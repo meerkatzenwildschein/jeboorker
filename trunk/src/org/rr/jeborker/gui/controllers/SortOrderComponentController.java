@@ -1,0 +1,80 @@
+package org.rr.jeborker.gui.controllers;
+
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.JToggleButton;
+
+import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.db.OrderDirection;
+import org.rr.jeborker.gui.JEBorkerMainController;
+
+public class SortOrderComponentController {
+	
+	private JToggleButton ascButton;
+	private JToggleButton descButton;
+
+	public SortOrderComponentController(JToggleButton ascButton, JToggleButton descButton) {
+		this.ascButton = ascButton;
+		this.descButton = descButton;
+		this.init();
+	}
+	
+	private void init() {
+		Icon ascIcon = ascButton.getIcon();
+		ascButton.setAction(new AbstractAction(null, ascIcon) {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				descButton.setSelected(false);
+				JEBorkerMainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
+				JEBorkerMainController.getController().refreshTable();
+			}
+		});
+		
+		Icon descIcon = descButton.getIcon();
+		descButton.setAction(new AbstractAction(null, descIcon) {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ascButton.setSelected(false);
+				JEBorkerMainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_DESC));
+				JEBorkerMainController.getController().refreshTable();
+			}
+		});	
+		
+		this.restoreProperties();
+		if(!ascButton.isSelected() && !descButton.isSelected()) {
+			//ascending order by default
+			ascButton.setSelected(true);
+		}
+		
+	}
+	
+	public void dispose() {
+		this.storeProperties();
+	}
+	
+	private void storeProperties() {
+		String value = ascButton.isSelected() ? "asc" : "desc";
+		JEBorkerPreferences.addEntryString("sortColumnOrder", value);
+	}
+	
+	
+	/**
+	 * Restores the order fields and put them to view and model.
+	 */
+	private void restoreProperties() {
+		String sortColumnOrder = JEBorkerPreferences.getEntryString("sortColumnOrder");
+		if(sortColumnOrder.equalsIgnoreCase("asc")) {
+			ascButton.setSelected(true);
+		} else if(sortColumnOrder.equalsIgnoreCase("desc")) {
+			descButton.setSelected(true);
+		}
+	}	
+}

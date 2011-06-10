@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="l2fprod_common"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="src" path="jempbox"/>
+	<classpathentry kind="src" path="japura"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JRRCommons"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JRRSwingCommons"/>
+	<classpathentry kind="lib" path="lib/iText-5.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/orientdb/orient-commons-0.9.25.jar"/>
+	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-0.9.25.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

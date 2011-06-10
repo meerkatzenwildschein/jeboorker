@@ -1,0 +1,368 @@
+package org.rr.jeborker.db.item;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import org.rr.jeborker.db.IDBObject;
+
+public class EbookPropertyItem implements IDBObject, Serializable {
+	
+	private static final long serialVersionUID = -4301328577306625467L;
+	
+	@DBViewField(name = "Created at", orderPriority = 0)
+	private Date createdAt;
+
+	/**
+	 * File name and path from the ebook file.
+	 */
+	private String file;
+	
+	/**
+	 * The base path of the ebook file.
+	 */
+	@DBViewField(name = "Base Path", orderPriority = 0)
+	private String basePath;
+	
+	/**
+	 * The mime type of the ebook file.
+	 */
+	@DBViewField(name = "Mime type", orderPriority = 0)
+	private String mimeType;
+	
+	/**
+	 * Title of the ebook. This property is ready from the ebook meta data.
+	 */
+	@DBViewField(name = "Title", orderPriority = 99)
+	private String title;
+	
+	/**
+	 * Language of the ebook
+	 */
+	@DBViewField(name = "Language", orderPriority = 30)
+	private String language;
+	
+	/**
+	 * The publishing / release date of the ebook.
+	 */
+	@DBViewField(name = "Publishing Date", orderPriority = 50)
+	private Date publishingDate;
+	
+	/**
+	 * The date when the ebook was created.
+	 */
+	@DBViewField(name = "Creation Date", orderPriority = 50)
+	private Date creationDate;	
+
+	/**
+	 * The author of the ebook.
+	 */
+	@DBViewField(name = "Author", orderPriority = 101)
+	private String author;
+	
+	/**
+	 * The author's name in a good sortable manner
+	 */
+	@DBViewField(name = "Author Sort", orderPriority = 100)
+	private String authorSort;	
+
+	/**
+	 * Epub Identifier. This is a UUID value
+	 */
+	private String uuid;
+	
+	/**
+	 * ISBN number of the ebook
+	 */
+	@DBViewField(name = "ISBN", orderPriority = 50)
+	private String isbn;
+	
+	/**
+	 * Description / summary of the book.
+	 */
+	@DBViewField(name = "Description", orderPriority = 20)
+	private String description;
+	
+	/**
+	 * Just some keywords for the book. Primary used with pdf.
+	 */
+	@DBViewField(name = "Keywords", orderPriority = 0)
+	private String keywords;
+	
+	/**
+	 * publisher of the ebook.
+	 */
+	@DBViewField(name = "Publisher", orderPriority = 80)
+	private String publisher;
+	
+	/**
+	 * The subject is for example "Belletristik/Krimis, Thriller, Spionage"
+	 */
+	@DBViewField(name = "Genre", orderPriority = 90)
+	private String genre;
+	
+	/**
+	 * If the ebook is part of a series like a trilogy, the name of the serie could be stored here.
+	 */
+	@DBViewField(name = "Series name", orderPriority = 90)
+	private String seriesName;
+	
+	/**
+	 * If the ebook is part of a series like a trilogy, the number of the serie could be stored here.
+	 */
+	@DBViewField(name = "Series index", orderPriority = 89)
+	private String seriesIndex;
+	
+	/**
+	 * The book rating. We use a 0.00 digit schema here. 
+	 */
+	@DBViewField(name = "Rating", orderPriority = 95)
+	private String rating;
+	
+	/**
+	 * Something like "All rights reserved" 
+	 */
+	@DBViewField(name = "Rights", orderPriority = 10)
+	private String rights;
+	
+	/**
+	 * The release scope for the book. For example "Germany"
+	 */
+	@DBViewField(name = "Coverage", orderPriority = 10)
+	private String coverage;
+	
+	/**
+	 * age suggestion. Something like '12-13' or simple '12'.
+	 */
+	@DBViewField(name = "Age suggestion", orderPriority = 80)
+	private String ageSuggestion;
+	
+	/**
+	 * A small thumbnail of the cover.
+	 */
+	private byte[] coverThumbnail;
+	
+	public EbookPropertyItem() {
+		super();
+	}
+	
+	@Override
+	public String toString() {
+		return file;
+	}
+	
+	/**
+	 * Get the file name without the path. The file name is created from the
+	 * {@link #getFile()} property.
+	 * 
+	 * @return the file name without path statement.
+	 */
+	public String getFileName() {
+		if(file!=null && file.indexOf('/')!=-1) {
+			return file.substring(file.lastIndexOf('/')+1);
+		} else if(file!=null && file.indexOf('\\')!=-1) {
+			return file.substring(file.lastIndexOf('\\')+1);
+		} else if(file!=null){
+			return this.file;
+		} else {
+			return "";
+		}
+	}	
+	
+    public boolean equals(Object obj) {
+    	if(file==null) {
+    		return false;
+    	}
+    	
+    	if(obj instanceof EbookPropertyItem) {
+    		return file.equals(((EbookPropertyItem)obj).file);
+    	}
+    	return false;
+    }	
+
+	public String getFile() {
+		return file;
+	}
+	
+	public void setFile(String file) {
+		this.file = file;
+	}
+
+	public String getTitle() {
+		return title!=null?title.trim():title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public String getBasePath() {
+		return basePath;
+	}
+
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
+	
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}		
+	
+	public String getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
+	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getIsbn() {
+		//urn:isbn:
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getSeriesName() {
+		return seriesName;
+	}
+
+	public void setSeriesName(String seriesName) {
+		this.seriesName = seriesName;
+	}
+
+	public String getSeriesIndex() {
+		return seriesIndex;
+	}
+
+	public void setSeriesIndex(String seriesIndex) {
+		this.seriesIndex = seriesIndex;
+	}
+
+	public String getRating() {
+		return rating;
+	}
+
+	public void setRating(String rating) {
+		this.rating = rating;
+	}
+
+	public String getRights() {
+		return rights;
+	}
+
+	public void setRights(String rights) {
+		this.rights = rights;
+	}
+
+	public String getCoverage() {
+		return coverage;
+	}
+
+	public void setCoverage(String coverage) {
+		this.coverage = coverage;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
+	}
+
+	public String getAgeSuggestion() {
+		return ageSuggestion;
+	}
+
+	public void setAgeSuggestion(String ageSuggestion) {
+		this.ageSuggestion = ageSuggestion;
+	}
+
+	public Date getPublishingDate() {
+		return publishingDate;
+	}
+
+	public void setPublishingDate(Date publishingDate) {
+		this.publishingDate = publishingDate;
+	}
+
+	public String getAuthorSort() {
+		return authorSort;
+	}
+
+	public void setAuthorSort(String authorSort) {
+		this.authorSort = authorSort;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public byte[] getCoverThumbnail() {
+		return coverThumbnail;
+	}
+
+	public void setCoverThumbnail(byte[] coverThumbnail) {
+		this.coverThumbnail = coverThumbnail;
+	}
+
+
+}
