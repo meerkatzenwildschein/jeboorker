@@ -1,0 +1,201 @@
+package org.rr.jeborker.gui;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
+import org.rr.commons.io.LineReader;
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.metadata.IMetadataReader;
+import org.rr.jeborker.metadata.IMetadataWriter;
+import org.rr.jeborker.metadata.MetadataHandlerFactory;
+
+public class PlainMetadataEditorController {
+	
+	private IMetadataReader reader;
+	
+	private PlainMetadataEditorView xmlMetadataView = null;
+	
+	private static int locationOffset = 0;
+	
+	private int[] rowsToRefresh;
+	
+	private PlainMetadataEditorController(IResourceHandler resourceHandler, int[] rowsToRefresh) {
+		this.rowsToRefresh = rowsToRefresh;
+		this.reader = MetadataHandlerFactory.getReader(resourceHandler);
+	}	
+	
+	public static PlainMetadataEditorController getInstance(final IResourceHandler resourceHandler, int[] rowsToRefresh) {
+		PlainMetadataEditorController controller = new PlainMetadataEditorController(resourceHandler, rowsToRefresh);
+		return controller;
+	}	
+	
+	public void showXMLMetadataDialog() {
+		PlainMetadataEditorView view = getView();
+		view.editor.setContentType(reader.getPlainMetaDataMime());
+		String plainMetaData = reader.getPlainMetaData();
+		view.editor.setText(plainMetaData);
+		toggleFolds(plainMetaData);
+		view.setVisible(true);
+	}
+	
+	/**
+	 * Close the folds which have large data values.  
+	 * @param xml The xml which is shown with the view.
+	 */
+	private void toggleFolds(String xml) {
+		if(xml==null || xml.length() == 0) {
+			return;
+		}
+		
+		LineReader lineReader = new LineReader(new ByteArrayInputStream(xml.getBytes()));
+		StringBuilder buffer = new StringBuilder();
+		try {
+			int lastOpenTag = 0;
+			int cDataCount = 0;
+			for(int i=0;;i++) {
+				buffer.setLength(0);
+				if(lineReader.readLine(buffer) > 0) {
+					if(buffer.length() > 0) {
+						if(buffer.charAt(buffer.length()-1) == '>') {
+							lastOpenTag = i;
+							cDataCount = 0;
+						} else {
+							cDataCount++;
+						}
+						
+						if(lastOpenTag > 0 && cDataCount > 10) {
+							//after a minimum of 10 data lines we close the fold.  
+							PlainMetadataEditorView view = getView();
+							view.xmlFoldingMargin.toggleFold(lastOpenTag);
+							lastOpenTag = -1;
+						}
+					}
+				} else {
+					break;
+				}
+			}
+		} catch (IOException e) {
+			LoggerFactory.logWarning(this, "could not toggle large folds.", e);
+		}
+	}
+	
+	private PlainMetadataEditorView getView() {
+		if(xmlMetadataView==null) {
+			JFrame mainWindow = JEBorkerMainController.getController().getMainWindow();
+			try {
+				xmlMetadataView = new PlainMetadataEditorView(mainWindow);
+			} catch (IOException e) {
+				LoggerFactory.logWarning(this, "could not create XML editor component for " + reader.getEbookResource(), e);
+			}
+			this.initialize();
+		}
+		return xmlMetadataView;
+	}
+	
+	private void initialize() {
+		JFrame mainWindow = JEBorkerMainController.getController().getMainWindow();
+		locationOffset = locationOffset + 10;
+		xmlMetadataView.setLocation(mainWindow.getLocation().x + locationOffset, mainWindow.getLocation().y + locationOffset);
+		xmlMetadataView.setSize(800, 600);
+		xmlMetadataView.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		restorePropeties();
+		
+		initListeners();		
+	}
+
+	private void initListeners() {
+		xmlMetadataView.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				storeProperties();
+				locationOffset -= 10;
+			}
+			
+		});
+		
+		xmlMetadataView.btnAbort.setAction(new AbstractAction() {
+			private static final long serialVersionUID = -2551783359830548125L;
+
+			{
+				putValue(Action.NAME, Bundle.getString("PlainMetadataEditorView.abort"));
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		});
+		
+		xmlMetadataView.btnSave.setAction(new AbstractAction() {
+			private static final long serialVersionUID = -2551783359830548125L;
+
+			{
+				putValue(Action.NAME, Bundle.getString("PlainMetadataEditorView.save"));
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final IResourceHandler ebookResource = reader.getEbookResource();
+				final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebookResource);
+				final String metadataContent = xmlMetadataView.editor.getText();
+				try {
+					writer.storePlainMetadata(metadataContent.getBytes("UTF-8"));
+				} catch (UnsupportedEncodingException e1) {
+					LoggerFactory.logWarning(this, "Could not encode data to UTF-8 " + ebookResource, e1);
+				}
+
+				close();
+				
+				Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookResource.toString());
+				action.actionPerformed(null);
+				JEBorkerMainController.getController().refreshTableRows(rowsToRefresh);
+			}
+		});
+	}
+	
+	public void close() {
+		storeProperties();
+		locationOffset -= 10;
+		
+		xmlMetadataView.setVisible(false);
+		xmlMetadataView.dispose();
+	}
+	
+	private void storeProperties() {
+		JEBorkerPreferences.addEntryNumber("metadataDialogSizeWidth", getView().getSize().width);
+		JEBorkerPreferences.addEntryNumber("metadataDialogSizeHeight", getView().getSize().height);
+		JEBorkerPreferences.addEntryNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
+		JEBorkerPreferences.addEntryNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
+	}
+	
+	private void restorePropeties() {
+		//restore the window size from the preferences.
+		Number metadataDialogSizeWidth = JEBorkerPreferences.getEntryAsNumber("metadataDialogSizeWidth");
+		Number metadataDialogSizeHeight = JEBorkerPreferences.getEntryAsNumber("metadataDialogSizeHeight");
+		if(metadataDialogSizeWidth!=null && metadataDialogSizeHeight!=null) {
+			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
+		}
+		
+		//restore window location
+		Point entryAsScreenLocation = JEBorkerPreferences.getEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
+		if(entryAsScreenLocation != null) {
+			getView().setLocation(entryAsScreenLocation);
+		}		
+	}
+}

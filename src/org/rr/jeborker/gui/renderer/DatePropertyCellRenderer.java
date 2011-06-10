@@ -1,0 +1,114 @@
+package org.rr.jeborker.gui.renderer;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.swing.Icon;
+import javax.swing.JList;
+import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
+import javax.swing.table.DefaultTableCellRenderer;
+
+import org.rr.commons.utils.DateConversionUtils;
+
+import com.l2fprod.common.model.DefaultObjectRenderer;
+import com.l2fprod.common.model.ObjectRenderer;
+
+public class DatePropertyCellRenderer extends DefaultTableCellRenderer implements  ListCellRenderer {
+
+	private static final long serialVersionUID = 1L;
+	
+    private ObjectRenderer objectRenderer = new DefaultObjectRenderer();
+
+    private Color oddBackgroundColor = Color.YELLOW; //UIManager.getColor("Tree.textBackground");//SystemColor.window;
+    
+    private boolean showOddAndEvenRows = true;	
+
+	private DateFormat dateFormat;
+
+    public DatePropertyCellRenderer() {
+        this(DateFormat.getDateInstance(DateFormat.SHORT));
+    }
+
+    public DatePropertyCellRenderer(String formatString) {
+        this(formatString, Locale.getDefault());
+    }
+
+    public DatePropertyCellRenderer(Locale l) {
+        this(DateFormat.getDateInstance(DateFormat.SHORT, l));
+    }
+
+    public DatePropertyCellRenderer(String formatString, Locale l) {
+        this(new SimpleDateFormat(formatString, l));
+    }
+
+    public DatePropertyCellRenderer(DateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public void setValue(Object value) {
+        if (value == null || value.toString().length() == 0) {
+            setText("");
+        } else if(value instanceof Date){
+            setText(dateFormat.format((Date) value));
+        } else if(value instanceof String) {
+        	Date date = DateConversionUtils.toDate((String) value);
+        	setText(dateFormat.format((Date) date));
+        }
+    }
+    
+    
+    public void setOddBackgroundColor(Color c) {
+        oddBackgroundColor = c;
+    }
+
+    public void setShowOddAndEvenRows(boolean b) {
+        showOddAndEvenRows = b;
+    }
+
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        setBorder(null);
+
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            setForeground(list.getSelectionForeground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
+
+        setValue(value);
+
+        return this ;
+    }
+
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (showOddAndEvenRows && !isSelected) {
+            if (row % 2 == 0) {
+            	setOpaque(true);
+                setBackground(oddBackgroundColor);
+            } else {
+            	setOpaque(false);
+            }
+        }
+
+        setValue(value);
+
+        return this ;
+    }
+
+    protected String convertToString(Object value) {
+        return objectRenderer.getText(value);
+    }
+
+    protected Icon convertToIcon(Object value) {
+        return null;
+    }
+    
+
+}
