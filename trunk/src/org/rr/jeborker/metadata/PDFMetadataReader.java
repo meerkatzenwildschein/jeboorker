@@ -319,8 +319,32 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	@Override
 	public List<MetadataProperty> getSupportedMetaData() {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		result.add(new MetadataProperty("Author", ""));
+		result.add(new MetadataProperty("Title", ""));
+		result.add(new MetadataProperty("Creator", ""));
+		result.add(new MetadataProperty("Subject", ""));
+		result.add(new MetadataProperty("Producer", ""));
+		result.add(new MetadataProperty("ModDate", "", Date.class));
+		result.add(new MetadataProperty("CreationDate", "", Date.class));
+		result.add(new MetadataProperty("SourceModified", "", Date.class));
 		return result;
 	}
+	
+	private MetadataProperty createSupportedMetadataProperty(String tagName) {
+		return createSupportedMetadataProperty(tagName, null, null);
+	}
+	
+	private MetadataProperty createSupportedMetadataProperty(String tagName, String[] attributeNames, String[] attributeValues) {
+		PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, "", "");
+		
+		EpubMetadataProperty epubMetadataProperty = new EpubMetadataProperty(tagName, "");
+		if(attributeNames!=null && attributeValues!=null) {
+			for (int i = 0; i < attributeValues.length; i++) {
+				epubMetadataProperty.addAttribute(attributeNames[i], attributeValues[i]);
+			}
+		}
+		return epubMetadataProperty;
+	}	
 	
 	@Override
 	public String getPlainMetaDataMime() {
