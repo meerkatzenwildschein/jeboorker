@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui.renderer;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,11 +22,7 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer implement
 	private static final long serialVersionUID = 1L;
 	
     private ObjectRenderer objectRenderer = new DefaultObjectRenderer();
-
-    private Color oddBackgroundColor = Color.YELLOW; //UIManager.getColor("Tree.textBackground");//SystemColor.window;
     
-    private boolean showOddAndEvenRows = true;	
-
 	private DateFormat dateFormat;
 
     public DatePropertyCellRenderer() {
@@ -60,23 +55,16 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer implement
         	setText(dateFormat.format((Date) date));
         }
     }
-    
-    
-    public void setOddBackgroundColor(Color c) {
-        oddBackgroundColor = c;
-    }
-
-    public void setShowOddAndEvenRows(boolean b) {
-        showOddAndEvenRows = b;
-    }
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         setBorder(null);
 
         if (isSelected) {
+        	setOpaque(true);
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
         } else {
+        	setOpaque(false);
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
@@ -88,15 +76,6 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer implement
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        if (showOddAndEvenRows && !isSelected) {
-            if (row % 2 == 0) {
-            	setOpaque(true);
-                setBackground(oddBackgroundColor);
-            } else {
-            	setOpaque(false);
-            }
-        }
-
         setValue(value);
 
         return this ;
