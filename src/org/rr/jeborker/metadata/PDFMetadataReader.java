@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
@@ -15,6 +17,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
+import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.xml.XMLUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -188,8 +191,9 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 
 	@Override
 	public byte[] getCover() {
+		byte[] tumbnailData = null;
 		try {
-			byte[] fetchThumbnail = fetchXMPThumbnail(pdfReader);
+			byte[] fetchThumbnail = fetchXMPThumbnail(pdfReader, ebookResource);
 			if(fetchThumbnail!=null) {
 				return fetchThumbnail;
 			} else {
@@ -198,16 +202,16 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read cover for pdf " + ebookResource, e);
 		}
-		return null;
+		return tumbnailData;
 	}	
 	
 	/**
 	 * Fetches the thumbnail from the xmp metadata.
 	 * @param pdfReader The reader instance to be used to read the XMP data
-	 * @return The thumbnail ot <code>null</code> if not thumbnail is embedded.
+	 * @return The thumbnail or <code>null</code> if not thumbnail is embedded.
 	 * @throws Exception
 	 */
-	private byte[] fetchXMPThumbnail(final PdfReader pdfReader) throws Exception {
+	static byte[] fetchXMPThumbnail(final PdfReader pdfReader, final IResourceHandler ebookResource) throws Exception {
 		final byte[] xmpMetadataBytes = pdfReader.getMetadata();
 		if(xmpMetadataBytes!=null) {
 			final Document document = getDocument(xmpMetadataBytes, ebookResource);
@@ -216,7 +220,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			if(basicSchema!=null) {
 				Thumbnail thumbnail = basicSchema.getThumbnail();
 				if(thumbnail!=null) {
-					String image = thumbnail.getImage();
+					String image = thumbnail.getImage();					
 					byte[] decodeBase64 = Base64.decode(image);
 					if(decodeBase64!=null && decodeBase64.length > 5) {
 						return decodeBase64;
@@ -299,11 +303,11 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	@Override
 	public String getPlainMetaData() {
 		try {
-			final byte[] xmpMetadataBytes = getReader().getMetadata();
+			final byte[] xmpMetadataBytes = getReader().getMetadata();	
 			if(xmpMetadataBytes!=null && xmpMetadataBytes.length > 0) {
 				String xml = new String(xmpMetadataBytes, "UTF-8");
-				
-				xml = XMLUtils.formatXML(xml, 4, 160);
+				xml = new HTMLEntityConverter(xml, -1).decodeEntities();
+//				xml = XMLUtils.formatXML(xml, 4, 160);
 				
 				return xml;
 			} else {
@@ -329,22 +333,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		result.add(new MetadataProperty("SourceModified", "", Date.class));
 		return result;
 	}
-	
-	private MetadataProperty createSupportedMetadataProperty(String tagName) {
-		return createSupportedMetadataProperty(tagName, null, null);
-	}
-	
-	private MetadataProperty createSupportedMetadataProperty(String tagName, String[] attributeNames, String[] attributeValues) {
-		PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, "", "");
-		
-		EpubMetadataProperty epubMetadataProperty = new EpubMetadataProperty(tagName, "");
-		if(attributeNames!=null && attributeValues!=null) {
-			for (int i = 0; i < attributeValues.length; i++) {
-				epubMetadataProperty.addAttribute(attributeNames[i], attributeValues[i]);
-			}
-		}
-		return epubMetadataProperty;
-	}	
 	
 	@Override
 	public String getPlainMetaDataMime() {

@@ -45,15 +45,9 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		try {
 			final byte[] pdfData = ebookResource.getContent();
 			final PdfReader pdfReader = new PdfReader(pdfData);
-
-			// byte[] metadata = pdfReader.getMetadata();
-			// if(metadata!=null) {
-			// System.out.println();
-			// System.out.println("read:" + new String(metadata));
-			// }
-
+			final byte[] fetchXMPThumbnail = PDFMetadataReader.fetchXMPThumbnail(pdfReader, ebookResource);
 			final HashMap<String, String> info = new HashMap<String, String>();
-			final XMPMetadata blankXMP = new XMPMetadata();
+			XMPMetadata blankXMP = new XMPMetadata();
 
 			// flag wich tells if xmp meta data where really be created.
 			// so no empty xmp doc will be inserted.
@@ -89,9 +83,11 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 				}
 			}
 			
+			if(fetchXMPThumbnail != null) {
+				blankXMP = attachCoverToXmp(fetchXMPThumbnail, blankXMP.getXMPDocument());
+			}
+			
 			writeMetadata(pdfReader, xmpMetadataSet ? blankXMP.asByteArray() : null, info);
-			// System.out.println("");
-			// System.out.println("write:" + new String(blankXMP.asByteArray()));
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
 		}
@@ -140,48 +136,62 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 	}
 
 	@Override
-	public void setCover(byte[] cover) {
+	public void setCover(byte[] coverData) {
 		try {
 			final byte[] pdfData = ebookResource.getContent();
 			final PdfReader pdfReader = new PdfReader(pdfData);
 			final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-			final XMPMetadata xmp;
-			if(xmpMetadataBytes!=null) {
-				final Document document = getDocument(xmpMetadataBytes, ebookResource);
-				xmp = new XMPMetadata(document);
-			} else {
-				xmp = new XMPMetadata();
-			}
 			
-			final XMPSchemaBasic xmpSchema = (XMPSchemaBasic) getXMPSchema("xap", xmp);
-			final IResourceHandler coverResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("PDFMetadataWriterSetCover", cover);
-			final String coverMimeType = coverResourceLoader.getMimeType();
-			
-			Thumbnail thumbnail = xmpSchema.getThumbnail();
-			if(thumbnail == null) {
-				thumbnail = new Thumbnail(xmp);
-			}
-			
-			if(coverMimeType.equals("image/jpeg")) {
-				thumbnail.setImage(Base64.encodeBytes(cover));
-				ImageInfo imageInfo = new ImageInfo(ResourceHandlerFactory.getVirtualResourceLoader("setCover", cover));
-				thumbnail.setHeight(imageInfo.getHeight());
-				thumbnail.setWidth(imageInfo.getWidth());
-			} else {
-				IImageProvider imageProvider = ImageProviderFactory.getImageProvider(coverResourceLoader);
-				BufferedImage image = imageProvider.getImage();
-				byte[] jpegCover = ImageUtils.getImageBytes(image, "image/jpeg");
-				thumbnail.setImage(Base64.encodeBytes(jpegCover));
-				thumbnail.setHeight(image.getHeight());
-				thumbnail.setWidth(image.getWidth());
-			}
-			thumbnail.setFormat(Thumbnail.FORMAT_JPEG);
-			xmpSchema.setThumbnail(thumbnail);
+			final XMPMetadata xmp = attachCoverToXmp(coverData, getDocument(xmpMetadataBytes, ebookResource));
 			
 			writeMetadata(pdfReader, xmp.asByteArray(), pdfReader.getInfo());
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not write cover for " + ebookResource, e);
 		}
+	}
+
+	/**
+	 * Attaches the given coverData as jpeg to the given document. The image is
+	 * converted into jpeg if needed.
+	 * 
+	 * @param coverData The image data to be used as cover.
+	 * @param document The xmp document where the cover should be attached to. 
+	 * @return Metadata created from the given document with the given cover.
+	 * @throws IOException
+	 */
+	private XMPMetadata attachCoverToXmp(byte[] coverData, final Document document) throws IOException {
+		final XMPMetadata xmp;
+		if(document != null) {
+			xmp = new XMPMetadata(document);
+		} else {
+			xmp = new XMPMetadata();
+		}
+		
+		final XMPSchemaBasic xmpSchema = (XMPSchemaBasic) getXMPSchema("xap", xmp);
+		final IResourceHandler coverResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("PDFMetadataWriterSetCover", coverData);
+		final String coverMimeType = coverResourceLoader.getMimeType();
+		
+		Thumbnail thumbnail = xmpSchema.getThumbnail();
+		if(thumbnail == null) {
+			thumbnail = new Thumbnail(xmp);
+		}
+		
+		if(coverMimeType.equals("image/jpeg")) {
+			thumbnail.setImage(Base64.encodeBytes(coverData));
+			ImageInfo imageInfo = new ImageInfo(ResourceHandlerFactory.getVirtualResourceLoader("setCover", coverData));
+			thumbnail.setHeight(imageInfo.getHeight());
+			thumbnail.setWidth(imageInfo.getWidth());
+		} else {
+			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(coverResourceLoader);
+			BufferedImage image = imageProvider.getImage();
+			byte[] jpegCover = ImageUtils.getImageBytes(image, "image/jpeg");
+			thumbnail.setImage(Base64.encodeBytes(jpegCover));
+			thumbnail.setHeight(image.getHeight());
+			thumbnail.setWidth(image.getWidth());
+		}
+		thumbnail.setFormat(Thumbnail.FORMAT_JPEG);
+		xmpSchema.setThumbnail(thumbnail);
+		return xmp;
 	}
 
 	/**

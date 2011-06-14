@@ -81,7 +81,7 @@ public class JEborkerMainView extends JFrame{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this.setTitle("JeBorker");
+		this.setTitle("Jeboorker");
 		this.setBounds(100, 100, 792, 622);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
@@ -92,7 +92,7 @@ public class JEborkerMainView extends JFrame{
 		});
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
-		gridBagLayout.rowHeights = new int[]{25, 0, 350, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{4, 0, 350, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.getContentPane().setLayout(gridBagLayout);
@@ -104,7 +104,7 @@ public class JEborkerMainView extends JFrame{
 		gbc_toolbarPanel.fill = GridBagConstraints.VERTICAL;
 		gbc_toolbarPanel.gridx = 0;
 		gbc_toolbarPanel.gridy = 0;
-		getContentPane().add(toolbarPanel, gbc_toolbarPanel);
+//		getContentPane().add(toolbarPanel, gbc_toolbarPanel);
 		toolbarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		
 		JButton readFolderButton = new JButton();

@@ -942,13 +942,15 @@ public class XMPSchema
             {
                 Element alt = (Element) altList.item(0);
                 NodeList items = alt.getElementsByTagName("rdf:li");
-                for (int i = 0; i < items.getLength() && retval == null; i++)
+                for (int i = 0; i < items.getLength(); i++)
                 {
                     Element li = (Element) items.item(i);
                     String elementLanguage = li.getAttribute("xml:lang");
-                    if (language.equals(elementLanguage))
-                    {
+                    if (language.equals(elementLanguage)) {
                         retval = new Thumbnail(li);
+                        break;
+                    } else if(elementLanguage==null || elementLanguage.length() == 0) {
+                    	retval = new Thumbnail(li);
                     }
                 }
             }

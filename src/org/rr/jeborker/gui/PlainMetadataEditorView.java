@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -60,6 +61,8 @@ public class PlainMetadataEditorView extends JDialog {
 			}
 		};
 		scroller.setViewportView(editor);
+		editor.setOpaque(false);
+		editor.setBackground(Color.WHITE);
 		
 		XMLEditorKit kit = new XMLEditorKit();
 		editor.setEditorKitForContentType("text/xml", kit);
