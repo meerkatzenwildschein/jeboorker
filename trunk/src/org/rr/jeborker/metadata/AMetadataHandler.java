@@ -29,7 +29,7 @@ public class AMetadataHandler {
 	 * Creates a document from the given xml bytes.
 	 * @return The desired document
 	 */
-	protected Document getDocument(byte[] xml, IResourceHandler ebookResource) {
+	protected static Document getDocument(byte[] xml, IResourceHandler ebookResource) {
 		try {
 			if(xml != null) {
 				final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

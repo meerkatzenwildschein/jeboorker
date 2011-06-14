@@ -615,8 +615,10 @@ public class XMPMetadata
      */
     public List<XMPSchema> getSchemas() throws IOException
     {
-        NodeList schemaList = xmpDocument
-                .getElementsByTagName("rdf:Description");
+    	if(xmpDocument == null) {
+    		return new ArrayList<XMPSchema>();
+    	}
+        NodeList schemaList = xmpDocument.getElementsByTagName("rdf:Description");
         List<XMPSchema> retval = new ArrayList<XMPSchema>(schemaList.getLength());
         for (int i = 0; i < schemaList.getLength(); i++)
         {

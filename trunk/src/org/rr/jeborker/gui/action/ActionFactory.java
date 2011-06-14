@@ -54,6 +54,18 @@ public class ActionFactory {
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return MetadataHandlerFactory.hasPlainMetadataSupport(resourceHandler);
 			}
+		},
+		REFRESH_ENTRY_ACTION {
+
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return RefreshEntryAction.class;
+			}
+			
+			@Override
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return true;
+			}
 		}
 	}	
 	
