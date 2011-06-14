@@ -80,6 +80,9 @@ class JEborkerMainMenuView extends JMenuBar {
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
 		result.add(action);		
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, rowsToRefreshAfter);
+		result.add(action);				
 		return result;
 	}
 	
