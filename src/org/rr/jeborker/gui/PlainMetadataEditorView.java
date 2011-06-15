@@ -34,6 +34,8 @@ public class PlainMetadataEditorView extends JDialog {
 	
 	JButton btnSave;
 	
+	JButton btnFormat;
+	
 	XMLFoldingMargin xmlFoldingMargin;
 	
 	PlainMetadataEditorView(JFrame invoker) throws IOException {
@@ -99,6 +101,14 @@ public class PlainMetadataEditorView extends JDialog {
 		gbc_editorPane.gridy = 0;
 		getContentPane().add(scroller, gbc_editorPane);
 		
+		btnFormat = new JButton(Bundle.getString("PlainMetadataEditorView.format"));
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.anchor = GridBagConstraints.WEST;
+		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton.gridx = 0;
+		gbc_btnNewButton.gridy = 1;
+		getContentPane().add(btnFormat, gbc_btnNewButton);
+		
 		btnAbort = new JButton(Bundle.getString("PlainMetadataEditorView.abort"));
 		GridBagConstraints gbc_btnAbort = new GridBagConstraints();
 		gbc_btnAbort.insets = new Insets(0, 0, 0, 5);
@@ -112,4 +122,5 @@ public class PlainMetadataEditorView extends JDialog {
 		gbc_btnOk.gridy = 1;
 		getContentPane().add(btnSave, gbc_btnOk);
 	}
+
 }

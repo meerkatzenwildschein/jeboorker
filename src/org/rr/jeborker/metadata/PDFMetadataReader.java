@@ -1,6 +1,5 @@
 package org.rr.jeborker.metadata;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
@@ -19,7 +17,6 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.xml.XMLUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -307,7 +304,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			if(xmpMetadataBytes!=null && xmpMetadataBytes.length > 0) {
 				String xml = new String(xmpMetadataBytes, "UTF-8");
 				xml = new HTMLEntityConverter(xml, -1).decodeEntities();
-//				xml = XMLUtils.formatXML(xml, 4, 160);
 				
 				return xml;
 			} else {

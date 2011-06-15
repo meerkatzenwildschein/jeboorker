@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import org.rr.commons.io.LineReader;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.xml.XMLUtils;
 import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -165,6 +166,32 @@ public class PlainMetadataEditorController {
 				JEBorkerMainController.getController().refreshTableRows(rowsToRefresh);
 			}
 		});
+		
+		xmlMetadataView.btnFormat.setAction(new AbstractAction() {
+			private static final long serialVersionUID = -2551783359830548125L;
+
+			{
+				putValue(Action.NAME, Bundle.getString("PlainMetadataEditorView.format"));
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final String metadataContent = xmlMetadataView.editor.getText();
+				final String formattedMetadataContent = XMLUtils.formatXML(metadataContent, 4, 160);
+				//make it invisible because the editor should not show the cover data 
+				//in an opened fold because this can is very slow and possibly can hang the app
+				//for a while.
+				xmlMetadataView.editor.setVisible(false);
+				try {
+					xmlMetadataView.editor.setText(formattedMetadataContent);
+					toggleFolds(formattedMetadataContent);
+				} catch(Exception ex) {
+					LoggerFactory.logWarning(this, "could not format metadata.", ex);
+				} finally {
+					xmlMetadataView.editor.setVisible(true);
+				}
+			}
+		});		
 	}
 	
 	public void close() {
