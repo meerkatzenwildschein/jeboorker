@@ -24,6 +24,8 @@ package org.rr.commons.xml;
 
 import java.util.Arrays;
 
+import org.rr.commons.utils.StringUtils;
+
 /**
  * <code>SimpleParser</code> - implementation of <em>SAX</em> parser.
  *  This is very basic implementation of <em>XML</em> parser designed especially
@@ -266,8 +268,7 @@ class SimpleParser {
       case END_OF_ATTR_NAME:
         if (chr == SINGLE_QUOTE || chr == DOUBLE_QUOTE) {
           parser_state.state = State.ATTRIB_VALUE;
-          parser_state.attrib_values[parser_state.current_attr] =
-            new StringBuilder();
+          parser_state.attrib_values[parser_state.current_attr] = new StringBuilder();
         } // end of if (chr == SINGLE_QUOTE || chr == DOUBLE_QUOTE)
         // Skip white characters and actually everything except quotes
         break;
@@ -285,6 +286,7 @@ class SimpleParser {
           parser_state.state = State.OPEN_BRACKET;
           parser_state.slash_found = false;
           if (parser_state.element_cdata != null) {
+        	rtrim(parser_state.element_cdata);
             handler.elementCData(parser_state.element_cdata);
             parser_state.element_cdata = null;
           } // end of if (parser_state.element_cdata != null)
@@ -325,6 +327,22 @@ class SimpleParser {
     } // end of for ()
 
     handler.saveParserState(parser_state);
+  }
+  
+  private static void rtrim(StringBuilder value) {
+	  int newSize = value.length();
+	  for (int i = value.length(); i > 0; i--) {
+		  char chr = value.charAt(i-1);
+		  if (Arrays.binarySearch(WHITE_CHARS, chr) >= 0) {
+			  newSize--;
+		  } else {
+			  break;
+		  }
+	  }
+	  
+	  if(newSize < value.length()) {
+		  value.delete(newSize, value.length());
+	  }
   }
 
   private class ParserState {

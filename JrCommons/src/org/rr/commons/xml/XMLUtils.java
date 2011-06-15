@@ -21,7 +21,7 @@ public class XMLUtils {
 		
 		char[] charArray = new String(xml.getBytes()).toCharArray();
 		parser.parse(formatter, charArray, 0, charArray.length);
-		formatter.outputExtraData("");
+//		formatter.outputExtraData("");
 
 		return out.toString();
 	}

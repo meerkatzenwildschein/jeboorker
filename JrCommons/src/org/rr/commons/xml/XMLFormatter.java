@@ -24,6 +24,11 @@ package org.rr.commons.xml;
  */
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.List;
+
+import org.rr.commons.utils.ArrayUtils;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 
 /**
  * This is temporary code used for testing purposes only. It is subject to change or remove at any time of server development. It has been created to format
@@ -111,7 +116,15 @@ class XMLFormatter implements SimpleHandler {
 	public void elementCData(final StringBuilder cdata) {
 		output.print(">");
 		openedElement = false;
-		if (getMaxCDataLength() > 0) {
+		if(cdata.indexOf("\n")!=-1) {
+			//do not format already formatted values
+			List<String> splitted = ListUtils.split(cdata.toString(), "\n");
+			for (String split : splitted) {
+				output.print('\n');
+				indent();
+				output.print(split.trim());
+			}
+		} else if (getMaxCDataLength() > 0) {
 			for (int srcBegin = 0; srcBegin < cdata.length(); srcBegin += maxCDataLength) {
 				output.print('\n');
 				indent();
