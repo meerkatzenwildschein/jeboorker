@@ -24,8 +24,6 @@ package org.rr.commons.xml;
 
 import java.util.Arrays;
 
-import org.rr.commons.utils.StringUtils;
-
 /**
  * <code>SimpleParser</code> - implementation of <em>SAX</em> parser.
  *  This is very basic implementation of <em>XML</em> parser designed especially
