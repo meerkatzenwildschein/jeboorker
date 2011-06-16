@@ -59,6 +59,8 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	
 	private Dimension thumbnailDimension;
 	
+	private String duplicateDetection = "";
+	
 	/**
 	 * A flag that tells where must be something to do with the labels.  
 	 */
@@ -126,6 +128,11 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, final int column) {
+		String duplicateDetection = String.valueOf(value) + isSelected + row;
+		if(this.duplicateDetection.equals(duplicateDetection)) {
+			return this;
+		}
+		
 		EbookPropertyItem item = (EbookPropertyItem) value;
 		switch(column) {
 			case 0:
@@ -163,6 +170,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				break;	
 		}
 		
+		this.duplicateDetection = duplicateDetection;
 		return this;
 	}
 
