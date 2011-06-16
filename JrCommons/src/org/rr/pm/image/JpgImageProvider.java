@@ -54,6 +54,6 @@ class JpgImageProvider extends AImageProvider implements IImageProvider {
 	 * @return a BufferedImage representing the current JpgImage
 	 */
 	public BufferedImage getImage() {
-		return ImageUtils.loadJpegImage(this.resourceLoader);
+		return ImageUtils.decodeJpeg(this.resourceLoader);
 	}
 }

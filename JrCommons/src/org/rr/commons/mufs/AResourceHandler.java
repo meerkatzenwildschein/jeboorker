@@ -133,7 +133,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			//data which mime-util not did.
 			final String guessedMime = ResourceHandlerUtils.guessFormat(this);
 			if(guessedMime!=null) {
-				return guessedMime;
+				return this.mime = guessedMime;
 			}
 		} catch (IOException e1) {
 			LoggerFactory.logInfo(this, "Could not guess format for " + this, e1);
