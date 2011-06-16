@@ -23,6 +23,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
@@ -448,8 +449,10 @@ public class JEBorkerMainController {
 	}
 	
 	private void setImage(final IMetadataReader reader) {
-		if (reader != null && reader.getEbookResource() != null) {
-			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(reader.getEbookResource().getName(), new VirtualStaticResourceDataLoader() {
+		final IResourceHandler ebookResource = reader!=null ? reader.getEbookResource() : null;
+		if (ebookResource != null) {
+			String coverFileName = StringUtils.substringBefore(ebookResource.getName(), ".", false, UtilConstants.COMPARE_BINARY);
+			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
 				
 				ByteArrayInputStream byteArrayInputStream = null;
 				
@@ -458,6 +461,7 @@ public class JEBorkerMainController {
 					if(byteArrayInputStream==null) {
 						byteArrayInputStream = new ByteArrayInputStream(reader.getCover());
 					}
+					byteArrayInputStream.reset();
 					return byteArrayInputStream;
 				}
 			}));
