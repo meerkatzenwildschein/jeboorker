@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.button.JMenuButton;
 import org.rr.common.swing.image.SimpleImageViewer;
+import org.rr.jeborker.JEBorker;
 import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -81,7 +82,7 @@ public class JEborkerMainView extends JFrame{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this.setTitle("Jeboorker");
+		this.setTitle("Jeboorker v" + JEBorker.version);
 		this.setBounds(100, 100, 792, 622);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
