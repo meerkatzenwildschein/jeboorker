@@ -128,12 +128,14 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, final int column) {
-		String duplicateDetection = String.valueOf(value) + isSelected + row;
+		//can happens that one row is rendered several times. Test here if the same row has already been rendered. 
+		//no need to do it twice.
+		final String duplicateDetection = String.valueOf(value) + isSelected + row;
 		if(this.duplicateDetection.equals(duplicateDetection)) {
 			return this;
 		}
 		
-		EbookPropertyItem item = (EbookPropertyItem) value;
+		final EbookPropertyItem item = (EbookPropertyItem) value;
 		switch(column) {
 			case 0:
 				if(isSelected) {
