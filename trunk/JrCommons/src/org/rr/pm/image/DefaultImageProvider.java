@@ -67,7 +67,7 @@ class DefaultImageProvider extends AImageProvider implements IImageProvider {
 			return ImageIO.read(resourceLoader.getContentInputStream());
 		} catch (IOException e) {
 			LoggerFactory.logWarning(this, "could not read image", e);
-		};
+		}
 		return null;
 	}
 }

@@ -3,9 +3,16 @@ package org.rr.pm.image;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.Image;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.PixelGrabber;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,8 +21,11 @@ import java.util.Iterator;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import javax.swing.ImageIcon;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -32,10 +42,10 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
 public class ImageUtils {
 	
 	/**
-	 * Creates the image bytes from teh given image.
+	 * Creates the image bytes from the given image.
 	 * @param image the image to be converted into bytes.
-	 * @param formatName The format of the resturned bytes. For example "jpeg", "png" or "gif".
-	 * @return The converted bytes or <code>null</code> if something wents wrong with the conversion.
+	 * @param formatName The format of the returned bytes. For example "jpeg", "png" or "gif".
+	 * @return The converted bytes or <code>null</code> if something went wrong with the conversion.
 	 */
 	public static byte[] getImageBytes(BufferedImage image, String mime) {
 		if(image==null) {
@@ -65,6 +75,13 @@ public class ImageUtils {
 		return null;
 	}
 
+	/**
+	 * Uses a poor and old jpeg encoder to encode the given image. It's possibly
+	 * the last was if jpeg encoding is not supported with the jre per default.
+	 * @param image The image to be encoded.
+	 * @param quality Encoding quality value.
+	 * @return The encoded image
+	 */
 	public static byte[] encodeJpeg(BufferedImage image, int quality) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JpegEncoder jpegEncoder = new JpegEncoder(image, quality, out);
@@ -73,12 +90,12 @@ public class ImageUtils {
 	}
 	
 	/**
-	 * This method loaded the given jpg file and decodes it.
-	 * @param resourceLoader The file to be loaded.
+	 * Loaded the given jpg file and decodes it.
+	 * @param resourceLoader The jpeg resource to be loaded.
 	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
 	 */
-	public static BufferedImage loadJpegImage(IResourceHandler resourceLoader) {
-		//ca. 200 ms faster than ImageIO.read and jai
+	public static BufferedImage decodeJpeg(IResourceHandler resourceLoader) {
+		//something about 200 ms faster than ImageIO.read and jai
 		BufferedImage bi = null;
 		InputStream bin = null;
 		try {
@@ -86,11 +103,26 @@ public class ImageUtils {
 			final JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(bin);
 			bi = decoder.decodeAsBufferedImage();
 		} catch (Exception e) {
-			LoggerFactory.log(Level.INFO, ImageUtils.class, "Image " + resourceLoader.getResourceString() + "could not be loaded", e);
+			bi = decodeJpegInternal(resourceLoader);
 		} finally {
 			IOUtils.closeQuietly(bin);
 		}
 		return bi;
+	}
+	
+	/**
+	 * Use a simple jpeg decoder as fallback.
+	 * @param resourceLoader The jpeg resource to be loaded.
+	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
+	 */
+	private static BufferedImage decodeJpegInternal(IResourceHandler resourceLoader) {
+		try {
+			JpegDecoder decoder = new JpegDecoder();
+			return toBufferedImage(decoder.decode(resourceLoader.getContentInputStream()));
+		} catch (Exception e1) {
+			LoggerFactory.log(Level.INFO, ImageUtils.class, "Image " + resourceLoader.getResourceString() + " with mime " + resourceLoader.getMimeType() + " could not be loaded", e1);	
+		}
+		return null;
 	}
 	
 	/**
@@ -114,7 +146,7 @@ public class ImageUtils {
 			BufferedImage scaledImage = scalePercent(image, Math.min(heightFactor, widthFactor));
 			return scaledImage;
 		} else {
-			BufferedImage scaledImage = new BufferedImage(frame.width, frame.height, image.getType() != -1 ? image.getType() : BufferedImage.TYPE_INT_RGB);
+			BufferedImage scaledImage = new BufferedImage(frame.width, frame.height, image.getType() > 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
 			Graphics scaledImageGraphics = scaledImage.getGraphics();
 			scaledImageGraphics.drawImage(image, 0, 0, frame.width, frame.height, 0, 0, image.getWidth(), image.getHeight(), null);
 			scaledImageGraphics.dispose();
@@ -361,5 +393,76 @@ public class ImageUtils {
 			}
 		}
 		return true;
+	}
+	
+	public static BufferedImage toBufferedImage(Image image) {
+	    if (image instanceof BufferedImage) {
+	        return (BufferedImage)image;
+	    }
+
+	    // This code ensures that all the pixels in the image are loaded
+	    image = new ImageIcon(image).getImage();
+
+	    // Determine if the image has transparent pixels; for this method's
+	    // implementation, see Determining If an Image Has Transparent Pixels
+	    boolean hasAlpha = hasAlpha(image);
+
+	    // Create a buffered image with a format that's compatible with the screen
+	    BufferedImage bimage = null;
+	    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    try {
+	        // Determine the type of transparency of the new buffered image
+	        int transparency = Transparency.OPAQUE;
+	        if (hasAlpha) {
+	            transparency = Transparency.BITMASK;
+	        }
+
+	        // Create the buffered image
+	        GraphicsDevice gs = ge.getDefaultScreenDevice();
+	        GraphicsConfiguration gc = gs.getDefaultConfiguration();
+	        bimage = gc.createCompatibleImage(
+	            image.getWidth(null), image.getHeight(null), transparency);
+	    } catch (HeadlessException e) {
+	        // The system does not have a screen
+	    }
+
+	    if (bimage == null) {
+	        // Create a buffered image using the default color model
+	        int type = BufferedImage.TYPE_INT_RGB;
+	        if (hasAlpha) {
+	            type = BufferedImage.TYPE_INT_ARGB;
+	        }
+	        bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+	    }
+
+	    // Copy image to buffered image
+	    Graphics g = bimage.createGraphics();
+
+	    // Paint the image onto the buffered image
+	    g.drawImage(image, 0, 0, null);
+	    g.dispose();
+
+	    return bimage;
 	}	
+	
+	public static boolean hasAlpha(Image image) {
+	    // If buffered image, the color model is readily available
+	    if (image instanceof BufferedImage) {
+	        BufferedImage bimage = (BufferedImage)image;
+	        return bimage.getColorModel().hasAlpha();
+	    }
+
+	    // Use a pixel grabber to retrieve the image's color model;
+	    // grabbing a single pixel is usually sufficient
+	     PixelGrabber pg = new PixelGrabber(image, 0, 0, 1, 1, false);
+	    try {
+	        pg.grabPixels();
+	    } catch (InterruptedException e) {
+	    }
+
+	    // Get the image's color model
+	    ColorModel cm = pg.getColorModel();
+	    return cm.hasAlpha();
+	}
+	
 }
