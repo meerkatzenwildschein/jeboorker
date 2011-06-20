@@ -57,8 +57,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			//XMP example: http://itextpdf.com/examples/iia.php?id=217
 			final byte[] xmpMetadataBytes = pdfReader.getMetadata();
 			if(xmpMetadataBytes!=null) {
-//System.out.println(new String(xmpMetadataBytes));		
-//FileUtils.writeByteArrayToFile(new File("/home/guru/metadata.xml"), xmpMetadataBytes);			
 				final Document document = getDocument(xmpMetadataBytes, ebookResource);
 				final XMPMetadata metadata = new XMPMetadata(document);
                 
@@ -182,6 +180,14 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 				item.setCreationDate(DateConversionUtils.toDate(metadataProperty.getValueAsString()));
 			} else if(name.equals("subject")) {
 				item.setGenre(metadataProperty.getValueAsString());
+			} else if(name.equals("agesuggestion")) {
+				item.setAgeSuggestion(metadataProperty.getValueAsString());
+			} else if(name.equals("rating")) {
+				item.setRating(metadataProperty.getValueAsString());
+			} else if(name.equals("seriesindex")) {
+				item.setSeriesIndex(metadataProperty.getValueAsString());
+			} else if(name.equals("seriesname")) {
+				item.setSeriesName(metadataProperty.getValueAsString());
 			}
 		}
 	}
@@ -324,9 +330,13 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		result.add(new MetadataProperty("Creator", ""));
 		result.add(new MetadataProperty("Subject", ""));
 		result.add(new MetadataProperty("Producer", ""));
+		result.add(new MetadataProperty("agesuggestion", ""));
+		result.add(new MetadataProperty("rating", ""));
+		result.add(new MetadataProperty("seriesindex", ""));
+		result.add(new MetadataProperty("seriesname", ""));
 		result.add(new MetadataProperty("ModDate", "", Date.class));
 		result.add(new MetadataProperty("CreationDate", "", Date.class));
-		result.add(new MetadataProperty("SourceModified", "", Date.class));
+		result.add(new MetadataProperty("SourceModified", "", Date.class));		
 		return result;
 	}
 	

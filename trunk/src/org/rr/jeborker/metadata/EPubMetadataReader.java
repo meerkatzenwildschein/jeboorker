@@ -45,10 +45,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 			final byte[] containerXmlData = getContainerOPF(ebookResourceHandler);
 
 			// http://www.virtualuniversity.ch/software/java-xml/3-6.html
-			// String opfXmlData = new String(containerXmlData);
-			// System.out.println(opfXmlData);
-
-			final Document document = this.getDocument(containerXmlData, ebookResourceHandler);
+			final Document document = getDocument(containerXmlData, ebookResourceHandler);
 			if (document != null) {
 				final Element metadataNode = this.getMetadataElement(document);
 				if (metadataNode != null) {
@@ -117,7 +114,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final byte[] containerXmlData = getContainerOPF(zipData);
-			final Document document = this.getDocument(containerXmlData, ebookResourceHandler);
+			final Document document = getDocument(containerXmlData, ebookResourceHandler);
 			final Element metadataNode = this.getMetadataElement(document);
 			final Element manifestNode = this.getManifestElement(document);
 
