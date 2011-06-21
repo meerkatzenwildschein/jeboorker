@@ -73,15 +73,13 @@ public class EbookSheetProperty extends DefaultProperty {
 		final List<MetadataProperty> allMetaData = reader.readMetaData();
 		for (int i=0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
-			final String metadataPropertyName = metadataProperty.getName();
 			final List<Object> values = metadataProperty.getValues();
 			if(values.size()==1) {
 				//find properties with the same name and value to merge them in the sheet view.
 				boolean found = false;
 				for (int j=i+1; j < allMetaData.size(); j++) {
 					MetadataProperty metadataProperty2 = allMetaData.get(j);
-					if(metadataPropertyName.equals(metadataProperty2.getName()) && metadataProperty2.getValues().size()==1
-							&& metadataProperty2.getValues().get(0).equals(values.get(0))) {
+					if(comparePropertiesForMerge(metadataProperty, metadataProperty2)) {
 						EbookSheetProperty property = new MultipleEbookSheetProperty(new MetadataProperty[] {metadataProperty, metadataProperty2});
 						result.add(property);
 						allMetaData.remove(j);
@@ -100,6 +98,33 @@ public class EbookSheetProperty extends DefaultProperty {
 					result.add(property);				
 				}
 			}
+		}
+	}
+
+	/**
+	 * Compares the metadata properties if they could be merged to one property. Properties
+	 * can only be merged if they have the same value and size.
+	 * 
+	 * @param metadataProperty1 The first property to be compared.
+	 * @param metadataProperty2 The second property to be compared.
+	 * @return <code>true</code> for merge and <code>false</code> otherwise.
+	 */
+	private static boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
+		final String metadataProperty1Name = metadataProperty1.getName();
+		final String metadataProperty2Name = metadataProperty2.getName();
+
+		// test for value
+		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
+				&& metadataProperty2.getValues().get(0).equals(metadataProperty1.getValues().get(0));
+
+		if (result && metadataProperty1Name.equals(metadataProperty2Name)) {
+			// name is the same
+			return true;
+		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
+			//merge createdate and creationdate because they having the same sense
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
