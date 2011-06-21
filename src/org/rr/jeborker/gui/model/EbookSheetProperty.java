@@ -110,18 +110,20 @@ public class EbookSheetProperty extends DefaultProperty {
 	 * @return <code>true</code> for merge and <code>false</code> otherwise.
 	 */
 	private static boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
-		final String metadataProperty1Name = metadataProperty1.getName();
-		final String metadataProperty2Name = metadataProperty2.getName();
-
 		// test for value
 		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
 				&& metadataProperty2.getValues().get(0).equals(metadataProperty1.getValues().get(0));
+		
+		final String metadataProperty1Name = metadataProperty1.getName().toLowerCase();
+		final String metadataProperty2Name = metadataProperty2.getName().toLowerCase();		
 
 		if (result && metadataProperty1Name.equals(metadataProperty2Name)) {
 			// name is the same
 			return true;
 		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
-			//merge createdate and creationdate because they having the same sense
+			//merge createdate and creationdate because they have the same sense
+			return true;
+		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "calibrerating", "rating")) {
 			return true;
 		} else {
 			return false;
