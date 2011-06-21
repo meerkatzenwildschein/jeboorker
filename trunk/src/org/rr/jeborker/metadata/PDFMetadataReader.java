@@ -330,10 +330,10 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		result.add(new MetadataProperty("Creator", ""));
 		result.add(new MetadataProperty("Subject", ""));
 		result.add(new MetadataProperty("Producer", ""));
-		result.add(new MetadataProperty("agesuggestion", ""));
-		result.add(new MetadataProperty("rating", ""));
-		result.add(new MetadataProperty("seriesindex", ""));
-		result.add(new MetadataProperty("seriesname", ""));
+		result.add(new MetadataProperty("Agesuggestion", ""));
+		result.add(new MetadataProperty("Rating", ""));
+		result.add(new MetadataProperty("SeriesIndex", ""));
+		result.add(new MetadataProperty("SeriesName", ""));
 		result.add(new MetadataProperty("ModDate", "", Date.class));
 		result.add(new MetadataProperty("CreationDate", "", Date.class));
 		result.add(new MetadataProperty("SourceModified", "", Date.class));		
