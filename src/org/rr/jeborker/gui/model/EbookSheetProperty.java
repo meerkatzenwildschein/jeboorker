@@ -166,6 +166,10 @@ public class EbookSheetProperty extends DefaultProperty {
 			value.append(String.valueOf(metadataProperty.getValues().get(propertyIndex)));
 		}
 		
+		if(!JEBorkerMainController.getController().getLocalizedString(metadataProperty.getName()).equals(metadataProperty.getName())) {
+			value.append(" (").append(metadataProperty.getName()).append(")");
+		}
+		
 		return value.toString();
 	}
 
