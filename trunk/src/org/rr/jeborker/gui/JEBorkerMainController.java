@@ -314,11 +314,12 @@ public class JEBorkerMainController {
 	 * change the view automatically.
 	 * @param item The {@link EbookPropertyItem} to be removed.
 	 */
-	public void removeEbookPropertyItem(EbookPropertyItem item) {
+	public boolean removeEbookPropertyItem(EbookPropertyItem item) {
 		TableModel model = mainWindow.table.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
-			((EbookPropertyDBTableModel)model).removeRow(item);
+			return ((EbookPropertyDBTableModel)model).removeRow(item);
 		}	
+		return false;
 	}
 	
 	/**

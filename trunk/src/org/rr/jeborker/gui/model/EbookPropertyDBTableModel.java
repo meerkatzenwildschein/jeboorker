@@ -251,8 +251,9 @@ public class EbookPropertyDBTableModel implements TableModel {
     	}
     }
     
-	public void removeRow(final EbookPropertyItem item) {
+	public boolean removeRow(final EbookPropertyItem item) {
 		final Iterator<EbookPropertyItem> iterator = allItems.iterator();
+		boolean removed = false;
 		for (int i = 0; iterator.hasNext(); i++) {
 			final EbookPropertyItem toRemove = iterator.next();
 			try {
@@ -262,6 +263,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 						allItems.remove(i);
 						fireTableRowsDeleted(i, i);
 					}
+					removed = true;
 					break;
 				}
 			} catch(Exception e) {
@@ -269,6 +271,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 				break;
 			}
 		}
+		return removed;
 	}    
 
     /**

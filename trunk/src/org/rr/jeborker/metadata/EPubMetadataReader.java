@@ -33,6 +33,8 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	private static final String TITLE = "title";
 	private static final String DATE = "date";
 	private static final String CREATOR = "creator";
+	private static final String CREATOR_AUT = "creator / Aut";
+	
 
 	EPubMetadataReader(IResourceHandler ebookResourceHandler) {
 		super(ebookResourceHandler);
@@ -136,7 +138,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 			final String name = metadataProperty.getName(); // The name is guaranteed to be interned.
 			final Object value = metadataProperty.getValues().get(0);
 
-			if (name == CREATOR) {
+			if (name == CREATOR || name == CREATOR_AUT) {
 				String opfRole = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("opf:role");
 				if (opfRole == null || opfRole.equals("aut")) {
 					// dc:creator opf:role=”aut” opf:file-as="#authorSort#" author

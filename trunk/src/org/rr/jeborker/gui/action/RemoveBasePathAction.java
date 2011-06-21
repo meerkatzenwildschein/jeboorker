@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import javax.swing.Action;
+import javax.swing.DefaultButtonModel;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +67,10 @@ public class RemoveBasePathAction extends QueueableAction {
 		
 		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
 //		defaultDBManager.deleteObject(ebookPropertyItem);
-		controller.removeEbookPropertyItem(item);		
+		boolean removed = controller.removeEbookPropertyItem(item);
+		if(!removed) {
+			DefaultDBManager.getInstance().deleteObject(item);
+		}
 	}
 	
 }
