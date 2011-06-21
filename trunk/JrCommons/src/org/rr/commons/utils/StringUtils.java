@@ -1088,6 +1088,31 @@ public final class StringUtils implements Serializable {
     }
     
     /**
+     * Tests a string if the first two arguments cross match to the second both arguments.
+     * For example "create" and "creation" should be compared as a true value, both can be
+     * given as the second  argments to return true. If any of the first both string did not 
+     * match to the second ones, <code>false</code> is returned.
+     * 
+     * @param first First string to be tested
+     * @param second Second string to be tested
+     * @param compFirst The first result
+     * @param compSecond The second result
+     * @return <code>true</code> if match and <code>false</code> otherwise.
+     */
+    public static boolean compareTwice(final String first, final String second, final String compFirst, final String compSecond) {
+    	if(first == null || second == null || compFirst == null || compSecond == null) {
+    		return false;
+    	}
+    	
+    	if(first.equals(compFirst) || first.equals(compSecond)) {
+        	if(second.equals(compFirst) || second.equals(compSecond)) {
+        		return true;
+        	}
+    	}
+    	return false;
+    }
+    
+    /**
      * Tests if the given string is empty. That means it's <code>null</code> or
      * have a trimmed length of null. 
      * @param text The text to be tested.
