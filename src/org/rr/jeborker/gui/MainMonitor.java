@@ -2,13 +2,13 @@ package org.rr.jeborker.gui;
 
 import javax.swing.JProgressBar;
 
-public class JEBorkerMainMonitor {
+public class MainMonitor {
 
 	private JProgressBar progressbar;
 	
 	private int started = 0;
 	
-	JEBorkerMainMonitor(JProgressBar progressbar) {
+	MainMonitor(JProgressBar progressbar) {
 		this.progressbar = progressbar;
 	}
 	

@@ -16,12 +16,12 @@ import org.rr.jeborker.metadata.MetadataProperty;
 
 import com.l2fprod.common.propertysheet.Property;
 
-class JEBorkerMainControllerUtils {
+class MainControllerUtils {
 	
 	/**
 	 * Writes the application properties to the preference file
 	 */
-	static void storeApplicationProperties(JEborkerMainView mainWindow) {
+	static void storeApplicationProperties(MainView mainWindow) {
 		JEBorkerPreferences.addEntryNumber("mainWindowSizeWidth", mainWindow.getSize().width);
 		JEBorkerPreferences.addEntryNumber("mainWindowSizeHeight", mainWindow.getSize().height);
 		JEBorkerPreferences.addEntryNumber("mainWindowLocationX", mainWindow.getLocation().x);
@@ -35,7 +35,7 @@ class JEBorkerMainControllerUtils {
 	/**
 	 * Restores the application properties 
 	 */
-	static void restoreApplicationProperties(JEborkerMainView mainWindow) {
+	static void restoreApplicationProperties(MainView mainWindow) {
 		//restore the window size from the preferences.
 		Number mainWindowSizeWidth = JEBorkerPreferences.getEntryAsNumber("mainWindowSizeWidth");
 		Number mainWindowSizeHeight = JEBorkerPreferences.getEntryAsNumber("mainWindowSizeHeight");

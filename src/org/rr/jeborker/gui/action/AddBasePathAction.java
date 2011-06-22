@@ -17,8 +17,8 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.QueueableAction;
-import org.rr.jeborker.gui.JEBorkerMainController;
-import org.rr.jeborker.gui.JEborkerMainMenuController;
+import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMenuController;
 
 /**
  * Add a folder action.
@@ -44,7 +44,7 @@ class AddBasePathAction extends QueueableAction {
 	
 	@Override
 	public void doAction(ActionEvent e) {
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainController controller = MainController.getController();
 		final IResourceHandler selectedDirectory;
 		String path = this.path;
 		
@@ -65,7 +65,7 @@ class AddBasePathAction extends QueueableAction {
 				//only attach the new path if it is not a part of an already configured path.
 				if(!isAlreadyExistingBasePath(JEBorkerPreferences.getBasePath(), path)) {
 					JEBorkerPreferences.addBasePath(path); //add path to preferences
-					JEborkerMainMenuController.getController().addBasePathMenuEntry(path); //add path to ui
+					MainMenuController.getController().addBasePathMenuEntry(path); //add path to ui
 					readEbookFilesToDB(selectedDirectory);
 				} else {
 					messageFinished = Bundle.getFormattedString("AddBasePathAction.duplicatePathEntry", new Object[] {path});
@@ -123,9 +123,9 @@ class AddBasePathAction extends QueueableAction {
 	 * @param item The item to be added.
 	 */
 	static void addEbookPropertyItem(final EbookPropertyItem item) {
-		JEBorkerMainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
+		MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
 		DefaultDBManager.getInstance().storeObject(item);
-		JEBorkerMainController.getController().addEbookPropertyItem(item);
+		MainController.getController().addEbookPropertyItem(item);
 	}
 
 }

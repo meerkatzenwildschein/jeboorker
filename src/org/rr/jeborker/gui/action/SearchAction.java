@@ -12,8 +12,8 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.FilterPanelController;
-import org.rr.jeborker.gui.JEBorkerMainController;
-import org.rr.jeborker.gui.JEBorkerMainMonitor;
+import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
 
 public class SearchAction extends AbstractAction {
 
@@ -24,7 +24,7 @@ public class SearchAction extends AbstractAction {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainController controller = MainController.getController();
 		FilterPanelController filterPanelController = controller.getFilterPanelController();
 		if(filterPanelController==null) {
 			if(e.getSource() instanceof FilterPanelController) {
@@ -52,14 +52,14 @@ public class SearchAction extends AbstractAction {
 	}
 
 	private void monitorStart(String filterText) {
-		JEBorkerMainMonitor progressMonitor = JEBorkerMainController.getController().getProgressMonitor();
+		MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		if(progressMonitor!=null) {
 			progressMonitor.monitorProgressStart(Bundle.getFormattedString("SearchAction.message", filterText));
 		}
 	}
 	
 	private void monitorStop(String filterText) {
-		JEBorkerMainMonitor progressMonitor = JEBorkerMainController.getController().getProgressMonitor();
+		MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		if(progressMonitor!=null) {
 			if(filterText!=null && filterText.length() > 0) {
 				progressMonitor.monitorProgressStop(Bundle.getFormattedString("SearchAction.message.finish", filterText));

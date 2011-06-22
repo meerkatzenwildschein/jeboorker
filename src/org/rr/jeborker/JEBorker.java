@@ -3,7 +3,7 @@ package org.rr.jeborker;
 import java.awt.EventQueue;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 
 public class JEBorker {
 	
@@ -20,7 +20,7 @@ public class JEBorker {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JEBorkerMainController.getController();
+					MainController.getController();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -16,13 +16,13 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 
-public class JEborkerMainMenuController {
+public class MainMenuController {
 
-	private static JEborkerMainMenuController controller;
+	private static MainMenuController controller;
 	
-	private JEborkerMainMenuView view;
+	private MainMenuView view;
 
-	private JEborkerMainMenuController() {
+	private MainMenuController() {
 	}
 	
 	/**
@@ -30,15 +30,15 @@ public class JEborkerMainMenuController {
 	 * We have a singleton here.
 	 * @return The desired EBorkerMainController.
 	 */
-	public static JEborkerMainMenuController getController() {
+	public static MainMenuController getController() {
 		if(controller==null) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e) {
-				LoggerFactory.logWarning(JEBorkerMainController.class, "Could not set system look and feel");
+				LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 			}
 			
-			controller = new JEborkerMainMenuController();
+			controller = new MainMenuController();
 		}
 		return controller;
 	}
@@ -47,9 +47,9 @@ public class JEborkerMainMenuController {
 	 * Get the menu view which is a {@link JMenuBar} instance.
 	 * @return The menu view.
 	 */
-	JEborkerMainMenuView getView() {
+	MainMenuView getView() {
 		if(view==null) {
-			view = new JEborkerMainMenuView();
+			view = new MainMenuView();
 		}
 		return view;
 	}
@@ -108,7 +108,7 @@ public class JEborkerMainMenuController {
 	 * @param invoker The invoker for the popup menu.
 	 */
 	void showMainPopupMenu(Point location, Component invoker) {
-		List<EbookPropertyItem> selectedItems = JEBorkerMainController.getController().getSelectedEbookPropertyItems();
+		List<EbookPropertyItem> selectedItems = MainController.getController().getSelectedEbookPropertyItems();
 		JPopupMenu menu = createMainTablePopupMenu(selectedItems);
 		
 		//setup and show popup
@@ -126,7 +126,7 @@ public class JEborkerMainMenuController {
 	 */
 	private static JPopupMenu createMainTablePopupMenu(List<EbookPropertyItem> items) {
 		//create and fill popup menu
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainController controller = MainController.getController();
 		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 		final JPopupMenu menu = new JPopupMenu();
 		

@@ -18,8 +18,8 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.QueueableAction;
-import org.rr.jeborker.gui.JEBorkerMainController;
-import org.rr.jeborker.gui.JEBorkerMainMonitor;
+import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
 
 /**
  * Add a folder action.
@@ -46,7 +46,7 @@ class RefreshBasePathAction extends QueueableAction {
 	
 	@Override
 	public void doAction(ActionEvent event) {
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainController controller = MainController.getController();
 		
 		controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 		String messageFinished = Bundle.getString("RefreshBasePathAction.finished");
@@ -72,7 +72,7 @@ class RefreshBasePathAction extends QueueableAction {
 	 * Performs a refresh to the given path. Deletes and reloads all given entries.
 	 * @param path The path to be refreshed.
 	 */
-	private void doRefresh(String path, ActionEvent e, JEBorkerMainMonitor monitor) {
+	private void doRefresh(String path, ActionEvent e, MainMonitor monitor) {
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		final Iterable<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "basePath", path);
 		
@@ -111,7 +111,7 @@ class RefreshBasePathAction extends QueueableAction {
 	 * Read all ebook files recursive and stores them directly to the database if they are not already be stored.
 	 * @param baseFolder The folder where the ebook search should be started.
 	 */
-	private void readEbookFilesToDB(final IResourceHandler baseFolder, final JEBorkerMainMonitor monitor) {
+	private void readEbookFilesToDB(final IResourceHandler baseFolder, final MainMonitor monitor) {
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
 			

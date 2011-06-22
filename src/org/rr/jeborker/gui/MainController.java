@@ -28,8 +28,6 @@ import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
-import org.rr.jeborker.gui.controllers.SortColumnComponentController;
-import org.rr.jeborker.gui.controllers.SortOrderComponentController;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -43,14 +41,14 @@ import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 
-public class JEBorkerMainController {
+public class MainController {
 
-	private JEborkerMainView mainWindow;
+	private MainView mainWindow;
 	
 	/**
 	 * The controller singleton.
 	 */
-	private static JEBorkerMainController controller;
+	private static MainController controller;
 	
 	/**
 	 * The controller for the SortColumn combobox.
@@ -69,10 +67,10 @@ public class JEBorkerMainController {
 	
 	/**
 	 * No public instantiation. The {@link #getController()} method is
-	 * used for creating a new {@link JEBorkerMainController} instance because
-	 * the {@link JEBorkerMainController} is a singleton.
+	 * used for creating a new {@link MainController} instance because
+	 * the {@link MainController} is a singleton.
 	 */
-	private JEBorkerMainController() {
+	private MainController() {
 	}
 	
 	/**
@@ -96,7 +94,7 @@ public class JEBorkerMainController {
 			//save the previous properties 
 			final Property[] previousProperties = mainWindow.propertySheet.getProperties();
 			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
-				JEBorkerMainControllerUtils.writeProperties(previousProperties);
+				MainControllerUtils.writeProperties(previousProperties);
 			}
 		}
 	}	
@@ -115,7 +113,7 @@ public class JEBorkerMainController {
 					mainWindow.table.getSelectionModel().setSelectionInterval(rowAtPoint, rowAtPoint);
 				}
 				
-				JEborkerMainMenuController.getController().showMainPopupMenu(event.getPoint(), mainWindow.table);
+				MainMenuController.getController().showMainPopupMenu(event.getPoint(), mainWindow.table);
 			}
 		}
 	}
@@ -125,26 +123,26 @@ public class JEBorkerMainController {
 	 * We have a singleton here.
 	 * @return The desired EBorkerMainController.
 	 */
-	public static JEBorkerMainController getController() {
+	public static MainController getController() {
 		if(controller==null) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e) {
-				LoggerFactory.logWarning(JEBorkerMainController.class, "Could not set system look and feel");
+				LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 			}
 			
-			controller = new JEBorkerMainController();
+			controller = new MainController();
 			controller.initialize();
 		}
 		return controller;
 	}
 	
 	private void initialize() {
-		mainWindow = new JEborkerMainView();
+		mainWindow = new MainView();
 		initListeners();
 		initController();
 		
-		JEBorkerMainControllerUtils.restoreApplicationProperties(mainWindow);
+		MainControllerUtils.restoreApplicationProperties(mainWindow);
 		mainWindow.setVisible(true);
 	}
 
@@ -335,9 +333,9 @@ public class JEBorkerMainController {
 	 * Gets the progress indicator.
 	 * @return The desired monitor instance of <code>null</code> if the monitor is not ready to use.
 	 */
-	public JEBorkerMainMonitor getProgressMonitor() {
+	public MainMonitor getProgressMonitor() {
 		if(mainWindow!=null && mainWindow.progressBar!=null) {
-			return new JEBorkerMainMonitor(mainWindow.progressBar);
+			return new MainMonitor(mainWindow.progressBar);
 		}
 		return null;
 	}
@@ -379,7 +377,7 @@ public class JEBorkerMainController {
 	
 	public void dispose() {
 		//Writes the application properties to the preference file
-		JEBorkerMainControllerUtils.storeApplicationProperties(mainWindow);
+		MainControllerUtils.storeApplicationProperties(mainWindow);
 		getSortColumnComponentController().dispose();
 		getSortOrderComponentController().dispose();
 		getFilterPanelController().dispose();

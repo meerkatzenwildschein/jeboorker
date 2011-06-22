@@ -3,7 +3,7 @@ package org.rr.jeborker;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 
 public class JEBorkerConsoleLogger extends Handler {
 
@@ -31,7 +31,7 @@ public class JEBorkerConsoleLogger extends Handler {
 	
 	private static void toMonitor(LogRecord record) {
 		if(record.getMessage()!=null) {
-			JEBorkerMainController.getController().getProgressMonitor().setMessage(record.getMessage());
+			MainController.getController().getProgressMonitor().setMessage(record.getMessage());
 		}
 	}
 	
