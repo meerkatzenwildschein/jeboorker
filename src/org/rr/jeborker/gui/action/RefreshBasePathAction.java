@@ -104,6 +104,13 @@ class RefreshBasePathAction extends QueueableAction {
 		if(resourceLoader==null) {
 			resourceLoader = ResourceHandlerFactory.getResourceLoader(item.getFile());
 		}
+		
+		//remove the entry from db and view.
+		if(!resourceLoader.exists()) {
+			RemoveBasePathAction.removeEbookPropertyItem(item);
+			return;
+		}
+		
 		EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
 	}
 	
