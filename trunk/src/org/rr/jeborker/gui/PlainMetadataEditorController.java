@@ -95,7 +95,7 @@ public class PlainMetadataEditorController {
 	
 	private PlainMetadataEditorView getView() {
 		if(xmlMetadataView==null) {
-			JFrame mainWindow = JEBorkerMainController.getController().getMainWindow();
+			JFrame mainWindow = MainController.getController().getMainWindow();
 			try {
 				xmlMetadataView = new PlainMetadataEditorView(mainWindow);
 			} catch (IOException e) {
@@ -107,7 +107,7 @@ public class PlainMetadataEditorController {
 	}
 	
 	private void initialize() {
-		JFrame mainWindow = JEBorkerMainController.getController().getMainWindow();
+		JFrame mainWindow = MainController.getController().getMainWindow();
 		locationOffset = locationOffset + 10;
 		xmlMetadataView.setLocation(mainWindow.getLocation().x + locationOffset, mainWindow.getLocation().y + locationOffset);
 		xmlMetadataView.setSize(800, 600);
@@ -163,7 +163,7 @@ public class PlainMetadataEditorController {
 				
 				Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookResource.toString());
 				action.actionPerformed(null);
-				JEBorkerMainController.getController().refreshTableRows(rowsToRefresh);
+				MainController.getController().refreshTableRows(rowsToRefresh);
 			}
 		});
 		

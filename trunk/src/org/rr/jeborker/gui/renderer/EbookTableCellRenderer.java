@@ -36,7 +36,7 @@ import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
@@ -223,7 +223,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		}
 		
 		final StringBuilder result = new StringBuilder();
-		final List<Field> selectedFields = JEBorkerMainController.getController().getSortColumnComponentController().getSelectedFields();
+		final List<Field> selectedFields = MainController.getController().getSortColumnComponentController().getSelectedFields();
 		
 		for (Field field : selectedFields) {
 			//do not add the folowing ones.

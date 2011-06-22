@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.event.RefreshAbstractAction;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.PlainMetadataEditorController;
 
 public class EditPlainMetadataAction extends RefreshAbstractAction {
@@ -24,7 +24,7 @@ public class EditPlainMetadataAction extends RefreshAbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainController controller = MainController.getController();
 		controller.getProgressMonitor().monitorProgressStart(Bundle.getString("EditPlainMetadataAction.message"));
 		
 		Exception exception = null;

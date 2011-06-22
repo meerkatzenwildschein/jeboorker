@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 
 /**
  * Action which removes the currently selected metadata entry.
@@ -49,7 +49,7 @@ public class RemoveMetadataEntryAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JEBorkerMainController.getController().removeSelectedMetadataProperty();
+		MainController.getController().removeSelectedMetadataProperty();
 	}
 
 }

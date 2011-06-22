@@ -15,7 +15,7 @@ import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 
-class JEborkerMainMenuView extends JMenuBar {
+class MainMenuView extends JMenuBar {
 
 	private static final long serialVersionUID = -8134987169763660105L;
 	
@@ -27,7 +27,7 @@ class JEborkerMainMenuView extends JMenuBar {
 	
 	JMenu metadataMenuBar;
 
-	JEborkerMainMenuView() {
+	MainMenuView() {
 		this.init();
 	}
 	
@@ -46,7 +46,7 @@ class JEborkerMainMenuView extends JMenuBar {
 			
 			@Override
 			public void menuSelected(MenuEvent e) {
-				final JEBorkerMainController controller = JEBorkerMainController.getController();
+				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
 				int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 				final List<Action> menuActions = createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);

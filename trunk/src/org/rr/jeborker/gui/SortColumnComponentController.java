@@ -1,4 +1,4 @@
-package org.rr.jeborker.gui.controllers;
+package org.rr.jeborker.gui;
 
 import java.awt.Component;
 import java.lang.reflect.Field;
@@ -22,7 +22,6 @@ import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.item.DBViewField;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.gui.JEBorkerMainController;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
 public class SortColumnComponentController {
@@ -87,10 +86,10 @@ public class SortColumnComponentController {
 			
 			@SuppressWarnings("unchecked")
 			private void changed(ListEvent event) {
-				final EbookPropertyDBTableModel tableModel = JEBorkerMainController.getController().getTableModel();
+				final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
 				tableModel.getOrderByColumns().clear();
 				tableModel.getOrderByColumns().addAll(internalCheckList);
-				JEBorkerMainController.getController().refreshTable();
+				MainController.getController().refreshTable();
 			}
 		});
 	}
@@ -223,7 +222,7 @@ public class SortColumnComponentController {
 			}
 		} else {
 			//set a default set of sort values
-			final EbookPropertyDBTableModel tableModel = JEBorkerMainController.getController().getTableModel();
+			final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
 			List<Field> orderByColumns = tableModel.getOrderByColumns();
 	    	try {
 				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("author"));

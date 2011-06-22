@@ -1,4 +1,4 @@
-package org.rr.jeborker.gui.controllers;
+package org.rr.jeborker.gui;
 
 import java.awt.event.ActionEvent;
 
@@ -8,7 +8,6 @@ import javax.swing.JToggleButton;
 
 import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.OrderDirection;
-import org.rr.jeborker.gui.JEBorkerMainController;
 
 public class SortOrderComponentController {
 	
@@ -30,8 +29,8 @@ public class SortOrderComponentController {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				descButton.setSelected(false);
-				JEBorkerMainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
-				JEBorkerMainController.getController().refreshTable();
+				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
+				MainController.getController().refreshTable();
 			}
 		});
 		
@@ -43,8 +42,8 @@ public class SortOrderComponentController {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ascButton.setSelected(false);
-				JEBorkerMainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_DESC));
-				JEBorkerMainController.getController().refreshTable();
+				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_DESC));
+				MainController.getController().refreshTable();
 			}
 		});	
 		

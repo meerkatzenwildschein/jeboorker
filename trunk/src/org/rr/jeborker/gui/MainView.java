@@ -43,7 +43,7 @@ import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
 
-public class JEborkerMainView extends JFrame{
+public class MainView extends JFrame{
 	
 	private static final long serialVersionUID = 6837919427429399376L;
 	
@@ -74,7 +74,7 @@ public class JEborkerMainView extends JFrame{
 	/**
 	 * Create the application.
 	 */
-	public JEborkerMainView() {
+	public MainView() {
 		initialize();
 	}
 
@@ -178,7 +178,7 @@ public class JEborkerMainView extends JFrame{
 				propertyContentPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
 				
 				sortOrderAscButton = new JToggleButton();
-				final Icon ascOrderIcon =  new ImageIcon(JEborkerMainView.class.getResource("resources/sort_asc.gif"));
+				final Icon ascOrderIcon =  new ImageIcon(MainView.class.getResource("resources/sort_asc.gif"));
 				sortOrderAscButton.setIcon(ascOrderIcon);
 				sortOrderAscButton.setPreferredSize(new Dimension(0,25));
 				sortOrderAscButton.setMinimumSize(new Dimension(0,25));
@@ -191,7 +191,7 @@ public class JEborkerMainView extends JFrame{
 				propertyContentPanel.add(sortOrderAscButton, gbc_sortOrderComboBox);
 				
 				sortOrderDescButton = new JToggleButton();
-				final Icon descOrderIcon = new ImageIcon(JEborkerMainView.class.getResource("resources/sort_desc.gif"));
+				final Icon descOrderIcon = new ImageIcon(MainView.class.getResource("resources/sort_desc.gif"));
 				sortOrderDescButton.setIcon(descOrderIcon);
 				sortOrderDescButton.setPreferredSize(new Dimension(0,25));
 				sortOrderDescButton.setMinimumSize(new Dimension(0,25));
@@ -286,6 +286,6 @@ public class JEborkerMainView extends JFrame{
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);
 		
-		this.setJMenuBar(JEborkerMainMenuController.getController().getView());
+		this.setJMenuBar(MainMenuController.getController().getView());
 	}
 }

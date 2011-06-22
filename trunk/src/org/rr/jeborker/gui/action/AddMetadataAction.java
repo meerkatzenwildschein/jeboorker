@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -19,13 +19,13 @@ public class AddMetadataAction extends AbstractAction {
 	
 	AddMetadataAction(MetadataProperty property) {
 		this.property = property;
-		putValue(Action.NAME, JEBorkerMainController.getController().getLocalizedString(property.getName()));
+		putValue(Action.NAME, MainController.getController().getLocalizedString(property.getName()));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final Property createProperty = EbookSheetProperty.createProperty(property, 0);
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainController controller = MainController.getController();
 		controller.addMetadataProperty(createProperty);
 	}
 

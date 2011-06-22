@@ -9,7 +9,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.JEBorkerUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.event.QueueableAction;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 
 public class QuitAction extends QueueableAction {
 
@@ -27,7 +27,7 @@ public class QuitAction extends QueueableAction {
 	
 	@Override
 	public void doAction(ActionEvent e) {
-		JEBorkerMainController.getController().dispose();
+		MainController.getController().dispose();
 		try {
 		DefaultDBManager.getInstance().shutdown();
 		} catch(Exception e1) {

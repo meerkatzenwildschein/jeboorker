@@ -14,9 +14,9 @@ import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.QueueableAction;
-import org.rr.jeborker.gui.JEBorkerMainController;
-import org.rr.jeborker.gui.JEBorkerMainMonitor;
-import org.rr.jeborker.gui.JEborkerMainMenuController;
+import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
+import org.rr.jeborker.gui.MainMenuController;
 
 public class RemoveBasePathAction extends QueueableAction {
 
@@ -36,7 +36,7 @@ public class RemoveBasePathAction extends QueueableAction {
 	public void doAction(final ActionEvent e) {
 		final String path = (String) getValue(Action.NAME);
 		
-		final JEBorkerMainMonitor progressMonitor = JEBorkerMainController.getController().getProgressMonitor();
+		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		final Iterable<EbookPropertyItem> items = defaultDBManager.getItems(EbookPropertyItem.class);
 		
@@ -54,7 +54,7 @@ public class RemoveBasePathAction extends QueueableAction {
 			progressMonitor.monitorProgressStop();
 		}
 		JEBorkerPreferences.removeBasePath(path);
-		JEborkerMainMenuController.getController().removeBasePathMenuEntry(path);
+		MainMenuController.getController().removeBasePathMenuEntry(path);
 	}
 	
 	/**
@@ -62,8 +62,8 @@ public class RemoveBasePathAction extends QueueableAction {
 	 * @param item The item to be deleted.
 	 */
 	static void removeEbookPropertyItem(final EbookPropertyItem item) {
-		final JEBorkerMainMonitor progressMonitor = JEBorkerMainController.getController().getProgressMonitor();
-		final JEBorkerMainController controller = JEBorkerMainController.getController();
+		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+		final MainController controller = MainController.getController();
 		
 		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
 //		defaultDBManager.deleteObject(ebookPropertyItem);

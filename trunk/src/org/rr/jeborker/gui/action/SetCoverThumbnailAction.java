@@ -17,7 +17,7 @@ import org.rr.commons.utils.ArrayUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.RefreshAbstractAction;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
@@ -57,8 +57,8 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction {
 						RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
 						DefaultDBManager.getInstance().updateObject(item);
 						
-						JEBorkerMainController.getController().refreshTableRows(getSelectedRowsToRefresh());
-						JEBorkerMainController.getController().setImageViewerResource(selectedFileResourceHandler);
+						MainController.getController().refreshTableRows(getSelectedRowsToRefresh());
+						MainController.getController().setImageViewerResource(selectedFileResourceHandler);
 					}
 				}
 			} else {

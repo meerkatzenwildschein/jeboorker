@@ -11,7 +11,7 @@ import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.gui.JEBorkerMainController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -158,7 +158,7 @@ public class EbookSheetProperty extends DefaultProperty {
 	@Override
 	public String getName() {
 		String name = metadataProperty.getName();
-		String localizedName = JEBorkerMainController.getController().getLocalizedString(name);
+		String localizedName = MainController.getController().getLocalizedString(name);
 		
 		if(metadataProperty.getValues().size() > 1) {
 			localizedName = (this.propertyIndex+1) + ")" + localizedName; 
@@ -193,7 +193,7 @@ public class EbookSheetProperty extends DefaultProperty {
 			value.append(String.valueOf(metadataProperty.getValues().get(propertyIndex)));
 		}
 		
-		if(!JEBorkerMainController.getController().getLocalizedString(metadataProperty.getName()).equals(metadataProperty.getName())) {
+		if(!MainController.getController().getLocalizedString(metadataProperty.getName()).equals(metadataProperty.getName())) {
 			value.append(" (").append(metadataProperty.getName()).append(")");
 		}
 		
