@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.gui.action.RemoveBasePathAction;
+import org.rr.jeborker.gui.action.RemoveMetadataEntryAction;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
