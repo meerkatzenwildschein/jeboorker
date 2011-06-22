@@ -18,6 +18,7 @@ import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.item.DBViewField;
@@ -30,7 +31,6 @@ public class SortColumnComponentController {
 	
 	private static EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();
 	
-	@SuppressWarnings("unchecked")
 	private ArrayList internalCheckList = new ArrayList();
 	
 	/**
@@ -106,7 +106,12 @@ public class SortColumnComponentController {
 			@Override
 			public String getText(Object value) {
 				DBViewField annotation = ((Field) value).getAnnotation(DBViewField.class);
-				return annotation.name();
+				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
+				if(localizedName != null) {
+					return localizedName;
+				} else {
+					return annotation.name();					
+				}
 			}
 
 			@Override
