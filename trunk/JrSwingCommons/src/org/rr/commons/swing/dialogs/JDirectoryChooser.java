@@ -858,7 +858,7 @@ public class JDirectoryChooser extends Component {
 				StringTokenizer fileTokenezier = new StringTokenizer(path.getPath(), String.valueOf(File.separatorChar+":"));
 		
 				//searching the node one after the other is fundamental because the children will be also read for the path
-				//and the serahc only works with children which knows it's sub childs.
+				//and the search only works with children which knows it's sub childs.
 				IFolderNode lastNode = (IFolderNode) this.getRoot();
 				while(fileTokenezier.hasMoreTokens()) {
 					String name = fileTokenezier.nextToken();
