@@ -39,13 +39,19 @@ public class Thumbnail
     protected Element parent = null;
     
     /**
+     * Prefix for the li childs called something like xapGImg: but can also
+     * be have another prefix.
+     */
+    protected String prefix = "xapGImg";
+    
+    /**
      * Create a new thumbnail element.
      * 
      * @param metadata The metadata document that his thumbnail will be part of.
      */
     public Thumbnail( XMPMetadata metadata )
     {
-        this( metadata.xmpDocument.createElement( "rdf:li" ) );
+        this( metadata.xmpDocument.createElement( "rdf:li" ), "xap" );
     }
     
     /**
@@ -53,8 +59,11 @@ public class Thumbnail
      *
      * @param parentElement The parent element that will store the thumbnail properties.
      */
-    public Thumbnail( Element parentElement )
+    public Thumbnail( Element parentElement, String prefix)
     {
+    	if(prefix != null) {
+    		this.prefix = prefix;
+    	}
         parent = parentElement;
         parent.setAttributeNS( 
             XMPSchema.NS_NAMESPACE, 
@@ -79,7 +88,7 @@ public class Thumbnail
      */
     public Integer getHeight()
     {
-        return XMLUtil.getIntValue( parent, "xapGImg:height" );
+        return XMLUtil.getIntValue( parent, getTagName("height") );
     }
     
     /**
@@ -99,7 +108,7 @@ public class Thumbnail
      */
     public Integer getWidth()
     {
-        return XMLUtil.getIntValue( parent, "xapGImg:width" );
+        return XMLUtil.getIntValue( parent, getTagName("width") );
     }
     
     /**
@@ -119,7 +128,7 @@ public class Thumbnail
      */
     public void setFormat( String format )
     {
-        XMLUtil.setStringValue( parent, "xapGImg:format", format );
+        XMLUtil.setStringValue( parent, getTagName("format"), format );
     }
     
     /**
@@ -129,7 +138,7 @@ public class Thumbnail
      */
     public String getFormat()
     {
-        return XMLUtil.getStringValue( parent, "xapGImg:format" );
+        return XMLUtil.getStringValue( parent, getTagName("format") );
     }
     
     /**
@@ -139,7 +148,7 @@ public class Thumbnail
      */
     public void setImage( String image )
     {
-        XMLUtil.setStringValue( parent, "xapGImg:image", image );
+        XMLUtil.setStringValue( parent, getTagName("image"), image );
     }
     
     /**
@@ -149,6 +158,15 @@ public class Thumbnail
      */
     public String getImage()
     {
-        return XMLUtil.getStringValue( parent, "xapGImg:image" );
+        return XMLUtil.getStringValue( parent, getTagName("image") );
+    }
+    
+    /**
+     * Get the tag name with the right prefix.
+     * @param name The name for the tag
+     * @return The tag name with prefix.
+     */
+    private String getTagName(String name) {
+    	return prefix + ":" + name;
     }
 }

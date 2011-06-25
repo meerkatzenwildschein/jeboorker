@@ -58,7 +58,7 @@ public class XMPSchemaBasic extends XMPSchema
     public XMPSchemaBasic( Element element, String prefix )
     {
         super( element, prefix );
-        if( schema.getAttribute( "xmlns:xapGImg" ) == null )
+        if(getThumbnailNamespace() == null)
         {
             schema.setAttributeNS( 
                 NS_NAMESPACE, 

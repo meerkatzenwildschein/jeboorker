@@ -54,6 +54,11 @@ public class XMPSchema
      * The DOM representation of this object.
      */
     protected Element schema = null;
+    
+    /**
+     * The name of the thumbnail namesapce.
+     */
+    private String thumbnailNamespace = null;
 
     /**
      * Create a new blank schema that can be populated.
@@ -947,16 +952,42 @@ public class XMPSchema
                     Element li = (Element) items.item(i);
                     String elementLanguage = li.getAttribute("xml:lang");
                     if (language.equals(elementLanguage)) {
-                        retval = new Thumbnail(li);
+                        retval = new Thumbnail(li, getThumbnailNamespace());
                         break;
                     } else if(elementLanguage==null || elementLanguage.length() == 0) {
-                    	retval = new Thumbnail(li);
+                    	//rr language attribute can also be missed.
+                    	retval = new Thumbnail(li, getThumbnailNamespace());
                     }
                 }
             }
         }
         return retval;
     }
+    
+    /**
+     * Get the namespace for the thumbnail from the schema.
+     * @return The namespace ie "xapGImg" or null if no namespace attribute
+     *         is specified.
+     */
+    protected String getThumbnailNamespace() 
+    {	//rr needed for thumbnail namespace support
+    	if(this.thumbnailNamespace != null) 
+    	{
+    		return this.thumbnailNamespace;
+    	}
+    	
+    	NamedNodeMap attributes = schema.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) 
+        {
+        	Node item = attributes.item(i);
+        	if(item.getNodeValue().equals("http://ns.adobe.com/xap/1.0/g/img/")) 
+        	{
+        		String nodeName = item.getNodeName();
+        		return this.thumbnailNamespace = nodeName.substring(nodeName.indexOf(':')+1);
+        	}
+		}
+        return null;
+    }    
 
     /**
      * Get a list of all languages that are currently defined for a specific
