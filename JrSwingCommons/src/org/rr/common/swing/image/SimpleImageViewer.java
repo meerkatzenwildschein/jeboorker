@@ -1,14 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * SimpleImageViewer2.java
- *
- * Created on 15.03.2009, 21:31:47
- */
-
 package org.rr.common.swing.image;
 
 import java.awt.Color;
@@ -105,10 +94,6 @@ public class SimpleImageViewer extends JComponent {
 				this.currentDisplayedResource = resourceHandler;
                 this.currentDisplayImage = null;  //the old image is not longer used.
                 this.transformToView = null; //the transform for the image is not longer used.
-
-//				if(currentDisplayedResource != null) {
-//					currentDisplayImageProvider = ImageProviderFactory.getImageProvider(resourceHandler);
-//				}
 			} catch (Exception e) {
                 this.currentDisplayImage = null; //the old image is not longer used.
                 this.transformToView = null; //the transform for the image is not longer used.
