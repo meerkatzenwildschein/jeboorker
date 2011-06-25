@@ -27,6 +27,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.rr.common.swing.StarRater;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -56,7 +57,9 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	
 	JLabel thirdLineLabel;
 	
-	JLabel firstLineRightLabel;
+	JLabel dataFormatLabel;
+	
+	StarRater starRater;
 	
 	private Dimension thumbnailDimension;
 	
@@ -72,9 +75,9 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	public EbookTableCellRenderer() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0,  Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		imageLabel = new JLabel("");
@@ -97,14 +100,23 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		gbc_firstLineLabel.gridy = 1;
 		add(firstLineLabel, gbc_firstLineLabel);
 		
-		firstLineRightLabel = new JLabel("");
-		firstLineRightLabel.setOpaque(false);
-		firstLineRightLabel.setVerticalAlignment(SwingConstants.TOP);
+		dataFormatLabel = new JLabel("");
+		dataFormatLabel.setOpaque(false);
+		dataFormatLabel.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.insets = new Insets(0, 0, 0, 0);
+		gbc_label.anchor = GridBagConstraints.NORTHEAST;
+		gbc_label.insets = new Insets(2, 0, 0, 0);
 		gbc_label.gridx = 2;
-		gbc_label.gridy = 1;
-		add(firstLineRightLabel, gbc_label);		
+		gbc_label.gridy = 2;
+		add(dataFormatLabel, gbc_label);		
+		
+		starRater = new StarRater();
+		starRater.setMinimumSize(new Dimension(85,27));
+		GridBagConstraints gbc_test = new GridBagConstraints();
+		gbc_test.insets = new Insets(3, 0, 0, 0);
+		gbc_test.gridx = 2;
+		gbc_test.gridy = 1;
+		add(starRater, gbc_test);		
 		
 		secondLineLabel = new JLabel("");
 		secondLineLabel.setOpaque(false);
@@ -156,7 +168,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				firstLineLabel.setText(this.getTitle(item));
 				
 				//gray light file format
-				firstLineRightLabel.setText(getDataFormat(item));
+				dataFormatLabel.setText(getDataFormat(item));
 				
 				secondLineLabel.setText(getAuthorAndOrderValues(item));
 				
@@ -337,8 +349,8 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 			firstLineLabel.setBorder(new EmptyBorder(0,0,0,0));
 			firstLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
 			
-			firstLineRightLabel.setBorder(new EmptyBorder(0,0,0,5));
-			firstLineRightLabel.setForeground(Color.GRAY);
+			dataFormatLabel.setBorder(new EmptyBorder(0,0,0,5));
+			dataFormatLabel.setForeground(Color.GRAY);
 			
 			secondLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
 			secondLineLabel.setBorder(new EmptyBorder(0,0,0,0));
