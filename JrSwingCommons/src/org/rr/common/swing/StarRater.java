@@ -22,7 +22,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.swing.JPanel;
 
 /**
- * The star rater panel.
+ * The star rater panel. http://blog.noblemaster.com/2010/08/31/star-rating-panel-for-java-swing/
  * 
  * @author noblemaster
  * @since August 30, 2010
