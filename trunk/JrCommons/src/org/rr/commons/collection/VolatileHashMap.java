@@ -85,6 +85,13 @@ public class VolatileHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, 
 	private int volatileExceedValue = 10;
 	
 	/**
+	 * The latest entry for a successfull {@link #containsKey(Object)} is stored here. 
+	 * the next {@link #get(Object)} call will check this value first before searching
+	 * for it.
+	 */
+	private Entry<K, V> lastContains = null;
+	
+	/**
 	 * Constructs an empty <tt>HashMap</tt> with the specified initial capacity and load factor.
 	 * 
 	 * @param initialCapacity
@@ -227,6 +234,13 @@ public class VolatileHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, 
         if (key == null) {
             return getForNullKey();
         }
+        if(lastContains!=null && lastContains.key.equals(key)) {
+        	lastContains.time = System.currentTimeMillis(); // update the time for the touched entry.
+        	V value = lastContains.value;
+        	lastContains = null;
+        	return value;
+        }
+        
         int hash = hash(key.hashCode());
         for (Entry<K,V> e = table[indexFor(hash, table.length)];
              e != null;
@@ -265,7 +279,7 @@ public class VolatileHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, 
 	 * @return <tt>true</tt> if this map contains a mapping for the specified key.
 	 */
 	public boolean containsKey(Object key) {
-		return getEntry(key) != null;
+		return (lastContains = getEntry(key)) != null;
 	}
 
 	/**
