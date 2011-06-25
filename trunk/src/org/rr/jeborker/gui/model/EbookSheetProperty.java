@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
@@ -112,7 +113,7 @@ public class EbookSheetProperty extends DefaultProperty {
 	private static boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
 		// test for value
 		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
-				&& metadataProperty2.getValues().get(0).equals(metadataProperty1.getValues().get(0));
+			&& CommonUtils.compareTo(metadataProperty2.getValues().get(0), metadataProperty1.getValues().get(0)) == 0;
 		
 		final String metadataProperty1Name = metadataProperty1.getName().toLowerCase();
 		final String metadataProperty2Name = metadataProperty2.getName().toLowerCase();		

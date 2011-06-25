@@ -27,6 +27,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -60,6 +61,8 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	private Dimension thumbnailDimension;
 	
 	private String duplicateDetection = "";
+	
+	private VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
 	/**
 	 * A flag that tells where must be something to do with the labels.  
@@ -184,6 +187,10 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
 		if(item!=null && item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
+			if(thumbnailCache.containsKey(item.getFile())) {
+				return thumbnailCache.get(item.getFile());
+			}
+			
 			try {
 				final byte[] coverData = item.getCoverThumbnail();
 				if(coverData!=null) {
@@ -193,6 +200,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 					if(image!=null) {	
 						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(imageProvider.getImage(), getThumbnailDimension(table), false);
 						ImageIcon imageIcon = new ImageIcon(scaleToMatch);
+						thumbnailCache.put(item.getFile(), imageIcon);
 						return imageIcon;
 					} else {
 						return null;
@@ -317,7 +325,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	}
 
 	/**
-	 * take shure that the labels have a constant allocation.
+	 * take sure that the labels have a constant allocation.
 	 */
 	private void completeLabelSetup(JTable table) {
 		if(!labelSetupComplete) {

@@ -124,12 +124,17 @@ class RefreshBasePathAction extends QueueableAction {
 			
 			@Override
 			public boolean accept(IResourceHandler loader) {
-				if(loader.isFileResource() && loader.isEbookFormat()) {
-					final List<EbookPropertyItem> alreadyStoredOne = defaultDBManager.getObject(EbookPropertyItem.class, "file", loader.getResourceString());
-					if(alreadyStoredOne==null || alreadyStoredOne.isEmpty()) {
-						AddBasePathAction.addEbookPropertyItem(EbookPropertyItemUtils.createEbookPropertyItem(loader, baseFolder));
-						monitor.setMessage(Bundle.getFormattedString("AddBasePathAction.add", new Object[] {loader.getName()}));
+				try {
+					if(loader.isFileResource() && loader.isEbookFormat()) {			
+						final List<EbookPropertyItem> alreadyStoredOne = defaultDBManager.getObject(EbookPropertyItem.class, "file", loader.getResourceString());
+						if(alreadyStoredOne==null || alreadyStoredOne.isEmpty()) {
+							EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(loader, baseFolder);
+							AddBasePathAction.addEbookPropertyItem(item);
+							monitor.setMessage(Bundle.getFormattedString("AddBasePathAction.add", new Object[] {loader.getName()}));
+						}
 					}
+				} catch (Throwable e) {
+					LoggerFactory.log(Level.WARNING, RefreshBasePathAction.class, "Could not add file " + loader.getResourceString(), e);
 				}
 				return false;
 			}

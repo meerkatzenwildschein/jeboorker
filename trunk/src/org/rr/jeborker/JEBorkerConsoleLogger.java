@@ -31,7 +31,11 @@ public class JEBorkerConsoleLogger extends Handler {
 	
 	private static void toMonitor(LogRecord record) {
 		if(record.getMessage()!=null) {
-			MainController.getController().getProgressMonitor().setMessage(record.getMessage());
+			String thrownCause = "";
+			if(record.getThrown() != null) {
+				thrownCause = record.getThrown().getMessage();
+			}
+			MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null ? " (" + thrownCause+ ")" : ""));
 		}
 	}
 	

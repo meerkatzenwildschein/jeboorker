@@ -13,11 +13,13 @@ import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.pm.image.ImageInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -215,6 +217,9 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	 * @throws Exception
 	 */
 	static byte[] fetchXMPThumbnail(final PdfReader pdfReader, final IResourceHandler ebookResource) throws Exception {
+		if(pdfReader == null || ebookResource == null) {
+			return null;
+		}
 		final byte[] xmpMetadataBytes = pdfReader.getMetadata();
 		if(xmpMetadataBytes!=null) {
 			final Document document = getDocument(xmpMetadataBytes, ebookResource);
@@ -293,7 +298,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 						double aspectRatio = ((double)height) / ((double)width);
 						if(width > 150 && aspectRatio > 1.5d && aspectRatio < 1.7d) {
 //							int bitsPerPixel = new ImageInfo(ResourceHandlerFactory.getVirtualResourceLoader(null, img)).getBitsPerPixel();
-//						System.out.println("bitsPerPixel:" + bitsPerPixel + " " + ebookResource.getName());						
+//						System.out.println("bitsPerPixel:" + bitsPerPixel + " " + ebookResource.getName());
 							return img;
 						}
 					}
