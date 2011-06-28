@@ -166,11 +166,11 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		for (MetadataProperty metadataProperty : metadataProperties) {
 			final String name = metadataProperty.getName().toLowerCase();
-			if(item.getTitle()==null && name.equals("title")) {
+			if(item.getTitle() == null && name.equals("title")) {
 				item.setTitle(metadataProperty.getValueAsString());
 			} else if(name.equals("author")) {
 				item.setAuthor(metadataProperty.getValueAsString());
-			} else if(item.getAuthor()==null && name.equals("creator")) {
+			} else if(item.getAuthor() == null && name.equals("creator")) {
 				item.setAuthor(metadataProperty.getValueAsString());
 			} else if(name.equals("keywords")) {
 				item.setKeywords(metadataProperty.getValueAsString());
