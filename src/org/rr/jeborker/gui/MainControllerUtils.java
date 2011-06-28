@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -26,7 +27,7 @@ class MainControllerUtils {
 		JEBorkerPreferences.addEntryNumber("mainWindowSizeHeight", mainWindow.getSize().height);
 		JEBorkerPreferences.addEntryNumber("mainWindowLocationX", mainWindow.getLocation().x);
 		JEBorkerPreferences.addEntryNumber("mainWindowLocationY", mainWindow.getLocation().y);
-		JEBorkerPreferences.addEntryNumber("mainWindowDividerLocation", Double.valueOf(mainWindow.mainSplitPane.getDividerLocation()));
+		JEBorkerPreferences.addEntryNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
 		JEBorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.table.getRowCount()));
 		JEBorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
 		JEBorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
@@ -52,7 +53,8 @@ class MainControllerUtils {
 		//restore the divider location at the main window
 		final Number mainWindowDividerLocation = JEBorkerPreferences.getEntryAsNumber("mainWindowDividerLocation");
 		if(mainWindowDividerLocation!=null) {
-			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue());
+			//however, the splitpane has a difference of 7 between setting and getting the location.
+			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue()-7);
 		}
 		
 		//restore the divider location in the property sheet 

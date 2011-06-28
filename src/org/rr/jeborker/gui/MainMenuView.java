@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -32,7 +34,7 @@ class MainMenuView extends JMenuBar {
 	}
 	
 	private void init() {
-		add(createFileMenuEntry());
+		add(createFileMenu());
 		add(createMetadataMenuEntry());
 	}
 	
@@ -90,8 +92,39 @@ class MainMenuView extends JMenuBar {
 	 * Creates the file menu entry with it's menu items.
 	 * @return The new created menu entry.
 	 */
-	private JMenu createFileMenuEntry() {
+	private JMenu createFileMenu() {
 		this.fileMenuBar = new JMenu(Bundle.getString("EborkerMainView.file"));
+		
+		this.fileMenuBar.addMenuListener(new MenuListener() {
+			
+			@Override
+			public void menuSelected(MenuEvent e) {
+				final MainController controller = MainController.getController();
+				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
+				final List<Component> menuActions = createDynamicFileMenu(selectedItems);
+				
+				fileMenuBar.removeAll();
+				for (Component menuAction : menuActions) {
+					fileMenuBar.add(menuAction);
+				}
+			}
+			
+			@Override
+			public void menuDeselected(MenuEvent e) {
+			}
+			
+			@Override
+			public void menuCanceled(MenuEvent e) {
+			}
+		});
+		
+
+		
+		return fileMenuBar;
+	}
+
+	private List<Component> createDynamicFileMenu(List<EbookPropertyItem> items) {
+		ArrayList<Component> fileMenuBar = new ArrayList<Component>();
 		
 		JMenuItem mntmAddEbooks = new JMenuItem();
 		mntmAddEbooks.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
@@ -116,11 +149,25 @@ class MainMenuView extends JMenuBar {
 		}
 		fileMenuBar.add(mnVerzeichnisRefresh);		
 		
+		fileMenuBar.add(new JSeparator());
+		
+		//Open folder only for single selection.
+		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+		final JMenuItem openFolderItem;
+		if(selectedEbookPropertyItems.size() == 1) {
+			openFolderItem = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			openFolderItem.setEnabled(true);
+		} else {
+			openFolderItem = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
+			openFolderItem.setEnabled(false);
+		}
+		fileMenuBar.add(openFolderItem);
+		
+		//quit menu entry
 		JMenuItem mntmQuit = new JMenuItem();
 		mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
 		fileMenuBar.add(mntmQuit);
 		
 		return fileMenuBar;
 	}
-
 }
