@@ -18,6 +18,7 @@
 package com.l2fprod.common.propertysheet;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * PropertySheet.<br>
@@ -31,7 +32,7 @@ public interface PropertySheet {
 
   public void setProperties(Property[] properties);
   
-  public Property[] getProperties();
+  public List<Property> getProperties();
   
   public void addProperty(Property property);
   

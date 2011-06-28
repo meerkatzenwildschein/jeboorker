@@ -238,6 +238,11 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		return result;
 	}
 	
+	@Override
+	public MetadataProperty getRatingMetaData() {
+		return createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {CALIBRE_RATING, ""});
+	}	
+	
 	private MetadataProperty createSupportedMetadataProperty(String tagName) {
 		return createSupportedMetadataProperty(tagName, null, null);
 	}
@@ -267,5 +272,6 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	public String getPlainMetaDataMime() {
 		return "text/xml";
 	}
+
 }
 

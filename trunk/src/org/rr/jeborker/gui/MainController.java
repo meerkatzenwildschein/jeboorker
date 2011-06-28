@@ -28,12 +28,14 @@ import org.rr.jeborker.JEBorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
+import org.rr.jeborker.gui.action.AddMetadataAction;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
+import org.rr.jeborker.metadata.MetadataProperty;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.Property;
@@ -92,7 +94,7 @@ public class MainController {
 		 */
 		private void saveProperties() {
 			//save the previous properties 
-			final Property[] previousProperties = mainWindow.propertySheet.getProperties();
+			final List<Property> previousProperties = mainWindow.propertySheet.getProperties();
 			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
 				//write properties
 				MainControllerUtils.writeProperties(previousProperties);
@@ -144,13 +146,13 @@ public class MainController {
 	private void initialize() {
 		mainWindow = new MainView();
 		initListeners();
-		initController();
+		initSubController();
 		
 		MainControllerUtils.restoreApplicationProperties(mainWindow);
 		mainWindow.setVisible(true);
 	}
 
-	private void initController() {
+	private void initSubController() {
 		sortColumnComponentController = new SortColumnComponentController(mainWindow.sortColumnComboBox);
 		sortOrderComponentController = new SortOrderComponentController(mainWindow.sortOrderAscButton, mainWindow.sortOrderDescButton);
 		filterPanelController = new FilterPanelController();
@@ -261,18 +263,38 @@ public class MainController {
 	}	
 	
 	/**
-	 * Get the currently selected metadata propery.
+	 * Get the currently selected metadata property.
 	 * @return The desired {@link Property} instance or <code>null</code> if no selection is made.
 	 */
 	public Property getSelectedMetadataProperty() {
 		int selectedRow = mainWindow.propertySheet.getTable().getSelectedRow();
 		if(selectedRow >= 0) {
-			TableModel model = mainWindow.propertySheet.getTable().getModel();
-			PropertySheetTableModel.Item item = (Item) ((PropertySheetTableModel)model).getObject(selectedRow);
+			EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
+			PropertySheetTableModel.Item item = (Item) model.getObject(selectedRow);
 			Property property = item.getProperty();
 			return property;
 		}
 		return null;
+	}
+	
+	/**
+	 * Sets the rating value (between 1 and 10).
+	 * @param rating The rating value.
+	 */
+	public void setRatingToSelectedEntry(int rating) {
+		EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
+		Property ratingProperty = model.getRatingProperty();
+		if(ratingProperty != null) {
+			ratingProperty.setValue(rating);
+		} else {
+			List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
+			for (EbookPropertyItem item : selectedEbookPropertyItems) {
+				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
+				MetadataProperty ratingMetaData = reader.getRatingMetaData();
+				Property addMetadataItem = AddMetadataAction.addMetadataItem(ratingMetaData);
+				addMetadataItem.setValue(rating);
+			}
+		}
 	}
 	
 	/**

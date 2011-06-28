@@ -71,8 +71,8 @@ class MainControllerUtils {
 	 * Writes the given l2fprod sheet properties as metadata to the ebook.
 	 * @param properties The properties to be written.
 	 */
-	static void writeProperties(final Property[] properties) {
-		if(properties==null || properties.length==0) {
+	static void writeProperties(final List<Property> properties) {
+		if(properties==null || properties.isEmpty()) {
 			return; //nothing to do.
 		}
 		
@@ -85,7 +85,7 @@ class MainControllerUtils {
 					final ArrayList<MetadataProperty> target = new ArrayList<MetadataProperty>();
 					for (Property property : properties) {
 						if(property instanceof EbookSheetProperty) {
-							MetadataProperty[] metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
+							List<MetadataProperty> metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
 							for (MetadataProperty metadataProperty : metadataProperties) {
 								target.add(metadataProperty);
 							}
@@ -111,14 +111,12 @@ class MainControllerUtils {
 	 * @param properties The properties to be searched.
 	 * @return The desired {@link IResourceHandler} or <code>null</code> if no {@link IResourceHandler} could be found.
 	 */
-	static IResourceHandler getPropertyResourceHandler(final Property[] properties) {
-		IResourceHandler ebook = null;
-		for (int i = 0; i < properties.length; i++) {
-			if(properties[i].getValue() instanceof IResourceHandler) {
-				ebook = (IResourceHandler) properties[i].getValue();
-				break;
+	static IResourceHandler getPropertyResourceHandler(final List<Property> properties) {
+		for (Property property : properties) {
+			if(property.getValue() instanceof IResourceHandler) {
+				return (IResourceHandler) property.getValue();
 			}
 		}
-		return ebook;
+		return null;
 	}	
 }

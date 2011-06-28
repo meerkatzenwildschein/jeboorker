@@ -27,6 +27,12 @@ public interface IMetadataReader {
 	public List<MetadataProperty> getSupportedMetaData();
 	
 	/**
+	 * Gets a new, empty metadata property for the rating value.
+	 * @return The desired metadata property.
+	 */
+	public MetadataProperty getRatingMetaData();	
+	
+	/**
 	 * Sets the {@link EbookPropertyItem} properties from the given {@link MetadataProperty}.
 	 * @param metadataProperties metadata which values should be transfered to the given {@link EbookPropertyItem}.
 	 * @param item The item to be filled.
@@ -56,5 +62,5 @@ public interface IMetadataReader {
 	 * but it's not a must.
 	 */
 	public void dispose();
-
+	
 }

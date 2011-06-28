@@ -122,7 +122,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		if(columnIndex > 0) {
+		if(columnIndex == 0) {
 			return true;
 		}
 		return false;

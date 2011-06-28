@@ -24,9 +24,18 @@ public class AddMetadataAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		addMetadataItem(property);
+	}
+	
+	/**
+	 * Adds a metadata item to the sheet.
+	 * @param property The property to be added.
+	 */
+	public static Property addMetadataItem(MetadataProperty property) {
 		final Property createProperty = EbookSheetProperty.createProperty(property, 0);
 		final MainController controller = MainController.getController();
 		controller.addMetadataProperty(createProperty);
+		return createProperty;
 	}
 
 }

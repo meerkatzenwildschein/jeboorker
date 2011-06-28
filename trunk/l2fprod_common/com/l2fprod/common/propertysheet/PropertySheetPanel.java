@@ -27,6 +27,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -234,7 +235,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		model.setProperties(properties);
 	}
 
-	public Property[] getProperties() {
+	public List<Property> getProperties() {
 		return model.getProperties();
 	}
 
@@ -279,9 +280,9 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		// cancel pending edits
 		getTable().cancelEditing();
 
-		Property[] properties = model.getProperties();
-		for (int i = 0, c = properties.length; i < c; i++) {
-			properties[i].readFromObject(data);
+		List<Property> properties = model.getProperties();
+		for (int i = 0, c = properties.size(); i < c; i++) {
+			properties.get(i).readFromObject(data);
 		}
 		repaint();
 	}
@@ -295,9 +296,9 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		// ensure pending edits are committed
 		getTable().commitEditing();
 
-		Property[] properties = getProperties();
-		for (int i = 0, c = properties.length; i < c; i++) {
-			properties[i].writeToObject(data);
+		List<Property> properties = getProperties();
+		for (int i = 0, c = properties.size(); i < c; i++) {
+			properties.get(i).writeToObject(data);
 		}
 	}
 
