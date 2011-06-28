@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.model;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -72,24 +73,17 @@ public class EbookSheetProperty extends DefaultProperty {
 	 */
 	private static void setupMetadata(final ArrayList<Property> result, final IResourceHandler resourceLoader, final IMetadataReader reader) {
 		final List<MetadataProperty> allMetaData = reader.readMetaData();
-		for (int i=0; i < allMetaData.size(); i++) {
+		for (int i = 0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
 			final List<Object> values = metadataProperty.getValues();
-			if(values.size()==1) {
+			if(values.size() == 1) {
 				//find properties with the same name and value to merge them in the sheet view.
-				boolean found = false;
-				for (int j=i+1; j < allMetaData.size(); j++) {
-					MetadataProperty metadataProperty2 = allMetaData.get(j);
-					if(comparePropertiesForMerge(metadataProperty, metadataProperty2)) {
-						EbookSheetProperty property = new MultipleEbookSheetProperty(new MetadataProperty[] {metadataProperty, metadataProperty2});
-						result.add(property);
-						allMetaData.remove(j);
-						found = true;
-						break;
-					}
-				}
-				
-				if(!found) {
+				List<MetadataProperty> mergedProperties = getMergedProperties(metadataProperty, allMetaData);
+				if(mergedProperties.size() > 1) {
+					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties);
+					result.add(property);					
+					allMetaData.removeAll(mergedProperties);
+				} else {
 					Property property = createProperty(metadataProperty, 0);
 					result.add(property);
 				}
@@ -101,6 +95,22 @@ public class EbookSheetProperty extends DefaultProperty {
 			}
 		}
 	}
+	
+	/**
+	 * searches for all metadata properties matching to the given one and returns them. 
+	 * @param ref The ref to be searched. This one is in the result list in any case.
+	 * @param allMetaData The metadata list to be searched.
+	 * @return The list with all metadata instances matching with the given one. Never returns <code>null</code>.
+	 */
+	private static List<MetadataProperty> getMergedProperties(MetadataProperty ref, List<MetadataProperty> allMetaData) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(3);
+		for (MetadataProperty metadataProperty : allMetaData) {
+			if(comparePropertiesForMerge(metadataProperty, ref)) {
+				result.add(metadataProperty);
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * Compares the metadata properties if they could be merged to one property. Properties
@@ -111,6 +121,10 @@ public class EbookSheetProperty extends DefaultProperty {
 	 * @return <code>true</code> for merge and <code>false</code> otherwise.
 	 */
 	private static boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
+		if(metadataProperty1 == metadataProperty2) {
+			return true;
+		}
+		
 		// test for value
 		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
 			&& CommonUtils.compareTo(metadataProperty2.getValues().get(0), metadataProperty1.getValues().get(0)) == 0;
@@ -159,12 +173,7 @@ public class EbookSheetProperty extends DefaultProperty {
 	@Override
 	public String getName() {
 		String name = metadataProperty.getName();
-		String localizedName = MainController.getController().getLocalizedString(name);
-		
-		if(metadataProperty.getValues().size() > 1) {
-			localizedName = (this.propertyIndex+1) + ")" + localizedName; 
-		}
-		return localizedName;
+		return name;
 	}
 	
 	@Override
@@ -203,7 +212,13 @@ public class EbookSheetProperty extends DefaultProperty {
 
 	@Override
 	public String getDisplayName() {
-		return this.getName();
+		String name = metadataProperty.getName();
+		String localizedName = MainController.getController().getLocalizedString(name);
+		
+		if(metadataProperty.getValues().size() > 1) {
+			localizedName = (this.propertyIndex+1) + ")" + localizedName; 
+		}
+		return localizedName;
 	}
 
 
@@ -222,8 +237,8 @@ public class EbookSheetProperty extends DefaultProperty {
 	 * Gets the encapsulated {@link MetadataProperty} which holds the current value state.
 	 * @return The encapsulated {@link MetadataProperty} or <code>null</code> if no one existing.
 	 */
-	public MetadataProperty[] getMetadataProperties() {
-		return new MetadataProperty[] {this.metadataProperty};
+	public List<MetadataProperty> getMetadataProperties() {
+		return Arrays.asList(this.metadataProperty);
 	}
 	
 	/**
@@ -236,13 +251,13 @@ public class EbookSheetProperty extends DefaultProperty {
 
 		private static final long serialVersionUID = 3047729348480097722L;
 		
-		final MetadataProperty[] metadataProperty;
+		final List<MetadataProperty> metadataProperties;
 		                                                                     
-		public MultipleEbookSheetProperty(final MetadataProperty[] metadataProperty) {
-			super(metadataProperty[0], 0);
-			this.metadataProperty = metadataProperty;
-			for (int i = 0; i < metadataProperty.length; i++) {
-				if(!metadataProperty[i].isEditable()) {
+		public MultipleEbookSheetProperty(final List<MetadataProperty> metadataProperties) {
+			super(metadataProperties.get(0), 0);
+			this.metadataProperties = metadataProperties;
+			for (MetadataProperty metadataProperty : metadataProperties) {
+				if(!metadataProperty.isEditable()) {
 					this.setEditable(false);
 				}
 			}
@@ -251,9 +266,10 @@ public class EbookSheetProperty extends DefaultProperty {
 		@Override
 		public void setValue(Object value) {
 			if(value!=null && !value.equals(getValue())) {
-				for (int i = 0; i < metadataProperty.length; i++) {
-					metadataProperty[i].setValue(value, 0);
+				for (MetadataProperty metadataProperty : metadataProperties) {
+					metadataProperty.setValue(value, 0);
 				}
+				
 				this.setChanged(true);	
 			}
 			super.setValue(value);
@@ -263,8 +279,8 @@ public class EbookSheetProperty extends DefaultProperty {
 		 * Gets the encapsulated {@link MetadataProperty} which holds the current value state.
 		 * @return The encapsulated {@link MetadataProperty} or <code>null</code> if no one existing.
 		 */
-		public MetadataProperty[] getMetadataProperties() {
-			return metadataProperty;
+		public List<MetadataProperty> getMetadataProperties() {
+			return metadataProperties;
 		}		
 	}
 }

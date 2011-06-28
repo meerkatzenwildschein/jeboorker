@@ -91,8 +91,9 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#getProperties()
    */
-  public Property[] getProperties() {
-    return (Property[]) properties.toArray(new Property[properties.size()]);
+  public List<Property> getProperties() {
+	  return Collections.unmodifiableList(properties);
+    //return (Property[]) properties.toArray(new Property[properties.size()]);
   }
 
   /* (non-Javadoc)

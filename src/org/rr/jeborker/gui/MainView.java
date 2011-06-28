@@ -37,6 +37,7 @@ import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
+import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
 
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
@@ -141,10 +142,24 @@ public class MainView extends JFrame{
 		gbc_mainSplitPane.gridy = 2;
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
 		
-		table = new JTable();
+		table = new JTable() {
+			private static final long serialVersionUID = 6017908033003779908L;
+
+			//  Place cell in edit mode when it 'gains focus'
+			public void changeSelection(int row, int column, boolean toggle, boolean extend) {
+				super.changeSelection(row, column, toggle, extend);
+
+				if (editCellAt(row, column)) {
+					Component editor = getEditorComponent();
+					editor.requestFocusInWindow();
+				}
+			}
+		};
+		
 		table.setRowHeight(74);
 		table.setModel(new EbookPropertyDBTableModel());
 		table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+		table.setDefaultEditor(Object.class, new EbookTableCellEditor());
 		table.setTableHeader(null);
 		table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
 				

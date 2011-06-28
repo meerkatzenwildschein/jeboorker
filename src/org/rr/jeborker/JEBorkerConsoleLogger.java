@@ -34,6 +34,9 @@ public class JEBorkerConsoleLogger extends Handler {
 			String thrownCause = "";
 			if(record.getThrown() != null) {
 				thrownCause = record.getThrown().getMessage();
+				if(thrownCause != null && thrownCause.length() == 0) {
+					thrownCause = null;
+				}
 			}
 			MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null ? " (" + thrownCause+ ")" : ""));
 		}

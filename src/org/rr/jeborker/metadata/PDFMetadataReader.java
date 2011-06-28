@@ -345,6 +345,11 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}
 	
 	@Override
+	public MetadataProperty getRatingMetaData() {
+		return new MetadataProperty("Rating", "");
+	}	
+	
+	@Override
 	public String getPlainMetaDataMime() {
 		return "text/xml";
 	}

@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.model;
 
+import java.util.List;
+
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 
@@ -10,7 +12,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	private boolean changed = false;
 
 	public boolean isChanged() {
-		Property[] properties = this.getProperties();
+		List<Property> properties = this.getProperties();
 		for (Property property : properties) {
 			if(property instanceof EbookSheetProperty && ((EbookSheetProperty)property).isChanged()) {
 				return true;
@@ -45,6 +47,20 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public void setProperties(Property[] newProperties) {
 		super.setProperties(newProperties);
 		changed = false;
+	}
+	
+	/**
+	 * The rating property.
+	 * @return The desired rating property.
+	 */
+	public Property getRatingProperty() {
+		List<Property> properties = getProperties();
+		for (Property property : properties) {
+			if(property.getName().toLowerCase().indexOf("rating") != -1) {
+				return property;
+			}
+		}
+		return null;
 	}
 	
 }
