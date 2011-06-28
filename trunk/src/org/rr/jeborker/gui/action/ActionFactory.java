@@ -29,7 +29,7 @@ public class ActionFactory {
 	}
 	
 	public static enum COMMON_ACTION_TYPES {
-		ADD_BASE_PATH_ACTION, REMOVE_BASE_PATH_ACTION, REFRESH_BASE_PATH_ACTION, REFRESH_ENTRY_ACTION, QUIT_ACTION, SEARCH_ACTION, REMOVE_METADATA_ENTRY_ACTION
+		ADD_BASE_PATH_ACTION, REMOVE_BASE_PATH_ACTION, REFRESH_BASE_PATH_ACTION, REFRESH_ENTRY_ACTION, QUIT_ACTION, SEARCH_ACTION, REMOVE_METADATA_ENTRY_ACTION, OPEN_FOLDER_ACTION
 	}
 	
 	public static enum DYNAMIC_ACTION_TYPES implements ActionType {
@@ -84,7 +84,9 @@ public class ActionFactory {
 			case SEARCH_ACTION:
 				return new SearchAction();
 			case REMOVE_METADATA_ENTRY_ACTION:
-				return RemoveMetadataEntryAction.getInstance();			
+				return RemoveMetadataEntryAction.getInstance();	
+			case OPEN_FOLDER_ACTION:
+				return new OpenFolderAction(text);
 		}
 		
 		return null;

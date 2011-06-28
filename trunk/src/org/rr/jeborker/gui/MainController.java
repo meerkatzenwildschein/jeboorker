@@ -329,8 +329,12 @@ public class MainController {
 	 * @return all selected rows or an empty array if no row is selected.
 	 */
 	public int[] getSelectedEbookPropertyItemRows() {
-		final int[] selectedRows = mainWindow.table.getSelectedRows();
-		return selectedRows;
+		if(mainWindow!=null && mainWindow.table != null) {
+			final int[] selectedRows = mainWindow.table.getSelectedRows();
+			return selectedRows;
+		} else {
+			return new int[0];
+		}
 	}
 	
 	/**

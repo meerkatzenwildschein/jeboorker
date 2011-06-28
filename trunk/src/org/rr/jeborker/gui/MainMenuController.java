@@ -149,7 +149,13 @@ public class MainMenuController {
 			if(action.isEnabled()) {
 				menu.add(action);
 			}
-		}		
+		}	
+		
+		if(items.size() == 1) {
+			//only visible to single selections
+			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile());
+			menu.add(action);
+		}
 		return menu;
 	}	
 }
