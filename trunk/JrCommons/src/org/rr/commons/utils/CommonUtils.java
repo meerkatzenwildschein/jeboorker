@@ -73,7 +73,9 @@ public final class CommonUtils implements Serializable {
 	}
 
 	/**
-	 * Tests if the given string matches to an integer value.
+	 * Tests if the given string matches to an integer value. Valid 
+	 * values are +/- at the start of the string and digits only
+	 * at the rest.
 	 * 
 	 * @param string
 	 *            The string to be tested.
