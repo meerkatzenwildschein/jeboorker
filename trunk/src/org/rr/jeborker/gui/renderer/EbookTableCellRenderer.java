@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.io.Serializable;
 
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 public class EbookTableCellRenderer extends EbookTableCellComponent implements TableCellRenderer, Serializable  {
@@ -14,8 +15,13 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		final Component tableCellComponent = super.getTableCellComponent(table, value, isSelected, hasFocus, row, column);
-		this.setBackground(Color.WHITE);
-		this.setForeground(Color.BLACK);
+		if(isSelected) {
+			this.setBackground(UIManager.getColor("TextField.selectionBackground"));	
+			this.setForeground(UIManager.getColor("TextField.selectionForeground"));
+		} else {
+			this.setBackground(Color.WHITE);
+			this.setForeground(Color.BLACK);
+		}
 		return tableCellComponent;
 	}
 	

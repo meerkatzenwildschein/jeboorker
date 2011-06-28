@@ -12,6 +12,10 @@ public class EbookPropertyDBTableSelectionModel extends DefaultListSelectionMode
 	
 	LinkedList<Selection> history = new LinkedList<EbookPropertyDBTableSelectionModel.Selection>();
 
+	public EbookPropertyDBTableSelectionModel() {
+		setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	}
+	
 	@Override
 	public void setSelectionInterval(int index0, int index1) {
 		super.setSelectionInterval(index0, index1);
