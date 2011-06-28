@@ -45,7 +45,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		try {
 			final byte[] pdfData = ebookResource.getContent();
 			final PdfReader pdfReader = new PdfReader(pdfData);
-			final byte[] fetchXMPThumbnail = PDFMetadataReader.fetchXMPThumbnail(pdfReader, ebookResource);
+			final byte[] fetchXMPThumbnail = fetchXMPThumbnail(pdfReader);
 			final HashMap<String, String> info = new HashMap<String, String>();
 			XMPMetadata blankXMP = new XMPMetadata();
 
@@ -90,6 +90,20 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			writeMetadata(pdfReader, xmpMetadataSet ? blankXMP.asByteArray() : null, info);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
+		}
+	}
+	
+	/**
+	 * Get the thumbnail from the pdf.
+	 * @param pdfReader The reader for extracting the thumbnail.
+	 * @return The thumbnail or <code>null</code> if no thumbnail exists.
+	 */
+	private byte[] fetchXMPThumbnail(final PdfReader pdfReader) {
+		try {
+			byte[] fetchXMPThumbnail = PDFMetadataReader.fetchXMPThumbnail(pdfReader, ebookResource);
+			return fetchXMPThumbnail;
+		} catch (Exception e) {
+			return null;
 		}
 	}
 
@@ -213,7 +227,16 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			stamper = new PdfStamper(pdfReader, ebookResourceOutputStream);
 			stamper.setXmpMetadata(xmp);
 			if(moreInfo!=null) {
-				stamper.setMoreInfo(moreInfo);
+				//to delete old entries, itext need to null them.
+				HashMap<String, String> oldInfo = pdfReader.getInfo();
+				HashMap<String, String> newInfo = new HashMap<String, String>(oldInfo.size() + moreInfo.size());
+				for (Iterator<String> it = oldInfo.keySet().iterator(); it.hasNext();) {
+					newInfo.put(it.next(), null); 
+				}
+				newInfo.putAll(moreInfo);
+				
+				stamper.setMoreInfo(newInfo);
+				moreInfo.put("Rating", null);
 			}
 		} finally {
 			if (stamper != null) {

@@ -88,5 +88,4 @@ public class AMetadataHandler {
 		}
 		return result;
 	}
-	
 }

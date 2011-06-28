@@ -170,12 +170,23 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				//gray light file format
 				dataFormatLabel.setText(getDataFormat(item));
 				
+				//star rating
+				final float starRatingValue = this.getStarRatingValue(item);
+				if(starRatingValue < 0) {
+					this.starRater.setVisible(false);
+				} else {
+					this.starRater.setVisible(true);
+					this.starRater.setRating(starRatingValue);
+				}
+				
+				//second line author and order values.
 				secondLineLabel.setText(getAuthorAndOrderValues(item));
 				
+				//third line description
 				if(item!=null && item.getDescription() != null) {
 					//attach html for a multiline label but previously strip all possible html from the description. 
-					String stripedDescription = cleanString(item != null ? item.getDescription() : "");
-					thirdLineLabel.setText("<html>" + stripedDescription + "</html>");
+					String strippedDescription = cleanString(item != null ? item.getDescription() : "");
+					thirdLineLabel.setText("<html>" + strippedDescription + "</html>");
 				} else {
 					thirdLineLabel.setText("");
 				}
@@ -189,6 +200,20 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		
 		this.duplicateDetection = duplicateDetection;
 		return this;
+	}
+	
+	/**
+	 * Get the five star rating value or -1 if not rating is available.
+	 * @param item The item containing the rating.
+	 * @return The rating value.
+	 */
+	private float getStarRatingValue(final EbookPropertyItem item) {
+		final Integer rating = item.getRating();
+		if(rating == null || rating.intValue() < 0) {
+			return -1f;
+		} else {
+			return ((float)rating) / 2f;
+		} 
 	}
 
 	/**
@@ -237,6 +262,11 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		return thumbnailDimension;
 	}
 	
+	/**
+	 * Get the author and the sort order column values.
+	 * @param item The item containing the desired values.
+	 * @return The author and order string. Never returns <code>null</code>.
+	 */
 	private String getAuthorAndOrderValues(EbookPropertyItem item) {
 		if(item == null) {
 			return "";

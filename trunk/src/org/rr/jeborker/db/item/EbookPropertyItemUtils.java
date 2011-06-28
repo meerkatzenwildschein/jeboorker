@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.gui.action.RemoveBasePathAction;
-import org.rr.jeborker.gui.action.RemoveMetadataEntryAction;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -48,6 +46,7 @@ public class EbookPropertyItemUtils {
 		if(reader!=null) {
 			try {
 				final List<MetadataProperty> metadataProperties = reader.readMetaData();
+				item.clearMetadata();
 				reader.fillEbookPropertyItem(metadataProperties, item);
 				if(refreshCover) {
 					final byte[] imageData = reader.getCover();

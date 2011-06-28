@@ -183,7 +183,8 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			} else if(name.equals("agesuggestion")) {
 				item.setAgeSuggestion(metadataProperty.getValueAsString());
 			} else if(name.equals("rating")) {
-				item.setRating(metadataProperty.getValueAsString());
+				Number number = CommonUtils.toNumber(metadataProperty.getValueAsString());
+				item.setRating(number != null ? number.intValue() : null);
 			} else if(name.equals("seriesindex")) {
 				item.setSeriesIndex(metadataProperty.getValueAsString());
 			} else if(name.equals("seriesname")) {

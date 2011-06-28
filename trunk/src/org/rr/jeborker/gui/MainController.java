@@ -94,7 +94,11 @@ public class MainController {
 			//save the previous properties 
 			final Property[] previousProperties = mainWindow.propertySheet.getProperties();
 			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
+				//write properties
 				MainControllerUtils.writeProperties(previousProperties);
+				
+				//a repaint does a refresh to all visible table rows.
+				mainWindow.table.repaint();
 			}
 		}
 	}	
@@ -186,9 +190,9 @@ public class MainController {
 		mainWindow.table.tableChanged(new TableModelEvent(model));
 		refreshSheetProperties();
 	}
-	
+
 	/**
-	 * Refresh the whole table.
+	 * Refresh the selected table row.
 	 */
 	public void refreshTableSelectedItem() {
 		final TableModel model = mainWindow.table.getModel();

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -198,7 +199,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 						item.setSeriesIndex(metaContent);
 					} else if (metaName.equalsIgnoreCase(CALIBRE_RATING)) {
 						// <opf:meta name="calibre:rating" content="8"/>
-						item.setRating(metaContent);
+						item.setRating(CommonUtils.toNumber(metadataProperty.getValueAsString()).intValue());
 					} else if (metaName.equalsIgnoreCase(JB_KEYWORDS)) {
 						// <meta name="jb:keywords" content="foo, bar"/>
 						item.setKeywords(metaContent);
