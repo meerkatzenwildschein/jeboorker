@@ -76,14 +76,7 @@ class MainControllerUtils {
 			return; //nothing to do.
 		}
 		
-		//search for the property which has the ebook file as value
-		IResourceHandler ebook = null;
-		for (int i = 0; i < properties.length; i++) {
-			if(properties[i].getValue() instanceof IResourceHandler) {
-				ebook = (IResourceHandler) properties[i].getValue();
-				break;
-			}
-		}
+		IResourceHandler ebook = getPropertyResourceHandler(properties);
 		
 		if(ebook!=null) {
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebook);
@@ -103,12 +96,29 @@ class MainControllerUtils {
 					//now the data was written, it's time to refresh the database entry
 					List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", ebook.toString());
 					for (EbookPropertyItem item : items) {
-						EbookPropertyItemUtils.refreshEbookPropertyItem(item, ebook, false);						
+						EbookPropertyItemUtils.refreshEbookPropertyItem(item, ebook, false);		
+						DefaultDBManager.getInstance().updateObject(item);
 					}
 				} finally {
 					writer.dispose();
 				}
 			}
 		}
+	}
+
+	/**
+	 * search for the property which has the ebook file as value
+	 * @param properties The properties to be searched.
+	 * @return The desired {@link IResourceHandler} or <code>null</code> if no {@link IResourceHandler} could be found.
+	 */
+	static IResourceHandler getPropertyResourceHandler(final Property[] properties) {
+		IResourceHandler ebook = null;
+		for (int i = 0; i < properties.length; i++) {
+			if(properties[i].getValue() instanceof IResourceHandler) {
+				ebook = (IResourceHandler) properties[i].getValue();
+				break;
+			}
+		}
+		return ebook;
 	}	
 }

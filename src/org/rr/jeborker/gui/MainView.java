@@ -33,6 +33,7 @@ import org.rr.jeborker.JEBorker;
 import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
@@ -145,6 +146,7 @@ public class MainView extends JFrame{
 		table.setModel(new EbookPropertyDBTableModel());
 		table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
 		table.setTableHeader(null);
+		table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
 				
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();

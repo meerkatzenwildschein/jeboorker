@@ -1,8 +1,14 @@
 package org.rr.jeborker.db.item;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
 
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.IDBObject;
 
 public class EbookPropertyItem implements IDBObject, Serializable {
@@ -10,23 +16,27 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	private static final long serialVersionUID = -4301328577306625467L;
 	
 	@DBViewField(name = "Created at", orderPriority = 0)
+	@ProtectedField
 	private Date createdAt;
 
 	/**
 	 * File name and path from the ebook file.
 	 */
+	@ProtectedField
 	private String file;
 	
 	/**
 	 * The base path of the ebook file.
 	 */
 	@DBViewField(name = "Base Path", orderPriority = 0)
+	@ProtectedField
 	private String basePath;
 	
 	/**
 	 * The mime type of the ebook file.
 	 */
 	@DBViewField(name = "Mime type", orderPriority = 0)
+	@ProtectedField
 	private String mimeType;
 	
 	/**
@@ -116,7 +126,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * The book rating. We use a 0.00 digit schema here. 
 	 */
 	@DBViewField(name = "Rating", orderPriority = 95)
-	private String rating;
+	private Integer rating;
 	
 	/**
 	 * Something like "All rights reserved" 
@@ -178,6 +188,40 @@ public class EbookPropertyItem implements IDBObject, Serializable {
     	}
     	return false;
     }	
+    
+    /**
+     * Get all fields which are marked with a {@link DBViewField} annotation.
+     * @return The desired fields.
+     */
+    public static List<Field> getDBViewFields() {
+		//get fields to be displayed in the combobox
+		final List<Field> fields = ReflectionUtils.getFields(EbookPropertyItem.class, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
+		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
+		for (Field field : fields) {
+			DBViewField dbViewFieldAnnotation = field.getAnnotation(DBViewField.class);
+			if(dbViewFieldAnnotation!=null) {
+				listEntries.add(field);
+			}
+		} 
+		
+		return listEntries;  	
+    }
+    
+	/**
+	 * Clears all metadata.
+	 */
+	public void clearMetadata() {
+		List<Field> dbViewFields = EbookPropertyItem.getDBViewFields();
+		for (Field field : dbViewFields) {
+			try {
+				if(field.getAnnotation(ProtectedField.class) == null) {
+					field.set(this, null);
+				}
+			} catch (Exception e) {
+				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
+			}
+		}		
+	}    
 
 	public String getFile() {
 		return file;
@@ -276,11 +320,11 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		this.seriesIndex = seriesIndex;
 	}
 
-	public String getRating() {
+	public Integer getRating() {
 		return rating;
 	}
 
-	public void setRating(String rating) {
+	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 

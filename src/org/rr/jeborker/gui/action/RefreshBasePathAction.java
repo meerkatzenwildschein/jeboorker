@@ -96,7 +96,7 @@ class RefreshBasePathAction extends QueueableAction {
 	}
 	
 	/**
-	 * Refresh the given {@link EbookPropertyItem}.
+	 * Refresh the given {@link EbookPropertyItem}. Does not persist it to the db!
 	 * @param item The item to be refreshed
 	 * @param resourceLoader The IResourceHandler for the given item. Can be <code>null</code>.
 	 */
