@@ -9,7 +9,7 @@ public class JEBorker {
 	
 	public static boolean isRuntime = false;
 	
-	public static String version = "0.1b";
+	public static String version = "0.1.1";
 	
 	/**
 	 * Launch the application.
