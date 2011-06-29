@@ -8,7 +8,7 @@ import java.util.List;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.JEBorkerUtils;
+import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 import com.orientechnologies.orient.core.db.object.ODatabaseObjectTx;
@@ -72,7 +72,7 @@ public class DefaultDBManager {
 		}
 		
 		final String dbName = getDBName();
-		final String configPath = JEBorkerUtils.getConfigDirectory();
+		final String configPath = JeboorkerUtils.getConfigDirectory();
 		final String dbFile = configPath + dbName;
 		
 		// OPEN / CREATE THE DATABASE

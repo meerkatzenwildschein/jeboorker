@@ -6,7 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JToggleButton;
 
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.OrderDirection;
 
 public class SortOrderComponentController {
@@ -61,7 +61,7 @@ public class SortOrderComponentController {
 	
 	private void storeProperties() {
 		String value = ascButton.isSelected() ? "asc" : "desc";
-		JEBorkerPreferences.addEntryString("sortColumnOrder", value);
+		JeboorkerPreferences.addEntryString("sortColumnOrder", value);
 	}
 	
 	
@@ -69,7 +69,7 @@ public class SortOrderComponentController {
 	 * Restores the order fields and put them to view and model.
 	 */
 	private void restoreProperties() {
-		String sortColumnOrder = JEBorkerPreferences.getEntryString("sortColumnOrder");
+		String sortColumnOrder = JeboorkerPreferences.getEntryString("sortColumnOrder");
 		if(sortColumnOrder.equalsIgnoreCase("asc")) {
 			ascButton.setSelected(true);
 		} else if(sortColumnOrder.equalsIgnoreCase("desc")) {

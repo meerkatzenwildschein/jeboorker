@@ -12,7 +12,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.ResourceNameFilter;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -63,8 +63,8 @@ class AddBasePathAction extends QueueableAction {
 
 				
 				//only attach the new path if it is not a part of an already configured path.
-				if(!isAlreadyExistingBasePath(JEBorkerPreferences.getBasePath(), path)) {
-					JEBorkerPreferences.addBasePath(path); //add path to preferences
+				if(!isAlreadyExistingBasePath(JeboorkerPreferences.getBasePath(), path)) {
+					JeboorkerPreferences.addBasePath(path); //add path to preferences
 					MainMenuController.getController().addBasePathMenuEntry(path); //add path to ui
 					readEbookFilesToDB(selectedDirectory);
 				} else {

@@ -6,7 +6,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.JEBorkerUtils;
+import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
@@ -34,7 +34,7 @@ public class QuitAction extends QueueableAction {
 			LoggerFactory.logWarning(this, "Database shutdown failed.", e1);
 		}
 		
-		JEBorkerUtils.shutdown();
+		JeboorkerUtils.shutdown();
 		System.exit(0);
 	}
 	

@@ -11,7 +11,7 @@ import javax.swing.MutableComboBoxModel;
 
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.action.ActionFactory;
 
 public class FilterPanelController {
@@ -46,7 +46,7 @@ public class FilterPanelController {
 	
 	void initialize() {
 		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
-		final String latestSearch = JEBorkerPreferences.getEntryString("FilterPanelControllerCurrentFilter");
+		final String latestSearch = JeboorkerPreferences.getEntryString("FilterPanelControllerCurrentFilter");
 		
 		this.restoreFilterHistory();
 		view.filterField.getEditor().setItem(latestSearch);
@@ -115,8 +115,8 @@ public class FilterPanelController {
 			}
 			modelEntries.append(elementAt);
 		}
-		JEBorkerPreferences.addEntryString("FilterPanelControllerEntries", modelEntries.toString());		
-		JEBorkerPreferences.addEntryString("FilterPanelControllerCurrentFilter", getFilterText());
+		JeboorkerPreferences.addEntryString("FilterPanelControllerEntries", modelEntries.toString());		
+		JeboorkerPreferences.addEntryString("FilterPanelControllerCurrentFilter", getFilterText());
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class FilterPanelController {
 	 */
 	private void restoreFilterHistory() {
 		final MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
-		String filterEntries = JEBorkerPreferences.getEntryString("FilterPanelControllerEntries");
+		String filterEntries = JeboorkerPreferences.getEntryString("FilterPanelControllerEntries");
 		if(filterEntries!=null && filterEntries.length() > 0) {
 			List<String> split = ListUtils.split(filterEntries, ",");
 			for (String string : split) {

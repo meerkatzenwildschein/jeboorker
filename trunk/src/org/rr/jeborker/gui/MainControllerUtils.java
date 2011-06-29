@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -23,14 +23,14 @@ class MainControllerUtils {
 	 * Writes the application properties to the preference file
 	 */
 	static void storeApplicationProperties(MainView mainWindow) {
-		JEBorkerPreferences.addEntryNumber("mainWindowSizeWidth", mainWindow.getSize().width);
-		JEBorkerPreferences.addEntryNumber("mainWindowSizeHeight", mainWindow.getSize().height);
-		JEBorkerPreferences.addEntryNumber("mainWindowLocationX", mainWindow.getLocation().x);
-		JEBorkerPreferences.addEntryNumber("mainWindowLocationY", mainWindow.getLocation().y);
-		JEBorkerPreferences.addEntryNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
-		JEBorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.table.getRowCount()));
-		JEBorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
-		JEBorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
+		JeboorkerPreferences.addEntryNumber("mainWindowSizeWidth", mainWindow.getSize().width);
+		JeboorkerPreferences.addEntryNumber("mainWindowSizeHeight", mainWindow.getSize().height);
+		JeboorkerPreferences.addEntryNumber("mainWindowLocationX", mainWindow.getLocation().x);
+		JeboorkerPreferences.addEntryNumber("mainWindowLocationY", mainWindow.getLocation().y);
+		JeboorkerPreferences.addEntryNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
+		JeboorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.table.getRowCount()));
+		JeboorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
+		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
 	}
 	
 	/**
@@ -38,32 +38,32 @@ class MainControllerUtils {
 	 */
 	static void restoreApplicationProperties(MainView mainWindow) {
 		//restore the window size from the preferences.
-		Number mainWindowSizeWidth = JEBorkerPreferences.getEntryAsNumber("mainWindowSizeWidth");
-		Number mainWindowSizeHeight = JEBorkerPreferences.getEntryAsNumber("mainWindowSizeHeight");
+		Number mainWindowSizeWidth = JeboorkerPreferences.getEntryAsNumber("mainWindowSizeWidth");
+		Number mainWindowSizeHeight = JeboorkerPreferences.getEntryAsNumber("mainWindowSizeHeight");
 		if(mainWindowSizeWidth!=null && mainWindowSizeHeight!=null) {
 			mainWindow.setSize(mainWindowSizeWidth.intValue(), mainWindowSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JEBorkerPreferences.getEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
+		Point entryAsScreenLocation = JeboorkerPreferences.getEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
 		if(entryAsScreenLocation != null) {
 			mainWindow.setLocation(entryAsScreenLocation);
 		}
 		
 		//restore the divider location at the main window
-		final Number mainWindowDividerLocation = JEBorkerPreferences.getEntryAsNumber("mainWindowDividerLocation");
+		final Number mainWindowDividerLocation = JeboorkerPreferences.getEntryAsNumber("mainWindowDividerLocation");
 		if(mainWindowDividerLocation!=null) {
 			//however, the splitpane has a difference of 7 between setting and getting the location.
 			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue()-7);
 		}
 		
 		//restore the divider location in the property sheet 
-		final Number descriptionDividerLocation = JEBorkerPreferences.getEntryAsNumber("descriptionDividerLocation");
+		final Number descriptionDividerLocation = JeboorkerPreferences.getEntryAsNumber("descriptionDividerLocation");
 		if(descriptionDividerLocation!=null) {
 			mainWindow.propertySheet.setDescriptionDividerLocation(descriptionDividerLocation.intValue());
 		}
 		
-		final Number propertySheetImageSplitPaneDividerLocation = JEBorkerPreferences.getEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
+		final Number propertySheetImageSplitPaneDividerLocation = JeboorkerPreferences.getEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
 		if(propertySheetImageSplitPaneDividerLocation!=null) {
 			mainWindow.propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
 		}			

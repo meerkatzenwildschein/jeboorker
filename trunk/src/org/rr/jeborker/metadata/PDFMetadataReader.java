@@ -286,18 +286,8 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 							}							
 						} catch(Exception e) {}
 						
-//						HashMap<Object, Object> fieldValue = (HashMap) ReflectionUtils.getFieldValue(stream, "hashMap");
-//						System.out.println(ebookResource);
-//						for (Entry<Object, Object> entry : fieldValue.entrySet()) {
-//							Object key = entry.getKey();
-//							Object value = entry.getValue();
-//							System.out.println(key + ":" + value);
-//						}
-//						System.out.println();	
 						double aspectRatio = ((double)height) / ((double)width);
 						if(width > 150 && aspectRatio > 1.5d && aspectRatio < 1.7d) {
-//							int bitsPerPixel = new ImageInfo(ResourceHandlerFactory.getVirtualResourceLoader(null, img)).getBitsPerPixel();
-//						System.out.println("bitsPerPixel:" + bitsPerPixel + " " + ebookResource.getName());
 							return img;
 						}
 					}

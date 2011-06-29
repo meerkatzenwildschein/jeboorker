@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.QueueableAction;
@@ -53,7 +53,7 @@ public class RemoveBasePathAction extends QueueableAction {
 		} finally {
 			progressMonitor.monitorProgressStop();
 		}
-		JEBorkerPreferences.removeBasePath(path);
+		JeboorkerPreferences.removeBasePath(path);
 		MainMenuController.getController().removeBasePathMenuEntry(path);
 	}
 	

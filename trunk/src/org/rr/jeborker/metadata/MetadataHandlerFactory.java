@@ -1,7 +1,7 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.jeborker.JEBorkerConstants.MIME_EPUB;
-import static org.rr.jeborker.JEBorkerConstants.MIME_PDF;
+import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
 
 import org.rr.commons.mufs.IResourceHandler;
 

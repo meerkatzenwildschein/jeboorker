@@ -14,7 +14,7 @@ import javax.swing.table.TableModel;
 import org.rr.commons.collection.CompoundList;
 import org.rr.commons.collection.IteratorList;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.JEBorker;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.OrderDirection;
 import org.rr.jeborker.db.QueryCondition;
@@ -217,7 +217,7 @@ public class EbookPropertyDBTableModel implements TableModel {
      * @return The desired {@link EbookPropertyItem}s.
      */
     public List<EbookPropertyItem> getEbookItems() {
-    	if(JEBorker.isRuntime) {
+    	if(Jeboorker.isRuntime) {
 	    	if(isDirty() || dbItems==null) {
 	    		this.dirty = false;
 	    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());

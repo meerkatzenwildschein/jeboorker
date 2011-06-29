@@ -13,7 +13,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.ResourceNameFilter;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -54,7 +54,7 @@ class RefreshBasePathAction extends QueueableAction {
 			if(path!=null && path.length()>0) {
 				doRefresh(path, event, controller.getProgressMonitor());
 			} else {
-				final List<String> basePath = JEBorkerPreferences.getBasePath();
+				final List<String> basePath = JeboorkerPreferences.getBasePath();
 				for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 					final String basePathEntry = iterator.next();
 					doRefresh(basePathEntry, event, controller.getProgressMonitor());
