@@ -19,8 +19,8 @@ import org.w3c.dom.NodeList;
 class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
 	
 	private static final String COVER = "cover";
-	private static final String JB_AGE_SUGGESTION = "jb:age_suggestion";
-	private static final String JB_KEYWORDS = "jb:keywords";
+	private static final String JB_AGE_SUGGESTION = "jeboorker:age_suggestion";
+	private static final String JB_KEYWORDS = "jeboorker:keywords";
 	private static final String CALIBRE_RATING = "calibre:rating";
 	private static final String CALIBRE_SERIES_INDEX = "calibre:series_index";
 	private static final String CALIBRE_SERIES = "calibre:series";
