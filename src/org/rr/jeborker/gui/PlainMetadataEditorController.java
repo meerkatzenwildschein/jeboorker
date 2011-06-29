@@ -17,7 +17,7 @@ import org.rr.commons.io.LineReader;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.xml.XMLUtils;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataWriter;
@@ -203,22 +203,22 @@ public class PlainMetadataEditorController {
 	}
 	
 	private void storeProperties() {
-		JEBorkerPreferences.addEntryNumber("metadataDialogSizeWidth", getView().getSize().width);
-		JEBorkerPreferences.addEntryNumber("metadataDialogSizeHeight", getView().getSize().height);
-		JEBorkerPreferences.addEntryNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
-		JEBorkerPreferences.addEntryNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
+		JeboorkerPreferences.addEntryNumber("metadataDialogSizeWidth", getView().getSize().width);
+		JeboorkerPreferences.addEntryNumber("metadataDialogSizeHeight", getView().getSize().height);
+		JeboorkerPreferences.addEntryNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
+		JeboorkerPreferences.addEntryNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
 	}
 	
 	private void restorePropeties() {
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JEBorkerPreferences.getEntryAsNumber("metadataDialogSizeWidth");
-		Number metadataDialogSizeHeight = JEBorkerPreferences.getEntryAsNumber("metadataDialogSizeHeight");
+		Number metadataDialogSizeWidth = JeboorkerPreferences.getEntryAsNumber("metadataDialogSizeWidth");
+		Number metadataDialogSizeHeight = JeboorkerPreferences.getEntryAsNumber("metadataDialogSizeHeight");
 		if(metadataDialogSizeWidth!=null && metadataDialogSizeHeight!=null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JEBorkerPreferences.getEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
+		Point entryAsScreenLocation = JeboorkerPreferences.getEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		

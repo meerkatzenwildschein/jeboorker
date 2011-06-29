@@ -1,7 +1,7 @@
 package org.rr.jeborker.gui.renderer;
 
-import static org.rr.jeborker.JEBorkerConstants.MIME_EPUB;
-import static org.rr.jeborker.JEBorkerConstants.MIME_PDF;
+import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
 
 import java.awt.Color;
 import java.awt.Component;

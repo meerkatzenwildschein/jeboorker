@@ -19,7 +19,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.DBViewField;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -202,7 +202,7 @@ public class SortColumnComponentController {
 	 */
 	private void readOrderColumnsFromPreferences() {
 		//preferences to table model
-		final String entryString = JEBorkerPreferences.getEntryString("sortColumnFields");
+		final String entryString = JeboorkerPreferences.getEntryString("sortColumnFields");
 		if(entryString!=null && entryString.length() > 0) {
 			final List<String> splitted = ListUtils.split(entryString, ",", -1, UtilConstants.COMPARE_BINARY);
 			final ListCheckModel model = comboBox.getModel();
@@ -244,7 +244,7 @@ public class SortColumnComponentController {
 			}
 			value.append(field.getName());
 		}
-		JEBorkerPreferences.addEntryString("sortColumnFields", value.toString());
+		JeboorkerPreferences.addEntryString("sortColumnFields", value.toString());
 	}
 	
 	/**

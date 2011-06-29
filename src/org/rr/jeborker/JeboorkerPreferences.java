@@ -13,7 +13,7 @@ import java.util.prefs.Preferences;
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.utils.CommonUtils;
 
-public class JEBorkerPreferences {
+public class JeboorkerPreferences {
 	
 	private static final Preferences appNode = Preferences.userRoot().node("jeborker");
 

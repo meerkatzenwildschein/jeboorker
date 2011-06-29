@@ -1,6 +1,6 @@
 package org.rr.jeborker;
 
-public class JEBorkerConstants {
+public class JeboorkerConstants {
 	
 	public static final String MIME_EPUB = "application/epub+zip".intern();
 	

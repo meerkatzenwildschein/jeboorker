@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
-public class JEBorkerUtils {
+public class JeboorkerUtils {
 	
 	public static int OS_WINDOWS = 0;
 	
@@ -32,7 +32,7 @@ public class JEBorkerUtils {
 					resourceHandler.delete();
 				}
 			} catch (IOException e) {
-				LoggerFactory.log(Level.WARNING, JEBorkerUtils.class, "could not delete temporary file " + temporaryResourceLoader.get(i).getResourceString(), e);
+				LoggerFactory.log(Level.WARNING, JeboorkerUtils.class, "could not delete temporary file " + temporaryResourceLoader.get(i).getResourceString(), e);
 			}
 		}
 	}

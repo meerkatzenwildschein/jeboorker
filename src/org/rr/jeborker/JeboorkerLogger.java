@@ -5,7 +5,7 @@ import java.util.logging.LogRecord;
 
 import org.rr.jeborker.gui.MainController;
 
-public class JEBorkerConsoleLogger extends Handler {
+public class JeboorkerLogger extends Handler {
 
 	@Override
 	public void close() throws SecurityException {

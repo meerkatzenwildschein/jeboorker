@@ -5,7 +5,7 @@ import java.awt.EventQueue;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.gui.MainController;
 
-public class JEBorker {
+public class Jeboorker {
 	
 	public static boolean isRuntime = false;
 	
@@ -16,7 +16,7 @@ public class JEBorker {
 	 */
 	public static void main(String[] args) {
 		isRuntime = true;
-		LoggerFactory.addHandler(new JEBorkerConsoleLogger());
+		LoggerFactory.addHandler(new JeboorkerLogger());
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

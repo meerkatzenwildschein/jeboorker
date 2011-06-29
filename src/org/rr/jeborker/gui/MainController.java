@@ -24,7 +24,7 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
@@ -376,10 +376,10 @@ public class MainController {
 	 * @return The selected folder or <code>null</code>.
 	 */
 	public File getDirectorySelection() {
-		final String lastEbookFolder = JEBorkerPreferences.getEntryString("lastEbookFolder");
+		final String lastEbookFolder = JeboorkerPreferences.getEntryString("lastEbookFolder");
 		File selectedDirectory = JDirectoryChooser.getDirectorySelection(lastEbookFolder, mainWindow);
 		if(selectedDirectory!=null) {
-			JEBorkerPreferences.addEntryString("lastEbookFolder", selectedDirectory.toString());
+			JeboorkerPreferences.addEntryString("lastEbookFolder", selectedDirectory.toString());
 		}
 		return selectedDirectory;
 	}

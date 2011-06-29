@@ -13,7 +13,7 @@ import javax.swing.JSeparator;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.rr.jeborker.JEBorkerPreferences;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 
@@ -136,7 +136,7 @@ class MainMenuView extends JMenuBar {
 		mntmAddEbooks.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
 		fileMenuBar.add(mntmAddEbooks);
 		
-		final List<String> basePath = JEBorkerPreferences.getBasePath();
+		final List<String> basePath = JeboorkerPreferences.getBasePath();
 		mnVerzeichnisEntfernen = new JMenu(Bundle.getString("EborkerMainView.removeBasePath"));
 		for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 			String path = iterator.next();
