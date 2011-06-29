@@ -1,6 +1,15 @@
 package org.rr.commons.xml;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class XMLUtils {
 	
@@ -8,6 +17,13 @@ public class XMLUtils {
 		return formatXML(xml, 4, -1);
 	}
 
+	/**
+	 * Formats the given xml data.
+	 * @param xml The xml data to be formatted.
+	 * @param indent Number of whitespaces to indent. 
+	 * @param maxCDataLength Max line length for cdata.
+	 * @return The formatted xml.
+	 */
 	public static String formatXML(String xml, int indent, int maxCDataLength) {
 		SimpleParser parser = new SimpleParser();
 		
@@ -21,8 +37,24 @@ public class XMLUtils {
 		
 		char[] charArray = new String(xml.getBytes()).toCharArray();
 		parser.parse(formatter, charArray, 0, charArray.length);
-//		formatter.outputExtraData("");
 
 		return out.toString();
 	}
+	
+	/**
+	 * Creates a document from the given xml bytes.
+	 * @return The desired document or <code>null</code> if the given xml is not valid.
+	 * @throws ParserConfigurationException, IOException, SAXException  
+	 */
+	public static Document getDocument(byte[] xml) throws ParserConfigurationException, IOException, SAXException {
+		if(xml != null) {
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			// factory.setNamespaceAware( true );
+			// factory.setValidating( true );
+			final DocumentBuilder builder = factory.newDocumentBuilder();
+			final Document document = builder.parse(new ByteArrayInputStream(xml));
+			return document;
+		}
+		throw new IOException("No xml data");
+	}	
 }
