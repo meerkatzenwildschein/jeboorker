@@ -85,7 +85,7 @@ class EPubMetadataWriter extends AEpubMetadataHandler implements IMetadataWriter
 			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final byte[] containerXmlData = getContainerOPF(zipData);
 
-			final Document document = this.getDocument(containerXmlData, ebookResourceHandler);
+			final Document document = getDocument(containerXmlData, ebookResourceHandler);
 			if (document != null) {
 				final Element metadataElement = this.getMetadataElement(document);
 				final Element manifestElement = this.getManifestElement(document);

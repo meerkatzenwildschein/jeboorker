@@ -1,19 +1,17 @@
 package org.rr.jeborker.metadata;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -31,14 +29,7 @@ public class AMetadataHandler {
 	 */
 	protected static Document getDocument(byte[] xml, IResourceHandler ebookResource) {
 		try {
-			if(xml != null) {
-				final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				// factory.setNamespaceAware( true );
-				// factory.setValidating( true );
-				final DocumentBuilder builder = factory.newDocumentBuilder();
-				final Document document = builder.parse(new ByteArrayInputStream(xml));
-				return document;
-			}
+			XMLUtils.getDocument(xml);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(AMetadataHandler.class, "Could not read epub " + ebookResource, e);
 		}
@@ -57,7 +48,7 @@ public class AMetadataHandler {
 		return formatDocument(document).getBytes();
 	}
 	
-	protected String formatDocument(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
+	private String formatDocument(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
         OutputFormat format = new OutputFormat(document);
         format.setLineWidth(160);
         format.setIndenting(true);
