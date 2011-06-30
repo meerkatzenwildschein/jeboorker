@@ -29,12 +29,12 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 			
 			@Override
 			public void handleSelection(int selection) {
-				starRater.setRating(selection);
-				
-				MainController.getController().setRatingToSelectedEntry(selection * 2);
-				
-				//reset the temp selection
-				starRater.setSelection(0);
+//				starRater.setRating(selection);
+//				
+//				
+//				
+//				//reset the temp selection
+//				starRater.setSelection(0);
 			}
 		});
 	}
@@ -56,6 +56,10 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 
 	@Override
 	public boolean stopCellEditing() {
+		if(starRater.getSelection() > 0) {
+			MainController.getController().setRatingToSelectedEntry(starRater.getSelection() * 2);
+		}
+		starRater.setSelection(0);
 		return true;
 	}
 
