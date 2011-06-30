@@ -123,15 +123,7 @@ public class MainController {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
 				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
 				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
-				int[] selectedEbookPropertyItemRows = getSelectedEbookPropertyItemRows();
-				for (int i : selectedEbookPropertyItemRows) {
-					if(mainWindow.table.isEditing()) {
-						mainWindow.table.editingStopped(null);
-					} else {
-						TableModelEvent tableModelEvent = new TableModelEvent(mainWindow.table.getModel(), i);
-						mainWindow.table.tableChanged(tableModelEvent);							
-					}
-				}
+				refreshTableSelectedItem();
 			}
 		}
 	}
@@ -221,6 +213,11 @@ public class MainController {
 		if(model instanceof EbookPropertyDBTableModel) {
 			((EbookPropertyDBTableModel)model).setDirty();
 		}
+		
+		if(mainWindow.table.isEditing()) {
+			mainWindow.table.editingStopped(null);
+		}
+			
 		mainWindow.table.tableChanged(new TableModelEvent(model));
 		refreshSheetProperties();
 	}
@@ -234,8 +231,13 @@ public class MainController {
 		if(selectedRows==null || selectedRows.length==0) {
 			return;
 		} else {
+			int editingRow = mainWindow.table.getEditingRow();
 			for (int i = 0; i < selectedRows.length; i++) {
-				mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));	
+				if(editingRow != -1 && editingRow == selectedRows[i]) {
+					mainWindow.table.editingStopped(null);
+				} else {
+					mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));					
+				}
 			}
 			refreshSheetProperties();
 		}
@@ -250,10 +252,15 @@ public class MainController {
 		if(rows==null || rows.length==0) {
 			return;
 		} else {
+			int editingRow = mainWindow.table.getEditingRow();
 			int[] selectedEbookPropertyItemRows = getSelectedEbookPropertyItemRows();
 			boolean sheetPropertiesRefreshed = false;
 			for (int i = 0; i < rows.length; i++) {
-				mainWindow.table.tableChanged(new TableModelEvent(model, rows[i]));	
+				if(editingRow != -1 && editingRow == rows[i]) {
+					mainWindow.table.editingStopped(null);
+				}
+				mainWindow.table.tableChanged(new TableModelEvent(model, rows[i]));					
+				
 				for (int j = 0; j < selectedEbookPropertyItemRows.length; j++) {
 					if(!sheetPropertiesRefreshed && selectedEbookPropertyItemRows[j] == rows[i]) {
 						refreshSheetProperties();

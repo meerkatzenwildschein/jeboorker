@@ -63,7 +63,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	
 	private String duplicateDetection = "";
 	
-	private VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
+	private static VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
 	/**
 	 * A flag that tells where must be something to do with the labels.  
@@ -214,8 +214,9 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
 		if(item!=null && item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
-			if(thumbnailCache.containsKey(item.getFile())) {
-				return thumbnailCache.get(item.getFile());
+			String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
+			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
+				return thumbnailCache.get(coverThumbnailCRC32);
 			}
 			
 			try {
@@ -227,7 +228,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 					if(image!=null) {	
 						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(imageProvider.getImage(), getThumbnailDimension(table), false);
 						ImageIcon imageIcon = new ImageIcon(scaleToMatch);
-						thumbnailCache.put(item.getFile(), imageIcon);
+						thumbnailCache.put(coverThumbnailCRC32, imageIcon);
 						return imageIcon;
 					} else {
 						return null;

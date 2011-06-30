@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.zip.CRC32;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -163,7 +164,8 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 	
 	/**
-	 * Creates an {@link IResourceHandler} for the ebook file. 
+	 * Creates an {@link IResourceHandler} for the ebook file. This is just 
+	 * a convenience method for getting a IResourceHandler for this {@link EbookPropertyItem} instance.
 	 * @return The desired {@link IResourceHandler}.
 	 */
 	public IResourceHandler getResourceHandler() {
@@ -232,6 +234,20 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 			}
 		}		
 	}    
+	
+	/**
+	 * Get the CRC32 checksum for the cover thumbnail.
+	 * @return The desired checksum or 0 if no thumbnail is set.
+	 */
+	public long getCoverThumbnailCRC32() {
+		CRC32 crc32 = new CRC32();
+		if(getCoverThumbnail() != null) {
+			crc32.update(getCoverThumbnail());
+			return crc32.getValue();
+		} else {
+			return 0;
+		}
+	}
 
 	public String getFile() {
 		return file;
