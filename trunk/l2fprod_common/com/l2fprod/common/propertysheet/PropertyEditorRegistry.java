@@ -39,10 +39,12 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
 
   private Map typeToEditor;
   private Map propertyToEditor;
+  private Map propertyNameToEditor;
 
   public PropertyEditorRegistry() {
     typeToEditor = new HashMap();
     propertyToEditor = new HashMap();
+    propertyNameToEditor = new HashMap();
     registerDefaults();
   }
 
@@ -73,7 +75,11 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
    */
   public synchronized PropertyEditor getEditor(Property property) {
     PropertyEditor editor = null;
-    if (property instanceof PropertyDescriptorAdapter) {
+    if(property != null && property.getName() != null) {
+    	Class clz = (Class) propertyNameToEditor.get(property.getName().toLowerCase());
+    	editor = loadPropertyEditor(clz);
+    }
+    if (editor == null && property instanceof PropertyDescriptorAdapter) {
       PropertyDescriptor descriptor = ((PropertyDescriptorAdapter) property).getDescriptor();
       if (descriptor != null) {
         Class clz = descriptor.getPropertyEditorClass();
@@ -145,6 +151,10 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
       }
     }
     return editor;
+  }
+  
+  public synchronized void registerEditor(String propertyName, Class editorClass) {
+	  propertyNameToEditor.put(propertyName.toLowerCase(), editorClass);
   }
 
   public synchronized void registerEditor(Class type, Class editorClass) {

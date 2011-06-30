@@ -38,10 +38,12 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 
   private Map typeToRenderer;
   private Map propertyToRenderer;
+  private Map propertyNameToRenderer;
 
   public PropertyRendererRegistry() {
     typeToRenderer = new HashMap();
     propertyToRenderer = new HashMap();
+    propertyNameToRenderer = new HashMap();
     registerDefaults();
   }
   
@@ -72,8 +74,19 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
    * @param property
    * @return a renderer suitable for the Property.
    */
-  public synchronized TableCellRenderer getRenderer(Property property)
- {
+  public synchronized TableCellRenderer getRenderer(Property property) {
+	  if(property != null && property.getName() != null) {
+		  Class clz= (Class) propertyNameToRenderer.get(property.getName().toLowerCase());
+		  if(clz != null) {
+			  try {
+				return (TableCellRenderer) clz.newInstance();
+			} catch (InstantiationException ex) {
+				ex.printStackTrace();
+			} catch (IllegalAccessException ex) {
+				ex.printStackTrace();
+			}
+		  }
+	  }
 
    // editors bound to the property descriptor have the highest priority
    TableCellRenderer renderer = null;
@@ -139,6 +152,10 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 
   public synchronized void registerRenderer(Class type, Class rendererClass) {
     typeToRenderer.put(type, rendererClass);
+  }
+  
+  public synchronized void registerRenderer(String propertyName, Class rendererClass) {
+	  propertyNameToRenderer.put(propertyName.toLowerCase(), rendererClass);
   }
 
   public synchronized void registerRenderer(Class type, TableCellRenderer renderer) {
