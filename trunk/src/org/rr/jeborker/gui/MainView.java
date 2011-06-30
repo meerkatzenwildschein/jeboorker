@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.japura.gui.CheckComboBox;
@@ -144,20 +145,7 @@ public class MainView extends JFrame{
 		gbc_mainSplitPane.gridy = 2;
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
 		
-		table = new JTable() {
-			private static final long serialVersionUID = 6017908033003779908L;
-
-			//  Place cell in edit mode when it 'gains focus'
-			public void changeSelection(int row, int column, boolean toggle, boolean extend) {
-				super.changeSelection(row, column, toggle, extend);
-
-				if (editCellAt(row, column)) {
-					Component editor = getEditorComponent();
-					editor.requestFocusInWindow();
-				}
-			}
-		};
-		
+		table = new JTable();
 		table.setRowHeight(74);
 		table.setModel(new EbookPropertyDBTableModel());
 		table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
