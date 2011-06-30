@@ -22,6 +22,7 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 			this.setBackground(Color.WHITE);
 			this.setForeground(Color.BLACK);
 		}
+		
 		return tableCellComponent;
 	}
 	

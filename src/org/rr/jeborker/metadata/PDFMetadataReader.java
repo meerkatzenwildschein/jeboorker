@@ -310,7 +310,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 				
 				return xml;
 			} else {
-				LoggerFactory.logWarning(this, "Could not get plain metadata for " + ebookResource, new Exception("dumpstack"));
+				LoggerFactory.logInfo(this, "Could not get plain metadata for " + ebookResource, null);
 			}
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get plain metadata for " + ebookResource, e);

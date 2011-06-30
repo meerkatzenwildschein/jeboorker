@@ -29,7 +29,7 @@ public class AMetadataHandler {
 	 */
 	protected static Document getDocument(byte[] xml, IResourceHandler ebookResource) {
 		try {
-			XMLUtils.getDocument(xml);
+			return XMLUtils.getDocument(xml);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(AMetadataHandler.class, "Could not read epub " + ebookResource, e);
 		}

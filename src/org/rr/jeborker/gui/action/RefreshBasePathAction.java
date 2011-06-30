@@ -87,7 +87,6 @@ class RefreshBasePathAction extends QueueableAction {
 				//refresh the existing ones
 				monitor.setMessage(Bundle.getFormattedString("RefreshBasePathAction.refresh", new Object[] {resourceLoader.getName()}));
 				refreshEbookPropertyItem(item, resourceLoader);
-				defaultDBManager.updateObject(item);
 			}
 		}
 		
@@ -96,7 +95,7 @@ class RefreshBasePathAction extends QueueableAction {
 	}
 	
 	/**
-	 * Refresh the given {@link EbookPropertyItem}. Does not persist it to the db!
+	 * Refresh the given {@link EbookPropertyItem}. Does also persist it to the db!
 	 * @param item The item to be refreshed
 	 * @param resourceLoader The IResourceHandler for the given item. Can be <code>null</code>.
 	 */
@@ -109,9 +108,10 @@ class RefreshBasePathAction extends QueueableAction {
 		if(!resourceLoader.exists()) {
 			RemoveBasePathAction.removeEbookPropertyItem(item);
 			return;
+		} else {
+			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
+			DefaultDBManager.getInstance().updateObject(item);
 		}
-		
-		EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
 	}
 	
 	/**
