@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.model;
 
+import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import com.l2fprod.common.propertysheet.Property;
@@ -39,6 +40,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void removeProperty(Property property) {
+//		if(property instanceof EbookSheetProperty) {
+//			((EbookSheetProperty)property).firePropertyChanged(null, null);
+//		}
+		property.setValue("");
 		super.removeProperty(property);
 		changed = true;
 	}
@@ -51,7 +56,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	
 	/**
 	 * The rating property.
-	 * @return The desired rating property.
+	 * @return The desired rating property or <code>null</code> if no rating property is exists.
 	 */
 	public Property getRatingProperty() {
 		List<Property> properties = getProperties();

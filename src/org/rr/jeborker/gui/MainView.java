@@ -221,7 +221,6 @@ public class MainView extends JFrame{
 				propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
 //				propertySheet.getTable().setModel(new PropertySheetTableModel());
 				propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
-				propertySheet.addPropertySheetChangeListener(new PropertySheetChangeListener());
 				propertySheet.setDescriptionVisible(true);
 				propertySheet.setShowCategoryButton(false);
 				

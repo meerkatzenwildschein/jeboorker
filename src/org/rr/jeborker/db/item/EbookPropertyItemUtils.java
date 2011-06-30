@@ -46,7 +46,6 @@ public class EbookPropertyItemUtils {
 		if(reader!=null) {
 			try {
 				final List<MetadataProperty> metadataProperties = reader.readMetaData();
-				item.clearMetadata();
 				reader.fillEbookPropertyItem(metadataProperties, item);
 				if(refreshCover) {
 					final byte[] imageData = reader.getCover();
