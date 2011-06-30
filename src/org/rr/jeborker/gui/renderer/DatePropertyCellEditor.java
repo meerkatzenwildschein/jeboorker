@@ -17,8 +17,6 @@ import com.l2fprod.common.swing.LookAndFeelTweaks;
 
 public class DatePropertyCellEditor extends AbstractPropertyEditor {
 
-	protected Component editor;
-
 	private Date date = null;
 
 	public DatePropertyCellEditor() {

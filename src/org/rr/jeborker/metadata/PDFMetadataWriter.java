@@ -236,7 +236,6 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 				newInfo.putAll(moreInfo);
 				
 				stamper.setMoreInfo(newInfo);
-				moreInfo.put("Rating", null);
 			}
 		} finally {
 			if (stamper != null) {

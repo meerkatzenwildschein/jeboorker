@@ -39,6 +39,8 @@ import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
 import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
+import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
+import org.rr.jeborker.gui.renderer.StarRatingPropertyRenderer;
 
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
@@ -245,6 +247,9 @@ public class MainView extends JFrame{
 				DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(Date.class, calendarDatePropertyRenderer);
+		        
+		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("rating", StarRatingPropertyEditor.class);
+		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("rating", StarRatingPropertyRenderer.class);
 		        
 				GridBagConstraints gbc_propertySheet = new GridBagConstraints();
 				gbc_propertySheet.fill = GridBagConstraints.BOTH;

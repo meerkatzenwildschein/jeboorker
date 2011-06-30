@@ -78,7 +78,7 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer implement
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setValue(value);
 
-        return this ;
+        return this;
     }
 
     protected String convertToString(Object value) {
