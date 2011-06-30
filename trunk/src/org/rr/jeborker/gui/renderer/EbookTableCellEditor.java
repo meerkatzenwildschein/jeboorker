@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.renderer;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
 import java.util.EventObject;
@@ -9,7 +10,6 @@ import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
-import org.rr.common.swing.StarRater;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 
@@ -19,24 +19,18 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 	
 	private EbookPropertyItem value;
 	
+	private final Color selectedBgColor;
+	
+	private final Color selectedFgColor;
+	
 	public EbookTableCellEditor() {
 		super();
-		this.initListener();
-	}
-	
-	private void initListener() {
-		this.starRater.addStarListener(new StarRater.StarListener() {
-			
-			@Override
-			public void handleSelection(int selection) {
-//				starRater.setRating(selection);
-//				
-//				
-//				
-//				//reset the temp selection
-//				starRater.setSelection(0);
-			}
-		});
+		selectedFgColor = UIManager.getColor("TextField.selectionForeground");
+		
+		//workaround for a swing bug. The first time, the editor is used, the 
+		//ui color instance draws the wrong color but have the right rgb values.
+		Color color = UIManager.getColor("TextField.selectionBackground");
+		selectedBgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
 	}
 	
 	@Override
@@ -76,11 +70,13 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, int row, int column) {
 		this.value = (EbookPropertyItem) value;
 		final Component tableCellComponent = super.getTableCellComponent(table, value, true, true, row, column);
-		this.setBackground(UIManager.getColor("TextField.selectionBackground"));	
-		this.setForeground(UIManager.getColor("TextField.selectionForeground"));
+
+		tableCellComponent.setBackground(selectedBgColor);
+		tableCellComponent.setForeground(selectedFgColor);
+		
 		return tableCellComponent;
 	}
 

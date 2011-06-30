@@ -51,7 +51,7 @@ public class Thumbnail
      */
     public Thumbnail( XMPMetadata metadata )
     {
-        this( metadata.xmpDocument.createElement( "rdf:li" ), "xap" );
+        this( metadata.xmpDocument.createElement( "rdf:li" ), "xapGImg" );
     }
     
     /**

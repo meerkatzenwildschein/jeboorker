@@ -36,7 +36,6 @@ public class RefreshEntryAction extends AbstractAction {
 		if(iterator.hasNext()) {
 			EbookPropertyItem item = iterator.next();
 			RefreshBasePathAction.refreshEbookPropertyItem(item, handler);
-			defaultDBManager.updateObject(item);
 		}
 	}
 
