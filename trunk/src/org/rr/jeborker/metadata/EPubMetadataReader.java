@@ -135,6 +135,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 
 	@Override
 	public void fillEbookPropertyItem(final List<MetadataProperty> metadataProperties, final EbookPropertyItem item) {
+		item.clearMetadata();
 		for (MetadataProperty metadataProperty : metadataProperties) {
 			final String name = metadataProperty.getName(); // The name is guaranteed to be interned.
 			final Object value = metadataProperty.getValues().get(0);

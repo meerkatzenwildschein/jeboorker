@@ -84,15 +84,7 @@ class MainControllerUtils {
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebook);
 			if(writer!=null) {
 				try {
-					final ArrayList<MetadataProperty> target = new ArrayList<MetadataProperty>();
-					for (Property property : properties) {
-						if(property instanceof EbookSheetProperty) {
-							List<MetadataProperty> metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
-							for (MetadataProperty metadataProperty : metadataProperties) {
-								target.add(metadataProperty);
-							}
-						}
-					}
+					final ArrayList<MetadataProperty> target = createMetadataProperties(properties);
 					writer.writeMetadata(target.iterator());
 					
 					//now the data was written, it's time to refresh the database entry
@@ -106,6 +98,24 @@ class MainControllerUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Unwraps the {@link MetadataProperty} from the given {@link Property} list.
+	 * @param properties The properties to be unwrapped.
+	 * @return The desired {@link MetadataProperty}
+	 */
+	static ArrayList<MetadataProperty> createMetadataProperties(final List<Property> properties) {
+		final ArrayList<MetadataProperty> target = new ArrayList<MetadataProperty>();
+		for (Property property : properties) {
+			if(property instanceof EbookSheetProperty) {
+				List<MetadataProperty> metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
+				for (MetadataProperty metadataProperty : metadataProperties) {
+					target.add(metadataProperty);
+				}
+			}
+		}
+		return target;
 	}
 
 	/**

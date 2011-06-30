@@ -2,6 +2,8 @@ package org.rr.jeborker.gui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -76,7 +78,7 @@ public class MainController {
 	}
 	
 	/**
-	 * ListSelectionListener which is invoked on changing ebook items. It saves and sets the meta data properties of
+	 * ListSelectionListener which is invoked by changing the selection in the main table. It saves and sets the metadata properties of
 	 * the {@link PropertySheet}.
 	 */
 	private class PropertySheetListSelectionListener implements ListSelectionListener {
@@ -103,7 +105,36 @@ public class MainController {
 				mainWindow.table.repaint();
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * PropertySheetChangeListener is always invoked if a values in the property sheet has changed.
+	 */
+	private class PropertySheetChangeListener implements PropertyChangeListener {
+		
+		/**
+		 * On each change in the metadata sheet the sheet properties are transfered into metadata properties
+		 * and the metadata reader refreshes the selected {@link EbookPropertyItem}. 
+		 */
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			final List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
+			for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
+				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
+				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
+				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+				int[] selectedEbookPropertyItemRows = getSelectedEbookPropertyItemRows();
+				for (int i : selectedEbookPropertyItemRows) {
+					if(mainWindow.table.isEditing()) {
+						mainWindow.table.editingStopped(null);
+					} else {
+						TableModelEvent tableModelEvent = new TableModelEvent(mainWindow.table.getModel(), i);
+						mainWindow.table.tableChanged(tableModelEvent);							
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Mouse listener which handles the right click / popup menu on the main table.
@@ -162,6 +193,7 @@ public class MainController {
 		mainWindow.table.getSelectionModel().addListSelectionListener(new PropertySheetListSelectionListener());
 		mainWindow.table.addMouseListener(new MainTablePopupMouseAdapter());
 		
+		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertySheetChangeListener());
 		mainWindow.propertySheet.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {

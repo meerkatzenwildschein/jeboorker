@@ -77,7 +77,9 @@ public class PropertyEditorRegistry implements PropertyEditorFactory {
     PropertyEditor editor = null;
     if(property != null && property.getName() != null) {
     	Class clz = (Class) propertyNameToEditor.get(property.getName().toLowerCase());
-    	editor = loadPropertyEditor(clz);
+    	if(clz != null) {
+    		editor = loadPropertyEditor(clz);
+    	}
     }
     if (editor == null && property instanceof PropertyDescriptorAdapter) {
       PropertyDescriptor descriptor = ((PropertyDescriptorAdapter) property).getDescriptor();

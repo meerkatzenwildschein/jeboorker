@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.IDBObject;
 
@@ -158,6 +160,14 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	@Override
 	public String toString() {
 		return file;
+	}
+	
+	/**
+	 * Creates an {@link IResourceHandler} for the ebook file. 
+	 * @return The desired {@link IResourceHandler}.
+	 */
+	public IResourceHandler getResourceHandler() {
+		return ResourceHandlerFactory.getResourceLoader(this.file);
 	}
 	
 	/**

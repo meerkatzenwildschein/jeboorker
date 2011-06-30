@@ -39,6 +39,9 @@ public class EbookSheetProperty extends DefaultProperty {
 		this.setEditable(metadataProperty.isEditable());
 	}
 
+	void firePropertyChanged(Object oldValue, Object newValue) {
+		firePropertyChange(oldValue, newValue);
+	}
 	
 	/**
 	 * Creates all Property elements supported by the ebook format given
