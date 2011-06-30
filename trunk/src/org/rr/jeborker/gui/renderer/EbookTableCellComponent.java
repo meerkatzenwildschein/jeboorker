@@ -63,7 +63,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	
 	private String duplicateDetection = "";
 	
-	private static VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
+	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
 	/**
 	 * A flag that tells where must be something to do with the labels.  
