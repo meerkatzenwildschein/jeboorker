@@ -123,7 +123,7 @@ public class MainController {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
 				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
 				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
-				refreshTableSelectedItem();
+				refreshTableSelectedItem(false);
 			}
 		}
 	}
@@ -208,7 +208,7 @@ public class MainController {
 	/**
 	 * Refresh the whole table.
 	 */
-	public void refreshTable() {
+	public void refreshTable(final boolean refreshMetadataSheet) {
 		final TableModel model = mainWindow.table.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			((EbookPropertyDBTableModel)model).setDirty();
@@ -219,13 +219,15 @@ public class MainController {
 		}
 			
 		mainWindow.table.tableChanged(new TableModelEvent(model));
-		refreshSheetProperties();
+		if(refreshMetadataSheet) {
+			refreshSheetProperties();
+		}
 	}
 
 	/**
 	 * Refresh the selected table row.
 	 */
-	public void refreshTableSelectedItem() {
+	public void refreshTableSelectedItem(final boolean refreshMetadataSheet) {
 		final TableModel model = mainWindow.table.getModel();
 		int[] selectedRows = getSelectedEbookPropertyItemRows() ;
 		if(selectedRows==null || selectedRows.length==0) {
@@ -238,22 +240,26 @@ public class MainController {
 				} 
 				mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));					
 			}
-//			refreshSheetProperties();
+		}
+		
+		if(refreshMetadataSheet) {
+			refreshSheetProperties();
 		}
 	}
 	
 	/**
 	 * Refresh the given table rows.
 	 * @param rows The rows to be refreshed.
+	 * @param refreshMetadataSheet TODO
+	 * @param refreshMetadataSheet do also refresh the metadata sheet. 
 	 */
-	public void refreshTableRows(int[] rows) {
+	public void refreshTableRows(final int[] rows, boolean refreshMetadataSheet) {
 		final TableModel model = mainWindow.table.getModel();
 		if(rows==null || rows.length==0) {
 			return;
 		} else {
 			int editingRow = mainWindow.table.getEditingRow();
 			int[] selectedEbookPropertyItemRows = getSelectedEbookPropertyItemRows();
-			boolean sheetPropertiesRefreshed = false;
 			for (int i = 0; i < rows.length; i++) {
 				if(editingRow != -1 && editingRow == rows[i]) {
 					mainWindow.table.editingStopped(null);
@@ -261,7 +267,7 @@ public class MainController {
 				mainWindow.table.tableChanged(new TableModelEvent(model, rows[i]));					
 				
 				for (int j = 0; j < selectedEbookPropertyItemRows.length; j++) {
-					if(!sheetPropertiesRefreshed && selectedEbookPropertyItemRows[j] == rows[i]) {
+					if(refreshMetadataSheet && selectedEbookPropertyItemRows[j] == rows[i]) {
 						refreshSheetProperties();
 					}
 				}
@@ -482,6 +488,9 @@ public class MainController {
 		return mainWindow;
 	}
 
+	/**
+	 * Rereads the metadata properties and set them to the sheet.
+	 */
 	public void refreshSheetProperties() {
 		if(mainWindow.table.getSelectedRowCount() > 1 || mainWindow.table.getSelectedRowCount() == 0) {
 			//clear on multiple selection 

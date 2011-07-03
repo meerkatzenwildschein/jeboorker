@@ -63,7 +63,7 @@ class RefreshBasePathAction extends QueueableAction {
 		} catch (Exception ex) {
 			LoggerFactory.log(Level.WARNING, this, "Path " + path, ex);
 		} finally {
-			controller.refreshTable();
+			controller.refreshTable(true);
 			controller.getProgressMonitor().monitorProgressStop(messageFinished);
 		}
 	}

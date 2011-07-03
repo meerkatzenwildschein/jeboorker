@@ -30,7 +30,7 @@ public class SortOrderComponentController {
 			public void actionPerformed(ActionEvent e) {
 				descButton.setSelected(false);
 				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
-				MainController.getController().refreshTable();
+				MainController.getController().refreshTable(true);
 			}
 		});
 		
@@ -43,7 +43,7 @@ public class SortOrderComponentController {
 			public void actionPerformed(ActionEvent e) {
 				ascButton.setSelected(false);
 				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_DESC));
-				MainController.getController().refreshTable();
+				MainController.getController().refreshTable(true);
 			}
 		});	
 		

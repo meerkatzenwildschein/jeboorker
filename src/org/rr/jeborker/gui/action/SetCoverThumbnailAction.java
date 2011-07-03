@@ -56,7 +56,7 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction {
 						writer.setCover(selectedFileResourceHandler.getContent());
 						RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
 										
-						MainController.getController().refreshTableRows(getSelectedRowsToRefresh());
+						MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
 						MainController.getController().setImageViewerResource(selectedFileResourceHandler);
 					}
 				}

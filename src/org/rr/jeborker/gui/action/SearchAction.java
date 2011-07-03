@@ -45,7 +45,7 @@ public class SearchAction extends AbstractAction {
 				}
 			}
 			controller.getTableModel().setQueryConditions(rootCondition);
-			controller.refreshTable();
+			controller.refreshTable(true);
 		} finally {
 			monitorStop(filterText);
 		}
