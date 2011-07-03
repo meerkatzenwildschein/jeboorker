@@ -61,8 +61,6 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	
 	private Dimension thumbnailDimension;
 	
-	private String duplicateDetection = "";
-	
 	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
 	/**
@@ -144,12 +142,8 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	public Component getTableCellComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, final int column) {
 		//can happens that one row is rendered several times. Test here if the same row has already been rendered. 
 		//no need to do it twice.
-		final String duplicateDetection = String.valueOf(value) + isSelected + row;
-		if(this.duplicateDetection.equals(duplicateDetection)) {
-			return this;
-		}
-		
 		final EbookPropertyItem item = (EbookPropertyItem) value;
+		
 		switch(column) {
 			case 0:
 				imageLabel.setIcon(this.getImageIconCover(table, item));
@@ -188,7 +182,6 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 				break;	
 		}
 		
-		this.duplicateDetection = duplicateDetection;
 		return this;
 	}
 	
@@ -213,8 +206,9 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 * @return The thumbnail image to be displayed in the renderer.
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
+		final String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
+		
 		if(item!=null && item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
-			String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
 			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
 				return thumbnailCache.get(coverThumbnailCRC32);
 			}
