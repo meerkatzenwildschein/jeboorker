@@ -170,7 +170,7 @@ class MainMenuView extends JMenuBar {
 			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
 			openFolderMenuEntry.setEnabled(false);
 			
-			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
 			openFileMenuEntry.setEnabled(false);			
 		}
 		fileMenuBar.add(openFileMenuEntry);
