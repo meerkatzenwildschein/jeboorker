@@ -307,7 +307,7 @@ public class MainController {
 	}	
 	
 	/**
-	 * Get the currently selected metadata property.
+	 * Get the currently selected metadata property from the metadata sheet.
 	 * @return The desired {@link Property} instance or <code>null</code> if no selection is made.
 	 */
 	public Property getSelectedMetadataProperty() {

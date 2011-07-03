@@ -18,7 +18,12 @@ public class EditPlainMetadataAction extends RefreshAbstractAction {
 	
 	EditPlainMetadataAction(final IResourceHandler handler) {
 		this.resourceHandler = handler;
-		putValue(Action.NAME, Bundle.getString("EditPlainMetadataAction.name"));
+		String additionalName = "";
+		if(handler.getMimeType().equals("application/pdf")) {
+			additionalName = "XMP";
+		}
+		
+		putValue(Action.NAME, Bundle.getFormattedString("EditPlainMetadataAction.name", additionalName));
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("edit_16.gif")));
 	}
 
