@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui.model;
 
-import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import com.l2fprod.common.propertysheet.Property;
@@ -67,5 +66,4 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 		return null;
 	}
-	
 }

@@ -157,6 +157,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 				
 				//star rating
 				final float starRatingValue = this.getStarRatingValue(item);
+			
 				if(starRatingValue < 0) {
 					this.starRater.setRating(0);
 				} else {

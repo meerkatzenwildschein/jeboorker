@@ -235,11 +235,10 @@ public class MainController {
 			for (int i = 0; i < selectedRows.length; i++) {
 				if(editingRow != -1 && editingRow == selectedRows[i]) {
 					mainWindow.table.editingStopped(null);
-				} else {
-					mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));					
-				}
+				} 
+				mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));					
 			}
-			refreshSheetProperties();
+//			refreshSheetProperties();
 		}
 	}
 	
