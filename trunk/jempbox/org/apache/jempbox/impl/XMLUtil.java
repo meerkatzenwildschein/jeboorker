@@ -166,7 +166,6 @@ public class XMLUtil
         {
         	children = parent.getElementsByTagName( "*" );
         	for(int i=0; i<children.getLength(); i++) {
-        		System.out.println(((Element)children.item(i)).getTagName());
         		if(((Element)children.item(i)).getTagName().equals(elementName)) {
         			return (Element)children.item(i);
         		}
