@@ -88,7 +88,7 @@ public class SortColumnComponentController {
 				final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
 				tableModel.getOrderByColumns().clear();
 				tableModel.getOrderByColumns().addAll(internalCheckList);
-				MainController.getController().refreshTable();
+				MainController.getController().refreshTable(true);
 			}
 		});
 	}
