@@ -265,12 +265,12 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		try {
 			final byte[] pdfData = ebookResource.getContent();
 			final PdfReader pdfReader = new PdfReader(pdfData);
-			if(new String(plainMetadata, 0, 9).startsWith("<?xpacket")) {
+			if(plainMetadata.length > 9 && new String(plainMetadata, 0, 9).startsWith("<?xpacket")) {
 				//XMP 
 				writeMetadata(pdfReader, plainMetadata, pdfReader.getInfo());
 			} else {
 				//PDF Property
-				throw new UnsupportedOperationException("Could not store properties");
+				throw new UnsupportedOperationException("Could not write plain metadata");
 			}
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Could not write metadata to " + ebookResource, e);

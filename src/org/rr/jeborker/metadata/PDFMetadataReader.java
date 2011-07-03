@@ -201,9 +201,9 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		byte[] tumbnailData = null;
 		try {
 			byte[] fetchThumbnail = fetchXMPThumbnail(pdfReader, ebookResource);
-			if(fetchThumbnail!=null) {
+			if(pdfReader!=null && fetchThumbnail!=null) {
 				return fetchThumbnail;
-			} else {
+			} else if(pdfReader != null) {
 				return fetchCoverFromPDFContent(pdfReader);
 			}
 		} catch (Exception e) {
