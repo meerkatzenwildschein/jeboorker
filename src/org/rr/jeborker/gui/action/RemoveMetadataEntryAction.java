@@ -12,7 +12,7 @@ import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.MainController;
 
 /**
- * Action which removes the currently selected metadata entry.
+ * Action which removes the currently selected metadata entry in the metadata sheet.
  */
 public class RemoveMetadataEntryAction extends AbstractAction {
 
