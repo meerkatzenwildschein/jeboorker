@@ -74,7 +74,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 	/**
 	 * Returns the Date formated with the locale and formatString set.
 	 * 
-	 * @return the choosen Date as String
+	 * @return the chosen Date as String
 	 */
 	public String getAsText() {
 		Date date = (Date) getValue();

@@ -7,9 +7,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.Icon;
-import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.rr.commons.utils.DateConversionUtils;
@@ -17,7 +15,7 @@ import org.rr.commons.utils.DateConversionUtils;
 import com.l2fprod.common.model.DefaultObjectRenderer;
 import com.l2fprod.common.model.ObjectRenderer;
 
-public class DatePropertyCellRenderer extends DefaultTableCellRenderer implements  ListCellRenderer {
+public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -56,28 +54,10 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer implement
         }
     }
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        setBorder(null);
-
-        if (isSelected) {
-        	setOpaque(true);
-            setBackground(list.getSelectionBackground());
-            setForeground(list.getSelectionForeground());
-        } else {
-        	setOpaque(false);
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
-        }
-
-        setValue(value);
-
-        return this ;
-    }
-
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setValue(value);
-
+        RendererUtils.setColor(this, isSelected);
         return this;
     }
 
