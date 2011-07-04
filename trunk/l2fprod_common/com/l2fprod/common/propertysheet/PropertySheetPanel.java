@@ -17,6 +17,7 @@
  */
 package com.l2fprod.common.propertysheet;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -160,7 +161,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		// prepare the new table
 		table.getSelectionModel().addListSelectionListener(selectionListener);
 		tableScroll.getViewport().setView(table);
-
+		
 		// use the new table as our table
 		this.table = table;
 	}
@@ -318,42 +319,12 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		return table.getEditorFactory();
 	}
 
-	/**
-	 * @deprecated use {@link #setEditorFactory(PropertyEditorFactory)}
-	 * @param registry
-	 */
-	public void setEditorRegistry(PropertyEditorRegistry registry) {
-		table.setEditorFactory(registry);
-	}
-
-	/**
-	 * @deprecated use {@link #getEditorFactory()}
-	 */
-	public PropertyEditorRegistry getEditorRegistry() {
-		return (PropertyEditorRegistry) table.getEditorFactory();
-	}
-
 	public void setRendererFactory(PropertyRendererFactory factory) {
 		table.setRendererFactory(factory);
 	}
 
 	public PropertyRendererFactory getRendererFactory() {
 		return table.getRendererFactory();
-	}
-
-	/**
-	 * @deprecated use {@link #setRendererFactory(PropertyRendererFactory)}
-	 * @param registry
-	 */
-	public void setRendererRegistry(PropertyRendererRegistry registry) {
-		table.setRendererRegistry(registry);
-	}
-
-	/**
-	 * @deprecated use {@link #getRendererFactory()}
-	 */
-	public PropertyRendererRegistry getRendererRegistry() {
-		return table.getRendererRegistry();
 	}
 
 	/**

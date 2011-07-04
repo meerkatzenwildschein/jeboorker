@@ -17,9 +17,6 @@
  */
 package com.l2fprod.common.propertysheet;
 
-import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
-import com.l2fprod.common.swing.HeaderlessColumnResizer;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -30,7 +27,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyEditor;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.CellEditor;
@@ -46,6 +42,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+
+import sun.swing.DefaultLookup;
+
+import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
+import com.l2fprod.common.swing.HeaderlessColumnResizer;
 
 /**
  * A table which allows the editing of Properties through
@@ -315,23 +316,6 @@ public class PropertySheetTable extends JTable {
     return rendererFactory;
   }
 
-  /**
-   * @deprecated use {@link #setRendererFactory(PropertyRendererFactory)}
-   * @param registry
-   */
-  public void setRendererRegistry(PropertyRendererRegistry registry) {
-    setRendererFactory(registry);
-  }
-
-  /**
-   * @deprecated use {@link #getRendererFactory()}
-   * @throws ClassCastException if the current renderer factory is not a
-   *           PropertyRendererRegistry
-   */
-  public PropertyRendererRegistry getRendererRegistry() {
-    return (PropertyRendererRegistry) getRendererFactory();
-  }
-
   /* (non-Javadoc)
    * @see javax.swing.JTable#isCellEditable(int, int)
    */
@@ -385,6 +369,7 @@ public class PropertySheetTable extends JTable {
         TableCellRenderer renderer = getRendererFactory().createTableCellRenderer(property);
         if (renderer == null)
           renderer = getCellRenderer(property.getType());
+        
         return renderer;
       }
       default:
@@ -407,8 +392,9 @@ public class PropertySheetTable extends JTable {
       renderer = getCellRenderer(type.getSuperclass());
 
     // if that fails, just use the default Object renderer
-    if (renderer == null)
+    if (renderer == null) {
       renderer = super.getDefaultRenderer(Object.class);
+    }
 
     return renderer;
   }

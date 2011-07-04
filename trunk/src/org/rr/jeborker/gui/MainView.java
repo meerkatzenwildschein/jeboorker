@@ -24,7 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.japura.gui.CheckComboBox;
@@ -38,6 +37,7 @@ import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
+import org.rr.jeborker.gui.renderer.DefaultPropertyRenderer;
 import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
@@ -219,7 +219,6 @@ public class MainView extends JFrame{
 				sheetPanel.setLayout(gbl_panel);
 				
 				propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
-//				propertySheet.getTable().setModel(new PropertySheetTableModel());
 				propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
 				propertySheet.setDescriptionVisible(true);
 				propertySheet.setShowCategoryButton(false);
@@ -230,6 +229,8 @@ public class MainView extends JFrame{
 				
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
 				propertySheet.addToolbarComponent(removeMetadataButton);
+				
+				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class)null, DefaultPropertyRenderer.class);
 				
 				DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());

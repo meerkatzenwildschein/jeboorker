@@ -17,12 +17,12 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 	private final Color selectedFgColor;	
 	
 	public EbookTableCellRenderer() {
-		final Color color = UIManager.getColor("TextField.selectionBackground");
+		final Color color = UIManager.getColor("Table.selectionBackground");
 		final int brighter = 20;
 		selectedBgColor = new Color(color.getRed() + brighter, color.getGreen() + brighter, color.getBlue() + brighter);		
 		
 //		selectedBgColor = UIManager.getColor("TextField.selectionBackground");	
-		selectedFgColor = UIManager.getColor("TextField.selectionForeground");
+		selectedFgColor = UIManager.getColor("Table.selectionForeground");
 	}
 
 	@Override
@@ -31,9 +31,9 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 		if(isSelected) {
 			this.setBackground(selectedBgColor);	
 			this.setForeground(selectedFgColor);
-		} else {
-			this.setBackground(Color.WHITE);
-			this.setForeground(Color.BLACK);
+		} else {		
+			this.setBackground(UIManager.getColor("Table.background"));
+			this.setForeground(UIManager.getColor("Table.foreground"));			
 		}
 		
 		return tableCellComponent;

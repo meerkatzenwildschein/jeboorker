@@ -12,7 +12,7 @@ import org.rr.common.swing.StarRater;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 
-public class StarRatingPropertyRenderer extends DefaultTableCellRenderer implements  ListCellRenderer {
+public class StarRatingPropertyRenderer extends DefaultTableCellRenderer implements ListCellRenderer {
 	
 	private static final long serialVersionUID = -9177633701463286482L;
 	
@@ -44,9 +44,8 @@ public class StarRatingPropertyRenderer extends DefaultTableCellRenderer impleme
 	}	
 	
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setValue(value);
-
+        RendererUtils.setColor(this, isSelected);
         return renderer;
     }	
 

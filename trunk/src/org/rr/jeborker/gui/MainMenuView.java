@@ -10,6 +10,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -126,7 +128,7 @@ class MainMenuView extends JMenuBar {
 	/**
 	 * Creates all menu entries for the file menu. This method is always invoked
 	 * if the file menu is opened.
-	 * @param items Selected items.
+	 * @param items Currently selected items.
 	 * @return The menu entries for the file menu.
 	 */
 	private List<Component> createDynamicFileMenu(List<EbookPropertyItem> selectedEbookPropertyItems) {
@@ -175,6 +177,10 @@ class MainMenuView extends JMenuBar {
 		}
 		fileMenuBar.add(openFileMenuEntry);
 		fileMenuBar.add(openFolderMenuEntry);
+		
+		fileMenuBar.add(new JSeparator());
+		
+		fileMenuBar.add(createLookAndFeelMenu());
 
 		//quit menu entry
 		JMenuItem mntmQuit = new JMenuItem();
@@ -182,5 +188,14 @@ class MainMenuView extends JMenuBar {
 		fileMenuBar.add(mntmQuit);
 		
 		return fileMenuBar;
+	}
+	
+	private JMenu createLookAndFeelMenu() {
+		JMenu menu = new JMenu(Bundle.getString("EborkerMainMenuView.lookAndFeelMainMenuName"));
+		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			JMenuItem jMenuItem = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SET_LOOK_AND_FEEL_ACTION, info.getName()));
+			menu.add(jMenuItem);
+		}
+		return menu;
 	}
 }

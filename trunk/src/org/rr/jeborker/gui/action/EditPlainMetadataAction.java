@@ -19,7 +19,7 @@ public class EditPlainMetadataAction extends RefreshAbstractAction {
 	EditPlainMetadataAction(final IResourceHandler handler) {
 		this.resourceHandler = handler;
 		String additionalName = "";
-		if(handler.getMimeType().equals("application/pdf")) {
+		if(handler != null && handler.getMimeType().equals("application/pdf")) {
 			additionalName = "XMP";
 		}
 		
