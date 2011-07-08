@@ -1,10 +1,14 @@
 package org.rr.common.swing;
 
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Window;
 import java.util.ArrayList;
+
+import javax.swing.JList;
+import javax.swing.UIManager;
 
 public class SwingUtils {
 	/**
@@ -105,6 +109,30 @@ public class SwingUtils {
 			}
 		}
 		return recursive;
+	}
+
+	/**
+	 * Get the background color for the current UI.
+	 * @return The desired background color.
+	 */
+	public static Color getHighlightBackgroundColor() {
+		Color color = UIManager.getColor("Table.selectionBackground");
+		if(color == null) {
+			color = new JList().getSelectionBackground(); 
+		}
+		return color;
+	}
+	
+	/**
+	 * Get the foreground color for the current UI.
+	 * @return The desired foreground color.
+	 */
+	public static Color getHighlightForegroundColor() {
+		Color color = UIManager.getColor("Table.selectionForeground");
+		if(color == null) {
+			color = new JList().getSelectionForeground();
+		}
+		return color;
 	}	
 	
 }
