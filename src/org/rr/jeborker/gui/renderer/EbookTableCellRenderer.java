@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
 
-import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
