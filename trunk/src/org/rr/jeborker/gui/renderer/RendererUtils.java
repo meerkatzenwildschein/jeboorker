@@ -5,6 +5,8 @@ import java.awt.Component;
 
 import javax.swing.UIManager;
 
+import org.rr.common.swing.SwingUtils;
+
 class RendererUtils {
 	private static final Color selectedBgColor;
 	
@@ -15,8 +17,8 @@ class RendererUtils {
 	private static final Color fgColor;
 	
 	static {
-		selectedBgColor = UIManager.getColor("Table.selectionBackground");	
-		selectedFgColor = UIManager.getColor("Table.selectionForeground");
+		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
+		selectedFgColor = SwingUtils.getSelectionForegroundColor();
 		
 		bgColor = UIManager.getColor("Table.background");
 		fgColor = UIManager.getColor("Table.foreground");				

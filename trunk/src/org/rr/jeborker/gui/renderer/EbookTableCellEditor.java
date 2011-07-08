@@ -25,11 +25,11 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 	
 	public EbookTableCellEditor() {
 		super();
-		selectedFgColor = SwingUtils.getHighlightForegroundColor();
+		selectedFgColor = SwingUtils.getSelectionForegroundColor();
 		
 		//workaround for a swing bug. The first time, the editor is used, the 
 		//ui color instance draws the wrong color but have the right rgb values.
-		Color color = SwingUtils.getHighlightBackgroundColor();
+		Color color = SwingUtils.getSelectionBackgroundColor();
 		selectedBgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
 	}
 	

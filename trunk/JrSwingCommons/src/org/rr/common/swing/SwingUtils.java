@@ -115,7 +115,7 @@ public class SwingUtils {
 	 * Get the background color for the current UI.
 	 * @return The desired background color.
 	 */
-	public static Color getHighlightBackgroundColor() {
+	public static Color getSelectionBackgroundColor() {
 		Color color = UIManager.getColor("Table.selectionBackground");
 		if(color == null) {
 			color = new JList().getSelectionBackground(); 
@@ -127,7 +127,7 @@ public class SwingUtils {
 	 * Get the foreground color for the current UI.
 	 * @return The desired foreground color.
 	 */
-	public static Color getHighlightForegroundColor() {
+	public static Color getSelectionForegroundColor() {
 		Color color = UIManager.getColor("Table.selectionForeground");
 		if(color == null) {
 			color = new JList().getSelectionForeground();
