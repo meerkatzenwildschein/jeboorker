@@ -1,43 +1,87 @@
 package org.rr.jeborker.gui.renderer;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.beans.PropertyEditor;
 import java.util.logging.Level;
+
+import javax.swing.JPanel;
 
 import org.rr.common.swing.StarRater;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 
-import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
+public class StarRatingPropertyEditor extends JPanel implements PropertyEditor {
+	
+	private static final long serialVersionUID = 8069880556160736365L;
 
-public class StarRatingPropertyEditor extends AbstractPropertyEditor {
-	
+	private StarRater starRater;
+
 	public StarRatingPropertyEditor() {
-		editor = new StarRater();
+		starRater = new StarRater();
+		this.setLayout(new BorderLayout());
+		this.add(starRater, BorderLayout.CENTER);
+		RendererUtils.setColor(this, true);
 	}
-	
+
 	public Component getCustomEditor() {
-		return editor;
+		return this;
 	}
-	
+
 	public void setValue(Object value) {
 		Number number = CommonUtils.toNumber(value);
-		if(number !=null) {
+		if (number != null) {
 			float rating = number.floatValue() / 2f;
-			((StarRater)editor).setRating(rating);
+			starRater.setRating(rating);
 		} else {
-			LoggerFactory.log(Level.WARNING, this, "could not parse the entered value \""+String.valueOf(value)+"\"as Number.");			
+			LoggerFactory.log(Level.WARNING, this, "could not parse the entered value \"" + String.valueOf(value) + "\"as Number.");
 		}
 	}
-	
+
 	/**
 	 * Returns the rating as string
 	 * 
 	 * @return the rating value. This value is an integer between 1 and 10.
 	 */
 	public Object getValue() {
-		float rating = ((StarRater)editor).getSelection();
+		float rating = starRater.getSelection();
 		Float valueOf = Float.valueOf(rating * 2f);
 		return String.valueOf(valueOf.intValue());
-	}	
+	}
+
+	@Override
+	public boolean isPaintable() {
+		return false;
+	}
+
+	@Override
+	public void paintValue(Graphics gfx, Rectangle box) {
+	}
+
+	@Override
+	public String getJavaInitializationString() {
+		return null;
+	}
+
+	@Override
+	public String getAsText() {
+		return null;
+	}
+
+	@Override
+	public void setAsText(String text) throws IllegalArgumentException {
+	}
+
+	@Override
+	public String[] getTags() {
+		return null;
+	}
+
+	@Override
+	public boolean supportsCustomEditor() {
+		return false;
+	}
 
 }

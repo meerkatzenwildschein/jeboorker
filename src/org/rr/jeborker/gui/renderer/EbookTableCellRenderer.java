@@ -19,12 +19,12 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 	private final Color selectedFgColor;	
 	
 	public EbookTableCellRenderer() {
-		final Color color = SwingUtils.getHighlightBackgroundColor();
+		final Color color = SwingUtils.getSelectionBackgroundColor();
 		final int brighter = 20;
 		selectedBgColor = new Color(color.getRed() + brighter, color.getGreen() + brighter, color.getBlue() + brighter);		
 		
 //		selectedBgColor = UIManager.getColor("TextField.selectionBackground");	
-		selectedFgColor = SwingUtils.getHighlightForegroundColor();
+		selectedFgColor = SwingUtils.getSelectionForegroundColor();
 	}
 
 	@Override
