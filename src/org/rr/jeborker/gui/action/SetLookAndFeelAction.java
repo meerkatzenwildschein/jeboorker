@@ -6,9 +6,10 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.rr.commons.utils.CommonUtils;
 
@@ -28,21 +29,23 @@ public class SetLookAndFeelAction extends AbstractAction {
 		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 			if(CommonUtils.compareTo(lookAndFeelName, info.getName()) == 0) {
 				try {
-					UIManager.setLookAndFeel(info.getClassName());
-					
-					Window[] windows = Window.getWindows();
-					for (Window window : windows) {
-						for(int i=0; i < window.getComponentCount(); i++) {
-							Component component = window.getComponent(i);
-							if(component instanceof JComponent) {
-								((JComponent)component).updateUI();
-							}
-						}
-					}
+					setLookAndFeel(info);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 				break;
+			}
+		}
+	}
+
+	private static void setLookAndFeel(LookAndFeelInfo info) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+		UIManager.setLookAndFeel(info.getClassName());
+		
+		Window[] windows = Window.getWindows();
+		for (Window window : windows) {
+			for(int i=0; i < window.getComponentCount(); i++) {
+				Component component = window.getComponent(i);
+				SwingUtilities.updateComponentTreeUI(component);
 			}
 		}
 	}
