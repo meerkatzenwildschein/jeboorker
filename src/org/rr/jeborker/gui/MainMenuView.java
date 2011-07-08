@@ -147,6 +147,9 @@ class MainMenuView extends JMenuBar {
 			mnVerzeichnisEntfernen.add(pathItem);
 		}
 		fileMenuBar.add(mnVerzeichnisEntfernen);
+		if(basePath.isEmpty()) {
+			mnVerzeichnisEntfernen.setEnabled(false);
+		}		
 
 		mnVerzeichnisRefresh = new JMenu(Bundle.getString("EborkerMainView.refreshBasePath"));
 		for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
@@ -155,7 +158,10 @@ class MainMenuView extends JMenuBar {
 			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
 			mnVerzeichnisRefresh.add(pathItem);
 		}
-		fileMenuBar.add(mnVerzeichnisRefresh);		
+		fileMenuBar.add(mnVerzeichnisRefresh);
+		if(basePath.isEmpty()) {
+			mnVerzeichnisRefresh.setEnabled(false);
+		}
 		
 		fileMenuBar.add(new JSeparator());
 		
