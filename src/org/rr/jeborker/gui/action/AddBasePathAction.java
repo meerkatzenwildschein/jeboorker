@@ -60,8 +60,6 @@ class AddBasePathAction extends QueueableAction {
 			controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 			String messageFinished = Bundle.getString("AddBasePathAction.finished");
 			try {
-
-				
 				//only attach the new path if it is not a part of an already configured path.
 				if(!isAlreadyExistingBasePath(JeboorkerPreferences.getBasePath(), path)) {
 					JeboorkerPreferences.addBasePath(path); //add path to preferences
@@ -73,6 +71,7 @@ class AddBasePathAction extends QueueableAction {
 			} finally {
 				controller.getProgressMonitor().monitorProgressStop(messageFinished);
 			}
+			controller.refreshTable(false);
 		}
 	}
 	
@@ -94,8 +93,6 @@ class AddBasePathAction extends QueueableAction {
 		}
 		return false;
 	}
-
-
 	
 	/**
 	 * Read all ebook files recursive and stores them directly to the database.

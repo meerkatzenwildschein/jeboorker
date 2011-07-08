@@ -5,11 +5,10 @@ import java.io.File;
 import java.util.Iterator;
 
 import javax.swing.Action;
-import javax.swing.DefaultButtonModel;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -40,19 +39,22 @@ public class RemoveBasePathAction extends QueueableAction {
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		final Iterable<EbookPropertyItem> items = defaultDBManager.getItems(EbookPropertyItem.class);
 		
-		progressMonitor.monitorProgressStart(Bundle.getString("RemoveBasePathAction.message"));
 		try {
+			progressMonitor.monitorProgressStart(Bundle.getString("RemoveBasePathAction.message"));
 			for (Iterator<EbookPropertyItem> iterator = items.iterator(); iterator.hasNext();) {
 				final EbookPropertyItem item =  iterator.next();
-				if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(StringUtils.replace(path, File.separator, ""))) {
-					removeEbookPropertyItem(item);
+				try {
+					if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(StringUtils.replace(path, File.separator, ""))) {
+						removeEbookPropertyItem(item);
+					}
+				} catch(Exception ex) {
+					LoggerFactory.logWarning(this, "Error while removing ebooks from catalog", ex);
 				}
 			}
-		} catch(Exception ex) {
-			LoggerFactory.logWarning(this, "Error while removing ebooks from catalog", ex);
 		} finally {
-			progressMonitor.monitorProgressStop();
+			progressMonitor.monitorProgressStop();	
 		}
+		
 		JeboorkerPreferences.removeBasePath(path);
 		MainMenuController.getController().removeBasePathMenuEntry(path);
 	}
