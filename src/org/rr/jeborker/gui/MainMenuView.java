@@ -186,8 +186,6 @@ class MainMenuView extends JMenuBar {
 		
 		fileMenuBar.add(new JSeparator());
 		
-		fileMenuBar.add(createLookAndFeelMenu());
-
 		//quit menu entry
 		JMenuItem mntmQuit = new JMenuItem();
 		mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
@@ -195,13 +193,5 @@ class MainMenuView extends JMenuBar {
 		
 		return fileMenuBar;
 	}
-	
-	private JMenu createLookAndFeelMenu() {
-		JMenu menu = new JMenu(Bundle.getString("EborkerMainMenuView.lookAndFeelMainMenuName"));
-		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-			JMenuItem jMenuItem = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SET_LOOK_AND_FEEL_ACTION, info.getName()));
-			menu.add(jMenuItem);
-		}
-		return menu;
-	}
+
 }
