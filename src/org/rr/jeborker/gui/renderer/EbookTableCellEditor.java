@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.EventObject;
 
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
