@@ -12,6 +12,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.rr.commons.utils.CommonUtils;
+import org.rr.jeborker.JeboorkerPreferences;
 
 public class SetLookAndFeelAction extends AbstractAction {
 
@@ -26,16 +27,30 @@ public class SetLookAndFeelAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		setLookAndFeel(this.lookAndFeelName);
+	}
+
+	public static void setLookAndFeel(String lookAndFeelName) {
 		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 			if(CommonUtils.compareTo(lookAndFeelName, info.getName()) == 0) {
 				try {
 					setLookAndFeel(info);
+					JeboorkerPreferences.addEntryString(SetLookAndFeelAction.class.getName(), lookAndFeelName);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 				break;
 			}
 		}
+	}
+	
+	public static boolean restoreLookAndFeel() {
+		String lookAndFeelName = JeboorkerPreferences.getEntryString(SetLookAndFeelAction.class.getName());
+		if(lookAndFeelName != null && lookAndFeelName.length() > 0) {
+			setLookAndFeel(lookAndFeelName);
+			return true;
+		}
+		return false;
 	}
 
 	private static void setLookAndFeel(LookAndFeelInfo info) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {

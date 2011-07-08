@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
 
+import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
+
+import org.rr.common.swing.SwingUtils;
 
 public class EbookTableCellRenderer extends EbookTableCellComponent implements TableCellRenderer, Serializable  {
 
@@ -17,12 +20,12 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 	private final Color selectedFgColor;	
 	
 	public EbookTableCellRenderer() {
-		final Color color = UIManager.getColor("Table.selectionBackground");
+		final Color color = SwingUtils.getHighlightBackgroundColor();
 		final int brighter = 20;
 		selectedBgColor = new Color(color.getRed() + brighter, color.getGreen() + brighter, color.getBlue() + brighter);		
 		
 //		selectedBgColor = UIManager.getColor("TextField.selectionBackground");	
-		selectedFgColor = UIManager.getColor("Table.selectionForeground");
+		selectedFgColor = SwingUtils.getHighlightForegroundColor();
 	}
 
 	@Override

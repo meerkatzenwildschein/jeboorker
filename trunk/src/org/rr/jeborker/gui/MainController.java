@@ -31,6 +31,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.action.AddMetadataAction;
+import org.rr.jeborker.gui.action.SetLookAndFeelAction;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -155,7 +156,10 @@ public class MainController {
 	public static MainController getController() {
 		if(controller==null) {
 			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				boolean restoreLookAndFeel = SetLookAndFeelAction.restoreLookAndFeel();
+				if(!restoreLookAndFeel) {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				}
 			} catch (Exception e) {
 				LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 			}
