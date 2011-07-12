@@ -587,7 +587,9 @@ public class ReflectionUtils implements Serializable {
 				continue;
 			} 
 			//null matches to aything else (excepting the primitives)
-			else if (sourceValues[j]==null && !(targetParameterTypes[j].equals(char.class) || targetParameterTypes[j].equals(int.class) || targetParameterTypes[j].equals(double.class) || targetParameterTypes[j].equals(float.class) || targetParameterTypes[j].equals(long.class) || targetParameterTypes[j].equals(short.class) || targetParameterTypes[j].equals(boolean.class))) {
+			else if (sourceValues[j]==null && 
+					(targetParameterTypes[j].equals(char.class) || targetParameterTypes[j].equals(int.class) || targetParameterTypes[j].equals(double.class) || targetParameterTypes[j].equals(float.class) || targetParameterTypes[j].equals(long.class) || targetParameterTypes[j].equals(short.class) || targetParameterTypes[j].equals(boolean.class)) == false
+					) {
 				result[j] = sourceValues[j]; 
 				found++;
 				continue;
