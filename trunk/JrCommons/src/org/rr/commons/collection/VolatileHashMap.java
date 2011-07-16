@@ -651,11 +651,12 @@ public class VolatileHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, 
 			return oldValue;
 		}
 
-		@SuppressWarnings("unchecked")
 		public boolean equals(Object o) {
 			if (!(o instanceof Map.Entry)) {
 				return false;
 			}
+			
+			@SuppressWarnings("rawtypes")
 			Map.Entry e = (Map.Entry) o;
 			Object k1 = getKey();
 			Object k2 = e.getKey();
