@@ -78,4 +78,8 @@ public class QueryCondition {
 	public void setOrChildren(List<QueryCondition> orChildren) {
 		this.orChildren = orChildren;
 	}	
+	
+	public boolean isEmpty() {
+		return this.fieldName == null || this.fieldName.length() == 0;
+	}
 }

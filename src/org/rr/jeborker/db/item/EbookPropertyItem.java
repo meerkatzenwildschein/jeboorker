@@ -8,15 +8,23 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.CRC32;
 
+import javax.persistence.Id;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.IDBObject;
 
+import com.orientechnologies.orient.core.id.ORecordId;
+
 public class EbookPropertyItem implements IDBObject, Serializable {
 	
 	private static final long serialVersionUID = -4301328577306625467L;
+	  
+	@Id
+	private Object id; // DON'T CREATE GETTER/SETTER FOR IT TO PREVENT THE CHANGING BY THE USER APPLICATION, 
+	                  // UNLESS IT'S NEEDED	
 	
 	@DBViewField(name = "Created at", orderPriority = 0)
 	@ProtectedField
@@ -163,6 +171,10 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		return file;
 	}
 	
+	public ORecordId getIdentity() {
+		return (ORecordId) this.id;
+	}
+	
 	/**
 	 * Creates an {@link IResourceHandler} for the ebook file. This is just 
 	 * a convenience method for getting a IResourceHandler for this {@link EbookPropertyItem} instance.
@@ -263,6 +275,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+		System.out.println("title:" + title);
 	}
 
 	public String getAuthor() {

@@ -11,6 +11,7 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
+import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.object.ODatabaseObjectTx;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNativeSchema;
@@ -135,12 +136,16 @@ public class DefaultDBManager {
 
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
-	System.out.println(sql.toString());	
+		
 		try {
-			List<T> result = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
-			
-			return result;
+			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
+			return listResult;
 		} catch(NullPointerException e) {
+			return Collections.emptyList();
+		} catch(OException e) {
+			if(e.getMessage().indexOf("Error on parsing query")== -1 && e.getMessage().indexOf("Query: EbookPropertyItem")== -1) {
+				LoggerFactory.logWarning(this, "Reading database entries has failed", e);
+			}
 			return Collections.emptyList();
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Reading database entries has failed", e);
