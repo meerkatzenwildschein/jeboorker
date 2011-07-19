@@ -1,8 +1,13 @@
 package org.rr.jeborker.db;
 
+import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.id.ORecordId;
+
 /**
- * All class instances which should be written to the database should implements this interface.
+ * All pojos should implements this interface.
  */
 public interface IDBObject {
 
+	public ORID getIdentity();
+	
 }

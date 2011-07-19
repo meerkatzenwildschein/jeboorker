@@ -54,7 +54,7 @@ public class JeboorkerUtils {
 	 */
 	public static String getConfigDirectory() {
 		String result = System.getProperties().getProperty("user.home");
-		result += "/.jeborker/";
+		result += "/.jeboorker/";
 		
 		return result;
 	}

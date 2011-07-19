@@ -15,7 +15,7 @@ import org.rr.commons.utils.CommonUtils;
 
 public class JeboorkerPreferences {
 	
-	private static final Preferences appNode = Preferences.userRoot().node("jeborker");
+	private static final Preferences appNode = Preferences.userRoot().node("jeboorker");
 
 	public static void addBasePath(final String path) {
 		String basePath = appNode.get("basePath", "");
