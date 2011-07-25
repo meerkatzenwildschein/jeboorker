@@ -173,6 +173,13 @@ public class IteratorList<E> implements List<E> {
 			} catch (ReflectionFailureException e) {
 				LoggerFactory.logInfo(this, "could not fetch size via reflection", e);
 			}
+		} else if(ReflectionUtils.getMethod(iterator.getClass(), "size", null, ReflectionUtils.VISIBILITY_VISIBLE_ALL) != null) {
+			try {
+				Number size = (Number) ReflectionUtils.invokeMethod(iterator, "size", null);
+				return size.intValue();
+			} catch (ReflectionFailureException e) {
+				LoggerFactory.logInfo(this, "could not fetch size via reflection", e);
+			}
 		}
 		this.copyIterator();
 		return list.size();
