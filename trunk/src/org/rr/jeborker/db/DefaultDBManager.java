@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
@@ -75,9 +76,10 @@ public class DefaultDBManager {
 		final String dbName = getDBName();
 		final String configPath = JeboorkerUtils.getConfigDirectory();
 		final String dbFile = configPath + dbName;
+		final IResourceHandler dbResourceHandler = ResourceHandlerFactory.getResourceLoader(dbFile);
 		
 		// OPEN / CREATE THE DATABASE
-		if(!ResourceHandlerFactory.getResourceLoader(dbFile).exists()) {
+		if(!dbResourceHandler.exists()) {
 			db = new ODatabaseObjectTx ("local:" + dbFile).create();
 		} else {
 			db = new ODatabaseObjectTx ("local:" + dbFile).open("admin", "admin");
