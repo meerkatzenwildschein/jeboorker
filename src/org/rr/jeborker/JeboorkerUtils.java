@@ -1,5 +1,6 @@
 package org.rr.jeborker;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -54,7 +55,7 @@ public class JeboorkerUtils {
 	 */
 	public static String getConfigDirectory() {
 		String result = System.getProperties().getProperty("user.home");
-		result += "/.jeboorker/";
+		result += File.separator + ".jeboorker" + File.separator;
 		
 		return result;
 	}
