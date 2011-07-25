@@ -770,7 +770,6 @@ public final class MathUtils implements Serializable {
 	 * value and <code>false</code> otherwise. 
 	 */
 	public static boolean between(double value, double firstScope, double secondScope) {
-		//TODO Should be implemented to the FunctionNode
 		if (value > firstScope && value < secondScope) {
 			return true;
 		}
@@ -780,6 +779,27 @@ public final class MathUtils implements Serializable {
 		}		
 		
 		return false;
+	}
+	
+	/**
+	 * Determines if the specified <code>value</code> is between the <code>minScope</code>
+	 * and the <code>maxScope</code> value and returns a value which is in the defined scope.
+	 * 
+	 * @param value Value to be tested
+	 * @param minScope The max range specification.
+	 * @param maxScope The min rage specification
+	 * @return The value which is in the specified range.
+	 */
+	public static int range(int value, int minScope, int maxScope) {
+		if (value > minScope && value < maxScope) {
+			return value;
+		}
+		
+		if (value > maxScope) {
+			return maxScope;
+		} else {
+			return minScope;
+		}			
 	}
 	
 	/**
