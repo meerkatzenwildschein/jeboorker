@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import javax.swing.JList;
 import javax.swing.UIManager;
 
+import org.rr.commons.utils.MathUtils;
+
 public class SwingUtils {
 	/**
 	 * Fetch all components from a specified type out of a Window. <BR>
@@ -134,5 +136,16 @@ public class SwingUtils {
 		}
 		return color;
 	}	
+	
+	/**
+	 * Creates a new color instance which is brighter. 
+	 * @param color The base color to be made brighter.
+	 * @param brighter The rgb value by which the given base color should be made brighter.
+	 * @return The brighter color.
+	 */
+	public static Color getBrighterColor(Color color, int brighter) {
+		Color c = new Color(MathUtils.range(color.getRed() + brighter, 0, 255) , MathUtils.range(color.getGreen() + brighter, 0, 255), MathUtils.range(color.getBlue() + brighter, 0, 255));
+		return c;
+	}
 	
 }
