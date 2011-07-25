@@ -192,6 +192,10 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 * @return The rating value.
 	 */
 	private float getStarRatingValue(final EbookPropertyItem item) {
+		if(item == null) {
+			return 0f;
+		}
+		
 		final Integer rating = item.getRating();
 		if(rating == null || rating.intValue() < 0) {
 			return -1f;
@@ -207,9 +211,9 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 * @return The thumbnail image to be displayed in the renderer.
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
-		final String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
-		
 		if(item!=null && item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
+			final String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
+			
 			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
 				return thumbnailCache.get(coverThumbnailCRC32);
 			}
