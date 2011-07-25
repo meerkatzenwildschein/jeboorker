@@ -20,12 +20,12 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 	
 	public EbookTableCellRenderer() {
 		final Color color = SwingUtils.getSelectionBackgroundColor();
-		final int brighter = 20;
-		selectedBgColor = new Color(color.getRed() + brighter, color.getGreen() + brighter, color.getBlue() + brighter);		
+		selectedBgColor = SwingUtils.getBrighterColor(color, 20);		
 		
 //		selectedBgColor = UIManager.getColor("TextField.selectionBackground");	
 		selectedFgColor = SwingUtils.getSelectionForegroundColor();
 	}
+	
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
