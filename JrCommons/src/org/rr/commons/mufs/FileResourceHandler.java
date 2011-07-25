@@ -127,7 +127,6 @@ class FileResourceHandler extends AResourceHandler {
 				C::
 				C:\\
 				C:\abc\\
-				C:\abc\abc5643.
 				C:\abc\ab%g
 				C:\abc\aabc.txt\
 				C:\abc\aabc.txt\ab	*/			
