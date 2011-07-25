@@ -4,10 +4,12 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
@@ -68,9 +70,11 @@ class AddBasePathAction extends QueueableAction {
 				} else {
 					messageFinished = Bundle.getFormattedString("AddBasePathAction.duplicatePathEntry", new Object[] {path});
 				}
-			} finally {
-				controller.getProgressMonitor().monitorProgressStop(messageFinished);
-			}
+			} catch(Throwable t) {
+				LoggerFactory.log(Level.WARNING, this, "Adding " + path + " has failed", t);
+			} 
+			controller.getProgressMonitor().monitorProgressStop(messageFinished);
+			
 			controller.refreshTable(false);
 		}
 	}

@@ -81,8 +81,10 @@ public class DefaultDBManager {
 		// OPEN / CREATE THE DATABASE
 		if(!dbResourceHandler.exists()) {
 			db = new ODatabaseObjectTx ("local:" + dbFile).create();
+//			db.getMetadata().getSchema().createClass(EbookPropertyItem.class);
 		} else {
 			db = new ODatabaseObjectTx ("local:" + dbFile).open("admin", "admin");
+			
 		}
 		
 		if(db!=null && db.getEntityManager() != null) {
