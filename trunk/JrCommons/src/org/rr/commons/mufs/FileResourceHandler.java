@@ -108,7 +108,7 @@ class FileResourceHandler extends AResourceHandler {
 				return true;
 			} else if (new File(resource).exists()) {
 				return true;
-			} else if (Pattern.matches("^[a-zA-Z]:(\\\\\\w+)*([\\\\]|[.][a-zA-Z]+)?$", resource)){
+			} else if (Pattern.matches("^[a-zA-Z]:(\\\\[a-zA-Z_0-9.]+)*([\\\\]|[.][a-zA-Z]+)?$", resource)){
 				//windows pattern match .. 
 				/*
 				c:
