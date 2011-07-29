@@ -765,15 +765,18 @@ public class JDirectoryChooser extends Component {
 //				the first match was not good, now search cloudy.
 				File parentFile = path.getParentFile();
 				if(parentFile!=null) {
-					IFolderNode lastFolderNode = (IFolderNode) getPathForFolder(parentFile).getLastPathComponent();
-					for (int i = 0; i < lastFolderNode.getChildCount(); i++) {
-						IFolderNode child = (IFolderNode) lastFolderNode.getChildAt(i);
-						if(toOSCompareString(child.toString()).startsWith(toOSCompareString(path.getName()))) {
-							//possibly matching node found
-							TreePath found = getPathForFolder(child.getFile());
-							this.setSelectionPath(found);
-							this.scrollPathToVisible(found);
-							return;
+					TreePath pathForFolder = getPathForFolder(parentFile);
+					if(pathForFolder != null) {
+						IFolderNode lastFolderNode = (IFolderNode) pathForFolder.getLastPathComponent();
+						for (int i = 0; i < lastFolderNode.getChildCount(); i++) {
+							IFolderNode child = (IFolderNode) lastFolderNode.getChildAt(i);
+							if(toOSCompareString(child.toString()).startsWith(toOSCompareString(path.getName()))) {
+								//possibly matching node found
+								TreePath found = getPathForFolder(child.getFile());
+								this.setSelectionPath(found);
+								this.scrollPathToVisible(found);
+								return;
+							}
 						}
 					}
 				}
