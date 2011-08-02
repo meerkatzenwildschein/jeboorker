@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Xmx256m $_JCONSOLE -cp lib/*:lib/orientdb/* org.rr.jeborker.JEBorker $@
+java -Xmx256m $_JCONSOLE -cp lib/*:lib/orientdb/*:lib/epubcheck/* org.rr.jeborker.JEBorker $@
