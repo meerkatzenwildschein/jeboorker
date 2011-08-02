@@ -1,2 +1,3 @@
 #!/bin/sh
-java -Xmx256m $_JCONSOLE -cp lib/*:lib/orientdb/*:lib/epubcheck/* org.rr.jeborker.JEBorker $@
+cd `dirname $(readlink -f $0)`
+java -Xmx256m $_JCONSOLE -jar lib/jeboorker.jar $@
