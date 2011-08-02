@@ -17,31 +17,21 @@ public class Jeboorker {
 
 	public static boolean isRuntime = false;
 
-	public static String version = "0.1.1";
+	public static String version = "0.1.2";
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		isRuntime = true;
+		
+		//setup the logger
 		LoggerFactory.addHandler(new JeboorkerLogger());
 
-		String result = System.getProperties().getProperty("user.dir");
-		try {
-			addPath(new File(result + File.separator + "lib/"));
-			addPath(new File(result + File.separator + "lib/orientdb/"));
-			addPath(new File(result + File.separator + "lib/epubcheck/"));
-		} catch (Exception e1) {
-			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
-			System.exit(-1);
-		}
-		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
-		}		
+		setupClasspath();
+		setupLookAndFeel();		
 
+		//start the application
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -54,6 +44,31 @@ public class Jeboorker {
 		});
 	}
 
+	private static void setupLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
+		}
+	}
+
+	private static void setupClasspath() {
+		String result = System.getProperties().getProperty("user.dir");
+		try {
+			addPath(new File(result + File.separator + "lib/"));
+			addPath(new File(result + File.separator + "lib/orientdb/"));
+			addPath(new File(result + File.separator + "lib/epubcheck/"));
+		} catch (Exception e1) {
+			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
+			System.exit(-1);
+		}
+	}
+
+	/**
+	 * Add a classpath to the default system classloader.
+	 * @param dir The dir with jars to be added (not recursively)
+	 * @throws Exception
+	 */
 	public static void addPath(File dir) throws Exception {
 		File[] files = dir.listFiles(new FileFilter() {
 
