@@ -315,12 +315,6 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 		if(certainEntryName[0]!=null && !extract.isEmpty()) {
 			for (ZipDataEntry zipDataEntry : extract) {
 				if(zipDataEntry.path.equals(certainEntryName[0])) {
-					try {
-						FileUtils.writeByteArrayToFile(new File("/home/guru/test.png"), zipDataEntry.data);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					return zipDataEntry;
 				}
 			}
