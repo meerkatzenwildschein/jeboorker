@@ -8,6 +8,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.logging.Level;
 
+import javax.swing.UIManager;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.gui.MainController;
 
@@ -33,6 +35,12 @@ public class Jeboorker {
 			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
 			System.exit(-1);
 		}
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
+		}		
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -57,7 +65,6 @@ public class Jeboorker {
 
 		if(files != null) {
 			for (int i = 0; i < files.length; i++) {
-	System.out.println(files[i]);			
 				URL u = files[i].toURL();
 				URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 				Class<URLClassLoader> urlClass = URLClassLoader.class;
