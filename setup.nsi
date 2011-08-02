@@ -56,8 +56,16 @@ ShowUninstDetails show
 
 # Installer sections
 Section -Main SEC0000
-    SetOutPath $INSTDIR\lib
     SetOverwrite on
+    SetOutPath $INSTDIR
+    File Jeboorker32.exe
+    File Jeboorker64.exe
+    File Jeboorker32.lap
+    File Jeboorker64.lap
+    File msvcr71.dll
+    File Readme.txt
+    
+    SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk16-146.jar
     File lib\commons-io-2.0.jar
     File lib\commons-lang-2.5.jar
@@ -65,10 +73,12 @@ Section -Main SEC0000
     File lib\jeboorker.jar
     File lib\jsoup-1.5.2.jar
     File lib\jsoup-1.5.2-sources.jar
+    
     SetOutPath $INSTDIR\lib\orientdb
     File lib\orientdb\jpa.jar
     File lib\orientdb\orient-commons-1.0rc3.jar
     File lib\orientdb\orientdb-core-1.0rc3.jar
+    
     SetOutPath $INSTDIR\lib\epubcheck
     File lib\epubcheck\epubcheck-1.2.jar
     File lib\epubcheck\jing.jar
@@ -82,6 +92,8 @@ Section -post SEC0001
     WriteUninstaller $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     SetOutPath $SMPROGRAMS\$StartMenuGroup
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Jeboorker32.lnk" "$INSTDIR\Jeboorker32.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Jeboorker64.lnk" "$INSTDIR\Jeboorker64.exe"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_END
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
@@ -110,9 +122,11 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\lib\epubcheck\saxon.jar
     Delete /REBOOTOK $INSTDIR\lib\epubcheck\jing.jar
     Delete /REBOOTOK $INSTDIR\lib\epubcheck\epubcheck-1.2.jar
+    RMDir  $INSTDIR\lib\epubcheck
     Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-core-1.0rc3.jar
     Delete /REBOOTOK $INSTDIR\lib\orientdb\orient-commons-1.0rc3.jar
     Delete /REBOOTOK $INSTDIR\lib\orientdb\jpa.jar
+    RMDir  $INSTDIR\lib\orientdb
     Delete /REBOOTOK $INSTDIR\lib\jsoup-1.5.2-sources.jar
     Delete /REBOOTOK $INSTDIR\lib\jsoup-1.5.2.jar
     Delete /REBOOTOK $INSTDIR\lib\jeboorker.jar
@@ -120,6 +134,16 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\lib\commons-lang-2.5.jar
     Delete /REBOOTOK $INSTDIR\lib\commons-io-2.0.jar
     Delete /REBOOTOK $INSTDIR\lib\bcprov-jdk16-146.jar
+    RMDir  $INSTDIR\lib
+    
+    Delete /REBOOTOK $INSTDIR\Jeboorker32.exe
+    Delete /REBOOTOK $INSTDIR\Jeboorker64.exe
+    Delete /REBOOTOK $INSTDIR\Jeboorker32.lap
+    Delete /REBOOTOK $INSTDIR\Jeboorker64.lap
+    Delete /REBOOTOK $INSTDIR\msvcr71.dll
+    Delete /REBOOTOK $INSTDIR\Readme.txt
+    
+    RMDir $INSTDIR
     DeleteRegValue HKLM "${REGKEY}\Components" Main
 SectionEnd
 
@@ -146,4 +170,5 @@ Function un.onInit
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
 FunctionEnd
+
 
