@@ -51,10 +51,10 @@ class MainMenuView extends JMenuBar {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
 				int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-				final List<Action> menuActions = createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
+				final List<JMenuItem> menuActions = createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
 				
 				metadataMenuBar.removeAll();
-				for (Action menuAction : menuActions) {
+				for (JMenuItem menuAction : menuActions) {
 					metadataMenuBar.add(menuAction);
 				}
 			}
@@ -75,16 +75,25 @@ class MainMenuView extends JMenuBar {
 	 * @param items Items for the menu items.
 	 * @return The list of menu entries.
 	 */
-	private List<Action> createDynamicMetadataMenuEntries(List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
-		ArrayList<Action> result = new ArrayList<Action>();
+	private List<JMenuItem> createDynamicMetadataMenuEntries(List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
+		final ArrayList<JMenuItem> result = new ArrayList<JMenuItem>();
+		
+		JMenu setSubmenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
+		
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, rowsToRefreshAfter);
-		result.add(action);
+		setSubmenu.add(new JMenuItem(action));
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, rowsToRefreshAfter);
+		setSubmenu.add(new JMenuItem(action));
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, rowsToRefreshAfter);
+		setSubmenu.add(new JMenuItem(action));		
+		
+		result.add(setSubmenu);
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
-		result.add(action);		
+		result.add(new JMenuItem(action));		
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, rowsToRefreshAfter);
-		result.add(action);				
+		result.add(new JMenuItem(action));				
 		return result;
 	}
 	

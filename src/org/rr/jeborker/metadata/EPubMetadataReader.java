@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
-	
+
 	private static final String COVER = "cover";
 	private static final String JB_AGE_SUGGESTION = "jeboorker:age_suggestion";
 	private static final String JB_KEYWORDS = "jeboorker:keywords";
@@ -37,13 +37,11 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	private static final String CREATOR = "creator";
 	private static final String CREATOR_AUT = "creator / Aut";
 	private static final String CREATOR_AUTHOR = "creator / Author";
-	
-	
 
 	EPubMetadataReader(IResourceHandler ebookResourceHandler) {
 		super(ebookResourceHandler);
 	}
-	
+
 	@Override
 	public List<MetadataProperty> readMetaData() {
 		final IResourceHandler ebookResourceHandler = getEbookResource();
@@ -69,7 +67,9 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 
 	/**
 	 * Creates a list of {@link MetadataProperty} from the given metadata element.
-	 * @param metadataElement The {@link Element} containing the metadata to be read.
+	 * 
+	 * @param metadataElement
+	 *            The {@link Element} containing the metadata to be read.
 	 * @return A list with the metadata. Never returns <code>null</code>.
 	 */
 	private List<MetadataProperty> createMetadataList(final Element metadataElement) {
@@ -79,9 +79,9 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 
 		for (int i = 0; i < length; i++) {
 			Element item = (Element) childNodes.item(i);
-			if(item.getParentNode() == metadataElement) {
+			if (item.getParentNode() == metadataElement) {
 				EpubMetadataProperty epubMetadataProperty = new EpubMetadataProperty(item.getTagName(), item.getTextContent());
-				
+
 				final NamedNodeMap attributes = item.getAttributes();
 				if (attributes != null) {
 					for (int j = 0; j < attributes.getLength(); j++) {
@@ -98,9 +98,9 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 
 		return result;
 	}
-	
+
 	private void setEditableFlag(EpubMetadataProperty epubMetadataProperty) {
-		if(epubMetadataProperty.getName() == COVER) {
+		if (epubMetadataProperty.getName() == COVER) {
 			epubMetadataProperty.setEditable(false);
 		}
 	}
@@ -127,7 +127,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 			final String coverNameReference = findMetadataCoverNameReference(metadataNode);
 			final String coverName = findManifestCoverName(manifestNode, coverNameReference);
 			final ZipDataEntry extract = extractCoverFromZip(zipData, coverName != null ? coverName : coverNameReference);
-			if(extract!=null && extract.data!=null && extract.data.length > 0) {
+			if (extract != null && extract.data != null && extract.data.length > 0) {
 				return extract.data;
 			}
 		} catch (Exception e) {
@@ -225,35 +225,35 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
 		result.add(createSupportedMetadataProperty("dc:title"));
 		result.add(createSupportedMetadataProperty("dc:subject"));
-		result.add(createSupportedMetadataProperty("dc:creator", new String[] {"opf:role"}, new String[] {"aut"}));
+		result.add(createSupportedMetadataProperty("dc:creator", new String[] { "opf:role" }, new String[] { "aut" }));
 		result.add(createSupportedMetadataProperty("dc:rights"));
 		result.add(createSupportedMetadataProperty("dc:publisher"));
 		result.add(createSupportedMetadataProperty("dc:description"));
-		result.add(createSupportedMetadataProperty("dc:date", new String[] {"opf:event"}, new String[] {"publication"}));
+		result.add(createSupportedMetadataProperty("dc:date", new String[] { "opf:event" }, new String[] { "publication" }));
 		result.add(createSupportedMetadataProperty("dc:language"));
-		result.add(createSupportedMetadataProperty("dc:identifier", new String[] {"id", "opf:scheme"}, new String[] {"uuid_id", "uuid"}));
-		result.add(createSupportedMetadataProperty("dc:identifier", new String[] {"opf:scheme"}, new String[] {"ISBN"}));
-		result.add(createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {CALIBRE_SERIES, ""}));
-		result.add(createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {CALIBRE_SERIES_INDEX, ""}));
-		result.add(createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {CALIBRE_RATING, ""}));
-		result.add(createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {JB_KEYWORDS, ""}));
-		result.add(createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {JB_AGE_SUGGESTION, ""}));
-		
+		result.add(createSupportedMetadataProperty("dc:identifier", new String[] { "id", "opf:scheme" }, new String[] { "uuid_id", "uuid" }));
+		result.add(createSupportedMetadataProperty("dc:identifier", new String[] { "opf:scheme" }, new String[] { "ISBN" }));
+		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { CALIBRE_SERIES, "" }));
+		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { CALIBRE_SERIES_INDEX, "" }));
+		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { CALIBRE_RATING, "" }));
+		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { JB_KEYWORDS, "" }));
+		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { JB_AGE_SUGGESTION, "" }));
+
 		return result;
 	}
-	
+
 	@Override
 	public MetadataProperty createRatingMetaData() {
-		return createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {CALIBRE_RATING, ""});
-	}	
-	
+		return createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { CALIBRE_RATING, "" });
+	}
+
 	private MetadataProperty createSupportedMetadataProperty(String tagName) {
 		return createSupportedMetadataProperty(tagName, null, null);
 	}
-	
+
 	private MetadataProperty createSupportedMetadataProperty(String tagName, String[] attributeNames, String[] attributeValues) {
 		EpubMetadataProperty epubMetadataProperty = new EpubMetadataProperty(tagName, "");
-		if(attributeNames!=null && attributeValues!=null) {
+		if (attributeNames != null && attributeValues != null) {
 			for (int i = 0; i < attributeValues.length; i++) {
 				epubMetadataProperty.addAttribute(attributeNames[i], attributeValues[i]);
 			}
@@ -281,33 +281,56 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
-		if(props != null) {
+		if (props != null) {
 			metadataProperties = props;
 		} else {
 			metadataProperties = readMetaData();
 		}
-		
+
 		for (MetadataProperty property : metadataProperties) {
-			if(property.getName().startsWith("creator")) {
-				if(((EpubMetadataProperty)property).getAttributeValueByName("opf:role") != null) {
-					if(((EpubMetadataProperty)property).getAttributeValueByName("opf:role").startsWith("aut")) {
-						//opf:role = auth is the author.
+			if (property.getName().startsWith("creator")) {
+				if (((EpubMetadataProperty) property).getAttributeValueByName("opf:role") != null) {
+					if (((EpubMetadataProperty) property).getAttributeValueByName("opf:role").startsWith("aut")) {
+						// opf:role = auth is the author.
 						result.add(property);
 					}
 				} else {
-					//no attribute. Good chance it's the author
+					// no attribute. Good chance it's the author
 					result.add(property);
 				}
 			}
 		}
-		
-		//if the list is empty and a new property should be created, add a new, empty author property to the result.
-		if(create && result.isEmpty()) {
-			MetadataProperty authorProperty = createSupportedMetadataProperty("dc:creator", new String[] {"opf:role"}, new String[] {"aut"});
+
+		// if the list is empty and a new property should be created, add a new, empty author property to the result.
+		if (create && result.isEmpty()) {
+			MetadataProperty authorProperty = createSupportedMetadataProperty("dc:creator", new String[] { "opf:role" }, new String[] { "aut" });
 			result.add(authorProperty);
-		} 
+		}
+		return Collections.unmodifiableList(result);
+	}
+
+	@Override
+	public List<MetadataProperty> getGenreMetaData(boolean create, List<MetadataProperty> props) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final List<MetadataProperty> metadataProperties;
+		if (props != null) {
+			metadataProperties = props;
+		} else {
+			metadataProperties = readMetaData();
+		}
+
+		for (MetadataProperty property : metadataProperties) {
+			if (property.getName() == SUBJECT) {
+				result.add(property);
+			}
+		}
+
+		// if the list is empty and a new property should be created, add a new, empty subject property to the result.
+		if (create && result.isEmpty()) {
+			MetadataProperty subjectProperty = createSupportedMetadataProperty("dc:subject");
+			result.add(subjectProperty);
+		}
 		return Collections.unmodifiableList(result);
 	}
 
 }
-
