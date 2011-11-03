@@ -3,6 +3,7 @@ package org.rr.jeborker.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 
 /**
@@ -67,7 +68,7 @@ public class MetadataProperty {
 	 * @param idx The index of the value
 	 */
 	public void setValue(final Object value, final int idx) {
-		this.values.set(idx, value);
+		ListUtils.set(this.values, value, idx);
 	}
 	
 	public Class<?> getPropertyClass() {

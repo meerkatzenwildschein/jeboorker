@@ -21,13 +21,15 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
-public class SetCoverThumbnailAction extends RefreshAbstractAction {
+public class SetCoverThumbnailAction extends RefreshAbstractAction implements IDoOnlyOnceAction<ImageFileChooser> {
 
 	private static final long serialVersionUID = 4772310971481868593L;
 
 	private final IResourceHandler resourceHandler;
 	
-	private static File selectedFile = null;
+	private ImageFileChooser imageFileChooserT;
+	
+	private static File previousSelectedFile;
 	
 	SetCoverThumbnailAction(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
@@ -39,18 +41,13 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction {
 	public void actionPerformed(ActionEvent evt) {
 		try {
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
-			final ImageFileChooser imageFileChooser = new ImageFileChooser();
 			List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
 			
 			if(!items.isEmpty()) {
 				EbookPropertyItem item = items.get(0);
-				imageFileChooser.setVisible(true);
-				if(selectedFile!=null) {
-					imageFileChooser.setSelectedFile(selectedFile);
-				}
-				int returnVal = imageFileChooser.showOpenDialog(ArrayUtils.get(Frame.getFrames(), 0));
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					selectedFile = imageFileChooser.getSelectedFile();
+				ImageFileChooser imageFileChooser = doOnce();
+				if (imageFileChooser.getReturnValue() == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = imageFileChooser.getSelectedFile();
 					if(selectedFile!=null) {
 						IResourceHandler selectedFileResourceHandler = ResourceHandlerFactory.getResourceLoader(selectedFile);
 						writer.setCover(selectedFileResourceHandler.getContent());
@@ -75,6 +72,26 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction {
 	 */
 	public static boolean canHandle(final IResourceHandler resourceHandler) {
 		return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+	}
+
+	@Override
+	public synchronized ImageFileChooser doOnce() {
+		if(imageFileChooserT == null) {
+			imageFileChooserT = new ImageFileChooser();
+			imageFileChooserT.setVisible(true);
+			if(previousSelectedFile!=null) {
+				imageFileChooserT.setSelectedFile(previousSelectedFile);
+			}
+			imageFileChooserT.showOpenDialog(ArrayUtils.get(Frame.getFrames(), 0));
+			previousSelectedFile = imageFileChooserT.getSelectedFile();
+		}
+		
+		return imageFileChooserT;
+	}
+
+	@Override
+	public void setResult(ImageFileChooser result) {
+		this.imageFileChooserT = result;
 	}
 
 }

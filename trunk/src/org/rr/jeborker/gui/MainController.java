@@ -326,7 +326,7 @@ public class MainController {
 			List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
 			for (EbookPropertyItem item : selectedEbookPropertyItems) {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
-				MetadataProperty ratingMetaData = reader.getRatingMetaData();
+				MetadataProperty ratingMetaData = reader.createRatingMetaData();
 				Property addMetadataItem = AddMetadataAction.addMetadataItem(ratingMetaData);
 				addMetadataItem.setValue(rating);
 			}
@@ -476,7 +476,7 @@ public class MainController {
 	 * Gets the application main window. Needed for having modal dialogs.
 	 * @return The main window instance. 
 	 */
-	JFrame getMainWindow() {
+	public JFrame getMainWindow() {
 		return mainWindow;
 	}
 

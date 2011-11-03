@@ -44,6 +44,16 @@ public class ActionFactory {
 				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 			}
 		},
+		SET_AUTHOR_ACTION {
+
+			public Class<? extends Action> getActionClass() {
+				return SetAuthorAction.class;
+			}
+
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return true;
+			}
+		},		
 		EDIT_PLAIN_METADATA_ACTION {
 
 			@Override
@@ -135,7 +145,7 @@ public class ActionFactory {
 	
 	/**
 	 * Get a list of actions - one for each supported metadata entry - which
-	 * allows to add a metadata. 
+	 * allows to add metadata. 
 	 * @param properties The metadata from the {@link IMetadataReader} where the actions 
 	 * should be created for.
 	 * @return The actions for adding a metadata entry. Never returns <code>null</code>.

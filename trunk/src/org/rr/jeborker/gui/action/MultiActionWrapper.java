@@ -38,11 +38,7 @@ public class MultiActionWrapper extends QueueableAction {
 		
 		//skip the first and use the action we have already created with the constructor
 		iterator.next();
-		if(firstActionInstance instanceof QueueableAction) {
-			((QueueableAction)firstActionInstance).doAction(e);
-		} else {
-			firstActionInstance.actionPerformed(e);
-		}
+		this.doActionAt(firstActionInstance, e);
 		
 		//create an action instance for all the other handlers. 
 		while (iterator.hasNext()) {
@@ -50,20 +46,40 @@ public class MultiActionWrapper extends QueueableAction {
 			Action action = createInstance(firstActionInstance.getClass(), handler, selectedRowsToRefresh);
 			
 			if(action!=null) {
-				if(firstActionInstance instanceof QueueableAction) {
-					((QueueableAction)action).doAction(e);
-				} else {
-					action.actionPerformed(e);
-				}				
+				this.transferDoOnlyOnceValue(action);
+				this.doActionAt(action, e);			
 			} else {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
 			}
 		}
 	}
+
+	/**
+	 * Invokes the action method to the given action.
+	 * @param action The action to be executed.
+	 */
+	public void doActionAt(Action action, ActionEvent e) {
+		if(action instanceof QueueableAction) {
+			((QueueableAction)action).doAction(e);
+		} else {
+			action.actionPerformed(e);
+		}
+	}
+
+	/**
+	 * Transfers the DoOnlyOnce value to the given action instance.
+	 * @param action The action which gets the new value.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void transferDoOnlyOnceValue(Action action) {
+		if(action instanceof IDoOnlyOnceAction<?>) {
+			((IDoOnlyOnceAction)action).setResult(((IDoOnlyOnceAction<?>)firstActionInstance).doOnce());
+		}
+	}
 	
 	/**
 	 * Creates the action instance from the given class and {@link IResourceHandler}.
-	 * @param clazz The class to be instanciated.
+	 * @param clazz The class to be instantiated.
 	 * @param handler The handler for the first constructor parameter.
 	 * @return The desired action.
 	 */

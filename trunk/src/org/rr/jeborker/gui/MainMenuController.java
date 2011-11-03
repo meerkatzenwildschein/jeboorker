@@ -138,6 +138,13 @@ public class MainMenuController {
 		}
 		
 		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_AUTHOR_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				menu.add(action);
+			}
+		}		
+		
+		{
 			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
 				menu.add(action);
