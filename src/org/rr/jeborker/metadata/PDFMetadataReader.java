@@ -2,8 +2,10 @@ package org.rr.jeborker.metadata;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -11,6 +13,7 @@ import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
+import org.rr.commons.collection.IteratorList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
@@ -338,12 +341,48 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}
 	
 	@Override
-	public MetadataProperty getRatingMetaData() {
+	public MetadataProperty createRatingMetaData() {
 		return new MetadataProperty("Rating", "");
+	}
+	
+	@Override
+	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final List<MetadataProperty> metadataProperties;
+		if(props != null) {
+			metadataProperties = props;
+		} else {
+			metadataProperties = readMetaData();
+		}
+		
+		MetadataProperty authorProperty = null;
+		MetadataProperty creatorProperty = null;
+		for (MetadataProperty property : metadataProperties) {
+			if(property.getName().equalsIgnoreCase("Author")) {
+				result.add(property);
+				authorProperty = property;
+			} else if(property.getName().equalsIgnoreCase("creator")) {
+				result.add(property);
+				creatorProperty = property;
+			}
+		}
+		
+		//if author and creator exists and don't have the same content, remove the creator prop.
+		if(authorProperty != null && creatorProperty != null && !authorProperty.getValueAsString().equals(creatorProperty.getValueAsString())) {
+			result.remove(creatorProperty);
+		}
+		
+		//if the list is empty and a new property should be created, add a new, empty author property to the result.
+		if(create && result.isEmpty()) {
+			authorProperty = new MetadataProperty("Author", "");
+			result.add(authorProperty);
+		} 
+		return Collections.unmodifiableList(result);
 	}	
 	
 	@Override
 	public String getPlainMetaDataMime() {
 		return "text/xml";
 	}
+
 }

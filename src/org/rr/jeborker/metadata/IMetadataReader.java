@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
@@ -30,7 +31,7 @@ public interface IMetadataReader {
 	 * Gets a new, empty metadata property for the rating value.
 	 * @return The desired metadata property.
 	 */
-	public MetadataProperty getRatingMetaData();	
+	public MetadataProperty createRatingMetaData();	
 	
 	/**
 	 * Sets the {@link EbookPropertyItem} properties from the given {@link MetadataProperty}.
@@ -56,6 +57,15 @@ public interface IMetadataReader {
 	 * @return The mimetype of the metadata.
 	 */
 	public String getPlainMetaDataMime();
+	
+	/**
+	 * Get the author entries.
+	 * @param create If not author entry exists, create a new, empty one. 
+	 * @param props Extract the author entry from the given metadata properties. If this
+	 * 		parameter is <code>null</code>, the properties will be read from the file.
+	 * @return A list of author entries. Never returns <code>null</code>
+	 */
+	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props);
 	
 	/**
 	 * Some clean up code. Should be invoked at the end of the readers usage

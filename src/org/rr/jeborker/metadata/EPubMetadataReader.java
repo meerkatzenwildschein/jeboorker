@@ -1,6 +1,7 @@
 package org.rr.jeborker.metadata;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -240,7 +241,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	}
 	
 	@Override
-	public MetadataProperty getRatingMetaData() {
+	public MetadataProperty createRatingMetaData() {
 		return createSupportedMetadataProperty("meta", new String[] {"name", "content"}, new String[] {CALIBRE_RATING, ""});
 	}	
 	
@@ -272,6 +273,38 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	@Override
 	public String getPlainMetaDataMime() {
 		return "text/xml";
+	}
+
+	@Override
+	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final List<MetadataProperty> metadataProperties;
+		if(props != null) {
+			metadataProperties = props;
+		} else {
+			metadataProperties = readMetaData();
+		}
+		
+		for (MetadataProperty property : metadataProperties) {
+			if(property.getName().startsWith("creator")) {
+				if(((EpubMetadataProperty)property).getAttributeValueByName("opf:role") != null) {
+					if(((EpubMetadataProperty)property).getAttributeValueByName("opf:role").startsWith("aut")) {
+						//opf:role = auth is the author.
+						result.add(property);
+					}
+				} else {
+					//no attribute. Good chance it's the author
+					result.add(property);
+				}
+			}
+		}
+		
+		//if the list is empty and a new property should be created, add a new, empty author property to the result.
+		if(create && result.isEmpty()) {
+			MetadataProperty authorProperty = createSupportedMetadataProperty("dc:creator", new String[] {"opf:role"}, new String[] {"aut"});
+			result.add(authorProperty);
+		} 
+		return Collections.unmodifiableList(result);
 	}
 
 }
