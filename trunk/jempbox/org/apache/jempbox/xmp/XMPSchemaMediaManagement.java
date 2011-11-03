@@ -43,6 +43,10 @@ public class XMPSchemaMediaManagement extends XMPSchema
     public XMPSchemaMediaManagement( XMPMetadata parent )
     {
         super( parent, "xmpMM", NAMESPACE );
+        schema.setAttributeNS( 
+                NS_NAMESPACE, 
+                "xmlns:xapMM", 
+                "http://ns.adobe.com/xap/1.0/" );           
     }
     
     /**

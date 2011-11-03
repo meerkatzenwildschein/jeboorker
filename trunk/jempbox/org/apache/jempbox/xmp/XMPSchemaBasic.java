@@ -47,6 +47,10 @@ public class XMPSchemaBasic extends XMPSchema
             NS_NAMESPACE, 
             "xmlns:xapGImg", 
             "http://ns.adobe.com/xap/1.0/g/img/" );
+        schema.setAttributeNS( 
+                NS_NAMESPACE, 
+                "xmlns:xap", 
+                "http://ns.adobe.com/xap/1.0/" );        
     }
     
     /**
@@ -64,6 +68,10 @@ public class XMPSchemaBasic extends XMPSchema
                 NS_NAMESPACE, 
                 "xmlns:xapGImg", 
                 "http://ns.adobe.com/xap/1.0/g/img/" );
+            schema.setAttributeNS( 
+                    NS_NAMESPACE, 
+                    "xmlns:xap", 
+                    "http://ns.adobe.com/xap/1.0/" );                 
         }
     }
     
