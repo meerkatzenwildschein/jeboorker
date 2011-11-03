@@ -261,7 +261,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		if(item == null) {
 			return "";
 		}
-		
+
 		final StringBuilder result = new StringBuilder();
 		final List<Field> selectedFields = MainController.getController().getSortColumnComponentController().getSelectedFields();
 		
@@ -278,6 +278,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 			try {
 				final Object fieldValueObject = ReflectionUtils.getFieldValue(item, field.getName());
 				final String fieldValueString = StringUtils.toString(fieldValueObject);
+			
 				if(StringUtils.isNotEmpty(fieldValueString)) {
 					if(StringUtils.isNotEmpty(result)) {
 						result.append(", ");
