@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -130,19 +131,30 @@ public class MainMenuController {
 		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 		final JPopupMenu menu = new JPopupMenu();
 		
+		JMenu submenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
 		{
 			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
-				menu.add(action);
+				submenu.add(action);
 			}
 		}
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_AUTHOR_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
-				menu.add(action);
+				submenu.add(new JMenuItem(action));
 			}
-		}		
+		}
+		
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				submenu.add(new JMenuItem(action));
+			}
+		}	
+		if(submenu.getMenuComponentCount() > 0) {
+			menu.add(submenu);
+		}
 		
 		{
 			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);

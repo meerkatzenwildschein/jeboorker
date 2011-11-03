@@ -44,16 +44,26 @@ public class ActionFactory {
 				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 			}
 		},
-		SET_AUTHOR_ACTION {
+		SET_METADATA_AUTHOR_ACTION {
 
 			public Class<? extends Action> getActionClass() {
-				return SetAuthorAction.class;
+				return SetMetadataAuthorAction.class;
 			}
 
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
-		},		
+		},	
+		SET_METADATA_GENRE_ACTION {
+
+			public Class<? extends Action> getActionClass() {
+				return SetMetadataGenreAction.class;
+			}
+
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return true;
+			}
+		},			
 		EDIT_PLAIN_METADATA_ACTION {
 
 			@Override
