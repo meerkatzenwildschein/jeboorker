@@ -12,6 +12,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import org.rr.commons.utils.ReflectionFailureException;
+import org.rr.commons.utils.ReflectionUtils;
+
 public class ImageFileChooser extends JFileChooser {
 
 	private static final long serialVersionUID = 1456173962722237346L;
@@ -21,6 +24,18 @@ public class ImageFileChooser extends JFileChooser {
 		ImagePreviewPanel imagePreviewPanel = new ImagePreviewPanel();
 		setAccessory(imagePreviewPanel);
 		addPropertyChangeListener(imagePreviewPanel);
+	}
+	
+	/**
+	 * Get the return value from a previous showOpenDialog call.
+	 * @return The desired return value. (CANCEL_OPTION or APPROVE_OPTION ...)
+	 */
+	public int getReturnValue() {
+		try {
+			return ((Integer) ReflectionUtils.getFieldValue(this, "returnValue")).intValue();
+		} catch (ReflectionFailureException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private static class ImagePreviewPanel extends JPanel implements PropertyChangeListener {
