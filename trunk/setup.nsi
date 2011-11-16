@@ -62,6 +62,7 @@ Section -Main SEC0000
     File Jeboorker32.lap
     File Jeboorker64.lap
     File msvcr71.dll
+    File msvcr100.dll
     File Readme.txt
     
     SetOutPath $INSTDIR\lib
@@ -139,6 +140,7 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\Jeboorker32.lap
     Delete /REBOOTOK $INSTDIR\Jeboorker64.lap
     Delete /REBOOTOK $INSTDIR\msvcr71.dll
+    Delete /REBOOTOK $INSTDIR\msvcr100.dll
     Delete /REBOOTOK $INSTDIR\Readme.txt
     
     RMDir $INSTDIR
