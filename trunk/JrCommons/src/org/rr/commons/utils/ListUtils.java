@@ -3,6 +3,7 @@ package org.rr.commons.utils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -137,6 +138,38 @@ public final class ListUtils implements Serializable {
 		}
 		return list;
 	}
+	
+	/**
+	 * Fast split with a character only separator.
+	 * @param text The text to be splitted.
+	 * @param separator The separator.
+	 * @return The splitted values.
+	 */
+	public static List<String> split(String text, char separator) {
+		if(text == null) {
+			return Collections.emptyList();
+		}
+		
+		ArrayList<String> result = new ArrayList<String>(StringUtils.occurrence(text, String.valueOf(separator), UtilConstants.COMPARE_BINARY) + 1);
+		int last = 0;
+		for (int i = 0; i < text.length(); i++) {
+			char c = text.charAt(i);
+			if(c == separator) {
+				char[] separated = new char[i - last];
+				text.getChars(last, i, separated, 0);
+				result.add(String.valueOf(separated));
+				last = i+1;
+			}
+		}
+		
+		char[] separated = new char[text.length() - last];
+		if(separated.length > 0 || text.isEmpty() || text.charAt(text.length()-1) == separator) {
+			text.getChars(last, text.length(), separated, 0);
+			result.add(String.valueOf(separated));
+		}
+		
+		return result;
+	}	
 	
 	/**
 	 * Splits the given <code>text</code> into a string array where each
@@ -721,5 +754,24 @@ public final class ListUtils implements Serializable {
 	 */
 	public static boolean exists(final List<?> values, final Object match, final int compare, final int searchType) {
 		return indexOf(values, match, compare, searchType)!=-1;
+	}
+	
+	/**
+	 * Sets the given value to the desired index of the given list. If the size of the list
+	 * isn't large enough, the list will be filled with <code>null</code> values.
+	 * @param <T>
+	 * @param values The list where the value should be set to.
+	 * @param value The value to be set into the list
+	 * @param idx The list index where the value should be inserted into the list.
+	 */
+	public static <T>void set(final List<T> values, T value, int idx) {
+		if(values.size() > idx) {
+			values.set(idx, value);
+		} else {
+			for (int i = values.size(); i <= idx; i++) {
+				values.add(null);
+			}
+			set(values, value, idx);
+		}
 	}
 }

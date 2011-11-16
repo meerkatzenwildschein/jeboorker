@@ -410,7 +410,7 @@ public class ArrayUtils {
 			end = values.length;
 		}
 		
-		//test if the start is lowser than 0
+		//test if the start is lower than 0
 		if (start < 0) {
 			start = 0;
 		}
