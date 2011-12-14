@@ -732,7 +732,7 @@ public final class DateUtils implements Serializable {
 	}
 	
 	/**
-	 * The mehtod returns the name of a day
+	 * The method returns the name of a day
 	 * 
 	 * @param weekday The number of the day of which the method will return the name
 	 * @param abbreviate If true, the method returns the abbreviate.<br>
@@ -779,4 +779,42 @@ public final class DateUtils implements Serializable {
 		calendar.setTime(date);
 		return calendar;
 	}
+	
+    /**
+     * Returns the last millisecond of the specified date.
+     *
+     * @param date Date to calculate end of day from
+     * @return Last millisecond of <code>date</code>
+     */
+    public static Date endOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        synchronized(calendar) {
+            calendar.setTime(date);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MILLISECOND, 999);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.set(Calendar.MINUTE, 59);
+            return calendar.getTime();
+        }
+    }
+
+
+    /**
+     * Returns a new Date with the hours, milliseconds, seconds and minutes
+     * set to 0.
+     *
+     * @param date Date used in calculating start of day
+     * @return Start of <code>date</code>
+     */
+    public static Date startOfDay(Date date) {
+    	Calendar calendar = Calendar.getInstance();
+        synchronized(calendar) {
+            calendar.setTime(date);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            return calendar.getTime();
+        }
+    }	
 }
