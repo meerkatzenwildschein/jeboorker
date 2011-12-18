@@ -47,6 +47,7 @@ public class Jeboorker {
 	private static void setupLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		} catch (Exception e) {
 			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 		}
