@@ -66,7 +66,7 @@ class MainControllerUtils {
 		final Number propertySheetImageSplitPaneDividerLocation = JeboorkerPreferences.getEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
 		if(propertySheetImageSplitPaneDividerLocation!=null) {
 			mainWindow.propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
-		}			
+		}
 	}
 	
 	/**

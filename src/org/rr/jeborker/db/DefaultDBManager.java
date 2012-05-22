@@ -126,8 +126,10 @@ public class DefaultDBManager {
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
 	public <T> Iterable<T> getItems(final Class<T> class1, final QueryCondition queryConditions, final List<Field> orderFields, final OrderDirection orderDirection) {
-		if(orderFields==null || orderFields.size()==0) {
-			return getItems(class1);
+		if(orderFields==null || orderFields.isEmpty()) {
+			if(queryConditions == null || queryConditions.isEmpty()) {
+				return getItems(class1);
+			}
 		}
 
 		final StringBuilder sql = new StringBuilder()
@@ -136,7 +138,7 @@ public class DefaultDBManager {
 
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
-		
+//System.out.println("query: " + sql.toString());		
 		try {
 			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
 			return listResult;
@@ -193,18 +195,17 @@ public class DefaultDBManager {
 				localSql.append(" where");
 			}
 			
-			if(condition.getFieldName() != null && StringUtils.toString(condition.getValue()).length() > 0) {
-				if(connect!=null && connect.length() > 0) {
-					localSql.append(" ")
-					.append(connect);
-				}
-				
+			if(connect!=null && connect.length() > 0 && sql.charAt(sql.length()-1)!='(') {
 				localSql.append(" ")
-				.append(condition.getFieldName() + ".toLowerCase()")
-				.append(" ")
-				.append(condition.getOperator())
-				.append(" ")
-				.append("'"+condition.getValue()+"'");
+				.append(connect).append(" ");
+			}
+			if(condition.getFieldName() != null && StringUtils.toString(condition.getValue()).length() > 0) {
+				localSql.append(" ");
+				localSql.append(condition.getFieldName() + ".toLowerCase()");
+				localSql.append(" ");
+				localSql.append(condition.getOperator());
+				localSql.append(" ");
+				localSql.append("'"+condition.getValue()+"'");
 				result = true;
 			}
 				
@@ -223,7 +224,7 @@ public class DefaultDBManager {
 			if(condition.getAndChildren() != null) {
 				localSql.append("(");
 				List<QueryCondition> andChildren = condition.getAndChildren();
-				for (int i=0; i < andChildren.size(); i++) {
+				for (int i=0; i < andChildren.size(); i++) { 
 					boolean andResult = appendQueryCondition(localSql, andChildren.get(i), i==0 ? "" : "and", deepness+1);
 					if(andResult) {
 						result = true;

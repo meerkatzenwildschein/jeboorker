@@ -2,8 +2,13 @@ package org.rr.jeborker.gui;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -14,6 +19,8 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.ListUtils;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 
@@ -22,6 +29,8 @@ public class MainMenuController {
 	private static MainMenuController controller;
 	
 	private MainMenuView view;
+	
+	HashMap<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
 
 	private MainMenuController() {
 	}
@@ -43,6 +52,10 @@ public class MainMenuController {
 		}
 		return controller;
 	}
+	
+	public void dispose() {
+		this.storeProperties();
+	}	
 	
 	/**
 	 * Get the menu view which is a {@link JMenuBar} instance.
@@ -180,4 +193,59 @@ public class MainMenuController {
 		}
 		return menu;
 	}	
+	
+	/**
+	 * Tells if the ebook items with the given basePath are shown or not. 
+	 * @param basePath The pase path for the items.
+	 * @return <code>true</code> if the ebook items are shown and <code>false</code> if not.
+	 */
+	public boolean isShowHideBasePathStatusShow(final String basePath) {
+		final Boolean status = showHideBasePathToggleStatus.get(basePath);
+		if(status == null) {
+			return true; //show per default
+		}
+		return status.booleanValue();
+	}
+	
+	public void setShowHideBasePathStatusShow(final String basePath, final boolean show) {
+		showHideBasePathToggleStatus.put(basePath, Boolean.valueOf(show));
+	}
+	
+	/**
+	 * get all base path entries which are marked as hidden in the file menu.
+	 * @return A list of all hidden base path entries.
+	 */
+	public List<String> getHiddenBasePathEntries() {
+		if(showHideBasePathToggleStatus.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
+		final ArrayList<String> result = new ArrayList<String>();
+	    for (Map.Entry<String, Boolean> entry : showHideBasePathToggleStatus.entrySet()) {
+	        String basePath = entry.getKey();
+	        Boolean isSHow = entry.getValue();
+	        if(isSHow!=null && isSHow.booleanValue() == false) {
+	        	result.add(basePath);
+	        }
+	    }
+	    return result;
+	}
+	
+	private void storeProperties() {
+		List<String> hiddenBasePathEntries = MainMenuController.getController().getHiddenBasePathEntries();
+		if(!hiddenBasePathEntries.isEmpty()) {
+			JeboorkerPreferences.addEntryString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
+		}		
+	}
+	
+	void restoreProperties() {
+		String basePathPropString = JeboorkerPreferences.getEntryString("mainMenuBasePathHide");
+		if(basePathPropString!=null && !basePathPropString.isEmpty()) {
+			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
+			for(String basePath : split) {
+				//setShowHideBasePathStatusShow(basePath, false); //set checkbox value to the view
+				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).actionPerformed(new ActionEvent(this, 0, "initialize"));
+			}
+		}
+	}
 }

@@ -18,6 +18,8 @@ import org.rr.jeborker.gui.MainMonitor;
 public class SearchAction extends AbstractAction {
 
 	private static final long serialVersionUID = -2514716618739877972L;
+	
+	private static final String QUERY_IDENTIFER = SearchAction.class.getName();
 
 	SearchAction() {
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("play_16.gif")));
@@ -36,15 +38,18 @@ public class SearchAction extends AbstractAction {
 		monitorStart(filterText);
 		try {
 			final List<String> filterValues = ListUtils.split(filterText, " ", -1, UtilConstants.COMPARE_BINARY);
-			final QueryCondition rootCondition = new QueryCondition(null, null, null);
+			final QueryCondition rootCondition = controller.getTableModel().getQueryCondition();
+			rootCondition.removeConditionByIdentifier(QUERY_IDENTIFER); //remove possibly existing search conditions
+			
+			final QueryCondition rootFilterCondition = new QueryCondition(null,null,null, QUERY_IDENTIFER);
+			rootCondition.addAndChild(rootFilterCondition);
 			for (String filterValue : filterValues) {
 				if(StringUtils.toString(filterValue).length() > 0) {
-					rootCondition.addOrChild(new QueryCondition("author", "%" + filterValue + "%", "like"));
-					rootCondition.addOrChild(new QueryCondition("title", "%" + filterValue + "%", "like"));
-					rootCondition.addOrChild(new QueryCondition("file", "%" + filterValue + "%", "like"));
+					rootFilterCondition.addOrChild(new QueryCondition("author", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+					rootFilterCondition.addOrChild(new QueryCondition("title", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+					rootFilterCondition.addOrChild(new QueryCondition("file", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
 				}
 			}
-			controller.getTableModel().setQueryConditions(rootCondition);
 			controller.refreshTable(true);
 			filterPanelController.addFilterFieldSearch(filterText);
 		} finally {
