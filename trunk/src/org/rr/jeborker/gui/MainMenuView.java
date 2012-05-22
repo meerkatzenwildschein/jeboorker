@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -26,6 +27,8 @@ class MainMenuView extends JMenuBar {
 	JMenu mnVerzeichnisEntfernen;
 
 	JMenu mnVerzeichnisRefresh;
+	
+	JMenu mnVerzeichnisShowHide;
 	
 	JMenu metadataMenuBar;
 
@@ -146,28 +149,48 @@ class MainMenuView extends JMenuBar {
 		fileMenuBar.add(mntmAddEbooks);
 		
 		final List<String> basePath = JeboorkerPreferences.getBasePath();
-		mnVerzeichnisEntfernen = new JMenu(Bundle.getString("EborkerMainView.removeBasePath"));
-		for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
-			String path = iterator.next();
-			JMenuItem pathItem = new JMenuItem();
-			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
-			mnVerzeichnisEntfernen.add(pathItem);
+		{
+			mnVerzeichnisEntfernen = new JMenu(Bundle.getString("EborkerMainView.removeBasePath"));
+			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
+				String path = iterator.next();
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
+				mnVerzeichnisEntfernen.add(pathItem);
+			}
+			fileMenuBar.add(mnVerzeichnisEntfernen);
+			if(basePath.isEmpty()) {
+				mnVerzeichnisEntfernen.setEnabled(false);
+			}	
 		}
-		fileMenuBar.add(mnVerzeichnisEntfernen);
-		if(basePath.isEmpty()) {
-			mnVerzeichnisEntfernen.setEnabled(false);
-		}		
 
-		mnVerzeichnisRefresh = new JMenu(Bundle.getString("EborkerMainView.refreshBasePath"));
-		for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
-			String path = iterator.next();
-			JMenuItem pathItem = new JMenuItem();
-			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
-			mnVerzeichnisRefresh.add(pathItem);
+		{
+			mnVerzeichnisRefresh = new JMenu(Bundle.getString("EborkerMainView.refreshBasePath"));
+			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
+				String path = iterator.next();
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
+				mnVerzeichnisRefresh.add(pathItem);
+			}
+			fileMenuBar.add(mnVerzeichnisRefresh);
+			if(basePath.isEmpty()) {
+				mnVerzeichnisRefresh.setEnabled(false);
+			}
 		}
-		fileMenuBar.add(mnVerzeichnisRefresh);
-		if(basePath.isEmpty()) {
-			mnVerzeichnisRefresh.setEnabled(false);
+		
+		{
+			mnVerzeichnisShowHide = new JMenu(Bundle.getString("EborkerMainView.basePathVisibility"));
+			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
+				String path = iterator.next();
+				JCheckBoxMenuItem pathItem = new JCheckBoxMenuItem();
+				boolean isShow = MainMenuController.getController().isShowHideBasePathStatusShow(path);
+				pathItem.setSelected(isShow);
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path));
+				mnVerzeichnisShowHide.add(pathItem);
+			}
+			fileMenuBar.add(mnVerzeichnisShowHide);
+			if(basePath.isEmpty()) {
+				mnVerzeichnisShowHide.setEnabled(false);
+			}		
 		}
 		
 		fileMenuBar.add(new JSeparator());

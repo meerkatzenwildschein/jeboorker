@@ -164,6 +164,7 @@ public class MainController {
 		initSubController();
 		
 		MainControllerUtils.restoreApplicationProperties(mainWindow);
+		MainMenuController.getController().restoreProperties();
 		mainWindow.setVisible(true);
 	}
 
@@ -447,6 +448,7 @@ public class MainController {
 		getSortColumnComponentController().dispose();
 		getSortOrderComponentController().dispose();
 		getFilterPanelController().dispose();
+		MainMenuController.getController().dispose();
 	}
 
 	/**

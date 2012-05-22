@@ -320,19 +320,14 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	/**
 	 * Gets the current list of filter conditions.
-	 * @return The current filter condition list or <code>null</code> if no filter was set.
+	 * @return The current filter condition list. Never returns <code>null</code>.
 	 */
 	public QueryCondition getQueryCondition() {
+		if(this.queryConditions == null) {
+			//set as root condition
+			this.queryConditions = new QueryCondition(null, null, null, "ROOT");
+		}
 		return queryConditions;
-	}
-
-	/**
-	 * Sets the given {@link QueryCondition}s as the current used ones. 
-	 * Previous ones which was setted ot added will be removed. 
-	 * @param queryConditions 
-	 */
-	public void setQueryConditions(QueryCondition queryConditions) {
-		this.queryConditions = queryConditions;
 	}
 
 }
