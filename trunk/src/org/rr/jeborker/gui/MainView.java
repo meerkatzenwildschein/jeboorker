@@ -75,6 +75,7 @@ public class MainView extends JFrame{
 	JMenuButton addMetadataButton;
 	
 	JButton removeMetadataButton;
+	private JLabel lblSortBy;
 	
 	/**
 	 * Create the application.
@@ -110,7 +111,6 @@ public class MainView extends JFrame{
 		gbc_toolbarPanel.fill = GridBagConstraints.VERTICAL;
 		gbc_toolbarPanel.gridx = 0;
 		gbc_toolbarPanel.gridy = 0;
-//		getContentPane().add(toolbarPanel, gbc_toolbarPanel);
 		toolbarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		
 		JButton readFolderButton = new JButton();
@@ -155,16 +155,23 @@ public class MainView extends JFrame{
 				
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
-		gbl_propertyContentPanel.columnWidths = new int[]{25, 25, 0};
+		gbl_propertyContentPanel.columnWidths = new int[]{0, 25, 25, 0};
 		gbl_propertyContentPanel.rowHeights = new int[]{25, 0, 0, 0};
-		gbl_propertyContentPanel.columnWeights = new double[]{0.0, 0.0, 1.0};
+		gbl_propertyContentPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0};
 		gbl_propertyContentPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		propertyContentPanel.setLayout(gbl_propertyContentPanel);
 		mainSplitPane.setLeftComponent(propertyContentPanel);
 				
+				lblSortBy = new JLabel(Bundle.getString("EborkerMainView.sortby"));
+				GridBagConstraints gbc_lblSortBy = new GridBagConstraints();
+				gbc_lblSortBy.insets = new Insets(0, 0, 5, 5);
+				gbc_lblSortBy.gridx = 0;
+				gbc_lblSortBy.gridy = 0;
+				propertyContentPanel.add(lblSortBy, gbc_lblSortBy);
+				
 				JScrollPane scrollPane = new JScrollPane();
 				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-				gbc_scrollPane.gridwidth = 4;
+				gbc_scrollPane.gridwidth = 5;
 				gbc_scrollPane.weightx = 2.0;
 				gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
 				gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -177,10 +184,10 @@ public class MainView extends JFrame{
 				sortColumnComboBox = new CheckComboBox();
 				sortColumnComboBox.setPreferredSize(new Dimension(0,25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
-				gbc_sortColumnComboBox.insets = new Insets(0, 0, 5, 0);
+				gbc_sortColumnComboBox.insets = new Insets(0, 0, 5, 5);
 				gbc_sortColumnComboBox.anchor = GridBagConstraints.NORTH;
 				gbc_sortColumnComboBox.fill = GridBagConstraints.HORIZONTAL;
-				gbc_sortColumnComboBox.gridx = 2;
+				gbc_sortColumnComboBox.gridx = 3;
 				gbc_sortColumnComboBox.gridy = 0;
 				propertyContentPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
 				
@@ -190,10 +197,10 @@ public class MainView extends JFrame{
 				sortOrderAscButton.setPreferredSize(new Dimension(0,25));
 				sortOrderAscButton.setMinimumSize(new Dimension(0,25));
 				GridBagConstraints gbc_sortOrderComboBox = new GridBagConstraints();
-				gbc_sortOrderComboBox.insets = new Insets(0, 0, 5, 0);
+				gbc_sortOrderComboBox.insets = new Insets(0, 0, 5, 5);
 				gbc_sortOrderComboBox.anchor = GridBagConstraints.NORTH;
 				gbc_sortOrderComboBox.fill = GridBagConstraints.HORIZONTAL;
-				gbc_sortOrderComboBox.gridx = 0;
+				gbc_sortOrderComboBox.gridx = 1;
 				gbc_sortOrderComboBox.gridy = 0;
 				propertyContentPanel.add(sortOrderAscButton, gbc_sortOrderComboBox);
 				
@@ -205,8 +212,8 @@ public class MainView extends JFrame{
 				GridBagConstraints gbc_toggleButton = new GridBagConstraints();
 				gbc_toggleButton.anchor = GridBagConstraints.NORTH;
 				gbc_toggleButton.fill = GridBagConstraints.HORIZONTAL;				
-				gbc_toggleButton.insets = new Insets(0, 0, 5, 0);
-				gbc_toggleButton.gridx = 1;
+				gbc_toggleButton.insets = new Insets(0, 0, 5, 5);
+				gbc_toggleButton.gridx = 2;
 				gbc_toggleButton.gridy = 0;
 				propertyContentPanel.add(sortOrderDescButton, gbc_toggleButton);				
 				
@@ -288,7 +295,7 @@ public class MainView extends JFrame{
 		gbc_progressBar.gridy = 0;
 		statusPanel.add(progressBar, gbc_progressBar);
 		
-		JLabel label = new JLabel("Status: ");
+		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.insets = new Insets(0, 0, 0, 5);
 		gbc_label.anchor = GridBagConstraints.WEST;
