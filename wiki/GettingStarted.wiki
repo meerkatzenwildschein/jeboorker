@@ -6,4 +6,5 @@ After the read process has been done, all books from all folders you've specifie
 
 Always you've changed something within your ebook collection, you should perform a _File->Refresh folder_ for a rescan, so jeboorker can recognize these changes.
 
+
 http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg
