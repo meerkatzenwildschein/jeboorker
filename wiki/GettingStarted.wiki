@@ -4,4 +4,6 @@ If you start jeboorker the first time, you have to specify the folder where your
 
 After the read process has been done, all books from all folders you've specified appears in the main area. 
 
-Always you've changed something within your ebook collection, you should perform a _File->Refresh folder_ for a rescan, so jeboorker can recognize these changes. t
+Always you've changed something within your ebook collection, you should perform a _File->Refresh folder_ for a rescan, so jeboorker can recognize these changes.
+
+http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg
