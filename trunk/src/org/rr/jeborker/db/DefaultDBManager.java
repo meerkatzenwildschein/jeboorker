@@ -13,11 +13,10 @@ import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 import com.orientechnologies.common.exception.OException;
-import com.orientechnologies.orient.core.db.object.ODatabaseObjectTx;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
-import com.orientechnologies.orient.core.query.nativ.OQueryContextNativeSchema;
-import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
 
 /**
@@ -29,7 +28,7 @@ public class DefaultDBManager {
 	
 	private static DefaultDBManager manager;
 	
-	private static ODatabaseObjectTx db;
+	private static OObjectDatabaseTx db;
 	
 	/**
 	 * Gets a shared {@link ConfigManager} instance.
@@ -68,7 +67,7 @@ public class DefaultDBManager {
 	 * @param The database file name. The database is stored in the user app config folder.
 	 * @return The ready to use container
 	 */
-	public synchronized ODatabaseObjectTx getDB() {
+	public synchronized OObjectDatabaseTx getDB() {
 		if(db!=null) {
 			return db;
 		}
@@ -80,10 +79,10 @@ public class DefaultDBManager {
 		
 		// OPEN / CREATE THE DATABASE
 		if(!dbResourceHandler.exists()) {
-			db = new ODatabaseObjectTx ("local:" + dbFile).create();
+			db = new OObjectDatabaseTx ("local:" + dbFile).create();
 			db.getMetadata().getSchema().createClass(EbookPropertyItem.class);
 		} else {
-			db = new ODatabaseObjectTx ("local:" + dbFile).open("admin", "admin");
+			db = new OObjectDatabaseTx ("local:" + dbFile).open("admin", "admin");
 			db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
 		}
 		
@@ -259,16 +258,25 @@ public class DefaultDBManager {
 	 * @return A list with all results.
 	 */
 	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
-		List<?> result = getDB().command(
-				  new ONativeSynchQuery<ODocument, OQueryContextNativeSchema<ODocument>>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNativeSchema<ODocument>()) {
-					private static final long serialVersionUID = 1L;
+//		List<?> result = getDB().command(
+//				  new ONativeSynchQuery<ODocument, OQueryContextNative<ODocument>>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNativeSchema<ODocument>()) {
+//					private static final long serialVersionUID = 1L;
+//
+//					@Override
+//				    public boolean filter(OQueryContextNativeSchema<ODocument> iRecord) {
+//				      //return iRecord.field("city").field("name").eq("Rome").and().field("name").like("G%").go();
+//				    	return iRecord.field(field).eq(value).go();
+//				    };
+//				  }).execute();
+		
+		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
 
-					@Override
-				    public boolean filter(OQueryContextNativeSchema<ODocument> iRecord) {
-				      //return iRecord.field("city").field("name").eq("Rome").and().field("name").like("G%").go();
-				    	return iRecord.field(field).eq(value).go();
-				    };
-				  }).execute();
+			@Override
+			public boolean filter(OQueryContextNative iRecord) {
+				return iRecord.field(field).eq(value).go();
+			}
+					
+		}.execute((Object[]) null);
 		return new ODocumentMapper<T>(result, db);
 	}
 
