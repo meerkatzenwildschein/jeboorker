@@ -76,7 +76,7 @@ public class SetMetadataGenreAction extends ASetCommonMetadataAction implements 
 	@Override
 	public synchronized SimpleInputDialog doOnce() {
 		if(inputDialog == null) {
-			inputDialog = new SimpleInputDialog(MainController.getController().getMainWindow(), "Authors name", true);
+			inputDialog = new SimpleInputDialog(MainController.getController().getMainWindow(), "Genre", true);
 			inputDialog.setDialogMode(SimpleInputDialog.OK_CANCEL_DIALOG);
 			inputDialog.setQuestionTest(Bundle.getString("SetMetadataGenreAction.input.text"));
 			inputDialog.setSize(305,160);

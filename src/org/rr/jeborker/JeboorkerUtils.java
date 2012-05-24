@@ -55,7 +55,11 @@ public class JeboorkerUtils {
 	 */
 	public static String getConfigDirectory() {
 		String result = System.getProperties().getProperty("user.home");
-		result += File.separator + ".jeboorker" + File.separator;
+		if(String.valueOf(JeboorkerUtils.class.getResource("JeboorkerUtils.class")).indexOf("jar:")==-1) {
+			result += File.separator + ".jeboorker.devel" + File.separator;
+		} else {		
+			result += File.separator + ".jeboorker" + File.separator;
+		}
 		
 		return result;
 	}
