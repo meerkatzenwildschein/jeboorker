@@ -4,7 +4,11 @@ If you start jeboorker the first time, you have to specify the folder where your
 
 After the read process has been done, all books from all folders you've specified appears in the main area. 
 
+http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg
+
+= Folder handling =
 Always you've changed something within your ebook collection, you should perform a _File->Refresh folder_ for a rescan, so jeboorker can recognize these changes.
 
+The folders you've added can be toggled in it's visibility state by _File->Show/hide folder_.
 
-http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg
+If you do not need a folder, you can remove it by _File->Remove folder_. This folder is only be removed from jeboorker and did not get touched in any other way!
