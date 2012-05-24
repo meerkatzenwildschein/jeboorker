@@ -1,0 +1,7 @@
+= Getting started =
+
+If you start jeboorker the first time, you have to specify the folder where youre ebooks located at. This can be done with the menu _File->Read folder_. You can add as many folders as you want. 
+
+After the read process has been done, all books from all folders you've specified appears in the main area. 
+
+Always you've changed something within your ebook collection, you should perform a _File->Refresh folder_ for a rescan, so jeboorker can recognize these changes.
