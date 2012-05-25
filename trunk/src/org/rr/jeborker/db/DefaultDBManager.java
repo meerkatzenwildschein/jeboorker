@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -11,11 +12,18 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.db.item.Index;
 
 import com.orientechnologies.common.exception.OException;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
+import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
 
@@ -46,15 +54,6 @@ public class DefaultDBManager {
 	}
 	
 	/**
-	 * Gets all {@link IDBObject} classes handled by this {@link DefaultDBManager} instance.
-	 * @return All handled {@link IDBObject} classes.
-	 */
-	@SuppressWarnings("unchecked")
-	protected Class<IDBObject>[] getIDBObjectForSetup() {
-		return new Class[] {EbookPropertyItem.class};
-	}
-	
-	/**
 	 * Gets the database name for the database handled by this {@link DefaultDBManager} instance.
 	 * @return The database file name.
 	 */
@@ -69,6 +68,7 @@ public class DefaultDBManager {
 	 */
 	public synchronized OObjectDatabaseTx getDB() {
 		if(db!=null) {
+			ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 			return db;
 		}
 		
@@ -78,16 +78,84 @@ public class DefaultDBManager {
 		final IResourceHandler dbResourceHandler = ResourceHandlerFactory.getResourceLoader(dbFile);
 		
 		// OPEN / CREATE THE DATABASE
-		if(!dbResourceHandler.exists()) {
-			db = new OObjectDatabaseTx ("local:" + dbFile).create();
-			db.getMetadata().getSchema().createClass(EbookPropertyItem.class);
-		} else {
-			db = new OObjectDatabaseTx ("local:" + dbFile).open("admin", "admin");
+		if (!dbResourceHandler.exists()) {
+			db = new OObjectDatabaseTx("local:" + dbFile).create();
 			db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
-		}
+			
+			this.createIndices(db, EbookPropertyItem.class);
+			
+			db.close();
+		} 
+		
+		db = OObjectDatabasePool.global().acquire("local:" + dbFile, "admin", "admin");
+		db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
+		
+//		this.deleteIndices(db, EbookPropertyItem.class);
+//		this.createIndices(db, EbookPropertyItem.class);
+		
+		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 		
 		return db;
 	}
+	
+	public <T> void deleteIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
+		List<ODocument> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
+		for (ODocument index : indicies) {
+			if(!"DICTIONARY".equals(index.field("type"))) {
+				//delete all indices except of the DICTIONARY one.
+				String name = index.field("name");
+				String field =((ODocument) index.field("indexDefinition")).field("field");
+				try {
+					db.command(new OCommandSQL("DROP INDEX " + name)).execute();
+				} catch (Exception e) {
+					LoggerFactory.log(Level.SEVERE, this, "could not delete index " + name, e);
+				}
+				
+				try {
+					db.command(new OCommandSQL("DROP PROPERTY " + itemClass.getSimpleName() + "." + field)).execute();
+				} catch (Exception e) {
+					LoggerFactory.log(Level.SEVERE, this, "could not delete property " + itemClass.getSimpleName() + "." + field, e);
+				}				
+			}
+		}
+	}
+	
+	public <T> void createIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
+//		List<?> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
+//		if(indicies.size() > 1) {
+//			return;
+//		}
+		
+		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(Index.class, itemClass);
+		for (Field field : dbViewFields) {
+			try {
+				final String indexType = ((Index)field.getAnnotation(Index.class)).type();
+				final StringBuilder sql = new StringBuilder();
+
+				//CREATE PROPERTY User.id STRING
+				try {
+					sql.append("CREATE PROPERTY " + itemClass.getSimpleName() + "." + field.getName() + " STRING");
+					db.command(new OCommandSQL(sql.toString())).execute();
+				} catch (Exception e) {
+					//LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + field.getName(), e);
+				} finally {
+					sql.setLength(0);
+				}
+
+				//CREATE INDEX <name> [ON <class-name> (prop-names)] <type> [<key-type>]
+				sql.append("CREATE INDEX indexFor").append(itemClass.getSimpleName()).append(field.getName())
+					.append(" ON ")
+					.append(itemClass.getSimpleName())
+					.append("(")
+					.append(field.getName())
+					.append(") ")
+					.append(indexType);
+				db.command(  new OCommandSQL(sql.toString()) ).execute(); 
+			} catch (Exception e) {
+				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
+			}
+		}		
+	}	
 	
 	/**
 	 * Closes and shutdown all database connections previously opened.
@@ -134,10 +202,9 @@ public class DefaultDBManager {
 		final StringBuilder sql = new StringBuilder()
 			.append("select * from ")
 			.append(class1.getSimpleName());
-
+		
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
-//System.out.println("query: " + sql.toString());		
 		try {
 			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
 			return listResult;
@@ -258,17 +325,6 @@ public class DefaultDBManager {
 	 * @return A list with all results.
 	 */
 	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
-//		List<?> result = getDB().command(
-//				  new ONativeSynchQuery<ODocument, OQueryContextNative<ODocument>>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNativeSchema<ODocument>()) {
-//					private static final long serialVersionUID = 1L;
-//
-//					@Override
-//				    public boolean filter(OQueryContextNativeSchema<ODocument> iRecord) {
-//				      //return iRecord.field("city").field("name").eq("Rome").and().field("name").like("G%").go();
-//				    	return iRecord.field(field).eq(value).go();
-//				    };
-//				  }).execute();
-		
 		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
 
 			@Override

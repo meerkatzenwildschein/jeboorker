@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface DBViewField {
+public @interface ViewField {
 
 	/**
 	 * The name allows to specify a more beautiful name

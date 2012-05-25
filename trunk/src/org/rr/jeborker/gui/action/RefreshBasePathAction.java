@@ -51,8 +51,12 @@ class RefreshBasePathAction extends QueueableAction {
 		controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 		String messageFinished = Bundle.getString("RefreshBasePathAction.finished");
 		try {
-			if(path!=null && path.length()>0) {
-				doRefresh(path, event, controller.getProgressMonitor());
+			if(path!=null && path.length() > 0) {
+				if(!ResourceHandlerFactory.getResourceLoader(path).isDirectoryResource()) {
+					messageFinished = "The folder " + path + " did not exists.";
+				} else {			
+					doRefresh(path, event, controller.getProgressMonitor());
+				}
 			} else {
 				final List<String> basePath = JeboorkerPreferences.getBasePath();
 				for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {

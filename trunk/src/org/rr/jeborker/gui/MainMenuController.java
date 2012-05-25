@@ -233,7 +233,9 @@ public class MainMenuController {
 	
 	private void storeProperties() {
 		List<String> hiddenBasePathEntries = MainMenuController.getController().getHiddenBasePathEntries();
-		if(!hiddenBasePathEntries.isEmpty()) {
+		if(hiddenBasePathEntries.isEmpty()) {
+			JeboorkerPreferences.addEntryString("mainMenuBasePathHide", "");
+		} else {
 			JeboorkerPreferences.addEntryString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
 		}		
 	}

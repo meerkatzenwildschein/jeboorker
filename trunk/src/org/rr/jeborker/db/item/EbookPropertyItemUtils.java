@@ -1,12 +1,15 @@
 package org.rr.jeborker.db.item;
 
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -15,6 +18,25 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 public class EbookPropertyItemUtils {
+	
+    /**
+     * Get all fields which are marked with a {@link ViewField} annotation.
+     * @param itemClass TODO
+     * @return The desired fields.
+     */
+    public static List<Field> getFieldsByAnnotation(final Class annotationClass, final Class<?> itemClass) {
+		//get fields to be displayed in the combobox
+		final List<Field> fields = ReflectionUtils.getFields(itemClass, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
+		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
+		for (Field field : fields) {
+			Object dbViewFieldAnnotation = field.getAnnotation(annotationClass);
+			if(dbViewFieldAnnotation!=null) {
+				listEntries.add(field);
+			}
+		} 
+		
+		return listEntries;  	
+    } 	
 	
 	/**
 	 * Creates a new {@link EbookPropertyItem} from the given resource.
