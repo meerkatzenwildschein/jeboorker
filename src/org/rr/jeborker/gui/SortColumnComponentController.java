@@ -20,8 +20,9 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
-import org.rr.jeborker.db.item.DBViewField;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.db.item.ViewField;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
 public class SortColumnComponentController {
@@ -39,8 +40,8 @@ public class SortColumnComponentController {
 
 		@Override
 		public int compare(Field o1, Field o2) {
-			DBViewField annotation1 = o1.getAnnotation(DBViewField.class);
-			DBViewField annotation2 = o2.getAnnotation(DBViewField.class);
+			ViewField annotation1 = o1.getAnnotation(ViewField.class);
+			ViewField annotation2 = o2.getAnnotation(ViewField.class);
 			if(annotation1!=null && annotation2!=null) {
 				return Integer.valueOf(annotation1.orderPriority()).compareTo(Integer.valueOf(annotation2.orderPriority())) * -1;
 			}
@@ -104,7 +105,7 @@ public class SortColumnComponentController {
 
 			@Override
 			public String getText(Object value) {
-				DBViewField annotation = ((Field) value).getAnnotation(DBViewField.class);
+				ViewField annotation = ((Field) value).getAnnotation(ViewField.class);
 				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
 				if(localizedName != null) {
 					return localizedName;
@@ -150,7 +151,7 @@ public class SortColumnComponentController {
 					if(text.length() > 0) {
 						text.append(", ");
 					}
-					String name = ((Field)field).getAnnotation(DBViewField.class).name();
+					String name = ((Field)field).getAnnotation(ViewField.class).name();
 					text.append(name);
 				}
 				return text;		
@@ -169,7 +170,7 @@ public class SortColumnComponentController {
 	 */
 	private DefaultListCheckModel initModel() {
 		//get fields to be displayed in the combobox
-		final List<Field> listEntries = EbookPropertyItem.getDBViewFields();
+		final List<Field> listEntries = EbookPropertyItemUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
 		
 		//sort the fields to the DBViewField.orderPriority()
 		Collections.sort(listEntries, ebookPropertyItemFieldComperator);
@@ -222,8 +223,8 @@ public class SortColumnComponentController {
 			final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
 			List<Field> orderByColumns = tableModel.getOrderByColumns();
 	    	try {
-				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("author"));
-				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("title"));
+//				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("author"));
+//				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("title"));
 			} catch (Exception e) {
 				LoggerFactory.logWarning(this, "Field named author is not available at " + EbookPropertyItem.class, e);
 			} 

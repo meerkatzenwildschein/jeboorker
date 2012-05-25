@@ -34,5 +34,6 @@ public class MainMonitor {
 	public void setMessage(String message) {
 		progressbar.setString(message != null ? message : "");
 		progressbar.setStringPainted(true);
+		progressbar.setToolTipText(message != null ? message : "");
 	}
 }

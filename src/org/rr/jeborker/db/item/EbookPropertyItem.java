@@ -18,7 +18,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	
 	private static final long serialVersionUID = -4301328577306625467L;
 	
-	@DBViewField(name = "Created at", orderPriority = 0)
+	@ViewField(name = "Created at", orderPriority = 0)
 	@ProtectedField
 	private Date createdAt;
 
@@ -26,56 +26,62 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * File name and path from the ebook file.
 	 */
 	@ProtectedField
+	@Index(type= "FULLTEXT")
 	private String file;
 	
 	/**
 	 * The base path of the ebook file.
 	 */
-	@DBViewField(name = "Base Path", orderPriority = 0)
+	@ViewField(name = "Base Path", orderPriority = 0)
 	@ProtectedField
 	private String basePath;
 	
 	/**
 	 * The mime type of the ebook file.
 	 */
-	@DBViewField(name = "Mime type", orderPriority = 0)
+	@ViewField(name = "Mime type", orderPriority = 0)
 	@ProtectedField
+	@Index(type= "FULLTEXT")
 	private String mimeType;
 	
 	/**
 	 * Title of the ebook. This property is ready from the ebook meta data.
 	 */
-	@DBViewField(name = "Title", orderPriority = 99)
+	@ViewField(name = "Title", orderPriority = 99)
+	@Index(type= "FULLTEXT")
 	private String title;
 	
 	/**
 	 * Language of the ebook
 	 */
-	@DBViewField(name = "Language", orderPriority = 30)
+	@ViewField(name = "Language", orderPriority = 30)
+	@Index(type= "FULLTEXT")
 	private String language;
 	
 	/**
 	 * The publishing / release date of the ebook.
 	 */
-	@DBViewField(name = "Publishing Date", orderPriority = 50)
+	@ViewField(name = "Publishing Date", orderPriority = 50)
 	private Date publishingDate;
 	
 	/**
 	 * The date when the ebook was created.
 	 */
-	@DBViewField(name = "Creation Date", orderPriority = 50)
+	@ViewField(name = "Creation Date", orderPriority = 50)
 	private Date creationDate;	
 
 	/**
 	 * The author of the ebook.
 	 */
-	@DBViewField(name = "Author", orderPriority = 101)
+	@ViewField(name = "Author", orderPriority = 101)
+	@Index(type= "FULLTEXT")
 	private String author;
 	
 	/**
 	 * The author's name in a good sortable manner
 	 */
-	@DBViewField(name = "Author Sort", orderPriority = 100)
+	@ViewField(name = "Author Sort", orderPriority = 100)
+	@Index(type= "FULLTEXT")
 	private String authorSort;	
 
 	/**
@@ -86,67 +92,77 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * ISBN number of the ebook
 	 */
-	@DBViewField(name = "ISBN", orderPriority = 50)
+	@ViewField(name = "ISBN", orderPriority = 50)
+	@Index(type= "FULLTEXT")
 	private String isbn;
 	
 	/**
 	 * Description / summary of the book.
 	 */
-	@DBViewField(name = "Description", orderPriority = 20)
+	@ViewField(name = "Description", orderPriority = 20)
+	@Index(type= "FULLTEXT")
 	private String description;
 	
 	/**
 	 * Just some keywords for the book. Primary used with pdf.
 	 */
-	@DBViewField(name = "Keywords", orderPriority = 0)
+	@ViewField(name = "Keywords", orderPriority = 0)
+	@Index(type= "FULLTEXT")
 	private String keywords;
 	
 	/**
 	 * publisher of the ebook.
 	 */
-	@DBViewField(name = "Publisher", orderPriority = 80)
+	@ViewField(name = "Publisher", orderPriority = 80)
+	@Index(type= "FULLTEXT")
 	private String publisher;
 	
 	/**
 	 * The subject is for example "Belletristik/Krimis, Thriller, Spionage"
 	 */
-	@DBViewField(name = "Genre", orderPriority = 90)
+	@ViewField(name = "Genre", orderPriority = 90)
+	@Index(type= "FULLTEXT")
 	private String genre;
 	
 	/**
 	 * If the ebook is part of a series like a trilogy, the name of the serie could be stored here.
 	 */
-	@DBViewField(name = "Series name", orderPriority = 90)
+	@ViewField(name = "Series name", orderPriority = 90)
+	@Index(type= "FULLTEXT")
 	private String seriesName;
 	
 	/**
 	 * If the ebook is part of a series like a trilogy, the number of the serie could be stored here.
 	 */
-	@DBViewField(name = "Series index", orderPriority = 89)
+	@ViewField(name = "Series index", orderPriority = 89)
+	@Index(type= "FULLTEXT")
 	private String seriesIndex;
 	
 	/**
 	 * The book rating. We use a 0.00 digit schema here. 
 	 */
-	@DBViewField(name = "Rating", orderPriority = 95)
+	@ViewField(name = "Rating", orderPriority = 95)
 	private Integer rating;
 	
 	/**
 	 * Something like "All rights reserved" 
 	 */
-	@DBViewField(name = "Rights", orderPriority = 10)
+	@ViewField(name = "Rights", orderPriority = 10)
+	@Index(type= "FULLTEXT")
 	private String rights;
 	
 	/**
 	 * The release scope for the book. For example "Germany"
 	 */
-	@DBViewField(name = "Coverage", orderPriority = 10)
+	@ViewField(name = "Coverage", orderPriority = 10)
+	@Index(type= "FULLTEXT")
 	private String coverage;
 	
 	/**
 	 * age suggestion. Something like '12-13' or simple '12'.
 	 */
-	@DBViewField(name = "Age suggestion", orderPriority = 80)
+	@ViewField(name = "Age suggestion", orderPriority = 80)
+	@Index(type= "FULLTEXT")
 	private String ageSuggestion;
 	
 	/**
@@ -201,29 +217,13 @@ public class EbookPropertyItem implements IDBObject, Serializable {
     	return false;
     }	
     
-    /**
-     * Get all fields which are marked with a {@link DBViewField} annotation.
-     * @return The desired fields.
-     */
-    public static List<Field> getDBViewFields() {
-		//get fields to be displayed in the combobox
-		final List<Field> fields = ReflectionUtils.getFields(EbookPropertyItem.class, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
-		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
-		for (Field field : fields) {
-			DBViewField dbViewFieldAnnotation = field.getAnnotation(DBViewField.class);
-			if(dbViewFieldAnnotation!=null) {
-				listEntries.add(field);
-			}
-		} 
-		
-		return listEntries;  	
-    }
+   
     
 	/**
 	 * Clears all metadata.
 	 */
 	public void clearMetadata() {
-		List<Field> dbViewFields = EbookPropertyItem.getDBViewFields();
+		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
 		for (Field field : dbViewFields) {
 			try {
 				if(field.getAnnotation(ProtectedField.class) == null) {
@@ -233,7 +233,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
 			}
 		}		
-	}    
+	}  
 	
 	/**
 	 * Get the CRC32 checksum for the cover thumbnail.
