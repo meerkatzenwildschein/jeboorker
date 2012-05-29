@@ -22,6 +22,7 @@ import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -125,7 +126,7 @@ public class DefaultDBManager {
 //		if(indicies.size() > 1) {
 //			return;
 //		}
-		
+
 		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(Index.class, itemClass);
 		for (Field field : dbViewFields) {
 			try {
@@ -136,6 +137,7 @@ public class DefaultDBManager {
 				try {
 					sql.append("CREATE PROPERTY " + itemClass.getSimpleName() + "." + field.getName() + " STRING");
 					db.command(new OCommandSQL(sql.toString())).execute();
+//System.out.println(sql);					
 				} catch (Exception e) {
 					//LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + field.getName(), e);
 				} finally {
@@ -151,6 +153,7 @@ public class DefaultDBManager {
 					.append(") ")
 					.append(indexType);
 				db.command(  new OCommandSQL(sql.toString()) ).execute(); 
+//System.out.println(sql);				
 			} catch (Exception e) {
 				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
 			}
@@ -206,7 +209,14 @@ public class DefaultDBManager {
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
 		try {
+			//select from index:<index-name> where key between <min> and <max>
+//			List<T> listResult2 = getDB().query(new OSQLSynchQuery<T>("select from index:indexForEbookPropertyItemauthor where key = \"Glen\""));
+			
+			
+System.out.println(sql);	
+long time = System.currentTimeMillis();
 			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
+System.out.println(System.currentTimeMillis() - time);
 			return listResult;
 		} catch(NullPointerException e) {
 			return Collections.emptyList();
@@ -267,7 +277,7 @@ public class DefaultDBManager {
 			}
 			if(condition.getFieldName() != null && StringUtils.toString(condition.getValue()).length() > 0) {
 				localSql.append(" ");
-				localSql.append(condition.getFieldName() + ".toLowerCase()");
+				localSql.append(condition.getFieldName()+".toLowerCase()");
 				localSql.append(" ");
 				localSql.append(condition.getOperator());
 				localSql.append(" ");
