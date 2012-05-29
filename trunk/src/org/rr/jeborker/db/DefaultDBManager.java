@@ -120,12 +120,12 @@ public class DefaultDBManager {
 		}
 	}
 	
+	/**
+	 * Create indices for all fields of the given item class marked with an Index annotation. 
+	 * @param db Database instance.
+	 * @param itemClass The item class where the indices should be created for.
+	 */
 	public <T> void createIndices(final ODatabaseObjectTx db, final Class<?> itemClass) {
-//		List<?> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
-//		if(indicies.size() > 1) {
-//			return;
-//		}
-
 		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(Index.class, itemClass);
 		for (Field field : dbViewFields) {
 			try {
@@ -136,7 +136,6 @@ public class DefaultDBManager {
 				try {
 					sql.append("CREATE PROPERTY " + itemClass.getSimpleName() + "." + field.getName() + " STRING");
 					db.command(new OCommandSQL(sql.toString())).execute();
-//System.out.println(sql);					
 				} catch (Exception e) {
 					//LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + field.getName(), e);
 				} finally {
@@ -152,7 +151,6 @@ public class DefaultDBManager {
 					.append(") ")
 					.append(indexType);
 				db.command(  new OCommandSQL(sql.toString()) ).execute(); 
-//System.out.println(sql);				
 			} catch (Exception e) {
 				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
 			}

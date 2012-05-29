@@ -89,9 +89,13 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		final EbookPropertyItem ebookPropertyItem;
 		try {
+			if(ebookItems.size() < rowIndex) {
+				setDirty();
+				ebookItems = this.getEbookItems();
+			}
 			ebookPropertyItem = ebookItems.get(rowIndex);
 		} catch(IndexOutOfBoundsException ex) {
 			LoggerFactory.logInfo(this, "", ex);
