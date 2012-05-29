@@ -7,8 +7,11 @@ import java.util.List;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.ArrayUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.w3c.dom.Document;
@@ -191,27 +194,21 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 				item.setPublisher(value != null ? String.valueOf(value) : null);
 			} else if (name == SUBJECT) {
 				item.setGenre(value != null ? String.valueOf(value) : null);
-			} else if (name == META) {
-				String metaName = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("name");
-				String metaContent = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("content");
-				if (metaName != null && metaContent != null) {
-					if (metaName.equalsIgnoreCase(CALIBRE_SERIES)) {
-						// <meta name="calibre:series" content="Lord of the Rings Trilogy"/>
-						item.setSeriesName(metaContent);
-					} else if (metaName.equalsIgnoreCase(CALIBRE_SERIES_INDEX)) {
-						// <meta name="calibre:series_index" content="1"/>
-						item.setSeriesIndex(metaContent);
-					} else if (metaName.equalsIgnoreCase(CALIBRE_RATING)) {
-						// <opf:meta name="calibre:rating" content="8"/>
-						item.setRating(CommonUtils.toNumber(metadataProperty.getValueAsString()).intValue());
-					} else if (metaName.equalsIgnoreCase(JB_KEYWORDS)) {
-						// <meta name="jb:keywords" content="foo, bar"/>
-						item.setKeywords(metaContent);
-					} else if (metaName.equalsIgnoreCase(JB_AGE_SUGGESTION)) {
-						// <meta name="jb:age_suggestion" content="13-15"/>
-						item.setAgeSuggestion(metaContent);
-					}
-				}
+			} else if (name.equalsIgnoreCase(CALIBRE_SERIES)) {
+				// <meta name="calibre:series" content="Lord of the Rings Trilogy"/>
+				item.setSeriesName(value != null ? String.valueOf(value) : null);
+			} else if (name.equalsIgnoreCase(CALIBRE_SERIES_INDEX)) {
+				// <meta name="calibre:series_index" content="1"/>
+				item.setSeriesIndex(value != null ? String.valueOf(value) : null);
+			} else if (name.equalsIgnoreCase(CALIBRE_RATING)) {
+				// <opf:meta name="calibre:rating" content="8"/>
+				item.setRating(CommonUtils.toNumber(metadataProperty.getValueAsString()).intValue());
+			} else if (name.equalsIgnoreCase(JB_KEYWORDS)) {
+				// <meta name="jb:keywords" content="foo, bar"/>
+				item.setKeywords(value != null ? ListUtils.split(String.valueOf(value), ",").toArray(new String[0]) : null);
+			} else if (name.equalsIgnoreCase(JB_AGE_SUGGESTION)) {
+				// <meta name="jb:age_suggestion" content="13-15"/>
+				item.setAgeSuggestion(value != null ? String.valueOf(value) : null);
 			}
 		}
 	}
