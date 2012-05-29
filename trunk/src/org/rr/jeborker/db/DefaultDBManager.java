@@ -22,7 +22,6 @@ import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
