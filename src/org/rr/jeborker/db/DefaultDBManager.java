@@ -16,15 +16,12 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.Index;
 
 import com.orientechnologies.common.exception.OException;
-import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
-import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
+import com.orientechnologies.orient.core.db.object.ODatabaseObjectTx;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
-import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
+import com.orientechnologies.orient.core.query.nativ.OQueryContextNativeSchema;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.object.db.OObjectDatabasePool;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
 
 /**
@@ -36,7 +33,7 @@ public class DefaultDBManager {
 	
 	private static DefaultDBManager manager;
 	
-	private static OObjectDatabaseTx db;
+	private static ODatabaseObjectTx db;
 	
 	/**
 	 * Gets a shared {@link ConfigManager} instance.
@@ -54,6 +51,15 @@ public class DefaultDBManager {
 	}
 	
 	/**
+	 * Gets all {@link IDBObject} classes handled by this {@link DefaultDBManager} instance.
+	 * @return All handled {@link IDBObject} classes.
+	 */
+	@SuppressWarnings("unchecked")
+	protected Class<IDBObject>[] getIDBObjectForSetup() {
+		return new Class[] {EbookPropertyItem.class};
+	}
+	
+	/**
 	 * Gets the database name for the database handled by this {@link DefaultDBManager} instance.
 	 * @return The database file name.
 	 */
@@ -66,9 +72,8 @@ public class DefaultDBManager {
 	 * @param The database file name. The database is stored in the user app config folder.
 	 * @return The ready to use container
 	 */
-	public synchronized OObjectDatabaseTx getDB() {
+	public synchronized ODatabaseObjectTx getDB() {
 		if(db!=null) {
-			ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 			return db;
 		}
 		
@@ -79,7 +84,7 @@ public class DefaultDBManager {
 		
 		// OPEN / CREATE THE DATABASE
 		if (!dbResourceHandler.exists()) {
-			db = new OObjectDatabaseTx("local:" + dbFile).create();
+			db = new ODatabaseObjectTx("local:" + dbFile).create();
 			db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
 			
 			this.createIndices(db, EbookPropertyItem.class);
@@ -87,18 +92,13 @@ public class DefaultDBManager {
 			db.close();
 		} 
 		
-		db = OObjectDatabasePool.global().acquire("local:" + dbFile, "admin", "admin");
+		db = new ODatabaseObjectTx ("local:" + dbFile).open("admin", "admin");
 		db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
-		
-//		this.deleteIndices(db, EbookPropertyItem.class);
-//		this.createIndices(db, EbookPropertyItem.class);
-		
-		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 		
 		return db;
 	}
 	
-	public <T> void deleteIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
+	public <T> void deleteIndices(final ODatabaseObjectTx db, final Class<?> itemClass) {
 		List<ODocument> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
 		for (ODocument index : indicies) {
 			if(!"DICTIONARY".equals(index.field("type"))) {
@@ -120,7 +120,7 @@ public class DefaultDBManager {
 		}
 	}
 	
-	public <T> void createIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
+	public <T> void createIndices(final ODatabaseObjectTx db, final Class<?> itemClass) {
 //		List<?> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
 //		if(indicies.size() > 1) {
 //			return;
@@ -204,18 +204,14 @@ public class DefaultDBManager {
 		final StringBuilder sql = new StringBuilder()
 			.append("select * from ")
 			.append(class1.getSimpleName());
-		
+
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
+//System.out.println("query: " + sql.toString());		
 		try {
-			//select from index:<index-name> where key between <min> and <max>
-//			List<T> listResult2 = getDB().query(new OSQLSynchQuery<T>("select from index:indexForEbookPropertyItemauthor where key = \"Glen\""));
-			
-			
-System.out.println(sql);	
-long time = System.currentTimeMillis();
+			long time =System.currentTimeMillis();
 			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
-System.out.println(System.currentTimeMillis() - time);
+System.out.println(System.currentTimeMillis() - time);			
 			return listResult;
 		} catch(NullPointerException e) {
 			return Collections.emptyList();
@@ -276,7 +272,7 @@ System.out.println(System.currentTimeMillis() - time);
 			}
 			if(condition.getFieldName() != null && StringUtils.toString(condition.getValue()).length() > 0) {
 				localSql.append(" ");
-				localSql.append(condition.getFieldName()+".toLowerCase()");
+				localSql.append(condition.getFieldName() + ".toLowerCase()");
 				localSql.append(" ");
 				localSql.append(condition.getOperator());
 				localSql.append(" ");
@@ -334,14 +330,16 @@ System.out.println(System.currentTimeMillis() - time);
 	 * @return A list with all results.
 	 */
 	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
-		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
+		List<?> result = getDB().command(
+				  new ONativeSynchQuery<ODocument, OQueryContextNativeSchema<ODocument>>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNativeSchema<ODocument>()) {
+					private static final long serialVersionUID = 1L;
 
-			@Override
-			public boolean filter(OQueryContextNative iRecord) {
-				return iRecord.field(field).eq(value).go();
-			}
-					
-		}.execute((Object[]) null);
+					@Override
+				    public boolean filter(OQueryContextNativeSchema<ODocument> iRecord) {
+				      //return iRecord.field("city").field("name").eq("Rome").and().field("name").like("G%").go();
+				    	return iRecord.field(field).eq(value).go();
+				    };
+				  }).execute();
 		return new ODocumentMapper<T>(result, db);
 	}
 
