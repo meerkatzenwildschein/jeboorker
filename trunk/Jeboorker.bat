@@ -1,0 +1,1 @@
+start /MIN cmd /C java -Djava.class.path=.\lib\jeboorker.jar org.rr.jeborker.Jeboorker 
