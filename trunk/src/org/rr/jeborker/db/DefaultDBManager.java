@@ -87,7 +87,7 @@ public class DefaultDBManager {
 			db = new ODatabaseObjectTx("local:" + dbFile).create();
 			db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
 			
-			this.createIndices(db, EbookPropertyItem.class);
+//			this.createIndices(db, EbookPropertyItem.class);
 			
 			db.close();
 		} 
