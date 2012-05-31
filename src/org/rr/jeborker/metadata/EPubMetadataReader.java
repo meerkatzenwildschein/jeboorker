@@ -7,11 +7,9 @@ import java.util.List;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.ArrayUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.w3c.dom.Document;
@@ -28,7 +26,6 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	private static final String CALIBRE_RATING = "calibre:rating";
 	private static final String CALIBRE_SERIES_INDEX = "calibre:series_index";
 	private static final String CALIBRE_SERIES = "calibre:series";
-	private static final String META = "meta";
 	private static final String SUBJECT = "subject";
 	private static final String PUBLISHER = "publisher";
 	private static final String IDENTIFIER = "identifier";

@@ -60,6 +60,7 @@ public class JeboorkerUtils {
 		} else {		
 			result += File.separator + ".jeboorker" + File.separator;
 		}
+		result += File.separator + ".jeboorker" + File.separator;
 		
 		return result;
 	}

@@ -108,7 +108,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	@ViewField(name = "Keywords", orderPriority = 0)
 	@Index(type= "FULLTEXT")
-	private String keywords;
+	private String[] keywords;
 	
 	/**
 	 * publisher of the ebook.
@@ -378,11 +378,16 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		this.createdAt = createdAt;
 	}
 
-	public String getKeywords() {
+	public String[] getKeywords() {
 		return keywords;
 	}
 
-	public void setKeywords(String keywords) {
+	public void setKeywords(String[] keywords) {
+		if(keywords != null) {
+			for (int i = 0; i < keywords.length; i++) {
+				keywords[i] = keywords[i].trim();
+			}
+		}
 		this.keywords = keywords;
 	}
 
