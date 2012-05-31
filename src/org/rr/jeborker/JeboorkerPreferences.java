@@ -15,16 +15,20 @@ import org.rr.commons.utils.CommonUtils;
 
 public class JeboorkerPreferences {
 	
-	private static final Preferences appNode = Preferences.userRoot().node("jeboorker");
+	private static final Preferences APP_NODE;
+	static {
+		String suffix = System.getProperties().getProperty("application.suffix");
+		APP_NODE = Preferences.userRoot().node("jeboorker" + (suffix != null ? "." + suffix : ""));
+	}
 
 	public static void addBasePath(final String path) {
-		String basePath = appNode.get("basePath", "");
+		String basePath = APP_NODE.get("basePath", "");
 		if(basePath.length()==0) {
 			basePath = path;
 		} else {
 			basePath += (File.pathSeparator + path);
 		}
-		appNode.put("basePath", basePath);
+		APP_NODE.put("basePath", basePath);
 	}
 	
 	/**
@@ -46,7 +50,7 @@ public class JeboorkerPreferences {
 			newBasePath.deleteCharAt(newBasePath.length()-1);
 		}
 		
-		appNode.put("basePath", newBasePath.toString());
+		APP_NODE.put("basePath", newBasePath.toString());
 	}	
 	
 	/**
@@ -54,7 +58,7 @@ public class JeboorkerPreferences {
 	 * @return The stored base path entries. never returns <code>null</code>.
 	 */
 	public static List<String> getBasePath() {
-		String basePath = appNode.get("basePath", "");
+		String basePath = APP_NODE.get("basePath", "");
 		if(basePath.length()==0) {
 			return Collections.emptyList();
 		} else if(basePath.indexOf(File.pathSeparator)==-1) {
@@ -71,7 +75,7 @@ public class JeboorkerPreferences {
 	 * @param value The value which can be accessed with the given key.
 	 */
 	public static void addEntryString(final String key, final String value) {
-		appNode.put(key, value);
+		APP_NODE.put(key, value);
 	}
 	
 	/**
@@ -80,7 +84,7 @@ public class JeboorkerPreferences {
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static String getEntryString(final String key) {
-		return appNode.get(key, "");
+		return APP_NODE.get(key, "");
 	}
 	
 	/**
@@ -89,7 +93,7 @@ public class JeboorkerPreferences {
 	 * @param value The value which can be accessed with the given key.
 	 */
 	public static void addEntryNumber(final String key, final Number value) {
-		appNode.put(key, String.valueOf(value.doubleValue()));
+		APP_NODE.put(key, String.valueOf(value.doubleValue()));
 	}
 	
 	/**
@@ -98,9 +102,9 @@ public class JeboorkerPreferences {
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static Number getEntryAsNumber(final String key) {
-		String value = appNode.get(key, "");
+		String value = APP_NODE.get(key, "");
 		if(value!=null && value.length()>0) {
-			return Double.valueOf(appNode.get(key, ""));
+			return Double.valueOf(APP_NODE.get(key, ""));
 		} else {
 			return null;
 		}
@@ -114,8 +118,8 @@ public class JeboorkerPreferences {
 	 * there is no previously stored location point or if the window is not located at the screen.
 	 */
 	public static Point getEntryAsScreenLocation(final String xKey, final String yKey) {
-		String widthValue = appNode.get(xKey, "");
-		String heightValue = appNode.get(yKey, "");
+		String widthValue = APP_NODE.get(xKey, "");
+		String heightValue = APP_NODE.get(yKey, "");
 		Point location = new Point();
 		
 		if(widthValue!=null && widthValue.length()>0) {
