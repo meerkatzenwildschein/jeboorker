@@ -213,7 +213,7 @@ public class DefaultDBManager {
 		try {
 			long time =System.currentTimeMillis();
 			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
-System.out.println(System.currentTimeMillis() - time);			
+//System.out.println(System.currentTimeMillis() - time);			
 			return listResult;
 		} catch(NullPointerException e) {
 			return Collections.emptyList();
