@@ -202,7 +202,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 				item.setRating(CommonUtils.toNumber(metadataProperty.getValueAsString()).intValue());
 			} else if (name.equalsIgnoreCase(JB_KEYWORDS)) {
 				// <meta name="jb:keywords" content="foo, bar"/>
-				item.setKeywords(value != null ? ListUtils.split(String.valueOf(value), ",").toArray(new String[0]) : null);
+				item.setKeywords(value != null ? ListUtils.split(String.valueOf(value), ",") : null);
 			} else if (name.equalsIgnoreCase(JB_AGE_SUGGESTION)) {
 				// <meta name="jb:age_suggestion" content="13-15"/>
 				item.setAgeSuggestion(value != null ? String.valueOf(value) : null);
