@@ -165,7 +165,11 @@ public class DefaultDBManager {
 	}
 
 	public void storeObject(Object item) {
-		getDB().save(item);
+		try {
+			getDB().save(item);
+		} catch (Exception e) {
+			LoggerFactory.logWarning(this, "could not store " + item, e);
+		}
 	}
 	
 	public long count(Class<?> cls) {

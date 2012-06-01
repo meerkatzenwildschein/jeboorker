@@ -178,7 +178,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			} else if(!authorSet && name.equals("creator")) {
 				item.setAuthor(metadataProperty.getValueAsString());
 			} else if(name.equals("keywords")) {
-				item.setKeywords(ListUtils.split(metadataProperty.getValueAsString(), ",").toArray(new String[0]));
+				item.setKeywords(ListUtils.split(metadataProperty.getValueAsString(), ","));
 			} else if(name.equals("description")) {
 				item.setDescription(metadataProperty.getValueAsString());
 			} else if(name.equals("creationdate")) {
