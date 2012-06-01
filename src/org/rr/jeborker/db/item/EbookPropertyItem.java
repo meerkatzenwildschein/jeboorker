@@ -2,7 +2,6 @@ package org.rr.jeborker.db.item;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -11,7 +10,6 @@ import java.util.zip.CRC32;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.IDBObject;
 
 public class EbookPropertyItem implements IDBObject, Serializable {
@@ -25,6 +23,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * File name and path from the ebook file.
 	 */
+	@ViewField(name = "file name", orderPriority = 0)
 	@ProtectedField
 	@Index(type= "FULLTEXT")
 	private String file;
@@ -220,7 +219,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
    
     
 	/**
-	 * Clears all metadata.
+	 * Clears all metadata excepting this ones which have a {@link ProtectedField} annotation.
 	 */
 	public void clearMetadata() {
 		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
