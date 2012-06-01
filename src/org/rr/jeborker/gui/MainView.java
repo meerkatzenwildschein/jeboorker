@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,7 +67,7 @@ public class MainView extends JFrame{
 	
 	PropertySheetPanel propertySheet;
 	
-	CheckComboBox  sortColumnComboBox;
+	CheckComboBox<Field>  sortColumnComboBox;
 	
 	JToggleButton sortOrderAscButton;
 	
@@ -181,7 +182,7 @@ public class MainView extends JFrame{
 				propertyContentPanel.add(scrollPane, gbc_scrollPane);
 				scrollPane.setViewportView(table);
 				
-				sortColumnComboBox = new CheckComboBox();
+				sortColumnComboBox = new CheckComboBox<Field>();
 				sortColumnComboBox.setPreferredSize(new Dimension(0,25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
 				gbc_sortColumnComboBox.insets = new Insets(0, 0, 5, 5);
@@ -298,7 +299,7 @@ public class MainView extends JFrame{
 		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.insets = new Insets(0, 0, 0, 5);
-		gbc_label.anchor = GridBagConstraints.WEST;
+		gbc_label.anchor = GridBagConstraints.EAST;
 		gbc_label.gridx = 0;
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);

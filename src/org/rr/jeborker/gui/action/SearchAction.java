@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -45,9 +46,17 @@ public class SearchAction extends AbstractAction {
 			rootCondition.addAndChild(rootFilterCondition);
 			for (String filterValue : filterValues) {
 				if(StringUtils.toString(filterValue).length() > 0) {
-					rootFilterCondition.addOrChild(new QueryCondition("author", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
-					rootFilterCondition.addOrChild(new QueryCondition("title", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
-					rootFilterCondition.addOrChild(new QueryCondition("file", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+					List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
+					if(!selectedFilterFields.isEmpty()) {
+						for (Field field : selectedFilterFields) {
+							rootFilterCondition.addOrChild(new QueryCondition(field.getName(), "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+						}
+					} else {
+						//default filter/search fields
+						rootFilterCondition.addOrChild(new QueryCondition("author", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+						rootFilterCondition.addOrChild(new QueryCondition("title", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+						rootFilterCondition.addOrChild(new QueryCondition("file", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+					}
 				}
 			}
 			controller.refreshTable(true);

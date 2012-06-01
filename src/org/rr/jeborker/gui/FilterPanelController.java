@@ -1,22 +1,37 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 
+import org.japura.gui.CheckComboBox;
+import org.japura.gui.model.DefaultListCheckModel;
+import org.japura.gui.model.ListCheckModel;
+import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.db.item.ViewField;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.additional.EbookPropertyItemFieldComperator;
 
 public class FilterPanelController {
 	
 	private static FilterPanelView view;
+	
+	private static EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();
 	
 	FilterPanelController() {
 		initialize();
@@ -48,6 +63,12 @@ public class FilterPanelController {
 		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
 		final String latestSearch = JeboorkerPreferences.getEntryString("FilterPanelControllerCurrentFilter");
 		
+		this.initFieldSelectionRenderer();
+		this.initFilterSelectionClosedViewValue();
+		
+		DefaultListCheckModel<Field> sortColumnComboBoxModel = this.initFieldSelectionModel();
+		view.filterFieldSelection.setModel(sortColumnComboBoxModel);
+		
 		this.restoreFilterHistory();
 		view.filterField.getEditor().setItem(latestSearch);
 		filterFieldActionListener.actionPerformed(new ActionEvent(this, 0, "initialize"));
@@ -60,6 +81,85 @@ public class FilterPanelController {
 	 */
 	public String getFilterText() {
 		return StringUtils.toString(view.filterField.getEditor().getItem());
+	}	
+	
+	/**
+	 * get all {@link EbookPropertyItem} fields which should be included by the filter.
+	 * @return The fields to be filtered. Never returns null.
+	 */
+	public List<Field> getSelectedFilterFields() {
+		ListCheckModel<Field> model = view.filterFieldSelection.getModel();
+		List<Field> checkeds = model.getCheckeds();
+		return checkeds;
+	}
+	
+	/**
+	 * get all {@link EbookPropertyItem} field names which are selected by the filter selection combobox.
+	 * @return The field names to be filtered. Never returns null.
+	 */
+	public List<String> getSelectedFilterFieldNames() {
+		List<Field> selectedFilterFields = getSelectedFilterFields();
+		ArrayList<String> result = new ArrayList<String>(selectedFilterFields.size());
+		for (Field field : selectedFilterFields) {
+			result.add(field.getName());
+		}
+		
+		return result;
+	}	
+	
+	/**
+	 * Initialize the renderer which is able to show the field names.
+	 * @param filterFieldSelection The combobox instance where the renderer should be applied to.
+	 */
+	private void initFieldSelectionRenderer() {
+		//renderer setup for showing the name annotation for the fields.
+		view.filterFieldSelection.setRenderer(new CheckListRenderer() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String getText(Object value) {
+				ViewField annotation = ((Field) value).getAnnotation(ViewField.class);
+				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
+				if(localizedName != null) {
+					return localizedName;
+				} else {
+					return annotation.name();					
+				}
+			}
+
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+				Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				return c;
+			}
+		});
+	}
+
+	/**
+	 * Initializes and set the data model to the combobox.
+	 * @return The created model.
+	 */
+	private DefaultListCheckModel<Field> initFieldSelectionModel() {
+		//get fields to be displayed in the combobox
+		final List<Field> listEntries = EbookPropertyItemUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
+		
+		//sort the fields to the DBViewField.orderPriority()
+		Collections.sort(listEntries, ebookPropertyItemFieldComperator);
+		
+		final DefaultListCheckModel<Field> sortColumnComboBoxModel = new DefaultListCheckModel<Field>();
+		for (Field field : listEntries) {
+			sortColumnComboBoxModel.addElement(field);
+		}
+		return sortColumnComboBoxModel;
+	}	
+	
+	/**
+	 * Setup the value which is shown if the combobox is closed. 
+	 * 
+	 * @param filterFieldSelection The combobox to be setup.
+	 */
+	private void initFilterSelectionClosedViewValue() {
+		view.filterFieldSelection.setTextFor(CheckComboBox.MULTIPLE, "***");
 	}	
 	
 	/**
@@ -117,6 +217,7 @@ public class FilterPanelController {
 		}
 		JeboorkerPreferences.addEntryString("FilterPanelControllerEntries", modelEntries.toString());		
 		JeboorkerPreferences.addEntryString("FilterPanelControllerCurrentFilter", getFilterText());
+		JeboorkerPreferences.addEntryString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
 	}
 	
 	/**
@@ -124,15 +225,34 @@ public class FilterPanelController {
 	 * @see #storeFilterHistory() 
 	 */
 	private void restoreFilterHistory() {
-		final MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
-		String filterEntries = JeboorkerPreferences.getEntryString("FilterPanelControllerEntries");
-		if(filterEntries!=null && filterEntries.length() > 0) {
-			List<String> split = ListUtils.split(filterEntries, ",");
-			for (String string : split) {
-				model.addElement(string);
+		{
+			final MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
+			String filterEntries = JeboorkerPreferences.getEntryString("FilterPanelControllerEntries");
+			if(filterEntries!=null && filterEntries.length() > 0) {
+				List<String> split = ListUtils.split(filterEntries, ",");
+				for (String string : split) {
+					model.addElement(string);
+				}
+			}
+			view.filterField.updateUI();
+		}
+		
+		
+		{ //restore the filter field selection
+			String filterFieldSelectionEntries = JeboorkerPreferences.getEntryString("FilterPanelControllerCurrentFilterFieldSelection");
+			List<String> splitted = ListUtils.split(filterFieldSelectionEntries, ",");
+			final ListCheckModel<Field> model = view.filterFieldSelection.getModel();
+			final int modelSize = model.getSize();
+			
+			for (String split : splitted) {
+				for (int j = 0; j < modelSize; j++) {
+					if(model.getElementAt(j).getName().equals(split)) {
+						model.addCheck((Field)model.getElementAt(j));
+						break;
+					}
+				}
 			}
 		}
-		view.filterField.updateUI();
 	}
 }
  
