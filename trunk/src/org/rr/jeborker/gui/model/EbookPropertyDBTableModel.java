@@ -226,7 +226,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	    		this.dirty = false;
 	    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());
 	    		
-	    		this.dbItems = new IteratorList<EbookPropertyItem>(items.iterator());
+	    		this.dbItems = new IteratorList<EbookPropertyItem>(items);
 	    		if(this.dbItems==null) {
 	    			this.dbItems = Collections.emptyList();
 	    		}

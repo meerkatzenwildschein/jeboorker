@@ -6,9 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.persistence.Transient;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ReflectionFailureException;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -16,12 +20,17 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.Index;
 
 import com.orientechnologies.common.exception.OException;
-import com.orientechnologies.orient.core.db.object.ODatabaseObjectTx;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
+import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
+import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
-import com.orientechnologies.orient.core.query.nativ.OQueryContextNativeSchema;
+import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.object.db.OObjectDatabasePool;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
 
 /**
@@ -31,9 +40,17 @@ import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
  */
 public class DefaultDBManager {
 	
+	private static final String BINARY_STORE_BINARY = "binary";
+
+	private static final String BINARY_STORE_FIELD_NAME = "fieldName";
+
+	private static final String BINARY_STORE_ID = "id";
+
+	private static final String BINARY_STORE_BLOB = "Blob";
+
 	private static DefaultDBManager manager;
 	
-	private static ODatabaseObjectTx db;
+	private static OObjectDatabaseTx db;
 	
 	/**
 	 * Gets a shared {@link ConfigManager} instance.
@@ -51,54 +68,38 @@ public class DefaultDBManager {
 	}
 	
 	/**
-	 * Gets all {@link IDBObject} classes handled by this {@link DefaultDBManager} instance.
-	 * @return All handled {@link IDBObject} classes.
-	 */
-	@SuppressWarnings("unchecked")
-	protected Class<IDBObject>[] getIDBObjectForSetup() {
-		return new Class[] {EbookPropertyItem.class};
-	}
-	
-	/**
-	 * Gets the database name for the database handled by this {@link DefaultDBManager} instance.
-	 * @return The database file name.
-	 */
-	protected String getDBName() {
-		return "jeborkerDB";
-	}
-	
-	/**
 	 * Opens the database with the given <code>dbName</code> and returns the db {@link ObjectContainer}.
 	 * @param The database file name. The database is stored in the user app config folder.
 	 * @return The ready to use container
 	 */
-	public synchronized ODatabaseObjectTx getDB() {
+	public synchronized OObjectDatabaseTx getDB() {
 		if(db!=null) {
+			ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 			return db;
 		}
 		
-		final String dbName = getDBName();
+		final String dbName = "jeborkerDB";
 		final String configPath = JeboorkerUtils.getConfigDirectory();
 		final String dbFile = configPath + dbName;
 		final IResourceHandler dbResourceHandler = ResourceHandlerFactory.getResourceLoader(dbFile);
 		
 		// OPEN / CREATE THE DATABASE
 		if (!dbResourceHandler.exists()) {
-			db = new ODatabaseObjectTx("local:" + dbFile).create();
-			db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
-			
-//			this.createIndices(db, EbookPropertyItem.class);
-			
+			db = new OObjectDatabaseTx("local:" + dbFile).create();
 			db.close();
 		} 
 		
-		db = new ODatabaseObjectTx ("local:" + dbFile).open("admin", "admin");
+		db = OObjectDatabasePool.global().acquire("local:" + dbFile, "admin", "admin");
 		db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
+		db.getEntityManager().registerEntityClass(ODocument.class);
+		db.getEntityManager().registerEntityClass(ORecordBytes.class);
+		
+		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 		
 		return db;
 	}
 	
-	public <T> void deleteIndices(final ODatabaseObjectTx db, final Class<?> itemClass) {
+	public <T> void deleteIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
 		List<ODocument> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
 		for (ODocument index : indicies) {
 			if(!"DICTIONARY".equals(index.field("type"))) {
@@ -120,12 +121,7 @@ public class DefaultDBManager {
 		}
 	}
 	
-	/**
-	 * Create indices for all fields of the given item class marked with an Index annotation. 
-	 * @param db Database instance.
-	 * @param itemClass The item class where the indices should be created for.
-	 */
-	public <T> void createIndices(final ODatabaseObjectTx db, final Class<?> itemClass) {
+	public <T> void createIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
 		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(Index.class, itemClass);
 		for (Field field : dbViewFields) {
 			try {
@@ -137,7 +133,7 @@ public class DefaultDBManager {
 					sql.append("CREATE PROPERTY " + itemClass.getSimpleName() + "." + field.getName() + " STRING");
 					db.command(new OCommandSQL(sql.toString())).execute();
 				} catch (Exception e) {
-					//LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + field.getName(), e);
+					LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + field.getName(), e);
 				} finally {
 					sql.setLength(0);
 				}
@@ -164,11 +160,70 @@ public class DefaultDBManager {
         getDB().close();
 	}
 
-	public void storeObject(Object item) {
-		try {
-			getDB().save(item);
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this, "could not store " + item, e);
+	public void storeObject(final IDBObject item) {
+		Object save = getDB().save(item);
+		ORID identity = getDB().getIdentity(save);
+		storeTransientBinaryData(item, identity);
+	}
+
+	/** 
+	 * Stores the binary fields of the given {@link IDBObject} separately in a Blob document.
+	 */
+	private void storeTransientBinaryData(final IDBObject item, final ORID identity) {
+		List<Field> fields = ReflectionUtils.getFields(item.getClass(), ReflectionUtils.VISIBILITY_VISIBLE_ALL);
+		for (Field field : fields) {
+			if(field.getType().getName().equals(byte[].class.getName())) {
+				if(field.getAnnotation(Transient.class)!=null) {
+					//store bytes separately
+					try {
+						final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, field.getName());
+						if(bytes != null && bytes.length > 0) {
+							ORecordBytes record = new ORecordBytes(getDB().getUnderlying(), bytes);
+
+							ODocument doc = new ODocument(getDB().getUnderlying(), BINARY_STORE_BLOB);
+							doc.field(BINARY_STORE_ID, identity.toString());
+							doc.field(BINARY_STORE_FIELD_NAME, field.getName());
+							doc.field(BINARY_STORE_BINARY, record);
+							doc.save();							
+						}
+					} catch (ReflectionFailureException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Restores the binary fields of the given {@link IDBObject} instance.
+	 * @param item {@link IDBObject} where the binary fields should be restored for.
+	 * @param identity The identity of the given {@link IDBObject}.
+	 */
+	void restoreTransientBinaryData(final IDBObject item, final ORID identity) {
+		List<Field> fields = ReflectionUtils.getFields(item.getClass(), ReflectionUtils.VISIBILITY_VISIBLE_ALL);
+		for (final Field field : fields) {
+			if(field.getType().getName().equals(byte[].class.getName())) {
+				if(field.getAnnotation(Transient.class)!=null) {
+					try {
+						List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), BINARY_STORE_BLOB, new OQueryContextNative()) {
+
+							@Override
+							public boolean filter(OQueryContextNative iRecord) {
+								return iRecord.field(BINARY_STORE_ID).eq(identity.toString()).and().field(BINARY_STORE_FIELD_NAME).eq(field.getName()).go();
+							}
+									
+						}.execute((Object[]) null);
+						
+						if(!result.isEmpty()) {
+							ODocument object = (ODocument) result.get(0);
+							ORecordBytes bytes = object.field(BINARY_STORE_BINARY);
+							ReflectionUtils.setFieldValue(item, field.getName(), bytes.toStream());
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 	
@@ -197,24 +252,18 @@ public class DefaultDBManager {
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
 	public <T> Iterable<T> getItems(final Class<T> class1, final QueryCondition queryConditions, final List<Field> orderFields, final OrderDirection orderDirection) {
-		if(orderFields==null || orderFields.isEmpty()) {
-			if(queryConditions == null || queryConditions.isEmpty()) {
-				return getItems(class1);
-			}
-		}
-
 		final StringBuilder sql = new StringBuilder()
 			.append("select * from ")
 			.append(class1.getSimpleName());
-
+		
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
-//System.out.println("query: " + sql.toString());		
+		
 		try {
-			long time =System.currentTimeMillis();
+long time = System.currentTimeMillis();
 			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
-//System.out.println(System.currentTimeMillis() - time);			
-			return listResult;
+System.out.println(System.currentTimeMillis() - time);
+			return new ODocumentMapper<T>(listResult, db);
 		} catch(NullPointerException e) {
 			return Collections.emptyList();
 		} catch(OException e) {
@@ -257,7 +306,7 @@ public class DefaultDBManager {
 	 * @param condition The condition
 	 * @param connect "and" or "or" for the creation process. Initially can be <code>null</code>
 	 * @param deepness The recursion deepness is needed for detecting the root process.
-	 * @return <code>true</code> if the append process has been successfull and <code>false</code> if nothing has been appended.
+	 * @return <code>true</code> if the append process has been successful and <code>false</code> if nothing has been appended.
 	 * @see http://code.google.com/p/orient/wiki/SQLQuery
 	 */
 	private static boolean appendQueryCondition(StringBuilder sql, QueryCondition condition, String connect, int deepness) {
@@ -274,7 +323,7 @@ public class DefaultDBManager {
 			}
 			if(condition.getFieldName() != null && StringUtils.toString(condition.getValue()).length() > 0) {
 				localSql.append(" ");
-				localSql.append(condition.getFieldName() + ".toLowerCase()");
+				localSql.append(condition.getFieldName()+".toLowerCase()");
 				localSql.append(" ");
 				localSql.append(condition.getOperator());
 				localSql.append(" ");
@@ -319,7 +368,8 @@ public class DefaultDBManager {
 	 * @param item
 	 */
 	public void updateObject(IDBObject item) {
-		getDB().save(item);
+		//getDB().save(item);
+		this.storeObject(item);
 	}
 
 	/**
@@ -332,24 +382,19 @@ public class DefaultDBManager {
 	 * @return A list with all results.
 	 */
 	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
-		List<?> result = getDB().command(
-				  new ONativeSynchQuery<ODocument, OQueryContextNativeSchema<ODocument>>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNativeSchema<ODocument>()) {
-					private static final long serialVersionUID = 1L;
+		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
 
-					@Override
-				    public boolean filter(OQueryContextNativeSchema<ODocument> iRecord) {
-				      //return iRecord.field("city").field("name").eq("Rome").and().field("name").like("G%").go();
-				    	return iRecord.field(field).eq(value).go();
-				    };
-				  }).execute();
+			@Override
+			public boolean filter(OQueryContextNative iRecord) {
+				return iRecord.field(field).eq(value).go();
+			}
+					
+		}.execute((Object[]) null);
 		return new ODocumentMapper<T>(result, db);
 	}
 
-	public int deleteObject(Object toRemove) {
+	public int deleteObject(IDBObject toRemove) {
 		getDB().delete(toRemove);
 		return 1;
 	}
-	
-
-	
 }
