@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.CRC32;
 
+import javax.persistence.Transient;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -167,6 +169,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * A small thumbnail of the cover.
 	 */
+	@Transient
 	private byte[] coverThumbnail;
 	
 	public EbookPropertyItem() {
@@ -433,10 +436,9 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	public byte[] getCoverThumbnail() {
 		return coverThumbnail;
 	}
-
+	
 	public void setCoverThumbnail(byte[] coverThumbnail) {
 		this.coverThumbnail = coverThumbnail;
 	}
-
 
 }

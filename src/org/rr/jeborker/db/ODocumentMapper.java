@@ -3,16 +3,17 @@ package org.rr.jeborker.db;
 import java.util.AbstractList;
 import java.util.List;
 
-import com.orientechnologies.orient.core.db.object.ODatabaseObjectTx;
+import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.record.ORecordInternal;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 class ODocumentMapper<T> extends AbstractList<T> {
 
 	private List<?> documents;
 	
-	private ODatabaseObjectTx db;
+	private OObjectDatabaseTx db;
 	
-	public ODocumentMapper(List<?> documents, ODatabaseObjectTx db) {
+	public ODocumentMapper(List<?> documents, OObjectDatabaseTx db) {
 		this.documents = documents;
 		this.db = db;
 	}
@@ -20,12 +21,21 @@ class ODocumentMapper<T> extends AbstractList<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public T get(int index) {
-		Object object = documents.get(index);
+		final Object object = documents.get(index);
+		final T result;
+		final ORID identity;
 		if(object instanceof ORecordInternal) {
-			return (T) db.getUserObjectByRecord((ORecordInternal<T>) object, null);
+			result = (T) db.getUserObjectByRecord((ORecordInternal<T>) object, null);
+			identity = ((ORecordInternal<T>) object).getIdentity();
 		} else {
-			return (T)object;
+			result = (T)object;
+			identity = db.getIdentity(object);
 		}
+		
+		//restore
+		DefaultDBManager.getInstance().restoreTransientBinaryData((IDBObject) result, identity);
+		
+		return result;
 	}
 
 	@Override
