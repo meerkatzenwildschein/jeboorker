@@ -55,16 +55,16 @@ import org.japura.gui.renderer.CheckListRenderer;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public class CheckComboBox extends JComponent{
+public class CheckComboBox<T> extends JComponent{
 
   private static final long serialVersionUID = 8189247456412690742L;
   public static final CheckState NONE = CheckState.NONE;
   public static final CheckState MULTIPLE = CheckState.MULTIPLE;
   public static final CheckState ALL = CheckState.ALL;
   private Popup itemsChooser;
-  private CheckList checkList;
+  private CheckList<T> checkList;
   private ListDataListener listDataListener;
-  private ListCheckListener listCheckListener;
+  private ListCheckListener<T> listCheckListener;
 
   private CompoundComponent compoundComponent;
   private JComboBox comboBox;
@@ -79,7 +79,7 @@ public class CheckComboBox extends JComponent{
 	texts = new HashMap<CheckState, CharSequence>();
 	setFocusable(true);
 	setRenderer(new CheckListRenderer());
-	setModel(new DefaultListCheckModel());
+	setModel(new DefaultListCheckModel<T>());
 	super.setLayout(new BorderLayout());
 	add(getCompoundComponent(), BorderLayout.CENTER);
 
@@ -171,7 +171,7 @@ public class CheckComboBox extends JComponent{
 	}
   }
 
-  public void setModel(ListCheckModel model) {
+  public void setModel(ListCheckModel<T> model) {
 	getCheckList().setModel(model);
 	model.removeListDataListener(getListDataListener());
 	model.removeListCheckListener(getListCheckListener());
@@ -180,7 +180,7 @@ public class CheckComboBox extends JComponent{
 	updateCellPanelWidth();
   }
 
-  public ListCheckModel getModel() {
+  public ListCheckModel<T> getModel() {
 	return getCheckList().getModel();
   }
 
@@ -211,7 +211,7 @@ public class CheckComboBox extends JComponent{
 	  }
 	}
 
-	ListCheckModel m = getModel();
+	ListCheckModel<T> m = getModel();
 
 	for (int i = 0; i < m.getSize(); i++) {
 	  String str = m.getElementAt(i).toString();
@@ -228,23 +228,23 @@ public class CheckComboBox extends JComponent{
   @Override
   public final void setLayout(LayoutManager mgr) {}
 
-  private CheckList getCheckList() {
+  private CheckList<T> getCheckList() {
 	if (checkList == null) {
-	  checkList = new CheckList();
+	  checkList = new CheckList<T>();
 	}
 	return checkList;
   }
 
-  private ListCheckListener getListCheckListener() {
+  private ListCheckListener<T> getListCheckListener() {
 	if (listCheckListener == null) {
-	  listCheckListener = new ListCheckListener() {
+	  listCheckListener = new ListCheckListener<T>() {
 		@Override
-		public void addCheck(ListEvent event) {
+		public void addCheck(ListEvent<T> event) {
 		  checkUpdated();
 		}
 
 		@Override
-		public void removeCheck(ListEvent event) {
+		public void removeCheck(ListEvent<T> event) {
 		  checkUpdated();
 		}
 	  };
@@ -257,7 +257,7 @@ public class CheckComboBox extends JComponent{
 
 	CheckListRenderer renderer = getCheckList().getCellRenderer();
 
-	List<Object> checkeds = getModel().getCheckeds();
+	List<T> checkeds = getModel().getCheckeds();
 	int total = getModel().getSize();
 	if (total > 0) {
 	  if (checkeds.size() == 0 && texts.containsKey(CheckState.NONE)) {

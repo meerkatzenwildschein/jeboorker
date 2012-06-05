@@ -26,10 +26,10 @@ import java.util.EventListener;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public interface ListModelListener extends EventListener{
+public interface ListModelListener<T> extends EventListener{
 
-  public void valueAdded(ListEvent e);
+  public void valueAdded(ListEvent<T> e);
 
-  public void valueRemoved(ListEvent e);
+  public void valueRemoved(ListEvent<T> e);
 
 }

@@ -26,10 +26,10 @@ import java.util.EventListener;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public interface ListLockListener extends EventListener{
+public interface ListLockListener<T> extends EventListener{
 
-  public void addLock(ListEvent event);
+  public void addLock(ListEvent<T> event);
 
-  public void removeLock(ListEvent event);
+  public void removeLock(ListEvent<T> event);
 
 }

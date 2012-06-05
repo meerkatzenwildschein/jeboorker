@@ -37,26 +37,23 @@ import org.japura.gui.event.ListModelListener;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public class DefaultListCheckModel implements ListCheckModel, Serializable{
+public class DefaultListCheckModel<T> implements ListCheckModel<T>, Serializable{
 
   protected EventListenerList listenerList = new EventListenerList();
-  private List<Object> items;
-  private List<Object> checkeds;
-  private List<Object> lockeds;
+  private List<T> items;
+  private List<T> checkeds;
+  private List<T> lockeds;
 
   public DefaultListCheckModel() {
-	checkeds = new ArrayList<Object>();
-	lockeds = new ArrayList<Object>();
-	items = new ArrayList<Object>();
+	checkeds = new ArrayList<T>();
+	lockeds = new ArrayList<T>();
+	items = new ArrayList<T>();
   }
 
-  protected void fireAddedListModelListeners(List<Object> values, int index1,
-											 int index2,
-											 boolean valueIsAdjusting) {
-	ListModelListener listeners[] =
-		listenerList.getListeners(ListModelListener.class);
+  protected void fireAddedListModelListeners(List<T> values, int index1, int index2, boolean valueIsAdjusting) {
+	ListModelListener listeners[] = listenerList.getListeners(ListModelListener.class);
 
-	ListEvent e = new ListEvent(this, values, valueIsAdjusting);
+	ListEvent<T> e = new ListEvent<T>(this, values, valueIsAdjusting);
 	for (ListModelListener l : listeners) {
 	  l.valueAdded(e);
 	}
@@ -70,12 +67,12 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	}
   }
 
-  protected void fireRemovedListModelListeners(List<Object> values,
+  protected void fireRemovedListModelListeners(List<T> values,
 											   boolean valueIsAdjusting) {
 	ListModelListener listeners[] =
 		listenerList.getListeners(ListModelListener.class);
 
-	ListEvent e = new ListEvent(this, values, valueIsAdjusting);
+	ListEvent<T> e = new ListEvent<T>(this, values, valueIsAdjusting);
 	for (ListModelListener l : listeners) {
 	  l.valueRemoved(e);
 	}
@@ -92,18 +89,15 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	}
   }
 
-  protected void fireAddLockListModelListeners(List<Object> values,
-											   boolean valueIsAdjusting) {
+  protected void fireAddLockListModelListeners(List<T> values, boolean valueIsAdjusting) {
 	fireLockListModelListeners(values, valueIsAdjusting, true);
   }
 
-  protected void fireRemoveLockListModelListeners(List<Object> values,
-												  boolean valueIsAdjusting) {
+  protected void fireRemoveLockListModelListeners(List<T> values, boolean valueIsAdjusting) {
 	fireLockListModelListeners(values, valueIsAdjusting, false);
   }
 
-  private void fireLockListModelListeners(List<Object> values,
-										  boolean valueIsAdjusting, boolean add) {
+  private void fireLockListModelListeners(List<T> values, boolean valueIsAdjusting, boolean add) {
 	ListLockListener listeners[] =
 		listenerList.getListeners(ListLockListener.class);
 
@@ -116,18 +110,15 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	}
   }
 
-  protected void fireAddCheckListModelListeners(List<Object> values,
-												boolean valueIsAdjusting) {
+  protected void fireAddCheckListModelListeners(List<T> values, boolean valueIsAdjusting) {
 	fireCheckListModelListeners(values, valueIsAdjusting, true);
   }
 
-  protected void fireRemoveCheckListModelListeners(List<Object> values,
-												   boolean valueIsAdjusting) {
+  protected void fireRemoveCheckListModelListeners(List<T> values, boolean valueIsAdjusting) {
 	fireCheckListModelListeners(values, valueIsAdjusting, false);
   }
 
-  private void fireCheckListModelListeners(List<Object> values,
-										   boolean valueIsAdjusting, boolean add) {
+  private void fireCheckListModelListeners(List<T> values, boolean valueIsAdjusting, boolean add) {
 	ListCheckListener listeners[] =
 		listenerList.getListeners(ListCheckListener.class);
 
@@ -155,7 +146,7 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	  int index2 = items.size() - 1;
 	  items.clear();
 	  fireRemovedListModelListeners(0, index2, valueIsAdjusting);
-	  fireRemovedListModelListeners(new ArrayList<Object>(), valueIsAdjusting);
+	  fireRemovedListModelListeners(new ArrayList<T>(), valueIsAdjusting);
 	}
   }
 
@@ -168,7 +159,7 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	  return;
 
 	lockeds.clear();
-	fireRemoveLockListModelListeners(new ArrayList<Object>(), valueIsAdjusting);
+	fireRemoveLockListModelListeners(new ArrayList<T>(), valueIsAdjusting);
   }
 
   @Override
@@ -187,12 +178,12 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void addLock(Object... values) {
+  public void addLock(T... values) {
 	if (values.length == 0)
 	  return;
 
-	List<Object> list = new ArrayList<Object>();
-	for (Object value : values) {
+	List<T> list = new ArrayList<T>();
+	for (T value : values) {
 	  if (lockeds.contains(value) == false) {
 		lockeds.add(value);
 		list.add(value);
@@ -210,12 +201,12 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void removeLock(Object... values) {
+  public void removeLock(T... values) {
 	if (values.length == 0)
 	  return;
 
-	List<Object> list = new ArrayList<Object>();
-	for (Object value : values) {
+	List<T> list = new ArrayList<T>();
+	for (T value : values) {
 	  if (lockeds.remove(value)) {
 		list.add(value);
 	  }
@@ -227,14 +218,14 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void setLock(Object... objs) {
+  public void setLock(T... objs) {
 	clearLockeds(true);
 	addLock(objs);
   }
 
   @Override
-  public List<Object> getLockeds() {
-	return new ArrayList<Object>(lockeds);
+  public List<T> getLockeds() {
+	return new ArrayList<T>(lockeds);
   }
 
   private void clearCheckeds(boolean valueIsAdjusting) {
@@ -242,7 +233,7 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	  return;
 
 	checkeds.clear();
-	fireRemoveCheckListModelListeners(new ArrayList<Object>(), false);
+	fireRemoveCheckListModelListeners(new ArrayList<T>(), false);
   }
 
   @Override
@@ -261,12 +252,12 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void addCheck(Object... values) {
+  public void addCheck(T... values) {
 	if (values.length == 0)
 	  return;
 
-	List<Object> list = new ArrayList<Object>();
-	for (Object value : values) {
+	List<T> list = new ArrayList<T>();
+	for (T value : values) {
 	  if (checkeds.contains(value) == false) {
 		checkeds.add(value);
 		list.add(value);
@@ -284,12 +275,12 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void removeCheck(Object... values) {
+  public void removeCheck(T... values) {
 	if (values.length == 0)
 	  return;
 
-	List<Object> list = new ArrayList<Object>();
-	for (Object value : values) {
+	List<T> list = new ArrayList<T>();
+	for (T value : values) {
 	  if (checkeds.remove(value)) {
 		list.add(value);
 	  }
@@ -301,20 +292,20 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void setCheck(Object... values) {
+  public void setCheck(T... values) {
 	clearCheckeds(true);
 	addCheck(values);
   }
 
   @Override
-  public List<Object> getCheckeds() {
-	return new ArrayList<Object>(checkeds);
+  public List<T> getCheckeds() {
+	return new ArrayList<T>(checkeds);
   }
 
   @Override
-  public void addElement(int index, Object value) {
+  public void addElement(int index, T value) {
 	if (index >= 0 && index <= items.size() && items.contains(value) == false) {
-	  List<Object> list = new ArrayList<Object>();
+	  List<T> list = new ArrayList<T>();
 	  items.add(index, value);
 	  list.add(value);
 	  fireAddedListModelListeners(list, index, index, false);
@@ -322,18 +313,18 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void setElement(Object... values) {
+  public void setElement(T... values) {
 	clear(true);
 	addElement(values);
   }
 
   @Override
-  public void addElement(Object... values) {
+  public void addElement(T... values) {
 	if (values.length == 0)
 	  return;
 
-	List<Object> list = new ArrayList<Object>();
-	for (Object value : values) {
+	List<T> list = new ArrayList<T>();
+	for (T value : values) {
 		items.add(value);
 		list.add(value);
 	}
@@ -350,7 +341,7 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public void removeElement(Object... values) {
+  public void removeElement(T... values) {
 	if (values.length == 0)
 	  return;
 
@@ -360,8 +351,8 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 	}
 	List<Integer> indexList = new ArrayList<Integer>();
 
-	List<Object> list = new ArrayList<Object>();
-	for (Object value : values) {
+	List<T> list = new ArrayList<T>();
+	for (T value : values) {
 	  if (items.remove(value)) {
 		indexList.add(indexMap.get(value));
 		list.add(value);
@@ -399,7 +390,7 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
   }
 
   @Override
-  public Object getElementAt(int index) {
+  public T getElementAt(int index) {
 	return items.get(index);
   }
 
@@ -435,9 +426,9 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 
   @Override
   public void removeChecks() {
-	List<Object> list = null;
+	List<T> list = null;
 	if (listenerList.getListenerCount(ListCheckListener.class) > 0) {
-	  list = new ArrayList<Object>(checkeds);
+	  list = new ArrayList<T>(checkeds);
 	}
 
 	checkeds.clear();
@@ -448,9 +439,9 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 
   @Override
   public void removeLocks() {
-	List<Object> list = null;
+	List<T> list = null;
 	if (listenerList.getListenerCount(ListLockListener.class) > 0) {
-	  list = new ArrayList<Object>(checkeds);
+	  list = new ArrayList<T>(checkeds);
 	}
 
 	lockeds.clear();
@@ -471,9 +462,9 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 
   @Override
   public void checkAll() {
-	List<Object> list = null;
+	List<T> list = null;
 	if (listenerList.getListenerCount(ListCheckListener.class) > 0) {
-	  list = new ArrayList<Object>(items);
+	  list = new ArrayList<T>(items);
 	}
 
 	checkeds.clear();
@@ -486,9 +477,9 @@ public class DefaultListCheckModel implements ListCheckModel, Serializable{
 
   @Override
   public void lockAll() {
-	List<Object> list = null;
+	List<T> list = null;
 	if (listenerList.getListenerCount(ListLockListener.class) > 0) {
-	  list = new ArrayList<Object>(items);
+	  list = new ArrayList<T>(items);
 	}
 
 	lockeds.clear();
