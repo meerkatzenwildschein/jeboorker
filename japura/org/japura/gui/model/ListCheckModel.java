@@ -30,20 +30,20 @@ import org.japura.gui.event.ListModelListener;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public interface ListCheckModel extends ListModel{
+public interface ListCheckModel <T> extends ListModel {
 
   @Override
-  public Object getElementAt(int index);
+  public T getElementAt(int index);
 
-  public boolean contains(Object value);
+  public boolean contains(T value);
 
-  public void addElement(Object... values);
+  public void addElement(T... values);
 
-  public void setElement(Object... values);
+  public void setElement(T... values);
 
-  public void addElement(int index, Object value);
+  public void addElement(int index, T value);
 
-  public void removeElement(Object... values);
+  public void removeElement(T... values);
 
   public void addListModelListener(ListModelListener listener);
 
@@ -57,29 +57,29 @@ public interface ListCheckModel extends ListModel{
 
   public ListLockListener[] getListLockListeners();
 
-  public List<Object> getLockeds();
+  public List<T> getLockeds();
 
-  public void setLock(Object... values);
+  public void setLock(T... values);
 
-  public void removeLock(Object... values);
+  public void removeLock(T... values);
 
-  public void addLock(Object... values);
+  public void addLock(T... values);
 
   /**
    * Returns true if the specified value is locked.
    */
-  public boolean isLocked(Object value);
+  public boolean isLocked(T value);
 
-  public void setCheck(Object... values);
+  public void setCheck(T... values);
 
-  public void removeCheck(Object... values);
+  public void removeCheck(T... values);
 
-  public void addCheck(Object... values);
+  public void addCheck(T... values);
 
   /**
    * Returns true if the specified value is checked.
    */
-  public boolean isChecked(Object value);
+  public boolean isChecked(T value);
 
   public void clear();
 
@@ -97,7 +97,7 @@ public interface ListCheckModel extends ListModel{
 
   public ListCheckListener[] getListCheckListeners();
 
-  public List<Object> getCheckeds();
+  public List<T> getCheckeds();
 
   public int getLocksCount();
 

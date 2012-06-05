@@ -44,15 +44,15 @@ import org.japura.gui.renderer.CheckListRenderer;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public class CheckList extends JList{
+public class CheckList<T> extends JList{
 
   private static final long serialVersionUID = 7562297704191604289L;
-  private ListCheckModel model;
-  private PopupMenuBuilder<CheckList> popupMenuBuilder;
+  private ListCheckModel<T> model;
+  private PopupMenuBuilder<CheckList<T>> popupMenuBuilder;
 
   public CheckList() {
 	setCellRenderer(new CheckListRenderer());
-	setModel(new DefaultListCheckModel());
+	setModel(new DefaultListCheckModel<T>());
 
 	MouseMotionListener[] mmls = getMouseMotionListeners();
 	for (MouseMotionListener mml : mmls) {
@@ -72,7 +72,7 @@ public class CheckList extends JList{
 		if (SwingUtilities.isLeftMouseButton(e)) {
 		  int index = locationToIndex(e.getPoint());
 		  if (index > -1) {
-			Object obj = getModel().getElementAt(index);
+			T obj = getModel().getElementAt(index);
 			if (getModel().isLocked(obj) == false) {
 			  boolean checked = getModel().isChecked(obj);
 			  if (checked) {
@@ -94,7 +94,7 @@ public class CheckList extends JList{
   }
 
   @Override
-  public ListCheckModel getModel() {
+  public ListCheckModel<T> getModel() {
 	return model;
   }
 
@@ -114,65 +114,65 @@ public class CheckList extends JList{
 	return (CheckListRenderer) super.getCellRenderer();
   }
 
-  public void setPopupMenuBuilder(PopupMenuBuilder<CheckList> popupMenuBuilder) {
+  public void setPopupMenuBuilder(PopupMenuBuilder<CheckList<T>> popupMenuBuilder) {
 	this.popupMenuBuilder = popupMenuBuilder;
   }
 
-  public PopupMenuBuilder<CheckList> getPopupMenuBuilder() {
+  public PopupMenuBuilder<CheckList<T>> getPopupMenuBuilder() {
 	return popupMenuBuilder;
   }
 
   @Override
   public void setModel(ListModel model) {
 	if (model instanceof ListCheckModel) {
-	  setModel((ListCheckModel) model);
+	  setModel(model);
 	} else {
 	  throw new IllegalArgumentException("model must be ListCheckModel");
 	}
   }
 
-  public void setModel(ListCheckModel model) {
+  public void setModel(ListCheckModel<T> model) {
 	if (model == null) {
 	  throw new IllegalArgumentException("model must be non null");
 	}
-	ListCheckModel oldValue = getModel();
+	ListCheckModel<T> oldValue = getModel();
 	this.model = model;
 	if (oldValue != null) {
 	  firePropertyChange("model", oldValue, model);
 	}
 
-	model.addListModelListener(new ListModelListener() {
+	model.addListModelListener(new ListModelListener<T>() {
 	  @Override
-	  public void valueAdded(ListEvent e) {
+	  public void valueAdded(ListEvent<T> e) {
 		repaint();
 	  }
 
 	  @Override
-	  public void valueRemoved(ListEvent e) {
-		repaint();
-	  }
-	});
-
-	model.addListCheckListener(new ListCheckListener() {
-	  @Override
-	  public void addCheck(ListEvent event) {
-		repaint();
-	  }
-
-	  @Override
-	  public void removeCheck(ListEvent event) {
+	  public void valueRemoved(ListEvent<T> e) {
 		repaint();
 	  }
 	});
 
-	model.addListLockListener(new ListLockListener() {
+	model.addListCheckListener(new ListCheckListener<T>() {
 	  @Override
-	  public void addLock(ListEvent event) {
+	  public void addCheck(ListEvent<T> event) {
 		repaint();
 	  }
 
 	  @Override
-	  public void removeLock(ListEvent event) {
+	  public void removeCheck(ListEvent<T> event) {
+		repaint();
+	  }
+	});
+
+	model.addListLockListener(new ListLockListener<T>() {
+	  @Override
+	  public void addLock(ListEvent<T> event) {
+		repaint();
+	  }
+
+	  @Override
+	  public void removeLock(ListEvent<T> event) {
 		repaint();
 	  }
 	});

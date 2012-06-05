@@ -26,10 +26,10 @@ import java.util.EventListener;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public interface ListCheckListener extends EventListener{
+public interface ListCheckListener<T> extends EventListener{
 
-  public void removeCheck(ListEvent event);
+  public void removeCheck(ListEvent<T> event);
 
-  public void addCheck(ListEvent event);
+  public void addCheck(ListEvent<T> event);
 
 }

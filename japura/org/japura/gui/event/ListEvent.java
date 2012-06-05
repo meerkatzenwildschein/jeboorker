@@ -28,14 +28,13 @@ import org.japura.gui.model.ListCheckModel;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public class ListEvent{
+public class ListEvent<T>{
 
-  private ListCheckModel source;
-  private List<Object> values;
+  private ListCheckModel<T> source;
+  private List<T> values;
   private boolean valueIsAdjusting;
 
-  public ListEvent(ListCheckModel source, List<Object> values,
-	  boolean valueIsAdjusting) {
+  public ListEvent(ListCheckModel<T> source, List<T> values,boolean valueIsAdjusting) {
 	this.source = source;
 	this.values = values;
 	this.valueIsAdjusting = valueIsAdjusting;
@@ -47,11 +46,11 @@ public class ListEvent{
 		+ getValues();
   }
 
-  public ListCheckModel getSource() {
+  public ListCheckModel<T> getSource() {
 	return source;
   }
 
-  public List<Object> getValues() {
+  public List<T> getValues() {
 	return values;
   }
 
