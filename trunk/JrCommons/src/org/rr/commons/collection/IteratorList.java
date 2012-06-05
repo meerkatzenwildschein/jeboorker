@@ -1,5 +1,6 @@
 package org.rr.commons.collection;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 
@@ -18,13 +20,22 @@ public class IteratorList<E> implements List<E> {
 	
 	private Iterator<E> iterator;
 	
+	private Iterable<E> iterable;
+	
 	private List<E> list = new ArrayList<E>();
+	
+	private Method method;
 	
 	private boolean completlyCopied = false;
 	
 	public IteratorList(Iterator<E> iterator) {
 		this.iterator = iterator;
 	}
+	
+	public IteratorList(Iterable<E> iterable) {
+		this.iterator = iterable.iterator();
+		this.iterable = iterable;
+	}	
 
 	@Override
 	public boolean add(E e) {
@@ -160,8 +171,12 @@ public class IteratorList<E> implements List<E> {
 
 	@Override
 	public int size() {
+		if(completlyCopied) {
+			return list.size();
+		}
+		
 		//some special handling for the orientdb result. It's much faster to get the size via reflection.
-		if(iterator.getClass().getName().equals("com.orientechnologies.orient.core.iterator.OObjectIteratorMultiCluster")) {
+		if(iterator.getClass().getName().equals("com.orientechnologies.orient.core.iterator.OObjectIteratorMultiCluster") || iterator.getClass().getName().equals("com.orientechnologies.orient.object.iterator.OObjectIteratorClass")) {
 			try {
 				//field underlying / com.orientechnologies.orient.core.iterator.ORecordIteratorClass
 				//field browsedRecords / int
@@ -173,12 +188,17 @@ public class IteratorList<E> implements List<E> {
 			} catch (ReflectionFailureException e) {
 				LoggerFactory.logInfo(this, "could not fetch size via reflection", e);
 			}
-		} else if(ReflectionUtils.getMethod(iterator.getClass(), "size", null, ReflectionUtils.VISIBILITY_VISIBLE_ALL) != null) {
+		} else if(method!=null || (method = ReflectionUtils.getMethod(iterable.getClass(), "size", null, ReflectionUtils.VISIBILITY_VISIBLE_ALL))!=null) {
 			try {
-				Number size = (Number) ReflectionUtils.invokeMethod(iterator, "size", null);
-				return size.intValue();
-			} catch (ReflectionFailureException e) {
-				LoggerFactory.logInfo(this, "could not fetch size via reflection", e);
+				Object result = method.invoke(iterable, new Object[0]);
+				if( result != null) {
+					Number number = CommonUtils.toNumber(result);
+					if(number != null) {
+						return number.intValue();
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		this.copyIterator();

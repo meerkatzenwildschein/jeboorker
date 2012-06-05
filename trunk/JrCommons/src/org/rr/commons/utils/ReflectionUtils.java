@@ -327,6 +327,7 @@ public class ReflectionUtils implements Serializable {
 		Method result = null;
 		try {
 			result = clazz.getMethod(name, initargs);
+			result.setAccessible(true);
 		} catch (Exception e) {
 			if (visibility==VISIBILITY_VISIBLE_ACCESSIBLE_ONLY) {
 				return null;
