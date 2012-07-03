@@ -9,7 +9,7 @@ import org.rr.commons.utils.ReflectionUtils;
 
 /**
  * Class that allows to perform the implemented run action to each transient byte field 
- * of the given {@link IDBObject} instance. No need to 
+ * of the given {@link IDBObject} instance. No need to repeat the field iteration.
  */
 public abstract class ByteStorageFieldRunner  {
 	
