@@ -117,8 +117,9 @@ public class IteratorList<E> implements List<E> {
 
 	@Override
 	public Iterator<E> iterator() {
-		this.copyIterator();
-		return this.list.iterator();
+		return new ArrayIterator<E>(this);
+//		this.copyIterator();
+//		return this.list.iterator();
 	}
 
 	@Override
@@ -198,6 +199,14 @@ public class IteratorList<E> implements List<E> {
 					}
 				}
 			} catch (Exception e) {
+				//sometimes happens if the list is empty.
+				try {
+					List<?> l = (List<?>) ReflectionUtils.getFieldValue(iterable, "documents");
+					if(l!=null) {
+						return l.size();
+					}
+				} catch (ReflectionFailureException e1) {
+				}
 				e.printStackTrace();
 			}
 		}
@@ -243,11 +252,14 @@ public class IteratorList<E> implements List<E> {
 	
 	private void copyIterator() {
 		if(!completlyCopied) {
+			int c = list.size();
 			completlyCopied = true;
 			while(iterator.hasNext()) {
 				list.add(iterator.next());
 			}
+			System.out.println("IteratorList copy from " + c + " to " + list.size());	
+			Thread.dumpStack();
+			
 		}
 	}
-
 }
