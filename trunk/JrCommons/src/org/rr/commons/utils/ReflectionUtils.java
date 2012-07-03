@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.rr.commons.collection.VolatileHashMap;
+import org.rr.commons.collection.LRUCacheMap;
 
 public class ReflectionUtils implements Serializable {
 	
@@ -51,11 +51,13 @@ public class ReflectionUtils implements Serializable {
 	
 	private static final int DEFAULT_MAX_CACHE_CAPACITY = 30; 
 	
-	private static final VolatileHashMap<String, Class<?>> classNameToClassCache = new VolatileHashMap<String, Class<?>>(DEFAULT_MAX_CACHE_CAPACITY);
+	private static final LRUCacheMap<String, Class<?>> classNameToClassCache = new LRUCacheMap<String, Class<?>>(DEFAULT_MAX_CACHE_CAPACITY);
 	
-	private static final VolatileHashMap<String, Method> methodNameToMethodCache= new VolatileHashMap<String, Method>(DEFAULT_MAX_CACHE_CAPACITY);
+	private static final LRUCacheMap<String, Method> methodNameToMethodCache = new LRUCacheMap<String, Method>(DEFAULT_MAX_CACHE_CAPACITY);
 	
-	private static final VolatileHashMap<String, Field> fieldNameToFieldCache= new VolatileHashMap<String, Field>(DEFAULT_MAX_CACHE_CAPACITY);
+	private static final LRUCacheMap<String, Field> fieldNameToFieldCache = new LRUCacheMap<String, Field>(DEFAULT_MAX_CACHE_CAPACITY);
+	
+	private static final LRUCacheMap<Class<?>, List<Field>> fieldClassCache = new LRUCacheMap<Class<?>, List<Field>>(DEFAULT_MAX_CACHE_CAPACITY);
 	
 	/**
 	 * Gets the <code>Field</code> value from the field with the name specified with the
@@ -204,11 +206,11 @@ public class ReflectionUtils implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws NoSuchFieldException
 	 */
-	public static void setFieldValue(final Object object, final String fieldName, final Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException  {
+	public static void setFieldValue(final Object object, final String fieldName, final Object value) throws ReflectionFailureException  {
 		setFieldValue(object, object.getClass(), fieldName, value);
 	}
 	
-	public static void setFieldValue(final Object object, Class<?> clazz, final String fieldName, final Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException  {
+	public static void setFieldValue(final Object object, Class<?> clazz, final String fieldName, final Object value) throws ReflectionFailureException  {
 		Field field = null;
 		Class<?> superclass = clazz.getSuperclass();
 		
@@ -225,14 +227,18 @@ public class ReflectionUtils implements Serializable {
 		if (field != null) {
 			//field found, set the value
 			field.setAccessible(true);
-			field.set(object, value);
+			try {
+				field.set(object, value);
+			} catch (IllegalAccessException e) {
+				throw new ReflectionFailureException(e);
+			}
 			return;
 		} else if (superclass!=null && !Object.class.equals(  superclass )) {
 			//there is no filed found but a super class to be searched.
 			setFieldValue(object, superclass, fieldName, value);
 		} else {
 			//throw an Exception if the field could not be allocated.
-			throw new NoSuchFieldException();
+			throw new ReflectionFailureException();
 		}
 	}
 	
@@ -390,6 +396,11 @@ public class ReflectionUtils implements Serializable {
 			return new ArrayList<Field>(0);
 		}
 		
+		List<Field> cachedFields = fieldClassCache.get(clazz);
+		if(cachedFields != null) {
+			return cachedFields;
+		}
+		
 		List<Field> fields = new ArrayList<Field>(0);
 		Class<?> superclass = clazz.getSuperclass();
 		
@@ -412,7 +423,9 @@ public class ReflectionUtils implements Serializable {
 			}
 		}
 		
-		return distinct(fields, UtilConstants.COMPARE_BINARY);
+		List<Field> result =  distinct(fields, UtilConstants.COMPARE_BINARY);
+		fieldClassCache.put(clazz, result);
+		return result;
 	}
 	
 	/**
