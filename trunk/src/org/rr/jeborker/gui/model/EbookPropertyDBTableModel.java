@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -38,6 +39,8 @@ public class EbookPropertyDBTableModel implements TableModel {
     private QueryCondition queryConditions;
     
     private boolean dirty = false;
+    
+    private int oldSize = 0;
     
     public EbookPropertyDBTableModel() {
     	super();
@@ -81,7 +84,20 @@ public class EbookPropertyDBTableModel implements TableModel {
 	public int getRowCount() {
 		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		if(ebookItems!=null) {
-			return ebookItems.size();
+			final int size = ebookItems.size();
+			if(size > oldSize) {
+				final int old = oldSize;
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						fireTableRowsInserted(old-1, size-1);
+					}
+				});
+				
+			}
+			this.oldSize = size;
+			return size;
 		} else {
 			return 0;
 		}
@@ -98,7 +114,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			}
 			ebookPropertyItem = ebookItems.get(rowIndex);
 		} catch(IndexOutOfBoundsException ex) {
-			LoggerFactory.logInfo(this, "", ex);
+//			LoggerFactory.logInfo(this, "", ex);
 			return null;
 		}
 		if(ebookPropertyItem!=null) {
@@ -221,6 +237,7 @@ public class EbookPropertyDBTableModel implements TableModel {
      * @return The desired {@link EbookPropertyItem}s.
      */
     public List<EbookPropertyItem> getEbookItems() {
+    	//NO BREAKPOINT HERE!
     	if(Jeboorker.isRuntime) {
 	    	if(isDirty() || dbItems==null) {
 	    		this.dirty = false;
@@ -256,14 +273,14 @@ public class EbookPropertyDBTableModel implements TableModel {
     }
     
 	public boolean removeRow(final EbookPropertyItem item) {
-		final Iterator<EbookPropertyItem> iterator = allItems.iterator();
+		final Iterator<EbookPropertyItem> iterator = this.allItems.iterator();	
 		boolean removed = false;
 		for (int i = 0; iterator.hasNext(); i++) {
 			final EbookPropertyItem toRemove = iterator.next();
 			try {
 				if(toRemove!=null && toRemove.equals(item)) {
-					int deleteObjects = DefaultDBManager.getInstance().deleteObject(toRemove);
-					if(!isDirty() && deleteObjects>0) {
+					DefaultDBManager.getInstance().deleteObject(toRemove);
+					if(!isDirty()) {
 						allItems.remove(i);
 						fireTableRowsDeleted(i, i);
 					}

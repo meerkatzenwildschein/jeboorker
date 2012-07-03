@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -339,11 +340,11 @@ public class MainController {
 	 * {@link EbookPropertyItem} will be shown to the ui.
 	 * @param item The item to be added.
 	 */
-	public void addEbookPropertyItem(EbookPropertyItem item) {
-		TableModel model = mainWindow.table.getModel();
-		if(model instanceof EbookPropertyDBTableModel) {
-			((EbookPropertyDBTableModel)model).addRow(item);
-		}
+	public void addEbookPropertyItem(final EbookPropertyItem item) {
+			TableModel model = mainWindow.table.getModel();
+			if(model instanceof EbookPropertyDBTableModel) {
+				((EbookPropertyDBTableModel)model).addRow(item);
+			}
 	}
 	
 	/**
@@ -382,6 +383,7 @@ public class MainController {
 	public boolean removeEbookPropertyItem(EbookPropertyItem item) {
 		TableModel model = mainWindow.table.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
+			mainWindow.table.clearSelection();
 			return ((EbookPropertyDBTableModel)model).removeRow(item);
 		}	
 		return false;
@@ -529,7 +531,12 @@ public class MainController {
 				@Override
 				public InputStream getContentInputStream() {
 					if(byteArrayInputStream==null) {
-						byteArrayInputStream = new ByteArrayInputStream(reader.getCover());
+						byte[] cover = reader.getCover();
+						if(cover != null) {
+							byteArrayInputStream = new ByteArrayInputStream(reader.getCover());
+						} else {
+							byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+						}
 					}
 					byteArrayInputStream.reset();
 					return byteArrayInputStream;

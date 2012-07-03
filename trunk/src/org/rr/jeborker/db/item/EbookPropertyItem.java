@@ -108,8 +108,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * Just some keywords for the book. Primary used with pdf.
 	 */
 	@ViewField(name = "Keywords", orderPriority = 0)
-	@Index(type= "FULLTEXT")
-	private List<String> keywords;
+	private List<EbookKeywordItem> keywords;
 	
 	/**
 	 * publisher of the ebook.
@@ -178,7 +177,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	
 	@Override
 	public String toString() {
-		return file;
+		return this.getFile();
 	}
 	
 	/**
@@ -187,7 +186,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * @return The desired {@link IResourceHandler}.
 	 */
 	public IResourceHandler getResourceHandler() {
-		return ResourceHandlerFactory.getResourceLoader(this.file);
+		return ResourceHandlerFactory.getResourceLoader(this.getFile());
 	}
 	
 	/**
@@ -197,24 +196,25 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * @return the file name without path statement.
 	 */
 	public String getFileName() {
+		String file = this.getFile();
 		if(file!=null && file.indexOf('/')!=-1) {
 			return file.substring(file.lastIndexOf('/')+1);
 		} else if(file!=null && file.indexOf('\\')!=-1) {
 			return file.substring(file.lastIndexOf('\\')+1);
 		} else if(file!=null){
-			return this.file;
+			return file;
 		} else {
 			return "";
 		}
 	}	
 	
     public boolean equals(Object obj) {
-    	if(file==null) {
+    	if(this.getFile()==null) {
     		return false;
     	}
     	
     	if(obj instanceof EbookPropertyItem) {
-    		return file.equals(((EbookPropertyItem)obj).file);
+    		return this.getFile().equals(((EbookPropertyItem)obj).getFile());
     	}
     	return false;
     }	
@@ -252,7 +252,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 
 	public String getFile() {
-		return file;
+		return this.file;
 	}
 	
 	public void setFile(String file) {
@@ -380,16 +380,11 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		this.createdAt = createdAt;
 	}
 
-	public List<String> getKeywords() {
+	public List<EbookKeywordItem> getKeywords() {
 		return keywords;
 	}
 
-	public void setKeywords(List<String> keywords) {
-		if(keywords != null) {
-			for (int i = 0; i < keywords.size(); i++) {
-				keywords.set(i, keywords.get(i).trim());
-			}
-		}
+	public void setKeywords(List<EbookKeywordItem> keywords) {
 		this.keywords = keywords;
 	}
 
