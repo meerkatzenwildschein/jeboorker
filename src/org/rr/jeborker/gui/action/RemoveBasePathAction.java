@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.StringUtils;
@@ -34,6 +35,7 @@ public class RemoveBasePathAction extends QueueableAction {
 	@Override
 	public void doAction(final ActionEvent e) {
 		final String path = (String) getValue(Action.NAME);
+		final String normalizedPath = StringUtils.replace(path, File.separator, "");
 		
 		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
@@ -44,7 +46,7 @@ public class RemoveBasePathAction extends QueueableAction {
 			for (Iterator<EbookPropertyItem> iterator = items.iterator(); iterator.hasNext();) {
 				final EbookPropertyItem item =  iterator.next();
 				try {
-					if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(StringUtils.replace(path, File.separator, ""))) {
+					if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(normalizedPath)) {
 						removeEbookPropertyItem(item);
 					}
 				} catch(Exception ex) {
@@ -53,6 +55,13 @@ public class RemoveBasePathAction extends QueueableAction {
 			}
 		} finally {
 			progressMonitor.monitorProgressStop();	
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					MainController.getController().refreshTable(false);
+				}
+			});
 		}
 		
 		JeboorkerPreferences.removeBasePath(path);
@@ -69,10 +78,16 @@ public class RemoveBasePathAction extends QueueableAction {
 		
 		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
 //		defaultDBManager.deleteObject(ebookPropertyItem);
-		boolean removed = controller.removeEbookPropertyItem(item);
-		if(!removed) {
-			DefaultDBManager.getInstance().deleteObject(item);
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				boolean removed = controller.removeEbookPropertyItem(item);
+				if(!removed) {
+					DefaultDBManager.getInstance().deleteObject(item);
+				}
+			}
+		});
 	}
 	
 }

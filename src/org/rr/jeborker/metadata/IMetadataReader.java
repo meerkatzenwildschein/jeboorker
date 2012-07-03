@@ -1,8 +1,8 @@
 package org.rr.jeborker.metadata;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.bouncycastle.asn1.cms.MetaData;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 

@@ -19,7 +19,9 @@ import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -178,7 +180,9 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			} else if(!authorSet && name.equals("creator")) {
 				item.setAuthor(metadataProperty.getValueAsString());
 			} else if(name.equals("keywords")) {
-				item.setKeywords(ListUtils.split(metadataProperty.getValueAsString(), ","));
+				List<String> keywords = ListUtils.split(metadataProperty.getValueAsString(), ",");
+				List<EbookKeywordItem> asEbookKeywordItem = EbookPropertyItemUtils.getAsEbookKeywordItem(keywords);
+				item.setKeywords(asEbookKeywordItem);
 			} else if(name.equals("description")) {
 				item.setDescription(metadataProperty.getValueAsString());
 			} else if(name.equals("creationdate")) {

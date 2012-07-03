@@ -11,7 +11,9 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ZipUtils.ZipDataEntry;
+import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -202,7 +204,13 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 				item.setRating(CommonUtils.toNumber(metadataProperty.getValueAsString()).intValue());
 			} else if (name.equalsIgnoreCase(JB_KEYWORDS)) {
 				// <meta name="jb:keywords" content="foo, bar"/>
-				item.setKeywords(value != null ? ListUtils.split(String.valueOf(value), ",") : null);
+				if(value != null) {
+					List<String> keywords = ListUtils.split(String.valueOf(value), ",");
+					List<EbookKeywordItem> asEbookKeywordItem = EbookPropertyItemUtils.getAsEbookKeywordItem(keywords);
+					item.setKeywords(asEbookKeywordItem);
+				} else {
+					item.setKeywords(null);
+				}
 			} else if (name.equalsIgnoreCase(JB_AGE_SUGGESTION)) {
 				// <meta name="jb:age_suggestion" content="13-15"/>
 				item.setAgeSuggestion(value != null ? String.valueOf(value) : null);

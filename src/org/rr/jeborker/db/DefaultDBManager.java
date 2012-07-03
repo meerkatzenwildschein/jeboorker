@@ -15,6 +15,7 @@ import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
+import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.Index;
@@ -86,12 +87,20 @@ public class DefaultDBManager {
 		// OPEN / CREATE THE DATABASE
 		if (!dbResourceHandler.exists()) {
 			db = new OObjectDatabaseTx("local:" + dbFile).create();
+			
+			db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
+			db.getEntityManager().registerEntityClass(EbookKeywordItem.class);
+			
+			this.createIndices(db, EbookPropertyItem.class);
+			this.createIndices(db, EbookKeywordItem.class);
 			db.close();
-		} 
+		} else {
+			
+		}
 		
 		db = OObjectDatabasePool.global().acquire("local:" + dbFile, "admin", "admin");
 		db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
-		db.getEntityManager().registerEntityClass(ODocument.class);
+		db.getEntityManager().registerEntityClass(EbookKeywordItem.class);
 		db.getEntityManager().registerEntityClass(ORecordBytes.class);
 		
 		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
@@ -161,37 +170,54 @@ public class DefaultDBManager {
 	}
 
 	public void storeObject(final IDBObject item) {
-		Object save = getDB().save(item);
-		ORID identity = getDB().getIdentity(save);
-		storeTransientBinaryData(item, identity);
+		final IDBObject save = getDB().save(item);
+		new ByteStorageFieldRunner(item) {
+			
+			@Override
+			public void run(final Field field) {
+				try {
+					final String fieldName = field.getName();
+					final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, fieldName);
+					if(bytes != null) {
+						ReflectionUtils.setFieldValue(save, fieldName, bytes);
+					}
+				} catch (ReflectionFailureException e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "could not transfer image data." ,e);
+				}
+			}
+		}.start();
+		
+		storeTransientBinaryData(save);
 	}
-
+	
 	/** 
 	 * Stores the binary fields of the given {@link IDBObject} separately in a Blob document.
 	 */
-	private void storeTransientBinaryData(final IDBObject item, final ORID identity) {
-		List<Field> fields = ReflectionUtils.getFields(item.getClass(), ReflectionUtils.VISIBILITY_VISIBLE_ALL);
-		for (Field field : fields) {
-			if(field.getType().getName().equals(byte[].class.getName())) {
-				if(field.getAnnotation(Transient.class)!=null) {
-					//store bytes separately
-					try {
-						final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, field.getName());
-						if(bytes != null && bytes.length > 0) {
+	private void storeTransientBinaryData(final IDBObject item) {
+		new ByteStorageFieldRunner(item) {
+			
+			@Override
+			public void run(final Field field) {
+				try {
+					final String fieldName = field.getName();
+					final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, fieldName);
+					if(bytes != null && bytes.length > 0) {
+						ORID itemIdentity = getDB().getIdentity(item);
+						if(itemIdentity.getClusterId() != -1) {
 							ORecordBytes record = new ORecordBytes(getDB().getUnderlying(), bytes);
-
+	
 							ODocument doc = new ODocument(getDB().getUnderlying(), BINARY_STORE_BLOB);
-							doc.field(BINARY_STORE_ID, identity.toString());
-							doc.field(BINARY_STORE_FIELD_NAME, field.getName());
+							doc.field(BINARY_STORE_ID, itemIdentity.toString());
+							doc.field(BINARY_STORE_FIELD_NAME, fieldName);
 							doc.field(BINARY_STORE_BINARY, record);
-							doc.save();							
+							doc.save();	
 						}
-					} catch (ReflectionFailureException e) {
-						e.printStackTrace();
 					}
+				} catch (ReflectionFailureException e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "could not store binary data for " + item ,e);
 				}
 			}
-		}
+		}.start();		
 	}
 	
 	/**
@@ -199,32 +225,67 @@ public class DefaultDBManager {
 	 * @param item {@link IDBObject} where the binary fields should be restored for.
 	 * @param identity The identity of the given {@link IDBObject}.
 	 */
-	void restoreTransientBinaryData(final IDBObject item, final ORID identity) {
-		List<Field> fields = ReflectionUtils.getFields(item.getClass(), ReflectionUtils.VISIBILITY_VISIBLE_ALL);
-		for (final Field field : fields) {
-			if(field.getType().getName().equals(byte[].class.getName())) {
-				if(field.getAnnotation(Transient.class)!=null) {
-					try {
-						List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), BINARY_STORE_BLOB, new OQueryContextNative()) {
-
-							@Override
-							public boolean filter(OQueryContextNative iRecord) {
-								return iRecord.field(BINARY_STORE_ID).eq(identity.toString()).and().field(BINARY_STORE_FIELD_NAME).eq(field.getName()).go();
-							}
-									
-						}.execute((Object[]) null);
-						
-						if(!result.isEmpty()) {
-							ODocument object = (ODocument) result.get(0);
-							ORecordBytes bytes = object.field(BINARY_STORE_BINARY);
-							ReflectionUtils.setFieldValue(item, field.getName(), bytes.toStream());
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+	void restoreTransientBinaryData(final IDBObject item) {
+		new ByteStorageFieldRunner(item) {
+			
+			@Override
+			public void run(final Field field) {
+				try {
+					final ORecordBytes bytes = getTransientBinaryData(item, field);
+					if(bytes != null) {
+						ReflectionUtils.setFieldValue(item, field.getName(), bytes.toStream());
 					}
+				} catch (ReflectionFailureException e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "could not store binary data for " + item ,e);
 				}
 			}
+		}.start();	
+	}
+	
+	/**
+	 * Gets the binary data object for the field of the given {@link IDBObject} instance.
+	 * @param item The item to get the binary for.
+	 * @param field The field belongs to the binary data.
+	 * @return The desired binary data object or <code>null</code> if no belonging data object was found.
+	 */
+	private ORecordBytes getTransientBinaryData(final IDBObject item, final Field field) {
+		final ODocument doc = getTransientBinaryDataDocument(item, field);
+		if(doc != null) {
+			ORecordBytes bytes = doc.field(BINARY_STORE_BINARY);
+			return bytes;
 		}
+		return null;
+	}
+	
+	/**
+	 * Gets the binary data document for the field of the given {@link IDBObject} instance.
+	 * 
+	 * The following document fields are used.
+	 * 	doc.field(BINARY_STORE_ID, itemIdentity.toString()); //id of the given {@link IDBObject} instance.
+	 *	doc.field(BINARY_STORE_FIELD_NAME, field.getName()); //name of the field belonging to the {@link IDBObject} object.
+	 *	doc.field(BINARY_STORE_BINARY, record); //the ORecordBytes containing the bytes to be stored.
+	 * 
+	 * @param item The item to get the binary for.
+	 * @param field The field belongs to the binary data.
+	 * @return The desired binary data document or <code>null</code> if no belonging data document was found.
+	 */
+	private ODocument getTransientBinaryDataDocument(final IDBObject item, final Field field) {
+		final ORID identity = getDB().getIdentity(item);
+		final List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), BINARY_STORE_BLOB, new OQueryContextNative()) {
+
+			@Override
+			public boolean filter(OQueryContextNative iRecord) {
+				boolean f = iRecord.field(BINARY_STORE_ID).eq(identity.toString()).and().field(BINARY_STORE_FIELD_NAME).eq(field.getName()).go();
+				return f;
+			}
+					
+		}.execute((Object[]) null);
+		
+		if(!result.isEmpty()) {
+			ODocument doc = (ODocument) result.get(0);
+			return doc;
+		}
+		return null;
 	}
 	
 	public long count(Class<?> cls) {
@@ -260,10 +321,11 @@ public class DefaultDBManager {
 		appendOrderBy(sql, orderFields, orderDirection);
 		
 		try {
-long time = System.currentTimeMillis();
-			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
-System.out.println(System.currentTimeMillis() - time);
-			return new ODocumentMapper<T>(listResult, db);
+//long time = System.currentTimeMillis();
+//			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
+//System.out.println(System.currentTimeMillis() - time);
+//			return new ODocumentMapper<T>(listResult, db);
+			return new ODocumentMapper<T>(sql, getDB());
 		} catch(NullPointerException e) {
 			return Collections.emptyList();
 		} catch(OException e) {
@@ -393,8 +455,28 @@ System.out.println(System.currentTimeMillis() - time);
 		return new ODocumentMapper<T>(result, db);
 	}
 
-	public int deleteObject(IDBObject toRemove) {
-		getDB().delete(toRemove);
-		return 1;
+	/**
+	 * Deletes the given item and it's binary entries from the database.
+	 * @param item The item to be deleted.
+	 * @return 
+	 */
+	public void deleteObject(IDBObject item) {
+		new ByteStorageFieldRunner(item) {
+			
+			@Override
+			public void run(final Field field) {
+				try {
+					final ODocument doc = getTransientBinaryDataDocument(item, field);
+					
+					if(doc != null) {
+						getDB().delete(doc);
+					}
+				} catch (Exception e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "could not delete binary for " + item ,e);
+				}
+			}
+		}.start();	
+		
+		getDB().delete(item);
 	}
 }

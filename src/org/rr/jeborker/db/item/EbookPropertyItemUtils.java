@@ -102,6 +102,21 @@ public class EbookPropertyItemUtils {
 			} else {
 				item.setCoverThumbnail(null);
 			}
-		} 
+		} else {
+			item.setCoverThumbnail(null);
+		}
 	}	
+	
+	/**
+	 * Get a list of EbookKeywordItem for a list of keyword strings.
+	 * @param keywords The keywords to be used for the reuslt list.
+	 * @return The list over EbookKeywordItem instances.
+	 */
+	public static List<EbookKeywordItem> getAsEbookKeywordItem(List<String> keywords) {
+		ArrayList<EbookKeywordItem> result = new ArrayList<EbookKeywordItem>(keywords.size());
+		for (String keyword : keywords) {
+			result.add(new EbookKeywordItem(keyword));
+		}
+		return result;
+	}
 }

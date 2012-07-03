@@ -62,7 +62,8 @@ public class SearchAction extends AbstractAction {
 			controller.refreshTable(true);
 			filterPanelController.addFilterFieldSearch(filterText);
 		} finally {
-			monitorStop(filterText);
+			int rowCount = controller.getTableModel().getRowCount();
+			monitorStop(filterText, rowCount);
 		}
 	}
 
@@ -73,13 +74,17 @@ public class SearchAction extends AbstractAction {
 		}
 	}
 	
-	private void monitorStop(String filterText) {
+	private void monitorStop(final String filterText, final int entries) {
 		MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		if(progressMonitor!=null) {
 			if(filterText!=null && filterText.length() > 0) {
-				progressMonitor.monitorProgressStop(Bundle.getFormattedString("SearchAction.message.finish", filterText));
+				progressMonitor.monitorProgressStop(
+						Bundle.getFormattedString("SearchAction.message.finish", filterText) + 
+						" / " + 
+						Bundle.getFormattedString("SearchAction.message.count", String.valueOf(entries))
+				);
 			} else {
-				progressMonitor.monitorProgressStop("");
+				progressMonitor.monitorProgressStop(Bundle.getFormattedString("SearchAction.message.count", String.valueOf(entries)));
 			}
 		}
 	}

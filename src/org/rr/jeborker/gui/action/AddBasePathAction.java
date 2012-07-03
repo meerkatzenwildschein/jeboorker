@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -126,7 +127,14 @@ class AddBasePathAction extends QueueableAction {
 	static void addEbookPropertyItem(final EbookPropertyItem item) {
 		MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
 		DefaultDBManager.getInstance().storeObject(item);
-		MainController.getController().addEbookPropertyItem(item);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				MainController.getController().addEbookPropertyItem(item);
+			}
+		});
 	}
 
 }
