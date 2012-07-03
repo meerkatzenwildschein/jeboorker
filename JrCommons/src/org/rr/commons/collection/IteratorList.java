@@ -252,14 +252,10 @@ public class IteratorList<E> implements List<E> {
 	
 	private void copyIterator() {
 		if(!completlyCopied) {
-			int c = list.size();
 			completlyCopied = true;
 			while(iterator.hasNext()) {
 				list.add(iterator.next());
 			}
-			System.out.println("IteratorList copy from " + c + " to " + list.size());	
-			Thread.dumpStack();
-			
 		}
 	}
 }

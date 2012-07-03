@@ -358,6 +358,7 @@ public class ResourceHandlerUtils {
      *
      * @param resourceLoader {@link IResourceHandler} containing image data.
      * @return The mime type of the image or <code>null</code> if no format could be identified.
+     * @throw {@link IOException}
      */
     public static String guessFormat(final IResourceHandler resourceLoader) throws IOException {
     	final InputStream is = resourceLoader.getContentInputStream();
