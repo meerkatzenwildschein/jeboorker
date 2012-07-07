@@ -18,6 +18,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.xml.XMLUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageInfo;
 import org.rr.pm.image.ImageProviderFactory;
@@ -263,11 +264,16 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 	@Override
 	public void storePlainMetadata(byte[] plainMetadata) {
 		try {
-			final byte[] pdfData = ebookResource.getContent();
-			final PdfReader pdfReader = new PdfReader(pdfData);
 			if(plainMetadata.length > 9 && new String(plainMetadata, 0, 9).startsWith("<?xpacket")) {
 				//XMP 
-				writeMetadata(pdfReader, plainMetadata, pdfReader.getInfo());
+				if(XMLUtils.isValidXML(plainMetadata)) {
+					final byte[] pdfData = ebookResource.getContent();
+					final PdfReader pdfReader = new PdfReader(pdfData);
+					
+					writeMetadata(pdfReader, plainMetadata, pdfReader.getInfo());
+				} else {
+					throw new UnsupportedOperationException("XML is not well formed");
+				}
 			} else {
 				//PDF Property
 				throw new UnsupportedOperationException("Could not write plain metadata");
@@ -275,5 +281,6 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Could not write metadata to " + ebookResource, e);
 		}
+		
 	}
 }
