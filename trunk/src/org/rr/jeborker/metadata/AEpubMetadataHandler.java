@@ -1,12 +1,10 @@
 package org.rr.jeborker.metadata;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import org.apache.commons.io.FileUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtils;
