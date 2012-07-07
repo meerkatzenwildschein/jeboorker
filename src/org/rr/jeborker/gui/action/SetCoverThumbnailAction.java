@@ -49,12 +49,14 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction implements ID
 				if (imageFileChooser.getReturnValue() == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = imageFileChooser.getSelectedFile();
 					if(selectedFile!=null) {
+System.out.println("crc32:" + item.getCoverThumbnailCRC32() + " hash:"+item.hashCode());						
 						IResourceHandler selectedFileResourceHandler = ResourceHandlerFactory.getResourceLoader(selectedFile);
 						writer.setCover(selectedFileResourceHandler.getContent());
 						RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
 										
 						MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
 						MainController.getController().setImageViewerResource(selectedFileResourceHandler);
+System.out.println("crc32:" + item.getCoverThumbnailCRC32() + " hash:"+item.hashCode());						
 					}
 				}
 			} else {

@@ -2,8 +2,10 @@ package org.rr.jeborker.db;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.persistence.Transient;
@@ -187,13 +189,13 @@ public class DefaultDBManager {
 			}
 		}.start();
 		
-		storeTransientBinaryData(save);
+		storeAllTransientBinaryData(save);
 	}
 	
 	/** 
 	 * Stores the binary fields of the given {@link IDBObject} separately in a Blob document.
 	 */
-	private void storeTransientBinaryData(final IDBObject item) {
+	private void storeAllTransientBinaryData(final IDBObject item) {
 		new ByteStorageFieldRunner(item) {
 			
 			@Override
@@ -225,7 +227,7 @@ public class DefaultDBManager {
 	 * @param item {@link IDBObject} where the binary fields should be restored for.
 	 * @param identity The identity of the given {@link IDBObject}.
 	 */
-	void restoreTransientBinaryData(final IDBObject item) {
+	void loadAllTransientBinaryData(final IDBObject item) {
 		new ByteStorageFieldRunner(item) {
 			
 			@Override
@@ -240,6 +242,30 @@ public class DefaultDBManager {
 				}
 			}
 		}.start();	
+	}
+	
+	/**
+	 * Delete the binary data objects for the given {@link IDBObject} instance from the database.
+	 * The binary data will also be removed from  the given {@link IDBObject} instance.
+	 * @param item The {@link IDBObject} instance which binary data should be deleted.
+	 */
+	private void deleteAllTransientBinaryData(final IDBObject item) {
+		new ByteStorageFieldRunner(item) {
+			
+			@Override
+			public void run(final Field field) {
+				try {
+					final ODocument doc = getTransientBinaryDataDocument(item, field);
+					
+					if(doc != null) {
+						getDB().delete(doc);
+						field.set(item, null);
+					}
+				} catch (Exception e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "could not delete binary for " + item ,e);
+				}
+			}
+		}.start();			
 	}
 	
 	/**
@@ -427,10 +453,40 @@ public class DefaultDBManager {
 
 	/**
 	 * Updates the given item.
-	 * @param item
+	 * @param item {@link IDBObject} instance to be updated.
 	 */
-	public void updateObject(IDBObject item) {
-		//getDB().save(item);
+	public void updateObject(final IDBObject item) {		
+		//store the bytes before deleting
+		final HashMap<Field, byte[]> data = new HashMap<Field, byte[]>();
+		new ByteStorageFieldRunner(item) {
+			
+			@Override
+			public void run(final Field field) {
+				try {
+					data.put(field, (byte[]) field.get(item));
+				} catch (Exception e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "could not delete binary for " + item, e);
+				}
+			}
+		}.start();		
+		
+		deleteAllTransientBinaryData(item);
+		
+		//delete the item and all the attached binary data 
+//		this.deleteObject(item);
+		
+		//restore binary data to IDBObject
+		for (Map.Entry<Field, byte[]> entry : data.entrySet()) {
+            Field field = entry.getKey();
+            byte[] value = entry.getValue();
+            try {
+				field.set(item, value);
+			} catch (Exception e) {
+				LoggerFactory.getLogger(this).log(Level.WARNING, "could not restore binary data for " + item, e);
+			}
+        }
+		
+		//store the item and 
 		this.storeObject(item);
 	}
 
@@ -460,23 +516,13 @@ public class DefaultDBManager {
 	 * @param item The item to be deleted.
 	 * @return 
 	 */
-	public void deleteObject(IDBObject item) {
-		new ByteStorageFieldRunner(item) {
-			
-			@Override
-			public void run(final Field field) {
-				try {
-					final ODocument doc = getTransientBinaryDataDocument(item, field);
-					
-					if(doc != null) {
-						getDB().delete(doc);
-					}
-				} catch (Exception e) {
-					LoggerFactory.getLogger(this).log(Level.WARNING, "could not delete binary for " + item ,e);
-				}
-			}
-		}.start();	
-		
-		getDB().delete(item);
+	public boolean deleteObject(IDBObject item) {
+		try {
+			this.deleteAllTransientBinaryData(item);
+			getDB().delete(item);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -3,7 +3,6 @@ package org.rr.jeborker.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -104,23 +103,6 @@ public class MainView extends JFrame{
 		gridBagLayout.columnWeights = new double[]{1.0};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.getContentPane().setLayout(gridBagLayout);
-		
-		JPanel toolbarPanel = new JPanel();
-		GridBagConstraints gbc_toolbarPanel = new GridBagConstraints();
-		gbc_toolbarPanel.anchor = GridBagConstraints.WEST;
-		gbc_toolbarPanel.insets = new Insets(0, 0, 5, 0);
-		gbc_toolbarPanel.fill = GridBagConstraints.VERTICAL;
-		gbc_toolbarPanel.gridx = 0;
-		gbc_toolbarPanel.gridy = 0;
-		toolbarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		
-		JButton readFolderButton = new JButton();
-		readFolderButton.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, ""));
-		toolbarPanel.add(readFolderButton);
-
-		JButton refreshFolderButton = new JButton();
-		refreshFolderButton.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, ""));
-		toolbarPanel.add(refreshFolderButton);		
 		
 		JPanel filterPanel = FilterPanelController.getView();
 		GridBagConstraints gbc_searchPanel = new GridBagConstraints();

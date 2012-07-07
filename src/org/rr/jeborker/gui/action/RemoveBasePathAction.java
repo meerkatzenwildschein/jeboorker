@@ -2,7 +2,8 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -15,8 +16,8 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
-import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.MainMenuController;
+import org.rr.jeborker.gui.MainMonitor;
 
 public class RemoveBasePathAction extends QueueableAction {
 
@@ -35,37 +36,72 @@ public class RemoveBasePathAction extends QueueableAction {
 	@Override
 	public void doAction(final ActionEvent e) {
 		final String path = (String) getValue(Action.NAME);
-		final String normalizedPath = StringUtils.replace(path, File.separator, "");
 		
-		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
-		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
-		final Iterable<EbookPropertyItem> items = defaultDBManager.getItems(EbookPropertyItem.class);
-		
-		try {
-			progressMonitor.monitorProgressStart(Bundle.getString("RemoveBasePathAction.message"));
-			for (Iterator<EbookPropertyItem> iterator = items.iterator(); iterator.hasNext();) {
-				final EbookPropertyItem item =  iterator.next();
-				try {
-					if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(normalizedPath)) {
-						removeEbookPropertyItem(item);
-					}
-				} catch(Exception ex) {
-					LoggerFactory.logWarning(this, "Error while removing ebooks from catalog", ex);
-				}
-			}
-		} finally {
-			progressMonitor.monitorProgressStop();	
-			SwingUtilities.invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					MainController.getController().refreshTable(false);
-				}
-			});
-		}
+		removeBasePathEntries(path, true);
 		
 		JeboorkerPreferences.removeBasePath(path);
 		MainMenuController.getController().removeBasePathMenuEntry(path);
+	}
+
+	static void removeBasePathEntries(final String path, boolean refreshTable) {
+		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+		
+		try {
+			progressMonitor.monitorProgressStart(Bundle.getString("RemoveBasePathAction.message"));
+			try {
+				ArrayList<EbookPropertyItem> itemsToRemove = getItemsToRemove(path);
+				removeAllEbookPropertyItems(itemsToRemove);
+			} catch(Exception ex) {
+				LoggerFactory.logWarning(RemoveBasePathAction.class, "Error while removing ebooks from catalog", ex);
+			}
+		} finally {
+			progressMonitor.monitorProgressStop();	
+			if(refreshTable) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						MainController.getController().refreshTable(false);
+					}
+				});
+			}
+		}
+	}
+	
+	/**
+	 * Get all items from the database with a fitting base path.
+	 * @param basePath The base path string
+	 * @return A list over all items with a fitting base path. Never returns null.
+	 */
+	static ArrayList<EbookPropertyItem> getItemsToRemove(final String basePath) {
+		final String normalizedPath = StringUtils.replace(basePath, File.separator, "");
+		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
+		final ArrayList<EbookPropertyItem> toRemove = new ArrayList<EbookPropertyItem>();
+		final Iterable<EbookPropertyItem> items = defaultDBManager.getItems(EbookPropertyItem.class);
+		for (EbookPropertyItem item : items) {
+			if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(normalizedPath)) {
+				toRemove.add(item);
+			}
+		}
+		return toRemove;
+	}
+	
+	/**
+	 * Deletes the given items from the database and the view.
+	 * @param items The items to be deleted.
+	 */
+	static void removeAllEbookPropertyItems(final List<EbookPropertyItem> items) {
+		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+		final MainController controller = MainController.getController();
+		
+		progressMonitor.setMessage(Bundle.getString("RemoveBasePathAction.deletingMany"));
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				controller.removeEbookPropertyItems(items);
+			}
+		});		
 	}
 	
 	/**
@@ -77,7 +113,6 @@ public class RemoveBasePathAction extends QueueableAction {
 		final MainController controller = MainController.getController();
 		
 		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
-//		defaultDBManager.deleteObject(ebookPropertyItem);
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override

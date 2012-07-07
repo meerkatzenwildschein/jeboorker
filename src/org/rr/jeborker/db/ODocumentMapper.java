@@ -6,7 +6,6 @@ import java.util.List;
 import org.rr.commons.collection.CompoundList;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
-import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.record.ORecordInternal;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -42,7 +41,7 @@ class ODocumentMapper<T> extends AbstractList<T> {
 		this.query = new OSQLSynchQuery<T>(sql.toString());	
 	}	
 	
-	private List<?> getDocuments() {
+	private synchronized List<?> getDocuments() {
 		if(this.documents == null) {
 			this.documents = getNextDocuments();
 		}
@@ -96,7 +95,7 @@ class ODocumentMapper<T> extends AbstractList<T> {
 		}
 		
 		//fill binary data to the object instance. 
-		DefaultDBManager.getInstance().restoreTransientBinaryData((IDBObject) result);
+		DefaultDBManager.getInstance().loadAllTransientBinaryData((IDBObject) result);
 		
 		this.fetchNextRecords(index);
 		
