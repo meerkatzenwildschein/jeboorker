@@ -141,7 +141,13 @@ public class CompoundList<E> extends AbstractList<E> {
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		return super.removeAll(c);
+		boolean changed = false;
+		for (Object object : c) {
+			if(this.remove(object)) {
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	@Override
