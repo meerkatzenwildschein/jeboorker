@@ -43,7 +43,7 @@ public class XMLUtils {
 	
 	/**
 	 * Creates a document from the given xml bytes.
-	 * @return The desired document or <code>null</code> if the given xml is not valid.
+	 * @return The desired document. Never returns null but throws some Exception.
 	 * @throws ParserConfigurationException, IOException, SAXException  
 	 */
 	public static Document getDocument(byte[] xml) throws ParserConfigurationException, IOException, SAXException {
@@ -57,4 +57,18 @@ public class XMLUtils {
 		}
 		throw new IOException("No xml data");
 	}	
+	
+	/**
+	 * Tests if the given xml data could be parsed into a document.
+	 * @param xml The xml data to be parsed
+	 * @return <code>true</code> if the given data could be parsed and <code>false</code> otherwise.
+	 */
+	public static boolean isValidXML(byte[] xml) {
+		try {
+			getDocument(xml);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }
