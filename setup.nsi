@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.2.0.0
+VIProductVersion 0.1.4.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -76,9 +76,11 @@ Section -Main SEC0000
     File lib\jsoup-1.5.2-sources.jar
     
     SetOutPath $INSTDIR\lib\orientdb
-    File lib\orientdb\jpa.jar
-    File lib\orientdb\orient-commons-1.0rc3.jar
-    File lib\orientdb\orientdb-core-1.0rc3.jar
+    File lib\orientdb\javassist.jar
+    File lib\orientdb\orient-commons-1.0.1.jar
+    File lib\orientdb\orientdb-core-1.0.1.jar
+    File lib\orientdb\orientdb-object-1.0.1.jar
+    File lib\orientdb\persistence-api-1.0.jar
     
     SetOutPath $INSTDIR\lib\epubcheck
     File lib\epubcheck\epubcheck-1.2.jar
@@ -127,10 +129,14 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\lib\epubcheck\jing.jar
     Delete /REBOOTOK $INSTDIR\lib\epubcheck\epubcheck-1.2.jar
     RMDir  $INSTDIR\lib\epubcheck
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-core-1.0rc3.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orient-commons-1.0rc3.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\jpa.jar
+    
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\javassist.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orient-commons-1.0.1.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-core-1.0.1.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-object-1.0.1.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\persistence-api-1.0.jar
     RMDir  $INSTDIR\lib\orientdb
+    
     Delete /REBOOTOK $INSTDIR\lib\jsoup-1.5.2-sources.jar
     Delete /REBOOTOK $INSTDIR\lib\jsoup-1.5.2.jar
     Delete /REBOOTOK $INSTDIR\lib\jeboorker.jar
