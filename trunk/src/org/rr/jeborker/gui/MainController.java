@@ -365,7 +365,7 @@ public class MainController {
 	
 	/**
 	 * Gets all selected rows from the main table.
-	 * @return all selected rows or an empty array if no row is selected.
+	 * @return all selected rows or an empty array if no row is selected. Never returns <code>null</code>.
 	 */
 	public int[] getSelectedEbookPropertyItemRows() {
 		if(mainWindow!=null && mainWindow.table != null) {
