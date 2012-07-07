@@ -17,6 +17,7 @@ import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
+import org.rr.jeborker.db.item.EbookBlobItem;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -49,7 +50,7 @@ public class DefaultDBManager {
 
 	private static final String BINARY_STORE_ID = "id";
 
-	private static final String BINARY_STORE_BLOB = "Blob";
+	private static final String BINARY_STORE_BLOB = "EbookBlobItem";
 
 	private static DefaultDBManager manager;
 	
@@ -104,6 +105,7 @@ public class DefaultDBManager {
 		db.getEntityManager().registerEntityClass(EbookPropertyItem.class);
 		db.getEntityManager().registerEntityClass(EbookKeywordItem.class);
 		db.getEntityManager().registerEntityClass(ORecordBytes.class);
+		db.getEntityManager().registerEntityClass(EbookBlobItem.class);
 		
 		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 		
@@ -208,7 +210,8 @@ public class DefaultDBManager {
 						if(itemIdentity.getClusterId() != -1) {
 							ORecordBytes record = new ORecordBytes(getDB().getUnderlying(), bytes);
 	
-							ODocument doc = new ODocument(getDB().getUnderlying(), BINARY_STORE_BLOB);
+							ODocument doc = new ODocument(getDB().getUnderlying());
+							doc.setClassNameIfExists(BINARY_STORE_BLOB);
 							doc.field(BINARY_STORE_ID, itemIdentity.toString());
 							doc.field(BINARY_STORE_FIELD_NAME, fieldName);
 							doc.field(BINARY_STORE_BINARY, record);
