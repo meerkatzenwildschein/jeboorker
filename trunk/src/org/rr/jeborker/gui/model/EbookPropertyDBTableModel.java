@@ -139,6 +139,22 @@ public class EbookPropertyDBTableModel implements TableModel {
 			return null;
 		}		
 	}
+	
+	/**
+	 * Loads the {@link EbookPropertyItem} element at the given index from the database
+	 * and set this instance as current one.  
+	 * @param rowIndex Index of {@link EbookPropertyItem} to be reloaded.
+	 */
+	public void reloadEbookPropertyItemAt(int rowIndex) {
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		final EbookPropertyItem itemRoRefresh = this.getEbookPropertyItemAt(rowIndex);
+		final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", itemRoRefresh.getFile());
+		
+		if(!items.isEmpty()) {
+			EbookPropertyItem item = items.get(0);
+			ebookItems.set(rowIndex, item);
+		}
+	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -294,6 +310,13 @@ public class EbookPropertyDBTableModel implements TableModel {
 		}
 		return removed;
 	}    
+	
+	public void removeRows(List<EbookPropertyItem> items) {
+		this.allItems.removeAll(items);
+		for (EbookPropertyItem ebookPropertyItem : items) {
+			DefaultDBManager.getInstance().deleteObject(ebookPropertyItem);
+		}
+	}	
 
     /**
      * @return <code>true</code> if a refresh is needed and <code>false</code> otherwise.

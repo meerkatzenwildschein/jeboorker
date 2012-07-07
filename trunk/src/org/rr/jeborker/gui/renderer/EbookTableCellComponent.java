@@ -212,7 +212,6 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
 		if(item!=null && item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
 			final String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
-			
 			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
 				return thumbnailCache.get(coverThumbnailCRC32);
 			}

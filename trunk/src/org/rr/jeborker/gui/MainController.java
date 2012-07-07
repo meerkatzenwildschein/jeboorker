@@ -13,7 +13,6 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -203,7 +202,7 @@ public class MainController {
 	 * Refresh the whole table.
 	 */
 	public void refreshTable(final boolean refreshMetadataSheet) {
-		final TableModel model = mainWindow.table.getModel();
+		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			((EbookPropertyDBTableModel)model).setDirty();
 		}
@@ -222,7 +221,7 @@ public class MainController {
 	 * Refresh the selected table row.
 	 */
 	public void refreshTableSelectedItem(final boolean refreshMetadataSheet) {
-		final TableModel model = mainWindow.table.getModel();
+		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
 		int[] selectedRows = getSelectedEbookPropertyItemRows() ;
 		if(selectedRows==null || selectedRows.length==0) {
 			return;
@@ -232,6 +231,7 @@ public class MainController {
 				if(editingRow != -1 && editingRow == selectedRows[i]) {
 					mainWindow.table.editingStopped(null);
 				} 
+				model.reloadEbookPropertyItemAt(selectedRows[i]);
 				mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));					
 			}
 		}
@@ -248,7 +248,7 @@ public class MainController {
 	 * @param refreshMetadataSheet do also refresh the metadata sheet. 
 	 */
 	public void refreshTableRows(final int[] rows, boolean refreshMetadataSheet) {
-		final TableModel model = mainWindow.table.getModel();
+		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
 		if(rows==null || rows.length==0) {
 			return;
 		} else {
@@ -258,6 +258,7 @@ public class MainController {
 				if(editingRow != -1 && editingRow == rows[i]) {
 					mainWindow.table.editingStopped(null);
 				}
+				model.reloadEbookPropertyItemAt(rows[i]);
 				mainWindow.table.tableChanged(new TableModelEvent(model, rows[i]));					
 				
 				for (int j = 0; j < selectedEbookPropertyItemRows.length; j++) {
@@ -389,6 +390,14 @@ public class MainController {
 		return false;
 	}
 	
+	public void removeEbookPropertyItems(List<EbookPropertyItem> items) {
+		TableModel model = mainWindow.table.getModel();
+		if(model instanceof EbookPropertyDBTableModel) {
+			mainWindow.table.clearSelection();
+			((EbookPropertyDBTableModel)model).removeRows(items);
+		}	
+	}
+	
 	/**
 	 * gets the current model for the main table.
 	 * @return The desired model. <code>null</code> if the model is not initialized.
@@ -505,18 +514,18 @@ public class MainController {
 			if(item==null) {
 				//clear
 				mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
-			}
-			
-			final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
-			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, reader));
-			if(item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
-				setImage(reader);
 			} else {
-				setImage(null);
+				final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
+				final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
+				mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, reader));
+				if(item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
+					setImage(reader);
+				} else {
+					setImage(null);
+				}
+				
+				mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader));
 			}
-			
-			mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader));
 		}
 	}
 	

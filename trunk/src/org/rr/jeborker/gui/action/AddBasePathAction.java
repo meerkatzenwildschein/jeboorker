@@ -103,7 +103,7 @@ class AddBasePathAction extends QueueableAction {
 	 * Read all ebook files recursive and stores them directly to the database.
 	 * @param baseFolder The folder where the ebook search should be started.
 	 */
-	private void readEbookFilesToDB(final IResourceHandler baseFolder) {
+	static void readEbookFilesToDB(final IResourceHandler baseFolder) {
 		ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
 			
 			@Override
