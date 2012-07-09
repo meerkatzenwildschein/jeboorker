@@ -34,20 +34,25 @@ public class MultiActionWrapper extends QueueableAction {
 	
 	@Override
 	public void doAction(ActionEvent e) {
-		Iterator<IResourceHandler> iterator = handlers.iterator();
+		final Iterator<IResourceHandler> iterator = handlers.iterator();
+		final int size = handlers.size();
 		
-		//skip the first and use the action we have already created with the constructor
+		//skip the first and use the firstActionInstance action we have already created with the constructor
 		iterator.next();
-		this.doActionAt(firstActionInstance, e);
+		
+		if(firstActionInstance instanceof IDoOnlyOnceAction<?>) {
+			((IDoOnlyOnceAction<?>)firstActionInstance).doOnce();
+		}
+		this.doActionAt(firstActionInstance, e, 0, size);
 		
 		//create an action instance for all the other handlers. 
-		while (iterator.hasNext()) {
+		for (int i=1; iterator.hasNext(); i++) {
 			IResourceHandler handler = iterator.next();
 			Action action = createInstance(firstActionInstance.getClass(), handler, selectedRowsToRefresh);
 			
 			if(action!=null) {
 				this.transferDoOnlyOnceValue(action);
-				this.doActionAt(action, e);			
+				this.doActionAt(action, e, i, size);			
 			} else {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
 			}
@@ -58,7 +63,11 @@ public class MultiActionWrapper extends QueueableAction {
 	 * Invokes the action method to the given action.
 	 * @param action The action to be executed.
 	 */
-	public void doActionAt(Action action, ActionEvent e) {
+	public void doActionAt(Action action, ActionEvent e, int entryIndex, int entrySize) {
+		if(firstActionInstance instanceof IDoOnlyOnceAction<?>) {
+			((IDoOnlyOnceAction<?>)action).prepareFor(entryIndex, entrySize);
+		}
+		
 		if(action instanceof QueueableAction) {
 			((QueueableAction)action).doAction(e);
 		} else {
@@ -73,7 +82,7 @@ public class MultiActionWrapper extends QueueableAction {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void transferDoOnlyOnceValue(Action action) {
 		if(action instanceof IDoOnlyOnceAction<?>) {
-			((IDoOnlyOnceAction)action).setResult(((IDoOnlyOnceAction<?>)firstActionInstance).doOnce());
+			((IDoOnlyOnceAction)action).setResult(((IDoOnlyOnceAction<?>)firstActionInstance).getResult());
 		}
 	}
 	

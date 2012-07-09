@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import javax.persistence.Transient;
-
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -174,7 +172,16 @@ public class DefaultDBManager {
 	}
 
 	public void storeObject(final IDBObject item) {
-		final IDBObject save = getDB().save(item);
+		IDBObject saveLocal;
+		try {
+			saveLocal = getDB().save(item);
+		} catch(Exception e) {
+			//If storage fails try to delete and store the record.
+			deleteObject(item);
+			saveLocal = getDB().save(item);
+		}
+		final IDBObject save = saveLocal;
+		
 		new ByteStorageFieldRunner(item) {
 			
 			@Override

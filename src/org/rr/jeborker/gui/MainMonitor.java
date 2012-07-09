@@ -27,6 +27,7 @@ public class MainMonitor {
 		if(started<=0) {
 			started = 0;
 			progressbar.setIndeterminate(false);
+			progressbar.setValue(0);
 			this.setMessage(message);
 		}
 	}	
@@ -35,5 +36,12 @@ public class MainMonitor {
 		progressbar.setString(message != null ? message : "");
 		progressbar.setStringPainted(true);
 		progressbar.setToolTipText(message != null ? message : "");
+	}
+	
+	public void setProgress(int progress, int max) {
+		progressbar.setIndeterminate(false);
+		progressbar.setMinimum(0);
+		progressbar.setMaximum(max);
+		progressbar.setValue(progress);
 	}
 }
