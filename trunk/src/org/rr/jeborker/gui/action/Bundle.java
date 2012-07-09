@@ -46,7 +46,7 @@ public class Bundle {
      * 
      * @return the formated string
      */
-    public static String getFormattedString(String key, Object arg) {
+    public static String getFormattedString(String key, String arg) {
         String format = null;
         try {
             format = getString(key);
@@ -70,8 +70,8 @@ public class Bundle {
      * 
      * @return the formated string
      */
-    public static String getFormattedString(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);
+    public static String getFormattedString(String key, String ... args) {
+        return MessageFormat.format(getString(key), (Object[]) args);
     }
 
     /**

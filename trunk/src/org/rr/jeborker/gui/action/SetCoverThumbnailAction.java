@@ -28,6 +28,10 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction implements ID
 	private final IResourceHandler resourceHandler;
 	
 	private ImageFileChooser imageFileChooserT;
+
+	private int index;
+
+	private int max;
 	
 	private static File previousSelectedFile;
 	
@@ -44,19 +48,23 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction implements ID
 			List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
 			
 			if(!items.isEmpty()) {
-				EbookPropertyItem item = items.get(0);
-				ImageFileChooser imageFileChooser = doOnce();
+				final MainController controller = MainController.getController();
+				final EbookPropertyItem item = items.get(0);
+				final ImageFileChooser imageFileChooser = doOnce();
+				
 				if (imageFileChooser.getReturnValue() == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = imageFileChooser.getSelectedFile();
 					if(selectedFile!=null) {
-System.out.println("crc32:" + item.getCoverThumbnailCRC32() + " hash:"+item.hashCode());						
+						controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataCoverAction.message", selectedFile.getName(), item.toString()));
+						controller.getProgressMonitor().setProgress(index, max);
+						
 						IResourceHandler selectedFileResourceHandler = ResourceHandlerFactory.getResourceLoader(selectedFile);
 						writer.setCover(selectedFileResourceHandler.getContent());
 						RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
 										
 						MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
 						MainController.getController().setImageViewerResource(selectedFileResourceHandler);
-System.out.println("crc32:" + item.getCoverThumbnailCRC32() + " hash:"+item.hashCode());						
+						controller.getProgressMonitor().monitorProgressStop(null);
 					}
 				}
 			} else {
@@ -88,12 +96,23 @@ System.out.println("crc32:" + item.getCoverThumbnailCRC32() + " hash:"+item.hash
 			previousSelectedFile = imageFileChooserT.getSelectedFile();
 		}
 		
-		return imageFileChooserT;
+		return getResult();
 	}
 
 	@Override
 	public void setResult(ImageFileChooser result) {
 		this.imageFileChooserT = result;
 	}
+
+	@Override
+	public ImageFileChooser getResult() {
+		return imageFileChooserT;
+	}
+	
+	@Override
+	public void prepareFor(int index, int max) {
+		this.index = index;
+		this.max = max;
+	}	
 
 }

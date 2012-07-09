@@ -69,7 +69,7 @@ class AddBasePathAction extends QueueableAction {
 					MainMenuController.getController().addBasePathMenuEntry(path); //add path to ui
 					readEbookFilesToDB(selectedDirectory);
 				} else {
-					messageFinished = Bundle.getFormattedString("AddBasePathAction.duplicatePathEntry", new Object[] {path});
+					messageFinished = Bundle.getFormattedString("AddBasePathAction.duplicatePathEntry", path);
 				}
 			} catch(Throwable t) {
 				LoggerFactory.log(Level.WARNING, this, "Adding " + path + " has failed", t);

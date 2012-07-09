@@ -268,6 +268,10 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 		List<Element> manifestChildren = getChildren(manifestElement);
 		for (Element child : manifestChildren) {
 			if(child.getTagName().equals("item") && child.getAttribute("id")!=null && child.getAttribute("id").equals(coverId)) {
+				if(child.getAttribute("media-type") != null && !child.getAttribute("media-type").startsWith("image/")) {
+					//failsave for entries with cover id which is not really an image.
+					continue;
+				}
 				String href = child.getAttribute("href");
 				return href;
 			}
