@@ -68,6 +68,15 @@ public interface IMetadataReader {
 	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props);
 	
 	/**
+	 * Get the title entries.
+	 * @param create If not title entry exists, create a new, empty one. 
+	 * @param props Extract the title entry from the given metadata properties. If this
+	 * 		parameter is <code>null</code>, the properties will be read from the file.
+	 * @return A list of title entries. Never returns <code>null</code>
+	 */
+	public List<MetadataProperty> getTitleMetaData(boolean create, List<MetadataProperty> props);	
+	
+	/**
 	 * Get the genre entries.
 	 * @param create If not genre entry exists, create a new, empty one. 
 	 * @param props Extract the genre entry from the given metadata properties. If this

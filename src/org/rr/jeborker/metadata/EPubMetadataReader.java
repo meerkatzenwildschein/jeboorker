@@ -310,6 +310,30 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		}
 		return Collections.unmodifiableList(result);
 	}
+	
+	@Override
+	public List<MetadataProperty> getTitleMetaData(boolean create, List<MetadataProperty> props) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final List<MetadataProperty> metadataProperties;
+		if (props != null) {
+			metadataProperties = props;
+		} else {
+			metadataProperties = readMetaData();
+		}
+
+		for (MetadataProperty property : metadataProperties) {
+			if (property.getName() == TITLE) {
+				result.add(property);
+			}
+		}
+
+		// if the list is empty and a new property should be created, add a new, empty subject property to the result.
+		if (create && result.isEmpty()) {
+			MetadataProperty subjectProperty = createSupportedMetadataProperty("dc:title");
+			result.add(subjectProperty);
+		}
+		return Collections.unmodifiableList(result);
+	}	
 
 	@Override
 	public List<MetadataProperty> getGenreMetaData(boolean create, List<MetadataProperty> props) {

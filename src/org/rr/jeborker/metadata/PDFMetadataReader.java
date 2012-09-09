@@ -387,6 +387,29 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		} 
 		return Collections.unmodifiableList(result);
 	}	
+	
+	@Override
+	public List<MetadataProperty> getTitleMetaData(boolean create, List<MetadataProperty> props) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final List<MetadataProperty> metadataProperties;
+		if(props != null) {
+			metadataProperties = props;
+		} else {
+			metadataProperties = readMetaData();
+		}
+		
+		for (MetadataProperty property : metadataProperties) {
+			if(property.getName().equalsIgnoreCase("title")) {
+				result.add(property);
+			}
+		}
+		
+		//if the list is empty and a new property should be created, add a new, empty author property to the result.
+		if(create && result.isEmpty()) {
+			result.add(new MetadataProperty("Title", ""));
+		} 
+		return Collections.unmodifiableList(result);
+	}	
 
 	@Override
 	public List<MetadataProperty> getGenreMetaData(boolean create, List<MetadataProperty> props) {

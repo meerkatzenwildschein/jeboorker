@@ -63,6 +63,16 @@ public class ActionFactory {
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
+		},		
+		SET_METADATA_TITLE_ACTION {
+
+			public Class<? extends Action> getActionClass() {
+				return SetMetadataTitleAction.class;
+			}
+
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return true;
+			}
 		},			
 		EDIT_PLAIN_METADATA_ACTION {
 
