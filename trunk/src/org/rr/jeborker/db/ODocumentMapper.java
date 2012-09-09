@@ -49,9 +49,7 @@ class ODocumentMapper<T> extends AbstractList<T> {
 	}
 	
 	private List<?> getNextDocuments() {
-		long time = System.currentTimeMillis();
 		List<?> result = db.query(query);
-		System.out.println("getNextDocuments: " + (System.currentTimeMillis() - time) + "ms");
 		return result;
 	}
 	
