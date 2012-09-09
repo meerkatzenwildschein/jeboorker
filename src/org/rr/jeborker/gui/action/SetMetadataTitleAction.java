@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
 import org.rr.commons.log.LoggerFactory;
@@ -33,7 +32,6 @@ public class SetMetadataTitleAction extends ASetCommonMetadataAction implements 
 	SetMetadataTitleAction(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
 		putValue(Action.NAME, Bundle.getString("SetMetadataTitleAction.name"));
-//		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("set_author_16.gif")));
 	}
 	
 	@Override
