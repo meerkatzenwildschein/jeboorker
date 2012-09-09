@@ -86,6 +86,7 @@ public class EbookSheetProperty extends DefaultProperty {
 					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties);
 					result.add(property);					
 					allMetaData.removeAll(mergedProperties);
+					i--;
 				} else {
 					Property property = createProperty(metadataProperty, 0);
 					result.add(property);

@@ -45,8 +45,8 @@ public class MetadataAddListModel extends AbstractListModel {
 		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
 		supportedMetaData = reader.getSupportedMetaData();
 		for (MetadataProperty supportedProperty : supportedMetaData) {
-			for (MetadataProperty metadataProperty : currentMetaData) {
-				if(supportedProperty.getName().equals(metadataProperty.getName())) {
+			for (MetadataProperty currentMetadataProperty : currentMetaData) {
+				if(supportedProperty.getName().equals(currentMetadataProperty.getName())) {
 					toRemove.add(supportedProperty);
 				}
 			}
