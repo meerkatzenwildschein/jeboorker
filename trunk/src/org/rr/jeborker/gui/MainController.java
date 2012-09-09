@@ -532,7 +532,8 @@ public class MainController {
 	private void setImage(final IMetadataReader reader) {
 		final IResourceHandler ebookResource = reader!=null ? reader.getEbookResource() : null;
 		if (ebookResource != null) {
-			String coverFileName = StringUtils.substringBefore(ebookResource.getName(), ".", false, UtilConstants.COMPARE_BINARY);
+			//remove file extension by removing the separation dot because an image file name is expected.  
+			String coverFileName = StringUtils.replace(ebookResource.getName(), ".", "_");
 			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
 				
 				ByteArrayInputStream byteArrayInputStream = null;
