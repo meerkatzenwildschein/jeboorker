@@ -32,7 +32,6 @@ public class SetMetadataGenreAction extends ASetCommonMetadataAction implements 
 	SetMetadataGenreAction(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
 		putValue(Action.NAME, Bundle.getString("SetMetadataGenreAction.name"));
-//		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("set_author_16.gif")));
 	}
 	
 	@Override

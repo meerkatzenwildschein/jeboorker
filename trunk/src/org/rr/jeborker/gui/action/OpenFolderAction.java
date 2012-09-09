@@ -33,6 +33,20 @@ public class OpenFolderAction extends QueueableAction {
 		try {
 			Desktop.getDesktop().open(file);
 		} catch (IOException e1) {
+			if(new File("/usr/bin/nautilus").exists()) {
+				try {
+					//workaround for 6490730. It's already present with my ubuntu
+					//http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6490730
+				    Process oProc = Runtime.getRuntime().exec(new String[] {"/bin/sh", "-c", "/usr/bin/nautilus \""+file.toString()+"\""});
+				    int bExit = oProc.waitFor(); 
+				    if(bExit==0) {
+				    	return;
+				    }
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				
+			}
 			LoggerFactory.logWarning(this, "could not open folder " + file, e1);
 		}
 	}
