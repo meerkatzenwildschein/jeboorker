@@ -84,9 +84,11 @@ class MainMenuView extends JMenuBar {
 		JMenu setSubmenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
 		
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));
+		setSubmenu.add(new JMenuItem(action));				
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, rowsToRefreshAfter);
 		setSubmenu.add(new JMenuItem(action));
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, rowsToRefreshAfter);
+		setSubmenu.add(new JMenuItem(action));				
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, rowsToRefreshAfter);
 		setSubmenu.add(new JMenuItem(action));		
 		
