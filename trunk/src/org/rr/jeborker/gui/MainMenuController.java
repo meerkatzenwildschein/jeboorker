@@ -160,18 +160,19 @@ public class MainMenuController {
 		}
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
 				submenu.add(new JMenuItem(action));
 			}
 		}	
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
 				submenu.add(new JMenuItem(action));
 			}
 		}	
+		
 		
 		if(submenu.getMenuComponentCount() > 0) {
 			menu.add(submenu);
