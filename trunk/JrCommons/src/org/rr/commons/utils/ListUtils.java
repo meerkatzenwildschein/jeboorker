@@ -34,8 +34,7 @@ public final class ListUtils implements Serializable {
 	 * @return The processed <code>String</code>.
 	 * @see #split(String, String, int, int)
 	 */
-	@SuppressWarnings("unchecked")
-	public static String join(final List values, final String delimiter) {
+	public static String join(final List<? extends Object> values, final String delimiter) {
 		if(values==null || values.size() == 0) {
 			return "";
 		}
