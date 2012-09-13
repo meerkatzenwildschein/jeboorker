@@ -1,0 +1,81 @@
+package org.rr.jeborker.gui.action;
+
+import java.awt.event.ActionEvent;
+
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.event.QueueableAction;
+import org.rr.jeborker.gui.MainController;
+
+public class DeleteFileAction extends QueueableAction implements IDoOnlyOnceAction<Integer>{
+
+	private static final long serialVersionUID = -6464113132395695332L;
+	
+	private Integer result = null;
+	
+	final IResourceHandler fileToDelete;
+
+	DeleteFileAction(final String text) {
+		this(ResourceHandlerFactory.getResourceLoader(text));
+	}
+	
+	public DeleteFileAction(final IResourceHandler resourceLoader) {
+		this.fileToDelete = resourceLoader;
+		putValue(Action.NAME, Bundle.getString("DeleteFileAction.name"));
+		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("remove_16.gif")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("remove_22.gif")));		
+	}
+
+	@Override
+	public void doAction(ActionEvent e) {
+		try {
+			Integer value = this.doOnce();
+			if(value.intValue() == JOptionPane.YES_OPTION) {
+				fileToDelete.delete();
+				if(fileToDelete.exists()) {
+					LoggerFactory.logWarning(this.getClass(), "could not delete file " + fileToDelete);
+				} else {
+					RefreshEntryAction.refreshEntry(fileToDelete);
+				}
+			}
+		} catch (Exception e1) {
+			LoggerFactory.logWarning(this, "could not open file " + fileToDelete, e1);
+		}
+	}
+
+	@Override
+	public Integer doOnce() {
+		if(this.result == null) {
+			int value = JOptionPane.showConfirmDialog(
+					MainController.getController().getMainWindow(), 
+					Bundle.getString("DeleteFileAction.delete.message"),
+					Bundle.getString("DeleteFileAction.name"),
+					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+					);
+			this.result = Integer.valueOf(value);
+		}
+		return result;
+	}
+
+	@Override
+	public Integer getResult() {
+		 return this.result;
+	}
+
+	@Override
+	public void setResult(Integer result) {
+		this.result = result;
+	}
+
+	@Override
+	public void prepareFor(int index, int size) {
+		//Not needed
+	}
+	
+
+}

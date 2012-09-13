@@ -30,13 +30,21 @@ public class RefreshEntryAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		refreshEntry(handler);
+	}
+	
+	/**
+	 * Refreshes the entries for the given handler.
+	 * @param handler The handler of the entry to be refreshed.
+	 */
+	public static void refreshEntry(IResourceHandler handler) {	
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		final Iterable<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", handler.toString());
 		Iterator<EbookPropertyItem> iterator = items.iterator();
 		if(iterator.hasNext()) {
 			EbookPropertyItem item = iterator.next();
 			RefreshBasePathAction.refreshEbookPropertyItem(item, handler);
-		}
+		}		
 	}
 
 }

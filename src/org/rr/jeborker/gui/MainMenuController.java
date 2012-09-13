@@ -200,6 +200,10 @@ public class MainMenuController {
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile());
 			menu.add(action);
 		}
+		
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
+		menu.add(action);
+		
 		return menu;
 	}	
 	

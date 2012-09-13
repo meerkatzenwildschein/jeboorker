@@ -200,6 +200,7 @@ class MainMenuView extends JMenuBar {
 		//Open folder only for single selection.
 		final JMenuItem openFolderMenuEntry;
 		final JMenuItem openFileMenuEntry;
+		final JMenuItem deleteFileMenuEntry;
 		if(selectedEbookPropertyItems.size() == 1) {
 			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedEbookPropertyItems.get(0).getFile()));
 			openFolderMenuEntry.setEnabled(true);
@@ -211,10 +212,20 @@ class MainMenuView extends JMenuBar {
 			openFolderMenuEntry.setEnabled(false);
 			
 			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
-			openFileMenuEntry.setEnabled(false);			
+			openFileMenuEntry.setEnabled(false);							
 		}
+		
+		if(selectedEbookPropertyItems.size() >= 1) {
+			deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			deleteFileMenuEntry.setEnabled(true);	
+		} else {
+			deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			deleteFileMenuEntry.setEnabled(false);				
+		}
+		
 		fileMenuBar.add(openFileMenuEntry);
 		fileMenuBar.add(openFolderMenuEntry);
+		fileMenuBar.add(deleteFileMenuEntry);
 		
 		fileMenuBar.add(new JSeparator());
 		
