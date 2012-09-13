@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -385,7 +386,9 @@ public class MainController {
 		TableModel model = mainWindow.table.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			mainWindow.table.clearSelection();
-			return ((EbookPropertyDBTableModel)model).removeRow(item);
+			mainWindow.table.editingStopped(new ChangeEvent(this));
+			boolean result = ((EbookPropertyDBTableModel)model).removeRow(item);
+			return result;
 		}	
 		return false;
 	}
@@ -394,6 +397,7 @@ public class MainController {
 		TableModel model = mainWindow.table.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			mainWindow.table.clearSelection();
+			mainWindow.table.editingStopped(new ChangeEvent(this));
 			((EbookPropertyDBTableModel)model).removeRows(items);
 		}	
 	}

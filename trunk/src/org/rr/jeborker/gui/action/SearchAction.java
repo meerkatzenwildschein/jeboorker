@@ -38,14 +38,15 @@ public class SearchAction extends AbstractAction {
 
 		monitorStart(filterText);
 		try {
-			final List<String> filterValues = ListUtils.split(filterText, " ", -1, UtilConstants.COMPARE_BINARY);
+			final List<String> filterValues = ListUtils.split(filterText, ",", -1, UtilConstants.COMPARE_BINARY);
+
 			final QueryCondition rootCondition = controller.getTableModel().getQueryCondition();
 			rootCondition.removeConditionByIdentifier(QUERY_IDENTIFER); //remove possibly existing search conditions
 			
 			final QueryCondition rootFilterCondition = new QueryCondition(null,null,null, QUERY_IDENTIFER);
 			rootCondition.addAndChild(rootFilterCondition);
 			for (String filterValue : filterValues) {
-				if(StringUtils.toString(filterValue).length() > 0) {
+				if(!StringUtils.toString(filterValue).trim().isEmpty()) {
 					List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
 					if(!selectedFilterFields.isEmpty()) {
 						for (Field field : selectedFilterFields) {
