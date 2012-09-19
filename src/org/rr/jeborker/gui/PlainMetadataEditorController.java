@@ -161,8 +161,7 @@ public class PlainMetadataEditorController {
 
 				close();
 				
-				Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookResource.toString());
-				action.actionPerformed(null);
+				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookResource.toString()).invokeAction();
 				MainController.getController().refreshTableRows(rowsToRefresh, true);
 			}
 		});

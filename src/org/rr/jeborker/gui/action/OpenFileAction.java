@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.event.QueueableAction;
 
-public class OpenFileAction extends QueueableAction {
+class OpenFileAction extends QueueableAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	

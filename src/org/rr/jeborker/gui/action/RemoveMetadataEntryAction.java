@@ -14,7 +14,7 @@ import org.rr.jeborker.gui.MainController;
 /**
  * Action which removes the currently selected metadata entry in the metadata sheet.
  */
-public class RemoveMetadataEntryAction extends AbstractAction {
+class RemoveMetadataEntryAction extends AbstractAction {
 
 	private static final long serialVersionUID = 1208674185052606967L;
 	

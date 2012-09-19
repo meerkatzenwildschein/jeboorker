@@ -24,12 +24,10 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
-import org.rr.jeborker.gui.action.AddMetadataAction;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -331,8 +329,10 @@ public class MainController {
 			for (EbookPropertyItem item : selectedEbookPropertyItems) {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
 				MetadataProperty ratingMetaData = reader.createRatingMetaData();
-				Property addMetadataItem = AddMetadataAction.addMetadataItem(ratingMetaData);
-				addMetadataItem.setValue(rating);
+				
+				final Property createProperty = EbookSheetProperty.createProperty(ratingMetaData, 0);
+				this.addMetadataProperty(createProperty);				
+				createProperty.setValue(rating);
 			}
 		}
 	}

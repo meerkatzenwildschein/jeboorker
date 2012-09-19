@@ -16,7 +16,7 @@ import org.rr.jeborker.gui.FilterPanelController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 
-public class SearchAction extends AbstractAction {
+class SearchAction extends AbstractAction {
 
 	private static final long serialVersionUID = -2514716618739877972L;
 	

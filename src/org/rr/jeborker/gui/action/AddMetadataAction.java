@@ -6,12 +6,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.jeborker.gui.MainController;
-import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.metadata.MetadataProperty;
 
-import com.l2fprod.common.propertysheet.Property;
-
-public class AddMetadataAction extends AbstractAction {
+class AddMetadataAction extends AbstractAction {
 
 	private static final long serialVersionUID = 1208674185052606967L;
 	
@@ -24,18 +21,6 @@ public class AddMetadataAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		addMetadataItem(property);
+		ActionUtils.addMetadataItem(property);
 	}
-	
-	/**
-	 * Adds a metadata item to the sheet.
-	 * @param property The property to be added.
-	 */
-	public static Property addMetadataItem(MetadataProperty property) {
-		final Property createProperty = EbookSheetProperty.createProperty(property, 0);
-		final MainController controller = MainController.getController();
-		controller.addMetadataProperty(createProperty);
-		return createProperty;
-	}
-
 }

@@ -353,8 +353,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		return "text/xml";
 	}
 	
-	@Override
-	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
+	private List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
 		if(props != null) {
@@ -389,7 +388,25 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}	
 	
 	@Override
-	public List<MetadataProperty> getTitleMetaData(boolean create, List<MetadataProperty> props) {
+	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+		final String search;
+		final String name;
+		
+		switch(type) {
+			case GENRE:
+				search = "subject";
+				name = "Subject";
+				break;
+			case TITLE:
+				search = "title";
+				name = "Title";
+				break;	
+			case AUTHOR:
+				return this.getAuthorMetaData(create, props);
+			default:
+				return null;
+		}
+		
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
 		if(props != null) {
@@ -399,37 +416,14 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		}
 		
 		for (MetadataProperty property : metadataProperties) {
-			if(property.getName().equalsIgnoreCase("title")) {
+			if(property.getName().equalsIgnoreCase(search)) {
 				result.add(property);
 			}
 		}
 		
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {
-			result.add(new MetadataProperty("Title", ""));
-		} 
-		return Collections.unmodifiableList(result);
-	}	
-
-	@Override
-	public List<MetadataProperty> getGenreMetaData(boolean create, List<MetadataProperty> props) {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
-		final List<MetadataProperty> metadataProperties;
-		if(props != null) {
-			metadataProperties = props;
-		} else {
-			metadataProperties = readMetaData();
-		}
-		
-		for (MetadataProperty property : metadataProperties) {
-			if(property.getName().equalsIgnoreCase("subject")) {
-				result.add(property);
-			}
-		}
-		
-		//if the list is empty and a new property should be created, add a new, empty author property to the result.
-		if(create && result.isEmpty()) {
-			result.add(new MetadataProperty("Subject", ""));
+			result.add(new MetadataProperty(name, ""));
 		} 
 		return Collections.unmodifiableList(result);
 	}

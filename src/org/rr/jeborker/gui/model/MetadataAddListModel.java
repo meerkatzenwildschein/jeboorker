@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
-import javax.swing.Action;
 
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.action.ApplicationAction;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -16,7 +16,7 @@ public class MetadataAddListModel extends AbstractListModel {
 	
 	private List<MetadataProperty> supportedMetaData = null;
 	
-	private List<Action> actionsForMetadataProperties = null;
+	private List<ApplicationAction> actionsForMetadataProperties = null;
 	
 	private final IMetadataReader reader;
 	

@@ -2,14 +2,23 @@ package org.rr.jeborker.gui.action;
 
 import java.util.List;
 
+import javax.swing.JFileChooser;
+
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.dialogs.SimpleInputDialog;
 import org.rr.commons.utils.ListUtils;
+import org.rr.jeborker.db.DefaultDBManager;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.RefreshAbstractAction;
+import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataWriter;
+import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 import org.rr.jeborker.metadata.MetadataUtils;
 
-public abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements IDoOnlyOnceAction<SimpleInputDialog> {
+abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements IDoOnlyOnceAction<SimpleInputDialog> {
 
 	/**
 	 * Transfers the given value to each entry in the given MetadataProperty list.
@@ -36,4 +45,40 @@ public abstract class ASetCommonMetadataAction extends RefreshAbstractAction imp
 		List<MetadataProperty> mergeMetadata = MetadataUtils.mergeMetadata(allMetaData, specificMetaData);
 		writer.writeMetadata(mergeMetadata.iterator());
 	}	
+	
+	protected void setMetaData(IResourceHandler resourceHandler, IMetadataReader.METADATA_TYPES type) {
+		try {
+			final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
+			
+			if(!items.isEmpty()) {
+				final MainController controller = MainController.getController();
+				final EbookPropertyItem item = items.get(0);
+				
+				SimpleInputDialog inputDialog = this.doOnce();
+				if (inputDialog.getReturnValue() == JFileChooser.APPROVE_OPTION) {
+					final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
+					final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
+					final String input = inputDialog.getInput();
+					
+					//get author metadata an set the entered author.
+					List<MetadataProperty> readMetaData = reader.readMetaData();
+					List<MetadataProperty> authorMetaData = reader.getMetaDataByType(true, readMetaData, type);
+					
+					transferValueToMetadata(input, authorMetaData);
+
+					mergeAndWrite(writer, readMetaData, authorMetaData);
+					
+					//do some refresh to the changed entry.
+					RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
+					
+					controller.getProgressMonitor().monitorProgressStop(null);
+					MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
+				}
+			} else {
+				LoggerFactory.logInfo(this, "No database item found for " + resourceHandler, null);
+			}
+		} catch (Exception e) {
+			LoggerFactory.logWarning(this, "could not set author for " + resourceHandler, e);
+		}
+	}		
 }

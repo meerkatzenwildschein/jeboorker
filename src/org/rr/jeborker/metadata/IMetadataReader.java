@@ -9,6 +9,10 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 
 public interface IMetadataReader {
 	
+	public static enum METADATA_TYPES {
+		GENRE, TITLE, AUTHOR
+	}
+	
 	/**
 	 * gets the ebook {@link IResourceHandler} for this instance.
 	 * @return The desired ebook {@link IResourceHandler}
@@ -59,31 +63,13 @@ public interface IMetadataReader {
 	public String getPlainMetaDataMime();
 	
 	/**
-	 * Get the author entries.
-	 * @param create If not author entry exists, create a new, empty one. 
-	 * @param props Extract the author entry from the given metadata properties. If this
-	 * 		parameter is <code>null</code>, the properties will be read from the file.
-	 * @return A list of author entries. Never returns <code>null</code>
-	 */
-	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props);
-	
-	/**
-	 * Get the title entries.
-	 * @param create If not title entry exists, create a new, empty one. 
-	 * @param props Extract the title entry from the given metadata properties. If this
-	 * 		parameter is <code>null</code>, the properties will be read from the file.
-	 * @return A list of title entries. Never returns <code>null</code>
-	 */
-	public List<MetadataProperty> getTitleMetaData(boolean create, List<MetadataProperty> props);	
-	
-	/**
-	 * Get the genre entries.
-	 * @param create If not genre entry exists, create a new, empty one. 
-	 * @param props Extract the genre entry from the given metadata properties. If this
+	 * Get the the metadata entries by it's type.
+	 * @param create If no metadata entries with the desired type exists, create a new, empty one. 
+	 * @param props Extract the desired metadata type entry from the given metadata properties. If this
 	 * 		parameter is <code>null</code>, the properties will be read from the file.
 	 * @return A list of genre entries. Never returns <code>null</code>
 	 */
-	public List<MetadataProperty> getGenreMetaData(boolean create, List<MetadataProperty> props);	
+	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type);
 	
 	/**
 	 * Some clean up code. Should be invoked at the end of the readers usage
