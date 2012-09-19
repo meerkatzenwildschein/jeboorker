@@ -111,32 +111,47 @@ public class ActionFactory {
 		}
 	}	
 	
-	public static Action getAction(final COMMON_ACTION_TYPES type, final String text) {
+	public static ApplicationAction getAction(final COMMON_ACTION_TYPES type, final String text) {
+		Action action = null;
 		switch(type) {
 			case ADD_BASE_PATH_ACTION:
-				return new AddBasePathAction(text);
+				action = new AddBasePathAction(text);
+				break;
 			case REMOVE_BASE_PATH_ACTION:
-				return new RemoveBasePathAction(text);
+				action = new RemoveBasePathAction(text);
+				break;
 			case REFRESH_BASE_PATH_ACTION:
-				return new RefreshBasePathAction(text);
+				action = new RefreshBasePathAction(text);
+				break;
 			case SHOW_HIDE_BASE_PATH_ACTION:
-				return new ShowHideBasePathAction(text);
+				action = new ShowHideBasePathAction(text);
+				break;
 			case REFRESH_ENTRY_ACTION:
-				return new RefreshEntryAction(text);				
+				action = new RefreshEntryAction(text);
+				break;
 			case QUIT_ACTION:
-				return new QuitAction(text);
+				action = new QuitAction(text);
+				break;
 			case SEARCH_ACTION:
-				return new SearchAction();
+				action = new SearchAction();
+				break;
 			case REMOVE_METADATA_ENTRY_ACTION:
-				return RemoveMetadataEntryAction.getInstance();	
+				action = RemoveMetadataEntryAction.getInstance();
+				break;
 			case OPEN_FOLDER_ACTION:
-				return new OpenFolderAction(text);
+				action = new OpenFolderAction(text);
+				break;
 			case OPEN_FILE_ACTION:
-				return new OpenFileAction(text);
+				action = new OpenFileAction(text);
+				break;
 			case DELETE_FILE_ACTION:
-				return new DeleteFileAction(text);				
+				action = new DeleteFileAction(text);			
+				break;
 		}
 		
+		if(action != null) {
+			return new ApplicationAction(action);
+		} 
 		return null;
 	}
 	
@@ -147,7 +162,7 @@ public class ActionFactory {
 	 * @param items The items to be handled by the actions.
 	 * @return The desired action instance. Never returns <code>null</code>.
 	 */
-	public static Action getActionForItems(final DYNAMIC_ACTION_TYPES type, final List<EbookPropertyItem> items, int[] refreshRowsAfter) {
+	public static ApplicationAction getActionForItems(final DYNAMIC_ACTION_TYPES type, final List<EbookPropertyItem> items, int[] refreshRowsAfter) {
 		final ArrayList<IResourceHandler> resourceHandlers = new ArrayList<IResourceHandler>(items.size()); 
 		
 		//create the resource handle list.
@@ -170,12 +185,12 @@ public class ActionFactory {
 			canHandle = false;
 		}
 		
-		Action result = new MultiActionWrapper(type.getActionClass(), resourceHandlers, refreshRowsAfter);
+		Action action = new MultiActionWrapper(type.getActionClass(), resourceHandlers, refreshRowsAfter);
 		if(!canHandle) {
-			result.setEnabled(false);
+			action.setEnabled(false);
 		}
 		
-		return result; 
+		return new ApplicationAction(action); 
 	}
 	
 	/**
@@ -185,14 +200,14 @@ public class ActionFactory {
 	 * should be created for.
 	 * @return The actions for adding a metadata entry. Never returns <code>null</code>.
 	 */
-	public static List<Action> getAddMetadataActions(List<MetadataProperty> properties) {
-		final ArrayList<Action> result = new ArrayList<Action>();
+	public static List<ApplicationAction> getAddMetadataActions(List<MetadataProperty> properties) {
+		final ArrayList<ApplicationAction> result = new ArrayList<ApplicationAction>();
 		for (MetadataProperty property : properties) {
 			AddMetadataAction addMetadataAction = new AddMetadataAction(property);
 			if(!property.isEditable()) {
 				addMetadataAction.setEnabled(false);
 			}
-			result.add(addMetadataAction);
+			result.add(new ApplicationAction(addMetadataAction));
 		}
 		return result;
 	}

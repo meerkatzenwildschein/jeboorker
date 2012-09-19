@@ -19,7 +19,7 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuController;
 import org.rr.jeborker.gui.MainMonitor;
 
-public class RemoveBasePathAction extends QueueableAction {
+class RemoveBasePathAction extends QueueableAction {
 
 	private static final long serialVersionUID = 6607018752541779846L;
 

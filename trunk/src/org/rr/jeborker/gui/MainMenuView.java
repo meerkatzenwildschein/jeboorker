@@ -83,21 +83,21 @@ class MainMenuView extends JMenuBar {
 		
 		JMenu setSubmenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
 		
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, rowsToRefreshAfter);
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, rowsToRefreshAfter).getAction();
 		setSubmenu.add(new JMenuItem(action));				
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, rowsToRefreshAfter);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, rowsToRefreshAfter).getAction();
 		setSubmenu.add(new JMenuItem(action));
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, rowsToRefreshAfter);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, rowsToRefreshAfter).getAction();
 		setSubmenu.add(new JMenuItem(action));				
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, rowsToRefreshAfter);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, rowsToRefreshAfter).getAction();
 		setSubmenu.add(new JMenuItem(action));		
 		
 		result.add(setSubmenu);
 		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter).getAction();
 		result.add(new JMenuItem(action));		
 		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, rowsToRefreshAfter);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, rowsToRefreshAfter).getAction();
 		result.add(new JMenuItem(action));				
 		return result;
 	}
@@ -147,7 +147,7 @@ class MainMenuView extends JMenuBar {
 		ArrayList<Component> fileMenuBar = new ArrayList<Component>();
 		
 		JMenuItem mntmAddEbooks = new JMenuItem();
-		mntmAddEbooks.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
+		mntmAddEbooks.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null).getAction());
 		fileMenuBar.add(mntmAddEbooks);
 		
 		final List<String> basePath = JeboorkerPreferences.getBasePath();
@@ -156,7 +156,7 @@ class MainMenuView extends JMenuBar {
 			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 				String path = iterator.next();
 				JMenuItem pathItem = new JMenuItem();
-				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path).getAction());
 				mnVerzeichnisEntfernen.add(pathItem);
 			}
 			fileMenuBar.add(mnVerzeichnisEntfernen);
@@ -170,7 +170,7 @@ class MainMenuView extends JMenuBar {
 			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 				String path = iterator.next();
 				JMenuItem pathItem = new JMenuItem();
-				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path).getAction());
 				mnVerzeichnisRefresh.add(pathItem);
 			}
 			fileMenuBar.add(mnVerzeichnisRefresh);
@@ -186,7 +186,7 @@ class MainMenuView extends JMenuBar {
 				JCheckBoxMenuItem pathItem = new JCheckBoxMenuItem();
 				boolean isShow = MainMenuController.getController().isShowHideBasePathStatusShow(path);
 				pathItem.setSelected(isShow);
-				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path));
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path).getAction());
 				mnVerzeichnisShowHide.add(pathItem);
 			}
 			fileMenuBar.add(mnVerzeichnisShowHide);
@@ -202,24 +202,24 @@ class MainMenuView extends JMenuBar {
 		final JMenuItem openFileMenuEntry;
 		final JMenuItem deleteFileMenuEntry;
 		if(selectedEbookPropertyItems.size() == 1) {
-			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedEbookPropertyItems.get(0).getFile()).getAction());
 			openFolderMenuEntry.setEnabled(true);
 			
-			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()).getAction());
 			openFileMenuEntry.setEnabled(true);
 		} else {
-			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
+			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, "").getAction());
 			openFolderMenuEntry.setEnabled(false);
 			
-			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
+			openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, "").getAction());
 			openFileMenuEntry.setEnabled(false);							
 		}
 		
 		if(selectedEbookPropertyItems.size() >= 1) {
-			deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()).getAction());
 			deleteFileMenuEntry.setEnabled(true);	
 		} else {
-			deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, selectedEbookPropertyItems.get(0).getFile()));
+			deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, "").getAction());
 			deleteFileMenuEntry.setEnabled(false);				
 		}
 		
@@ -231,7 +231,7 @@ class MainMenuView extends JMenuBar {
 		
 		//quit menu entry
 		JMenuItem mntmQuit = new JMenuItem();
-		mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
+		mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null).getAction());
 		fileMenuBar.add(mntmQuit);
 		
 		return fileMenuBar;

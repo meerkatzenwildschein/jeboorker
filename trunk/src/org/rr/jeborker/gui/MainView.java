@@ -30,7 +30,6 @@ import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.button.JMenuButton;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
@@ -94,7 +93,7 @@ public class MainView extends JFrame{
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				((QueueableAction)ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null)).doAction(null);
+				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null).invokeAction();
 			}
 		});
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -217,10 +216,10 @@ public class MainView extends JFrame{
 				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.gif")));
 				propertySheet.addToolbarComponent(addMetadataButton);
 				
-				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
+				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null).getAction());
 				propertySheet.addToolbarComponent(removeMetadataButton);
 				
-				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class)null, DefaultPropertyRenderer.class);
+				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>)null, DefaultPropertyRenderer.class);
 				
 				DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());

@@ -5,13 +5,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.JeboorkerUtils;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.event.QueueableAction;
-import org.rr.jeborker.gui.MainController;
 
-public class QuitAction extends QueueableAction {
+class QuitAction extends QueueableAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 
@@ -27,15 +23,7 @@ public class QuitAction extends QueueableAction {
 	
 	@Override
 	public void doAction(ActionEvent e) {
-		MainController.getController().dispose();
-		try {
-		DefaultDBManager.getInstance().shutdown();
-		} catch(Exception e1) {
-			LoggerFactory.logWarning(this, "Database shutdown failed.", e1);
-		}
-		
-		JeboorkerUtils.shutdown();
-		System.exit(0);
+		ActionUtils.quit();
 	}
 	
 

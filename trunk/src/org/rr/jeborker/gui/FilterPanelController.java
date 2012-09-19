@@ -44,7 +44,7 @@ public class FilterPanelController {
 	private class FilterFieldActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, null).actionPerformed(e);
+			ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, null).invokeAction(e);
 		}
 	}
 	

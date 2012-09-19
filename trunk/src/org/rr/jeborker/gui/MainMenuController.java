@@ -105,13 +105,13 @@ public class MainMenuController {
 	public void addBasePathMenuEntry(String path) {
 		{
 			JMenuItem pathItem = new JMenuItem();
-			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
+			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path).getAction());
 			view.mnVerzeichnisEntfernen.add(pathItem);
 		}
 		
 		{
 			JMenuItem pathItem = new JMenuItem();
-			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
+			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path).getAction());
 			view.mnVerzeichnisRefresh.add(pathItem);
 		}
 	}
@@ -146,28 +146,28 @@ public class MainMenuController {
 		
 		JMenu submenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, selectedEbookPropertyItemRows).getAction();
 			if(action.isEnabled()) {
 				submenu.add(action);
 			}
 		}
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, selectedEbookPropertyItemRows).getAction();
 			if(action.isEnabled()) {
 				submenu.add(new JMenuItem(action));
 			}
 		}
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, selectedEbookPropertyItemRows).getAction();
 			if(action.isEnabled()) {
 				submenu.add(new JMenuItem(action));
 			}
 		}	
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, selectedEbookPropertyItemRows).getAction();
 			if(action.isEnabled()) {
 				submenu.add(new JMenuItem(action));
 			}
@@ -179,14 +179,14 @@ public class MainMenuController {
 		}
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows).getAction();
 			if(action.isEnabled()) {
 				menu.add(action);
 			}
 		}
 		
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows).getAction();
 			if(action.isEnabled()) {
 				menu.add(action);
 			}
@@ -194,14 +194,14 @@ public class MainMenuController {
 		
 		if(items.size() == 1) {
 			//only visible to single selections
-			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).getFile());
+			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).getFile()).getAction();
 			menu.add(action);			
 			
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile());
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile()).getAction();
 			menu.add(action);
 		}
 		
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows).getAction();
 		menu.add(action);
 		
 		return menu;
@@ -259,7 +259,7 @@ public class MainMenuController {
 			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
 			for(String basePath : split) {
 				//setShowHideBasePathStatusShow(basePath, false); //set checkbox value to the view
-				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).actionPerformed(new ActionEvent(this, 0, "initialize"));
+				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
 			}
 		}
 	}

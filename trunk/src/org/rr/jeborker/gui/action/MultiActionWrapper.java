@@ -12,7 +12,7 @@ import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.event.RefreshAbstractAction;
 
-public class MultiActionWrapper extends QueueableAction {
+class MultiActionWrapper extends QueueableAction {
 
 	private static final long serialVersionUID = -2128569488506763407L;
 
@@ -40,9 +40,13 @@ public class MultiActionWrapper extends QueueableAction {
 		//skip the first and use the firstActionInstance action we have already created with the constructor
 		iterator.next();
 		
+		Object doOnce;
 		if(firstActionInstance instanceof IDoOnlyOnceAction<?>) {
-			((IDoOnlyOnceAction<?>)firstActionInstance).doOnce();
+			doOnce = ((IDoOnlyOnceAction<?>)firstActionInstance).doOnce();
+		} else {
+			doOnce = null;
 		}
+		
 		this.doActionAt(firstActionInstance, e, 0, size);
 		
 		//create an action instance for all the other handlers. 
@@ -51,7 +55,9 @@ public class MultiActionWrapper extends QueueableAction {
 			Action action = createInstance(firstActionInstance.getClass(), handler, selectedRowsToRefresh);
 			
 			if(action!=null) {
-				this.transferDoOnlyOnceValue(action);
+				if(doOnce!=null && action instanceof IDoOnlyOnceAction<?>) {
+					((IDoOnlyOnceAction)action).setDoOnceResult(doOnce);
+				}				
 				this.doActionAt(action, e, i, size);			
 			} else {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
@@ -72,17 +78,6 @@ public class MultiActionWrapper extends QueueableAction {
 			((QueueableAction)action).doAction(e);
 		} else {
 			action.actionPerformed(e);
-		}
-	}
-
-	/**
-	 * Transfers the DoOnlyOnce value to the given action instance.
-	 * @param action The action which gets the new value.
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void transferDoOnlyOnceValue(Action action) {
-		if(action instanceof IDoOnlyOnceAction<?>) {
-			((IDoOnlyOnceAction)action).setResult(((IDoOnlyOnceAction<?>)firstActionInstance).getResult());
 		}
 	}
 	

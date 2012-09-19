@@ -279,8 +279,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		return "text/xml";
 	}
 
-	@Override
-	public List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
+	private List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
 		if (props != null) {
@@ -312,7 +311,25 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	}
 	
 	@Override
-	public List<MetadataProperty> getTitleMetaData(boolean create, List<MetadataProperty> props) {
+	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+		final String tag;
+		final String name;
+		
+		switch(type) {
+			case GENRE:
+				tag = "dc:subject";
+				name = SUBJECT;
+				break;
+			case TITLE:
+				tag = "dc:title";
+				name = TITLE;
+				break;	
+			case AUTHOR:
+				return getAuthorMetaData(create, props);
+			default:
+				return null;
+		}
+		
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
 		if (props != null) {
@@ -322,38 +339,14 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		}
 
 		for (MetadataProperty property : metadataProperties) {
-			if (property.getName() == TITLE) {
+			if (property.getName() == name) {
 				result.add(property);
 			}
 		}
 
 		// if the list is empty and a new property should be created, add a new, empty subject property to the result.
 		if (create && result.isEmpty()) {
-			MetadataProperty subjectProperty = createSupportedMetadataProperty("dc:title");
-			result.add(subjectProperty);
-		}
-		return Collections.unmodifiableList(result);
-	}	
-
-	@Override
-	public List<MetadataProperty> getGenreMetaData(boolean create, List<MetadataProperty> props) {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
-		final List<MetadataProperty> metadataProperties;
-		if (props != null) {
-			metadataProperties = props;
-		} else {
-			metadataProperties = readMetaData();
-		}
-
-		for (MetadataProperty property : metadataProperties) {
-			if (property.getName() == SUBJECT) {
-				result.add(property);
-			}
-		}
-
-		// if the list is empty and a new property should be created, add a new, empty subject property to the result.
-		if (create && result.isEmpty()) {
-			MetadataProperty subjectProperty = createSupportedMetadataProperty("dc:subject");
+			MetadataProperty subjectProperty = createSupportedMetadataProperty(tag);
 			result.add(subjectProperty);
 		}
 		return Collections.unmodifiableList(result);

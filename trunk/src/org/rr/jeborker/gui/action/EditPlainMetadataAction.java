@@ -10,7 +10,7 @@ import org.rr.jeborker.event.RefreshAbstractAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.PlainMetadataEditorController;
 
-public class EditPlainMetadataAction extends RefreshAbstractAction {
+class EditPlainMetadataAction extends RefreshAbstractAction {
 	
 	private static final long serialVersionUID = 108236926726922222L;
 	

@@ -21,7 +21,7 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
-public class SetCoverThumbnailAction extends RefreshAbstractAction implements IDoOnlyOnceAction<ImageFileChooser> {
+class SetCoverThumbnailAction extends RefreshAbstractAction implements IDoOnlyOnceAction<ImageFileChooser> {
 
 	private static final long serialVersionUID = 4772310971481868593L;
 
@@ -50,10 +50,10 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction implements ID
 			if(!items.isEmpty()) {
 				final MainController controller = MainController.getController();
 				final EbookPropertyItem item = items.get(0);
-				final ImageFileChooser imageFileChooser = doOnce();
 				
-				if (imageFileChooser.getReturnValue() == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = imageFileChooser.getSelectedFile();
+				ImageFileChooser imageFileChooserT = this.doOnce();
+				if (imageFileChooserT.getReturnValue() == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = imageFileChooserT.getSelectedFile();
 					if(selectedFile!=null) {
 						controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataCoverAction.message", selectedFile.getName(), item.toString()));
 						controller.getProgressMonitor().setProgress(index, max);
@@ -96,17 +96,12 @@ public class SetCoverThumbnailAction extends RefreshAbstractAction implements ID
 			previousSelectedFile = imageFileChooserT.getSelectedFile();
 		}
 		
-		return getResult();
+		return this.imageFileChooserT;
 	}
 
 	@Override
-	public void setResult(ImageFileChooser result) {
+	public void setDoOnceResult(ImageFileChooser result) {
 		this.imageFileChooserT = result;
-	}
-
-	@Override
-	public ImageFileChooser getResult() {
-		return imageFileChooserT;
 	}
 	
 	@Override

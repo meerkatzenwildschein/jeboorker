@@ -12,7 +12,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
 
-public class DeleteFileAction extends QueueableAction implements IDoOnlyOnceAction<Integer>{
+class DeleteFileAction extends QueueableAction implements IDoOnlyOnceAction<Integer>{
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
@@ -34,13 +34,12 @@ public class DeleteFileAction extends QueueableAction implements IDoOnlyOnceActi
 	@Override
 	public void doAction(ActionEvent e) {
 		try {
-			Integer value = this.doOnce();
-			if(value.intValue() == JOptionPane.YES_OPTION) {
+			if(this.doOnce().intValue() == JOptionPane.YES_OPTION) {
 				fileToDelete.delete();
 				if(fileToDelete.exists()) {
 					LoggerFactory.logWarning(this.getClass(), "could not delete file " + fileToDelete);
 				} else {
-					RefreshEntryAction.refreshEntry(fileToDelete);
+					ActionUtils.refreshEntry(fileToDelete);
 				}
 			}
 		} catch (Exception e1) {
@@ -63,12 +62,7 @@ public class DeleteFileAction extends QueueableAction implements IDoOnlyOnceActi
 	}
 
 	@Override
-	public Integer getResult() {
-		 return this.result;
-	}
-
-	@Override
-	public void setResult(Integer result) {
+	public void setDoOnceResult(Integer result) {
 		this.result = result;
 	}
 

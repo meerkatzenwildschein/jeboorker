@@ -1,24 +1,17 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 
-import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.dialogs.SimpleInputDialog;
-import org.rr.jeborker.db.DefaultDBManager;
-import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
-import org.rr.jeborker.metadata.MetadataProperty;
 
-public class SetMetadataAuthorAction extends ASetCommonMetadataAction implements IDoOnlyOnceAction<SimpleInputDialog> {
+class SetMetadataAuthorAction extends ASetCommonMetadataAction implements IDoOnlyOnceAction<SimpleInputDialog> {
 
 	private static final long serialVersionUID = 4772310971481868593L;
 
@@ -38,41 +31,13 @@ public class SetMetadataAuthorAction extends ASetCommonMetadataAction implements
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		try {
-			List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
-			
-			if(!items.isEmpty()) {
-				final MainController controller = MainController.getController();
-				final EbookPropertyItem item = items.get(0);
-				SimpleInputDialog inputDialog = doOnce();
-				if (inputDialog.getReturnValue() == JFileChooser.APPROVE_OPTION) {
-					final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
-					final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-					final String author = inputDialog.getInput();
-					
-					controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataAuthorAction.message", author, item.toString()));
-					controller.getProgressMonitor().setProgress(index, max);					
-					
-					//get author metadata an set the entered author.
-					List<MetadataProperty> readMetaData = reader.readMetaData();
-					List<MetadataProperty> authorMetaData = reader.getAuthorMetaData(true, readMetaData);
-					
-					transferValueToMetadata(author, authorMetaData);
-
-					mergeAndWrite(writer, readMetaData, authorMetaData);
-					
-					//do some refresh to the changed entry.
-					RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
-					
-					controller.getProgressMonitor().monitorProgressStop(null);
-					MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
-				}
-			} else {
-				LoggerFactory.logInfo(this, "No database item found for " + resourceHandler, null);
-			}
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this, "could not set author for " + resourceHandler, e);
-		}
+		final MainController controller = MainController.getController();
+		final SimpleInputDialog inputDialog = this.doOnce();
+		
+		controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataAuthorAction.message", inputDialog.getInput(), resourceHandler.getName()));
+		controller.getProgressMonitor().setProgress(index, max);		
+		
+		setMetaData(resourceHandler, IMetadataReader.METADATA_TYPES.AUTHOR);
 	}
 
 	/**
@@ -94,17 +59,12 @@ public class SetMetadataAuthorAction extends ASetCommonMetadataAction implements
 			inputDialog.setVisible(true);
 		}
 		
-		return getResult();
+		return this.inputDialog;
 	}
 
 	@Override
-	public void setResult(SimpleInputDialog result) {
+	public void setDoOnceResult(SimpleInputDialog result) {
 		this.inputDialog = result;
-	}
-
-	@Override
-	public SimpleInputDialog getResult() {
-		return inputDialog;
 	}
 
 	@Override
