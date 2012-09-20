@@ -10,7 +10,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 public interface IMetadataReader {
 	
 	public static enum METADATA_TYPES {
-		GENRE, TITLE, AUTHOR
+		GENRE, TITLE, AUTHOR, SERIES_NAME
 	}
 	
 	/**

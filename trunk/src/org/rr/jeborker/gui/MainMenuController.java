@@ -171,7 +171,14 @@ public class MainMenuController {
 			if(action.isEnabled()) {
 				submenu.add(new JMenuItem(action));
 			}
-		}	
+		}
+		
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_SERIES_NAME_ACTION, items, selectedEbookPropertyItemRows).getAction();
+			if(action.isEnabled()) {
+				submenu.add(new JMenuItem(action));
+			}
+		}			
 		
 		
 		if(submenu.getMenuComponentCount() > 0) {

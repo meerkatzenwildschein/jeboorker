@@ -91,6 +91,8 @@ class MainMenuView extends JMenuBar {
 		setSubmenu.add(new JMenuItem(action));				
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, rowsToRefreshAfter).getAction();
 		setSubmenu.add(new JMenuItem(action));		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_SERIES_NAME_ACTION, items, rowsToRefreshAfter).getAction();
+		setSubmenu.add(new JMenuItem(action));				
 		
 		result.add(setSubmenu);
 		

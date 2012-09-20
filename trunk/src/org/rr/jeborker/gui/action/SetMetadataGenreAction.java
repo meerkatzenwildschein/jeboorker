@@ -8,7 +8,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.dialogs.SimpleInputDialog;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
 class SetMetadataGenreAction extends ASetCommonMetadataAction implements IDoOnlyOnceAction<SimpleInputDialog> {
 
@@ -44,7 +43,7 @@ class SetMetadataGenreAction extends ASetCommonMetadataAction implements IDoOnly
 	 * @return <code>true</code> if this action is able to do something or <code>false</code> otherwise.
 	 */
 	public static boolean canHandle(final IResourceHandler resourceHandler) {
-		return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+		return true;
 	}
 
 	@Override

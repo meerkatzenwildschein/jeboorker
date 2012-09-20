@@ -46,7 +46,7 @@ class SetMetadataAuthorAction extends ASetCommonMetadataAction implements IDoOnl
 	 * @return <code>true</code> if this action is able to do something or <code>false</code> otherwise.
 	 */
 	public static boolean canHandle(final IResourceHandler resourceHandler) {
-		return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+		return true;
 	}
 
 	@Override

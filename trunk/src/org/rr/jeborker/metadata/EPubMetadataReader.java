@@ -324,6 +324,10 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 				tag = "dc:title";
 				name = TITLE;
 				break;	
+			case SERIES_NAME:
+				tag = CALIBRE_SERIES;
+				name = CALIBRE_SERIES;
+				break;					
 			case AUTHOR:
 				return getAuthorMetaData(create, props);
 			default:

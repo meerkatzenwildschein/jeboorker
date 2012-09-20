@@ -47,11 +47,11 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 	}	
 	
 	protected void setMetaData(IResourceHandler resourceHandler, IMetadataReader.METADATA_TYPES type) {
+		final MainController controller = MainController.getController();
 		try {
 			final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
 			
 			if(!items.isEmpty()) {
-				final MainController controller = MainController.getController();
 				final EbookPropertyItem item = items.get(0);
 				
 				SimpleInputDialog inputDialog = this.doOnce();
@@ -71,7 +71,6 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 					//do some refresh to the changed entry.
 					RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
 					
-					controller.getProgressMonitor().monitorProgressStop(null);
 					MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
 				}
 			} else {
@@ -79,6 +78,8 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 			}
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not set author for " + resourceHandler, e);
+		} finally {
+			controller.getProgressMonitor().monitorProgressStop(null);
 		}
 	}		
 }
