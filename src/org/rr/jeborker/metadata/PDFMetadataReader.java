@@ -401,6 +401,10 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 				search = "title";
 				name = "Title";
 				break;	
+			case SERIES_NAME:
+				search = "seriesname";
+				name = "seriesname";
+				break;						
 			case AUTHOR:
 				return this.getAuthorMetaData(create, props);
 			default:

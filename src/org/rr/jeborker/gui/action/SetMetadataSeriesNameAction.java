@@ -9,7 +9,7 @@ import org.rr.commons.swing.dialogs.SimpleInputDialog;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
 
-class SetMetadataTitleAction extends ASetCommonMetadataAction implements IDoOnlyOnceAction<SimpleInputDialog> {
+class SetMetadataSeriesNameAction extends ASetCommonMetadataAction implements IDoOnlyOnceAction<SimpleInputDialog> {
 
 	private static final long serialVersionUID = 4772310971481868593L;
 
@@ -21,19 +21,21 @@ class SetMetadataTitleAction extends ASetCommonMetadataAction implements IDoOnly
 
 	private int max;
 	
-	SetMetadataTitleAction(IResourceHandler resourceHandler) {
+	SetMetadataSeriesNameAction(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
-		putValue(Action.NAME, Bundle.getString("SetMetadataTitleAction.name"));
+		putValue(Action.NAME, Bundle.getString("SetMetadataSeriesNameAction.name"));
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent evt) {		final MainController controller = MainController.getController();
-	final SimpleInputDialog inputDialog = this.doOnce();
-	
-	controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataTitleAction.message", inputDialog.getInput(), resourceHandler.getName()));
-	controller.getProgressMonitor().setProgress(index, max);		
-	
-	setMetaData(resourceHandler, IMetadataReader.METADATA_TYPES.TITLE);}
+	public void actionPerformed(ActionEvent evt) {
+		final MainController controller = MainController.getController();
+		final SimpleInputDialog inputDialog = this.doOnce();
+		
+		controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataSeriesNameAction.message", inputDialog.getInput(), resourceHandler.getName()));
+		controller.getProgressMonitor().setProgress(index, max);		
+		
+		setMetaData(resourceHandler, IMetadataReader.METADATA_TYPES.SERIES_NAME);
+	}
 
 	/**
 	 * Tells the factory if this writer is able to work with the 
@@ -49,7 +51,7 @@ class SetMetadataTitleAction extends ASetCommonMetadataAction implements IDoOnly
 		if(inputDialog == null) {
 			inputDialog = new SimpleInputDialog(MainController.getController().getMainWindow(), "Authors name", true);
 			inputDialog.setDialogMode(SimpleInputDialog.OK_CANCEL_DIALOG);
-			inputDialog.setQuestionTest(Bundle.getString("SetMetadataTitleAction.input.text"));
+			inputDialog.setQuestionTest(Bundle.getString("SetMetadataAuthorAction.input.text"));
 			inputDialog.setSize(300,160);
 			inputDialog.setVisible(true);
 		}

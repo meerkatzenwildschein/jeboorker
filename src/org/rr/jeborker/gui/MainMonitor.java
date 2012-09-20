@@ -16,6 +16,7 @@ public class MainMonitor {
 		started++;
 		progressbar.setIndeterminate(true);
 		this.setMessage(message);
+		MainController.getController().getMainWindow().getGlassPane().setVisible(true);
 	}
 	
 	public void monitorProgressStop() {
@@ -29,6 +30,7 @@ public class MainMonitor {
 			progressbar.setIndeterminate(false);
 			progressbar.setValue(0);
 			this.setMessage(message);
+			MainController.getController().getMainWindow().getGlassPane().setVisible(false);
 		}
 	}	
 	

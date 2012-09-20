@@ -63,7 +63,17 @@ public class ActionFactory {
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
-		},		
+		},	
+		SET_METADATA_SERIES_NAME_ACTION {
+
+			public Class<? extends Action> getActionClass() {
+				return SetMetadataSeriesNameAction.class;
+			}
+
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return true;
+			}
+		},			
 		SET_METADATA_TITLE_ACTION {
 
 			public Class<? extends Action> getActionClass() {

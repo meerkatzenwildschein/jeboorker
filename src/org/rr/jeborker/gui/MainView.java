@@ -27,6 +27,7 @@ import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
 import org.japura.gui.CheckComboBox;
+import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.button.JMenuButton;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.jeborker.Jeboorker;
@@ -74,7 +75,10 @@ public class MainView extends JFrame{
 	JMenuButton addMetadataButton;
 	
 	JButton removeMetadataButton;
-	private JLabel lblSortBy;
+	
+	JLabel lblSortBy;
+	
+	JPanel rootPanel;
 	
 	/**
 	 * Create the application.
@@ -96,6 +100,11 @@ public class MainView extends JFrame{
 				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null).invokeAction();
 			}
 		});
+		
+		ShadowPanel shadowPanel = new ShadowPanel();
+		this.setGlassPane(shadowPanel);	
+		getGlassPane().setVisible(false);
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
 		gridBagLayout.rowHeights = new int[]{4, 0, 350, 0, 0, 0};
@@ -287,4 +296,5 @@ public class MainView extends JFrame{
 		
 		this.setJMenuBar(MainMenuController.getController().getView());
 	}
+
 }
