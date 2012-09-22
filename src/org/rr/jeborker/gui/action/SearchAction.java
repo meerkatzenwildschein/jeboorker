@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
@@ -63,8 +64,15 @@ class SearchAction extends AbstractAction {
 			controller.refreshTable(true);
 			filterPanelController.addFilterFieldSearch(filterText);
 		} finally {
-			int rowCount = controller.getTableModel().getRowCount();
-			monitorStop(filterText, rowCount);
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					int rowCount = controller.getTableModel().getRowCount();
+					monitorStop(filterText, rowCount);
+				}
+			});
+
 		}
 	}
 

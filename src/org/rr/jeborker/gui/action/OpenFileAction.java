@@ -5,13 +5,13 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.event.QueueableAction;
 
-class OpenFileAction extends QueueableAction {
+class OpenFileAction extends AbstractAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
@@ -25,7 +25,7 @@ class OpenFileAction extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		File file = new File(folder);
 
 		try {

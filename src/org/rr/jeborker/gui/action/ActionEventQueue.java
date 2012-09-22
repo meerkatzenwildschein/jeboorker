@@ -1,4 +1,4 @@
-package org.rr.jeborker.event;
+package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -8,13 +8,14 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 
+
 public class ActionEventQueue {
 	
 	private static SwingWorker<Void, Void> worker = null;
 	
 	private static final List<QueueableActionHolder> queue = Collections.synchronizedList(new ArrayList<QueueableActionHolder>());
 	
-	public static synchronized void addActionEvent(final QueueableAction action, final ActionEvent event) {
+	static synchronized void addActionEvent(final ApplicationAction action, final ActionEvent event) {
 		final QueueableActionHolder holder = new QueueableActionHolder(action, event);
 		queue.add(holder);
 		
@@ -26,7 +27,7 @@ public class ActionEventQueue {
 				protected Void doInBackground() {
 					while(queue.size()>0) {
 						QueueableActionHolder removed = queue.remove(0);
-						removed.action.doAction(removed.event);
+						removed.action.invokeRealAction(removed.event);
 					}
 					
 					return null;
@@ -42,9 +43,9 @@ public class ActionEventQueue {
 	}
 	
 	private static class QueueableActionHolder {
-		final QueueableAction action;
+		final ApplicationAction action;
 		final ActionEvent event;
-		QueueableActionHolder(final QueueableAction action, final ActionEvent event) {
+		QueueableActionHolder(final ApplicationAction action, final ActionEvent event) {
 			this.action = action;
 			this.event = event;
 		}

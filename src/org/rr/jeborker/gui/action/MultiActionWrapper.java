@@ -4,15 +4,15 @@ import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.event.RefreshAbstractAction;
 
-class MultiActionWrapper extends QueueableAction {
+class MultiActionWrapper extends AbstractAction {
 
 	private static final long serialVersionUID = -2128569488506763407L;
 
@@ -33,7 +33,7 @@ class MultiActionWrapper extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		final Iterator<IResourceHandler> iterator = handlers.iterator();
 		final int size = handlers.size();
 		
@@ -74,11 +74,7 @@ class MultiActionWrapper extends QueueableAction {
 			((IDoOnlyOnceAction<?>)action).prepareFor(entryIndex, entrySize);
 		}
 		
-		if(action instanceof QueueableAction) {
-			((QueueableAction)action).doAction(e);
-		} else {
-			action.actionPerformed(e);
-		}
+		action.actionPerformed(e);
 	}
 	
 	/**

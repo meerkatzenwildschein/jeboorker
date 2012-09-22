@@ -2,7 +2,7 @@ package org.rr.jeborker.metadata;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 
 public class EpubMetadataProperty extends MetadataProperty {
 	
-	private Hashtable<String, String> attributes;
+	private HashMap<String, String> attributes;
 	
 	private Class<?> propertyClass = null;
 	
@@ -150,7 +150,7 @@ public class EpubMetadataProperty extends MetadataProperty {
 	 */
 	public void addAttribute(String name, String value) {
 		if(this.attributes==null) {
-			this.attributes = new Hashtable<String, String>();
+			this.attributes = new HashMap<String, String>();
 		}
 		this.attributes.put(name, value);
 	}

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -19,14 +20,13 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
-import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuController;
 
 /**
  * Add a folder action.
  */
-class AddBasePathAction extends QueueableAction {
+class AddBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = -9066575818229620987L;
 	
@@ -46,7 +46,7 @@ class AddBasePathAction extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
 		final IResourceHandler selectedDirectory;
 		String path = this.path;

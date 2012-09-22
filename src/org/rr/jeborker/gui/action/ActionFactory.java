@@ -160,7 +160,7 @@ public class ActionFactory {
 		}
 		
 		if(action != null) {
-			return new ApplicationAction(action);
+			return ApplicationAction.getInstance(action);
 		} 
 		return null;
 	}
@@ -200,7 +200,7 @@ public class ActionFactory {
 			action.setEnabled(false);
 		}
 		
-		return new ApplicationAction(action); 
+		return ApplicationAction.getInstance(action); 
 	}
 	
 	/**
@@ -210,14 +210,14 @@ public class ActionFactory {
 	 * should be created for.
 	 * @return The actions for adding a metadata entry. Never returns <code>null</code>.
 	 */
-	public static List<ApplicationAction> getAddMetadataActions(List<MetadataProperty> properties) {
-		final ArrayList<ApplicationAction> result = new ArrayList<ApplicationAction>();
+	public static List<Action> getAddMetadataActions(List<MetadataProperty> properties) {
+		final ArrayList<Action> result = new ArrayList<Action>();
 		for (MetadataProperty property : properties) {
 			AddMetadataAction addMetadataAction = new AddMetadataAction(property);
 			if(!property.isEditable()) {
 				addMetadataAction.setEnabled(false);
 			}
-			result.add(new ApplicationAction(addMetadataAction));
+			result.add(ApplicationAction.getInstance(addMetadataAction));
 		}
 		return result;
 	}

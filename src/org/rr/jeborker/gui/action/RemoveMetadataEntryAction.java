@@ -22,22 +22,10 @@ class RemoveMetadataEntryAction extends AbstractAction {
 	
 	private RemoveMetadataEntryAction() {
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("remove_16.gif")));
+		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
+		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		setEnabled(false);
 		initListener();
-	}
-	
-	private void initListener() {
-		EventManager.addListener(new DefaultApplicationEventListener() {
-			
-			@Override
-			public void metaDataSheetSelectionChanged(ApplicationEvent evt) {
-				if(evt.getMetadataProperty() == null || !evt.getMetadataProperty().isEditable()) {
-					RemoveMetadataEntryAction.this.setEnabled(false);
-				} else {
-					RemoveMetadataEntryAction.this.setEnabled(true);
-				}
-			}
-		});
 	}
 	
 	static RemoveMetadataEntryAction getInstance() {
@@ -45,11 +33,28 @@ class RemoveMetadataEntryAction extends AbstractAction {
 			removeMetadataEntryAction = new RemoveMetadataEntryAction();
 		}
 		return removeMetadataEntryAction;
+	}	
+	
+	private void initListener() {
+		EventManager.addListener(new RemoveMetadataEntryApplicationEventListener());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		MainController.getController().removeSelectedMetadataProperty();
+	}
+	
+	private static class RemoveMetadataEntryApplicationEventListener extends DefaultApplicationEventListener {
+		
+		@Override
+		public void metaDataSheetSelectionChanged(ApplicationEvent evt) {
+			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null);
+			if(evt.getMetadataProperty() == null || !evt.getMetadataProperty().isEditable()) {
+				action.setEnabled(false);
+			} else {
+				action.setEnabled(true);
+			}
+		}		
 	}
 
 }
