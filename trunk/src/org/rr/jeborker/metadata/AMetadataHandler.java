@@ -33,7 +33,7 @@ public class AMetadataHandler {
 				return XMLUtils.getDocument(xml);
 			}
 		} catch (Exception e) {
-			LoggerFactory.logWarning(AMetadataHandler.class, "Could not read document " + ebookResource, e);
+			LoggerFactory.logWarning(AMetadataHandler.class, "Could not read metadata document " + ebookResource, e);
 		}
 		return null;
 	}
