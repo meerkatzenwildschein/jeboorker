@@ -9,7 +9,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.dialogs.SimpleInputDialog;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
 class SetMetadataAuthorAction extends ASetCommonMetadataAction implements IDoOnlyOnceAction<SimpleInputDialog> {
 

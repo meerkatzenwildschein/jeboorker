@@ -97,12 +97,14 @@ public class MainController {
 			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
 				//write properties
 				MainControllerUtils.writeProperties(previousProperties);
+				EbookPropertyDBTableModel model = (EbookPropertyDBTableModel)mainWindow.table.getModel();
+				int rowCount = model.getRowCount();
 				
-				if(e.getFirstIndex() >= 0) {
-					((EbookPropertyDBTableModel)mainWindow.table.getModel()).reloadEbookPropertyItemAt(e.getFirstIndex());
+				if(e.getFirstIndex() >= 0 && e.getFirstIndex() < rowCount) {
+					model.reloadEbookPropertyItemAt(e.getFirstIndex());
 				}
-				if(e.getLastIndex() >= 0 && e.getLastIndex() != e.getFirstIndex()) {
-					((EbookPropertyDBTableModel)mainWindow.table.getModel()).reloadEbookPropertyItemAt(e.getLastIndex());
+				if(e.getLastIndex() >= 0 && e.getLastIndex() != e.getFirstIndex() && e.getLastIndex() < rowCount) {
+					model.reloadEbookPropertyItemAt(e.getLastIndex());
 				}
 				
 				//a repaint does a refresh to all visible table rows.
