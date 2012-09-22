@@ -62,7 +62,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			final byte[] xmpMetadataBytes = pdfReader.getMetadata();
 			if(xmpMetadataBytes!=null) {
 				final Document document = getDocument(xmpMetadataBytes, ebookResource);
-				final XMPMetadata metadata = new XMPMetadata(document);
+				final XMPMetadata metadata = document != null ? new XMPMetadata(document) : new XMPMetadata();
                 
 				List<XMPSchema> schemas = metadata.getSchemas();
 				for (XMPSchema xmpSchema : schemas) {

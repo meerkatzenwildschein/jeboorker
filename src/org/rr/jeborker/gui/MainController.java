@@ -83,7 +83,7 @@ public class MainController {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting()) {
-				saveProperties();
+				saveProperties(e);
 				refreshSheetProperties(); 
 			}
 		}
@@ -91,12 +91,19 @@ public class MainController {
 		/**
 		 * Saves/Writes the metadata properties if something has changed. 
 		 */
-		private void saveProperties() {
+		private void saveProperties(ListSelectionEvent e) {
 			//save the previous properties 
 			final List<Property> previousProperties = mainWindow.propertySheet.getProperties();
 			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
 				//write properties
 				MainControllerUtils.writeProperties(previousProperties);
+				
+				if(e.getFirstIndex() >= 0) {
+					((EbookPropertyDBTableModel)mainWindow.table.getModel()).reloadEbookPropertyItemAt(e.getFirstIndex());
+				}
+				if(e.getLastIndex() >= 0 && e.getLastIndex() != e.getFirstIndex()) {
+					((EbookPropertyDBTableModel)mainWindow.table.getModel()).reloadEbookPropertyItemAt(e.getLastIndex());
+				}
 				
 				//a repaint does a refresh to all visible table rows.
 				mainWindow.table.repaint();
@@ -120,6 +127,7 @@ public class MainController {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
 				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
 				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+				
 				refreshTableSelectedItem(false);
 			}
 		}
@@ -229,7 +237,8 @@ public class MainController {
 			for (int i = 0; i < selectedRows.length; i++) {
 				if(editingRow != -1 && editingRow == selectedRows[i]) {
 					mainWindow.table.editingStopped(null);
-				} 
+				}
+				
 				model.reloadEbookPropertyItemAt(selectedRows[i]);
 				mainWindow.table.tableChanged(new TableModelEvent(model, selectedRows[i]));					
 			}
@@ -514,7 +523,7 @@ public class MainController {
 			} else {
 				modelRowIndex = selectedRow;
 			}
-			final EbookPropertyItem item = ((EbookPropertyDBTableModel)mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowIndex);
+			final EbookPropertyItem item = ((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowIndex);
 			if(item==null) {
 				//clear
 				mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
