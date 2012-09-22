@@ -323,18 +323,18 @@ public class ResourceHandlerUtils {
 	 * @param baseFolder Folder to start reading.
 	 * @param filter The filter where we have the possibility to do something with the files.
 	 */
-	public static void readAllFilesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
-		readAllFileFromBasePathRecursive(baseFolder, baseFolder, filter);
+	public static int readAllFilesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
+		return readAllFileFromBasePathRecursive(baseFolder, baseFolder, filter, 0);
 	}	
 	
-	private static void readAllFileFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
+	private static int readAllFileFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter, int count) {
 		if(baseFolder==null || baseFolder.isFileResource()) {
-			return;
+			return count;
 		}
 		
 		//collect all ebook files from the baseFolder
 		try {
-			baseFolder.listResources(filter);
+			count = baseFolder.listResources(filter).length;
 		} catch (IOException e) {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading folder.", e);
 		}
@@ -344,11 +344,12 @@ public class ResourceHandlerUtils {
 		try {
 			listDirectoryResources = baseFolder.listDirectoryResources();
 			for (int i = 0; i < listDirectoryResources.length; i++) {
-				readAllFileFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter);
+				count += readAllFileFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter, count);
 			}
 		} catch (IOException e) {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading subfolders.", e);
 		}
+		return count;
 	}	
 	
     /**
