@@ -39,9 +39,6 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void removeProperty(Property property) {
-//		if(property instanceof EbookSheetProperty) {
-//			((EbookSheetProperty)property).firePropertyChanged(null, null);
-//		}
 		property.setValue("");
 		super.removeProperty(property);
 		changed = true;

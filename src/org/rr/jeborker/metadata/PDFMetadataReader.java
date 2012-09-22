@@ -12,6 +12,7 @@ import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
+import org.apache.jempbox.xmp.XMPUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
@@ -60,7 +61,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			
 			//XMP example: http://itextpdf.com/examples/iia.php?id=217
 			final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-			if(xmpMetadataBytes!=null) {
+			if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
 				final Document document = getDocument(xmpMetadataBytes, ebookResource);
 				final XMPMetadata metadata = document != null ? new XMPMetadata(document) : new XMPMetadata();
                 
@@ -229,7 +230,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			return null;
 		}
 		final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-		if(xmpMetadataBytes!=null) {
+		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
 			final Document document = getDocument(xmpMetadataBytes, ebookResource);
 			final XMPMetadata metadata = new XMPMetadata(document);
 			XMPSchemaBasic basicSchema = metadata.getBasicSchema();

@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +25,8 @@ import com.l2fprod.common.propertysheet.Property;
 public class EbookSheetProperty extends DefaultProperty {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final Comparator<Property> PROPERTY_COMPARATOR = new MetadataPropertyComparator();
 	
 	protected MetadataProperty metadataProperty;
 	
@@ -64,6 +68,8 @@ public class EbookSheetProperty extends DefaultProperty {
 		result.add(fileNameProperty);
 		
 		setupMetadata(result, resourceLoader, reader);
+		
+		Collections.sort(result, PROPERTY_COMPARATOR);
 		
 		return result.toArray(new Property[result.size()]);
 	}
@@ -289,5 +295,28 @@ public class EbookSheetProperty extends DefaultProperty {
 		public List<MetadataProperty> getMetadataProperties() {
 			return metadataProperties;
 		}		
+	}
+	
+	private static class MetadataPropertyComparator implements Comparator<Property> {
+
+		@Override
+		public int compare(Property p1, Property p2) {
+			String name1 = getOrderValue(p1);
+			String name2 = getOrderValue(p2);
+			return name1.compareTo(name2);
+		}
+		
+		private String getOrderValue(Property p1) {
+			String name1 = p1.getName().toLowerCase();
+			if(name1.equals("file")) {
+				return "01";
+			} else if(name1.equals("author")) {
+				return "02";
+			}else if(name1.equals("title")) {
+				return "03";
+			}
+			return name1;
+		}
+		
 	}
 }
