@@ -45,11 +45,6 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	private FileResourceHandler parentFileresourceLoader = null;
 	
-	/**
-	 * The cached directory child resources
-	 */
-	private IResourceHandler[] cachedDirectoryResources;
-	
 	private Boolean isFloppyDrive = null;
 	
 	private Boolean isDirectory = null;
@@ -91,7 +86,6 @@ class FileResourceHandler extends AResourceHandler {
 	@Override
 	public void refresh() {
 		super.refresh();
-		this.cachedDirectoryResources = null;
 	}	
 
 	/**
@@ -307,10 +301,6 @@ class FileResourceHandler extends AResourceHandler {
 	 */	
 	@Override
 	public IResourceHandler[] listDirectoryResources() {
-		if(this.cachedDirectoryResources!=null) {
-			return this.cachedDirectoryResources;
-		}
-		
 		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
 		
 		synchronized(fileSystemViewInstance) {
@@ -326,10 +316,7 @@ class FileResourceHandler extends AResourceHandler {
 			}
 		}
 		
-		IResourceHandler[] sortedResourceHandlers =  ResourceHandlerUtils.sortResourceHandlers(result.toArray(new IResourceHandler[result.size()]), ResourceHandlerUtils.SORT_BY_NAME, true);
-
-		cachedDirectoryResources = sortedResourceHandlers;
-		return sortedResourceHandlers;
+		return ResourceHandlerUtils.sortResourceHandlers(result.toArray(new IResourceHandler[result.size()]), ResourceHandlerUtils.SORT_BY_NAME, true);
 	}
 
 	/**

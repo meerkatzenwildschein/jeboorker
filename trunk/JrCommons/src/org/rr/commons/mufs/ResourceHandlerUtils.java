@@ -324,12 +324,13 @@ public class ResourceHandlerUtils {
 	 * @param filter The filter where we have the possibility to do something with the files.
 	 */
 	public static int readAllFilesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
-		return readAllFileFromBasePathRecursive(baseFolder, baseFolder, filter, 0);
+		return readAllFileFromBasePathRecursive(baseFolder, baseFolder, filter);
 	}	
 	
-	private static int readAllFileFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter, int count) {
+	private static int readAllFileFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
+		int count = 0;
 		if(baseFolder==null || baseFolder.isFileResource()) {
-			return count;
+			return 0;
 		}
 		
 		//collect all ebook files from the baseFolder
@@ -344,7 +345,7 @@ public class ResourceHandlerUtils {
 		try {
 			listDirectoryResources = baseFolder.listDirectoryResources();
 			for (int i = 0; i < listDirectoryResources.length; i++) {
-				count += readAllFileFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter, count);
+				count += readAllFileFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter);
 			}
 		} catch (IOException e) {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading subfolders.", e);
