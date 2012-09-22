@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
+import org.apache.jempbox.xmp.XMPUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -220,11 +222,12 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 	 * @throws Exception
 	 */
 	private void writeMetadata(final PdfReader pdfReader, final byte[] xmp, HashMap<String, String> moreInfo) throws IOException, DocumentException, Exception {
+		final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResource, "tmp");
 		PdfStamper stamper = null;
 		OutputStream ebookResourceOutputStream = null;
-		IResourceHandler temporaryEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResource, "tmp");
+		
 		try {
-			ebookResourceOutputStream = temporaryEbookResourceLoader.getContentOutputStream(false);
+			ebookResourceOutputStream = tmpEbookResourceLoader.getContentOutputStream(false);
 			stamper = new PdfStamper(pdfReader, ebookResourceOutputStream);
 			stamper.setXmpMetadata(xmp);
 			if(moreInfo!=null) {
@@ -253,14 +256,11 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 					ebookResourceOutputStream.flush();
 				} catch (IOException e) {
 				}
-				try {
-					ebookResourceOutputStream.close();
-				} catch (IOException e) {
-				}
+				IOUtils.closeQuietly(ebookResourceOutputStream);
 			}
-			if(temporaryEbookResourceLoader.size() > 0) {
+			if(tmpEbookResourceLoader.size() > 0) {
 				//new temp pdf looks good. Move the new temp one over the old one. 
-				temporaryEbookResourceLoader.moveTo(ebookResource, true);
+				tmpEbookResourceLoader.moveTo(ebookResource, true);
 			}
 		}
 	}
@@ -270,7 +270,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		try {
 			if(plainMetadata.length > 9 && new String(plainMetadata, 0, 9).startsWith("<?xpacket")) {
 				//XMP 
-				if(XMLUtils.isValidXML(plainMetadata)) {
+				if(XMPUtils.isValidXMP(plainMetadata) && XMLUtils.isValidXML(plainMetadata)) {
 					final byte[] pdfData = ebookResource.getContent();
 					final PdfReader pdfReader = new PdfReader(pdfData);
 					
