@@ -68,8 +68,7 @@ public class SortColumnComponentController {
 			
 			private void changed(ListEvent<Field> event) {
 				final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
-				tableModel.getOrderByColumns().clear();
-				tableModel.getOrderByColumns().addAll(internalCheckList);
+				tableModel.setOrderByColumns(internalCheckList);
 				MainController.getController().refreshTable(true);
 			}
 		});

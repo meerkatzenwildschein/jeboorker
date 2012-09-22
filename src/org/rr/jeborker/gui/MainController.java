@@ -31,6 +31,7 @@ import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.EmptyListModel;
 import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
@@ -514,11 +515,11 @@ public class MainController {
 			//clear on multiple selection 
 			mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
 			setImage(null);
-			mainWindow.addMetadataButton.setListModel(new DefaultListModel());
+			mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
 		} else if (mainWindow.table.getSelectedRowCount() == 1) {
 			final int selectedRow = mainWindow.table.getSelectedRow();
 			final int modelRowIndex;
-			if(mainWindow.table.getRowSorter()!=null) {
+			if(mainWindow.table.getRowSorter() != null) {
 				modelRowIndex = mainWindow.table.getRowSorter().convertRowIndexToModel(selectedRow);
 			} else {
 				modelRowIndex = selectedRow;

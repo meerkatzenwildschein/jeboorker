@@ -29,6 +29,7 @@ public class SortOrderComponentController {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				descButton.setSelected(false);
+				ascButton.setSelected(true);
 				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
 				MainController.getController().refreshTable(true);
 			}
@@ -42,6 +43,7 @@ public class SortOrderComponentController {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ascButton.setSelected(false);
+				descButton.setSelected(true);
 				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_DESC));
 				MainController.getController().refreshTable(true);
 			}
@@ -71,9 +73,11 @@ public class SortOrderComponentController {
 	private void restoreProperties() {
 		String sortColumnOrder = JeboorkerPreferences.getEntryString("sortColumnOrder");
 		if(sortColumnOrder.equalsIgnoreCase("asc")) {
-			ascButton.setSelected(true);
+			ActionEvent e = new ActionEvent(ascButton, ActionEvent.ACTION_PERFORMED, null);
+			ascButton.getAction().actionPerformed(e);
 		} else if(sortColumnOrder.equalsIgnoreCase("desc")) {
-			descButton.setSelected(true);
+			ActionEvent e = new ActionEvent(descButton, ActionEvent.ACTION_PERFORMED, null);
+			descButton.getAction().actionPerformed(e);
 		}
 	}	
 }

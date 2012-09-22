@@ -32,7 +32,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     
     private CompoundList<EbookPropertyItem> allItems;
     
-    private List<Field> orderByColumns = new ArrayList<Field>();
+    private final List<Field> orderByColumns = new ArrayList<Field>();
     
     private OrderDirection orderDirection =null;
     
@@ -343,8 +343,17 @@ public class EbookPropertyDBTableModel implements TableModel {
 		return orderByColumns;
 	}
 
+	/**
+	 * Set the order by columns to the table model. To apply the new order
+	 * invoke the {@link #setDirty()} method or directly do a
+	 * <code>MainController.getController().refreshTable(true);</code>
+	 * 
+	 * @param orderByColumns Order columns to be set to the model. 
+	 * Previously setted order columns will be removed. 
+	 */
 	public void setOrderByColumns(List<Field> orderByColumns) {
-		this.orderByColumns = orderByColumns;
+		this.orderByColumns.clear();
+		this.orderByColumns.addAll(orderByColumns);
 	}
 
 	/**
