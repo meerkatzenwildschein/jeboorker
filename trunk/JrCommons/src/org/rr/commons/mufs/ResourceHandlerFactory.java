@@ -100,6 +100,26 @@ public class ResourceHandlerFactory {
 	public static IResourceHandler getResourceLoader(URL url) {
 		return getResourceLoader(url.toString());
 	}
+
+	/**
+	 * Get a {@link IResourceHandler} instance with the given, additional extension. The
+	 * result {@link IResourceHandler} will not exists. if the sibling the the extension already
+	 * exists a number will be added at the end of the result {@link IResourceHandler}.
+	 * 
+	 * @param sibling the sibling {@link IResourceHandler}.
+	 * @param extension the extension for the sibling {@link IResourceHandler}.
+	 * @return The sibling {@link IResourceHandler}.
+	 */
+	public static IResourceHandler getTemporaryResourceLoader(IResourceHandler sibling, final String extension) {
+		final String tmpFileName = sibling.toString() + "." + extension;
+		
+		int extensionNum = 0;
+		IResourceHandler result = null;
+		while( (result = getResourceLoader(tmpFileName + (extensionNum != 0 ? extensionNum : "") )).exists() ) {
+			extensionNum ++;
+		}
+		return result;
+	}
 	
 	/**
 	 * Gets a resource loader for the given resource.
