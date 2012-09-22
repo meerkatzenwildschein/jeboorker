@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
@@ -13,14 +14,13 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
-import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 
 /**
  * Add a folder action.
  */
-class RefreshBasePathAction extends QueueableAction {
+class RefreshBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = -9066575818229620987L;
 	
@@ -37,7 +37,7 @@ class RefreshBasePathAction extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(ActionEvent event) {
+	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
 		
 		controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
@@ -47,7 +47,7 @@ class RefreshBasePathAction extends QueueableAction {
 				if(!ResourceHandlerFactory.getResourceLoader(path).isDirectoryResource()) {
 					messageFinished = "The folder " + path + " did not exists.";
 				} else {			
-					doRefreshBasePath(path, event, controller.getProgressMonitor());
+					doRefreshBasePath(path, e, controller.getProgressMonitor());
 				}
 			}
 		} catch (Exception ex) {

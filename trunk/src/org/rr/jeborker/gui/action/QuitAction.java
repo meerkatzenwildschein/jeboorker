@@ -2,12 +2,12 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import org.rr.jeborker.event.QueueableAction;
 
-class QuitAction extends QueueableAction {
+class QuitAction extends AbstractAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 
@@ -22,7 +22,7 @@ class QuitAction extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		ActionUtils.quit();
 	}
 	

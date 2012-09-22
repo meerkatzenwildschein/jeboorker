@@ -2,15 +2,15 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.event.QueueableAction;
 
 /**
  * Add a folder action.
  */
-class ShowHideBasePathAction extends QueueableAction {
+class ShowHideBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = -9066575818229620987L;
 	
@@ -29,7 +29,7 @@ class ShowHideBasePathAction extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(ActionEvent event) {
+	public void actionPerformed(ActionEvent e) {
 		ActionUtils.toggleBasePathVisibility(path);
 	}
 	

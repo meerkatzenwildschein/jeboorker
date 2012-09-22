@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -14,12 +15,11 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuController;
 import org.rr.jeborker.gui.MainMonitor;
 
-class RemoveBasePathAction extends QueueableAction {
+class RemoveBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = 6607018752541779846L;
 
@@ -34,7 +34,7 @@ class RemoveBasePathAction extends QueueableAction {
 	}
 	
 	@Override
-	public void doAction(final ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		final String path = (String) getValue(Action.NAME);
 		
 		removeBasePathEntries(path, true);

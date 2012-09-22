@@ -1,6 +1,8 @@
 package org.rr.jeborker.event;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.rr.commons.collection.WeakList;
 
@@ -13,7 +15,7 @@ public class EventManager {
  
 	private static WeakList<ApplicationEventListener> weakListenerList = new WeakList<ApplicationEventListener>();
 	
-	private static ArrayList<ApplicationEventListener> listenerList = new ArrayList<ApplicationEventListener>();
+	private static List<ApplicationEventListener> listenerList = Collections.synchronizedList(new ArrayList<ApplicationEventListener>());
 	
 	/**
 	 * Adds a weak {@link ApplicationEventListener} listener which will be automatically removed if no hard reference exists anywhere.

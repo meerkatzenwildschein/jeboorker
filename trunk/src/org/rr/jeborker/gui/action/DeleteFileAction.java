@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -9,10 +10,9 @@ import javax.swing.JOptionPane;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.event.QueueableAction;
 import org.rr.jeborker.gui.MainController;
 
-class DeleteFileAction extends QueueableAction implements IDoOnlyOnceAction<Integer>{
+class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer>{
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
@@ -32,7 +32,7 @@ class DeleteFileAction extends QueueableAction implements IDoOnlyOnceAction<Inte
 	}
 
 	@Override
-	public void doAction(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		try {
 			if(this.doOnce().intValue() == JOptionPane.YES_OPTION) {
 				fileToDelete.delete();
