@@ -501,6 +501,7 @@ class FileResourceHandler extends AResourceHandler {
 				if(!overwrite && targetRecourceLoader.exists() && !targetRecourceLoader.isDirectoryResource()) {
 					throw new IOException("file already exists " + targetRecourceLoader.getResourceString());
 				}
+				FileUtils.deleteQuietly(((FileResourceHandler)targetRecourceLoader).file);
 				FileUtils.moveFile(this.file, ((FileResourceHandler)targetRecourceLoader).file);
 				return;
 			} else {
