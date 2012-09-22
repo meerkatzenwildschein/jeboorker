@@ -222,10 +222,9 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 	private void writeMetadata(final PdfReader pdfReader, final byte[] xmp, HashMap<String, String> moreInfo) throws IOException, DocumentException, Exception {
 		PdfStamper stamper = null;
 		OutputStream ebookResourceOutputStream = null;
-		byte[] oldPDFContentBytes = ebookResource.getContent();
-		
+		IResourceHandler temporaryEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResource, "tmp");
 		try {
-			ebookResourceOutputStream = ebookResource.getContentOutputStream(false);
+			ebookResourceOutputStream = temporaryEbookResourceLoader.getContentOutputStream(false);
 			stamper = new PdfStamper(pdfReader, ebookResourceOutputStream);
 			stamper.setXmpMetadata(xmp);
 			if(moreInfo!=null) {
@@ -259,9 +258,9 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 				} catch (IOException e) {
 				}
 			}
-			if(ebookResource.size() == 0) {
-				//restore the old data, something's got wrong
-				ebookResource.setContent(oldPDFContentBytes);
+			if(temporaryEbookResourceLoader.size() > 0) {
+				//new temp pdf looks good. Move the new temp one over the old one. 
+				temporaryEbookResourceLoader.moveTo(ebookResource, true);
 			}
 		}
 	}
