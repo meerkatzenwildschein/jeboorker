@@ -67,7 +67,8 @@ class AddBasePathAction extends AbstractAction {
 				if(!isAlreadyExistingBasePath(JeboorkerPreferences.getBasePath(), path)) {
 					JeboorkerPreferences.addBasePath(path); //add path to preferences
 					MainMenuController.getController().addBasePathMenuEntry(path); //add path to ui
-					readEbookFilesToDB(selectedDirectory);
+					int count = readEbookFilesToDB(selectedDirectory);
+					messageFinished = Bundle.getFormattedString("AddBasePathAction.finishedCount", String.valueOf(count));
 				} else {
 					messageFinished = Bundle.getFormattedString("AddBasePathAction.duplicatePathEntry", path);
 				}
@@ -103,18 +104,20 @@ class AddBasePathAction extends AbstractAction {
 	 * Read all ebook files recursive and stores them directly to the database.
 	 * @param baseFolder The folder where the ebook search should be started.
 	 */
-	static void readEbookFilesToDB(final IResourceHandler baseFolder) {
-		ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
+	static int readEbookFilesToDB(final IResourceHandler baseFolder) {
+		int count = ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
 			
 			@Override
 			public boolean accept(IResourceHandler loader) {
 				if(loader.isFileResource() && loader.isEbookFormat()) {
 					final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(loader, baseFolder);
 					addEbookPropertyItem(item);
+					return true;
 				}
 				return false;
 			}
 		});
+		return count;
 	}
 	
 	
