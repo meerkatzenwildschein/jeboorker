@@ -142,6 +142,9 @@ public class EbookSheetProperty extends DefaultProperty {
 		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
 			//merge createdate and creationdate because they have the same sense
 			return true;
+		}  else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "modifydate", "moddate")) {
+			//merge createdate and creationdate because they have the same sense
+			return true;
 		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "calibrerating", "rating")) {
 			return true;
 		} else {
