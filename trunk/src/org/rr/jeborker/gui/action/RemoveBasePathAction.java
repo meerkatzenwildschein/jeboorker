@@ -121,6 +121,7 @@ class RemoveBasePathAction extends AbstractAction {
 				if(!removed) {
 					DefaultDBManager.getInstance().deleteObject(item);
 				}
+				progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleted", item.getFileName()));
 			}
 		});
 	}

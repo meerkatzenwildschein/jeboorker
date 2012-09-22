@@ -12,7 +12,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.MainController;
 
-class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer>{
+class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer> {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
@@ -43,7 +43,7 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 				}
 			}
 		} catch (Exception e1) {
-			LoggerFactory.logWarning(this, "could not open file " + fileToDelete, e1);
+			LoggerFactory.logWarning(this, "could not delete file " + fileToDelete, e1);
 		}
 	}
 
