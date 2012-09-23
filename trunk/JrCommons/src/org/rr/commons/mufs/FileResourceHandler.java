@@ -242,7 +242,7 @@ class FileResourceHandler extends AResourceHandler {
 	}
 
 	/**
-	 * Delets the file handled with this {@link FileResourceHandler} instance.
+	 * Deletes the file handled with this {@link FileResourceHandler} instance.
 	 * @return <code>true</code> if and only if the file or directory is
      *          successfully deleted; <code>false</code> otherwise
 	 * @throws IOException 
