@@ -123,6 +123,11 @@ public class FTPResourceHandler extends AResourceHandler {
 			throw new IOException("could not delete resource " + String.valueOf(ftpURL), e);
 		}
 	}
+	
+	@Override
+	public boolean moveToTrash() throws IOException {
+		return ResourceHandlerUtils.moveToTrash(this);
+	}		
 
 	/**
 	 * Frees all resources

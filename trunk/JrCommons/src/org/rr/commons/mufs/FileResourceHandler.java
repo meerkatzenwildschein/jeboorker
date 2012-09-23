@@ -255,6 +255,11 @@ class FileResourceHandler extends AResourceHandler {
 		}
 		this.isDirectory = null;
 	}
+	
+	@Override
+	public boolean moveToTrash() throws IOException {
+		return ResourceHandlerUtils.moveToTrash(this);
+	}	
 
 	public String toString() {
 		return this.getResourceString();

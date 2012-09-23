@@ -147,6 +147,13 @@ public interface IResourceHandler {
 	public void delete() throws IOException;
 	
 	/**
+	 * Moves this {@link IResourceHandler} into the user trash.
+	 * @return <code>true</code> if moving to trash was successful and <code>false</code> otherwise.
+	 * @throws IOException
+	 */	
+	public boolean moveToTrash() throws IOException;
+	
+	/**
 	 * Tells this {@link IResourceHandler} instance can have child resources.
 	 * @return <code>true</code> if it's possible that this {@link IResourceHandler} can have child resources.
 	 */

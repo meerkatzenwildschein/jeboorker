@@ -42,8 +42,12 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 
 	@Override
 	public void delete() throws IOException {
-		throw new UnsupportedOperationException("Not Supported");
 	}
+	
+	@Override
+	public boolean moveToTrash() throws IOException {
+		return ResourceHandlerUtils.moveToTrash(this);
+	}		
 
 	@Override
 	public void dispose() {
