@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 class InputStreamResourceHandler extends AResourceHandler {
 	
 	private InputStream inputStream;
-
+	
 	InputStreamResourceHandler(InputStream inputStream) {
 		if(!(inputStream instanceof BufferedInputStream)) {
 			this.inputStream = new BufferedInputStream(inputStream);
@@ -32,6 +32,11 @@ class InputStreamResourceHandler extends AResourceHandler {
 	@Override
 	public void delete() {
 	}
+	
+	@Override
+	public boolean moveToTrash() throws IOException {
+		return ResourceHandlerUtils.moveToTrash(this);
+	}		
 
 	@Override
 	public void dispose() {
@@ -41,7 +46,7 @@ class InputStreamResourceHandler extends AResourceHandler {
 
 	@Override
 	public boolean exists() {
-		return false;
+		return this.inputStream != null;
 	}
 
 	@Override

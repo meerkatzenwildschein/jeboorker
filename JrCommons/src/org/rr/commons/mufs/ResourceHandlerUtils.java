@@ -475,7 +475,7 @@ public class ResourceHandlerUtils {
 	 * @return <code>true</code> if moving to trash was successful and <code>false</code> otherwise.
 	 * @throws IOException
 	 */
-	public static boolean moveToTrash(final IResourceHandler resourceHandler) throws IOException {
+	static boolean moveToTrash(final IResourceHandler resourceHandler) throws IOException {
 	    //Die zu löschende Datei in den Ordner ~/.local/share/Trash/files verschieben.
 	    //Im Ordner ~/.local/share/Trash/info eine Datei mit dem gleichen Basename, aber Endung .trashinfo anlegen. In dieser Datei steht der Pfad, der angibt, wo die Datei stand, als sie gelöscht wurde. Außerdem ein Zeitstempel der Löschung.
 		
@@ -506,9 +506,7 @@ public class ResourceHandlerUtils {
 				}
 				
 				resourceHandler.moveTo(ResourceHandlerFactory.getResourceLoader(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
-				if(!resourceHandler.exists()) {
-					return true;
-				}
+				return true;
 			}
 		}
 		
