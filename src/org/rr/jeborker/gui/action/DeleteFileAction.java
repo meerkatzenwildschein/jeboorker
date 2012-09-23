@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.jeborker.gui.MainController;
 
 class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer> {
@@ -35,18 +36,20 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	public void actionPerformed(ActionEvent e) {
 		try {
 			if(this.doOnce().intValue() == JOptionPane.YES_OPTION) {
-				fileToDelete.delete();
-				if(fileToDelete.exists()) {
-					LoggerFactory.logWarning(this.getClass(), "could not delete file " + fileToDelete);
-				} else {
-					ActionUtils.refreshEntry(fileToDelete);
+				if(!ResourceHandlerUtils.moveToTrash(fileToDelete)) {
+					fileToDelete.delete();
+					if(fileToDelete.exists()) {
+						LoggerFactory.logWarning(this.getClass(), "could not delete file " + fileToDelete);
+					} else {
+						ActionUtils.refreshEntry(fileToDelete);
+					}
 				}
 			}
 		} catch (Exception e1) {
 			LoggerFactory.logWarning(this, "could not delete file " + fileToDelete, e1);
 		}
 	}
-
+	
 	@Override
 	public Integer doOnce() {
 		if(this.result == null) {
