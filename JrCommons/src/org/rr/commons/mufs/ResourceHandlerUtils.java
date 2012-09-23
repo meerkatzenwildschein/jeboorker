@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import javax.swing.filechooser.FileSystemView;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.DateUtils;
 
 /**
  * A class providing some util methods to be used with 
