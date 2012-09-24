@@ -191,6 +191,17 @@ class MainMenuView extends JMenuBar {
 				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path));
 				mnVerzeichnisShowHide.add(pathItem);
 			}
+			{
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "showall"));
+				mnVerzeichnisShowHide.add(pathItem);
+			}
+			{
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "hideall"));
+				mnVerzeichnisShowHide.add(pathItem);
+			}			
+			
 			fileMenuBar.add(mnVerzeichnisShowHide);
 			if(basePath.isEmpty()) {
 				mnVerzeichnisShowHide.setEnabled(false);
