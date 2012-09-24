@@ -181,8 +181,8 @@ public class IteratorList<E> implements List<E> {
 			try {
 				//field underlying / com.orientechnologies.orient.core.iterator.ORecordIteratorClass
 				//field browsedRecords / int
-				final Object underlying = ReflectionUtils.getFieldValue(iterator, "underlying");
-				final Long records = (Long)ReflectionUtils.getFieldValue(underlying, "totalAvailableRecords");
+				final Object underlying = ReflectionUtils.getFieldValue(iterator, "underlying", false);
+				final Long records = (Long)ReflectionUtils.getFieldValue(underlying, "totalAvailableRecords", false);
 				if(records!=null) {
 					return records.intValue();
 				}
@@ -201,7 +201,7 @@ public class IteratorList<E> implements List<E> {
 			} catch (Exception e) {
 				//sometimes happens if the list is empty.
 				try {
-					List<?> l = (List<?>) ReflectionUtils.getFieldValue(iterable, "documents");
+					List<?> l = (List<?>) ReflectionUtils.getFieldValue(iterable, "documents", false);
 					if(l!=null) {
 						return l.size();
 					}

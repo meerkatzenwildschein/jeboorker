@@ -109,13 +109,23 @@ public class ReflectionUtils implements Serializable {
 	 * @throws IllegalArgumentException 
 	 * @throws NoSuchFieldException
 	 */
-	public static Object getFieldValue(final Object object, final String fieldName) throws ReflectionFailureException {
+	public static Object getFieldValue(final Object object, final String fieldName, boolean useGetter) throws ReflectionFailureException {
 		try {
 			final Class<?> c;
 			if(object instanceof Class<?>) {
 				c = (Class<?>) object;
 			} else {
 				c = object.getClass();
+			}
+			
+			if(useGetter) {
+				String getter = "get" + StringUtils.capitalize(fieldName);
+				Method method = getMethod(c, getter, null, VISIBILITY_VISIBLE_ACCESSIBLE_ONLY);
+				if(method != null) {
+					method.setAccessible(true);
+					Object methodResult = method.invoke(object, null);
+					return methodResult;
+				}
 			}
 			
 			//first try to get the desired field from the cache and return it's value.
@@ -189,7 +199,7 @@ public class ReflectionUtils implements Serializable {
 			classNameToClassCache.put(qualifiedFieldName, clazz);
 			return clazz;
 		}
-		Object fieldValue = getFieldValue(clazz, fieldName);
+		Object fieldValue = getFieldValue(clazz, fieldName, false);
 		return fieldValue;
 	}
 
@@ -874,7 +884,7 @@ public class ReflectionUtils implements Serializable {
 		Field[] fields = source.getClass().getFields();
 		for (int i = 0; i < fields.length; i++) {
 			if (fields[i].isAccessible()) {
-				Object fieldValue = getFieldValue(source, fields[i].getName());
+				Object fieldValue = getFieldValue(source, fields[i].getName(), false);
 				try {
 					fields[i].set(target, fieldValue);
 				} catch (Exception e) {}
