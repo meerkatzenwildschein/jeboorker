@@ -32,7 +32,7 @@ public class ImageFileChooser extends JFileChooser {
 	 */
 	public int getReturnValue() {
 		try {
-			return ((Integer) ReflectionUtils.getFieldValue(this, "returnValue")).intValue();
+			return ((Integer) ReflectionUtils.getFieldValue(this, "returnValue", false)).intValue();
 		} catch (ReflectionFailureException e) {
 			throw new RuntimeException(e);
 		}
