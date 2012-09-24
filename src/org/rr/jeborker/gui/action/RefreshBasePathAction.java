@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
@@ -11,6 +12,7 @@ import javax.swing.ImageIcon;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -24,12 +26,17 @@ class RefreshBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = -9066575818229620987L;
 	
+	private static final String REFRESH_ALL = "refreshAll";
+	
 	private String path;
 	
 	RefreshBasePathAction(String text) {
 		super();
 		putValue(Action.NAME, text);
-		if(ResourceHandlerFactory.hasResourceLoader(text)) {
+		if(REFRESH_ALL.equals(text)) {
+			path = text;
+			putValue(Action.NAME, Bundle.getString("RefreshBasePathAction.refreshAll.name"));
+		} else if(ResourceHandlerFactory.hasResourceLoader(text)) {
 			path = text;
 		}
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("refresh_16.gif")));
@@ -43,7 +50,14 @@ class RefreshBasePathAction extends AbstractAction {
 		controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 		String messageFinished = Bundle.getString("RefreshBasePathAction.finished");
 		try {
-			if(path!=null && path.length() > 0) {
+			if(REFRESH_ALL.equals(path)) {
+				final List<String> basePaths = JeboorkerPreferences.getBasePath();
+				for (String basePath : basePaths) {
+					if(ResourceHandlerFactory.getResourceLoader(basePath).isDirectoryResource()) {
+						doRefreshBasePath(basePath, e, controller.getProgressMonitor());
+					}
+				}				
+			} else if(path!=null && path.length() > 0) {
 				if(!ResourceHandlerFactory.getResourceLoader(path).isDirectoryResource()) {
 					messageFinished = "The folder " + path + " did not exists.";
 				} else {			

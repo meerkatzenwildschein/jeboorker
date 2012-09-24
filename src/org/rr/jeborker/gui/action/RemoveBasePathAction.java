@@ -95,11 +95,15 @@ class RemoveBasePathAction extends AbstractAction {
 		final MainController controller = MainController.getController();
 		
 		progressMonitor.setMessage(Bundle.getString("RemoveBasePathAction.deletingMany"));
+		
+		for(EbookPropertyItem item : items) {
+			DefaultDBManager.getInstance().deleteObject(item);
+		}
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				controller.removeEbookPropertyItems(items);
+				controller.refreshTable(true);
 			}
 		});		
 	}
@@ -113,6 +117,7 @@ class RemoveBasePathAction extends AbstractAction {
 		final MainController controller = MainController.getController();
 		
 		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
