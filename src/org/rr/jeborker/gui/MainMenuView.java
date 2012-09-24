@@ -165,6 +165,12 @@ class MainMenuView extends JMenuBar {
 			if(basePath.isEmpty()) {
 				mnVerzeichnisEntfernen.setEnabled(false);
 			}	
+			
+			if(basePath.size() > 1) {
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, "removeAll"));
+				mnVerzeichnisEntfernen.add(pathItem);				
+			}			
 		}
 
 		{
