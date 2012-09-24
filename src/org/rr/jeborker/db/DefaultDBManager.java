@@ -188,7 +188,7 @@ public class DefaultDBManager {
 			public void run(final Field field) {
 				try {
 					final String fieldName = field.getName();
-					final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, fieldName);
+					final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, fieldName, true);
 					if(bytes != null) {
 						ReflectionUtils.setFieldValue(save, fieldName, bytes);
 					}
@@ -211,7 +211,7 @@ public class DefaultDBManager {
 			public void run(final Field field) {
 				try {
 					final String fieldName = field.getName();
-					final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, fieldName);
+					final byte[] bytes = (byte[]) ReflectionUtils.getFieldValue(item, fieldName, true);
 					if(bytes != null && bytes.length > 0) {
 						ORID itemIdentity = getDB().getIdentity(item);
 						if(itemIdentity.getClusterId() != -1) {
