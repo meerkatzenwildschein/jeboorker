@@ -274,7 +274,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 			}
 			
 			try {
-				final Object fieldValueObject = ReflectionUtils.getFieldValue(item, field.getName());
+				final Object fieldValueObject = ReflectionUtils.getFieldValue(item, field.getName(), true);
 				final String fieldValueString = StringUtils.toString(fieldValueObject);
 			
 				if(StringUtils.isNotEmpty(fieldValueString)) {
