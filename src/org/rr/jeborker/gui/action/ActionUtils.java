@@ -55,23 +55,37 @@ public class ActionUtils {
 		}		
 	}
 	
+	/**
+	 * Toggles the visibility of the given base path entry. If it's visible
+	 * it's set to hide an other way round. 
+	 * @param path The path to be toggled.
+	 */
 	static void toggleBasePathVisibility(String path) {
+		final boolean isShow = MainMenuController.getController().isShowHideBasePathStatusShow(path);
+		setBasePathVisibility(path, !isShow);
+	}	
+	
+	/**
+	 * Sets the visibility of the given base path. 
+	 * @param path path which visibility should be set. 
+	 * @param show <code>true</code> if the base path should be shown and <code>false</code> for hide it.
+	 */
+	static void setBasePathVisibility(String path, boolean show) {
 		final String queryIdentifier = ShowHideBasePathAction.class.getName() + "_" + path;
 		final MainController controller = MainController.getController();
 		try {
-			boolean isShow = MainMenuController.getController().isShowHideBasePathStatusShow(path);
 			QueryCondition queryCondition = controller.getTableModel().getQueryCondition();
 			queryCondition.removeConditionByIdentifier(queryIdentifier); //remove possibly existing queries.
-			if(isShow) {
+			if(!show) {
 				queryCondition.addAndChild(new QueryCondition("basePath", path, "<>", queryIdentifier));
 			}
 				
-			MainMenuController.getController().setShowHideBasePathStatusShow(path, !isShow);
+			MainMenuController.getController().setShowHideBasePathStatusShow(path, show);
 		} catch (Exception ex) {
 			LoggerFactory.log(Level.WARNING, ActionUtils.class, "Path " + path, ex);
 		} finally {
 			controller.refreshTable(true);
 		}
-	}	
+	}		
 	
 }
