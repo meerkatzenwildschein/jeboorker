@@ -22,9 +22,16 @@ import org.rr.jeborker.gui.MainMonitor;
 class RemoveBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = 6607018752541779846L;
+	
+	private static final String REMOVE_ALL = "removeAll";
+	
+	private String path;
 
 	RemoveBasePathAction(String text) {
-		if(text==null) {
+		this.path = text;
+		if(REMOVE_ALL.equals(text)) {
+			putValue(Action.NAME, Bundle.getString("RemoveBasePathAction.removeAll.name"));
+		} else if(text==null) {
 			putValue(Action.NAME, Bundle.getString("ReadEbookFolderAction.name"));
 		} else {
 			putValue(Action.NAME, text);
@@ -35,12 +42,19 @@ class RemoveBasePathAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final String path = (String) getValue(Action.NAME);
-		
-		removeBasePathEntries(path, true);
-		
-		JeboorkerPreferences.removeBasePath(path);
-		MainMenuController.getController().removeBasePathMenuEntry(path);
+		if(REMOVE_ALL.equals(path)) {
+			final List<String> basePaths = JeboorkerPreferences.getBasePath();
+			for (String basePath : basePaths) {
+				removeBasePathEntries(basePath, true);
+				JeboorkerPreferences.removeBasePath(basePath);
+				MainMenuController.getController().removeBasePathMenuEntry(basePath);
+			}			
+		} else {
+			final String name = (String) getValue(Action.NAME);
+			removeBasePathEntries(name, true);
+			JeboorkerPreferences.removeBasePath(name);
+			MainMenuController.getController().removeBasePathMenuEntry(name);
+		}
 	}
 
 	static void removeBasePathEntries(final String path, boolean refreshTable) {
