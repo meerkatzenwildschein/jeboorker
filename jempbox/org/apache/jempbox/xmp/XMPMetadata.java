@@ -91,21 +91,17 @@ public class XMPMetadata
                         "begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"");
 
         xmpDocument.appendChild(beginXPacket);
-        Element xmpMeta = xmpDocument.createElementNS("adobe:ns:meta/",
-                "x:xmpmeta");
-        xmpMeta.setAttributeNS(XMPSchema.NS_NAMESPACE, "xmlns:x",
-                "adobe:ns:meta/");
+        Element xmpMeta = xmpDocument.createElementNS("adobe:ns:meta/","x:xmpmeta");
+        xmpMeta.setAttributeNS(XMPSchema.NS_NAMESPACE, "xmlns:x","adobe:ns:meta/");
 
         xmpDocument.appendChild(xmpMeta);
 
         Element rdf = xmpDocument.createElement("rdf:RDF");
-        rdf.setAttributeNS(XMPSchema.NS_NAMESPACE, "xmlns:rdf",
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        rdf.setAttributeNS(XMPSchema.NS_NAMESPACE, "xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 
         xmpMeta.appendChild(rdf);
 
-        ProcessingInstruction endXPacket = xmpDocument
-                .createProcessingInstruction("xpacket", "end=\"w\"");
+        ProcessingInstruction endXPacket = xmpDocument.createProcessingInstruction("xpacket", "end=\"w\"");
         xmpDocument.appendChild(endXPacket);
         init();
     }
@@ -125,6 +121,7 @@ public class XMPMetadata
     private void init()
     {
         nsMappings.put(XMPSchemaPDF.NAMESPACE, XMPSchemaPDF.class);
+        nsMappings.put(XMPSchemaPDFX.NAMESPACE, XMPSchemaPDFX.class);
         nsMappings.put(XMPSchemaBasic.NAMESPACE, XMPSchemaBasic.class);
         nsMappings
                 .put(XMPSchemaDublinCore.NAMESPACE, XMPSchemaDublinCore.class);
@@ -177,6 +174,19 @@ public class XMPMetadata
     {
         return (XMPSchemaPDF) getSchemaByClass(XMPSchemaPDF.class);
     }
+    
+    /**
+     * Get the PDFX Schema.
+     * 
+     * @return The first PDFX schema in the list.
+     * 
+     * @throws IOException
+     *             If there is an error accessing the schema.
+     */
+    public XMPSchemaPDFX getPDFXSchema() throws IOException
+    {
+        return (XMPSchemaPDFX) getSchemaByClass(XMPSchemaPDFX.class);
+    }    
 
     /**
      * Get the Basic Schema.
@@ -430,6 +440,20 @@ public class XMPMetadata
         XMPSchemaPDF schema = new XMPSchemaPDF(this);
         return (XMPSchemaPDF) basicAddSchema(schema);
     }
+    
+    /**
+     * Create and add a new PDFX Schema to this metadata. Typically a XMP
+     * document will only have one PDF schema (but multiple are supported) so it
+     * is recommended that you first check the existence of a PDF scheme by
+     * using getPDFXSchema()
+     * 
+     * @return A new blank PDF schema that is now part of the metadata.
+     */
+    public XMPSchemaPDFX addPDFXSchema()
+    {
+        XMPSchemaPDFX schema = new XMPSchemaPDFX(this);
+        return (XMPSchemaPDFX) basicAddSchema(schema);
+    }    
 
     /**
      * Create and add a new Dublin Core Schema to this metadata. Typically a XMP
