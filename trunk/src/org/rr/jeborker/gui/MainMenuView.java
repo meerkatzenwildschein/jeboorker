@@ -179,6 +179,12 @@ class MainMenuView extends JMenuBar {
 			if(basePath.isEmpty()) {
 				mnVerzeichnisRefresh.setEnabled(false);
 			}
+			
+			if(basePath.size() > 1) {
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, "refreshAll"));
+				mnVerzeichnisRefresh.add(pathItem);				
+			}
 		}
 		
 		{
@@ -191,16 +197,18 @@ class MainMenuView extends JMenuBar {
 				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path));
 				mnVerzeichnisShowHide.add(pathItem);
 			}
-			{
-				JMenuItem pathItem = new JMenuItem();
-				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "showall"));
-				mnVerzeichnisShowHide.add(pathItem);
+			if(basePath.size() > 1) {
+				{
+					JMenuItem pathItem = new JMenuItem();
+					pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "showAll"));
+					mnVerzeichnisShowHide.add(pathItem);
+				}
+				{
+					JMenuItem pathItem = new JMenuItem();
+					pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "hideAll"));
+					mnVerzeichnisShowHide.add(pathItem);
+				}		
 			}
-			{
-				JMenuItem pathItem = new JMenuItem();
-				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "hideall"));
-				mnVerzeichnisShowHide.add(pathItem);
-			}			
 			
 			fileMenuBar.add(mnVerzeichnisShowHide);
 			if(basePath.isEmpty()) {

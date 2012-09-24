@@ -16,9 +16,9 @@ class ShowHideBasePathAction extends AbstractAction {
 
 	private static final long serialVersionUID = -9066575818229620987L;
 	
-	private static final String HIDE_ALL = "hideall";
+	private static final String HIDE_ALL = "hideAll";
 	
-	private static final String SHOW_ALL = "showall";
+	private static final String SHOW_ALL = "showAll";
 	
 	private String path;
 	
@@ -29,10 +29,10 @@ class ShowHideBasePathAction extends AbstractAction {
 		} else {
 			if(SHOW_ALL.equals(text)) {
 				path = text;
-				putValue(Action.NAME, Bundle.getString("ShowHideBasePathAction.showall.name"));
+				putValue(Action.NAME, Bundle.getString("ShowHideBasePathAction.showAll.name"));
 			} else if(HIDE_ALL.equals(text)) {
 				path = text;
-				putValue(Action.NAME, Bundle.getString("ShowHideBasePathAction.hideall.name"));
+				putValue(Action.NAME, Bundle.getString("ShowHideBasePathAction.hideAll.name"));
 			} else if(ResourceHandlerFactory.hasResourceLoader(text)) {
 				path = text;
 				putValue(Action.NAME, text);
