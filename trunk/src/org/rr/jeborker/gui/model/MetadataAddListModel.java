@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -20,8 +21,11 @@ public class MetadataAddListModel extends AbstractListModel {
 	
 	private final IMetadataReader reader;
 	
-	public MetadataAddListModel(final IMetadataReader reader) {
+	private final EbookPropertyItem item;
+	
+	public MetadataAddListModel(final IMetadataReader reader, final EbookPropertyItem item) {
 		this.reader = reader;
+		this.item = item;
 	}
 	
 	@Override
@@ -52,6 +56,6 @@ public class MetadataAddListModel extends AbstractListModel {
 			}
 		}
 		supportedMetaData.removeAll(toRemove);
-		actionsForMetadataProperties = ActionFactory.getAddMetadataActions(supportedMetaData);
+		actionsForMetadataProperties = ActionFactory.getAddMetadataActions(supportedMetaData, item);
 	}
 }

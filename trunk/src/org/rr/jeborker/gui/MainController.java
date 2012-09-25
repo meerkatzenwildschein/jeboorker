@@ -97,7 +97,7 @@ public class MainController {
 			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
 				//write properties
 				MainControllerUtils.writeProperties(previousProperties);
-				EbookPropertyDBTableModel model = (EbookPropertyDBTableModel)mainWindow.table.getModel();
+				EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
 				int rowCount = model.getRowCount();
 				
 				if(e.getFirstIndex() >= 0 && e.getFirstIndex() < rowCount) {
@@ -124,14 +124,14 @@ public class MainController {
 		 */
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			final List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
-			for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
+			final EbookPropertyItem ebookPropertyItem = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItem(); //getSelectedEbookPropertyItems();
+//			for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
 				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
 				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
 				
 				refreshTableSelectedItem(false);
-			}
+//			}
 		}
 	}
 	
@@ -341,7 +341,7 @@ public class MainController {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
 				MetadataProperty ratingMetaData = reader.createRatingMetaData();
 				
-				final Property createProperty = EbookSheetProperty.createProperty(ratingMetaData, 0);
+				final Property createProperty = EbookSheetProperty.createProperty(ratingMetaData, item, 0);
 				this.addMetadataProperty(createProperty);				
 				createProperty.setValue(rating);
 			}
@@ -532,14 +532,14 @@ public class MainController {
 			} else {
 				final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
 				final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-				mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, reader));
+				mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, item, reader));
 				if(item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
 					setImage(reader);
 				} else {
 					setImage(null);
 				}
 				
-				mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader));
+				mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, item));
 			}
 		}
 	}

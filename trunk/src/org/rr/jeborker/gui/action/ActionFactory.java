@@ -210,10 +210,10 @@ public class ActionFactory {
 	 * should be created for.
 	 * @return The actions for adding a metadata entry. Never returns <code>null</code>.
 	 */
-	public static List<Action> getAddMetadataActions(List<MetadataProperty> properties) {
+	public static List<Action> getAddMetadataActions(List<MetadataProperty> properties, EbookPropertyItem item) {
 		final ArrayList<Action> result = new ArrayList<Action>();
 		for (MetadataProperty property : properties) {
-			AddMetadataAction addMetadataAction = new AddMetadataAction(property);
+			AddMetadataAction addMetadataAction = new AddMetadataAction(property, item);
 			if(!property.isEditable()) {
 				addMetadataAction.setEnabled(false);
 			}

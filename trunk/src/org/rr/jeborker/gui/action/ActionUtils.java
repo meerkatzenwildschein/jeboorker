@@ -22,8 +22,8 @@ public class ActionUtils {
 	 * Adds a metadata item to the sheet.
 	 * @param property The property to be added.
 	 */
-	static Property addMetadataItem(MetadataProperty property) {
-		final Property createProperty = EbookSheetProperty.createProperty(property, 0);
+	static Property addMetadataItem(MetadataProperty property, EbookPropertyItem item) {
+		final Property createProperty = EbookSheetProperty.createProperty(property, item, 0);
 		final MainController controller = MainController.getController();
 		controller.addMetadataProperty(createProperty);
 		return createProperty;
