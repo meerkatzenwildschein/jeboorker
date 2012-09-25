@@ -91,6 +91,8 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			}
 			
 			writeMetadata(pdfReader, xmpMetadataSet ? blankXMP.asByteArray() : null, info);
+		} catch (com.itextpdf.text.exceptions.BadPasswordException e) {
+			LoggerFactory.logWarning(this, "The pdf '" + ebookResource.getName() + "' is modification protected.", e);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
 		}
