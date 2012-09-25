@@ -24,21 +24,28 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:ben@benlitchfield.com">Ben Litchfield</a>
  * @version $Revision: 1.2 $
  */
-public class XMPSchemaPDFX extends XMPSchema
+public class XMPSchemaXMP extends XMPSchema
 {
     /**
      * The namespace for this schema.
      */
-    public static final String NAMESPACE = "http://ns.adobe.com/pdfx/1.3/";
+    public static final String NAMESPACE = "http://ns.adobe.com/xmp/1.0/";
+    
+    
+    public XMPSchemaXMP(XMPMetadata parent, String namespaceName,
+            String namespaceURI)
+    {
+        super( parent, namespaceName, namespaceURI );
+    }
     
     /**
      * Construct a new blank PDF schema.
      *
      * @param parent The parent metadata schema that this will be part of.
      */
-    public XMPSchemaPDFX( XMPMetadata parent )
+    public XMPSchemaXMP( XMPMetadata parent )
     {
-        super( parent, "pdfx", NAMESPACE );
+        super( parent, "xmp", NAMESPACE );
     }
     
     /**
@@ -47,8 +54,27 @@ public class XMPSchemaPDFX extends XMPSchema
      * @param element The existing element.
      * @param prefix The schema prefix.
      */
-    public XMPSchemaPDFX( Element element, String prefix )
+    public XMPSchemaXMP( Element element, String prefix )
     {
         super( element, prefix );
+    }
+    
+    /**
+     * Set the XMP ModifyDate.
+     *
+     */
+    public void setModifyDate( String modifyDate )
+    {
+        setTextProperty( prefix + ":ModifyDate", modifyDate );
+    }
+    
+    /**
+     * Get the value of the ModifyDate property.
+     *
+     * @return The ModifyDate property.
+     */
+    public String getModifyDate()
+    {
+        return getTextProperty( prefix + ":ModifyDate" );
     }
 }
