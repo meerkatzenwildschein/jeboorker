@@ -122,6 +122,7 @@ public class XMPMetadata
     {
         nsMappings.put(XMPSchemaPDF.NAMESPACE, XMPSchemaPDF.class);
         nsMappings.put(XMPSchemaPDFX.NAMESPACE, XMPSchemaPDFX.class);
+        nsMappings.put(XMPSchemaXMP.NAMESPACE, XMPSchemaXMP.class);
         nsMappings.put(XMPSchemaBasic.NAMESPACE, XMPSchemaBasic.class);
         nsMappings
                 .put(XMPSchemaDublinCore.NAMESPACE, XMPSchemaDublinCore.class);
@@ -186,6 +187,19 @@ public class XMPMetadata
     public XMPSchemaPDFX getPDFXSchema() throws IOException
     {
         return (XMPSchemaPDFX) getSchemaByClass(XMPSchemaPDFX.class);
+    }    
+    
+    /**
+     * Get the XMP Schema.
+     * 
+     * @return The first XMP schema in the list.
+     * 
+     * @throws IOException
+     *             If there is an error accessing the schema.
+     */
+    public XMPSchemaXMP getXMPSchema() throws IOException
+    {
+        return (XMPSchemaXMP) getSchemaByClass(XMPSchemaXMP.class);
     }    
 
     /**
@@ -454,6 +468,20 @@ public class XMPMetadata
         XMPSchemaPDFX schema = new XMPSchemaPDFX(this);
         return (XMPSchemaPDFX) basicAddSchema(schema);
     }    
+    
+    /**
+     * Create and add a new PDFX Schema to this metadata. Typically a XMP
+     * document will only have one PDF schema (but multiple are supported) so it
+     * is recommended that you first check the existence of a PDF scheme by
+     * using getPDFXSchema()
+     * 
+     * @return A new blank XMP schema that is now part of the metadata.
+     */
+    public XMPSchemaXMP addXMPSchema()
+    {
+    	XMPSchemaXMP schema = new XMPSchemaXMP(this);
+        return (XMPSchemaXMP) basicAddSchema(schema);
+    }      
 
     /**
      * Create and add a new Dublin Core Schema to this metadata. Typically a XMP
