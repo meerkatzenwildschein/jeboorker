@@ -147,14 +147,14 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 */
 	public void reloadEbookPropertyItemAt(int rowIndex) {
 		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
-		final EbookPropertyItem itemToRefresh = this.getEbookPropertyItemAt(rowIndex);
-		if(itemToRefresh != null) {
-			final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", itemToRefresh.getFile());
+		final EbookPropertyItem modelItem = this.getEbookPropertyItemAt(rowIndex);
+		if(modelItem != null) {
+			final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", modelItem.getFile());
 			
 			if(!items.isEmpty()) {
-				EbookPropertyItem item = items.get(0);
-				if(item.getFile().equals(itemToRefresh.getFile())) {
-					ebookItems.set(rowIndex, item);
+				EbookPropertyItem dbItem = items.get(0);
+				if(dbItem.getFile().equals(modelItem.getFile())) {
+					ebookItems.set(rowIndex, dbItem);
 				}
 			}
 		}
@@ -256,7 +256,7 @@ public class EbookPropertyDBTableModel implements TableModel {
      *  for using them from cache.
      * @return The desired {@link EbookPropertyItem}s.
      */
-    public List<EbookPropertyItem> getEbookItems() {
+    private List<EbookPropertyItem> getEbookItems() {
     	//NO BREAKPOINT HERE!
     	if(Jeboorker.isRuntime) {
 	    	if(isDirty() || dbItems==null) {
