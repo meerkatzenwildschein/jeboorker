@@ -271,6 +271,8 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			if(tmpEbookResourceLoader.size() > 0) {
 				//new temp pdf looks good. Move the new temp one over the old one. 
 				tmpEbookResourceLoader.moveTo(ebookResource, true);
+			} else {
+				tmpEbookResourceLoader.delete();
 			}
 		}
 	}
