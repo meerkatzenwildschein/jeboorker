@@ -310,7 +310,7 @@ public class EbookSheetProperty extends DefaultProperty {
 			String name1 = p1.getName().toLowerCase();
 			if(name1.equals("file")) {
 				return "01";
-			} else if(name1.equals("author")) {
+			} else if(name1.equals("author") || name1.equals("aut")) {
 				return "02";
 			}else if(name1.equals("title")) {
 				return "03";
