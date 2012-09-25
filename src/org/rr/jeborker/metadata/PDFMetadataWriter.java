@@ -133,6 +133,11 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 				if(xmpSchema==null) {
 					xmpSchema = xmpMetadata.addPDFXSchema();
 				}
+			} else if (namespace.equals("xmp")) {
+				xmpSchema = xmpMetadata.getXMPSchema();
+				if(xmpSchema==null) {
+					xmpSchema = xmpMetadata.addXMPSchema();
+				}
 			} else if (namespace.equals("xapMM") || namespace.equals("xmpMM")) {
 				xmpSchema = xmpMetadata.getMediaManagementSchema();
 				if(xmpSchema==null) {
