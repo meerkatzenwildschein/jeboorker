@@ -213,7 +213,11 @@ class EPubMetadataWriter extends AEpubMetadataHandler implements IMetadataWriter
 		if (newZipData != null && newZipData.length > 0) {
 			final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");
 			tmpEbookResourceLoader.setContent(newZipData);
-			tmpEbookResourceLoader.moveTo(ebookResourceHandler, true);
+			if(tmpEbookResourceLoader.size() > 0) {
+				tmpEbookResourceLoader.moveTo(ebookResourceHandler, true);
+			} else {
+				tmpEbookResourceLoader.delete();
+			}
 			
 			super.zipContent = newZipData;
 		}
