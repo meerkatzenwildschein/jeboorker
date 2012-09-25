@@ -98,6 +98,7 @@ class RefreshBasePathAction extends AbstractAction {
 		} else {
 			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
 			DefaultDBManager.getInstance().updateObject(item);
+			MainController.getController().refreshTableSelectedItem(true);
 		}
 	}
 
