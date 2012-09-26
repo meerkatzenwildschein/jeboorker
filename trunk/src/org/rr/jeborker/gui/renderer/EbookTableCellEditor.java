@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui.renderer;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
 import java.util.EventObject;
@@ -9,7 +8,6 @@ import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 
@@ -19,18 +17,8 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 	
 	private EbookPropertyItem value;
 	
-	private final Color selectedBgColor;
-	
-	private final Color selectedFgColor;
-	
 	public EbookTableCellEditor() {
 		super();
-		selectedFgColor = SwingUtils.getSelectionForegroundColor();
-		
-		//workaround for a swing bug. The first time, the editor is used, the 
-		//ui color instance draws the wrong color but have the right rgb values.
-		Color color = SwingUtils.getSelectionBackgroundColor();
-		selectedBgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
 	}
 	
 	@Override

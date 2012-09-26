@@ -132,6 +132,12 @@ public class SwingUtils {
 	 * @return The desired foreground color.
 	 */
 	public static Color getSelectionForegroundColor() {
+		//for windows
+		Color win = (Color) Toolkit.getDefaultToolkit().getDesktopProperty("win.item.highlightTextColor");
+		if(win != null) {
+			return win;
+		}
+		
 		Color color = UIManager.getColor("Table.selectionForeground");
 		if(color == null) {
 			color = new JList().getSelectionForeground();
@@ -149,6 +155,22 @@ public class SwingUtils {
 		Color c = new Color(MathUtils.range(color.getRed() + brighter, 0, 255) , MathUtils.range(color.getGreen() + brighter, 0, 255), MathUtils.range(color.getBlue() + brighter, 0, 255));
 		return c;
 	}
+	
+	public static Color getForegroundColor() {
+		Color color = UIManager.getColor("Table.foreground");
+		if(color == null) {
+			color = new JList().getForeground();
+		}
+		return color;		
+	}
+	
+	public static Color getBackgroundColor() {
+		Color color = UIManager.getColor("Table.background");
+		if(color == null) {
+			color = new JList().getBackground();
+		}
+		return color;		
+	}	
 	
 	public static void centerOnScreen(Window window) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
