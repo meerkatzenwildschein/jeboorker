@@ -62,9 +62,6 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 		this.value = (EbookPropertyItem) value;
 		final Component tableCellComponent = super.getTableCellComponent(table, value, true, true, row, column);
 
-		tableCellComponent.setBackground(selectedBgColor);
-		tableCellComponent.setForeground(selectedFgColor);
-		
 		return tableCellComponent;
 	}
 
