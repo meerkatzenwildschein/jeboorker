@@ -17,7 +17,7 @@ public class Jeboorker {
 
 	public static boolean isRuntime = false;
 
-	public static String version = "0.1.4";
+	public static String version = "0.1.5";
 
 	/**
 	 * Launch the application.
