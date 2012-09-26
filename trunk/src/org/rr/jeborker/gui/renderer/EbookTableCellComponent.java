@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -79,15 +78,22 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	private boolean labelSetupComplete = false;
 
 	public EbookTableCellComponent() {
-		selectedFgColor = SwingUtils.getSelectionForegroundColor();
+		
 		
 		//workaround for a swing bug. The first time, the editor is used, the 
 		//ui color instance draws the wrong color but have the right rgb values.
-		Color color = SwingUtils.getSelectionBackgroundColor();
+		Color color;
+		color = SwingUtils.getSelectionForegroundColor();
+		selectedFgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
+		
+		color = SwingUtils.getSelectionBackgroundColor();
 		selectedBgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
 		
-		bgColor = SwingUtils.getBackgroundColor();
-		fgColor = SwingUtils.getForegroundColor();
+		color = SwingUtils.getBackgroundColor();
+		bgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+		
+		color = SwingUtils.getForegroundColor();
+		fgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
@@ -164,6 +170,20 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		//no need to do it twice.
 		final EbookPropertyItem item = (EbookPropertyItem) value;
 		
+		if(isSelected) {
+			firstLineLabel.setForeground(selectedFgColor);
+			secondLineLabel.setForeground(selectedFgColor);
+			thirdLineLabel.setForeground(selectedFgColor);
+			this.setForeground(selectedFgColor);
+			this.setBackground(selectedBgColor);
+		} else {
+			firstLineLabel.setForeground(fgColor);
+			secondLineLabel.setForeground(fgColor);
+			thirdLineLabel.setForeground(fgColor);
+			this.setForeground(fgColor);
+			this.setBackground(bgColor);
+		}
+		
 		switch(column) {
 			case 0:
 				imageLabel.setIcon(this.getImageIconCover(table, item));
@@ -171,15 +191,6 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 				
 				//title
 				firstLineLabel.setText(this.getTitle(item));
-				if(isSelected) {
-					firstLineLabel.setForeground(selectedFgColor);
-					secondLineLabel.setForeground(selectedFgColor);
-					thirdLineLabel.setForeground(selectedFgColor);
-				} else {
-					firstLineLabel.setForeground(fgColor);
-					secondLineLabel.setForeground(fgColor);
-					thirdLineLabel.setForeground(fgColor);
-				}
 			         
 				//gray light file format
 				dataFormatLabel.setText(getDataFormat(item));
