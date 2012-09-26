@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.1.4.0
+VIProductVersion 0.1.5.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -67,10 +67,10 @@ Section -Main SEC0000
     File Readme.txt
     
     SetOutPath $INSTDIR\lib
-    File lib\bcprov-jdk16-146.jar
+    File lib\bcprov-jdk15on-147.jar
     File lib\commons-io-2.0.jar
     File lib\commons-lang-2.5.jar
-    File lib\iText-5.0.6.jar
+    File lib\itextpdf-5.3.3.jar
     File lib\jeboorker.jar
     File lib\jsoup-1.5.2.jar
     File lib\jsoup-1.5.2-sources.jar
@@ -140,10 +140,10 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\lib\jsoup-1.5.2-sources.jar
     Delete /REBOOTOK $INSTDIR\lib\jsoup-1.5.2.jar
     Delete /REBOOTOK $INSTDIR\lib\jeboorker.jar
-    Delete /REBOOTOK $INSTDIR\lib\iText-5.0.6.jar
+    Delete /REBOOTOK $INSTDIR\lib\itextpdf-5.3.3.jar
     Delete /REBOOTOK $INSTDIR\lib\commons-lang-2.5.jar
     Delete /REBOOTOK $INSTDIR\lib\commons-io-2.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\bcprov-jdk16-146.jar
+    Delete /REBOOTOK $INSTDIR\lib\bcprov-jdk15on-147.jar
     RMDir  $INSTDIR\lib
     
     Delete /REBOOTOK $INSTDIR\Jeboorker32.exe
