@@ -18,7 +18,6 @@ import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
 
 public class SimpleImageViewer extends JComponent {
 
@@ -80,7 +79,7 @@ public class SimpleImageViewer extends JComponent {
     	this.repaintRunnable = run;
     }
     
-	public void setImageResource(IResourceHandler resourceHandler) throws ImageFormatException {
+	public void setImageResource(IResourceHandler resourceHandler) {
 		//clear the view
 		if(resourceHandler==null) {
 			this.currentDisplayedResource = null;
@@ -98,8 +97,8 @@ public class SimpleImageViewer extends JComponent {
                 this.currentDisplayImage = null; //the old image is not longer used.
                 this.transformToView = null; //the transform for the image is not longer used.
                 
-                if(e instanceof ImageFormatException) {
-                	throw (ImageFormatException)e;
+                if(e.getClass().getSimpleName().equals("ImageFormatException")) {
+                	throw new RuntimeException(e);
                 }
                 LoggerFactory.log(Level.INFO, this, "Could not get an image provider for the file " + resourceHandler.getName(), e);
 			}
