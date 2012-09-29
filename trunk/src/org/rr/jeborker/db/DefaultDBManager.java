@@ -412,7 +412,7 @@ public class DefaultDBManager {
 		boolean result = false;
 		if(condition!=null) {
 			if(deepness == 0) {
-				localSql.append(" where");
+				localSql.append(" WHERE ");
 			}
 			
 			if(connect!=null && connect.length() > 0 && sql.charAt(sql.length()-1)!='(') {
