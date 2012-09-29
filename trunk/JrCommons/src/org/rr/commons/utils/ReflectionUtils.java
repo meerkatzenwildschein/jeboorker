@@ -264,7 +264,7 @@ public class ReflectionUtils implements Serializable {
 	 * @throws IllegalArgumentException 
 	 * @throws NoSuchMethodException 
 	 */
-	public static Object invokeMethod(final Object object, final String methodName, final Object[] args) throws ReflectionFailureException {
+	public static Object invokeMethod(final Object object, final String methodName, final Object ... args) throws ReflectionFailureException {
 		if (object instanceof Class<?>) {
 			return invokeMethod(null, (Class<?>)object, methodName, args);
 		} else {
@@ -653,7 +653,7 @@ public class ReflectionUtils implements Serializable {
 	 * @throws IllegalArgumentException 
 	 * @throws NoSuchMethodException 
 	 */
-	public static Object invokeMethod(final Object object, Class<?> clazz, final String methodName, Object[] args) throws ReflectionFailureException {
+	public static Object invokeMethod(final Object object, Class<?> clazz, final String methodName, Object ... args) throws ReflectionFailureException {
 		final String methodCacheKey = createMethodCacheKey(object, clazz, methodName, args);
 		Method method = methodNameToMethodCache.get(methodCacheKey);
 		Object[] argClasses = null;
