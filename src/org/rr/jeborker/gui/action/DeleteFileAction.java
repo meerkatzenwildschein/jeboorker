@@ -42,6 +42,8 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 					} else {
 						ActionUtils.refreshEntry(fileToDelete);
 					}
+				} else {
+					ActionUtils.refreshEntry(fileToDelete);
 				}
 			}
 		} catch (Exception e1) {
