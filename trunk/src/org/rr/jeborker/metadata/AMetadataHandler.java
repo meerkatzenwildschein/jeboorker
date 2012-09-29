@@ -47,15 +47,15 @@ public class AMetadataHandler {
 	 * @throws IOException 
 	 */
 	protected byte[] getDocumentBytes(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
-		return formatDocument(document).getBytes();
+		return formatDocument(document).getBytes("UTF-8");
 	}
 	
 	private String formatDocument(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
-        OutputFormat format = new OutputFormat(document);
+        OutputFormat format = new OutputFormat(document, "UTF-8", true);
         format.setLineWidth(160);
-        format.setIndenting(true);
+//        format.setIndenting(true);
         format.setIndent(2);
-        format.setEncoding("UTF-8");
+//        format.setEncoding("UTF-8");
         Writer out = new StringWriter();
         XMLSerializer serializer = new XMLSerializer(out, format);
         serializer.serialize(document);
