@@ -123,14 +123,16 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final byte[] containerXmlData = getContainerOPF(zipData);
 			final Document document = getDocument(containerXmlData, ebookResourceHandler);
-			final Element metadataNode = this.getMetadataElement(document);
-			final Element manifestNode = this.getManifestElement(document);
-
-			final String coverNameReference = findMetadataCoverNameReference(metadataNode);
-			final String coverName = findManifestCoverName(manifestNode, coverNameReference);
-			final ZipDataEntry extract = extractCoverFromZip(zipData, coverName != null ? coverName : coverNameReference);
-			if (extract != null && extract.data != null && extract.data.length > 0) {
-				return extract.data;
+			if(document!=null) {
+				final Element metadataNode = this.getMetadataElement(document);
+				final Element manifestNode = this.getManifestElement(document);
+	
+				final String coverNameReference = findMetadataCoverNameReference(metadataNode);
+				final String coverName = findManifestCoverName(manifestNode, coverNameReference);
+				final ZipDataEntry extract = extractCoverFromZip(zipData, coverName != null ? coverName : coverNameReference);
+				if (extract != null && extract.data != null && extract.data.length > 0) {
+					return extract.data;
+				}
 			}
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get cover for " + ebookResourceHandler, e);
@@ -148,7 +150,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 			if (name == CREATOR || name == CREATOR_AUT || name == CREATOR_AUTHOR) {
 				String opfRole = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("opf:role");
 				if (opfRole == null || opfRole.startsWith("aut")) {
-					// dc:creator opf:role=”aut” opf:file-as="#authorSort#" author
+					// dc:creator opf:role=â€�autâ€� opf:file-as="#authorSort#" author
 					item.setAuthor(value != null ? String.valueOf(value) : null);
 					String authorSort = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("opf:file-as");
 					item.setAuthorSort(authorSort);
