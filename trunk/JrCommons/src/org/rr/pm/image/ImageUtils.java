@@ -28,8 +28,8 @@ import javax.swing.ImageIcon;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.ReflectionUtils;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 
 
@@ -38,6 +38,8 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
  * provides some static methods to deal with images.
  */
 public class ImageUtils {
+	
+	private static final Class<?> jpegCodecClass = ReflectionUtils.getClassForName("com.sun.image.codec.jpeg.JPEGCodec");
 	
 	/**
 	 * Creates the image bytes from the given image.
@@ -97,11 +99,25 @@ public class ImageUtils {
 		BufferedImage bi = null;
 		InputStream bin = null;
 		try {
-			bin = resourceLoader.getContentInputStream();
-			final JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(bin);
-			bi = decoder.decodeAsBufferedImage();
-		} catch (Exception e) {
-			bi = decodeJpegInternal(resourceLoader);
+			try {
+				bin = resourceLoader.getContentInputStream();
+				if(jpegCodecClass!=null) {
+					final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
+					bi = decoder.decodeAsBufferedImage();
+				}
+			} catch (Exception e) {
+			}
+			
+			try {
+				if(bi == null && bin != null) {
+					bi = ImageIO.read(bin);
+				}
+			} catch (Exception e) {
+			}
+			
+			if(bi == null && bin != null) {
+				bi = decodeJpegInternal(resourceLoader);
+			}
 		} finally {
 			IOUtils.closeQuietly(bin);
 		}
