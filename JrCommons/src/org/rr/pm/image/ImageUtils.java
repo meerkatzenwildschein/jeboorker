@@ -101,6 +101,7 @@ public class ImageUtils {
 		try {
 			try {
 				bin = resourceLoader.getContentInputStream();
+				
 				if(jpegCodecClass!=null) {
 					final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
 					bi = decoder.decodeAsBufferedImage();
