@@ -77,9 +77,11 @@ Section -Main SEC0000
     
     SetOutPath $INSTDIR\lib\orientdb
     File lib\orientdb\javassist.jar
-    File lib\orientdb\orient-commons-1.0.1.jar
-    File lib\orientdb\orientdb-core-1.0.1.jar
-    File lib\orientdb\orientdb-object-1.0.1.jar
+    File lib\orientdb\jna-3.4.0.jar
+    File lib\orientdb\orient-commons-1.1.0.jar
+    File lib\orientdb\orientdb-core-1.1.0.jar
+    File lib\orientdb\orientdb-nativeos-1.1.0.jar
+    File lib\orientdb\orientdb-object-1.1.0.jar
     File lib\orientdb\persistence-api-1.0.jar
     
     SetOutPath $INSTDIR\lib\epubcheck
@@ -131,9 +133,11 @@ Section /o -un.Main UNSEC0000
     RMDir  $INSTDIR\lib\epubcheck
     
     Delete /REBOOTOK $INSTDIR\lib\orientdb\javassist.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orient-commons-1.0.1.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-core-1.0.1.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-object-1.0.1.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\jna-3.4.0.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orient-commons-1.1.0.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-core-1.1.0.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-nativeos-1.1.0.jar
+    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-object-1.1.0.jar
     Delete /REBOOTOK $INSTDIR\lib\orientdb\persistence-api-1.0.jar
     RMDir  $INSTDIR\lib\orientdb
     
