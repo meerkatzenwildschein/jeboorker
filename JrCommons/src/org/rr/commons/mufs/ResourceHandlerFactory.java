@@ -21,7 +21,7 @@ public class ResourceHandlerFactory {
 	 * reference instances.
 	 */
 	private static final IResourceHandler[] resourceLoader = new IResourceHandler[] {
-		new FileResourceHandler(), new FTPResourceHandler()
+		new FileResourceHandler(), new FTPResourceHandler(), new URLResourceHandler()
 	};
 	
 	/**
