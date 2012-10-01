@@ -45,7 +45,12 @@ public interface IResourceHandler {
 			@Override
 			public boolean isUserType() {
 				return false;
-			}}			
+			}},
+		URL {
+			@Override
+			public boolean isUserType() {
+				return false;
+			}}					
 	};
 
 	
