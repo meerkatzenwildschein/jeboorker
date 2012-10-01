@@ -49,6 +49,7 @@ class BingImageFetcher extends AImageFetcher {
 					}
 					
 				}
+				return result;
 			}
 		} finally {
 			resourceLoader.dispose();
