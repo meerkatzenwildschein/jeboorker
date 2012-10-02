@@ -48,17 +48,21 @@ class AddBasePathAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final IResourceHandler selectedDirectory;
 		String path = this.path;
 		
-		if(path!=null && path.length()>0) {
-			selectedDirectory = ResourceHandlerFactory.getResourceLoader(path);
+		if(this.path != null && this.path.length() > 0) {
+			IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceLoader(path);
+			addBasePath(controller, selectedDirectory, path);
 		} else {
-			final File directorySelection = controller.getDirectorySelection();
-			selectedDirectory = ResourceHandlerFactory.getResourceLoader(directorySelection);
-			path = selectedDirectory.toString();
+			final List<File> directorySelections = controller.getDirectorySelection();
+			for (File directorySelection : directorySelections) {
+				IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceLoader(directorySelection);
+				addBasePath(controller, selectedDirectory, selectedDirectory.toString());				
+			}
 		}
-		
+	}
+
+	private void addBasePath(final MainController controller, final IResourceHandler selectedDirectory, String path) {
 		if(selectedDirectory!=null) {
 			controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 			String messageFinished = Bundle.getString("AddBasePathAction.finished");
