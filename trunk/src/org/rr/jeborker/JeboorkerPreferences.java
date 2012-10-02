@@ -110,6 +110,18 @@ public class JeboorkerPreferences {
 		}
 	}	
 	
+	public static void addEntryBoolean(final String key, final Boolean b) {
+		addEntryNumber(key, b.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0));
+	}
+	
+	public static Boolean getEntryAsBoolean(final String key) {
+		Number entryAsNumber = getEntryAsNumber(key);
+		if(entryAsNumber != null && entryAsNumber.intValue() == 1) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+	
 	/**
 	 * Get the point of a window where a window should be shown. 
 	 * @param xKey The key for the x value

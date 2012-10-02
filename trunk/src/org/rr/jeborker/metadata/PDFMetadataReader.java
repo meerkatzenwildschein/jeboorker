@@ -152,7 +152,10 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	 */
 	private PdfReader getReader() throws IOException {
 		if(pdfReader==null) {
-			pdfInputStream = ebookResource.getContentInputStream();
+			if(this.pdfInputStream != null) {
+				IOUtils.closeQuietly(this.pdfInputStream);
+			}
+			this.pdfInputStream = ebookResource.getContentInputStream();
 			pdfReader = new PdfReader(pdfInputStream);
 		}
 		return pdfReader;

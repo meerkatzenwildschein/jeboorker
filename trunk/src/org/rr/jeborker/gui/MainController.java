@@ -167,6 +167,14 @@ public class MainController {
 		return controller;
 	}
 	
+	/**
+	 * Tells if the {@link MainController} is already initialized.
+	 * @return <code>true</code> if the {@link MainController} is initialized and <code>false</code> otherwise.
+	 */
+	public static boolean isInitialized() {
+		return controller!=null;
+	}
+	
 	private void initialize() {
 		mainWindow = new MainView();
 		initListeners();
