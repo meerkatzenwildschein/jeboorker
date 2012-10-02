@@ -18,7 +18,9 @@ public class JeboorkerLogger extends Handler {
 	@Override
 	public void publish(LogRecord record) {
 		toConsole(record);
-		toMonitor(record);
+		if(MainController.isInitialized()) {
+			toMonitor(record);
+		}
 	}
 	
 	private static void toConsole(LogRecord record) {
