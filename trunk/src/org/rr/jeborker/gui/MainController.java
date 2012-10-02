@@ -438,11 +438,15 @@ public class MainController {
 	 * <code>null</code> if no folder was selected.
 	 * @return The selected folder or <code>null</code>.
 	 */
-	public File getDirectorySelection() {
-		final String lastEbookFolder = JeboorkerPreferences.getEntryString("lastEbookFolder");
-		File selectedDirectory = JDirectoryChooser.getDirectorySelection(lastEbookFolder, mainWindow);
-		if(selectedDirectory!=null) {
-			JeboorkerPreferences.addEntryString("lastEbookFolder", selectedDirectory.toString());
+	public List<File> getDirectorySelection() {
+		String lastEbookFolder = JeboorkerPreferences.getEntryString("lastEbookFolder");
+		IResourceHandler lastEbookFolderResourceLoader = ResourceHandlerFactory.getResourceLoader(lastEbookFolder);
+		if(lastEbookFolderResourceLoader == null || !lastEbookFolderResourceLoader.isDirectoryResource()) {
+			lastEbookFolder = null;
+		}
+		List<File> selectedDirectory = JDirectoryChooser.getDirectorySelections(lastEbookFolder, mainWindow, true);
+		if(selectedDirectory!=null && !selectedDirectory.isEmpty()) {
+			JeboorkerPreferences.addEntryString("lastEbookFolder", selectedDirectory.get(selectedDirectory.size() - 1).toString());
 		}
 		return selectedDirectory;
 	}
