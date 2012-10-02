@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.EventObject;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.rr.commons.swing.dialogs.JDirectoryChooser.JFolderTree.FolderTreeModel.IFolderNode;
 import org.rr.commons.utils.StringUtils;
@@ -51,7 +53,7 @@ public class JDirectoryChooser extends Component {
 
 	private static final long serialVersionUID = 5358634581899478319L;
 
-	private File selectedDirectory = null;
+	private final List<File> selectedDirectory = new ArrayList<File>();
 
 	private Action abortAction = null;
 
@@ -72,10 +74,13 @@ public class JDirectoryChooser extends Component {
 	private JDialog dialog = null;
 
 	private KeyAdapter dialogCloseListener;
+	
+	private boolean multiselect;
 
 	/** Creates new form JDirectoryChooser */
-	public JDirectoryChooser() {
+	public JDirectoryChooser(boolean multiselect) {
 		super();
+		this.multiselect = multiselect;
 	}
 
 
@@ -118,9 +123,14 @@ public class JDirectoryChooser extends Component {
 		jButtonOK = new javax.swing.JButton();
 		jButtonCancel = new javax.swing.JButton();
 		jButtonNewFolder = new javax.swing.JButton();
-	
 		jPanel1.setLayout(new java.awt.GridBagLayout());
 	
+		if(this.multiselect) {
+			jTreeFolders.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		} else {
+			jTreeFolders.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		}
+		
 		jPanel1.setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(10, 10, 5, 10)));
 		jPanel1.setPreferredSize(new java.awt.Dimension(310, 330));
 		jLabelTitle.setText(this.getHeadline());
@@ -205,8 +215,22 @@ public class JDirectoryChooser extends Component {
 	 * @return the selected directory
 	 */
 	public File getSelectedDirectory() {
-		return this.selectedDirectory;
+		if(!this.selectedDirectory.isEmpty()) {
+			return this.selectedDirectory.get(0);
+		}
+		return null;
 	}
+	
+	/**
+	 * Returns the selected diretcory. This can be set either by the programmer via <code>setFile</code> or by a user action, such as either typing the
+	 * filename into the UI or selecting the file from a list in the UI.
+	 * 
+	 * @see #setSelectedDirectory(File)
+	 * @return the selected directory
+	 */
+	public List<File> getSelectedDirectories() {
+		return this.selectedDirectory;
+	}	
 
 	/**
 	 * Sets the selected directory. If the file's parent directory is not the current directory, changes the current directory to be the file's parent
@@ -220,7 +244,8 @@ public class JDirectoryChooser extends Component {
 	 *            the selected directory
 	 */
 	public void setSelectedDirectory(File selectedDirectory) {
-		this.selectedDirectory = selectedDirectory;
+		this.selectedDirectory.clear();
+		this.selectedDirectory.add(selectedDirectory);
 	}
 	
     /**
@@ -414,7 +439,7 @@ public class JDirectoryChooser extends Component {
 				private static final long serialVersionUID = -684918749910419234L;
 
 				public void actionPerformed(ActionEvent e) {
-					selectedDirectory = null;
+					selectedDirectory.clear();
 					dispose();
 				}
 			};
@@ -434,7 +459,8 @@ public class JDirectoryChooser extends Component {
 				private static final long serialVersionUID = -684918749910419234L;
 
 				public void actionPerformed(ActionEvent e) {
-					selectedDirectory = jTreeFolders.getSelectionFolderPath();
+					selectedDirectory.clear();
+					selectedDirectory.addAll(jTreeFolders.getSelectionFolderPath());
 					dispose();
 				}
 			};
@@ -454,11 +480,13 @@ public class JDirectoryChooser extends Component {
 				private static final long serialVersionUID = -522395172298834915L;
 
 				public void actionPerformed(ActionEvent e) {
-					File currentSelection = jTreeFolders.getSelectionFolderPath();
+					List<File> currentSelection = jTreeFolders.getSelectionFolderPath();
 					
 					try {
-						File newFolder = jTreeFolders.addFolder(currentSelection);
-						jTreeFolders.renameFolder(newFolder);
+						if(currentSelection!=null && currentSelection.size() == 1) {
+							File newFolder = jTreeFolders.addFolder(currentSelection.get(0));
+							jTreeFolders.renameFolder(newFolder);
+						}
 					} catch (IOException e1) {
 						Logger.getAnonymousLogger().logp(Level.WARNING, this.getClass().getName(), "actionPerformed", "Creating a new folder has been failed", e1);
 					}
@@ -492,7 +520,7 @@ public class JDirectoryChooser extends Component {
 				}
 				
 				/**
-				 * If There is a vlid entry, the entry is
+				 * If There is a valid entry, the entry is
 				 * to be selected within the JTree. 
 				 * 
 				 * @param e The DocumentEvent which has been triggered this listener instance.
@@ -518,14 +546,17 @@ public class JDirectoryChooser extends Component {
 				public void valueChanged(final TreeSelectionEvent e) {
 					JFolderTree tree = (JFolderTree) e.getSource();
 					
-					if(tree.getSelectionFolderPath()!=null) {
-						File path = new File( tree.getSelectionFolderPath().getPath() );
+					if(tree.getSelectionFolderPath()!=null && !tree.getSelectionFolderPath().isEmpty()) {
+						File path = tree.getSelectionFolderPath().get(0);
 						if(path!=null && path.exists()) {
 							SwingUtilities.invokeLater(new Runnable() {
 							
 								public void run() {
 									jTextFieldPathInput.getDocument().removeDocumentListener(getPathTextFieldDocumentListener(jTextFieldPathInput));
-									jTextFieldPathInput.setText( ((JFolderTree) e.getSource()).getSelectionFolderPath().getPath());
+									List<File> selectionFolderPath = ((JFolderTree) e.getSource()).getSelectionFolderPath();
+									for(File f : selectionFolderPath) {
+										jTextFieldPathInput.setText( f.getPath() );
+									}
 									jTextFieldPathInput.getDocument().addDocumentListener(getPathTextFieldDocumentListener(jTextFieldPathInput));
 								}
 							});
@@ -650,11 +681,15 @@ public class JDirectoryChooser extends Component {
 	 *            the command line arguments
 	 */
 	public static void main(String args[]) {
-		JDirectoryChooser sc = new JDirectoryChooser();
+		JDirectoryChooser sc = new JDirectoryChooser(true);
 		sc.setSelectedDirectory(new File("/home/guru"));
 		
 		sc.showDialog(null);
-		System.out.println(sc.getSelectedDirectory());
+		List<File> selectedDirectories = sc.getSelectedDirectories();
+		for (int i = 0; i < selectedDirectories.size(); i++) {
+			System.out.println(selectedDirectories.get(i));
+		}
+		System.exit(0);
 	}
 	
 	/**
@@ -663,16 +698,29 @@ public class JDirectoryChooser extends Component {
 	 * @return The selected folder or <code>null</code>.
 	 */
 	public static File getDirectorySelection(String folder, Component invoker) {
-		final JDirectoryChooser chooser = new JDirectoryChooser();
-		if(folder!=null && folder.length()>0) {
+		List<File> directorySelections = getDirectorySelections(folder, invoker, false);
+		if(directorySelections != null && !directorySelections.isEmpty()) {
+			return directorySelections.get(0);
+		}
+		return null;
+	}	
+	
+	/**
+	 * Opens a {@link JFileChooser} and returns the selected folder or
+	 * <code>null</code> if no folder was selected.
+	 * @return The selected folder or <code>null</code>.
+	 */
+	public static List<File> getDirectorySelections(String folder, Component invoker, boolean multiselect) {
+		final JDirectoryChooser chooser = new JDirectoryChooser(multiselect);
+		if(folder!=null && folder.length() > 0) {
 			chooser.setSelectedDirectory(new File(folder));
 		} else {
 			chooser.setSelectedDirectory(new File(System.getProperties().getProperty("user.home")));
 		}
 		chooser.showDialog(invoker);
-		File selectedDirectory = chooser.getSelectedDirectory();
+		List<File> selectedDirectory = chooser.getSelectedDirectories();
 		return selectedDirectory;
-	}	
+	}		
 
 	// Variables declaration - do not modify
 	private javax.swing.JButton jButtonCancel;
@@ -1274,16 +1322,20 @@ public class JDirectoryChooser extends Component {
 		 * Gets the selected folder path or <code>null</code> if nothing is selected.
 		 * @return The user selection.
 		 */
-		public File getSelectionFolderPath() {
-			TreePath treePath = this.getSelectionPath();
+		public List<File> getSelectionFolderPath() {
+			final TreePath[] treePath = this.getSelectionPaths();
+			final ArrayList<File> result = new ArrayList<File>();
 			if(treePath==null) {
 				return null;
 			}
-			IFolderNode lastNode = (IFolderNode) treePath.getLastPathComponent();
-			if(lastNode==null) {
-				return null;
+			for(TreePath tp : treePath) {
+				IFolderNode lastNode = (IFolderNode) tp.getLastPathComponent();
+				if(lastNode==null) {
+					return null;
+				}
+				result.add(lastNode.getFile());
 			}
-			return lastNode.getFile();
+			return result;
 		}
 
 		public TreeModel getModel() {
