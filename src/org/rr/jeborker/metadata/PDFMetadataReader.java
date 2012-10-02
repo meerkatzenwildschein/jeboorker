@@ -171,6 +171,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		this.pdfInfo = null;
 		if(this.pdfInputStream != null) {
 			IOUtils.closeQuietly(this.pdfInputStream);
+			this.pdfInputStream = null;
 		}
 	}
 	
