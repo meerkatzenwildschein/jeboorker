@@ -223,6 +223,10 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 	public void dispose() {
 		super.dispose();
 	}
+	
+	protected void finalize() throws Throwable {
+		dispose();
+	}
 
 	@Override
 	public List<MetadataProperty> getSupportedMetaData() {
