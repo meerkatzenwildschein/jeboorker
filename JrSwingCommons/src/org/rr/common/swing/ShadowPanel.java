@@ -54,8 +54,9 @@ public class ShadowPanel extends JPanel implements MouseListener, MouseMotionLis
 
 	public void setVisible(boolean v) {
 		// Make sure we grab the focus so that key events don't go astray.
-		if (v)
+		if (v) {
 			requestFocus();
+		}
 		super.setVisible(v);
 	}
 
