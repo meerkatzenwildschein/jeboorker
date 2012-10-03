@@ -17,7 +17,8 @@ public class ImageProviderFactory {
 	 * @throws IOException If the desired file could not be opened or read.
 	 */
 	public static IImageProvider getImageProvider(IResourceHandler resourceHandler) {
-		if(resourceHandler.getMimeType().endsWith("/jpg") || resourceHandler.getMimeType().endsWith("/jpeg")) {
+		String mimeType = resourceHandler.getMimeType();
+		if(mimeType != null && (mimeType.endsWith("/jpg") || mimeType.endsWith("/jpeg"))) {
 			return new JpgImageProvider(resourceHandler);
 		} else {
 			return new DefaultImageProvider(resourceHandler);

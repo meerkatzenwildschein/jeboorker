@@ -44,6 +44,15 @@ public class ImageFetcherFactory {
 
 		return null;
 	}
+	
+	public static IImageFetcher getImageFetcher(String fetcherName) {
+		for (FETCHER_TYPES type : FETCHER_TYPES.values()) {
+			if(fetcherName.equals(type.getName())) {
+				return getImageFetcher(type);
+			}
+		}		
+		return null;
+	}
 
 	/**
 	 * Get the names of all available fetchers.
@@ -56,4 +65,6 @@ public class ImageFetcherFactory {
 		}
 		return result;
 	}
+	
+	
 }
