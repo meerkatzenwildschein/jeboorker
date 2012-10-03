@@ -1,10 +1,12 @@
 package org.rr.commons.mufs;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
@@ -13,9 +15,9 @@ public class URLResourceHandler extends AResourceHandler {
 	
 	URL url;
 	
-	InputStream inStream = null;
+	ArrayList<InputStream> inStream = new ArrayList<InputStream>(2);
 	
-	OutputStream outStream = null;
+	ArrayList<OutputStream> outStream = new ArrayList<OutputStream>(2);
 	
 	URLResourceHandler() {
 		super();
@@ -49,19 +51,17 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public InputStream getContentInputStream() throws IOException {
-		if(inStream == null) {
-			this.inStream = this.url.openStream();
-		}
-		return this.inStream;
+		InputStream inputStream = this.url.openConnection().getInputStream();
+		inStream.add(inputStream);
+		return inputStream;
 	}
 
 	@Override
 	public OutputStream getContentOutputStream(boolean append) throws IOException {
-		if(this.outStream == null) {
-			URLConnection openConnection = this.url.openConnection();
-			this.outStream = openConnection.getOutputStream();
-		}
-		return this.outStream;
+		URLConnection openConnection = this.url.openConnection();
+		OutputStream outputStream = openConnection.getOutputStream();
+		this.outStream.add(outputStream);
+		return outputStream;
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public String getName() {
-		return this.url.getFile();
+		return new File(this.url.getFile()).getName();
 	}
 
 	@Override
@@ -125,11 +125,11 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public void dispose() {
-		if(this.inStream != null) {
-			IOUtils.closeQuietly(this.inStream);
+		while(!inStream.isEmpty()) {
+			IOUtils.closeQuietly(inStream.remove(0));
 		}
-		if(this.outStream != null) {
-			IOUtils.closeQuietly(this.outStream);
+		while(!outStream.isEmpty()) {
+			IOUtils.closeQuietly(outStream.remove(0));
 		}
 	}
 

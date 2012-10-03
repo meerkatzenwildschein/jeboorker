@@ -28,7 +28,10 @@ class GoogleImageFetcher extends AImageFetcher {
 	private static List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
 		final String ip = getExternalIP();
-		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader("http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+encodesSearchPhrase+"&userip=" + ip + "&rsz=8" + (page <=1 ? "" : "&start=" + page));
+		final int pageParameter = ((page -1) * 8) + 1; //always in 30 steps.
+		final String urlString = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+encodesSearchPhrase+"&userip=" + ip + "&rsz=8" + (page <=1 ? "" : "&start=" + pageParameter);
+		
+		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(urlString);
 		try {
 			final byte[] content = resourceLoader.getContent();
 			try {

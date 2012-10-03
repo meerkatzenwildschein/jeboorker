@@ -6,11 +6,12 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 
 abstract class AImageFetcherEntry implements IImageFetcherEntry {
-
+	
 	public byte[] getThumbnailImageBytes() throws IOException {
 		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(getThumbnailURL());
 		try {
-			return resourceHandler.getContent();
+			byte[] thumbnailBytes = resourceHandler.getContent();
+			return thumbnailBytes;
 		} finally {
 			resourceHandler.dispose();
 		}
@@ -19,7 +20,8 @@ abstract class AImageFetcherEntry implements IImageFetcherEntry {
 	public byte[] getImageBytes() throws IOException {
 		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(getImageURL());
 		try {
-			return resourceHandler.getContent();
+			byte[] imageBytes = resourceHandler.getContent();
+			return imageBytes;
 		} finally {
 			resourceHandler.dispose();
 		}

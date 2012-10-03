@@ -27,7 +27,7 @@ abstract class AImageFetcher implements IImageFetcher {
 				final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(service);
 				byte[] content = resourceLoader.getContent();
 				if(content != null) {
-					String ip = new String(content);
+					String ip = new String(content).replaceAll("[\\r\\n\\s]", "");
 					if(validate(ip)) {
 						return ip;
 					}
