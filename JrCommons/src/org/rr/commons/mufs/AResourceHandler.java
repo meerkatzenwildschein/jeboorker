@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -24,6 +25,8 @@ import eu.medsea.mimeutil.MimeUtil;
 abstract class AResourceHandler implements IResourceHandler, Comparable<IResourceHandler> {
 	
 	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<IResourceHandler>();
+	
+	private static final long heapMaxSize = Runtime.getRuntime().maxMemory();
 	
 	private static final Thread shutdownThread = new Thread(new Runnable() {
 		@Override
@@ -329,6 +332,22 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		byte[] byteArray = IOUtils.toByteArray(contentInputStream);
 		IOUtils.closeQuietly(contentInputStream);
 		return byteArray;
+	}
+	
+	/**
+	 * Sometimes, on heavy IO, the garbage collector isn't fast enough to free the heap.
+	 * To prevent this, the garbage collector is triggered if not enough space is 
+	 * present.
+	 * @param heapRequired The amount of heap needed in the near future.
+	 */
+	protected void cleanHeapIfNeeded(long heapRequired) {
+		//MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+		long heapFreeSize = Runtime.getRuntime().freeMemory();
+		long remaining = heapMaxSize - heapFreeSize - heapRequired;
+		if(remaining < 5000000) {
+			LoggerFactory.log(Level.INFO, this, "Garbage collector triggered manually. Only " + remaining + " bytes remaining.");
+			System.gc();
+		}
 	}
 	
 	/**
