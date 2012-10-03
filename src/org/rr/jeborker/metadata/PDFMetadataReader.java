@@ -1,7 +1,6 @@
 package org.rr.jeborker.metadata;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -9,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
@@ -46,8 +44,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	
 	private HashMap<String, String> pdfInfo;
 	
-	private InputStream pdfInputStream = null;
-
 	PDFMetadataReader(IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
 	}
@@ -152,11 +148,10 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	 */
 	private PdfReader getReader() throws IOException {
 		if(pdfReader==null) {
-			if(this.pdfInputStream != null) {
-				IOUtils.closeQuietly(this.pdfInputStream);
-			}
-			this.pdfInputStream = ebookResource.getContentInputStream();
-			pdfReader = new PdfReader(pdfInputStream);
+			//bytes will also be completely loaded by the PdfReader. 
+			System.gc();
+			byte[] pdfBytes = ebookResource.getContent();
+			pdfReader = new PdfReader(pdfBytes);
 		}
 		return pdfReader;
 	}	
@@ -172,10 +167,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	public void dispose() {
 		this.pdfReader = null;
 		this.pdfInfo = null;
-		if(this.pdfInputStream != null) {
-			IOUtils.closeQuietly(this.pdfInputStream);
-			this.pdfInputStream = null;
-		}
 	}
 	
 	protected void finalize() throws Throwable {
