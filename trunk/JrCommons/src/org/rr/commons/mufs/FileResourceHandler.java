@@ -163,6 +163,7 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public byte[] getContent() throws IOException {
+		this.cleanHeapIfNeeded(this.file.length());
 		return FileUtils.readFileToByteArray(this.file);
 	}
 
@@ -173,6 +174,7 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public InputStream getContentInputStream() throws IOException {
+		this.cleanHeapIfNeeded(this.file.length());
 		try {
 			FileInputStream fIn = new FileInputStream(this.file);
 			BufferedInputStream buffIn = new BufferedInputStream(fIn) ;
