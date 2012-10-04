@@ -101,8 +101,7 @@ public class MainView extends JFrame{
 			}
 		});
 		
-		ShadowPanel shadowPanel = new ShadowPanel();
-		this.setGlassPane(shadowPanel);	
+		this.setGlassPane(new ShadowPanel());	
 		getGlassPane().setVisible(false);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
