@@ -52,8 +52,11 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 						controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataCoverAction.message", dialogResult.getName(), item.toString()));
 						controller.getProgressMonitor().setProgress(index, max);
 						
-						writer.setCover(dialogResult.getContent());
-						RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
+						byte[] content = dialogResult.getContent();
+						if(content != null) {
+							writer.setCover(dialogResult.getContent());
+							RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
+						}
 										
 						MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
 						MainController.getController().setImageViewerResource(dialogResult);
