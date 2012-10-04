@@ -38,12 +38,12 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
+		final MainController controller = MainController.getController();
 		try {
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
 			
 			if(!items.isEmpty()) {
-				final MainController controller = MainController.getController();
 				final EbookPropertyItem item = items.get(0);
 				
 				this.doOnce();
@@ -60,7 +60,6 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 										
 						MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
 						MainController.getController().setImageViewerResource(dialogResult);
-						controller.getProgressMonitor().monitorProgressStop(null);
 					}
 				}
 			} else {
@@ -68,6 +67,8 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 			}
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not set cover for " + resourceHandler, e);
+		} finally {
+			controller.getProgressMonitor().monitorProgressStop(null);
 		}
 	}
 	
