@@ -46,9 +46,17 @@ public class ImageFetcherFactory {
 	}
 	
 	public static IImageFetcher getImageFetcher(String fetcherName) {
+		return getImageFetcher(fetcherName, null);
+	}
+	
+	public static IImageFetcher getImageFetcher(String fetcherName, String searchTerm) {
 		for (FETCHER_TYPES type : FETCHER_TYPES.values()) {
 			if(fetcherName.equals(type.getName())) {
-				return getImageFetcher(type);
+				IImageFetcher imageFetcher = getImageFetcher(type);
+				if(searchTerm != null) {
+					imageFetcher.setSearchTerm(searchTerm);
+				}
+				return imageFetcher;
 			}
 		}		
 		return null;

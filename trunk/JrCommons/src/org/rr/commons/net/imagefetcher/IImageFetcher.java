@@ -18,4 +18,9 @@ public interface IImageFetcher {
 	 */
 	public List<IImageFetcherEntry> getNextEntries() throws IOException;
 	
+	/**
+	 * @return The number of entries returned by this {@link IImageFetcher} instance.
+	 */
+	public int getPageSize();
+	
 }
