@@ -6,11 +6,18 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,13 +43,17 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.paraj.prodcons.Consumer;
+import org.paraj.prodcons.FeedEngine;
+import org.paraj.prodcons.Producer;
+import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -63,6 +74,8 @@ public class ImageDownloadDialog extends JDialog {
 	private JComboBox searchProviderComboBox;
 	
 	private JScrollPane scrollPane;
+	
+	private JButton okButton;
 	
 	private static Dimension cellSize = new Dimension(150, 250);
 	
@@ -89,12 +102,15 @@ public class ImageDownloadDialog extends JDialog {
 		init(null);
 	}
 
-	protected void init(JFrame owner) {
+	protected void init(Frame owner) {
 		this.setSize(800, 400);
 		if(owner != null) {
+			//center over the owner frame
 			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
 		}
 		this.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+		this.setGlassPane(new ShadowPanel());	
+		getGlassPane().setVisible(false);
 		
 		//workaround for a swing bug. The first time, the editor is used, the 
 		//ui color instance draws the wrong color but have the right rgb values.
@@ -149,6 +165,15 @@ public class ImageDownloadDialog extends JDialog {
 		gbc_searchTextField.gridy = 0;
 		borderPanel.add(searchTextField, gbc_searchTextField);
 		searchTextField.setColumns(10);
+		searchTextField.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					startSearch();
+				}
+			}
+		});		
 		
 		JButton searchButton = new JButton(new SearchAction());
 		searchButton.setMargin(new Insets(0, 8, 0, 8));
@@ -168,6 +193,16 @@ public class ImageDownloadDialog extends JDialog {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		borderPanel.add(scrollPane, gbc_scrollPane);
+		scrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				if(!e.getValueIsAdjusting()) {
+					scrollPane.repaint();
+				}
+			}
+		});
+
 		
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -195,13 +230,11 @@ public class ImageDownloadDialog extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				selectedImage = null;
-				setVisible(false);
-				dispose();				
+				closeDialog(null);
 			}
 		});
 		
-		JButton okButton = new JButton(Bundle.getString("ImageDownloadDialog.Action.OK"));
+		okButton = new JButton(Bundle.getString("ImageDownloadDialog.Action.OK"));
 		GridBagConstraints gbc_okButton = new GridBagConstraints();
 		gbc_okButton.anchor = GridBagConstraints.EAST;
 		gbc_okButton.gridx = 2;
@@ -211,25 +244,66 @@ public class ImageDownloadDialog extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SearchResultPanel view = (SearchResultPanel) scrollPane.getViewport().getView();
-				if(view != null) {
-					int selectedColumn = view.getSelectedColumn();
-					IImageFetcherEntry imageFetcher = (IImageFetcherEntry) view.getModel().getValueAt(0, selectedColumn);
-					if(imageFetcher != null) {
-						try {
-							URL imageURL = imageFetcher.getImageURL();
-							selectedImage = ResourceHandlerFactory.getResourceLoader(imageURL);
-							setVisible(false);
-							dispose();
-						} catch (Exception e1) {
-							LoggerFactory.getLogger(this).log(Level.WARNING, "Could not fetch image from " + imageFetcher.getImageURL());
-						}
-					}
-				}
+				storeSelectionAndCloseDialog();
 			}
 		});
 	}
 	
+	/**
+	 * Stores the selection for providing it for the {@link #getSelectedImage()} method
+	 * and closes this {@link ImageDownloadDialog} instance.
+	 * @see #closeDialog(IResourceHandler)
+	 */
+	private void storeSelectionAndCloseDialog() {
+		SearchResultPanel view = (SearchResultPanel) scrollPane.getViewport().getView();
+		if(view != null) {
+			final int selectedColumn = view.getSelectedColumn();
+			final IImageFetcherEntry imageFetcher = (IImageFetcherEntry) view.getModel().getValueAt(0, selectedColumn);
+			if(imageFetcher != null) {
+				try {
+					URL imageURL = imageFetcher.getImageURL();
+					IResourceHandler image = ResourceHandlerFactory.getResourceLoader(imageURL);
+					closeDialog(image);
+				} catch (Exception e1) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "Could not fetch image from " + imageFetcher.getImageURL());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Closes and disposes this {@link ImageDownloadDialog} instance. 
+	 * @param selectedImage The image to be set as result.
+	 */
+	private void closeDialog(IResourceHandler selectedImage) {
+		this.selectedImage = selectedImage;
+		setVisible(false);
+		dispose();			
+	}
+	
+	private void startSearch() {
+		getGlassPane().setVisible(true);
+		new SwingWorker<SearchResultPanel, SearchResultPanel>() {
+			
+			@Override
+			protected SearchResultPanel doInBackground() throws Exception {
+				SearchResultPanel searchResultPanel = new SearchResultPanel(searchTextField.getText(), searchProviderComboBox.getSelectedItem().toString());
+				return searchResultPanel;
+			}
+	
+			@Override
+			protected void done() {
+				try {
+					SearchResultPanel searchResultPanel = get();
+					scrollPane.setViewportView(searchResultPanel);
+					getGlassPane().setVisible(false);
+				} catch (Exception e) {
+					LoggerFactory.getLogger().log(Level.WARNING, "Error while setting search reuslts.", e);
+				}
+			}
+		}.execute();
+	}
+
 	private class SearchAction extends AbstractAction {
 
 		private SearchAction() {
@@ -239,7 +313,7 @@ public class ImageDownloadDialog extends JDialog {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			scrollPane.setViewportView(new SearchResultPanel(searchTextField.getText(), searchProviderComboBox.getSelectedItem().toString()));
+			startSearch();
 		}
 		
 	}
@@ -250,29 +324,23 @@ public class ImageDownloadDialog extends JDialog {
 		
 		private TableCellRenderer renderer = new SearchResultTableRenderer();
 		
-		private SearchResultPanel(String searchPhrase, String searchProviderName) {
+		private SearchResultPanel(String searchTerm, String searchProviderName) {
 			this.setLayout(new FlowLayout(FlowLayout.LEFT));
 			this.setRowHeight(cellSize.height);
 			this.setTableHeader(null);
 			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			this.setShowGrid(false);
 		    this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    
-			this.setColumnModel(new DefaultTableColumnModel(){
-
-				@Override
-				public TableColumn getColumn(int columnIndex) {
-					TableColumn column = super.getColumn(columnIndex);
-//					column.setWidth(cellSize.width);
-					return column;
+			
+			this.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if (e.getClickCount() == 2) {
+						storeSelectionAndCloseDialog();
+					}
 				}
-				
 			});
 			
-			IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(searchProviderName);
-			imageFetcher.setSearchTerm(searchPhrase);
-			
-			this.setModel(new SearchResultTableModel(imageFetcher, getResultCount()));
+			this.setModel(new SearchResultTableModel(searchTerm, searchProviderName));
 			this.setDefaultRenderer(Object.class, renderer);
 			
 			int columnCount = this.getModel().getColumnCount();
@@ -344,19 +412,61 @@ public class ImageDownloadDialog extends JDialog {
 		 */
 		private class SearchResultTableModel extends AbstractTableModel {
 			
-			final List<IImageFetcherEntry> entries = new ArrayList<IImageFetcherEntry>();
+			final List<IImageFetcherEntry> thumbnailEntries = new ArrayList<IImageFetcherEntry>();
 			
-			private SearchResultTableModel(IImageFetcher imageFetcher, int resultCount) {
+			private SearchResultTableModel(String searchTerm, String searchProviderName) {
 				try { //init
-					for(int i=1; entries.size() <= resultCount; i++) {
-						List<IImageFetcherEntry> imageFetcherEntries = imageFetcher.getNextEntries();
-						if(imageFetcherEntries.isEmpty()) {
-							break;
-						} else {
-							entries.addAll(imageFetcherEntries);
+					final IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(searchProviderName, searchTerm);
+					final FeedEngine<List<IImageFetcherEntry>> engine = new FeedEngine<List<IImageFetcherEntry>>();
+					final Producer<List<IImageFetcherEntry>> producer = new Producer<List<IImageFetcherEntry>>() {
+						
+						private int invoked = 0;
+						
+						@Override
+						public List<IImageFetcherEntry> produce() throws Exception {
+							try {
+								synchronized(this) {
+									//Calculate the number of needs to fetch the desired number of thumbnails.
+									invoked++;
+									if(imageFetcher.getPageSize() < getMaxDisplayedThumbnails()) {
+										if((invoked - 1) * imageFetcher.getPageSize() >= getMaxDisplayedThumbnails() + (getMaxDisplayedThumbnails() % imageFetcher.getPageSize())) {
+											return null;
+										}										
+									} else {
+										if(invoked > 1) {
+											return null;
+										}
+									}
+								}
+							
+								List<IImageFetcherEntry> imageFetcherEntries = imageFetcher.getNextEntries();
+								return imageFetcherEntries;
+							} catch (Exception e) {
+								LoggerFactory.getLogger().log(Level.WARNING, "Page fetching failed.", e);
+							}
+							return null;
 						}
-					}
-				} catch (IOException e) {
+					};
+					engine.addProducer(producer);
+					engine.addProducer(producer);
+					engine.addProducer(producer);
+					
+					engine.addConsumer(new Consumer<List<IImageFetcherEntry>>() {
+
+						@Override
+						public void close() {
+						}
+
+						@Override
+						public void consume(List<IImageFetcherEntry> imageFetcherEntries) throws Exception {
+							synchronized(thumbnailEntries) {
+								thumbnailEntries.addAll(imageFetcherEntries);
+							}
+						}
+					});
+					
+					engine.runUntilAllProcessed();
+				} catch (Exception e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Images could not be retrieved.", e);
 				}
 			}
@@ -368,13 +478,13 @@ public class ImageDownloadDialog extends JDialog {
 
 			@Override
 			public int getColumnCount() {
-				return entries.size();
+				return thumbnailEntries.size();
 			}
 
 
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
-				return entries.get(columnIndex);
+				return thumbnailEntries.get(columnIndex);
 			}
 		}
 	}
@@ -391,7 +501,7 @@ public class ImageDownloadDialog extends JDialog {
 		return selectedImage;
 	}
 
-	public int getResultCount() {
+	public int getMaxDisplayedThumbnails() {
 		return resultCount;
 	}
 
