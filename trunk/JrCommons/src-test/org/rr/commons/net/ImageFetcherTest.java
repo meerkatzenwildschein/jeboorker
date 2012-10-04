@@ -15,7 +15,7 @@ public class ImageFetcherTest extends TestCase {
 		try {
 			IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(ImageFetcherFactory.FETCHER_TYPES.GOOGLE_IMAGES);
 			imageFetcher.setSearchTerm("Der Fänger");
-			List<IImageFetcherEntry> searchImages = imageFetcher.getEntries(1);
+			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
 				
 			}
@@ -28,7 +28,7 @@ public class ImageFetcherTest extends TestCase {
 		try {
 			IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(ImageFetcherFactory.FETCHER_TYPES.BING_IMAGES);
 			imageFetcher.setSearchTerm("Der Fänger");
-			List<IImageFetcherEntry> searchImages = imageFetcher.getEntries(1);
+			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
 				System.out.println(m.getImageURL());
 			}
