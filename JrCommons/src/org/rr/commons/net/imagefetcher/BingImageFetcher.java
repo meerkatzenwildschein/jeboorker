@@ -27,9 +27,9 @@ class BingImageFetcher extends AImageFetcher {
 	 * 
 	 * @see https://developers.google.com/image-search/v1/jsondevguide#json_snippets_java
 	 */
-	private static List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
+	private  List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
-		final int pageParameter = ((page -1) * 30) + 1; //always in 30 steps.
+		final int pageParameter = ((page -1) * getPageSize()) + 1; //always in 30 steps.
 		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader("http://www.bing.com/images/async?q="+encodesSearchPhrase+"&format=htmlraw&first=" + pageParameter);
 		try {
 			final byte[] content = resourceLoader.getContent();
@@ -122,6 +122,12 @@ class BingImageFetcher extends AImageFetcher {
 				return "";
 			}
 		}
+	}
+
+	@Override
+	public int getPageSize() {
+		// TODO Auto-generated method stub
+		return 30;
 	}
 
 }
