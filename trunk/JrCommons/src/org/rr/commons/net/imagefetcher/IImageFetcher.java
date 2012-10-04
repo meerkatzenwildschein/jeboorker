@@ -13,10 +13,9 @@ public interface IImageFetcher {
 
 	/**
 	 * Get all search entries for the given page. 
-	 * @param page The search page starting with 1.
 	 * @return The list of images. never returns <code>null</code>.
 	 * @throws IOException
 	 */
-	public List<IImageFetcherEntry> getEntries(int page) throws IOException;
+	public List<IImageFetcherEntry> getNextEntries() throws IOException;
 	
 }

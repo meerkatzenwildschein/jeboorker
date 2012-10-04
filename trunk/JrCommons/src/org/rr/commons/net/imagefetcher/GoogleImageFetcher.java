@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -14,6 +15,10 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 
 class GoogleImageFetcher extends AImageFetcher {
+	
+	private HashSet<URL> alreadyFetchedUrls = new HashSet<URL>();
+	
+	private int page = 0;
 	
 	/**
 	 * Perform a google image search and returns the result. 
@@ -25,7 +30,7 @@ class GoogleImageFetcher extends AImageFetcher {
 	 * 
 	 * @see https://developers.google.com/image-search/v1/jsondevguide#json_snippets_java
 	 */
-	private static List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
+	private List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
 		final String ip = getExternalIP();
 		final int pageParameter = ((page -1) * 8) + 1; //always in 30 steps.
@@ -44,11 +49,14 @@ class GoogleImageFetcher extends AImageFetcher {
 					for(int i=0; i < results.length(); i++) {
 						JSONObject entry = results.getJSONObject(i);
 						IImageFetcherEntry image = new GoogelImageFetcherEntry(entry);
-						result.add(image);
+						if(!alreadyFetchedUrls.contains(image.getImageURL())) {
+							result.add(image);
+							alreadyFetchedUrls.add(image.getImageURL());
+						}
 					}
 					return result;
 				} else {
-					throw new IOException("HTTP " + json.get("responseStatus"));
+					throw new IOException("HTTP " + json.get("responseStatus") + " / " +  json.get("responseDetails"));
 				}
 			} catch (JSONException e) {
 				throw new IOException(e);
@@ -58,11 +66,11 @@ class GoogleImageFetcher extends AImageFetcher {
 		}
 	}
 	
-	public List<IImageFetcherEntry> getEntries(int page) throws IOException {
+	public List<IImageFetcherEntry> getNextEntries() throws IOException {
 		if(getSearchTerm() == null || getSearchTerm().isEmpty()) {
 			return Collections.emptyList();
 		}
-		return searchImages(getSearchTerm(), page);
+		return searchImages(getSearchTerm(), ++page);
 	}	
 	
 	/**

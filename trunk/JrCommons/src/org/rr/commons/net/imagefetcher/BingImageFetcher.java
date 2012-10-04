@@ -14,6 +14,8 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.HTMLEntityConverter;
 
 class BingImageFetcher extends AImageFetcher {
+	
+	private int page = 0;
 
 	/**
 	 * Perform a google image search and returns the result. 
@@ -58,11 +60,11 @@ class BingImageFetcher extends AImageFetcher {
 		return Collections.emptyList();
 	}
 
-	public List<IImageFetcherEntry> getEntries(int page) throws IOException {
+	public List<IImageFetcherEntry> getNextEntries() throws IOException {
 		if(getSearchTerm() == null || getSearchTerm().isEmpty()) {
 			return Collections.emptyList();
 		}
-		return searchImages(getSearchTerm(), page);
+		return searchImages(getSearchTerm(), ++page);
 	}	
 	
 	/**
