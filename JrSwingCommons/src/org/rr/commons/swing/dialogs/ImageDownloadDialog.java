@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -57,8 +58,6 @@ public class ImageDownloadDialog extends JDialog {
 	
 	private IResourceHandler selectedImage;
 	
-	private String searchPhrase;
-	
 	private JTextField searchTextField;
 	
 	private JComboBox searchProviderComboBox;
@@ -80,8 +79,21 @@ public class ImageDownloadDialog extends JDialog {
 
 	private Color fgColor;
 	
+	public ImageDownloadDialog(JFrame owner) {
+		super(owner);
+		init(owner);
+	}
+	
 	public ImageDownloadDialog() {
+		super();
+		init(null);
+	}
+
+	protected void init(JFrame owner) {
 		this.setSize(800, 400);
+		if(owner != null) {
+			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
+		}
 		this.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		
 		//workaround for a swing bug. The first time, the editor is used, the 
@@ -216,7 +228,6 @@ public class ImageDownloadDialog extends JDialog {
 				}
 			}
 		});
-		
 	}
 	
 	private class SearchAction extends AbstractAction {
@@ -338,7 +349,7 @@ public class ImageDownloadDialog extends JDialog {
 			private SearchResultTableModel(IImageFetcher imageFetcher, int resultCount) {
 				try { //init
 					for(int i=1; entries.size() <= resultCount; i++) {
-						List<IImageFetcherEntry> imageFetcherEntries = imageFetcher.getEntries(i);
+						List<IImageFetcherEntry> imageFetcherEntries = imageFetcher.getNextEntries();
 						if(imageFetcherEntries.isEmpty()) {
 							break;
 						} else {
@@ -369,11 +380,11 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	public String getSearchPhrase() {
-		return searchPhrase;
+		return this.searchTextField.getText();
 	}
 
 	public void setSearchPhrase(String searchPhrase) {
-		this.searchPhrase = searchPhrase;
+		this.searchTextField.setText(searchPhrase);
 	}
 	
 	public IResourceHandler getSelectedImage() {
@@ -391,7 +402,7 @@ public class ImageDownloadDialog extends JDialog {
 	public static void main(String[] args) {
 		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog();
 		imageDownloadDialog.setVisible(true);
-		System.out.println(imageDownloadDialog.getSelectedImage().getResourceString());
+		System.out.println(imageDownloadDialog.getSelectedImage());
 		System.exit(0);
 	}
 }
