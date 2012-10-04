@@ -146,11 +146,18 @@ public class MainMenuController {
 		
 		JMenu submenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
 		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_THUMBNAIL_ACTION, items, selectedEbookPropertyItemRows);
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
 				submenu.add(action);
 			}
 		}
+		
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				submenu.add(action);
+			}
+		}		
 		
 		{
 			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, selectedEbookPropertyItemRows);

@@ -34,16 +34,26 @@ public class ActionFactory {
 	}
 	
 	public static enum DYNAMIC_ACTION_TYPES implements ActionType {
-		SET_COVER_THUMBNAIL_ACTION {
+		SET_COVER_FROM_FILE_ACTION {
 
 			public Class<? extends Action> getActionClass() {
-				return SetCoverThumbnailAction.class;
+				return SetCoverFromFileAction.class;
 			}
 
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 			}
 		},
+		SET_COVER_FROM_DOWNLOAD_ACTION {
+
+			public Class<? extends Action> getActionClass() {
+				return SetCoverFromDownload.class;
+			}
+
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+			}
+		},		
 		SET_METADATA_AUTHOR_ACTION {
 
 			public Class<? extends Action> getActionClass() {
