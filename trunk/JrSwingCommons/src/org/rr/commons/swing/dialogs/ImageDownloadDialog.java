@@ -23,8 +23,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
@@ -60,6 +62,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.net.imagefetcher.IImageFetcher;
 import org.rr.commons.net.imagefetcher.IImageFetcherEntry;
+import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -79,6 +82,8 @@ public class ImageDownloadDialog extends JDialog {
 	
 	private static Dimension cellSize = new Dimension(150, 250);
 	
+	private IImageFetcherFactory factory;
+	
 	/**
 	 * Number of images to be loaded into the dialog.
 	 */
@@ -92,13 +97,15 @@ public class ImageDownloadDialog extends JDialog {
 
 	private Color fgColor;
 	
-	public ImageDownloadDialog(JFrame owner) {
+	public ImageDownloadDialog(JFrame owner, IImageFetcherFactory factory) {
 		super(owner);
+		this.factory = factory;
 		init(owner);
 	}
 	
-	public ImageDownloadDialog() {
+	public ImageDownloadDialog(IImageFetcherFactory factory) {
 		super();
+		this.factory = factory;
 		init(null);
 	}
 
@@ -108,6 +115,7 @@ public class ImageDownloadDialog extends JDialog {
 			//center over the owner frame
 			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
 		}
+		this.setTitle(Bundle.getString("ImageDownloadDialog.title"));
 		this.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		this.setGlassPane(new ShadowPanel());	
 		getGlassPane().setVisible(false);
@@ -135,7 +143,7 @@ public class ImageDownloadDialog extends JDialog {
 		getContentPane().setLayout(gridBagLayout);
 		
 		JPanel borderPanel = new JPanel();
-		borderPanel.setBorder(new TitledBorder(null, "Image search", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		borderPanel.setBorder(new TitledBorder(null, Bundle.getString("ImageDownloadDialog.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridBagConstraints gbc_borderPanel = new GridBagConstraints();
 		gbc_borderPanel.fill = GridBagConstraints.BOTH;
 		gbc_borderPanel.gridx = 0;
@@ -155,7 +163,7 @@ public class ImageDownloadDialog extends JDialog {
 		gbc_searchProviderComboBox.gridx = 0;
 		gbc_searchProviderComboBox.gridy = 0;
 		borderPanel.add(searchProviderComboBox, gbc_searchProviderComboBox);
-		searchProviderComboBox.setModel(new DefaultComboBoxModel(ImageFetcherFactory.getFetcherNames().toArray()));
+		searchProviderComboBox.setModel(new DefaultComboBoxModel(factory.getFetcherNames().toArray()));
 		
 		searchTextField = new JTextField();
 		GridBagConstraints gbc_searchTextField = new GridBagConstraints();
@@ -320,7 +328,7 @@ public class ImageDownloadDialog extends JDialog {
 	
 	private class SearchResultPanel extends JTable {
 		
-		private HashMap<Integer, ImageIcon> imageCache = new HashMap<Integer, ImageIcon>(30);
+		private Map<URL, ImageIcon> imageCache = Collections.synchronizedMap(new HashMap<URL, ImageIcon>(30));
 		
 		private TableCellRenderer renderer = new SearchResultTableRenderer();
 		
@@ -348,6 +356,28 @@ public class ImageDownloadDialog extends JDialog {
 				TableColumn column = this.getColumnModel().getColumn(i);
 				column.setPreferredWidth(cellSize.width);
 			}
+		}
+		
+		/**
+		 * Creates an {@link ImageIcon} from the given {@link IImageFetcherEntry}.
+		 * @param entry The {@link IImageFetcherEntry} containing the url for the thumbnail image.
+		 * @param thumbnailURL
+		 * @return
+		 * @throws IOException
+		 */
+		private ImageIcon createThumbnail(IImageFetcherEntry entry) throws IOException {
+			final URL thumbnailURL = entry.getThumbnailURL();
+
+			ImageIcon imageIcon = imageCache.get(thumbnailURL);
+			if(imageIcon == null) {
+				byte[] thumbnailImageBytes = entry.getThumbnailImageBytes();
+				IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceLoader(new ByteArrayInputStream(thumbnailImageBytes)));
+				BufferedImage image = imageProvider.getImage();
+				BufferedImage scaleToMatch = ImageUtils.scaleToMatch(image, cellSize, true);
+				imageIcon = new ImageIcon(scaleToMatch);
+				imageCache.put(thumbnailURL, imageIcon);			
+			}
+			return imageIcon;
 		}
 		
 		private class SearchResultTableRenderer extends JPanel implements TableCellRenderer {
@@ -389,22 +419,13 @@ public class ImageDownloadDialog extends JDialog {
 				
 				sizeLabel.setText(imageWidth + "x" + imageHeight);
 				try {
-					ImageIcon imageIcon = imageCache.get(Integer.valueOf(column));
-					if(imageIcon == null) {
-						byte[] thumbnailImageBytes = ((IImageFetcherEntry)value).getThumbnailImageBytes();
-						IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceLoader(new ByteArrayInputStream(thumbnailImageBytes)));
-						BufferedImage image = imageProvider.getImage();
-						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(image, cellSize, true);
-						imageIcon = new ImageIcon(scaleToMatch);
-						imageCache.put(Integer.valueOf(column), imageIcon);
-					}
+					ImageIcon imageIcon = createThumbnail((IImageFetcherEntry) value);
 					imageLabel.setIcon(imageIcon);
 				} catch (IOException e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Images could not be retrieved.", e);
 				}
 				return this;
 			}
-			
 		}
 		
 		/**
@@ -412,11 +433,11 @@ public class ImageDownloadDialog extends JDialog {
 		 */
 		private class SearchResultTableModel extends AbstractTableModel {
 			
-			final List<IImageFetcherEntry> thumbnailEntries = new ArrayList<IImageFetcherEntry>();
+			final List<IImageFetcherEntry> thumbnailEntries = Collections.synchronizedList(new ArrayList<IImageFetcherEntry>());
 			
 			private SearchResultTableModel(String searchTerm, String searchProviderName) {
 				try { //init
-					final IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(searchProviderName, searchTerm);
+					final IImageFetcher imageFetcher = factory.getImageFetcher(searchProviderName, searchTerm);
 					final FeedEngine<List<IImageFetcherEntry>> engine = new FeedEngine<List<IImageFetcherEntry>>();
 					final Producer<List<IImageFetcherEntry>> producer = new Producer<List<IImageFetcherEntry>>() {
 						
@@ -451,7 +472,7 @@ public class ImageDownloadDialog extends JDialog {
 					engine.addProducer(producer);
 					engine.addProducer(producer);
 					
-					engine.addConsumer(new Consumer<List<IImageFetcherEntry>>() {
+					final Consumer<List<IImageFetcherEntry>> consumer = new Consumer<List<IImageFetcherEntry>>() {
 
 						@Override
 						public void close() {
@@ -459,11 +480,15 @@ public class ImageDownloadDialog extends JDialog {
 
 						@Override
 						public void consume(List<IImageFetcherEntry> imageFetcherEntries) throws Exception {
-							synchronized(thumbnailEntries) {
-								thumbnailEntries.addAll(imageFetcherEntries);
+							thumbnailEntries.addAll(imageFetcherEntries);
+							for (IImageFetcherEntry entry : imageFetcherEntries) {
+								createThumbnail(entry);
 							}
 						}
-					});
+					};
+					engine.addConsumer(consumer);
+					engine.addConsumer(consumer);
+					engine.addConsumer(consumer);
 					
 					engine.runUntilAllProcessed();
 				} catch (Exception e) {
@@ -510,7 +535,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog();
+		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog(ImageFetcherFactory.getInstance());
 		imageDownloadDialog.setVisible(true);
 		System.out.println(imageDownloadDialog.getSelectedImage());
 		System.exit(0);
