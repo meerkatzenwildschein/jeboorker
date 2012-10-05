@@ -21,6 +21,8 @@ public class MetadataProperty {
 	
 	private boolean editable = true;
 	
+	private boolean deletable= true;
+	
 	MetadataProperty(String name, Object value) {
 		this.name = name;
 		this.values = new ArrayList<Object>(1);
@@ -109,17 +111,18 @@ public class MetadataProperty {
 
 	/**
 	 * Tells if the property should be editable or no.
-	 * @return <code>true</code> if the property should be editable or <code>false</code> if not.
+	 * @return <code>true</code> if the property is editable or <code>false</code> if not.
 	 */
 	public boolean isEditable() {
 		return editable;
 	}
-
+	
 	/**
-	 * Sets the property editable flag.
-	 * @param editable <code>true</code> if the property should be editable or <code>false</code> for not.
+	 * Tells if the property is deletable or not.
+	 * @return <code>true</code> if the property is deletable or <code>false</code> if not.
 	 */
-	public void setEditable(boolean editable) {
-		this.editable = editable;
+	public boolean isDeletable() {
+		return this.deletable;
 	}
+
 }

@@ -12,7 +12,7 @@ import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class EpubMetadataProperty extends MetadataProperty {
+class EpubMetadataProperty extends MetadataProperty {
 	
 	private HashMap<String, String> attributes;
 	
@@ -226,6 +226,25 @@ public class EpubMetadataProperty extends MetadataProperty {
 			
 		}
 		return result.toString();
+	}
+
+	@Override
+	public boolean isEditable() {
+		if(getName().equals("cover")) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean isDeletable() {
+		if(getName().equals("cover")) {
+			return false;
+		} else if(getName().startsWith("identifier")) {
+			//epub identifier is mandatory
+			return false;
+		}
+		return true;
 	}
 
 

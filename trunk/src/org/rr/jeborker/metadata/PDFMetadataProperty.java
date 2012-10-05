@@ -13,7 +13,7 @@ import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class PDFMetadataProperty extends MetadataProperty {
+class PDFMetadataProperty extends MetadataProperty {
 	
 	private Hashtable<String, String> attributes;
 	

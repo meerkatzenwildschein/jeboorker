@@ -32,7 +32,7 @@ public interface Property extends Serializable, Cloneable {
   
   public String getShortDescription();
   
-  public Class getType();
+  public Class<?> getType();
 
   public Object getValue();
   
