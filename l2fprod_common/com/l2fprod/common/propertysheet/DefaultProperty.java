@@ -35,12 +35,21 @@ public class DefaultProperty extends AbstractProperty {
   private String name;
   private String displayName;
   private String shortDescription;
-  private Class type;
+  private Class<?> type;
   private boolean editable = true;
   private String category;
   private Property parent;
-  private List subProperties = new ArrayList();
+  private List<Property> subProperties = new ArrayList<Property>();
+  private boolean isDeletable = true;
 
+  public void setDeletable(boolean deletable) {
+	this.isDeletable = deletable;
+  }
+	
+  public boolean isDeletable() {
+	return this.isDeletable;
+  }
+	
   public String getName() {
     return name;
   }
@@ -65,11 +74,11 @@ public class DefaultProperty extends AbstractProperty {
     this.shortDescription = shortDescription;
   }
 
-  public Class getType() {
+  public Class<?> getType() {
     return type;
   }
 
-  public void setType(Class type) {
+  public void setType(Class<?> type) {
     this.type = type;
   }
 
@@ -101,8 +110,8 @@ public class DefaultProperty extends AbstractProperty {
     	Object value = method.invoke(object, null);
         initializeValue(value); // avoid updating parent or firing property change
         if (value != null) {
-          for (Iterator iter = subProperties.iterator(); iter.hasNext();) {
-            Property subProperty = (Property)iter.next();
+          for (Iterator<Property> iter = subProperties.iterator(); iter.hasNext();) {
+            Property subProperty = iter.next();
             subProperty.readFromObject(value);
           }
         }
@@ -142,8 +151,8 @@ public class DefaultProperty extends AbstractProperty {
 	  }
 	}
     if (value != null) {
-        for (Iterator iter = subProperties.iterator(); iter.hasNext();) {
-          Property subProperty = (Property)iter.next();
+        for (Iterator<Property> iter = subProperties.iterator(); iter.hasNext();) {
+          Property subProperty = iter.next();
           subProperty.readFromObject(value);
         }
       }
@@ -206,18 +215,18 @@ public class DefaultProperty extends AbstractProperty {
   }
   
   public void clearSubProperties() {
-	for (Iterator iter = this.subProperties.iterator(); iter.hasNext();) {
-		Property subProp = (Property) iter.next();
+	for (Iterator<Property> iter = this.subProperties.iterator(); iter.hasNext();) {
+		Property subProp = iter.next();
 		if (subProp instanceof DefaultProperty)
 			((DefaultProperty)subProp).setParentProperty(null);
 	}
 	this.subProperties.clear();
   }
   
-  public void addSubProperties( Collection subProperties ) {
+  public void addSubProperties( Collection<Property> subProperties ) {
 	this.subProperties.addAll( subProperties );
-	for (Iterator iter = this.subProperties.iterator(); iter.hasNext();) {
-		Property subProp = (Property) iter.next();
+	for (Iterator<Property> iter = this.subProperties.iterator(); iter.hasNext();) {
+		Property subProp = iter.next();
 		if (subProp instanceof DefaultProperty)
 			((DefaultProperty)subProp).setParentProperty(this);
 	}

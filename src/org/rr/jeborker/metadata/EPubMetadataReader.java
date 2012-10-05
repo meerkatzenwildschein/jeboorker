@@ -22,7 +22,6 @@ import org.w3c.dom.NodeList;
 
 class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
 
-	private static final String COVER = "cover";
 	private static final String JB_AGE_SUGGESTION = "jeboorker:age_suggestion";
 	private static final String JB_KEYWORDS = "jeboorker:keywords";
 	private static final String CALIBRE_RATING = "calibre:rating";
@@ -93,18 +92,11 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 						epubMetadataProperty.addAttribute(nodeName, nodeValue);
 					}
 				}
-				this.setEditableFlag(epubMetadataProperty);
 				result.add(epubMetadataProperty);
 			}
 		}
 
 		return result;
-	}
-
-	private void setEditableFlag(EpubMetadataProperty epubMetadataProperty) {
-		if (epubMetadataProperty.getName() == COVER) {
-			epubMetadataProperty.setEditable(false);
-		}
 	}
 
 	/**
@@ -150,7 +142,7 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 			if (name == CREATOR || name == CREATOR_AUT || name == CREATOR_AUTHOR) {
 				String opfRole = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("opf:role");
 				if (opfRole == null || opfRole.startsWith("aut")) {
-					// dc:creator opf:role=â€�autâ€� opf:file-as="#authorSort#" author
+					// dc:creator opf:role=aut opf:file-as="#authorSort#" author
 					item.setAuthor(value != null ? String.valueOf(value) : null);
 					String authorSort = ((EpubMetadataProperty) metadataProperty).getAttributeValueByName("opf:file-as");
 					item.setAuthorSort(authorSort);
@@ -239,7 +231,11 @@ class EPubMetadataReader extends AEpubMetadataHandler implements IMetadataReader
 		result.add(createSupportedMetadataProperty("dc:description"));
 		result.add(createSupportedMetadataProperty("dc:date", new String[] { "opf:event" }, new String[] { "publication" }));
 		result.add(createSupportedMetadataProperty("dc:language"));
-		result.add(createSupportedMetadataProperty("dc:identifier", new String[] { "id", "opf:scheme" }, new String[] { "uuid_id", "uuid" }));
+		
+//		MetadataProperty createSupportedMetadataProperty = createSupportedMetadataProperty("dc:identifier", new String[] { "id", "opf:scheme" }, new String[] { "uuid_id", "uuid" });
+//		createSupportedMetadataProperty.setValue(UUID.randomUUID().toString(), 0);
+//		result.add(createSupportedMetadataProperty);
+				
 		result.add(createSupportedMetadataProperty("dc:identifier", new String[] { "opf:scheme" }, new String[] { "ISBN" }));
 		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { CALIBRE_SERIES, "" }));
 		result.add(createSupportedMetadataProperty("meta", new String[] { "name", "content" }, new String[] { CALIBRE_SERIES_INDEX, "" }));

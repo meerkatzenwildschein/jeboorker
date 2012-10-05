@@ -11,6 +11,8 @@ import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.MainController;
 
+import com.l2fprod.common.propertysheet.DefaultProperty;
+
 /**
  * Action which removes the currently selected metadata entry in the metadata sheet.
  */
@@ -49,7 +51,8 @@ class RemoveMetadataEntryAction extends AbstractAction {
 		@Override
 		public void metaDataSheetSelectionChanged(ApplicationEvent evt) {
 			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null);
-			if(evt.getMetadataProperty() == null || !evt.getMetadataProperty().isEditable()) {
+			boolean isDeletable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isDeletable() : true;
+			if(evt.getMetadataProperty() == null || !isDeletable) {
 				action.setEnabled(false);
 			} else {
 				action.setEnabled(true);

@@ -44,6 +44,7 @@ public class EbookSheetProperty extends DefaultProperty {
 		this.propertyIndex = propertyIndex;
 		this.item = item;
 		this.setEditable(metadataProperty.isEditable());
+		this.setDeletable(metadataProperty.isDeletable());
 	}
 	
 	/**
@@ -74,6 +75,7 @@ public class EbookSheetProperty extends DefaultProperty {
 		fileNameProperty.setDisplayName(Bundle.getString("EbookPropertySheetProperty.property.name.file"));
 		fileNameProperty.setName("file");
 		fileNameProperty.setEditable(false);
+		fileNameProperty.setDeletable(false);
 		fileNameProperty.setValue(resourceLoader);
 		fileNameProperty.setShortDescription(resourceLoader!=null ? resourceLoader.toString() : "");
 		result.add(fileNameProperty);
