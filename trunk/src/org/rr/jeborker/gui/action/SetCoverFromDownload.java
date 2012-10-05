@@ -5,6 +5,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
 import org.rr.commons.swing.dialogs.ImageDownloadDialog;
 import org.rr.jeborker.gui.MainController;
 
@@ -23,7 +24,7 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 	@Override
 	public ImageDownloadDialog doOnce() {
 		if(imageDownloadDialog == null) {
-			imageDownloadDialog = new ImageDownloadDialog(MainController.getController().getMainWindow());
+			imageDownloadDialog = new ImageDownloadDialog(MainController.getController().getMainWindow(), ImageFetcherFactory.getInstance());
 			
 			//default search phrase
 			String searchPhrase = this.resourceHandler.getName();
