@@ -1,6 +1,7 @@
 package org.rr.common.swing;
 
 import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -15,9 +16,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import org.rr.common.swing.icon.AnimatedIcon;
 
 /**
  * @see http://www.java2s.com/Code/Java/Swing-JFC/Showhowaglasspanecanbeusedtoblockmouseandkeyevents.htm
@@ -41,6 +46,10 @@ public class ShadowPanel extends JPanel implements MouseListener, MouseMotionLis
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addFocusListener(this);
+		
+		AnimatedIcon icon = new AnimatedIcon(new ImageIcon(ShadowPanel.class.getResource("button/resources/progress.gif")));
+		this.setLayout(new BorderLayout());
+		this.add(new JLabel(icon), BorderLayout.CENTER);
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -50,6 +59,8 @@ public class ShadowPanel extends JPanel implements MouseListener, MouseMotionLis
 		g2d.setColor(Color.BLACK);
 
 		g2d.fillRect(0, 0, getWidth(), getHeight());
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+		super.paintComponent(g2d);
 	}
 
 	public void setVisible(boolean v) {
