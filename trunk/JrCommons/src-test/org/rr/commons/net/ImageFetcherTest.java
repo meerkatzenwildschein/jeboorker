@@ -13,7 +13,7 @@ public class ImageFetcherTest extends TestCase {
 	
 	public void testFetcherGoogle() {
 		try {
-			IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(ImageFetcherFactory.FETCHER_TYPES.GOOGLE_IMAGES);
+			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Google");
 			imageFetcher.setSearchTerm("Der Fänger");
 			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
@@ -26,7 +26,7 @@ public class ImageFetcherTest extends TestCase {
 	
 	public void testFetcherBing() {
 		try {
-			IImageFetcher imageFetcher = ImageFetcherFactory.getImageFetcher(ImageFetcherFactory.FETCHER_TYPES.BING_IMAGES);
+			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Bing");
 			imageFetcher.setSearchTerm("Der Fänger");
 			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
