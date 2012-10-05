@@ -3,14 +3,16 @@ package org.rr.commons.net.imagefetcher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageFetcherFactory {
-
+public class ImageFetcherFactory implements IImageFetcherFactory {
+	
+	private static ImageFetcherFactory factorySingleton;
+	
 	private static interface FetcherType {
 
 		String getName();
 	}
 
-	public static enum FETCHER_TYPES implements FetcherType {
+	static enum FETCHER_TYPES implements FetcherType {
 		GOOGLE_IMAGES {
 
 			public String getName() {
@@ -25,6 +27,17 @@ public class ImageFetcherFactory {
 			}
 		}
 	}
+	
+	/**
+	 * get the singleton instance for the ImageFetcherFactory here.
+	 * @return
+	 */
+	public static ImageFetcherFactory getInstance() {
+		if(factorySingleton == null) {
+			factorySingleton = new ImageFetcherFactory();
+		}
+		return factorySingleton;
+	}
 
 	/**
 	 * Get the image fetcher of the desired type.
@@ -34,7 +47,7 @@ public class ImageFetcherFactory {
 	 * @return The fetcher type.
 	 * @see FETCHER_TYPES
 	 */
-	public static IImageFetcher getImageFetcher(FETCHER_TYPES type) {
+	private IImageFetcher getImageFetcher(FETCHER_TYPES type) {
 		switch (type) {
 		case GOOGLE_IMAGES:
 			return new GoogleImageFetcher();
@@ -45,11 +58,11 @@ public class ImageFetcherFactory {
 		return null;
 	}
 	
-	public static IImageFetcher getImageFetcher(String fetcherName) {
+	public IImageFetcher getImageFetcher(String fetcherName) {
 		return getImageFetcher(fetcherName, null);
 	}
 	
-	public static IImageFetcher getImageFetcher(String fetcherName, String searchTerm) {
+	public IImageFetcher getImageFetcher(String fetcherName, String searchTerm) {
 		for (FETCHER_TYPES type : FETCHER_TYPES.values()) {
 			if(fetcherName.equals(type.getName())) {
 				IImageFetcher imageFetcher = getImageFetcher(type);
@@ -63,10 +76,10 @@ public class ImageFetcherFactory {
 	}
 
 	/**
-	 * Get the names of all available fetchers.
+	 * Get the names of all available fetcher.
 	 * @return All available fetcher names.
 	 */
-	public static List<String> getFetcherNames() {
+	public List<String> getFetcherNames() {
 		ArrayList<String> result = new ArrayList<String>();
 		for (FETCHER_TYPES type : FETCHER_TYPES.values()) {
 			result.add(type.getName());
