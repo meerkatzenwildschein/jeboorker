@@ -425,9 +425,9 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public void dispose() {
-		this.parentFileresourceLoader = null;
-		this.file = null;
-		this.resource = null;
+//		this.parentFileresourceLoader = null;
+//		this.file = null;
+//		this.resource = null;
 	}
 
 	/**
