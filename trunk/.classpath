@@ -23,6 +23,7 @@
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-1.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-nativeos-1.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-object-1.2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/epublib/slf4j-simple-1.7.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/EpubLib"/>
 	<classpathentry kind="output" path="bin"/>
