@@ -1,80 +1,123 @@
 package org.rr.jeborker.metadata;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import nl.siegmann.epublib.domain.Author;
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Identifier;
+import nl.siegmann.epublib.domain.Meta;
+import nl.siegmann.epublib.domain.Metadata;
+import nl.siegmann.epublib.epub.EpubReader;
+import nl.siegmann.epublib.epub.EpubWriter;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.commons.utils.ZipUtils;
-import org.rr.commons.utils.ZipUtils.ZipDataEntry;
-import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-class EPubMetadataWriter extends AEpubMetadataHandler implements IMetadataWriter {
+class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWriter {
 
-	public EPubMetadataWriter(IResourceHandler ebookResourceHandler) {
+	public EPubLibMetadataWriter(IResourceHandler ebookResourceHandler) {
 		super(ebookResourceHandler);
 	}
 
 	@Override
 	public void writeMetadata(Iterator<MetadataProperty> props) {
 		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final EpubReader reader = new EpubReader();
+		
 		try {
-			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final String opfFile = this.getOpfFile(zipData);
-			final ZipDataEntry containerXml = ZipUtils.extract(zipData, opfFile);
-			if (containerXml != null) {
-				final Document document = getDocument(containerXml.data, ebookResourceHandler);
-				final Element metadataNode = this.getMetadataElement(document);
-
-				// delete metadata node
-				Node packageNode = metadataNode.getParentNode();
-				packageNode.removeChild(metadataNode);
-
-				Element newMetadata = document.createElement("metadata");
-				newMetadata.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
-				newMetadata.setAttribute("xmlns:opf", "http://www.idpf.org/2007/opf");
-				packageNode.insertBefore(newMetadata, packageNode.getFirstChild());
-
-				// do the modifications to the doc ....
-				this.addMetadataElements(ebookResourceHandler, document, newMetadata, props);
-
-				// write the doc.
-				final byte[] docData = getDocumentBytes(document);
-				this.writeZipData(docData, opfFile);
-			} else {
-				LoggerFactory.logWarning(this.getClass(), "Container not found " + opfFile + " in " + ebookResourceHandler, new RuntimeException("dumpstack"));
-			}
+			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream());
+			setMetadata(epub, props);
+			
+			writeBook(epub, ebookResourceHandler);
+			LoggerFactory.logInfo(this, "Metadata successfully written to " + ebookResourceHandler, null);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write metadata to file " + ebookResourceHandler, e);
 		}
 	}
-
-	/**
-	 * Attaches the data from the given {@link EbookPropertyItem} as nodes to the given {@link Document}. Existing data will be refreshed.
-	 * 
-	 * @param item
-	 *            The {@link EbookPropertyItem} containing the data to be written
-	 * @param document
-	 *            The {@link Document} which is needed to create new elements.
-	 * @param metadataNode
-	 *            The meta data node where the data should be attached.
-	 */
-	private void addMetadataElements(IResourceHandler item, final Document document, final Element metadataNode, Iterator<MetadataProperty> props) {
-		while (props.hasNext()) {
-			MetadataProperty metadataProperty = props.next();
-			if (metadataProperty instanceof EpubMetadataProperty) {
-				final Element element = ((EpubMetadataProperty) metadataProperty).createElement(document);
-				metadataNode.appendChild(element);
-			}
+	
+	private void setMetadata(final Book epub, final Iterator<MetadataProperty> props) {
+		final Metadata metadata = epub.getMetadata();
+		
+		metadata.clearAll();
+		while(props.hasNext()) {
+			final EpubLibMetadataProperty<?> meta = (EpubLibMetadataProperty<?>) props.next();
+			if(EPUB_METADATA_TYPES.AUTHOR.getName().equals(meta.getName())) {
+				Author author = new Author(meta.getValueAsString());
+				author.setRelator(((Author)meta.getType()).getRelator());				
+				metadata.addAuthor(author);
+			} else if(EPUB_METADATA_TYPES.TITLE.getName().equals(meta.getName())) {
+				metadata.addTitle(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.DESCRIPTION.getName().equals(meta.getName())) {
+				metadata.addDescription(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.PUBLISHER.getName().equals(meta.getName())) {
+				metadata.addPublisher(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.RIGHTS.getName().equals(meta.getName())) {
+				metadata.addRight(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.SUBJECT.getName().equals(meta.getName())) {
+				metadata.addSubject(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.TYPE.getName().equals(meta.getName())) {
+				metadata.addType(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.CONTRIBUTOR.getName().equals(meta.getName())) {
+				Author author = new Author(meta.getValueAsString());
+				author.setRelator(((Author)meta.getType()).getRelator());
+				metadata.addContributor(author);
+			} else if(EPUB_METADATA_TYPES.DATE.getName().equals(meta.getName())) {
+				Date date;
+				if(!meta.getValues().isEmpty() && meta.getValues().get(0) instanceof Date) {
+					date = (Date) meta.getValues().get(0);
+				} else {
+					date = DateConversionUtils.toDate(meta.getValueAsString());
+				}
+				
+				if(date != null) {
+					metadata.addDate(new nl.siegmann.epublib.domain.Date(date));
+				} else {
+					throw new RuntimeException("Invalid date '" + meta.getValueAsString() + "'");
+				}
+			} else if(EPUB_METADATA_TYPES.IDENTIFIER.getName().equals(meta.getName())) {
+				Identifier identifier = new Identifier(((Identifier)meta.getType()).getScheme(), meta.getValueAsString());
+				metadata.addIdentifier(identifier);
+			} else if(meta.getType() instanceof QName) {
+				Object type = meta.getType();
+				String prefix = ((QName)type).getPrefix();
+				String namespaceURI = ((QName)type).getNamespaceURI();
+				String localPart = ((QName)type).getLocalPart();
+				QName qName = new QName(namespaceURI, localPart, prefix);
+				metadata.addOtherProperty(qName, meta.getValueAsString());
+			} else if(meta.getType() instanceof Meta) {
+				Object type = meta.getType();
+				Meta m = new Meta( ((Meta)type).getName(), meta.getValueAsString() );
+				metadata.addOtherMeta(m);
+			} else if(EPUB_METADATA_TYPES.LANGUAGE.getName().equals(meta.getName())) {
+				metadata.setLanguage(meta.getValueAsString());
+			}  else if(EPUB_METADATA_TYPES.FORMAT.getName().equals(meta.getName())) {
+				metadata.setFormat(meta.getValueAsString());
+			} 
+		}
+	}
+	
+	private void writeBook(final Book epub, final IResourceHandler ebookResourceHandler) throws IOException {
+		final EpubWriter writer = new EpubWriter();
+		final IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");
+		writer.write(epub, temporaryResourceLoader.getContentOutputStream(false));
+		if(temporaryResourceLoader.size() > 0) {
+			temporaryResourceLoader.moveTo(ebookResourceHandler, true);
+		} else {
+			temporaryResourceLoader.delete();
 		}
 	}
 
@@ -88,8 +131,8 @@ class EPubMetadataWriter extends AEpubMetadataHandler implements IMetadataWriter
 			final Document document = getDocument(containerXmlData, ebookResourceHandler);
 			if (document != null) {
 				final Element metadataElement = this.getMetadataElement(document);
-				final Element manifestElement = this.getManifestElement(document);
 				if (metadataElement != null) {
+					final Element manifestElement = this.getManifestElement(document);
 					final String coverNameReference = findMetadataCoverNameReference(metadataElement, document);
 					final String coverName = findManifestCoverName(manifestElement, coverNameReference, document);
 					if(coverName!=null) {

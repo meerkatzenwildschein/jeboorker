@@ -5,19 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
+import nl.siegmann.epublib.domain.Identifier;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.DateConversionUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.commons.utils.ZipUtils;
 import org.rr.commons.utils.ZipUtils.ZipDataEntry;
+import org.rr.jeborker.db.item.EbookKeywordItem;
+import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public abstract class AEpubMetadataHandler extends AMetadataHandler {
+abstract class AEpubMetadataHandler extends AMetadataHandler {
 	
 	private IResourceHandler ebookResourceHandler;
 
@@ -26,6 +34,172 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 	protected byte[] zipContent = null;
 	
 	private String opfFileName = null;
+	
+	protected static interface MetadataEntryType {
+		String getName();
+		
+		void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
+	}	
+	
+	protected static enum EPUB_METADATA_TYPES implements MetadataEntryType {
+		JB_AGE_SUGGESTION {
+			public String getName() {
+				return "jeboorker:age_suggestion";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setAgeSuggestion(metadataProperty.getValueAsString());
+			}
+		},JB_KEYWORDS {
+			public String getName() {
+				return "jeboorker:keywords";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				List<String> keywords = ListUtils.split(metadataProperty.getValueAsString(), ",");
+				List<EbookKeywordItem> asEbookKeywordItem = EbookPropertyItemUtils.getAsEbookKeywordItem(keywords);
+				item.setKeywords(asEbookKeywordItem);
+			}			
+		},CALIBRE_RATING {
+			public String getName() {
+				return "calibre:rating";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				Number number = CommonUtils.toNumber(metadataProperty.getValueAsString());
+				item.setRating(number != null ? number.intValue() : null);
+			}
+		},CALIBRE_SERIES_INDEX {
+			public String getName() {
+				return "calibre:series_index";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setSeriesIndex(metadataProperty.getValueAsString());
+			}
+		},CALIBRE_SERIES {
+			public String getName() {
+				return "calibre:series";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setSeriesIndex(metadataProperty.getValueAsString());
+			}
+		},SUBJECT {
+			public String getName() {
+				return "subject";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setGenre(metadataProperty.getValueAsString());
+			}
+		},PUBLISHER {
+			public String getName() {
+				return "publisher";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setPublisher(metadataProperty.getValueAsString());
+			}
+		},IDENTIFIER {
+			public String getName() {
+				return "identifier";
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				Identifier identifier = ((EpubLibMetadataProperty<Identifier>)metadataProperty).getType();
+				if("uuid".equalsIgnoreCase(identifier.getScheme())) {
+					item.setUuid(metadataProperty.getValueAsString());
+				} else if("idbn".equalsIgnoreCase(identifier.getScheme())) {
+					item.setIsbn(metadataProperty.getValueAsString());
+				}
+			}
+		},RIGHTS {
+			public String getName() {
+				return "rights";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setRights(metadataProperty.getValueAsString());
+			}
+		},LANGUAGE {
+			public String getName() {
+				return "language";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setLanguage(metadataProperty.getValueAsString());
+			}
+		},DESCRIPTION {
+			public String getName() {
+				return "description";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setDescription(metadataProperty.getValueAsString());
+			}
+		},TITLE {
+			public String getName() {
+				return "title";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setTitle(metadataProperty.getValueAsString());
+			}
+		},DATE {
+			public String getName() {
+				return "date";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setCreationDate(DateConversionUtils.toDate(metadataProperty.getValueAsString()));
+			}
+		},CREATOR {
+			public String getName() {
+				return "creator";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				//no EbookPropertyItem
+			}
+		},AUTHOR {
+			public String getName() {
+				return "author";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setAuthor(metadataProperty.getValueAsString());
+			}
+		},TYPE {
+			public String getName() {
+				return "type";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				//no EbookPropertyItem
+			}
+		},CONTRIBUTOR {
+			public String getName() {
+				return "contributor";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				//no EbookPropertyItem
+			}
+		},FORMAT {
+			public String getName() {
+				return "format";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				//no EbookPropertyItem
+			}
+		}
+	}
 	
 	AEpubMetadataHandler(IResourceHandler ebookResourceHandler) {
 		this.ebookResourceHandler = ebookResourceHandler;
@@ -130,7 +304,8 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 */
 	protected Element getMetadataElement(Document document) {
 		try {
-			NodeList metadataElement = document.getElementsByTagName("metadata");
+			final String metadataElementName = attachPrefix("metadata", document);
+			NodeList metadataElement = document.getElementsByTagName(metadataElementName);
 			if(metadataElement!=null && metadataElement.getLength()>0) {
 				return (Element) metadataElement.item(0);
 			}
@@ -141,6 +316,27 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 	}	
 	
 	/**
+	 * Get the default prefix for the document or null if no prefix is set
+	 * @param document The document to be tested.
+	 * @return The prefix or null if no prefix is set.
+	 */
+	private String getPrefix(Document document) {
+		String nodeName = document.getDocumentElement().getNodeName();
+		if(nodeName.indexOf(':')!=-1) {
+			 return nodeName.substring(0,nodeName.indexOf(':'));
+		}
+		return null;
+	}
+	
+	private String attachPrefix(String tag, Document document) {
+		String prefix = getPrefix(document);
+		if(prefix != null) {
+			return prefix + ":" + tag;
+		}
+		return tag;
+	}
+	
+	/**
 	 * Gets the manifest node. The metadata node contains all the informations
 	 * that should be provided by the reader.
 	 * @param xmlData
@@ -148,7 +344,8 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 */
 	protected Element getManifestElement(Document document) {
 		try {
-			NodeList metadataElement = document.getElementsByTagName("manifest");
+			final String manifestElementName = attachPrefix("manifest", document);
+			NodeList metadataElement = document.getElementsByTagName(manifestElementName);
 			if(metadataElement!=null && metadataElement.getLength()>0) {
 				return (Element) metadataElement.item(0);
 			}
@@ -241,8 +438,12 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * @param metadataNode The metadata node.
 	 * @return The cover name or <code>null</code> if no cover entry is specified.
 	 */
-	protected String findMetadataCoverNameReference(final Node metadataNode) {
-		Node coverNode = getChildByTagAndAttribute(metadataNode, "meta", "name", "cover");
+	protected String findMetadataCoverNameReference(final Node metadataNode, final Document document) {
+		final String metaElementName = attachPrefix("meta", document);
+		Node coverNode = getChildByTagAndAttribute(metadataNode, metaElementName, "name", "cover");
+		if(coverNode == null) {
+			coverNode = getChildByTagAndAttribute(metadataNode, "meta", "name", "cover");
+		}
 		String cover = null;
 		if (coverNode != null) {
 			NamedNodeMap attributes = coverNode.getAttributes();
@@ -261,13 +462,14 @@ public abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * @param manifestElement The manifest node.
 	 * @return The cover name or <code>null</code> if no cover entry is specified.
 	 */
-	protected String findManifestCoverName(final Element manifestElement, final String coverId) {
+	protected String findManifestCoverName(final Element manifestElement, final String coverId, final Document document) {
 		if(coverId==null) {
 			return null;
 		}
 		List<Element> manifestChildren = getChildren(manifestElement);
+		final String itemElementName = attachPrefix("item", document);
 		for (Element child : manifestChildren) {
-			if(child.getTagName().equals("item") && child.getAttribute("id")!=null && child.getAttribute("id").equals(coverId)) {
+			if((child.getTagName().equals("item") || child.getTagName().equals(itemElementName)) && child.getAttribute("id")!=null && child.getAttribute("id").equals(coverId)) {
 				if(child.getAttribute("media-type") != null && !child.getAttribute("media-type").startsWith("image/")) {
 					//failsave for entries with cover id which is not really an image.
 					continue;

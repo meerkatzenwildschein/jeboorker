@@ -38,7 +38,8 @@ class ODocumentMapper<T> extends AbstractList<T> {
 		this.db = db;
 		
 //		sql.append(" " + LIMIT + " " + limit);
-		this.query = new OSQLSynchQuery<T>(sql.toString());	
+		String sqlSring = sql.toString();
+		this.query = new OSQLSynchQuery<T>(sqlSring);	
 	}	
 	
 	private synchronized List<?> getDocuments() {

@@ -3,9 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="l2fprod_common"/>
 	<classpathentry kind="src" path="bounce"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_32"/>
 	<classpathentry kind="src" path="jempbox"/>
 	<classpathentry kind="src" path="japura"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_32"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.jar"/>
@@ -16,12 +16,14 @@
 	<classpathentry kind="lib" path="lib/orientdb/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jsoup-1.7.1.jar" sourcepath="lib/jsoup-1.7.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/javassist-3.16.1-GA.jar"/>
+	<classpathentry kind="lib" path="lib/junique-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/paraj-r10.jar"/>
+	<classpathentry kind="lib" path="lib/epublib/htmlcleaner-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orient-commons-1.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-1.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-nativeos-1.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-object-1.2.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/junique-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/paraj-r10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/EpubLib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

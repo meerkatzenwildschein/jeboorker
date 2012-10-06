@@ -11,6 +11,8 @@ import java.io.FileFilter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.swing.UIManager;
@@ -99,15 +101,18 @@ public class Jeboorker {
 	}
 
 	private static void setupClasspath() {
-		String result = System.getProperties().getProperty("user.dir");
+		final String result = System.getProperties().getProperty("user.dir");
+		final Set<String> jarFileSet = new HashSet<String>();
+		
 		try {
-			addPath(new File(result + File.separator + "lib/"));
-			addPath(new File(result + File.separator + "lib/orientdb/"));
-			addPath(new File(result + File.separator + "lib/epubcheck/"));
+			addPath(new File(result + File.separator + "lib/"), jarFileSet);
+			addPath(new File(result + File.separator + "lib/orientdb/"), jarFileSet);
+			addPath(new File(result + File.separator + "lib/epubcheck/"), jarFileSet);
+			addPath(new File(result + File.separator + "lib/epublib/"), jarFileSet);
 		} catch (Exception e1) {
 			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
 			System.exit(-1);
-		}
+		} 
 	}
 
 	/**
@@ -115,23 +120,28 @@ public class Jeboorker {
 	 * @param dir The dir with jars to be added (not recursively)
 	 * @throws Exception
 	 */
-	public static void addPath(File dir) throws Exception {
-		File[] files = dir.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.getName().endsWith(".jar");
-			}
-		});
-
-		if(files != null) {
-			for (int i = 0; i < files.length; i++) {
-				URL u = files[i].toURL();
-				URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-				Class<URLClassLoader> urlClass = URLClassLoader.class;
-				Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
+	public static void addPath(final File dir, final Set<String> jarFileSet) throws Exception {
+		if(dir != null && dir.isDirectory()) {
+			final File[] files = dir.listFiles(new FileFilter() {
+	
+				@Override
+				public boolean accept(File pathname) {
+					return pathname.getName().endsWith(".jar");
+				}
+			});
+	
+			if(files != null) {
+				final URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+				final Class<URLClassLoader> urlClass = URLClassLoader.class;
+				final Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
 				method.setAccessible(true);
-				method.invoke(urlClassLoader, new Object[] { u });
+				for (int i = 0; i < files.length; i++) {
+					if(jarFileSet == null || !jarFileSet.contains(files[i].getName())) {
+						URL u = files[i].toURI().toURL();
+						method.invoke(urlClassLoader, new Object[] { u });
+						jarFileSet.add(files[i].getName());
+					}
+				}
 			}
 		}
 	}
