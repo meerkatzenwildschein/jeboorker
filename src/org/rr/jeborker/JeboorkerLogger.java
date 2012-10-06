@@ -40,7 +40,7 @@ public class JeboorkerLogger extends Handler {
 					thrownCause = null;
 				}
 			}
-			MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null ? " (" + thrownCause+ ")" : ""));
+			MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null && !thrownCause.isEmpty() ? " (" + thrownCause+ ")" : ""));
 		}
 	}
 	

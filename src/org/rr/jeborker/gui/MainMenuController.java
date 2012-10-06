@@ -273,7 +273,9 @@ public class MainMenuController {
 			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
 			for(String basePath : split) {
 				//setShowHideBasePathStatusShow(basePath, false); //set checkbox value to the view
-				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
+
+//TODO reactivate. It cause the nasty exception				
+//				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
 			}
 		}
 	}

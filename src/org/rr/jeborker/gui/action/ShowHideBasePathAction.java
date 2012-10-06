@@ -38,6 +38,7 @@ class ShowHideBasePathAction extends AbstractAction {
 				putValue(Action.NAME, text);
 			}
 		}
+		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE);
 	}
 	
 	@Override

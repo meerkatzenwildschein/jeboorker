@@ -17,7 +17,7 @@ public class MetadataHandlerFactory {
 		final String mimeType = resource.getMimeType();
 		if(mimeType!=null) {
 			if(resource.getMimeType().equals(MIME_EPUB)) {
-				return new EPubMetadataReader(resource);
+				return new EPubLibMetadataReader(resource);
 			} else if(resource.getMimeType().equals(MIME_PDF)) {
 				return new PDFMetadataReader(resource);
 			}
@@ -35,7 +35,7 @@ public class MetadataHandlerFactory {
 		final String mimeType = resource.getMimeType();
 		if(mimeType!=null) {
 			if(resource.getMimeType().equals(MIME_EPUB)) {
-				return new EPubMetadataWriter(resource);
+				return new EPubLibMetadataWriter(resource);
 			} else if(resource.getMimeType().equals(MIME_PDF)) {
 				return new PDFMetadataWriter(resource);
 			}

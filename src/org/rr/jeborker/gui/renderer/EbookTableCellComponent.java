@@ -340,7 +340,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		if(StringUtils.isNotEmpty(item.getAuthor())) {
 			result.insert(0, item.getAuthor());
 		} else {
-			result.insert(0, "<no author>");
+			result.insert(0, "<"+Bundle.getString("EbookTableCellComponent.noAuthor")+">");
 		}
 		return result.toString();
 	}
