@@ -35,6 +35,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	@ViewField(name = "Base Path", orderPriority = 0)
 	@ProtectedField
+	@Index(type= "FULLTEXT")
 	private String basePath;
 	
 	/**
