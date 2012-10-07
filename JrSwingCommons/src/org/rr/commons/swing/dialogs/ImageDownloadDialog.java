@@ -19,6 +19,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.LookupOp;
+import java.awt.image.ShortLookupTable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -110,7 +113,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	protected void init(Frame owner) {
-		this.setSize(800, 400);
+		this.setSize(800, 430);
 		if(owner != null) {
 			//center over the owner frame
 			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
@@ -194,6 +197,7 @@ public class ImageDownloadDialog extends JDialog {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 3;
 		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
@@ -339,7 +343,7 @@ public class ImageDownloadDialog extends JDialog {
 			this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			this.setShowGrid(false);
 		    this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			
+		    
 			this.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
 					if (e.getClickCount() == 2) {
@@ -381,6 +385,13 @@ public class ImageDownloadDialog extends JDialog {
 		}
 		
 		private class SearchResultTableRenderer extends JPanel implements TableCellRenderer {
+			private final short[] invertTable;
+			{
+				invertTable = new short[256];
+				for (int i = 0; i < 256; i++) {
+					invertTable[i] = (short) (255 - i);
+				}
+			}		
 			
 			private JLabel sizeLabel;
 			
@@ -404,7 +415,7 @@ public class ImageDownloadDialog extends JDialog {
 
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				if(isSelected && hasFocus) {
+				if(table.getSelectedColumn() == column) {
 					setBackground(selectedBgColor);
 					sizeLabel.setForeground(selectedFgColor);
 					imageLabel.setForeground(selectedFgColor);					
@@ -420,12 +431,25 @@ public class ImageDownloadDialog extends JDialog {
 				sizeLabel.setText(imageWidth + "x" + imageHeight);
 				try {
 					ImageIcon imageIcon = createThumbnail((IImageFetcherEntry) value);
+					if(table.getSelectedColumn() == column) {
+						BufferedImage invertedThumbnail = invertImage((BufferedImage) imageIcon.getImage());
+						imageIcon = new ImageIcon(invertedThumbnail);
+					}
 					imageLabel.setIcon(imageIcon);
 				} catch (IOException e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Images could not be retrieved.", e);
 				}
 				return this;
 			}
+			
+			private BufferedImage invertImage(final BufferedImage src) {
+				final int w = src.getWidth();
+				final int h = src.getHeight();
+				final BufferedImage dst = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+				 
+				final BufferedImageOp invertOp = new LookupOp(new ShortLookupTable(0, invertTable), null);
+				return invertOp.filter(src, dst);
+				}			
 		}
 		
 		/**
