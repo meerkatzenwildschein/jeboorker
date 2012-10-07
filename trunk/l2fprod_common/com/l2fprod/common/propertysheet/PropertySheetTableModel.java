@@ -499,6 +499,7 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   
   public class Item {
     private String name;
+    private String descriptionName;
     private Property property;
     private Item parent;
     private boolean hasToggle = true;
@@ -506,6 +507,7 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
 
     private Item(String name, Item parent) {
       this.name = name;
+      this.descriptionName = name;
       this.parent = parent;
       // this is not a property but a category, always has toggle
       this.hasToggle = true;
@@ -513,6 +515,8 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
     
     private Item(Property property, Item parent) {
       this.name = property.getDisplayName();
+      this.descriptionName = property.getDisplayDescriptionName();
+      this.descriptionName = property.getDisplayName();
       this.property = property;
       this.parent = parent;
       this.visible = (property == null);

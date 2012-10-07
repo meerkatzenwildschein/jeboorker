@@ -55,4 +55,6 @@ public interface Property extends Serializable, Cloneable {
   public Property getParentProperty();
   
   public Property[] getSubProperties();
+
+  public String getDisplayDescriptionName();
 }

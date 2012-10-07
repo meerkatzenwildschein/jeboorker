@@ -544,7 +544,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 			if (row >= 0 && table.getRowCount() > row)
 				prop = model.getPropertySheetElement(row).getProperty();
 			if (prop != null) {
-				descriptionPanel.setText("<html>" + "<b>" + (prop.getDisplayName() == null ? "" : prop.getDisplayName()) + "</b><br>"
+				descriptionPanel.setText("<html>" + "<b>" + (prop.getDisplayDescriptionName() == null ? "" : prop.getDisplayDescriptionName()) + "</b><br>"
 						+ (prop.getShortDescription() == null ? "" : prop.getShortDescription()));
 			} else {
 				descriptionPanel.setText("<html>");
