@@ -166,7 +166,7 @@ public class IteratorList<E> implements List<E> {
 
 	@Override
 	public E set(int index, E element) {
-		this.copyIterator();
+		fillListToIndex(index + 1);
 		return this.list.set(index, element);
 	}
 
@@ -251,6 +251,7 @@ public class IteratorList<E> implements List<E> {
 	}
 	
 	private void copyIterator() {
+		LoggerFactory.logInfo(this, "Full Iterator copy is triggered.", null);
 		if(!completlyCopied) {
 			completlyCopied = true;
 			while(iterator.hasNext()) {
