@@ -126,14 +126,12 @@ public class MainController {
 		 */
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			final EbookPropertyItem ebookPropertyItem = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItem(); //getSelectedEbookPropertyItems();
-//			for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
-				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
-				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
-				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
-				
-				refreshTableSelectedItem(false);
-//			}
+			final EbookPropertyItem ebookPropertyItem = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItem();
+			IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
+			ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
+			reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+			
+			refreshTableSelectedItem(false);
 		}
 	}
 	
