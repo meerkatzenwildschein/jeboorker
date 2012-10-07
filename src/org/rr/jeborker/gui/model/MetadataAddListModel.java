@@ -51,7 +51,9 @@ public class MetadataAddListModel extends AbstractListModel {
 		for (MetadataProperty supportedProperty : supportedMetaData) {
 			for (MetadataProperty currentMetadataProperty : currentMetaData) {
 				if(supportedProperty.getName().equals(currentMetadataProperty.getName())) {
-					toRemove.add(supportedProperty);
+					if(supportedProperty.isSingle()) {
+						toRemove.add(supportedProperty);
+					}
 				}
 			}
 		}

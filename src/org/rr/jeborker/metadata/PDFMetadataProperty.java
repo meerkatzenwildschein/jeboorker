@@ -218,11 +218,6 @@ class PDFMetadataProperty extends MetadataProperty {
 		}
 	}
 
-	@Override
-	public String getDetails() {
-		return "";
-	}
-
 	public String getNamespace() {
 		return namespace;
 	}

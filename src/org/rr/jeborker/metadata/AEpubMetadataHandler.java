@@ -41,7 +41,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
 	}	
 	
-	protected static enum EPUB_METADATA_TYPES implements MetadataEntryType {
+	static enum EPUB_METADATA_TYPES implements MetadataEntryType {
 		JB_AGE_SUGGESTION {
 			public String getName() {
 				return "jeboorker:age_suggestion";
@@ -116,6 +116,24 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 				} else if("idbn".equalsIgnoreCase(identifier.getScheme())) {
 					item.setIsbn(metadataProperty.getValueAsString());
 				}
+			}
+		},ISBN {
+			public String getName() {
+				return "isbn";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setIsbn(metadataProperty.getValueAsString());
+			}
+		},UUID {
+			public String getName() {
+				return "uuid";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setUuid(metadataProperty.getValueAsString());
 			}
 		},RIGHTS {
 			public String getName() {
