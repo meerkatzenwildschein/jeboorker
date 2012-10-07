@@ -41,6 +41,7 @@ public class DefaultProperty extends AbstractProperty {
   private Property parent;
   private List<Property> subProperties = new ArrayList<Property>();
   private boolean isDeletable = true;
+  private String diplayDescriptionName;
 
   public void setDeletable(boolean deletable) {
 	this.isDeletable = deletable;
@@ -241,4 +242,16 @@ public class DefaultProperty extends AbstractProperty {
 	if (subProperty instanceof DefaultProperty)
 		((DefaultProperty)subProperty).setParentProperty(this);
   }
+
+	@Override
+	public String getDisplayDescriptionName() {
+		if(this.diplayDescriptionName == null || this.diplayDescriptionName.isEmpty()) {
+			return this.displayName;
+		}
+		return this.diplayDescriptionName;
+	}
+	
+	public void setDisplayDescriptionName(String diplayDescriptionName) {
+		this.diplayDescriptionName = diplayDescriptionName;
+	}
 }

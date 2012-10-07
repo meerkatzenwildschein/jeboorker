@@ -122,5 +122,10 @@ class PropertyDescriptorAdapter extends AbstractProperty {
       return null;
     }
   }
+
+	@Override
+	public String getDisplayDescriptionName() {
+		return descriptor.getDisplayName();
+	}
   
 }
