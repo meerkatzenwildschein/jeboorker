@@ -83,8 +83,10 @@ public class MainController {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting()) {
+				Property selectedMetadataProperty = getSelectedMetadataProperty();				
 				saveProperties(e);
 				refreshSheetProperties(); 
+				setSelectedMetadataProperty(selectedMetadataProperty);
 			}
 		}
 
@@ -332,6 +334,32 @@ public class MainController {
 			return property;
 		}
 		return null;
+	}
+	
+	/**
+	 * Set the given property as selected one in the metadata sheet.
+	 * @param property The property to be set as selected.
+	 */
+	public void setSelectedMetadataProperty(final Property property) {
+		if(property != null) {
+			EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
+			int rowCount = model.getRowCount();
+			for (int i = 0; i < rowCount; i++) {
+				final PropertySheetTableModel.Item item = (Item) model.getObject(i);
+				
+				if(property instanceof EbookSheetProperty) {
+					if(item.getName().equals(((EbookSheetProperty)property).getDisplayName())) {
+						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
+						break;
+					}					
+				} else {
+					if(item.getProperty().getName().equals(property.getName())) {
+						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 	/**
