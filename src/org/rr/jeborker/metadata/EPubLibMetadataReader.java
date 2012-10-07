@@ -270,9 +270,37 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES type) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, IMetadataReader.METADATA_TYPES type) {
+		MetadataProperty newProperty;
+		switch(type) {
+		case AUTHOR:
+			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.AUTHOR.getName(), "");
+			break;
+		case TITLE:
+			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.TITLE.getName(), "");
+			break;
+		case GENRE:
+			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.SUBJECT.getName(), "");
+			break;
+		case SERIES_NAME:
+			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.CALIBRE_SERIES.getName(), "");
+			break;
+		default: newProperty = null;
+		}
+
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		if(newProperty != null) {
+			for(MetadataProperty prop : props) {
+				if(prop.getName().equalsIgnoreCase(newProperty.getName())) {
+					result.add(prop);
+				}
+			}
+		}
+		
+		if(create && result.isEmpty() && newProperty != null) {
+			result.add(newProperty);
+		}
+		return result;
 	}
 
 }
