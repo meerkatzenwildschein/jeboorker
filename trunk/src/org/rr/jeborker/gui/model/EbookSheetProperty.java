@@ -204,33 +204,28 @@ public class EbookSheetProperty extends DefaultProperty {
 	
 	@Override
 	public String getShortDescription() {
-		final String details = metadataProperty != null ? metadataProperty.getDetails() : "";
-		final StringBuilder value = new StringBuilder(details != null ? details : "");
+		final StringBuilder value = new StringBuilder();
 		final boolean isDate = ReflectionUtils.equals(metadataProperty.getPropertyClass(), Date.class);
 		
-		if(isDate) {
-			if(value.length()>0) {
+		if (isDate) {
+			if (value.length() > 0) {
 				value.append("<br/>");
 			}
-			
+
 			Object propertyValue = metadataProperty.getValues().get(propertyIndex);
-			if(propertyValue instanceof Date) {
-				value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format((Date)propertyValue));
+			if (propertyValue instanceof Date) {
+				value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format((Date) propertyValue));
 			} else {
 				Date date = DateConversionUtils.toDate(StringUtils.toString(metadataProperty.getValues().get(propertyIndex)));
-				if(date!=null) {
+				if (date != null) {
 					value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format(date));
 				}
 			}
 		} else {
 			if (value.length() > 0) {
 				value.append("<br/>");
-			}			
+			}
 			value.append(String.valueOf(metadataProperty.getValues().get(propertyIndex)));
-		}
-		
-		if(!MainController.getController().getLocalizedString(metadataProperty.getName()).equals(metadataProperty.getName())) {
-			value.append(" (").append(metadataProperty.getName()).append(")");
 		}
 		
 		return value.toString();
@@ -244,9 +239,18 @@ public class EbookSheetProperty extends DefaultProperty {
 		if(metadataProperty.getValues().size() > 1) {
 			localizedName = (this.propertyIndex+1) + ")" + localizedName; 
 		}
-		return localizedName;
+		
+		return localizedName.toString();
 	}
 
+	public String getDisplayDescriptionName() {
+		String name = metadataProperty.getName();
+		String localizedName = getDisplayName();
+//		if(!localizedName.equalsIgnoreCase(name)) {
+			localizedName += "</b><i> &lt;" + name+"&gt;</i><b>";
+//		}
+		return localizedName;
+	}
 
 	@Override
 	public Object getValue() {

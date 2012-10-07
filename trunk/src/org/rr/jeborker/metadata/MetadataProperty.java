@@ -15,13 +15,7 @@ public class MetadataProperty {
 	
 	protected ArrayList<Object> values;
 	
-	protected String details;
-	
 	private Class<?> propertyClass = null;
-	
-	private boolean editable = true;
-	
-	private boolean deletable= true;
 	
 	MetadataProperty(String name, Object value) {
 		this.name = name;
@@ -80,20 +74,6 @@ public class MetadataProperty {
 		return String.class;
 	}
 
-	/**
-	 * Some detail informations for this metadata instance. The details should only
-	 * provide some additional informations. Nothing to edit or store.
-	 * 
-	 * @return the detail informations.
-	 */
-	public String getDetails() {
-		return details;
-	}
-
-	public void setDetails(String details) {
-		this.details = details;
-	}
-
 	public void setPropertyClass(Class<?> propertyClass) {
 		this.propertyClass = propertyClass;
 	}
@@ -114,7 +94,7 @@ public class MetadataProperty {
 	 * @return <code>true</code> if the property is editable or <code>false</code> if not.
 	 */
 	public boolean isEditable() {
-		return editable;
+		return true;
 	}
 	
 	/**
@@ -122,7 +102,15 @@ public class MetadataProperty {
 	 * @return <code>true</code> if the property is deletable or <code>false</code> if not.
 	 */
 	public boolean isDeletable() {
-		return this.deletable;
+		return true;
+	}
+	
+	/**
+	 * Tells if the property could inserted more than one in a document.
+	 * @return <code>true</code> if it could not be inserted more than once and <code>false</code> otherwise.
+	 */
+	public boolean isSingle() {
+		return true;
 	}
 
 }

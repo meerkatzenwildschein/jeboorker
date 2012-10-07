@@ -346,12 +346,12 @@ public class MainController {
 				final PropertySheetTableModel.Item item = (Item) model.getObject(i);
 				
 				if(property instanceof EbookSheetProperty) {
-					if(item.getName().equals(((EbookSheetProperty)property).getDisplayName())) {
+					if(item != null && item.getName() != null && item.getName().equals(((EbookSheetProperty)property).getDisplayName())) {
 						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
 						break;
 					}					
 				} else {
-					if(item.getProperty().getName().equals(property.getName())) {
+					if(item != null && item.getProperty().getName().equals(property.getName())) {
 						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
 						break;
 					}

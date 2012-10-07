@@ -71,7 +71,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				metadata.addSubject(meta.getValueAsString());
 			} else if(EPUB_METADATA_TYPES.TYPE.getName().equals(meta.getName())) {
 				metadata.addType(meta.getValueAsString());
-			} else if(EPUB_METADATA_TYPES.CONTRIBUTOR.getName().equals(meta.getName())) {
+			} else if(EPUB_METADATA_TYPES.CONTRIBUTOR.getName().equals(meta.getName()) || meta.getType() instanceof Author) {
 				Author author = new Author(meta.getValueAsString());
 				author.setRelator(((Author)meta.getType()).getRelator());
 				metadata.addContributor(author);
@@ -88,7 +88,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				} else {
 					throw new RuntimeException("Invalid date '" + meta.getValueAsString() + "'");
 				}
-			} else if(EPUB_METADATA_TYPES.IDENTIFIER.getName().equals(meta.getName())) {
+			} else if(EPUB_METADATA_TYPES.IDENTIFIER.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.UUID.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.ISBN.getName().equals(meta.getName())) {
 				Identifier identifier = new Identifier(((Identifier)meta.getType()).getScheme(), meta.getValueAsString());
 				metadata.addIdentifier(identifier);
 			} else if(meta.getType() instanceof QName) {
@@ -104,7 +104,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				metadata.addOtherMeta(m);
 			} else if(EPUB_METADATA_TYPES.LANGUAGE.getName().equals(meta.getName())) {
 				metadata.setLanguage(meta.getValueAsString());
-			}  else if(EPUB_METADATA_TYPES.FORMAT.getName().equals(meta.getName())) {
+			} else if(EPUB_METADATA_TYPES.FORMAT.getName().equals(meta.getName())) {
 				metadata.setFormat(meta.getValueAsString());
 			} 
 		}
@@ -139,7 +139,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 						//continue with existing cover
 						final String decodedCoverName = coverName != null ? getOpfFilePath(zipData) + StringUtils.decodeURL(coverName) : "";
 						final String targetConversionMime = getTargetConversionMime(decodedCoverName, cover);
-						if(targetConversionMime!=null) {
+						if (targetConversionMime != null) {
 							IImageProvider coverImageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceLoader(null, cover));
 							byte[] imageBytes = ImageUtils.getImageBytes(coverImageProvider.getImage(), targetConversionMime);
 							if(imageBytes!=null) {

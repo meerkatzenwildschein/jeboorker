@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -98,7 +99,14 @@ class RefreshBasePathAction extends AbstractAction {
 		} else {
 			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
 			DefaultDBManager.getInstance().updateObject(item);
-			MainController.getController().refreshTableSelectedItem(true);
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					MainController.getController().refreshTableSelectedItem(true);
+				}
+			});
+			
 		}
 	}
 
