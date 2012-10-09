@@ -1,6 +1,8 @@
 package org.rr.jeborker.metadata;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -9,8 +11,10 @@ import javax.xml.namespace.QName;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Identifier;
+import nl.siegmann.epublib.domain.MediaType;
 import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
+import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.epub.EpubWriter;
 
@@ -106,7 +110,10 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				metadata.setLanguage(meta.getValueAsString());
 			} else if(EPUB_METADATA_TYPES.FORMAT.getName().equals(meta.getName())) {
 				metadata.setFormat(meta.getValueAsString());
-			} 
+			} else {
+				Meta m = new Meta( meta.getName(), meta.getValueAsString() );
+				metadata.addOtherMeta(m);
+			}
 		}
 	}
 	
@@ -120,9 +127,76 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 			temporaryResourceLoader.delete();
 		}
 	}
-
+	
 	@Override
 	public void setCover(final byte[] cover) {
+//		if(true) setCoverOld(cover);
+		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final EpubReader reader = new EpubReader();
+		
+		try {
+			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream());
+			final Resource oldCoverImage = epub.getCoverImage();
+			
+			if(oldCoverImage != null) {
+				//replace old cover
+				final String targetConversionMime = oldCoverImage.getMediaType().getName();
+				final String oldCoverFileName = new File(oldCoverImage.getHref()).getName();
+				final IImageProvider coverImageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceLoader(oldCoverFileName, cover));
+				final byte[] imageBytes = ImageUtils.getImageBytes(coverImageProvider.getImage(), targetConversionMime);
+				oldCoverImage.setData(imageBytes);
+				epub.setCoverImage(oldCoverImage);
+			} else {
+				//create new cover
+				final IResourceHandler imageResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("DummyImageCoverName", cover);
+				final String mimeType = imageResourceLoader.getMimeType();
+				final String fileExtension = mimeType.substring(mimeType.indexOf('/') + 1);
+				final Resource newCoverImage = new Resource(cover, new MediaType(mimeType, "." + mimeType.substring(mimeType.indexOf('/') + 1) ));
+				
+				String coverFilePath = getCoverFile(epub, "cover", fileExtension);
+				newCoverImage.setHref(coverFilePath);
+				newCoverImage.setId("cover");
+				epub.setCoverImage(newCoverImage);
+			}
+			
+			writeBook(epub, ebookResourceHandler);
+		} catch (Exception e) {
+			LoggerFactory.logWarning(this.getClass(), "could not write cover for " + ebookResourceHandler.getName(), e);
+		}			
+	}
+	
+	/**
+	 * Gets a cover file name with path. The path is this one where other image files also be located at if there exists any.
+	 * The cover file name is tested for uniqueness in the folder.
+	 */
+	private static String getCoverFile(final Book epub, String desiredFileName, String fileExtension) throws IOException {
+		final Collection<Resource> resources = epub.getResources().getAll();
+		String path = "";
+		for(Resource resource : resources) {
+			if(resource.getMediaType().getName().startsWith("image")) {
+				path = new File(resource.getHref()).getParent() + "/";
+				break;
+			}
+		}
+		
+		final Object additional = new Object() {
+			int count = 0;
+			
+			public String toString() {
+				if(count == 0) {
+					count ++;
+					return "";
+				} 
+				return String.valueOf(count);
+			}
+		};
+
+		String newCoverFileName;
+		while(epub.getResources().containsByHref(newCoverFileName = path + desiredFileName  + additional.toString() + "." + fileExtension )) {}
+		return newCoverFileName;
+	}
+
+	public void setCoverOld(final byte[] cover) {
 		final IResourceHandler ebookResourceHandler = getEbookResource();
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);

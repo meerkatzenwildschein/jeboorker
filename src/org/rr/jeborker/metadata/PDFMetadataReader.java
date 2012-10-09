@@ -132,7 +132,11 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			} else {
 				Object value = schemaChild.getTextContent();
 				if(tagName.endsWith("Date") || tagName.endsWith("SourceModified")) {
-					value = DateConversionUtils.toDate(StringUtils.toString(value));
+					Date dateValue = DateConversionUtils.toDate(StringUtils.toString(value));
+					if(value != null && value.toString().isEmpty()) {
+						//2004-12-11T00:00:+0Z
+						value = dateValue;
+					}
 				}
 				final PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, value, null);
 				result.add(pdfMetadataProperty);
@@ -375,16 +379,17 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			if(property.getName().equalsIgnoreCase("Author")) {
 				result.add(property);
 				authorProperty = property;
-			} else if(property.getName().equalsIgnoreCase("creator")) {
+			} 
+			/*else if(property.getName().equalsIgnoreCase("creator")) {
 				result.add(property);
 				creatorProperty = property;
-			}
+			}*/
 		}
 		
 		//if author and creator exists and don't have the same content, remove the creator prop.
-		if(authorProperty != null && creatorProperty != null && !authorProperty.getValueAsString().equals(creatorProperty.getValueAsString())) {
+		/*if(authorProperty != null && creatorProperty != null && !authorProperty.getValueAsString().equals(creatorProperty.getValueAsString())) {
 			result.remove(creatorProperty);
-		}
+		}*/
 		
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {

@@ -41,7 +41,9 @@ public class MainMonitor {
 				public void run() {
 					progressbar.setIndeterminate(false);
 					progressbar.setValue(0);
-					setMessage(message);
+					if(message != null) {
+						setMessage(message);
+					}
 					MainController.getController().getMainWindow().getGlassPane().setVisible(false);
 				}
 			});			

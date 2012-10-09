@@ -50,7 +50,11 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
             setText(dateFormat.format((Date) value));
         } else if(value instanceof String) {
         	Date date = DateConversionUtils.toDate((String) value);
-        	setText(dateFormat.format((Date) date));
+        	if(date != null) {
+        		setText(dateFormat.format((Date) date));
+        	} else {
+        		setText(String.valueOf(value));
+        	}
         }
     }
 
