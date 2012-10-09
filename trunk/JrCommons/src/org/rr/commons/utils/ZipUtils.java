@@ -17,6 +17,33 @@ import org.rr.commons.log.LoggerFactory;
 
 public class ZipUtils {
 	
+
+	public static List<String> list(byte[] zipData) {
+		if(zipData==null) {
+			return null;
+		}
+
+		JarInputStream jar = null;
+		try {
+			jar = new JarInputStream(new ByteArrayInputStream(zipData));
+			final ArrayList<String> result = new ArrayList<String>();
+			
+			ZipEntry nextEntry;
+			while ((nextEntry=jar.getNextEntry()) != null) {
+				String name = nextEntry.getName();
+				result.add(name);
+			}
+			return result;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if(jar!=null) {
+				try {jar.close();} catch (IOException e) {}
+			}
+		}
+	}
+    	
+	
 	public static List<ZipDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
 		if(zipData==null) {
 			return null;
