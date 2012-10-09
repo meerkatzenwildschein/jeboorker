@@ -70,9 +70,11 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
    */
   public void setProperties(Property[] newProperties) {
     // unregister the listeners from previous properties
-    for (Iterator iter = properties.iterator(); iter.hasNext();) {
-      Property prop = (Property) iter.next();
-      prop.removePropertyChangeListener(this);
+    for (int i=0; i < properties.size(); i++) {
+      Property prop = (Property) properties.get(i);
+      if(prop != null) {
+    	  prop.removePropertyChangeListener(this);
+      }
     }
 
     // replace the current properties
@@ -80,9 +82,11 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
     properties.addAll(Arrays.asList(newProperties));
 
     // add listeners
-    for (Iterator iter = properties.iterator(); iter.hasNext();) {
-      Property prop = (Property) iter.next();
-      prop.addPropertyChangeListener(this);
+    for (int i=0; i < properties.size(); i++) {
+    	Property prop = (Property) properties.get(i);
+    	if(prop != null) {
+    		prop.addPropertyChangeListener(this);
+    	}
     }
 
     buildModel();
