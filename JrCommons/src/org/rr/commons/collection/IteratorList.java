@@ -166,7 +166,7 @@ public class IteratorList<E> implements List<E> {
 
 	@Override
 	public E set(int index, E element) {
-		fillListToIndex(index + 1);
+		fillListToIndex(index);
 		return this.list.set(index, element);
 	}
 
