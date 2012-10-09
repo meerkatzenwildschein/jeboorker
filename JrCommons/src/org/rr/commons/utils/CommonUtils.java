@@ -169,4 +169,20 @@ public final class CommonUtils implements Serializable {
 			return null;
 		}
 	}
+	
+	/**
+	 * Tests if the operating system is a linux os. 
+	 * @return <code>true</code> if it's linux and <code>false</code> otherwise.
+	 */
+	public static boolean isLinux() {
+		Object osName = System.getProperties().get("os.name");
+		if(String.valueOf(osName).toLowerCase().indexOf("linux") != -1) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static void execute() {
+		
+	}
 }
