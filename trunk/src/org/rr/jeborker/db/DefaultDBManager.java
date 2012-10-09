@@ -433,7 +433,7 @@ public class DefaultDBManager {
 				localSql.append("(");
 				List<QueryCondition> orChildren = condition.getOrChildren();
 				for (int i=0; i < orChildren.size(); i++) {
-					boolean orResult = appendQueryCondition(localSql, orChildren.get(i), i==0 ? "" : "or", deepness+1);
+					boolean orResult = appendQueryCondition(localSql, orChildren.get(i), i==0 ? "" : "OR", deepness+1);
 					if(orResult) {
 						result = true;
 					}
