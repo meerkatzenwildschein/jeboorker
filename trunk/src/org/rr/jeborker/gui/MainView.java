@@ -235,6 +235,8 @@ public class MainView extends JFrame{
 		        
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("rating", StarRatingPropertyEditor.class);
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("rating", StarRatingPropertyRenderer.class);
+		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("calibre:rating", StarRatingPropertyEditor.class);
+		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("calibre:rating", StarRatingPropertyRenderer.class);
 		        
 				GridBagConstraints gbc_propertySheet = new GridBagConstraints();
 				gbc_propertySheet.fill = GridBagConstraints.BOTH;

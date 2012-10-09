@@ -445,7 +445,7 @@ public class DefaultDBManager {
 				localSql.append("(");
 				List<QueryCondition> andChildren = condition.getAndChildren();
 				for (int i=0; i < andChildren.size(); i++) { 
-					boolean andResult = appendQueryCondition(localSql, andChildren.get(i), i==0 ? "" : "and", deepness+1);
+					boolean andResult = appendQueryCondition(localSql, andChildren.get(i), i==0 ? "" : "AND", deepness+1);
 					if(andResult) {
 						result = true;
 					}

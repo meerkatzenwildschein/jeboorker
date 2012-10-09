@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.swing.Action;
@@ -63,10 +64,12 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 					}
 				}
 			} else {
-				LoggerFactory.logInfo(this, "No database item found for " + resourceHandler, null);
+				LoggerFactory.logInfo(this, "No database item found for " + resourceHandler.getName(), null);
 			}
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this, "could not set cover for " + resourceHandler, e);
+		} catch (FileNotFoundException e) {
+			LoggerFactory.logWarning(this, "Cover file for " + resourceHandler.getName() + " couldn't be loaded.", e);
+		}  catch (Exception e) {
+			LoggerFactory.logWarning(this, "Could not set cover for " + resourceHandler.getName(), e);
 		} finally {
 			controller.getProgressMonitor().monitorProgressStop(null);
 		}

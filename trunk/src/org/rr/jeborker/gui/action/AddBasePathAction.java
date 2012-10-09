@@ -93,9 +93,15 @@ class AddBasePathAction extends AbstractAction {
 	 */
 	private boolean isAlreadyExistingBasePath(List<String> existing, String path) {
 		path = path.replace('\\', '/');
+		if(!path.endsWith("/")) {
+			path += "/";
+		}
 		for (Iterator<String> iterator = existing.iterator(); iterator.hasNext();) {
 			String existingEntry =  iterator.next();
 			existingEntry = existingEntry.replace('\\', '/');
+			if(!existingEntry.endsWith("/")) {
+				existingEntry += "/";
+			}
 			
 			if(path.startsWith(existingEntry) || existingEntry.startsWith(path)) {
 				return true;
