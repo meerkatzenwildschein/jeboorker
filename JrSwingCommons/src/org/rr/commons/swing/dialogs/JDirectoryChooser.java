@@ -2,8 +2,10 @@ package org.rr.commons.swing.dialogs;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -76,8 +78,16 @@ public class JDirectoryChooser extends Component {
 	private KeyAdapter dialogCloseListener;
 	
 	private boolean multiselect;
+	
+	private Point dialogLocation;
+	
+	private Dimension dialogSize;
 
 	/** Creates new form JDirectoryChooser */
+	public JDirectoryChooser() {
+		this(false);
+	}
+	
 	public JDirectoryChooser(boolean multiselect) {
 		super();
 		this.multiselect = multiselect;
@@ -306,6 +316,38 @@ public class JDirectoryChooser extends Component {
 		//should be the last to be done.
 		this.dialog.setVisible(true);
 	}
+	
+	/**
+	 * Gets the location of the dialog when it was opened or the setted value if it wasn't opened.
+	 * @return The dialog location.
+	 */
+	public Point getDialogLocation() {
+		return this.dialogLocation;
+	}
+	
+	/**
+	 * Sets the location where the dialog should be opened.
+	 * @param p The location of the dialog.
+	 */
+	public void setDialogLocation(Point p) {
+		this.dialogLocation = p;
+	}
+	
+	/**
+	 * Sets the size of the dialog if it gets opened.
+	 * @param d The size for the dialog.
+	 */
+	public void setDialogSize(Dimension d) {
+		this.dialogSize = d;
+	}
+	
+	/**
+	 * Gets the dialog size when it was opened or the setted value if it wasn't already opened.
+	 * @return The dialog size. 
+	 */
+	public Dimension getDialogSize() {
+		return this.dialogSize;		
+	}
 
 	/**
 	 * Creates and returns a new <code>JDialog</code> wrapping <code>this</code> centered on the <code>parent</code> in the <code>parent</code>'s
@@ -366,7 +408,15 @@ public class JDirectoryChooser extends Component {
 			}
 		}
 		dialog.pack();
-		dialog.setLocationRelativeTo(parent);
+		if(this.dialogLocation != null) {
+			dialog.setLocation(this.dialogLocation);
+		} else {
+			dialog.setLocationRelativeTo(parent);
+		}
+		
+		if(this.dialogSize != null) {
+			dialog.setSize(this.dialogSize);
+		}
 
 		return dialog;
 	}
@@ -660,6 +710,8 @@ public class JDirectoryChooser extends Component {
 	 * will be created for each <code>{@link #showDialog(Component)}</code> invokement.
 	 */
 	public void dispose() {
+		this.dialogSize = this.dialog.getSize();
+		this.dialogLocation = this.dialog.getLocation();
 		this.dialog.setVisible(false);
 //		this.dialog.dispose();
 		this.dialog = null;
@@ -697,8 +749,8 @@ public class JDirectoryChooser extends Component {
 	 * <code>null</code> if no folder was selected.
 	 * @return The selected folder or <code>null</code>.
 	 */
-	public static File getDirectorySelection(String folder, Component invoker) {
-		List<File> directorySelections = getDirectorySelections(folder, invoker, false);
+	public File getDirectorySelection(String folder, Component invoker) {
+		List<File> directorySelections = getDirectorySelections(folder, invoker);
 		if(directorySelections != null && !directorySelections.isEmpty()) {
 			return directorySelections.get(0);
 		}
@@ -710,15 +762,14 @@ public class JDirectoryChooser extends Component {
 	 * <code>null</code> if no folder was selected.
 	 * @return The selected folder or <code>null</code>.
 	 */
-	public static List<File> getDirectorySelections(String folder, Component invoker, boolean multiselect) {
-		final JDirectoryChooser chooser = new JDirectoryChooser(multiselect);
+	public List<File> getDirectorySelections(String folder, Component invoker) {
 		if(folder!=null && folder.length() > 0) {
-			chooser.setSelectedDirectory(new File(folder));
+			setSelectedDirectory(new File(folder));
 		} else {
-			chooser.setSelectedDirectory(new File(System.getProperties().getProperty("user.home")));
+			setSelectedDirectory(new File(System.getProperties().getProperty("user.home")));
 		}
-		chooser.showDialog(invoker);
-		List<File> selectedDirectory = chooser.getSelectedDirectories();
+		showDialog(invoker);
+		List<File> selectedDirectory = getSelectedDirectories();
 		return selectedDirectory;
 	}		
 
