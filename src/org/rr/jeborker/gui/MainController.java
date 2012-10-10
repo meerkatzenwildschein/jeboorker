@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -22,6 +24,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -478,10 +481,31 @@ public class MainController {
 		if(lastEbookFolderResourceLoader == null || !lastEbookFolderResourceLoader.isDirectoryResource()) {
 			lastEbookFolder = null;
 		}
-		List<File> selectedDirectory = JDirectoryChooser.getDirectorySelections(lastEbookFolder, mainWindow, true);
+		
+		final JDirectoryChooser chooser = new JDirectoryChooser(true);
+		
+		//restore directory chooser location
+		String location = JeboorkerPreferences.getEntryString("JDirectoryChooserLocation");
+		if(location != null && location.indexOf(";") != -1) {
+			String[] split = location.split(";");
+			chooser.setDialogLocation(new Point(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
+		}
+		
+		//restore directory chooser size
+		String size = JeboorkerPreferences.getEntryString("JDirectoryChooserSize");
+		if(size != null && size.indexOf(";") != -1) {
+			String[] split = size.split(";");
+			chooser.setDialogSize(new Dimension(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
+		}		
+		
+		List<File> selectedDirectory = chooser.getDirectorySelections(lastEbookFolder, mainWindow);
 		if(selectedDirectory!=null && !selectedDirectory.isEmpty()) {
 			JeboorkerPreferences.addEntryString("lastEbookFolder", selectedDirectory.get(selectedDirectory.size() - 1).toString());
 		}
+		
+		//store directory chooser size and location
+		JeboorkerPreferences.addEntryString("JDirectoryChooserLocation", chooser.getDialogLocation().x + ";" + chooser.getDialogLocation().y);
+		JeboorkerPreferences.addEntryString("JDirectoryChooserSize", chooser.getDialogSize().width + ";" + chooser.getDialogSize().height);
 		return selectedDirectory;
 	}
 	

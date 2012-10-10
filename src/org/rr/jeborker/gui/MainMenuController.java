@@ -2,7 +2,6 @@ package org.rr.jeborker.gui;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
