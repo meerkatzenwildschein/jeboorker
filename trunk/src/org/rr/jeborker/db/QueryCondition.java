@@ -51,7 +51,9 @@ public class QueryCondition {
 	}
 
 	public String getValue() {
-		return value != null ? value.toLowerCase() : value;
+		String resultValue = value != null ? value.toLowerCase() : value;
+		resultValue = DBUtils.escape(resultValue);
+		return resultValue;
 	}
 
 	public void setValue(String value) {
