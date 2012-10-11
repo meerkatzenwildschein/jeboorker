@@ -108,7 +108,6 @@ class ODocumentMapper<T> extends AbstractList<T> {
 
 	@Override
 	public int size() {
-//		System.out.println(getDocuments().size());
 		return getDocuments().size();
 	}
 }
