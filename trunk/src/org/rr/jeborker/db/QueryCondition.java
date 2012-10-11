@@ -165,4 +165,15 @@ public class QueryCondition {
 		}
 		conditions.removeAll(toRemove);
 	}
+	
+	public String toString() {
+		StringBuilder localSql = new StringBuilder();
+		localSql.append(" ");
+		localSql.append(getFieldName()+".toLowerCase()");
+		localSql.append(" ");
+		localSql.append(getOperator());
+		localSql.append(" ");
+		localSql.append("'"+getValue()+"'");	
+		return localSql.toString();
+	}
 }

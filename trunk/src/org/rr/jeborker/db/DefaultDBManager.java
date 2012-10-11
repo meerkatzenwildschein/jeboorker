@@ -355,7 +355,6 @@ public class DefaultDBManager {
 		
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
-		
 		try {
 //long time = System.currentTimeMillis();
 //			List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
@@ -420,42 +419,50 @@ public class DefaultDBManager {
 				.append(connect).append(" ");
 			}
 			if(condition.getFieldName() != null && StringUtils.toString(condition.getValue()).length() > 0) {
-				localSql.append(" ");
-				localSql.append(condition.getFieldName()+".toLowerCase()");
-				localSql.append(" ");
-				localSql.append(condition.getOperator());
-				localSql.append(" ");
-				localSql.append("'"+condition.getValue()+"'");
+				localSql.append(condition.toString());
 				result = true;
 			}
 				
 			if(condition.getOrChildren() != null) {
-				localSql.append("(");
 				List<QueryCondition> orChildren = condition.getOrChildren();
+				if(deepness > 0 && orChildren.size() > 1) {
+					localSql.append("( ");
+				}				
 				for (int i=0; i < orChildren.size(); i++) {
 					boolean orResult = appendQueryCondition(localSql, orChildren.get(i), i==0 ? "" : "OR", deepness+1);
 					if(orResult) {
 						result = true;
 					}
 				}
-				localSql.append(")");
+				if(deepness > 0 && orChildren.size() > 1) {
+					localSql.append(" )");
+				}	
 			}
 			
 			if(condition.getAndChildren() != null) {
-				localSql.append("(");
 				List<QueryCondition> andChildren = condition.getAndChildren();
+				if(deepness > 0 && andChildren.size() > 1) {
+					localSql.append("( ");
+				}
 				for (int i=0; i < andChildren.size(); i++) { 
 					boolean andResult = appendQueryCondition(localSql, andChildren.get(i), i==0 ? "" : "AND", deepness+1);
 					if(andResult) {
 						result = true;
 					}
 				}
-				localSql.append(")");
+				if(deepness > 0 && andChildren.size() > 1) {
+					localSql.append(" )");
+				}
 			}
 		}
 		
 		if(result) {
-			sql.append(localSql);
+			if(sql.length() > 0 && Character.isWhitespace(sql.charAt(sql.length()-1))) {
+				//no duplicate whitespaces.
+				sql.append(StringUtils.ltrim(localSql.toString()));
+			} else {
+				sql.append(localSql);
+			}
 		}
 		
 		return result;
