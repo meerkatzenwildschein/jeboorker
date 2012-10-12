@@ -83,13 +83,13 @@ class ODocumentMapper<T> extends AbstractList<T> {
 //		final ORID identity;
 		if(object instanceof ORecordInternal) {
 			try {
-			result = (T) db.getUserObjectByRecord((ORecordInternal<T>) object, null);
-//			identity = ((ORecordInternal<T>) object).getIdentity();
+				result = (T) db.getUserObjectByRecord((ORecordInternal<T>) object, null);
+//				identity = ((ORecordInternal<T>) object).getIdentity();
 			} catch (Exception e) {
 				return (T) DefaultDBManager.getInstance().newInstance(EbookPropertyItem.class);
 			}
 		} else {
-			result = (T)object;
+			result = (T) object;
 //			identity = db.getIdentity(object);
 		}
 		

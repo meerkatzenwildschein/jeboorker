@@ -34,7 +34,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	SetCoverFrom(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
 		putValue(Action.NAME, Bundle.getString("SetCoverFromFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("image_jpeg_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("image_16.gif")));
 	}
 	
 	@Override

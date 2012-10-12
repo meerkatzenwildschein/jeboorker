@@ -10,7 +10,7 @@ import org.rr.commons.collection.WeakList;
 public class EventManager {
 	
 	public static enum EVENT_TYPES {
-		EBOOK_ITEM_SELECTION_CHANGE, METADATA_SHEET_SELECTION_CHANGE
+		EBOOK_ITEM_SELECTION_CHANGE, METADATA_SHEET_SELECTION_CHANGE, METADATA_SHEET_CONTENT_CHANGE
 	}
  
 	private static WeakList<ApplicationEventListener> weakListenerList = new WeakList<ApplicationEventListener>();
@@ -45,11 +45,13 @@ public class EventManager {
 	 */
 	public static synchronized void fireEvent(EVENT_TYPES type, ApplicationEvent evt) {
 		weakListenerList.trimToSize();
-		for (ApplicationEventListener listener : weakListenerList) {
-			fireEvent(type, evt, listener);
+		for (int i = 0; i < weakListenerList.size(); i++) {
+			ApplicationEventListener applicationEventListener = weakListenerList.get(i);
+			fireEvent(type, evt, applicationEventListener);
 		}
-		for (ApplicationEventListener listener : listenerList) {
-			fireEvent(type, evt, listener);
+		for (int i = 0; i < listenerList.size(); i++) {
+			ApplicationEventListener applicationEventListener = listenerList.get(i);
+			fireEvent(type, evt, applicationEventListener);
 		}
 	}
 
@@ -66,7 +68,10 @@ public class EventManager {
 			break;
 		case METADATA_SHEET_SELECTION_CHANGE:
 			listener.metaDataSheetSelectionChanged(evt);
-			break;					
+			break;	
+		case METADATA_SHEET_CONTENT_CHANGE:
+			listener.metaDataSheetContentChanged(evt);
 		}
 	}
+	
 }

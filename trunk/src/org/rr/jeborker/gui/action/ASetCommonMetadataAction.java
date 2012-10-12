@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.action;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -62,16 +63,22 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 					
 					//get author metadata an set the entered author.
 					List<MetadataProperty> readMetaData = reader.readMetaData();
-					List<MetadataProperty> authorMetaData = reader.getMetaDataByType(true, readMetaData, type);
+					List<MetadataProperty> metaData = reader.getMetaDataByType(true, readMetaData, type);
 					
-					transferValueToMetadata(input, authorMetaData);
+					transferValueToMetadata(input, metaData);
 
-					mergeAndWrite(writer, readMetaData, authorMetaData);
+					mergeAndWrite(writer, readMetaData, metaData);
 					
 					//do some refresh to the changed entry.
 					RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
 					
-					MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);
+						}
+					});
 				}
 			} else {
 				LoggerFactory.logInfo(this, "No database item found for " + resourceHandler, null);

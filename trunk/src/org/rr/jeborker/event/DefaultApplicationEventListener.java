@@ -8,4 +8,7 @@ public class DefaultApplicationEventListener implements ApplicationEventListener
 	@Override
 	public void ebookItemSelectionChanged(ApplicationEvent evt) {}
 	
+	@Override
+	public void metaDataSheetContentChanged(ApplicationEvent evt) {}
+	
 }
