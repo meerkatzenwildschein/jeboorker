@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -350,7 +349,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		long heapFreeSize = Runtime.getRuntime().freeMemory();
 		long remaining = heapMaxSize - heapFreeSize - heapRequired;
 		if(remaining < 5000000) {
-			LoggerFactory.log(Level.INFO, this, "Garbage collector triggered manually. Only " + remaining + " bytes remaining.");
+			System.err.println("Garbage collector triggered manually. Only " + remaining + " bytes remaining.");
 			System.gc();
 		}
 	}
