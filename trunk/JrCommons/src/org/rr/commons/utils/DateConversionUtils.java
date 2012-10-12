@@ -107,26 +107,51 @@ public class DateConversionUtils {
 		ISO_8601_DATE_TIME {
 			//Separate date and time in UTC: 	2011-05-07 14:39Z
 			//Combined date and time in UTC: 	2011-05-07T14:39Z
-			//2003-W14-2 (Date with week number)
-			private final Pattern ISO_8601_DATE_TIME_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[T\\s]\\d{2}:\\d{2}Z");
+			private final Pattern ISO_8601_DATE_TIME_PATTERN_1 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[T\\s]\\d{2}:\\d{2}Z");
 			
-			private final String FORMAT_PATTERN = "yyyy-MM-dd hh:mm'Z'";
+			//2005-07-04T00:00:+0Z
+			//2005-07-04 00:00:+0Z
+			private final Pattern ISO_8601_DATE_TIME_PATTERN_2 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:[+-]\\d{1,4}Z");
+			
+			private final String FORMAT_PATTERN_1 = "yyyy-MM-dd hh:mm'Z'";
+			
+			private final String FORMAT_PATTERN_2 = "yyyy-MM-dd hh:mm:Z";
 			
 			public Date getDate(String dateString) {
 				try {
 					dateString = dateString.replace('T', ' ');
-					return new SimpleDateFormat(FORMAT_PATTERN, Locale.US).parse(dateString);
+					if(ISO_8601_DATE_TIME_PATTERN_1.matcher(dateString).matches()) {
+						return new SimpleDateFormat(FORMAT_PATTERN_1, Locale.US).parse(dateString);
+					} else if(ISO_8601_DATE_TIME_PATTERN_2.matcher(dateString).matches()) {
+						//format 2005-07-04 00:00:+0Z -> 2005-07-04 00:00:+0000Z
+						final int idx = dateString.indexOf(":+") != -1 ? dateString.indexOf(":+") : dateString.indexOf(":-");
+						final String timezone = dateString.substring(idx + 2, dateString.indexOf('Z', idx));
+						
+						dateString = dateString.substring(0, idx + 2); //2005-07-04 00:00:+
+						if(timezone.length() == 1) {
+							dateString += "0" + timezone + "00";
+						} else if(timezone.length() == 2) {
+							dateString += "0" + timezone + "0";
+						} else if(timezone.length() == 3) {
+							dateString += "0" + timezone;
+						} else if(timezone.length() == 4) {
+							dateString += timezone;
+						}
+						return new SimpleDateFormat(FORMAT_PATTERN_2, Locale.US).parse(dateString);
+					} else {
+						throw new RuntimeException("unknown format for " + dateString);
+					}
 				} catch (ParseException e) {
 					throw new RuntimeException("could not parse date " + dateString);
 				}
 			}
 			
 			public boolean isMatching(String dateString) {
-				return ISO_8601_DATE_TIME_PATTERN.matcher(dateString).matches();
+				return ISO_8601_DATE_TIME_PATTERN_1.matcher(dateString).matches() || ISO_8601_DATE_TIME_PATTERN_2.matcher(dateString).matches();
 			}
 
 			public String getString(Date date) {
-				return new SimpleDateFormat(FORMAT_PATTERN).format(date);
+				return new SimpleDateFormat(FORMAT_PATTERN_1).format(date);
 			}			
 		},	
 		ISO_8601_ORDINAL {
@@ -243,7 +268,8 @@ public class DateConversionUtils {
 		W3C_MINUTE {
 			//2010-11-27T23:00+00:00
 			//2010-11-27 23:00+00:00
-			private final Pattern W3C_MINUTE_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}[+-]\\d{2}:??\\d{2}");
+			
+			private final Pattern W3C_MINUTE_DATE_PATTERN_1 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}[+-]\\d{2}:??\\d{2}");
 			
 			public Date getDate(String dateString) {
 				try {
@@ -257,7 +283,7 @@ public class DateConversionUtils {
 			}
 			
 			public boolean isMatching(String dateString) {
-				return W3C_MINUTE_DATE_PATTERN.matcher(dateString).matches();
+				return W3C_MINUTE_DATE_PATTERN_1.matcher(dateString).matches();
 			}
 			
 			public String getString(Date date) {
@@ -451,8 +477,7 @@ public class DateConversionUtils {
 				dateString = dateString.substring(0, dateString.length()-2) + "'" +  dateString.substring(dateString.length()-2) + "'";
 				return dateString;
 			}			
-		}
-		
+		},
 	}
 
 	/**
@@ -471,7 +496,7 @@ public class DateConversionUtils {
         new SimpleDateFormat("EEEE MMM dd HH:mm:ss z yyyy"), // GNU Ghostscript 7.0.7
         new SimpleDateFormat("EEEE, MMM dd, yyyy 'at' hh:mma"), // Acrobat Net Distiller 1.0 for Windows
         new SimpleDateFormat("yyyyMMddhhmmZ"), //200908242027+0200
-        new SimpleDateFormat("E, dd. MMMMM yyyy hh:mm") //Thursday, 20. March 2003 16:40
+        new SimpleDateFormat("E, dd. MMMMM yyyy hh:mm"), //Thursday, 20. March 2003 16:40
     };	
 
     /**

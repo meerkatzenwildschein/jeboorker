@@ -1,5 +1,8 @@
 package org.rr.commons.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import junit.framework.TestCase;
 
 public class DateConversionUtilsTest extends TestCase {
@@ -72,5 +75,8 @@ public class DateConversionUtilsTest extends TestCase {
 		assertTrue(DateConversionUtils.toDateTime("D:20110427120924Z00'00'").toString().equals("Wed Apr 27 00:09:24 CEST 2011"));
 		
 		assertEquals(DateConversionUtils.DATE_FORMATS.PDF.getString(DateConversionUtils.toDateTime("D:20001218180738+01'00'")) , "D:200012181807+01'00'");
+		
+		//2005-07-04T00:00:+0Z
+		assertEquals(DateConversionUtils.DATE_FORMATS.ISO_8601_DATE_TIME.getString(DateConversionUtils.toDateTime("2005-07-04T00:00:+0Z")) , "2005-07-04 02:00Z");
 	}
 }
