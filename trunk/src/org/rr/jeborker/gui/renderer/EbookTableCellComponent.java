@@ -43,6 +43,8 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 import com.itextpdf.text.Font;
+import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 
 public class EbookTableCellComponent extends JPanel implements Serializable  {
 	
@@ -250,19 +252,20 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 * @return The thumbnail image to be displayed in the renderer.
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
-		if(item!=null && item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
+		byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
+		if(item != null && coverThumbnail != null && coverThumbnail.length > 0) {
 			final String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
 			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
 				return thumbnailCache.get(coverThumbnailCRC32);
 			}
 			
 			try {
-				final byte[] coverData = item.getCoverThumbnail();
+				final byte[] coverData = coverThumbnail;
 				if(coverData!=null) {
 					final IResourceHandler virtualImageResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("TableCellRendererImageData", coverData);
 					final IImageProvider imageProvider = ImageProviderFactory.getImageProvider(virtualImageResourceLoader);
 					final BufferedImage image = imageProvider.getImage();
-					if(image!=null) {	
+					if(image != null) {	
 						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(imageProvider.getImage(), getThumbnailDimension(table), false);
 						ImageIcon imageIcon = new ImageIcon(scaleToMatch);
 						thumbnailCache.put(coverThumbnailCRC32, imageIcon);

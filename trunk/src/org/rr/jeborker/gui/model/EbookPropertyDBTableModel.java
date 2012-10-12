@@ -117,7 +117,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 //			LoggerFactory.logInfo(this, "", ex);
 			return null;
 		}
-		if(ebookPropertyItem!=null) {
+		if(ebookPropertyItem != null) {
 			switch(columnIndex) {
 				case 0:
 					return ebookPropertyItem;

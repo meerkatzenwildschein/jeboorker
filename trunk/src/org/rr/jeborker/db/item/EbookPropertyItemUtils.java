@@ -10,12 +10,15 @@ import java.util.UUID;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
+
+import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 
 public class EbookPropertyItemUtils {
 	
@@ -24,7 +27,8 @@ public class EbookPropertyItemUtils {
      * @param itemClass TODO
      * @return The desired fields.
      */
-    public static List<Field> getFieldsByAnnotation(final Class annotationClass, final Class<?> itemClass) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List<Field> getFieldsByAnnotation(final Class annotationClass, final Class<?> itemClass) {
 		//get fields to be displayed in the combobox
 		final List<Field> fields = ReflectionUtils.getFields(itemClass, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
 		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
@@ -44,7 +48,7 @@ public class EbookPropertyItemUtils {
 	 * @return The newly created {@link EbookPropertyItem}.
 	 */
 	public static EbookPropertyItem createEbookPropertyItem(final IResourceHandler resource, final IResourceHandler topLevelBaseFolder) {
-		final EbookPropertyItem item = new EbookPropertyItem();
+		final EbookPropertyItem item = (EbookPropertyItem) DefaultDBManager.getInstance().newInstance(EbookPropertyItem.class);
 		item.setCreatedAt(new Date());
 		item.setFile(resource.getResourceString());
 		item.setBasePath(topLevelBaseFolder.getResourceString());
@@ -63,7 +67,7 @@ public class EbookPropertyItemUtils {
 		if(resource==null) {
 			resource = ResourceHandlerFactory.getResourceLoader(item.getFile());
 		}
-		
+
 		IMetadataReader reader = MetadataHandlerFactory.getReader(resource);
 		if(reader!=null) {
 			try {
@@ -98,7 +102,12 @@ public class EbookPropertyItemUtils {
 				BufferedImage cropedImage = ImageUtils.crop(thumbnailImage);
 				
 				byte[] thumbnailImageBytes = ImageUtils.getImageBytes(cropedImage, "image/jpeg");
-				item.setCoverThumbnail(thumbnailImageBytes);
+				if(thumbnailImageBytes != null) {
+					ORecordBytes oRecordBytes = new ORecordBytes(DefaultDBManager.getInstance().getDB().getUnderlying(), thumbnailImageBytes);
+					item.setCoverThumbnail(oRecordBytes);
+				} else {
+					item.setCoverThumbnail(null);
+				}
 			} else {
 				item.setCoverThumbnail(null);
 			}
@@ -113,7 +122,7 @@ public class EbookPropertyItemUtils {
 	 * @return The list over EbookKeywordItem instances.
 	 */
 	public static List<EbookKeywordItem> getAsEbookKeywordItem(List<String> keywords) {
-		ArrayList<EbookKeywordItem> result = new ArrayList<EbookKeywordItem>(keywords.size());
+		final ArrayList<EbookKeywordItem> result = new ArrayList<EbookKeywordItem>(keywords.size());
 		for (String keyword : keywords) {
 			result.add(new EbookKeywordItem(keyword));
 		}
