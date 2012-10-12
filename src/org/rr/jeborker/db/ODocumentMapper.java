@@ -86,15 +86,12 @@ class ODocumentMapper<T> extends AbstractList<T> {
 			result = (T) db.getUserObjectByRecord((ORecordInternal<T>) object, null);
 //			identity = ((ORecordInternal<T>) object).getIdentity();
 			} catch (Exception e) {
-				return (T) new EbookPropertyItem();
+				return (T) DefaultDBManager.getInstance().newInstance(EbookPropertyItem.class);
 			}
 		} else {
 			result = (T)object;
 //			identity = db.getIdentity(object);
 		}
-		
-		//fill binary data to the object instance. 
-		DefaultDBManager.getInstance().loadAllTransientBinaryData((IDBObject) result);
 		
 		this.fetchNextRecords(index);
 		

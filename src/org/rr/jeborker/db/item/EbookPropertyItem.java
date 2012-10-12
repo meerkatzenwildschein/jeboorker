@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.CRC32;
 
-import javax.persistence.Transient;
-
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.db.IDBObject;
+
+import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 
 public class EbookPropertyItem implements IDBObject, Serializable {
 	
@@ -169,8 +169,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * A small thumbnail of the cover.
 	 */
-	@Transient
-	private byte[] coverThumbnail;
+	private ORecordBytes coverThumbnail;
 	
 	public EbookPropertyItem() {
 		super();
@@ -220,8 +219,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
     	return false;
     }	
     
-   
-    
 	/**
 	 * Clears all metadata excepting this ones which have a {@link ProtectedField} annotation.
 	 */
@@ -245,7 +242,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	public long getCoverThumbnailCRC32() {
 		CRC32 crc32 = new CRC32();
 		if(getCoverThumbnail() != null) {
-			crc32.update(getCoverThumbnail());
+			crc32.update(getCoverThumbnail().toStream());
 			return crc32.getValue();
 		} else {
 			return 0;
@@ -429,11 +426,11 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		this.creationDate = creationDate;
 	}
 
-	public byte[] getCoverThumbnail() {
+	public ORecordBytes getCoverThumbnail() {
 		return coverThumbnail;
 	}
 	
-	public void setCoverThumbnail(byte[] coverThumbnail) {
+	public void setCoverThumbnail(ORecordBytes coverThumbnail) {
 		this.coverThumbnail = coverThumbnail;
 	}
 

@@ -354,7 +354,7 @@ public class MainController {
 						break;
 					}					
 				} else {
-					if(item != null && item.getProperty().getName().equals(property.getName())) {
+					if(property != null && item != null && item.getProperty() != null && item.getProperty().getName().equals(property.getName())) {
 						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
 						break;
 					}
@@ -595,7 +595,8 @@ public class MainController {
 				final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
 				final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
 				mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, item, reader));
-				if(item.getCoverThumbnail()!=null && item.getCoverThumbnail().length > 0) {
+				byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
+				if(coverThumbnail != null && coverThumbnail.length > 0) {
 					setImage(reader);
 				} else {
 					setImage(null);
