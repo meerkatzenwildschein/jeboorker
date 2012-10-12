@@ -76,6 +76,8 @@ public class MainView extends JFrame{
 	
 	JButton removeMetadataButton;
 	
+	JButton saveMetadataButton;
+	
 	JLabel lblSortBy;
 	
 	JPanel rootPanel;
@@ -226,6 +228,9 @@ public class MainView extends JFrame{
 				
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
 				propertySheet.addToolbarComponent(removeMetadataButton);
+				
+				saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
+				propertySheet.addToolbarComponent(saveMetadataButton);				
 				
 				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>)null, DefaultPropertyRenderer.class);
 				

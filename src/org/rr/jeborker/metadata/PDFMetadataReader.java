@@ -230,35 +230,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}	
 	
 	/**
-	 * Fetches the thumbnail from the xmp metadata.
-	 * @param pdfReader The reader instance to be used to read the XMP data
-	 * @return The thumbnail or <code>null</code> if not thumbnail is embedded.
-	 * @throws Exception
-	 */
-	static byte[] fetchXMPThumbnail(final PdfReader pdfReader, final IResourceHandler ebookResource) throws Exception {
-		if(pdfReader == null || ebookResource == null) {
-			return null;
-		}
-		final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
-			final Document document = getDocument(xmpMetadataBytes, ebookResource);
-			final XMPMetadata metadata = new XMPMetadata(document);
-			XMPSchemaBasic basicSchema = metadata.getBasicSchema();
-			if(basicSchema!=null) {
-				Thumbnail thumbnail = basicSchema.getThumbnail();
-				if(thumbnail!=null) {
-					String image = thumbnail.getImage();					
-					byte[] decodeBase64 = Base64.decode(image);
-					if(decodeBase64!=null && decodeBase64.length > 5) {
-						return decodeBase64;
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * Tries to extract the cover by looking for the embedded images of the pdf. The first
 	 * image which seems to be a cover will be returned.
 	 *  

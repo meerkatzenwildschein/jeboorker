@@ -92,31 +92,43 @@ public class MainController {
 				setSelectedMetadataProperty(selectedMetadataProperty);
 			}
 		}
-
+		
 		/**
 		 * Saves/Writes the metadata properties if something has changed. 
 		 */
 		private void saveProperties(ListSelectionEvent e) {
 			//save the previous properties 
-			final List<Property> previousProperties = mainWindow.propertySheet.getProperties();
-			if(mainWindow.propertySheet.getTable().getModel() instanceof EbookSheetPropertyModel && ((EbookSheetPropertyModel)mainWindow.propertySheet.getTable().getModel()).isChanged()) {
-				//write properties
-				MainControllerUtils.writeProperties(previousProperties);
-				EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
-				int rowCount = model.getRowCount();
-				
-				if(e.getFirstIndex() >= 0 && e.getFirstIndex() < rowCount) {
-					model.reloadEbookPropertyItemAt(e.getFirstIndex());
-				}
-				if(e.getLastIndex() >= 0 && e.getLastIndex() != e.getFirstIndex() && e.getLastIndex() < rowCount) {
-					model.reloadEbookPropertyItemAt(e.getLastIndex());
-				}
-				
-				//a repaint does a refresh to all visible table rows.
-				mainWindow.table.repaint();
-			}
+			MainController.this.saveProperties(e.getFirstIndex(), e.getLastIndex());
 		}
 	}
+	
+	/**
+	 * Saves/Writes the metadata properties if something has changed. 
+	 */
+	public void saveProperties(int minSelectionIndex, int maxSelectionIndex) {
+		final List<Property> previousProperties = mainWindow.propertySheet.getProperties();
+		if(getEbookSheetPropertyModel().isChanged()) {
+			//write properties
+			MainControllerUtils.writeProperties(previousProperties);
+			EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
+			int rowCount = model.getRowCount();
+
+			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
+				model.reloadEbookPropertyItemAt(minSelectionIndex);
+			}
+			
+			if(maxSelectionIndex >= 0 && maxSelectionIndex != minSelectionIndex && maxSelectionIndex < rowCount) {
+				model.reloadEbookPropertyItemAt(maxSelectionIndex);
+			}
+			
+			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
+				model.reloadEbookPropertyItemAt(mainWindow.table.getSelectedRow());
+			}
+			
+			//a repaint does a refresh to all visible table rows.
+			mainWindow.table.repaint();
+		}
+	}	
 	
 	/**
 	 * PropertySheetChangeListener is always invoked if a values in the property sheet has changed.
@@ -199,6 +211,17 @@ public class MainController {
 		mainWindow.table.addMouseListener(new MainTablePopupMouseAdapter());
 		
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertySheetChangeListener());
+		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				if("value".equals(e.getPropertyName())) {
+					//sheet has been edited
+					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+				}
+			}
+		});
+		
 		mainWindow.propertySheet.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -343,8 +366,9 @@ public class MainController {
 	 */
 	public void setSelectedMetadataProperty(final Property property) {
 		if(property != null) {
-			EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
-			int rowCount = model.getRowCount();
+			final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
+			final int rowCount = model.getRowCount();
+			
 			for (int i = 0; i < rowCount; i++) {
 				final PropertySheetTableModel.Item item = (Item) model.getObject(i);
 				
@@ -368,8 +392,9 @@ public class MainController {
 	 * @param rating The rating value.
 	 */
 	public void setRatingToSelectedEntry(int rating) {
-		EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
-		Property ratingProperty = model.getRatingProperty();
+		final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
+		final Property ratingProperty = model.getRatingProperty();
+		
 		if(ratingProperty != null) {
 			ratingProperty.setValue(rating);
 		} else {
@@ -386,15 +411,24 @@ public class MainController {
 	}
 	
 	/**
+	 * Gets the model for the metadata sheet.
+	 * @return The metadata sheet model.
+	 */
+	public EbookSheetPropertyModel getEbookSheetPropertyModel() {
+		EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
+		return model;
+	}
+	
+	/**
 	 * Adds the given {@link EbookPropertyItem} to the model. The added
 	 * {@link EbookPropertyItem} will be shown to the ui.
 	 * @param item The item to be added.
 	 */
 	public void addEbookPropertyItem(final EbookPropertyItem item) {
-			TableModel model = mainWindow.table.getModel();
-			if(model instanceof EbookPropertyDBTableModel) {
-				((EbookPropertyDBTableModel)model).addRow(item);
-			}
+		TableModel model = mainWindow.table.getModel();
+		if (model instanceof EbookPropertyDBTableModel) {
+			((EbookPropertyDBTableModel) model).addRow(item);
+		}
 	}
 	
 	/**

@@ -147,14 +147,16 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 */
 	public void reloadEbookPropertyItemAt(int rowIndex) {
 		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
-		final EbookPropertyItem modelItem = this.getEbookPropertyItemAt(rowIndex);
-		if(modelItem != null) {
-			final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", modelItem.getFile());
-			
-			if(!items.isEmpty()) {
-				EbookPropertyItem dbItem = items.get(0);
-				if(dbItem.getFile().equals(modelItem.getFile())) {
-					ebookItems.set(rowIndex, dbItem);
+		if(rowIndex >= 0) {
+			final EbookPropertyItem modelItem = this.getEbookPropertyItemAt(rowIndex);
+			if(modelItem != null) {
+				final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", modelItem.getFile());
+				
+				if(!items.isEmpty()) {
+					EbookPropertyItem dbItem = items.get(0);
+					if(dbItem.getFile().equals(modelItem.getFile())) {
+						ebookItems.set(rowIndex, dbItem);
+					}
 				}
 			}
 		}
