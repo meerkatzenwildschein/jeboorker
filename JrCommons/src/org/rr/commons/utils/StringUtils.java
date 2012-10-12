@@ -1119,12 +1119,18 @@ public final class StringUtils implements Serializable {
      * @return <code>true</code> if the string is empty or <code>false</code> otherwise. 
      */
     public static boolean isEmpty(CharSequence text) {
-    	if(text==null || text.toString().trim().length()==0) {
+    	if(text == null || text.toString().trim().length() == 0) {
     		return true;
     	}
     	return false;
     }
     
+    /**
+     * Tests if the given string is not empty. That means it's <code>null</code> or
+     * have a trimmed length of null. 
+     * @param text The text to be tested.
+     * @return <code>true</code> if the string is not empty or <code>false</code> otherwise. 
+     */
     public static boolean isNotEmpty(CharSequence text) {
     	return !isEmpty(text);
     }
@@ -1294,4 +1300,18 @@ public final class StringUtils implements Serializable {
 			return null;
 		}
     }    
+    
+    /**
+     * Tests if the given text ends with the given search char. Works with 
+     * String as well as with StringBuilder or any other {@link CharSequence} implementations.
+     * @param text The text to be tested if it ends with.
+     * @param search The char to be tested if the given text ends with it.
+     * @return <code>true</code> if the given text ends with the given char and <code>false</code> otherwise.
+     */
+    public static boolean endsWith(CharSequence text, char search) {
+    	if(text != null && text.length() > 0) {
+    		return text.charAt(text.length() - 1) == search;
+    	} 
+    	return false;
+    }
 }
