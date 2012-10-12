@@ -83,7 +83,7 @@ public class ImageDownloadDialog extends JDialog {
 	
 	private JButton okButton;
 	
-	private static Dimension cellSize = new Dimension(150, 250);
+	private static Dimension cellSize = new Dimension(100, 200);
 	
 	private IImageFetcherFactory factory;
 	
@@ -113,7 +113,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	protected void init(Frame owner) {
-		this.setSize(800, 430);
+		this.setSize(800, 365);
 		if(owner != null) {
 			//center over the owner frame
 			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
