@@ -148,10 +148,10 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		} else {
 			xmp = new XMPMetadata();
 		}
-		final XMPSchemaBasic xmpSchema = xmp.getBasicSchema() != null ? xmp.getBasicSchema() : (XMPSchemaBasic) getXMPSchema("xap", xmp);
+		final XMPSchemaBasic xmpSchema = (XMPSchemaBasic) getXMPSchema("xap", xmp);
 		final IResourceHandler coverResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("PDFMetadataWriterSetCover", coverData);
 		final String coverMimeType = coverResourceLoader.getMimeType();
-		
+
 		Thumbnail thumbnail = xmpSchema.getThumbnail();
 		if(thumbnail == null) {
 			thumbnail = new Thumbnail(xmp);
