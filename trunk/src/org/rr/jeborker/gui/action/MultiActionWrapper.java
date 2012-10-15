@@ -30,6 +30,8 @@ class MultiActionWrapper extends AbstractAction {
 		putValue(Action.NAME, String.valueOf(firstActionInstance.getValue(Action.NAME)));
 		putValue(Action.SMALL_ICON, firstActionInstance.getValue(Action.SMALL_ICON));
 		putValue(Action.LARGE_ICON_KEY, firstActionInstance.getValue(Action.LARGE_ICON_KEY));
+		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, firstActionInstance.getValue(ApplicationAction.NON_THREADED_ACTION_KEY));
+		putValue(ApplicationAction.SINGLETON_ACTION_KEY, firstActionInstance.getValue(ApplicationAction.SINGLETON_ACTION_KEY));
 	}
 	
 	@Override

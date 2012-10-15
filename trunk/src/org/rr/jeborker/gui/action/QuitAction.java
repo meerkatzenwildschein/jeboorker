@@ -18,7 +18,8 @@ class QuitAction extends AbstractAction {
 			putValue(Action.NAME, text);
 		}
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("quit_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("quit_22.gif")));		
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("quit_22.gif")));
+		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 	
 	@Override

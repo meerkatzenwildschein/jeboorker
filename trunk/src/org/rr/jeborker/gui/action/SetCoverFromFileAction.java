@@ -23,6 +23,7 @@ class SetCoverFromFileAction extends SetCoverFrom<ImageFileChooser> implements I
 		super(resourceHandler);
 		putValue(Action.NAME, Bundle.getString("SetCoverFromFileAction.name"));
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("image_16.gif")));
+		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 	
 	@Override
