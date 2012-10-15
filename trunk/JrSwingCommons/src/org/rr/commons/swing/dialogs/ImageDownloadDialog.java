@@ -113,7 +113,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	protected void init(Frame owner) {
-		this.setSize(800, 365);
+		this.setSize(800, 375);
 		if(owner != null) {
 			//center over the owner frame
 			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
