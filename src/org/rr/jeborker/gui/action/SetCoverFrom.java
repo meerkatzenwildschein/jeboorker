@@ -41,6 +41,8 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	public void actionPerformed(ActionEvent evt) {
 		final MainController controller = MainController.getController();
 		try {
+			savePendingMetadata(evt);
+			
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
 			
@@ -73,6 +75,15 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 		} finally {
 			controller.getProgressMonitor().monitorProgressStop(null);
 		}
+	}
+	
+	/**
+	 * If the user has changed something in the metadata sheet, store the changes before continue
+	 * with the cover. Otherwise the entered data get lost.
+	 */
+	private void savePendingMetadata(ActionEvent evt) {
+		final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
+		action.actionPerformed(evt);		
 	}
 	
 	/**

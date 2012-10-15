@@ -45,8 +45,10 @@ class SaveMetadataAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
 		
-		MainController.getController().saveProperties(-1, -1);
-		action.setEnabled(false);
+		if(action.isEnabled()) {
+			MainController.getController().saveProperties(-1, -1);
+			action.setEnabled(false);
+		}
 	}
 	
 	private static class RemoveMetadataEntryApplicationEventListener extends DefaultApplicationEventListener {
