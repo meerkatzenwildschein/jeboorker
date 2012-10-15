@@ -109,12 +109,11 @@ public class APDFMetadataHandler extends AMetadataHandler {
 		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
 			final Document document = getDocument(xmpMetadataBytes, ebookResource);
 			final XMPMetadata xmp = new XMPMetadata(document);
-			final XMPSchemaBasic xmpSchema = xmp.getBasicSchema();
-			final XMPSchemaBasic xapSchema = (XMPSchemaBasic) getXMPSchema("xap", xmp);
+			final XMPSchemaBasic xmpSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
 			
 			if(xmpSchema != null) {
 				Thumbnail thumbnail = xmpSchema.getThumbnail();
-				if(thumbnail!=null) {
+				if (thumbnail != null) {
 					String image = thumbnail.getImage();					
 					byte[] decodeBase64 = Base64.decode(image);
 					if(decodeBase64!=null && decodeBase64.length > 5) {
@@ -122,17 +121,6 @@ public class APDFMetadataHandler extends AMetadataHandler {
 					}
 				}
 			}
-			
-			if(xapSchema != null && result == null) {
-				Thumbnail thumbnail = xapSchema.getThumbnail();
-				if(thumbnail!=null) {
-					String image = thumbnail.getImage();					
-					byte[] decodeBase64 = Base64.decode(image);
-					if(decodeBase64!=null && decodeBase64.length > 5) {
-						result = decodeBase64;
-					}
-				}
-			}			
 		}
 		return result;
 	}	
