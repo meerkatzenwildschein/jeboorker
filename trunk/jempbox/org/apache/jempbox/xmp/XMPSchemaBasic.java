@@ -337,6 +337,11 @@ public class XMPSchemaBasic extends XMPSchema
         setThumbnailProperty( prefix + ":Thumbnails", null, thumbnail );
     }
     
+    public void setThumbnail( Thumbnail thumbnail, String prefix)
+    {
+        setThumbnailProperty( prefix + ":Thumbnails", null, thumbnail );
+    }    
+    
     /**
      * Get the default value for the thumbnail.
      *
@@ -369,6 +374,11 @@ public class XMPSchemaBasic extends XMPSchema
     {
         return getThumbnailProperty( prefix + ":Thumbnails", language );
     }
+    
+    public Thumbnail getThumbnail( String language, String prefix )
+    {
+        return getThumbnailProperty( prefix + ":Thumbnails", language );
+    }    
     
     /**
      * Get a list of all languages that a thumbnail exists for.
