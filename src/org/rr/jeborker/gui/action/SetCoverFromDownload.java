@@ -7,6 +7,10 @@ import javax.swing.JFileChooser;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
 import org.rr.commons.swing.dialogs.ImageDownloadDialog;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.db.DefaultDBManager;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 
 class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements IDoOnlyOnceAction<ImageDownloadDialog> {
@@ -19,6 +23,7 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 		super(resourceHandler);
 		putValue(Action.NAME, Bundle.getString("SetCoverFromDownloadAction.name"));
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("image_16.gif")));		
+		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 
 	@Override
@@ -28,11 +33,25 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 			imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), ImageFetcherFactory.getInstance());
 			
 			//default search phrase
-			String searchPhrase = this.resourceHandler.getName();
-			searchPhrase = searchPhrase.substring(0, searchPhrase.length() - this.resourceHandler.getFileExtension().length()).trim();
-			if(searchPhrase.endsWith(".")) {
-				searchPhrase = searchPhrase.substring(0, searchPhrase.length()-1);
+			String searchPhrase = "";
+			EbookPropertyItem item = ListUtils.first(DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString()));
+			if(item != null) {
+				if(StringUtils.isNotEmpty(item.getAuthor())) {
+					searchPhrase += item.getAuthor() + " ";
+				}
+			} 
+			
+			if(item != null && StringUtils.isNotEmpty(item.getTitle())) {
+				searchPhrase += item.getTitle();
+			} else {
+				searchPhrase += this.resourceHandler.getName();
+				searchPhrase = searchPhrase.substring(0, searchPhrase.length() - this.resourceHandler.getFileExtension().length()).trim();
+				if(searchPhrase.endsWith(".")) {
+					searchPhrase = searchPhrase.substring(0, searchPhrase.length()-1);
+				}				
 			}
+			searchPhrase = StringUtils.replace(searchPhrase, "-", " ");
+			
 			imageDownloadDialog.setSearchPhrase(searchPhrase);
 			
 			imageDownloadDialog.setVisible(true);

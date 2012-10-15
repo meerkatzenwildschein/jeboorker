@@ -61,7 +61,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
 				final Document document = getDocument(xmpMetadataBytes, ebookResource);
 				final XMPMetadata metadata = document != null ? new XMPMetadata(document) : new XMPMetadata();
-                
+
 				List<XMPSchema> schemas = metadata.getSchemas();
 				for (XMPSchema xmpSchema : schemas) {
 	                this.addSchemaProperties(result, xmpSchema);
@@ -69,7 +69,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			}
 			
 			final HashMap<String, String> pdfInfo = getPdfInfo(getReader());
-			if(pdfInfo!=null) {
+			if(pdfInfo != null) {
 				for (Entry<String, String> entry : pdfInfo.entrySet()) {
 					final String key = entry.getKey();
 					final Object value = entry.getValue();
@@ -98,7 +98,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		}
 		return new ArrayList<MetadataProperty>(0);
 	}
-
+	
 	private void addSchemaProperties(final ArrayList<MetadataProperty> result, final XMPSchema schema) throws IOException {
 		if(schema==null) {
 			return;

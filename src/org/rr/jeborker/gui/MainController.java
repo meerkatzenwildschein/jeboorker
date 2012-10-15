@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -20,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
@@ -378,7 +380,7 @@ public class MainController {
 						break;
 					}					
 				} else {
-					if(property != null && item != null && item.getProperty() != null && item.getProperty().getName().equals(property.getName())) {
+					if(property != null && item != null && item.getProperty() != null && item.getProperty().getName() != null && item.getProperty().getName().equals(property.getName())) {
 						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
 						break;
 					}
@@ -608,36 +610,40 @@ public class MainController {
 	 * Rereads the metadata properties and set them to the sheet.
 	 */
 	public void refreshSheetProperties() {
-		if(mainWindow.table.getSelectedRowCount() > 1 || mainWindow.table.getSelectedRowCount() == 0) {
-			//clear on multiple selection 
-			mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
-			setImage(null);
-			mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
-		} else if (mainWindow.table.getSelectedRowCount() == 1) {
-			final int selectedRow = mainWindow.table.getSelectedRow();
-			final int modelRowIndex;
-			if(mainWindow.table.getRowSorter() != null) {
-				modelRowIndex = mainWindow.table.getRowSorter().convertRowIndexToModel(selectedRow);
-			} else {
-				modelRowIndex = selectedRow;
-			}
-			final EbookPropertyItem item = ((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowIndex);
-			if(item==null) {
-				//clear
+		try {
+			if(mainWindow.table.getSelectedRowCount() > 1 || mainWindow.table.getSelectedRowCount() == 0) {
+				//clear on multiple selection 
 				mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
-			} else {
-				final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
-				final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-				mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, item, reader));
-				byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
-				if(coverThumbnail != null && coverThumbnail.length > 0) {
-					setImage(reader);
+				setImage(null);
+				mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
+			} else if (mainWindow.table.getSelectedRowCount() == 1) {
+				final int selectedRow = mainWindow.table.getSelectedRow();
+				final int modelRowIndex;
+				if(mainWindow.table.getRowSorter() != null) {
+					modelRowIndex = mainWindow.table.getRowSorter().convertRowIndexToModel(selectedRow);
 				} else {
-					setImage(null);
+					modelRowIndex = selectedRow;
 				}
-				
-				mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, item));
+				final EbookPropertyItem item = ((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowIndex);
+				if(item==null) {
+					//clear
+					mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
+				} else {
+					final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
+					final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
+					mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, item, reader));
+					byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
+					if(coverThumbnail != null && coverThumbnail.length > 0) {
+						setImage(reader);
+					} else {
+						setImage(null);
+					}
+					
+					mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, item));
+				}
 			}
+		} catch (Exception e) {
+			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
 		}
 	}
 	
