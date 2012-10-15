@@ -171,7 +171,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			thumbnail.setWidth(image.getWidth());
 		}
 		thumbnail.setFormat(Thumbnail.FORMAT_JPEG);
-		xmpSchema.setThumbnail(thumbnail);
+		xmpSchema.setThumbnail(thumbnail, "xap");
 		return xmp;
 	}
 

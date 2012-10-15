@@ -377,8 +377,8 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
       }
     }
     publishedModel.clear();
-    for (Iterator iter = model.iterator(); iter.hasNext();) {
-      Item item = (Item) iter.next();
+    for (int i=0; i<model.size(); i++) {
+      Item item = (Item) model.get(i);
       Item parent = item.getParent();
       if (restoreOldStates) {
         Boolean oldState=(Boolean)toggleStates.get(item.getKey());

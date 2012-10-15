@@ -24,7 +24,8 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 	@Override
 	public ImageDownloadDialog doOnce() {
 		if(imageDownloadDialog == null) {
-			imageDownloadDialog = new ImageDownloadDialog(MainController.getController().getMainWindow(), ImageFetcherFactory.getInstance());
+			final MainController controller = MainController.getController();
+			imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), ImageFetcherFactory.getInstance());
 			
 			//default search phrase
 			String searchPhrase = this.resourceHandler.getName();

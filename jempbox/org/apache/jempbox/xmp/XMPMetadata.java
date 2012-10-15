@@ -199,7 +199,8 @@ public class XMPMetadata
      */
     public XMPSchemaXMP getXMPSchema() throws IOException
     {
-        return (XMPSchemaXMP) getSchemaByClass(XMPSchemaXMP.class);
+    	XMPSchemaXMP schema = (XMPSchemaXMP) getSchemaByClass(XMPSchemaXMP.class);
+    	return schema;
     }    
 
     /**
@@ -813,7 +814,7 @@ public class XMPMetadata
         // not found
         return null;
     }
-
+    
     /**
      * Merge this metadata with the given metadata object.
      * 

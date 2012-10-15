@@ -109,10 +109,14 @@ public class APDFMetadataHandler extends AMetadataHandler {
 		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
 			final Document document = getDocument(xmpMetadataBytes, ebookResource);
 			final XMPMetadata xmp = new XMPMetadata(document);
-			final XMPSchemaBasic xmpSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
+			final XMPSchemaBasic xmpBasicSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
 			
-			if(xmpSchema != null) {
-				Thumbnail thumbnail = xmpSchema.getThumbnail();
+			if(xmpBasicSchema != null) {
+				//Thumbnails could have xap: or xmp: namespace in the BasicSchema.
+				Thumbnail thumbnail = xmpBasicSchema.getThumbnail(null, "xap");
+				if(thumbnail == null) {
+					thumbnail = xmpBasicSchema.getThumbnail(null, "xmp");
+				}
 				if (thumbnail != null) {
 					String image = thumbnail.getImage();					
 					byte[] decodeBase64 = Base64.decode(image);

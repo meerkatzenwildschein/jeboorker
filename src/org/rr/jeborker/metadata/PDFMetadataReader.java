@@ -342,7 +342,6 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		}
 		
 		MetadataProperty authorProperty = null;
-		MetadataProperty creatorProperty = null;
 		for (MetadataProperty property : metadataProperties) {
 			if(property.getName().equalsIgnoreCase("Author")) {
 				result.add(property);
