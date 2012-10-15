@@ -61,7 +61,7 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 
 	@Override
 	public InputStream getContentInputStream() throws IOException {
-		if(this.data!=null) {
+		if(this.data != null) {
 			return this.data.getContentInputStream();
 		} else {
 			return new ByteArrayInputStream(new byte[0]);

@@ -99,7 +99,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	 */
 	@Override
 	public String getMimeType() {
-		if(this.mime!=null) {
+		if (this.mime != null) {
 			if(this.mime.length() > 0) {
 				return this.mime;
 			}
