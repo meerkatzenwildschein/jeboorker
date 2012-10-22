@@ -23,15 +23,15 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 
-public class MainMenuController {
+public class MainMenuBarController {
 
-	private static MainMenuController controller;
+	private static MainMenuBarController controller;
 	
-	private MainMenuView view;
+	private MainMenuBarView view;
 	
 	HashMap<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
 
-	private MainMenuController() {
+	private MainMenuBarController() {
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class MainMenuController {
 	 * We have a singleton here.
 	 * @return The desired EBorkerMainController.
 	 */
-	public static MainMenuController getController() {
+	public static MainMenuBarController getController() {
 		if(controller==null) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -47,7 +47,7 @@ public class MainMenuController {
 				LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 			}
 			
-			controller = new MainMenuController();
+			controller = new MainMenuBarController();
 		}
 		return controller;
 	}
@@ -60,9 +60,9 @@ public class MainMenuController {
 	 * Get the menu view which is a {@link JMenuBar} instance.
 	 * @return The menu view.
 	 */
-	MainMenuView getView() {
+	MainMenuBarView getView() {
 		if(view==null) {
-			view = new MainMenuView();
+			view = new MainMenuBarView();
 		}
 		return view;
 	}
@@ -132,6 +132,49 @@ public class MainMenuController {
 	}
 	
 	/**
+	 * Shows the cover popup menu for the selected entries.
+	 * @param location The locaten where the popup should appears.
+	 * @param invoker The invoker for the popup menu.
+	 */	
+	void showCoverPopupMenu(Point location, Component invoker) {
+		List<EbookPropertyItem> selectedItems = MainController.getController().getSelectedEbookPropertyItems();
+		JPopupMenu menu = createCoverPopupMenu(selectedItems);
+		
+		//setup and show popup
+		if(menu.getComponentCount() > 0) {
+			menu.setLocation(location);
+			menu.show(invoker, location.x, location.y);
+		}		
+	}
+	
+	/**
+	 * Create the popup menu containing the cover actions.  
+	 * @param items The items to be tested if they're matching against the menu entries.
+	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
+	 */
+	private static JPopupMenu createCoverPopupMenu(List<EbookPropertyItem> items) {
+		//create and fill popup menu
+		final MainController controller = MainController.getController();
+		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+		final JPopupMenu menu = new JPopupMenu();
+		
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				menu.add(action);
+			}
+		}
+		
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				menu.add(action);
+			}
+		}	
+		return menu;
+	}
+	
+	/**
 	 * Creates the popup menu for the main table having only these entries inside
 	 * that can be processed with the given {@link EbookPropertyItem} list.
 	 * @param items The items to be tested if they're matching against the menu entries.
@@ -144,20 +187,6 @@ public class MainMenuController {
 		final JPopupMenu menu = new JPopupMenu();
 		
 		JMenu submenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				submenu.add(action);
-			}
-		}
-		
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				submenu.add(action);
-			}
-		}		
-		
 		{
 			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, selectedEbookPropertyItemRows);
 			if(action.isEnabled()) {
@@ -258,7 +287,7 @@ public class MainMenuController {
 	}
 	
 	private void storeProperties() {
-		List<String> hiddenBasePathEntries = MainMenuController.getController().getHiddenBasePathEntries();
+		List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
 		if(hiddenBasePathEntries.isEmpty()) {
 			JeboorkerPreferences.addEntryString("mainMenuBasePathHide", "");
 		} else {

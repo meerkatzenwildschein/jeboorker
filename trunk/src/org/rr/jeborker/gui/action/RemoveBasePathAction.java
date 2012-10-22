@@ -16,7 +16,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
-import org.rr.jeborker.gui.MainMenuController;
+import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.MainMonitor;
 
 class RemoveBasePathAction extends AbstractAction {
@@ -47,13 +47,13 @@ class RemoveBasePathAction extends AbstractAction {
 			for (String basePath : basePaths) {
 				removeBasePathEntries(basePath, true);
 				JeboorkerPreferences.removeBasePath(basePath);
-				MainMenuController.getController().removeBasePathMenuEntry(basePath);
+				MainMenuBarController.getController().removeBasePathMenuEntry(basePath);
 			}			
 		} else {
 			final String name = (String) getValue(Action.NAME);
 			removeBasePathEntries(name, true);
 			JeboorkerPreferences.removeBasePath(name);
-			MainMenuController.getController().removeBasePathMenuEntry(name);
+			MainMenuBarController.getController().removeBasePathMenuEntry(name);
 		}
 	}
 

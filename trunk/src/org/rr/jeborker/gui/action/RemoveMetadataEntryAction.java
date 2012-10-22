@@ -51,11 +51,16 @@ class RemoveMetadataEntryAction extends AbstractAction {
 		@Override
 		public void metaDataSheetSelectionChanged(ApplicationEvent evt) {
 			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null);
-			boolean isDeletable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isDeletable() : true;
-			if(evt.getMetadataProperty() == null || !isDeletable) {
-				action.setEnabled(false);
+			final int[] selectedEbookPropertyItemRows = MainController.getController().getSelectedEbookPropertyItemRows();
+			if(selectedEbookPropertyItemRows.length == 1) {
+				boolean isDeletable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isDeletable() : true;
+				if(evt.getMetadataProperty() == null || !isDeletable) {
+					action.setEnabled(false);
+				} else {
+					action.setEnabled(true);
+				}
 			} else {
-				action.setEnabled(true);
+				action.setEnabled(false);
 			}
 		}		
 	}

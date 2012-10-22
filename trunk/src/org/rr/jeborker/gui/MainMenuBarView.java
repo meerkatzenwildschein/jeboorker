@@ -18,7 +18,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 
-class MainMenuView extends JMenuBar {
+class MainMenuBarView extends JMenuBar {
 
 	private static final long serialVersionUID = -8134987169763660105L;
 	
@@ -32,7 +32,7 @@ class MainMenuView extends JMenuBar {
 	
 	JMenu metadataMenuBar;
 
-	MainMenuView() {
+	MainMenuBarView() {
 		this.init();
 	}
 	
@@ -200,7 +200,7 @@ class MainMenuView extends JMenuBar {
 			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 				String path = iterator.next();
 				JCheckBoxMenuItem pathItem = new JCheckBoxMenuItem();
-				boolean isShow = MainMenuController.getController().isShowHideBasePathStatusShow(path);
+				boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 				pathItem.setSelected(isShow);
 				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path));
 				mnVerzeichnisShowHide.add(pathItem);

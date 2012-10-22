@@ -300,7 +300,7 @@ public class MainView extends JFrame{
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);
 		
-		this.setJMenuBar(MainMenuController.getController().getView());
+		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
 }

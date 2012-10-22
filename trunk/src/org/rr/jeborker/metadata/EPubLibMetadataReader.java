@@ -35,7 +35,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		final EpubReader reader = new EpubReader();
 		
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream());
+			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
 			final Metadata metadata = epub.getMetadata();
 			
 			final List<MetadataProperty> metadataList = this.createMetadataList(metadata);
@@ -162,7 +162,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		
 		byte[] result = null;
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream());
+			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
 			final Resource coverImage = epub.getCoverImage();
 			if(coverImage != null) {
 				final byte[] data = coverImage.getData();
