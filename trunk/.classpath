@@ -19,7 +19,6 @@
 	<classpathentry kind="lib" path="lib/junique-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/paraj-r10.jar"/>
 	<classpathentry kind="lib" path="lib/epublib/htmlcleaner-2.2.jar"/>
-	<classpathentry kind="lib" path="lib/epublib/slf4j-simple-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orient-commons-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-nativeos-1.2.0.jar"/>
