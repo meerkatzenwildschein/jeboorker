@@ -143,19 +143,21 @@ public class MainController {
 		 */
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			final EbookPropertyItem ebookPropertyItem = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItem();
-			IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
-			ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
-			reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
-			
-			refreshTableSelectedItem(false);
+			if(evt.getSource() instanceof EbookSheetProperty) {
+				final EbookPropertyItem ebookPropertyItem = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItem();
+				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
+				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
+				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+				
+				refreshTableSelectedItem(false);
+			}
 		}
 	}
 	
 	/**
 	 * Mouse listener which handles the right click / popup menu on the main table.
 	 */
-	private class MainTablePopupMouseAdapter extends MouseAdapter {
+	private class MainTablePopupMouseListener extends MouseAdapter {
 
 		public void mouseReleased(MouseEvent event) {
 			if (event.getButton() == MouseEvent.BUTTON3) {
@@ -166,10 +168,22 @@ public class MainController {
 					mainWindow.table.getSelectionModel().setSelectionInterval(rowAtPoint, rowAtPoint);
 				}
 				
-				MainMenuController.getController().showMainPopupMenu(event.getPoint(), mainWindow.table);
+				MainMenuBarController.getController().showMainPopupMenu(event.getPoint(), mainWindow.table);
 			}
 		}
 	}
+	
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
+	private class CoverPopupMouseListener extends MouseAdapter {
+
+		public void mouseReleased(MouseEvent event) {
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				MainMenuBarController.getController().showCoverPopupMenu(event.getPoint(), mainWindow.imageViewer);
+			}
+		}
+	}	
 	
 	/**
 	 * Gets the controller instance. because we have only one main window
@@ -198,7 +212,7 @@ public class MainController {
 		initSubController();
 		
 		MainControllerUtils.restoreApplicationProperties(mainWindow);
-		MainMenuController.getController().restoreProperties();
+		MainMenuBarController.getController().restoreProperties();
 		mainWindow.setVisible(true);
 	}
 
@@ -210,7 +224,9 @@ public class MainController {
 	
 	private void initListeners() {
 		mainWindow.table.getSelectionModel().addListSelectionListener(new PropertySheetListSelectionListener());
-		mainWindow.table.addMouseListener(new MainTablePopupMouseAdapter());
+		mainWindow.table.addMouseListener(new MainTablePopupMouseListener());
+		
+		mainWindow.imageViewer.addMouseListener(new CoverPopupMouseListener());
 		
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertySheetChangeListener());
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
@@ -572,7 +588,7 @@ public class MainController {
 		getSortColumnComponentController().dispose();
 		getSortOrderComponentController().dispose();
 		getFilterPanelController().dispose();
-		MainMenuController.getController().dispose();
+		MainMenuBarController.getController().dispose();
 	}
 
 	/**

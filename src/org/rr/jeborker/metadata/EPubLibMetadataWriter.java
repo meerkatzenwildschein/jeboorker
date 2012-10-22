@@ -43,7 +43,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		final EpubReader reader = new EpubReader();
 		
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream());
+			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
 			setMetadata(epub, props);
 			
 			writeBook(epub, ebookResourceHandler);
@@ -135,7 +135,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		final EpubReader reader = new EpubReader();
 		
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream());
+			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
 			final Resource oldCoverImage = epub.getCoverImage();
 			
 			if(oldCoverImage != null) {

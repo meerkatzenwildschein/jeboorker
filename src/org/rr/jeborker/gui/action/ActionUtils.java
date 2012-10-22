@@ -10,7 +10,7 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
-import org.rr.jeborker.gui.MainMenuController;
+import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -61,7 +61,7 @@ public class ActionUtils {
 	 * @param path The path to be toggled.
 	 */
 	static void toggleBasePathVisibility(String path) {
-		final boolean isShow = MainMenuController.getController().isShowHideBasePathStatusShow(path);
+		final boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 		setBasePathVisibility(path, !isShow);
 	}	
 	
@@ -80,7 +80,7 @@ public class ActionUtils {
 				queryCondition.addAndChild(new QueryCondition("basePath", path, "<>", queryIdentifier));
 			}
 				
-			MainMenuController.getController().setShowHideBasePathStatusShow(path, show);
+			MainMenuBarController.getController().setShowHideBasePathStatusShow(path, show);
 		} catch (Exception ex) {
 			LoggerFactory.log(Level.WARNING, ActionUtils.class, "Path " + path, ex);
 		} finally {
