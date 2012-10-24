@@ -26,6 +26,8 @@ class SaveMetadataAction extends AbstractAction {
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("save_16.gif")));
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
+		putValue(SHORT_DESCRIPTION, Bundle.getString("SaveMetadataAction.tooltip")); //tooltip
+
 		setEnabled(false);
 		initListener();
 	}
