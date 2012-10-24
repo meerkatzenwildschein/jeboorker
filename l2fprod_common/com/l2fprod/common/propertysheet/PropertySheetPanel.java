@@ -17,7 +17,6 @@
  */
 package com.l2fprod.common.propertysheet;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -256,7 +255,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		return model.getPropertyCount();
 	}
 
-	public Iterator propertyIterator() {
+	public Iterator<Property> propertyIterator() {
 		return model.propertyIterator();
 	}
 
@@ -593,6 +592,14 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		public void actionPerformed(ActionEvent e) {
 			setSorting(sortButton.isSelected());
 		}
+	}
+
+	public PropertySheetTableModel getModel() {
+		return model;
+	}
+
+	public void setModel(PropertySheetTableModel model) {
+		this.model = model;
 	}
 
 }
