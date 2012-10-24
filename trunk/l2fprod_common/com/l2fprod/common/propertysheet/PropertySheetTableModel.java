@@ -45,7 +45,7 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
   private List model;
   private List publishedModel;
-  private List properties;
+  private List<Property> properties;
   private int mode;
   private boolean sortingCategories;
   private boolean sortingProperties;
@@ -57,7 +57,7 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   public PropertySheetTableModel() {
     model = new ArrayList();
     publishedModel = new ArrayList();
-    properties = new ArrayList();
+    properties = new ArrayList<Property>();
     mode = PropertySheet.VIEW_AS_FLAT_LIST;
     sortingCategories = false;
     sortingProperties = false;
@@ -137,7 +137,7 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   /* (non-Javadoc)
    * @see com.l2fprod.common.propertysheet.PropertySheet#propertyIterator()
    */
-  public Iterator propertyIterator() {
+  public Iterator<Property> propertyIterator() {
     return properties.iterator();
   }
 
