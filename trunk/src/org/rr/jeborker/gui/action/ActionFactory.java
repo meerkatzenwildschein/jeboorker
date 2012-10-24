@@ -36,60 +36,72 @@ public class ActionFactory {
 	public static enum DYNAMIC_ACTION_TYPES implements ActionType {
 		SET_COVER_FROM_FILE_ACTION {
 
+			@Override
 			public Class<? extends Action> getActionClass() {
 				return SetCoverFromFileAction.class;
 			}
 
+			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 			}
 		},
 		SET_COVER_FROM_DOWNLOAD_ACTION {
 
+			@Override
 			public Class<? extends Action> getActionClass() {
 				return SetCoverFromDownload.class;
 			}
 
+			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 			}
 		},		
 		SET_METADATA_AUTHOR_ACTION {
 
+			@Override
 			public Class<? extends Action> getActionClass() {
 				return SetMetadataAuthorAction.class;
 			}
 
+			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
 		},	
 		SET_METADATA_GENRE_ACTION {
 
+			@Override
 			public Class<? extends Action> getActionClass() {
 				return SetMetadataGenreAction.class;
 			}
 
+			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
 		},	
 		SET_METADATA_SERIES_NAME_ACTION {
 
+			@Override
 			public Class<? extends Action> getActionClass() {
 				return SetMetadataSeriesNameAction.class;
 			}
 
+			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
 		},			
 		SET_METADATA_TITLE_ACTION {
 
+			@Override
 			public Class<? extends Action> getActionClass() {
 				return SetMetadataTitleAction.class;
 			}
 
+			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return true;
 			}
@@ -119,6 +131,7 @@ public class ActionFactory {
 			}
 		},
 		DELETE_FILE_ACTION {
+			
 			@Override
 			public Class<? extends Action> getActionClass() {
 				return DeleteFileAction.class;
