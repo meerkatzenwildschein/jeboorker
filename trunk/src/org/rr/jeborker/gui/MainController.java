@@ -89,18 +89,9 @@ public class MainController {
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting()) {
 				Property selectedMetadataProperty = getSelectedMetadataProperty();				
-				saveProperties(e);
 				refreshSheetProperties(); 
 				setSelectedMetadataProperty(selectedMetadataProperty);
 			}
-		}
-		
-		/**
-		 * Saves/Writes the metadata properties if something has changed. 
-		 */
-		private void saveProperties(ListSelectionEvent e) {
-			//save the previous properties 
-			MainController.this.saveProperties(e.getFirstIndex(), e.getLastIndex());
 		}
 	}
 	
@@ -361,6 +352,7 @@ public class MainController {
 	 */
 	public void addMetadataProperty(Property property) {
 		mainWindow.propertySheet.addProperty(property);
+		EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(controller.getSelectedEbookPropertyItems(), property, property));
 	}	
 	
 	/**
