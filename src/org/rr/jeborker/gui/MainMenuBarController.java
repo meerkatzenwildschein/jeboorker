@@ -2,6 +2,7 @@ package org.rr.jeborker.gui;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -299,11 +300,8 @@ public class MainMenuBarController {
 		String basePathPropString = JeboorkerPreferences.getEntryString("mainMenuBasePathHide");
 		if(basePathPropString!=null && !basePathPropString.isEmpty()) {
 			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
-			for(String basePath : split) {
-				//setShowHideBasePathStatusShow(basePath, false); //set checkbox value to the view
-
-//TODO reactivate. It cause the nasty exception				
-//				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
+			for(String basePath : split) {		
+				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
 			}
 		}
 	}
