@@ -268,7 +268,7 @@ public class DefaultDBManager {
 				localSql.append(" WHERE ");
 			}
 
-			if (connect != null && !connect.isEmpty() && sql.charAt(sql.length() - 1) != '(' && !StringUtils.endsWith(sql, "WHERE ")) {
+			if (connect != null && !connect.isEmpty() && !StringUtils.endsWith(sql, '(') && !StringUtils.endsWith(sql, "WHERE ")) {
 				localSql.append(" ").append(connect).append(" ");
 			}
 			if (condition.getFieldName() != null && StringUtils.isNotEmpty(condition.getValue())) {
