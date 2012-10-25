@@ -234,7 +234,7 @@ public class MainView extends JFrame{
 				saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 				saveMetadataButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), "PRESSED");
 				saveMetadataButton.getActionMap().put("PRESSED", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
-				
+				saveMetadataButton.setText("");
 				propertySheet.addToolbarComponent(saveMetadataButton);				
 				
 				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>)null, DefaultPropertyRenderer.class);

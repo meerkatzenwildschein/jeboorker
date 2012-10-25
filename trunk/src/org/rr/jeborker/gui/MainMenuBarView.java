@@ -226,6 +226,11 @@ class MainMenuBarView extends JMenuBar {
 		
 		fileMenuBar.add(new JSeparator());
 		
+		final JMenuItem saveMetadataMenuEntry = new JMenuItem((ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, "")));
+		fileMenuBar.add(saveMetadataMenuEntry);
+		
+		fileMenuBar.add(new JSeparator());
+		
 		//Open folder only for single selection.
 		final JMenuItem openFolderMenuEntry;
 		final JMenuItem openFileMenuEntry;

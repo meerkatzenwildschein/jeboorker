@@ -27,7 +27,7 @@ class SaveMetadataAction extends AbstractAction {
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		putValue(SHORT_DESCRIPTION, Bundle.getString("SaveMetadataAction.tooltip")); //tooltip
-
+		putValue(Action.NAME, Bundle.getString("SaveMetadataAction.name"));
 		setEnabled(false);
 		initListener();
 	}
