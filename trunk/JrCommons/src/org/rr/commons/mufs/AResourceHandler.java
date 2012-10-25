@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -27,6 +28,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<IResourceHandler>();
 	
 	private static final long heapMaxSize = Runtime.getRuntime().maxMemory();
+	
+	private HashMap<String, Object> metaMap;
 	
 	private static final Thread shutdownThread = new Thread(new Runnable() {
 		@Override
@@ -348,7 +351,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		//MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		long heapFreeSize = Runtime.getRuntime().freeMemory();
 		long remaining = heapMaxSize - heapFreeSize - heapRequired;
-		if(remaining < 5000000) {
+		if(heapFreeSize < 5000000) {
 			System.err.println("Garbage collector triggered manually. Only " + remaining + " bytes remaining.");
 			System.gc();
 		}
@@ -476,5 +479,21 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
+	}
+
+	@Override
+	public void addMeta(String key, Object value) {
+		if(metaMap == null) {
+			metaMap = new HashMap<String, Object>();
+		}
+		metaMap.put(key, value);
+	}
+
+	@Override
+	public Object getMeta(String key) {
+		if(metaMap == null) {
+			return null;
+		}
+		return metaMap.get(key);
 	}
 }

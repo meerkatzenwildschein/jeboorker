@@ -549,8 +549,12 @@ public class DateConversionUtils {
 	 * @return The desired date or <code>null</code> if the date format could not be detected.
 	 */
 	public static Date toDateTime(String dateString) {
+		if(dateString == null || dateString.isEmpty()) {
+			return null;
+		}
+		
 		DateConversionUtils.DateFormat detectFromat = detectFromat(dateString);
-		if(detectFromat!=null) {
+		if(detectFromat != null) {
 			return detectFromat.getDate(dateString);
 		} else if(CommonUtils.isInteger(dateString)) {
 			return new Date(CommonUtils.toNumber(dateString).longValue());
