@@ -773,4 +773,17 @@ public final class ListUtils implements Serializable {
 			set(values, value, idx);
 		}
 	}
+
+	/**
+	 * gets the first entry from teh given list. If the list is <code>null</code> 
+	 * or empty <code>null</code> is returned.
+	 * @param object The list where the first entry should be fetched from.
+	 * @return The desired list entry or <code>null</code>.
+	 */
+	public static <T> T first(List<T> object) {
+		if(object != null && !object.isEmpty()) {
+			return object.get(0);
+		}
+		return null;
+	}
 }

@@ -355,5 +355,17 @@ public interface IResourceHandler {
 	 * @return The type. 
 	 */
 	public RESOURCE_HANDLER_USER_TYPES getType();
+	
+	/**
+	 * Add some meta object to this {@link IResourceHandler} instance. 
+	 * @param meta The meta object to add.
+	 */
+	public void addMeta(String key, Object meta);
+	
+	/**
+	 * Gets a previously added meta object.
+	 * @return The meta object or <code>null</code>.
+	 */
+	public Object getMeta(String key);
 
 }

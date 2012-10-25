@@ -1314,4 +1314,24 @@ public final class StringUtils implements Serializable {
     	} 
     	return false;
     }
+    
+    /**
+     * Tests if the given text ends with the given search String. Works with 
+     * String as well as with StringBuilder or any other {@link CharSequence} implementations.
+     * @param text The text to be tested if it ends with.
+     * @param search The String to be tested if the given text ends with it.
+     * @return <code>true</code> if the given text ends with the given search String and <code>false</code> otherwise.
+     */
+    public static boolean endsWith(CharSequence text, String search) {
+    	if(text != null && text.length() >= search.length()) {
+    		for(int i = search.length() - 1, j = text.length() - 1; i >= 0; i--, j--) {
+    			char textChar = text.charAt(j);
+    			char searchChar = search.charAt(i);
+    			if(textChar != searchChar) {
+    				return false;
+    			}
+    		}
+    	} 
+    	return true;
+    }    
 }
