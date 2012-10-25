@@ -11,7 +11,7 @@ import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
-import org.rr.jeborker.gui.model.EbookSheetProperty;
+import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 import com.l2fprod.common.propertysheet.Property;
@@ -23,7 +23,7 @@ public class ActionUtils {
 	 * @param property The property to be added.
 	 */
 	static Property addMetadataItem(MetadataProperty property, EbookPropertyItem item) {
-		final Property createProperty = EbookSheetProperty.createProperty(property, item, 0);
+		final Property createProperty = EbookSheetPropertyModel.createProperty(property, item, 0);
 		final MainController controller = MainController.getController();
 		controller.addMetadataProperty(createProperty);
 		return createProperty;

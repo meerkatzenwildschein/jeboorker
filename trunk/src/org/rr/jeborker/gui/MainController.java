@@ -340,8 +340,8 @@ public class MainController {
 		Property selectedMetadataProperty = getSelectedMetadataProperty();
 		if(selectedMetadataProperty!=null) {
 			if(selectedMetadataProperty.isEditable()) {
-				TableModel model = mainWindow.propertySheet.getTable().getModel();
-				((PropertySheetTableModel)model).removeProperty(selectedMetadataProperty);
+				PropertySheetTableModel model = (PropertySheetTableModel) mainWindow.propertySheet.getModel();
+				model.removeProperty(selectedMetadataProperty);
 			}
 		}
 	}	
@@ -360,11 +360,13 @@ public class MainController {
 	 * @return The desired {@link Property} instance or <code>null</code> if no selection is made.
 	 */
 	public Property getSelectedMetadataProperty() {
-		int selectedRow = mainWindow.propertySheet.getTable().getSelectedRow();
+		final int selectedRow = mainWindow.propertySheet.getTable().getSelectedRow();
+		
 		if(selectedRow >= 0) {
-			EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
-			PropertySheetTableModel.Item item = (Item) model.getObject(selectedRow);
-			Property property = item.getProperty();
+			final EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
+			final PropertySheetTableModel.Item item = (Item) model.getObject(selectedRow);
+			final Property property = item.getProperty();
+			
 			return property;
 		}
 		return null;
@@ -413,7 +415,7 @@ public class MainController {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
 				MetadataProperty ratingMetaData = reader.createRatingMetaData();
 				
-				final Property createProperty = EbookSheetProperty.createProperty(ratingMetaData, item, 0);
+				final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetaData, item, 0);
 				this.addMetadataProperty(createProperty);				
 				createProperty.setValue(rating);
 			}
@@ -425,7 +427,7 @@ public class MainController {
 	 * @return The metadata sheet model.
 	 */
 	public EbookSheetPropertyModel getEbookSheetPropertyModel() {
-		EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getTable().getModel();
+		final EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
 		return model;
 	}
 	
@@ -639,7 +641,10 @@ public class MainController {
 				} else {
 					final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
 					final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-					mainWindow.propertySheet.setProperties(EbookSheetProperty.createProperties(resourceHandler, item, reader));
+					final EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
+					
+					model.reloadProperties(resourceHandler, item, reader);
+					
 					byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
 					if(coverThumbnail != null && coverThumbnail.length > 0) {
 						setImage(reader);
