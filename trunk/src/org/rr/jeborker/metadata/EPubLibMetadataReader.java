@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,12 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 
 	@Override
 	public List<MetadataProperty> readMetaData() {
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		final EpubReader reader = new EpubReader();
 		
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
+			final byte[] zipData = this.getContent(ebookResourceHandler);
+			final Book epub = reader.readEpub(new ByteArrayInputStream(zipData), ebookResourceHandler.getName());
 			final Metadata metadata = epub.getMetadata();
 			
 			final List<MetadataProperty> metadataList = this.createMetadataList(metadata);
@@ -157,7 +159,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	 *            The metadata node possibly containing some hints where the cover is.
 	 */
 	public byte[] getCover() {
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		final EpubReader reader = new EpubReader();
 		
 		byte[] result = null;
@@ -189,7 +191,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	 *            The metadata node possibly containing some hints where the cover is.
 	 */
 	public byte[] getCoverDirty() {
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final byte[] containerXmlData = getContainerOPF(zipData);
@@ -301,7 +303,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	@Override
 	public String getPlainMetaData() {
 		try {
-			final byte[] containerXmlData = getContainerOPF(getEbookResource());
+			final byte[] containerXmlData = getContainerOPF(getEbookResource().get(0));
 			return new String(containerXmlData, "UTF-8");
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get plain metadata for " + getEbookResource(), e);
@@ -315,7 +317,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, IMetadataReader.METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, IMetadataReader.METADATA_TYPES type) {
 		MetadataProperty newProperty;
 		switch(type) {
 		case AUTHOR:

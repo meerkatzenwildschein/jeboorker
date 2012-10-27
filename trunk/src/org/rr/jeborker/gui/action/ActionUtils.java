@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.action;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
 
@@ -23,7 +24,7 @@ public class ActionUtils {
 	 * @param property The property to be added.
 	 */
 	static Property addMetadataItem(MetadataProperty property, EbookPropertyItem item) {
-		final Property createProperty = EbookSheetPropertyModel.createProperty(property, item, 0);
+		final Property createProperty = EbookSheetPropertyModel.createProperty(property, Collections.singletonList(item), 0);
 		final MainController controller = MainController.getController();
 		controller.addMetadataProperty(createProperty);
 		return createProperty;

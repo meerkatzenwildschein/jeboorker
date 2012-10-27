@@ -37,6 +37,7 @@ import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.renderer.ComboBoxPropertyEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
 import org.rr.jeborker.gui.renderer.DefaultPropertyRenderer;
@@ -247,6 +248,8 @@ public class MainView extends JFrame{
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("rating", StarRatingPropertyRenderer.class);
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("calibre:rating", StarRatingPropertyEditor.class);
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("calibre:rating", StarRatingPropertyRenderer.class);
+		        
+		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, ComboBoxPropertyEditor.class);
 		        
 				GridBagConstraints gbc_propertySheet = new GridBagConstraints();
 				gbc_propertySheet.fill = GridBagConstraints.BOTH;

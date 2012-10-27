@@ -9,15 +9,56 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 
 public interface IMetadataReader {
 	
-	public static enum METADATA_TYPES {
-		GENRE, TITLE, AUTHOR, SERIES_NAME
-	}
+	public static interface MetadataEntryType {
+		String getName();
+		
+		void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
+	}	
+	
+	static enum METADATA_TYPES implements MetadataEntryType {
+		AUTHOR {
+			public String getName() {
+				return "author";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setAuthor(metadataProperty.getValueAsString());
+			}
+		},
+		TITLE {
+			public String getName() {
+				return "title";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setTitle(metadataProperty.getValueAsString());
+			}
+		},
+		SERIES_NAME {
+			public String getName() {
+				return "seriesname";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setSeriesName(metadataProperty.getValueAsString());
+			}
+		},
+		GENRE {
+			public String getName() {
+				return "genre";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setGenre(metadataProperty.getValueAsString());
+			}
+		}		
+	}	
 	
 	/**
 	 * gets the ebook {@link IResourceHandler} for this instance.
 	 * @return The desired ebook {@link IResourceHandler}
 	 */
-	public IResourceHandler getEbookResource();
+	public List<IResourceHandler> getEbookResource();
 
 	/**
 	 * Read the metadata from the given {@link IResourceHandler}.
@@ -69,7 +110,7 @@ public interface IMetadataReader {
 	 * 		parameter is <code>null</code>, the properties will be read from the file.
 	 * @return A list of genre entries. Never returns <code>null</code>
 	 */
-	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type);
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type);
 	
 	/**
 	 * Some clean up code. Should be invoked at the end of the readers usage

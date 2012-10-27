@@ -78,6 +78,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	private boolean showSortButton = true;
 	private boolean showDescriptionButton = true;
 
+	private PropertyChangeListener[] listener;
+
 	boolean isShowCategoryButton() {
 		return showCategoryButton;
 	}
@@ -153,6 +155,13 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		model = (PropertySheetTableModel) table.getModel();
 		model.addPropertyChangeListener(this);
 
+		if(listener != null) {
+			for(PropertyChangeListener l : listener) {
+				model.removePropertyChangeListener(l);
+				model.addPropertyChangeListener(l);
+			}
+		}
+		
 		// remove the listener from the old table
 		if (this.table != null)
 			this.table.getSelectionModel().removeListSelectionListener(selectionListener);
@@ -304,10 +313,12 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 
 	public void addPropertySheetChangeListener(PropertyChangeListener listener) {
 		model.addPropertyChangeListener(listener);
+		this.listener = model.getPropertyChangeListener();
 	}
 
 	public void removePropertySheetChangeListener(PropertyChangeListener listener) {
 		model.removePropertyChangeListener(listener);
+		this.listener = model.getPropertyChangeListener();
 	}
 
 	public void setEditorFactory(PropertyEditorFactory factory) {
@@ -600,6 +611,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 
 	public void setModel(PropertySheetTableModel model) {
 		this.model = model;
+		this.table.setModel(model);
+		setTable(this.table);
 	}
 
 }

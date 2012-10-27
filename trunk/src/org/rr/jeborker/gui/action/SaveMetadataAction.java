@@ -40,7 +40,7 @@ class SaveMetadataAction extends AbstractAction {
 	}	
 	
 	private void initListener() {
-		EventManager.addListener(new RemoveMetadataEntryApplicationEventListener());
+		EventManager.addListener(new SaveMetadataEntryApplicationEventListener());
 	}
 
 	@Override
@@ -53,7 +53,7 @@ class SaveMetadataAction extends AbstractAction {
 		}
 	}
 	
-	private static class RemoveMetadataEntryApplicationEventListener extends DefaultApplicationEventListener {
+	private static class SaveMetadataEntryApplicationEventListener extends DefaultApplicationEventListener {
 		
 		@Override
 		public void metaDataSheetContentChanged(ApplicationEvent evt) {

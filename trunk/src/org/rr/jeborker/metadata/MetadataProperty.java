@@ -13,9 +13,14 @@ public class MetadataProperty {
 
 	protected final String name;
 	
-	protected ArrayList<Object> values;
+	protected List<Object> values;
 	
 	private Class<?> propertyClass = null;
+	
+	MetadataProperty(String name, List<Object> values) {
+		this.name = name;
+		this.values = values;
+	}
 	
 	MetadataProperty(String name, Object value) {
 		this.name = name;
@@ -53,7 +58,7 @@ public class MetadataProperty {
 	 */
 	public String getValueAsString() {
 		final List<Object> values = getValues();
-		if(values.size()>0) {
+		if(values.size() > 0) {
 			return StringUtils.toString(values.get(0));
 		}
 		return "";
@@ -64,7 +69,7 @@ public class MetadataProperty {
 	 * @param idx The index of the value
 	 */
 	public void setValue(final Object value, final int idx) {
-		ListUtils.set(this.values, value, idx);
+		ListUtils.set(this.values, value, idx >= 0 ? idx : 0);
 	}
 	
 	public Class<?> getPropertyClass() {
@@ -112,5 +117,4 @@ public class MetadataProperty {
 	public boolean isSingle() {
 		return true;
 	}
-
 }

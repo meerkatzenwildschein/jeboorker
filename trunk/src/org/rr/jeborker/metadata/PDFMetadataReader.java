@@ -46,8 +46,8 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}
 	
 	@Override
-	public IResourceHandler getEbookResource() {
-		return this.ebookResource;
+	public List<IResourceHandler> getEbookResource() {
+		return Collections.singletonList(this.ebookResource);
 	}	
 	
 	@Override
@@ -367,7 +367,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}	
 	
 	@Override
-	public List<MetadataProperty> getMetaDataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
 		final String search;
 		final String name;
 		

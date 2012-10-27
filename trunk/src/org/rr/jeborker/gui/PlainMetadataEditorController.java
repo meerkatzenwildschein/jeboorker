@@ -29,6 +29,8 @@ public class PlainMetadataEditorController {
 	
 	private PlainMetadataEditorView xmlMetadataView = null;
 	
+	private IResourceHandler resourceHandler;
+	
 	private static int locationOffset = 0;
 	
 	private int[] rowsToRefresh;
@@ -36,6 +38,7 @@ public class PlainMetadataEditorController {
 	private PlainMetadataEditorController(IResourceHandler resourceHandler, int[] rowsToRefresh) {
 		this.rowsToRefresh = rowsToRefresh;
 		this.reader = MetadataHandlerFactory.getReader(resourceHandler);
+		this.resourceHandler = resourceHandler;
 	}	
 	
 	public static PlainMetadataEditorController getInstance(final IResourceHandler resourceHandler, int[] rowsToRefresh) {
@@ -150,18 +153,17 @@ public class PlainMetadataEditorController {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				final IResourceHandler ebookResource = reader.getEbookResource();
-				final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebookResource);
+				final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 				final String metadataContent = xmlMetadataView.editor.getText();
 				try {
 					writer.storePlainMetadata(metadataContent.getBytes("UTF-8"));
 				} catch (UnsupportedEncodingException e1) {
-					LoggerFactory.logWarning(this, "Could not encode data to UTF-8 " + ebookResource, e1);
+					LoggerFactory.logWarning(this, "Could not encode data to UTF-8 " + resourceHandler, e1);
 				}
 
 				close();
 				
-				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookResource.toString()).invokeAction();
+				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString()).invokeAction();
 				MainController.getController().refreshTableRows(rowsToRefresh, true);
 			}
 		});

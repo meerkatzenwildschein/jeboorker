@@ -19,7 +19,7 @@ public class EbookSheetProperty extends DefaultProperty {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final EbookPropertyItem item;
+	private final List<EbookPropertyItem> items;
 	
 	protected MetadataProperty metadataProperty;
 	
@@ -30,10 +30,10 @@ public class EbookSheetProperty extends DefaultProperty {
 	 */
 	private boolean changed = false;
 	
-	public EbookSheetProperty(final MetadataProperty metadataProperty, final EbookPropertyItem item, final int propertyIndex) {
+	public EbookSheetProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, final int propertyIndex) {
 		this.metadataProperty = metadataProperty;
 		this.propertyIndex = propertyIndex;
-		this.item = item;
+		this.items = items;
 		this.setEditable(metadataProperty.isEditable());
 		this.setDeletable(metadataProperty.isDeletable());
 	}
@@ -42,8 +42,8 @@ public class EbookSheetProperty extends DefaultProperty {
 	 * Get the {@link EbookPropertyItem} for this property.
 	 * @return The desired {@link EbookPropertyItem}.
 	 */
-	public EbookPropertyItem getEbookPropertyItem() {
-		return this.item;
+	public List<EbookPropertyItem> getEbookPropertyItems() {
+		return this.items;
 	}
 
 	void firePropertyChanged(Object oldValue, Object newValue) {
@@ -81,17 +81,16 @@ public class EbookSheetProperty extends DefaultProperty {
 	public String getShortDescription() {
 		final StringBuilder value = new StringBuilder();
 		final boolean isDate = ReflectionUtils.equals(metadataProperty.getPropertyClass(), Date.class);
-		
+		final int lpropertyIndex = this.propertyIndex >= 0 ? this.propertyIndex : 0;
 		if (isDate) {
 			if (value.length() > 0) {
 				value.append("<br/>");
 			}
-
-			Object propertyValue = metadataProperty.getValues().get(propertyIndex);
+			Object propertyValue = metadataProperty.getValues().get(lpropertyIndex);
 			if (propertyValue instanceof Date) {
 				value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format((Date) propertyValue));
 			} else {
-				Date date = DateConversionUtils.toDate(StringUtils.toString(metadataProperty.getValues().get(propertyIndex)));
+				Date date = DateConversionUtils.toDate(StringUtils.toString(metadataProperty.getValues().get(lpropertyIndex)));
 				if (date != null) {
 					value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format(date));
 				}
@@ -100,7 +99,7 @@ public class EbookSheetProperty extends DefaultProperty {
 			if (value.length() > 0) {
 				value.append("<br/>");
 			}
-			value.append(String.valueOf(metadataProperty.getValues().get(propertyIndex)));
+			value.append(String.valueOf(metadataProperty.getValues().get(lpropertyIndex)));
 		}
 		
 		return value.toString();
@@ -108,18 +107,19 @@ public class EbookSheetProperty extends DefaultProperty {
 
 	@Override
 	public String getDisplayName() {
-		String name = metadataProperty.getName();
+		final String name = metadataProperty.getName();
+
 		String localizedName = MainController.getController().getLocalizedString(name);
-		
-		if(metadataProperty.getValues().size() > 1) {
-			localizedName = (this.propertyIndex+1) + ")" + localizedName; 
+		if(!isMultiSelection() && metadataProperty.getValues().size() > 1) {
+			localizedName = (this.propertyIndex + 1) + ") " + localizedName; 
 		}
 		
 		return localizedName.toString();
 	}
 
 	public String getDisplayDescriptionName() {
-		String name = metadataProperty.getName();
+		final String name = metadataProperty.getName();
+		
 		String localizedName = getDisplayName();
 		localizedName += "</b><i> &lt;" + name+"&gt;</i><b>";
 		return localizedName;
@@ -127,7 +127,11 @@ public class EbookSheetProperty extends DefaultProperty {
 
 	@Override
 	public Object getValue() {
-		return metadataProperty.getValues().get(propertyIndex);
+		if(propertyIndex >= 0) {
+			return metadataProperty.getValues().get(propertyIndex);
+		} else {
+			return metadataProperty.getValues();
+		}
 	}
 
 
@@ -142,5 +146,13 @@ public class EbookSheetProperty extends DefaultProperty {
 	 */
 	public List<MetadataProperty> getMetadataProperties() {
 		return Arrays.asList(this.metadataProperty);
+	}
+	
+	/**
+	 * Tells if there is currently more than one entry selected. 
+	 * @return <code>true</code> if more than one value is selected and false otherwise. 
+	 */
+	private boolean isMultiSelection() {
+		return MainController.getController().getSelectedEbookPropertyItemRows().length > 1;
 	}
 }

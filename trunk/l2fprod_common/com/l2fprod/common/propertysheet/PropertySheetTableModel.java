@@ -362,6 +362,10 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     listeners.removePropertyChangeListener(listener);
   }
+  
+  public PropertyChangeListener[] getPropertyChangeListener() {
+	  return listeners.getPropertyChangeListeners();
+  }
 
   public void propertyChange(PropertyChangeEvent evt) {
     // forward the event to registered listeners
