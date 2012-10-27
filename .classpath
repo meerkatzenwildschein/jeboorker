@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="bounce"/>
 	<classpathentry kind="src" path="jempbox"/>
 	<classpathentry kind="src" path="japura"/>
+	<classpathentry kind="src" path="epublib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_32"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
@@ -23,7 +24,8 @@
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-nativeos-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-object-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/epublib/commons-vfs-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/epublib/kxml2-2.2.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/EpubLib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

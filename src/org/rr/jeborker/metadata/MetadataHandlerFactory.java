@@ -3,9 +3,24 @@ package org.rr.jeborker.metadata;
 import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
 import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
 
+import java.util.List;
+
 import org.rr.commons.mufs.IResourceHandler;
 
 public class MetadataHandlerFactory {
+	
+	/**
+	 * Gets a reader which supports multiple ebook resources.
+	 * @param resources The resources to be handled by the {@link IMetadataReader}.
+	 * @return The desired {@link IMetadataReader} instance.
+	 */
+	public static IMetadataReader getReader(final List<IResourceHandler> resources) {
+		if(resources.size() == 1) {
+			return getReader(resources.get(0));
+		} else {
+			return new MultiMetadataHandler(resources);
+		}
+	}
 	
 	/**
 	 * Get a meta data reader for the given {@link IResourceHandler}.

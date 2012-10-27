@@ -2,6 +2,7 @@ package org.rr.jeborker.metadata;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
@@ -228,8 +229,8 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * by this {@link AMetadataHandler} instance.
 	 * @return The desired {@link IResourceHandler} instance.
 	 */
-	public IResourceHandler getEbookResource() {
-		return this.ebookResourceHandler;
+	public List<IResourceHandler> getEbookResource() {
+		return Collections.singletonList(this.ebookResourceHandler);
 	}
 	
 	/**

@@ -39,7 +39,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 
 	@Override
 	public void writeMetadata(Iterator<MetadataProperty> props) {
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		final EpubReader reader = new EpubReader();
 		
 		try {
@@ -131,7 +131,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	@Override
 	public void setCover(final byte[] cover) {
 //		if(true) setCoverOld(cover);
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		final EpubReader reader = new EpubReader();
 		
 		try {
@@ -197,7 +197,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	}
 
 	public void setCoverOld(final byte[] cover) {
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final byte[] containerXmlData = getContainerOPF(zipData);
@@ -262,7 +262,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		
 		if(targetImageMime == null){
 			//need to load the existing cover image to determine it's image type
-			IMetadataReader reader = MetadataHandlerFactory.getReader(getEbookResource());
+			IMetadataReader reader = MetadataHandlerFactory.getReader(getEbookResource().get(0));
 			byte[] oldCover = reader.getCover();
 			if(oldCover!=null && oldCover.length > 0) {
 				IResourceHandler virtualResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader(null, oldCover);
@@ -324,7 +324,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	 * @throws IOException
 	 */
 	private void writeZipData(byte[] content, final String file) throws IOException {
-		final IResourceHandler ebookResourceHandler = getEbookResource();
+		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		final byte[] zipData = this.getContent(ebookResourceHandler);
 		final byte[] newZipData = ZipUtils.add(zipData, new ZipUtils.ZipDataEntry(file, content));
 		if (newZipData != null && newZipData.length > 0) {
@@ -343,7 +343,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	@Override
 	public void storePlainMetadata(byte[] plainMetadata) {
 		try {
-			final byte[] zipData = this.getContent(getEbookResource());
+			final byte[] zipData = this.getContent(getEbookResource().get(0));
 			this.writeZipData(plainMetadata, getOpfFile(zipData));
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Could not write metadata to " + getEbookResource(), e);

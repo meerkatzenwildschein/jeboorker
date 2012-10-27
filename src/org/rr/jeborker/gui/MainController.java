@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -35,13 +36,13 @@ import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.EbookSheetPropertyModelMultiSelection;
 import org.rr.jeborker.gui.model.EmptyListModel;
 import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
-import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel;
@@ -135,10 +136,14 @@ public class MainController {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if(evt.getSource() instanceof EbookSheetProperty) {
-				final EbookPropertyItem ebookPropertyItem = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItem();
-				IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
-				ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
-				reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+				final List<EbookPropertyItem> ebookPropertyItems = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItems();
+				for(int i = 0; i < ebookPropertyItems.size(); i++) {
+					final EbookPropertyItem ebookPropertyItem = ebookPropertyItems.get(i);
+					final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
+					final ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
+					
+					reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+				}
 				
 				refreshTableSelectedItem(false);
 			}
@@ -415,7 +420,7 @@ public class MainController {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
 				MetadataProperty ratingMetaData = reader.createRatingMetaData();
 				
-				final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetaData, item, 0);
+				final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetaData, Collections.singletonList(item), 0);
 				this.addMetadataProperty(createProperty);				
 				createProperty.setValue(rating);
 			}
@@ -621,39 +626,51 @@ public class MainController {
 	 */
 	public void refreshSheetProperties() {
 		try {
-			if(mainWindow.table.getSelectedRowCount() > 1 || mainWindow.table.getSelectedRowCount() == 0) {
-				//clear on multiple selection 
-				mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
-				setImage(null);
-				mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
-			} else if (mainWindow.table.getSelectedRowCount() == 1) {
-				final int selectedRow = mainWindow.table.getSelectedRow();
-				final int modelRowIndex;
-				if(mainWindow.table.getRowSorter() != null) {
-					modelRowIndex = mainWindow.table.getRowSorter().convertRowIndexToModel(selectedRow);
-				} else {
-					modelRowIndex = selectedRow;
-				}
-				final EbookPropertyItem item = ((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowIndex);
-				if(item==null) {
-					//clear
-					mainWindow.propertySheet.setProperties(new Property[] {new DefaultProperty()});
-				} else {
-					final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
-					final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-					final EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
-					
-					model.reloadProperties(resourceHandler, item, reader);
-					
-					byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
-					if(coverThumbnail != null && coverThumbnail.length > 0) {
-						setImage(reader);
+			if(mainWindow.table.getSelectedRowCount() >= 1) {
+				final int[] selectedRows = mainWindow.table.getSelectedRows();
+				final int[] modelRowsIndex = new int[selectedRows.length];
+				final List<EbookPropertyItem> items = new ArrayList<EbookPropertyItem>(selectedRows.length);
+				for (int i = 0; i < selectedRows.length; i++) {
+					if(mainWindow.table.getRowSorter() != null) {
+						modelRowsIndex[i] = mainWindow.table.getRowSorter().convertRowIndexToModel(selectedRows[i]);
 					} else {
-						setImage(null);
-					}
-					
-					mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, item));
+						modelRowsIndex[i] = selectedRows[i];
+					}	
+					items.add(((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowsIndex[i]));
 				}
+				
+				if(items.size() > 1) {
+					//multiple selection 
+					final EbookSheetPropertyModelMultiSelection model = new EbookSheetPropertyModelMultiSelection();
+					mainWindow.propertySheet.setModel(model);
+					
+					model.loadProperties(items);
+					
+					setImage(null);
+					mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
+				} else if (items.size() == 1) {
+					//single selection
+					final EbookSheetPropertyModel model = new EbookSheetPropertyModel();
+					mainWindow.propertySheet.setModel(model);
+					
+					if(items.get(0) != null) {
+						model.loadProperties(items.get(0));
+						IMetadataReader reader = model.getMetadataReader();
+						byte[] coverThumbnail = items.get(0).getCoverThumbnail() != null ? items.get(0).getCoverThumbnail().toStream() : null;
+						if(coverThumbnail != null && coverThumbnail.length > 0) {
+							setImage(reader);
+						} else {
+							setImage(null);
+						}
+						
+						mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, items.get(0)));
+					}
+				}				
+			} else {
+				//no selection
+				mainWindow.propertySheet.setModel(new EbookSheetPropertyModelMultiSelection());
+				setImage(null);
+				mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());						
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
@@ -661,10 +678,10 @@ public class MainController {
 	}
 	
 	private void setImage(final IMetadataReader reader) {
-		final IResourceHandler ebookResource = reader!=null ? reader.getEbookResource() : null;
-		if (ebookResource != null) {
+		final List<IResourceHandler> ebookResource = reader != null ? reader.getEbookResource() : null;
+		if (ebookResource != null && !ebookResource.isEmpty()) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
-			String coverFileName = StringUtils.replace(ebookResource.getName(), ".", "_");
+			String coverFileName = StringUtils.replace(ebookResource.get(0).getName(), ".", "_");
 			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
 				
 				ByteArrayInputStream byteArrayInputStream = null;

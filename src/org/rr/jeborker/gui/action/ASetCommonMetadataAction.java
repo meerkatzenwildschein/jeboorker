@@ -63,7 +63,7 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 					
 					//get author metadata an set the entered author.
 					List<MetadataProperty> readMetaData = reader.readMetaData();
-					List<MetadataProperty> metaData = reader.getMetaDataByType(true, readMetaData, type);
+					List<MetadataProperty> metaData = reader.getMetadataByType(true, readMetaData, type);
 					
 					transferValueToMetadata(input, metaData);
 

@@ -6,10 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.IMetadataReader;
+import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
@@ -20,9 +22,13 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	private static final long serialVersionUID = -4633492433120559387L;
 	
-	private static final Comparator<Property> PROPERTY_COMPARATOR = new MetadataPropertyComparator();
+	protected static final Comparator<Property> PROPERTY_COMPARATOR = new MetadataPropertyComparator();
 
 	private boolean changed = false;
+	
+	private IMetadataReader reader;
+
+	private IResourceHandler resourceHandler;
 
 	public boolean isChanged() {
 		List<Property> properties = this.getProperties();
@@ -77,9 +83,20 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		return null;
 	}
 	
-	public void reloadProperties(IResourceHandler resourceHandler, EbookPropertyItem item, IMetadataReader reader) {
+	public void loadProperties(EbookPropertyItem item) {
+		this.resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
+		this.reader = MetadataHandlerFactory.getReader(resourceHandler);
+		
 		Property[] newProperties = createProperties(resourceHandler, item, reader);
 		setProperties(newProperties);
+	}
+	
+	public IMetadataReader getMetadataReader() {
+		return reader;
+	}
+
+	public IResourceHandler getResourceHandler() {
+		return resourceHandler;
 	}
 	
 	/**
@@ -88,7 +105,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param item The item where the {@link Property} array should be created for.
 	 * @return A couple of properties for the given {@link EbookPropertyItem} never returns <code>null</code>.
 	 */
-	private static Property[] createProperties(final IResourceHandler resourceHandler, final EbookPropertyItem item, final IMetadataReader reader) {
+	private Property[] createProperties(final IResourceHandler resourceHandler, final EbookPropertyItem item, final IMetadataReader reader) {
 		if(resourceHandler==null) {
 			return new Property[0];
 		}
@@ -100,10 +117,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		fileNameProperty.setEditable(false);
 		fileNameProperty.setDeletable(false);
 		fileNameProperty.setValue(resourceHandler);
-		fileNameProperty.setShortDescription(resourceHandler!=null ? resourceHandler.toString() : "");
+		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : "");
 		result.add(fileNameProperty);
 		
-		setupMetadata(result, resourceHandler, item, reader);
+		setupMetadata(result, Collections.singletonList(item), reader);
 		
 		Collections.sort(result, PROPERTY_COMPARATOR);
 		
@@ -117,7 +134,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param result The list where the metadata properties should be attched to.
 	 * @param resourceLoader The {@link IResourceHandler} providing the ebook data.
 	 */
-	private static void setupMetadata(final ArrayList<Property> result, final IResourceHandler resourceLoader, final EbookPropertyItem item, final IMetadataReader reader) {
+	protected void setupMetadata(final ArrayList<Property> result, final List<EbookPropertyItem> items, final IMetadataReader reader) {
 		final List<MetadataProperty> allMetaData = reader.readMetaData();
 		for (int i = 0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
@@ -126,17 +143,17 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				//find properties with the same name and value to merge them in the sheet view.
 				List<MetadataProperty> mergedProperties = getMergedProperties(metadataProperty, allMetaData);
 				if(mergedProperties.size() > 1) {
-					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties, item);
+					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties, items);
 					result.add(property);					
 					allMetaData.removeAll(mergedProperties);
 					i--;
 				} else {
-					Property property = createProperty(metadataProperty, item, 0);
+					Property property = createProperty(metadataProperty, items, 0);
 					result.add(property);
 				}
 			} else {
 				for (int j=0; j < values.size(); j++) {
-					Property property = createProperty(metadataProperty, item, j);
+					Property property = createProperty(metadataProperty, items, j);
 					result.add(property);				
 				}
 			}
@@ -150,7 +167,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param allMetaData The metadata list to be searched.
 	 * @return The list with all metadata instances matching with the given one. Never returns <code>null</code>.
 	 */
-	private static List<MetadataProperty> getMergedProperties(MetadataProperty ref, List<MetadataProperty> allMetaData) {
+	protected List<MetadataProperty> getMergedProperties(MetadataProperty ref, List<MetadataProperty> allMetaData) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(3);
 		for (MetadataProperty metadataProperty : allMetaData) {
 			if(comparePropertiesForMerge(metadataProperty, ref)) {
@@ -159,7 +176,6 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 		return result;
 	}
-	
 
 	/**
 	 * Compares the metadata properties if they could be merged to one property. Properties
@@ -169,7 +185,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param metadataProperty2 The second property to be compared.
 	 * @return <code>true</code> for merge and <code>false</code> otherwise.
 	 */
-	private static boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
+	protected boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
 		if(metadataProperty1 == metadataProperty2) {
 			return true;
 		}
@@ -197,11 +213,11 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 	}	
 	
-	public static Property createProperty(final MetadataProperty metadataProperty, final EbookPropertyItem item, int valueIndex) {
-		return new EbookSheetProperty(metadataProperty, item, valueIndex);
+	public static Property createProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, int valueIndex) {
+		return new EbookSheetProperty(metadataProperty, items, valueIndex);
 	}	
 	
-	private static class MetadataPropertyComparator implements Comparator<Property> {
+	protected static class MetadataPropertyComparator implements Comparator<Property> {
 
 		@Override
 		public int compare(Property p1, Property p2) {
@@ -216,7 +232,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				return "01";
 			} else if(name1.equals("author") || name1.equals("creator / aut")) {
 				return "02";
-			}else if(name1.equals("title")) {
+			} else if(name1.equals("title")) {
 				return "03";
 			}
 			return name1;
@@ -229,14 +245,14 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * and the description are taken from. The value will be set to each of the given {@link MetadataProperty}
 	 * instances. This allows to merge different properties to be shown as one.
 	 */
-	private static class MultipleEbookSheetProperty extends EbookSheetProperty {
+	protected static class MultipleEbookSheetProperty extends EbookSheetProperty {
 
 		private static final long serialVersionUID = 3047729348480097722L;
 		
 		final List<MetadataProperty> metadataProperties;
 		                                                                     
-		public MultipleEbookSheetProperty(final List<MetadataProperty> metadataProperties, final EbookPropertyItem item) {
-			super(metadataProperties.get(0), item, 0);
+		public MultipleEbookSheetProperty(final List<MetadataProperty> metadataProperties, final List<EbookPropertyItem> items) {
+			super(metadataProperties.get(0), items, 0);
 			this.metadataProperties = metadataProperties;
 			for (MetadataProperty metadataProperty : metadataProperties) {
 				if(!metadataProperty.isEditable()) {
@@ -264,5 +280,6 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		public List<MetadataProperty> getMetadataProperties() {
 			return metadataProperties;
 		}		
-	}	
+	}
+
 }
