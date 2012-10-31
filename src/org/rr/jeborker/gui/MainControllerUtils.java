@@ -2,10 +2,15 @@ package org.rr.jeborker.gui;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.ReflectionUtils;
+import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -53,8 +58,12 @@ class MainControllerUtils {
 		//restore the divider location at the main window
 		final Number mainWindowDividerLocation = JeboorkerPreferences.getEntryAsNumber("mainWindowDividerLocation");
 		if(mainWindowDividerLocation!=null) {
-			//however, the splitpane has a difference of 7 between setting and getting the location.
-			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue()-7);
+			int add = 0;
+			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+				//however, the splitpane has a difference of 9 between setting and getting the location.				
+				add = 9;
+			}
+			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
 		}
 		
 		//restore the divider location in the property sheet 
@@ -78,19 +87,30 @@ class MainControllerUtils {
 			return; //nothing to do.
 		}
 		
-		IResourceHandler ebook = getPropertyResourceHandler(properties);
+		List<IResourceHandler> ebookResources = getPropertyResourceHandler(properties);
 		
-		if(ebook!=null) {
-			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebook);
-			if(writer!=null) {
+		if(ebookResources != null && !ebookResources.isEmpty()) {
+			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebookResources);
+			if(writer != null) {
 				try {
 					final ArrayList<MetadataProperty> target = createMetadataProperties(properties);
-					writer.writeMetadata(target.iterator());
+					writer.writeMetadata(target);
 					
 					//now the data was written, it's time to refresh the database entry
-					List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", ebook.toString());
-					for (EbookPropertyItem item : items) {
-						EbookPropertyItemUtils.refreshEbookPropertyItem(item, ebook, false);		
+					final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+					final List<IResourceHandler> selectedEbookResources = new ArrayList<IResourceHandler>();
+					for(EbookPropertyItem selectedEbookPropertyItem : selectedEbookPropertyItems) {
+						selectedEbookResources.add(selectedEbookPropertyItem.getResourceHandler());
+					}
+
+					final List<IResourceHandler> notSelectedEbookResources = ListUtils.difference(selectedEbookResources, ebookResources, UtilConstants.COMPARE_BINARY);
+					for (IResourceHandler notSelectedEbookResource : notSelectedEbookResources) {
+						List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", notSelectedEbookResource.toString());
+						selectedEbookPropertyItems.addAll(items);
+					}
+					
+					for (EbookPropertyItem item : selectedEbookPropertyItems) {
+						EbookPropertyItemUtils.refreshEbookPropertyItem(item, item.getResourceHandler(), false);		
 						DefaultDBManager.getInstance().updateObject(item);
 					}
 				} finally {
@@ -123,12 +143,18 @@ class MainControllerUtils {
 	 * @param properties The properties to be searched.
 	 * @return The desired {@link IResourceHandler} or <code>null</code> if no {@link IResourceHandler} could be found.
 	 */
-	static IResourceHandler getPropertyResourceHandler(final List<Property> properties) {
+	static List<IResourceHandler> getPropertyResourceHandler(final List<Property> properties) {
 		for (Property property : properties) {
 			if(property.getValue() instanceof IResourceHandler) {
-				return (IResourceHandler) property.getValue();
+				return Collections.singletonList((IResourceHandler) property.getValue());
 			}
 		}
-		return null;
+		
+		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+		final List<IResourceHandler> result = new ArrayList<IResourceHandler>(selectedEbookPropertyItems.size());
+		for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
+			result.add(ebookPropertyItem.getResourceHandler());
+		}
+		return result;
 	}	
 }

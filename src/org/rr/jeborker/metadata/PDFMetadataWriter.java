@@ -42,7 +42,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 	}
 
 	@Override
-	public void writeMetadata(Iterator<MetadataProperty> props) {
+	public void writeMetadata(List<MetadataProperty> props) {
 		try {
 			final byte[] pdfData = ebookResource.getContent();
 			final PdfReader pdfReader = new PdfReader(pdfData);
@@ -53,8 +53,9 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			// flag wich tells if xmp meta data where really be created.
 			// so no empty xmp doc will be inserted.
 			boolean xmpMetadataSet = false;
-			while (props.hasNext()) {
-				final MetadataProperty metadataProperty = props.next();
+			Iterator<MetadataProperty> iterator = props.iterator();
+			while (iterator.hasNext()) {
+				final MetadataProperty metadataProperty = iterator.next();
 				final String name = metadataProperty.getName();
 				final List<Object> value = metadataProperty.getValues();
 

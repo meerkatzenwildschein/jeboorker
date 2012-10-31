@@ -37,12 +37,13 @@ import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
-import org.rr.jeborker.gui.renderer.ComboBoxPropertyEditor;
+import org.rr.jeborker.gui.renderer.MultiListPropertyEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
 import org.rr.jeborker.gui.renderer.DefaultPropertyRenderer;
 import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
+import org.rr.jeborker.gui.renderer.MultiListPropertyRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyRenderer;
 
@@ -249,7 +250,8 @@ public class MainView extends JFrame{
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("calibre:rating", StarRatingPropertyEditor.class);
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("calibre:rating", StarRatingPropertyRenderer.class);
 		        
-		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, ComboBoxPropertyEditor.class);
+		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, MultiListPropertyEditor.class);
+		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(java.util.List.class, MultiListPropertyRenderer.class);
 		        
 				GridBagConstraints gbc_propertySheet = new GridBagConstraints();
 				gbc_propertySheet.fill = GridBagConstraints.BOTH;
@@ -307,7 +309,6 @@ public class MainView extends JFrame{
 		gbc_label.gridx = 0;
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);
-		
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 

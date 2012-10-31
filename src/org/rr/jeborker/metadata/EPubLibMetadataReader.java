@@ -321,16 +321,19 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		MetadataProperty newProperty;
 		switch(type) {
 		case AUTHOR:
-			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.AUTHOR.getName(), "");
+			Author author = new Author("");
+			author.setRelator(Relator.AUTHOR);			
+			newProperty = new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName(), "", author);
 			break;
 		case TITLE:
-			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.TITLE.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.TITLE.getName(), "");
 			break;
 		case GENRE:
-			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.SUBJECT.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.SUBJECT.getName(), "");
 			break;
 		case SERIES_NAME:
-			newProperty = new MetadataProperty(EPUB_METADATA_TYPES.CALIBRE_SERIES.getName(), "");
+			Meta seriesName = new Meta(EPUB_METADATA_TYPES.CALIBRE_SERIES.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Meta>(seriesName.getName(), "", seriesName);
 			break;
 		default: newProperty = null;
 		}

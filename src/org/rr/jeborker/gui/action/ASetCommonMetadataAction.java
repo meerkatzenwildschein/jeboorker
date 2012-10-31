@@ -44,7 +44,7 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 	 */
 	protected void mergeAndWrite(final IMetadataWriter writer, List<MetadataProperty> allMetaData, List<MetadataProperty> specificMetaData) {
 		List<MetadataProperty> mergeMetadata = MetadataUtils.mergeMetadata(allMetaData, specificMetaData);
-		writer.writeMetadata(mergeMetadata.iterator());
+		writer.writeMetadata(mergeMetadata);
 	}	
 	
 	protected void setMetaData(IResourceHandler resourceHandler, IMetadataReader.METADATA_TYPES type) {

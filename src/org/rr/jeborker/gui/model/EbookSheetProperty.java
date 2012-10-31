@@ -64,7 +64,10 @@ public class EbookSheetProperty extends DefaultProperty {
 
 	@Override
 	public void setValue(Object value) {
-		if(value!=null && !value.equals(getValue())) {
+		if (value != null && !value.equals(getValue())) {
+			metadataProperty.setValue(value, this.propertyIndex);
+			this.setChanged(true);	
+		} else if(value == null) {
 			metadataProperty.setValue(value, this.propertyIndex);
 			this.setChanged(true);	
 		}
@@ -99,7 +102,7 @@ public class EbookSheetProperty extends DefaultProperty {
 			if (value.length() > 0) {
 				value.append("<br/>");
 			}
-			value.append(String.valueOf(metadataProperty.getValues().get(lpropertyIndex)));
+			value.append(StringUtils.toString(metadataProperty.getValues().get(lpropertyIndex)));
 		}
 		
 		return value.toString();
@@ -111,10 +114,10 @@ public class EbookSheetProperty extends DefaultProperty {
 
 		String localizedName = MainController.getController().getLocalizedString(name);
 		if(!isMultiSelection() && metadataProperty.getValues().size() > 1) {
-			localizedName = (this.propertyIndex + 1) + ") " + localizedName; 
+			localizedName = (this.propertyIndex + 1) + ") " + StringUtils.toString(localizedName); 
 		}
 		
-		return localizedName.toString();
+		return StringUtils.toString(localizedName);
 	}
 
 	public String getDisplayDescriptionName() {
@@ -130,7 +133,8 @@ public class EbookSheetProperty extends DefaultProperty {
 		if(propertyIndex >= 0) {
 			return metadataProperty.getValues().get(propertyIndex);
 		} else {
-			return metadataProperty.getValues();
+			final List<Object> values = metadataProperty.getValues();
+			return values;			
 		}
 	}
 
@@ -150,7 +154,7 @@ public class EbookSheetProperty extends DefaultProperty {
 	
 	/**
 	 * Tells if there is currently more than one entry selected. 
-	 * @return <code>true</code> if more than one value is selected and false otherwise. 
+	 * @return <code>true</code> if more than one value is selected and <code>false</code> otherwise. 
 	 */
 	private boolean isMultiSelection() {
 		return MainController.getController().getSelectedEbookPropertyItemRows().length > 1;
