@@ -57,17 +57,12 @@ class SaveMetadataAction extends AbstractAction {
 		
 		@Override
 		public void metaDataSheetContentChanged(ApplicationEvent evt) {
-			final int[] selectedEbookPropertyItemRows = MainController.getController().getSelectedEbookPropertyItemRows();
 			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
-			if(selectedEbookPropertyItemRows.length == 1) {
-				boolean isEditable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isEditable() : true;
-				if(evt.getMetadataProperty() == null || !isEditable) {
-					action.setEnabled(false);
-				} else {
-					action.setEnabled(true);
-				}
-			} else {
+			boolean isEditable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isEditable() : true;
+			if(evt.getMetadataProperty() == null || !isEditable) {
 				action.setEnabled(false);
+			} else {
+				action.setEnabled(true);
 			}
 		}
 

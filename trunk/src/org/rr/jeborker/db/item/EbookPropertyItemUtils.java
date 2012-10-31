@@ -69,7 +69,7 @@ public class EbookPropertyItemUtils {
 		}
 
 		IMetadataReader reader = MetadataHandlerFactory.getReader(resource);
-		if(reader!=null) {
+		if(reader != null) {
 			try {
 				final List<MetadataProperty> metadataProperties = reader.readMetaData();
 				reader.fillEbookPropertyItem(metadataProperties, item);

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -38,7 +39,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	}
 
 	@Override
-	public void writeMetadata(Iterator<MetadataProperty> props) {
+	public void writeMetadata(List<MetadataProperty> props) {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		final EpubReader reader = new EpubReader();
 		
@@ -53,12 +54,13 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		}
 	}
 	
-	private void setMetadata(final Book epub, final Iterator<MetadataProperty> props) {
+	private void setMetadata(final Book epub, final List<MetadataProperty> props) {
 		final Metadata metadata = epub.getMetadata();
 		
 		metadata.clearAll();
-		while(props.hasNext()) {
-			final EpubLibMetadataProperty<?> meta = (EpubLibMetadataProperty<?>) props.next();
+		Iterator<MetadataProperty> iterator = props.iterator();
+		while(iterator.hasNext()) {
+			final EpubLibMetadataProperty<?> meta = (EpubLibMetadataProperty<?>) iterator.next();
 			if(EPUB_METADATA_TYPES.AUTHOR.getName().equals(meta.getName())) {
 				Author author = new Author(meta.getValueAsString());
 				author.setRelator(((Author)meta.getType()).getRelator());				

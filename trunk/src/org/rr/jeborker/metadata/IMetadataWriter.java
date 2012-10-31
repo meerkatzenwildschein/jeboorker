@@ -1,6 +1,7 @@
 package org.rr.jeborker.metadata;
 
-import java.util.Iterator;
+
+import java.util.List;
 
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
@@ -9,7 +10,7 @@ public interface IMetadataWriter {
 	/**
 	 * Write the metadata from the given {@link EbookPropertyItem}
 	 */
-	public void writeMetadata(Iterator<MetadataProperty> props); 
+	public void writeMetadata(List<MetadataProperty> props); 
 	
 	/**
 	 * (Over)writes the cover to the ebook handled by this {@link IMetadataWriter}

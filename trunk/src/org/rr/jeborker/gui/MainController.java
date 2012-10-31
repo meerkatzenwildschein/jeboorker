@@ -100,10 +100,10 @@ public class MainController {
 	 * Saves/Writes the metadata properties if something has changed. 
 	 */
 	public void saveProperties(int minSelectionIndex, int maxSelectionIndex) {
-		final List<Property> previousProperties = mainWindow.propertySheet.getProperties();
+		final List<Property> sheetProperties = mainWindow.propertySheet.getProperties();
 		if(getEbookSheetPropertyModel().isChanged()) {
 			//write properties
-			MainControllerUtils.writeProperties(previousProperties);
+			MainControllerUtils.writeProperties(sheetProperties);
 			EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
 			int rowCount = model.getRowCount();
 
@@ -116,7 +116,10 @@ public class MainController {
 			}
 			
 			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
-				model.reloadEbookPropertyItemAt(mainWindow.table.getSelectedRow());
+				int[] selectedRows = mainWindow.table.getSelectedRows();
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.reloadEbookPropertyItemAt(selectedRows[i]);
+				}
 			}
 			
 			//a repaint does a refresh to all visible table rows.

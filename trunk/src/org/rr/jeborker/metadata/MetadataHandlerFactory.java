@@ -42,6 +42,20 @@ public class MetadataHandlerFactory {
 	
 	/**
 	 * Get a meta data writer for the given {@link IResourceHandler}.
+	 * @param resources The resources for which a meta data writer should be fetched for.
+	 * @return The desired {@link IMetadataWriter} instance or <code>null</code> if no writer is available
+	 * 	for the given {@link IResourceHandler}.
+	 */
+	public static IMetadataWriter getWriter(final List<IResourceHandler> resources) {
+		if(resources.size() == 1) {
+			return getWriter(resources.get(0));
+		} else {
+			return new MultiMetadataHandler(resources);
+		}
+	}	
+	
+	/**
+	 * Get a meta data writer for the given {@link IResourceHandler}.
 	 * @param resource The resource for which a meta data writer should be fetched for.
 	 * @return The desired {@link IMetadataWriter} instance or <code>null</code> if no writer is available
 	 * 	for the given {@link IResourceHandler}.

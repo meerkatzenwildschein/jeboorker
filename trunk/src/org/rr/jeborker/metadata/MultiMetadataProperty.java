@@ -11,10 +11,8 @@ import org.rr.commons.collection.CompoundList;
  */
 public class MultiMetadataProperty extends MetadataProperty {
 
-	private static final String noChangeText = Bundle.getString("MultiMetadataProperty.noChangeText");
-	
 	MultiMetadataProperty(String name, List<Object> values) {
-		super(name, new CompoundList<Object>(new ArrayList<Object>(Collections.singletonList((Object) noChangeText)), values));
+		super(name, new CompoundList<Object>(new ArrayList<Object>(Collections.singletonList((Object) null)), values));
 	}
 	
 	public Class<?> getPropertyClass() {
