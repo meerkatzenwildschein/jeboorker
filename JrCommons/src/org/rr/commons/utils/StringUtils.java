@@ -837,7 +837,7 @@ public final class StringUtils implements Serializable {
      * @return The capitalized <code>String</code>.
      */
     public static String capitalize(String text) {
-    	StringBuilder result = new StringBuilder(text);
+    	StringBuilder result = new StringBuilder(toString(text));
     	if (result.length()==0) {
     		return text;
     	} else if (result.length() > 1 && Character.isUpperCase(result.charAt(0))) {
