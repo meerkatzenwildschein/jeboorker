@@ -139,6 +139,16 @@ public final class ListUtils implements Serializable {
 	}
 	
 	/**
+	 * convenience method and does the same as the <code>{@link #split(String, String, int, int)}</code> but
+	 * with UtilConstants.COMPARE_BINARY as compare parameter.
+	 * 
+	 * @see ##split(String, String, int, int)
+	 */
+	public static List<String> split(final String text, final String delimiter, final int limit) {
+		return split(text, delimiter, limit, UtilConstants.COMPARE_BINARY);
+	}
+	
+	/**
 	 * Fast split with a character only separator.
 	 * @param text The text to be splitted.
 	 * @param separator The separator.
@@ -297,13 +307,11 @@ public final class ListUtils implements Serializable {
 		//loop all filter values
 		for (int i = 0; i < processFilterValue.length; i++) {
 			//loop each entry of the input array
-			Iterator<T> iterator = values.iterator();
-			for (int j = 0; iterator.hasNext(); j++) {
-				final T next = iterator.next();
+			for (T next : values) {
 				boolean found;
 				if(next instanceof List) {
 					//if the value to be compared is an array, filter and add it.
-					result.add((T) filter((List) next, match, include, compare, searchType));
+					result.add((T) filter((List<?>) next, match, include, compare, searchType));
 				} else {
 					// compare process
 					if (searchType == UtilConstants.SEARCH_REGEXP) {
@@ -498,6 +506,10 @@ public final class ListUtils implements Serializable {
 		//create the result array 
 		return arrayList;
 	}
+	
+	public static <T>List<T> difference(final List<T> first, final List<T> second) {
+		return difference(first, second, UtilConstants.COMPARE_BINARY);
+	}
 
 	private static <T>List<T> copyDifference(final List<T> object, final List<T> previousValues, final List<T> duplicateArray, final int compare) {
 		Iterator<T> iterator = object.iterator();
@@ -607,7 +619,7 @@ public final class ListUtils implements Serializable {
 				final Object next = iterator.next();
 				if(next instanceof List) {
 					//if the value to be compared is an array, filter and add it.
-					if (indexOf((List)next, match, compare, searchType)!=-1) {
+					if (indexOf((List<?>)next, match, compare, searchType)!=-1) {
 						return j;
 					}
 				} else {
@@ -698,6 +710,10 @@ public final class ListUtils implements Serializable {
 		}
 		
 		return result;
+	}
+	
+	public static <T>List<T> distinct(final List<T> values) {
+		return distinct(values, UtilConstants.COMPARE_BINARY);
 	}
 
 	/**
