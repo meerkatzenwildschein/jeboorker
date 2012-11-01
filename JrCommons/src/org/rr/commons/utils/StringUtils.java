@@ -571,9 +571,9 @@ public final class StringUtils implements Serializable {
 		return replace(text, search, replacement, 0, -1, UtilConstants.COMPARE_BINARY, null, null);
 	}
 
-        /**
+    /**
 	 * This is just a convenience method and does the same as the <code>replace(String, String, String, int, int, int)</code> method to
-         * all entries in search. The replacement starts at the position 0 and performs all possible substitutions.
+     * all entries in search. The replacement starts at the position 0 and performs all possible substitutions.
 	 *
 	 * @param text The <code>String</code> to be searched.
 	 * @param search The parts of the <code>String</code> that will be replaced.
@@ -587,6 +587,16 @@ public final class StringUtils implements Serializable {
 
             }
             return result;
+	}
+	
+	/**
+	 * convenience method and does the same as the <code>replace(String, String, String[], int)</code> but
+	 * with UtilConstants.COMPARE_BINARY as compare parameter.
+	 * 
+	 * @see #replace(String, String[], String, int)
+	 */
+	public static final String replace(final String text, final String[] search, final String replacement) {
+		return replace(text, search, replacement, UtilConstants.COMPARE_BINARY);
 	}
 	
 	/**
@@ -1016,6 +1026,10 @@ public final class StringUtils implements Serializable {
     	return text1.substring(index+search.length());
     }
     
+    public static String substringAfter(String text1, String search, boolean forward) {
+    	return substringAfter(text1, search, forward, UtilConstants.COMPARE_BINARY);
+    }
+    
     /**
      * Creates the substring of the parameter <code>text1</code> that 
      * follows the first occurrence of the parameter <code>text2</code> 
@@ -1071,6 +1085,10 @@ public final class StringUtils implements Serializable {
     	}
     	
     	return text1.substring(0, index);
+    }
+    
+    public static String substringBefore(String text1, String search, boolean forward) {
+    	return substringBefore(text1, search, forward, UtilConstants.COMPARE_BINARY);
     }
     
     /**
