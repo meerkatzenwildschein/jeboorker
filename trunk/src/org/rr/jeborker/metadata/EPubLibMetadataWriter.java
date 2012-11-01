@@ -24,7 +24,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.commons.utils.ZipUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -58,12 +57,13 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		final Metadata metadata = epub.getMetadata();
 		
 		metadata.clearAll();
-		Iterator<MetadataProperty> iterator = props.iterator();
-		while(iterator.hasNext()) {
-			final EpubLibMetadataProperty<?> meta = (EpubLibMetadataProperty<?>) iterator.next();
+		Iterator<MetadataProperty> propsIterator = props.iterator();
+		while(propsIterator.hasNext()) {
+			final EpubLibMetadataProperty<?> meta = (EpubLibMetadataProperty<?>) propsIterator.next();
+			
 			if(EPUB_METADATA_TYPES.AUTHOR.getName().equals(meta.getName())) {
 				Author author = new Author(meta.getValueAsString());
-				author.setRelator(((Author)meta.getType()).getRelator());				
+				author.setRelator(((Author) meta.getType()).getRelator());				
 				metadata.addAuthor(author);
 			} else if(EPUB_METADATA_TYPES.TITLE.getName().equals(meta.getName())) {
 				metadata.addTitle(meta.getValueAsString());
@@ -79,7 +79,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				metadata.addType(meta.getValueAsString());
 			} else if(EPUB_METADATA_TYPES.CONTRIBUTOR.getName().equals(meta.getName()) || meta.getType() instanceof Author) {
 				Author author = new Author(meta.getValueAsString());
-				author.setRelator(((Author)meta.getType()).getRelator());
+				author.setRelator(((Author) meta.getType()).getRelator());
 				metadata.addContributor(author);
 			} else if(EPUB_METADATA_TYPES.DATE.getName().equals(meta.getName())) {
 				Date date;
@@ -256,9 +256,9 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		String targetImageMime = null;
 		if(targetCoverName.indexOf('.')!=-1) {
 			//extract mime from file name
-			String extension = StringUtils.substringAfter(targetCoverName, ".", false, UtilConstants.COMPARE_BINARY);
+			String extension = StringUtils.substringAfter(targetCoverName, ".", false);
 			if(extension.length()==3 || extension.length()==4) {
-				targetImageMime = "image/" + StringUtils.substringAfter(targetCoverName, ".", false, UtilConstants.COMPARE_BINARY);	
+				targetImageMime = "image/" + StringUtils.substringAfter(targetCoverName, ".", false);	
 			}
 		} 
 		
@@ -308,7 +308,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		if(coverMimeType==null || coverMimeType.indexOf('/')==-1) {
 			throw new RuntimeException("could not detect file format");
 		}
-		final String fileExtension = StringUtils.substringAfter(coverMimeType, "/", true, UtilConstants.COMPARE_BINARY);
+		final String fileExtension = StringUtils.substringAfter(coverMimeType, "/", true);
 		
 		final String coverFileName = "cover." + fileExtension;
 		final Element itemElement = document.createElement("item");

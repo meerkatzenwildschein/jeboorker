@@ -14,7 +14,7 @@ public class DBUtils {
 		if(resultValue != null) {
 			//The Backslash is the escape character and is needed to be doubled.
 			if(resultValue.indexOf('\\') != -1) {
-					resultValue = StringUtils.replace(resultValue, "\\", "\\\\");
+				resultValue = StringUtils.replace(resultValue, "\\", "\\\\");
 			}
 			
 			//Single quotes marks the sql string in the query.

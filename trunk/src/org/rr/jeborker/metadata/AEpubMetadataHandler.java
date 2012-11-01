@@ -14,7 +14,6 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.commons.utils.ZipUtils;
 import org.rr.commons.utils.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookKeywordItem;
@@ -268,7 +267,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	protected String getOpfFilePath(byte[] zipData) {
 		String opfFile = getOpfFile(zipData);
 		if(opfFile.indexOf('/')!=-1) {
-			return StringUtils.substringBefore(opfFile, "/", false, UtilConstants.COMPARE_BINARY) + "/";
+			return StringUtils.substringBefore(opfFile, "/", false) + "/";
 		}
 		return "";
 	}

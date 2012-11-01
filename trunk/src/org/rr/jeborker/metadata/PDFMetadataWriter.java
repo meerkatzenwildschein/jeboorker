@@ -53,9 +53,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 			// flag wich tells if xmp meta data where really be created.
 			// so no empty xmp doc will be inserted.
 			boolean xmpMetadataSet = false;
-			Iterator<MetadataProperty> iterator = props.iterator();
-			while (iterator.hasNext()) {
-				final MetadataProperty metadataProperty = iterator.next();
+			for (MetadataProperty metadataProperty : props) {
 				final String name = metadataProperty.getName();
 				final List<Object> value = metadataProperty.getValues();
 

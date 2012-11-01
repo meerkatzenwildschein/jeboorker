@@ -29,7 +29,6 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
@@ -564,7 +563,7 @@ public class MainController {
 	}
 	
 	/**
-	 * Tries to translate the given property name.
+	 * Tries to get localized Text from the bundle.
 	 *  
 	 * @param name The name to be translated.
 	 * @return The translated name.
@@ -573,9 +572,7 @@ public class MainController {
 		if(name == null) {
 			return null;
 		}
-		String localized = StringUtils.replace(name.toLowerCase(), ":", "");
-		localized = StringUtils.replace(localized, "/", "");
-		localized = StringUtils.replace(localized, " ", "");
+		String localized = StringUtils.replace(name.toLowerCase(), new String[] {"/", " ", ":"}, "");
 		localized = Bundle.getString(localized);
 		if(localized!=null && localized.length() > 0) {
 			return StringUtils.capitalize(localized);
@@ -684,7 +681,7 @@ public class MainController {
 		final List<IResourceHandler> ebookResource = reader != null ? reader.getEbookResource() : null;
 		if (ebookResource != null && !ebookResource.isEmpty()) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
-			final String coverFileName = StringUtils.replace(ebookResource.get(0).getResourceString(), new String[] {".", "/", "\\"}, "_", UtilConstants.COMPARE_BINARY);
+			final String coverFileName = StringUtils.replace(ebookResource.get(0).getResourceString(), new String[] {".", "/", "\\"}, "_");
 			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
 				
 			ByteArrayInputStream byteArrayInputStream = null;

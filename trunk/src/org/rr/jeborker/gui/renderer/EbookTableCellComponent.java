@@ -356,7 +356,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	private String getTitle(EbookPropertyItem item) {
 		if(item!=null && StringUtils.isEmpty(item.getTitle())) {
 			//if there is no title, just use the file name but without file extension
-			final String fileName = StringUtils.substringBefore(item.getFileName(), ".", false, UtilConstants.COMPARE_BINARY);
+			final String fileName = StringUtils.substringBefore(item.getFileName(), ".", false);
 			return fileName;
 		} else {
 			return cleanString(item != null ? item.getTitle() : "");

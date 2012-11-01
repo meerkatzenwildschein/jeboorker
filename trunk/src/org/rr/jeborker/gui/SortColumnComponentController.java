@@ -17,7 +17,6 @@ import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -184,7 +183,7 @@ public class SortColumnComponentController {
 		//preferences to table model
 		final String entryString = JeboorkerPreferences.getEntryString("sortColumnFields");
 		if(entryString!=null && entryString.length() > 0) {
-			final List<String> splitted = ListUtils.split(entryString, ",", -1, UtilConstants.COMPARE_BINARY);
+			final List<String> splitted = ListUtils.split(entryString, ",", -1);
 			final ListCheckModel<Field> model = comboBox.getModel();
 			final int modelSize = model.getSize();
 			
