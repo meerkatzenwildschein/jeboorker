@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 class MultiMetadataHandler implements IMetadataReader, IMetadataWriter {
@@ -126,14 +127,21 @@ class MultiMetadataHandler implements IMetadataReader, IMetadataWriter {
 			for(METADATA_TYPES type : METADATA_TYPES.values()) {
 				for(MetadataProperty prop : props) {
 					if(type.getName().equals(prop.getName()) && !prop.getValues().isEmpty()) {
-						final List<MetadataProperty> metadataByType = reader.getMetadataByType(true, readMetaData, type);
+						final Object value = prop.getValues().get(0);
+						final boolean createNew = !StringUtils.toString(value).isEmpty();
+						final List<MetadataProperty> metadataByType = reader.getMetadataByType(createNew, readMetaData, type);
 						
 						if(!metadataByType.isEmpty()) {
 							MetadataProperty metadataProperty = metadataByType.get(0);
 							Object oldValue = metadataProperty.getValues().isEmpty() ? null : metadataProperty.getValues().get(0);
-							Object value = prop.getValues().get(0);
 							if(value != null && !value.equals(oldValue)) {
 								metadataProperty.setValue(value, 0);
+								if(!StringUtils.toString(value).isEmpty() && !readMetaData.contains(metadataProperty)) {
+									readMetaData.add(metadataProperty);
+								} else if(StringUtils.toString(value).isEmpty()) {
+									//remove empty metadata entries
+									readMetaData.remove(metadataProperty);
+								}
 								change = true;
 							}
 						}

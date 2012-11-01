@@ -81,24 +81,7 @@ class MainMenuBarView extends JMenuBar {
 	private List<JMenuItem> createDynamicMetadataMenuEntries(List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
 		final ArrayList<JMenuItem> result = new ArrayList<JMenuItem>();
 		
-		JMenu setSubmenu = new JMenu(Bundle.getString("MainMenuController.setMetadataAction"));
-		
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));			
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_AUTHOR_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_TITLE_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));				
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_GENRE_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_METADATA_SERIES_NAME_ACTION, items, rowsToRefreshAfter);
-		setSubmenu.add(new JMenuItem(action));				
-		
-		result.add(setSubmenu);
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
 		result.add(new JMenuItem(action));		
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, rowsToRefreshAfter);

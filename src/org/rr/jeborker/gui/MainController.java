@@ -29,6 +29,7 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
@@ -305,7 +306,6 @@ public class MainController {
 	/**
 	 * Refresh the given table rows.
 	 * @param rows The rows to be refreshed.
-	 * @param refreshMetadataSheet TODO
 	 * @param refreshMetadataSheet do also refresh the metadata sheet. 
 	 */
 	public void refreshTableRows(final int[] rows, boolean refreshMetadataSheet) {
@@ -684,24 +684,24 @@ public class MainController {
 		final List<IResourceHandler> ebookResource = reader != null ? reader.getEbookResource() : null;
 		if (ebookResource != null && !ebookResource.isEmpty()) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
-			String coverFileName = StringUtils.replace(ebookResource.get(0).getName(), ".", "_");
+			final String coverFileName = StringUtils.replace(ebookResource.get(0).getResourceString(), new String[] {".", "/", "\\"}, "_", UtilConstants.COMPARE_BINARY);
 			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
 				
-				ByteArrayInputStream byteArrayInputStream = null;
+			ByteArrayInputStream byteArrayInputStream = null;
 				
-				@Override
-				public InputStream getContentInputStream() {
-					if(byteArrayInputStream==null) {
-						final byte[] cover = reader.getCover();
-						if(cover != null) {
-							byteArrayInputStream = new ByteArrayInputStream(cover);
-						} else {
-							byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-						}
+			@Override
+			public InputStream getContentInputStream() {
+				if(byteArrayInputStream==null) {
+					final byte[] cover = reader.getCover();
+					if(cover != null) {
+						byteArrayInputStream = new ByteArrayInputStream(cover);
+					} else {
+						byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
 					}
-					byteArrayInputStream.reset();
-					return byteArrayInputStream;
 				}
+				byteArrayInputStream.reset();
+				return byteArrayInputStream;
+			}
 			}));
 		} else {
 			setImageViewerResource(null);
