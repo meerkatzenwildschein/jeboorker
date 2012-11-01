@@ -39,7 +39,7 @@ class SearchAction extends AbstractAction {
 
 		monitorStart(filterText);
 		try {
-			final List<String> filterValues = ListUtils.split(filterText, ",", -1, UtilConstants.COMPARE_BINARY);
+			final List<String> filterValues = ListUtils.split(filterText, ",", -1);
 
 			final QueryCondition rootCondition = controller.getTableModel().getQueryCondition();
 			rootCondition.removeConditionByIdentifier(QUERY_IDENTIFER); //remove possibly existing search conditions

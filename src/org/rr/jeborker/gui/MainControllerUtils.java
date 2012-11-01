@@ -9,7 +9,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -102,7 +101,7 @@ class MainControllerUtils {
 						selectedEbookResources.add(selectedEbookPropertyItem.getResourceHandler());
 					}
 
-					final List<IResourceHandler> notSelectedEbookResources = ListUtils.difference(selectedEbookResources, ebookResources, UtilConstants.COMPARE_BINARY);
+					final List<IResourceHandler> notSelectedEbookResources = ListUtils.difference(selectedEbookResources, ebookResources);
 					for (IResourceHandler notSelectedEbookResource : notSelectedEbookResources) {
 						List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", notSelectedEbookResource.toString());
 						selectedEbookPropertyItems.addAll(items);
