@@ -58,54 +58,6 @@ public class ActionFactory {
 				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 			}
 		},		
-		SET_METADATA_AUTHOR_ACTION {
-
-			@Override
-			public Class<? extends Action> getActionClass() {
-				return SetMetadataAuthorAction.class;
-			}
-
-			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return true;
-			}
-		},	
-		SET_METADATA_GENRE_ACTION {
-
-			@Override
-			public Class<? extends Action> getActionClass() {
-				return SetMetadataGenreAction.class;
-			}
-
-			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return true;
-			}
-		},	
-		SET_METADATA_SERIES_NAME_ACTION {
-
-			@Override
-			public Class<? extends Action> getActionClass() {
-				return SetMetadataSeriesNameAction.class;
-			}
-
-			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return true;
-			}
-		},			
-		SET_METADATA_TITLE_ACTION {
-
-			@Override
-			public Class<? extends Action> getActionClass() {
-				return SetMetadataTitleAction.class;
-			}
-
-			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return true;
-			}
-		},			
 		EDIT_PLAIN_METADATA_ACTION {
 
 			@Override

@@ -95,7 +95,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 		});
 		combo.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
 					MultiListPropertyEditor.this.firePropertyChange(oldValue, combo.getSelectedItem());
 				}
 			}
@@ -104,14 +104,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 	}
 
 	public Object getValue() {
-		Object selected = ((JComboBox) editor).getSelectedItem();
-		Object result;
-		if (selected instanceof Value) {
-			result = ((Value) selected).value;
-		} else {
-			result = selected;
-		}
-	
+		Object result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();;
 		if(clear.equals(result)) {
 			result = "";
 		} else if(noChanges.equals(result)) {
@@ -154,35 +147,13 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 		this.icons = icons;
 	}
 
-	public class Renderer extends DefaultListCellRenderer {
+	private class Renderer extends DefaultListCellRenderer {
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			Component component = super.getListCellRendererComponent(list, (value instanceof Value) ? ((Value) value).visualValue : value, index, isSelected, cellHasFocus);
+			Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if (icons != null && index >= 0 && component instanceof JLabel) {
 				((JLabel) component).setIcon(icons[index]);
 			}
 			return component;
-		}
-	}
-
-	public static final class Value {
-		private Object value;
-		private Object visualValue;
-
-		public Value(Object value, Object visualValue) {
-			this.value = value;
-			this.visualValue = visualValue;
-		}
-
-		public boolean equals(Object o) {
-			if (o == this)
-				return true;
-			if (value == o || (value != null && value.equals(o)))
-				return true;
-			return false;
-		}
-
-		public int hashCode() {
-			return value == null ? 0 : value.hashCode();
 		}
 	}
 }
