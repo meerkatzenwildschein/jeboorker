@@ -21,6 +21,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.BeanInfo;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -62,6 +65,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	private PropertySheetTableModel model;
 	private JScrollPane tableScroll;
 	private ListSelectionListener selectionListener = new SelectionListener();
+	private KeyListener spaceKeyListener = new SpaceKeyListener();
 
 	private JPanel actionPanel;
 	private JToggleButton sortButton;
@@ -142,7 +146,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	 * 
 	 * @param table
 	 */
-	public void setTable(PropertySheetTable table) {
+	public void setTable(final PropertySheetTable table) {
 		if (table == null) {
 			throw new IllegalArgumentException("table must not be null");
 		}
@@ -169,6 +173,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		// prepare the new table
 		table.getSelectionModel().addListSelectionListener(selectionListener);
 		tableScroll.getViewport().setView(table);
+		
+		table.addKeyListener(spaceKeyListener);
 		
 		// use the new table as our table
 		this.table = table;
@@ -544,6 +550,21 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		// by default description is not visible, toolbar is visible.
 		setDescriptionVisible(false);
 		setToolBarVisible(true);
+	}
+	
+	/**
+	 * listener takes care that editing is started at the second column always 
+	 * the space bar is pressed.
+	 */
+	class SpaceKeyListener extends KeyAdapter {
+		
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if(!PropertySheetPanel.this.table.isEditing() && e.getKeyCode() == KeyEvent.VK_SPACE) {
+				int row = PropertySheetPanel.this.table.getSelectedRow();
+				PropertySheetPanel.this.table.editCellAt(row, 1);
+			}
+		}
 	}
 
 	class SelectionListener implements ListSelectionListener {
