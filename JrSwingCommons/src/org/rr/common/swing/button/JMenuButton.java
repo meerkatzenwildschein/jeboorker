@@ -32,6 +32,8 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 /**
  * A normal JButton which can have multiple actions added to it. When more than one action is added an arrow is added to the right hand side. If the user clicks
@@ -325,7 +327,14 @@ public class JMenuButton extends JButton {
 	 * Model which provides the Action entries. 
 	 * @param listModel The model to be set.
 	 */
-	public void setListModel(ListModel listModel) {
+	public void setListModel(final ListModel listModel) {
 		this.listModel = listModel;
+		
+		//disable the button if the model did not have any entries.
+		if(listModel.getSize() == 0) {
+			setEnabled(false);
+		} else {
+			setEnabled(true);
+		}
 	}
 }
