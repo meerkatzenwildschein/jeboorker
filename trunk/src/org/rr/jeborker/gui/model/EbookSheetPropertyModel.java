@@ -106,7 +106,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 */
 	public String getDisplayName(Property property) {
 		if(property instanceof DefaultProperty) {
-			String displayName = ((EbookSheetProperty)property).getDisplayName();
+			String displayName = ((DefaultProperty)property).getDisplayName();
 			if(displayName != null) {
 				return displayName;
 			}
