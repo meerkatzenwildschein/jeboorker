@@ -13,7 +13,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
-import org.rr.jeborker.gui.model.EbookSheetProperty;
+import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -126,11 +126,11 @@ class MainControllerUtils {
 	static ArrayList<MetadataProperty> createMetadataProperties(final List<Property> properties) {
 		final ArrayList<MetadataProperty> target = new ArrayList<MetadataProperty>();
 		for (Property property : properties) {
-			if(property instanceof EbookSheetProperty) {
-				List<MetadataProperty> metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
-				for (MetadataProperty metadataProperty : metadataProperties) {
-					target.add(metadataProperty);
-				}
+			
+			final EbookSheetPropertyModel model = MainController.getController().getEbookSheetPropertyModel();
+			List<MetadataProperty> metadataProperties = model.getMetadataProperties(property);
+			for (MetadataProperty metadataProperty : metadataProperties) {
+				target.add(metadataProperty);
 			}
 		}
 		return target;

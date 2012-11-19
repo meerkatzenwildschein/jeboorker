@@ -100,6 +100,47 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	}
 	
 	/**
+	 * Get the display name for the given property.
+	 * @param property The property where the display name should be gotten for.
+	 * @return The desired display name. Never returns <code>null</code>.  
+	 */
+	public String getDisplayName(Property property) {
+		if(property instanceof DefaultProperty) {
+			String displayName = ((EbookSheetProperty)property).getDisplayName();
+			if(displayName != null) {
+				return displayName;
+			}
+		}
+		return "";
+	}
+	
+	/**
+	 * Get the {@link EbookPropertyItem} assigned to the given {@link Property} instance.
+	 * @param property The {@link Property} instance where none, one or more {@link EbookPropertyItem} assigned to.
+	 * @return The list with all assigned {@link EbookPropertyItem}s. Never returns <code>null</code>.
+	 */
+	public List<EbookPropertyItem> getEbookPropertyItems(Property property) {
+		if(property instanceof EbookSheetProperty) {
+			List<EbookPropertyItem> ebookPropertyItems = ((EbookSheetProperty)property).getEbookPropertyItems();
+			return ebookPropertyItems;
+		}
+		return Collections.emptyList();
+	}
+	
+	/**
+	 * Get the {@link MetadataProperty} assigned to the given {@link Property} instance.
+	 * @param property The {@link Property} instance where none, one or more {@link MetadataProperty} assigned to.
+	 * @return The list with all assigned {@link MetadataProperty}. Never returns <code>null</code>.
+	 */	
+	public List<MetadataProperty> getMetadataProperties(Property property) {
+		if(property instanceof EbookSheetProperty) {
+			List<MetadataProperty> metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
+			return metadataProperties;
+		}
+		return Collections.emptyList();		
+	}
+	
+	/**
 	 * Creates all Property elements supported by the ebook format given
 	 * with the {@link EbookPropertyItem} parameter.
 	 * @param item The item where the {@link Property} array should be created for.

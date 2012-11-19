@@ -103,7 +103,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 	}
 
 	public Object getValue() {
-		Object result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();;
+		Object result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();
 		if(clear.equals(result)) {
 			result = "";
 		} else if(noChanges.equals(result)) {

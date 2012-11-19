@@ -10,9 +10,11 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 public interface IMetadataReader {
 	
 	public static interface MetadataEntryType {
-		String getName();
+		public String getName();
 		
-		void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
+		public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
+		
+		public String getValue(EbookPropertyItem item);
 	}	
 	
 	static enum METADATA_TYPES implements MetadataEntryType {
@@ -24,6 +26,11 @@ public interface IMetadataReader {
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				item.setAuthor(metadataProperty.getValueAsString());
 			}
+
+			@Override
+			public String getValue(EbookPropertyItem item) {
+				return item.getAuthor();
+			}
 		},
 		TITLE {
 			public String getName() {
@@ -33,6 +40,11 @@ public interface IMetadataReader {
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				item.setTitle(metadataProperty.getValueAsString());
 			}
+			
+			@Override
+			public String getValue(EbookPropertyItem item) {
+				return item.getTitle();
+			}			
 		},
 		SERIES_NAME {
 			public String getName() {
@@ -42,6 +54,11 @@ public interface IMetadataReader {
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				item.setSeriesName(metadataProperty.getValueAsString());
 			}
+			
+			@Override
+			public String getValue(EbookPropertyItem item) {
+				return item.getSeriesName();
+			}						
 		},
 		GENRE {
 			public String getName() {
@@ -51,6 +68,11 @@ public interface IMetadataReader {
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				item.setGenre(metadataProperty.getValueAsString());
 			}
+			
+			@Override
+			public String getValue(EbookPropertyItem item) {
+				return item.getGenre();
+			}				
 		}		
 	}	
 	

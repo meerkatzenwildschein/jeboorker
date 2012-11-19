@@ -108,7 +108,19 @@ class MultiMetadataHandler implements IMetadataReader, IMetadataWriter {
 
 	@Override
 	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
-		return Collections.emptyList();
+		List<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		for(MetadataProperty prop : props) {
+			if(prop.getName().equals(type.getName())) {
+				result.add(prop);
+			}
+		}
+		
+		if(create && result.isEmpty()) {
+			MultiMetadataProperty multiMetadataProperty = new MultiMetadataProperty(type.getName(), new ArrayList<Object>(Collections.singleton(null)));
+			result.add(multiMetadataProperty);
+		}
+		
+		return result;
 	}
 
 	@Override
