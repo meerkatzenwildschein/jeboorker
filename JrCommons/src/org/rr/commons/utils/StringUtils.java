@@ -1106,6 +1106,24 @@ public final class StringUtils implements Serializable {
     }
     
     /**
+     * Simply returns the string representation of the given object. If the 
+     * given object is <code>null</code>, an empty string is returned. 
+     * 
+     * @param value The value where the string representation should be fetched for.
+     * @return The string representation. Never returns <code>null</code>.
+     */
+    public static String toString(Object value, boolean preserveNull) {
+    	if(value == null) {
+    		if(preserveNull) {
+    			return null;
+    		} else {
+    			return "";
+    		}
+    	}
+    	return String.valueOf(value);
+    }    
+    
+    /**
      * Tests a string if the first two arguments cross match to the second both arguments.
      * For example "create" and "creation" should be compared as a true value, both can be
      * given as the second  argments to return true. If any of the first both string did not 
