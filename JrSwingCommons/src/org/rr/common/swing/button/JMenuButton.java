@@ -287,7 +287,7 @@ public class JMenuButton extends JButton {
 	}
 
 	/**
-	 * A wrapper for the actions to be dislayed when the pop-up is drawn.
+	 * A wrapper for the actions to be displayed when the pop-up is drawn.
 	 */
 	protected class ActionOptionWrapper extends AbstractAction {
 		private static final long serialVersionUID = -7161990723874074407L;
