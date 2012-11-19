@@ -34,9 +34,8 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
-import org.rr.jeborker.gui.model.EbookSheetProperty;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
-import org.rr.jeborker.gui.model.EbookSheetPropertyModelMultiSelection;
+import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
 import org.rr.jeborker.gui.model.EmptyListModel;
 import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -138,8 +137,9 @@ public class MainController {
 		 */
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if(evt.getSource() instanceof EbookSheetProperty) {
-				final List<EbookPropertyItem> ebookPropertyItems = ((EbookSheetProperty)evt.getSource()).getEbookPropertyItems();
+			if(evt.getSource() instanceof Property) {
+				final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
+				final List<EbookPropertyItem> ebookPropertyItems = model.getEbookPropertyItems((Property) evt.getSource());
 				for(int i = 0; i < ebookPropertyItems.size(); i++) {
 					final EbookPropertyItem ebookPropertyItem = ebookPropertyItems.get(i);
 					final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
@@ -147,9 +147,8 @@ public class MainController {
 					
 					reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
 				}
-				
-				refreshTableSelectedItem(false);
 			}
+			refreshTableSelectedItem(false);
 		}
 	}
 	
@@ -347,7 +346,7 @@ public class MainController {
 		Property selectedMetadataProperty = getSelectedMetadataProperty();
 		if(selectedMetadataProperty!=null) {
 			if(selectedMetadataProperty.isEditable()) {
-				PropertySheetTableModel model = (PropertySheetTableModel) mainWindow.propertySheet.getModel();
+				PropertySheetTableModel model = getEbookSheetPropertyModel();
 				model.removeProperty(selectedMetadataProperty);
 			}
 		}
@@ -370,7 +369,7 @@ public class MainController {
 		final int selectedRow = mainWindow.propertySheet.getTable().getSelectedRow();
 		
 		if(selectedRow >= 0) {
-			final EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
+			final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
 			final PropertySheetTableModel.Item item = (Item) model.getObject(selectedRow);
 			final Property property = item.getProperty();
 			
@@ -391,11 +390,9 @@ public class MainController {
 			for (int i = 0; i < rowCount; i++) {
 				final PropertySheetTableModel.Item item = (Item) model.getObject(i);
 				
-				if(property instanceof EbookSheetProperty) {
-					if(item != null && item.getName() != null && item.getName().equals(((EbookSheetProperty)property).getDisplayName())) {
-						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
-						break;
-					}					
+				if(item != null && item.getName() != null && item.getName().equals(model.getDisplayName(property))) {
+					mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
+					break;
 				} else {
 					if(property != null && item != null && item.getProperty() != null && item.getProperty().getName() != null && item.getProperty().getName().equals(property.getName())) {
 						mainWindow.propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
@@ -641,7 +638,7 @@ public class MainController {
 				
 				if(items.size() > 1) {
 					//multiple selection 
-					final EbookSheetPropertyModelMultiSelection model = new EbookSheetPropertyModelMultiSelection();
+					final EbookSheetPropertyMultiSelectionModel model = new EbookSheetPropertyMultiSelectionModel();
 					mainWindow.propertySheet.setModel(model);
 					
 					model.loadProperties(items);
@@ -668,7 +665,7 @@ public class MainController {
 				}				
 			} else {
 				//no selection
-				mainWindow.propertySheet.setModel(new EbookSheetPropertyModelMultiSelection());
+				mainWindow.propertySheet.setModel(new EbookSheetPropertyMultiSelectionModel());
 				setImage(null);
 				mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());						
 			}

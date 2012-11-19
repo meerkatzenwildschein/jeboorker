@@ -15,7 +15,7 @@ import org.rr.jeborker.metadata.MetadataProperty;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
 
-public class EbookSheetProperty extends DefaultProperty {
+class EbookSheetProperty extends DefaultProperty {
 
 	private static final long serialVersionUID = 1L;
 	
