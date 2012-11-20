@@ -133,8 +133,7 @@ public class PropertySheetTable extends JTable {
     
     // allow category toggle with SPACE and mouse
     getActionMap().put("toggle", new ToggleAction());
-    getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0),
-      "toggle");    
+    getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "toggle");    
     addMouseListener(new ToggleMouseHandler());
   }
 
@@ -572,16 +571,14 @@ public class PropertySheetTable extends JTable {
   private class ToggleAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {      
       int row = PropertySheetTable.this.getSelectedRow();
-      Item item = PropertySheetTable.this.getSheetModel()
-        .getPropertySheetElement(row);
+      Item item = PropertySheetTable.this.getSheetModel().getPropertySheetElement(row);
       item.toggle();
       PropertySheetTable.this.addRowSelectionInterval(row, row);
     }
     public boolean isEnabled() {
       int row = PropertySheetTable.this.getSelectedRow();
       if (row != -1) {
-        Item item = PropertySheetTable.this.getSheetModel()
-          .getPropertySheetElement(row);        
+        Item item = PropertySheetTable.this.getSheetModel().getPropertySheetElement(row);        
         return item.hasToggle();
       } else {
         return false;
