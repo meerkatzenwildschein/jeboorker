@@ -31,6 +31,8 @@ class PDFMetadataProperty extends MetadataProperty {
 	 */
 	private List<PDFMetadataProperty> childs;
 	
+	private Object value;
+	
 	/**
 	 * The namespace like xap pdf or dc 
 	 */
@@ -39,6 +41,7 @@ class PDFMetadataProperty extends MetadataProperty {
 	PDFMetadataProperty(final String tagName, final Object value, final String listElementName) {
 		super(tagName, value);
 		this.listElementName = listElementName;
+		this.value = value;
 		
 		final int namespaceSeparatorIndex = tagName.indexOf(':');
 		if(namespaceSeparatorIndex!=-1) {
@@ -225,5 +228,18 @@ class PDFMetadataProperty extends MetadataProperty {
 	public void setNamespace(String namespace) {
 		this.namespace = namespace;
 	}
+	
+	/**
+	 * Creates a new {@link MultiMetadataProperty} instance with the data of this {@link MultiMetadataProperty}.
+	 */	
+	@Override
+	public MetadataProperty clone() {
+		PDFMetadataProperty newMetadataProperty = new PDFMetadataProperty(this.name, this.value, this.listElementName);
+		newMetadataProperty.attributes = this.attributes;
+		newMetadataProperty.propertyClass = this.propertyClass;
+		newMetadataProperty.childs = this.childs;
+		newMetadataProperty.namespace = this.namespace;
+		return newMetadataProperty;
+	}		
 
 }

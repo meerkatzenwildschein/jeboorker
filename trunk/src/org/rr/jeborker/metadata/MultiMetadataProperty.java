@@ -53,5 +53,15 @@ public class MultiMetadataProperty extends MetadataProperty {
 	public boolean isSingle() {
 		return true;
 	}
+	
+	
+	/**
+	 * Creates a new {@link MultiMetadataProperty} instance with the data of this {@link MultiMetadataProperty}.
+	 */	
+	@Override
+	public MetadataProperty clone() {
+		MultiMetadataProperty newMetadataProperty = new MultiMetadataProperty(this.name, this.values);
+		return newMetadataProperty;
+	}	
 
 }

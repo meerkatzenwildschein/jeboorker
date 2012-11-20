@@ -9,7 +9,7 @@ import org.rr.commons.utils.StringUtils;
 /**
  * Class for storing metadata in a key/value kind with value class support.
  */
-public class MetadataProperty {
+public class MetadataProperty implements Cloneable {
 
 	protected final String name;
 	
@@ -116,5 +116,14 @@ public class MetadataProperty {
 	 */
 	public boolean isSingle() {
 		return true;
+	}
+	
+	/**
+	 * Creates a new {@link MetadataProperty} instance with the data of this {@link MetadataProperty}.
+	 */
+	public MetadataProperty clone() {
+		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, this.values);
+		newMetadataProperty.propertyClass = this.propertyClass;
+		return newMetadataProperty;
 	}
 }

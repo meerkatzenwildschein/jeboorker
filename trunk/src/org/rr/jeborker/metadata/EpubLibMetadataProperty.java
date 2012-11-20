@@ -5,6 +5,8 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	
 	private T epubLibMetadataEntry;
 	
+	private Object value;
+	
 	EpubLibMetadataProperty(String name, Object value) {
 		this(name, value, null);
 	}
@@ -12,6 +14,7 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	EpubLibMetadataProperty(String name, Object value, T epubLibMetadataEntry) {
 		super(name, value);
 		this.epubLibMetadataEntry = epubLibMetadataEntry;
+		this.value = value;
 	}
 
 	void setType(T epubLibMetadataEntry) {
@@ -52,5 +55,15 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 		} 
 		return false;
 	}	
+	
+	/**
+	 * Creates a new {@link EpubLibMetadataProperty} instance with the data of this {@link EpubLibMetadataProperty}.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public MetadataProperty clone() {
+		EpubLibMetadataProperty<?> newMetadataProperty = new EpubLibMetadataProperty(this.name, this.value, this.epubLibMetadataEntry);
+		return newMetadataProperty;
+	}
 
 }
