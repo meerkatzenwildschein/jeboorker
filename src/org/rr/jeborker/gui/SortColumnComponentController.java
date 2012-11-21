@@ -201,7 +201,7 @@ public class SortColumnComponentController {
 			final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
 			List<Field> orderByColumns = tableModel.getOrderByColumns();
 	    	try {
-				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("author"));
+				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("authorSort"));
 				orderByColumns.add(EbookPropertyItem.class.getDeclaredField("title"));
 			} catch (Exception e) {
 				LoggerFactory.logWarning(this, "Field named author is not available at " + EbookPropertyItem.class, e);

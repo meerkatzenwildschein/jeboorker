@@ -49,7 +49,7 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 				{
 					add(null); //selection value
 					for(EbookPropertyItem item : items) {
-						add(type.getValue(item));
+						addAll(type.getValue(item));
 					}	
 				}
 			};

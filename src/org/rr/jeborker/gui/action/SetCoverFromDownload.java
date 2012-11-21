@@ -36,8 +36,9 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 			String searchPhrase = "";
 			EbookPropertyItem item = ListUtils.first(DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString()));
 			if(item != null) {
-				if(StringUtils.isNotEmpty(item.getAuthor())) {
-					searchPhrase += item.getAuthor() + " ";
+				String authors = ListUtils.join(item.getAuthors(), " ").trim();
+				if(StringUtils.isNotEmpty(authors)) {
+					searchPhrase += item.getAuthors() + " ";
 				}
 			} 
 			

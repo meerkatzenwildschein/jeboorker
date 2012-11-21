@@ -35,7 +35,6 @@ import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
@@ -43,8 +42,6 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 import com.itextpdf.text.Font;
-import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 
 public class EbookTableCellComponent extends JPanel implements Serializable  {
 	
@@ -308,7 +305,11 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		
 		for (Field field : selectedFields) {
 			//do not add the folowing ones.
-			if(field.getName().equalsIgnoreCase("author")) {
+			if(field.getName().equalsIgnoreCase("authors")) {
+				continue;
+			} else if(field.getName().equalsIgnoreCase("author")) {
+				continue;
+			}  else if(field.getName().equalsIgnoreCase("authorSort")) {
 				continue;
 			} else if(field.getName().equalsIgnoreCase("title")) {
 				continue;
@@ -340,8 +341,21 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		if(StringUtils.isNotEmpty(result)) {
 			result.insert(0, ", ");
 		}
-		if(StringUtils.isNotEmpty(item.getAuthor())) {
-			result.insert(0, item.getAuthor());
+		
+		List<String> authors = item.getAuthors();
+		if(!authors.isEmpty()) {
+			StringBuilder b = new StringBuilder();
+			for(String author : authors) {
+				if(b.length() != 0) {
+					b.append(", ");
+				}
+				b.append(author);
+			}
+			if(StringUtils.isNotEmpty(b)) { 
+				result.insert(0, b);
+			} else {
+				result.insert(0, "<"+Bundle.getString("EbookTableCellComponent.noAuthor")+">");
+			}
 		} else {
 			result.insert(0, "<"+Bundle.getString("EbookTableCellComponent.noAuthor")+">");
 		}

@@ -116,41 +116,19 @@ public class MainController {
 			
 			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
 				int[] selectedRows = mainWindow.table.getSelectedRows();
-				for (int i = 0; i < selectedRows.length; i++) {
-					model.reloadEbookPropertyItemAt(selectedRows[i]);
+				for (int selectedRow : selectedRows) {
+					final EbookPropertyItem ebookPropertyItem = model.getEbookPropertyItemAt(selectedRow);
+					final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
+					final ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
+					reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
 				}
 			}
+			refreshTableSelectedItem(false);
 			
 			//a repaint does a refresh to all visible table rows.
 			mainWindow.table.repaint();
 		}
 	}	
-	
-	/**
-	 * PropertySheetChangeListener is always invoked if a values in the property sheet has changed.
-	 */
-	private class PropertySheetChangeListener implements PropertyChangeListener {
-		
-		/**
-		 * On each change in the metadata sheet the sheet properties are transfered into metadata properties
-		 * and the metadata reader refreshes the selected {@link EbookPropertyItem}. 
-		 */
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if(evt.getSource() instanceof Property) {
-				final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
-				final List<EbookPropertyItem> ebookPropertyItems = model.getEbookPropertyItems((Property) evt.getSource());
-				for(int i = 0; i < ebookPropertyItems.size(); i++) {
-					final EbookPropertyItem ebookPropertyItem = ebookPropertyItems.get(i);
-					final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
-					final ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
-					
-					reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
-				}
-			}
-			refreshTableSelectedItem(false);
-		}
-	}
 	
 	/**
 	 * Mouse listener which handles the right click / popup menu on the main table.
@@ -226,7 +204,6 @@ public class MainController {
 		
 		mainWindow.imageViewer.addMouseListener(new CoverPopupMouseListener());
 		
-		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertySheetChangeListener());
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
 			
 			@Override
@@ -277,7 +254,7 @@ public class MainController {
 	}
 
 	/**
-	 * Refresh the selected table row.
+	 * Refresh the selected table rows.
 	 */
 	public void refreshTableSelectedItem(final boolean refreshMetadataSheet) {
 		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
