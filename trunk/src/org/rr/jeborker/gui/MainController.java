@@ -662,7 +662,7 @@ public class MainController {
 				
 			@Override
 			public InputStream getContentInputStream() {
-				if(byteArrayInputStream==null) {
+				if(byteArrayInputStream == null) {
 					final byte[] cover = reader.getCover();
 					if(cover != null) {
 						byteArrayInputStream = new ByteArrayInputStream(cover);
