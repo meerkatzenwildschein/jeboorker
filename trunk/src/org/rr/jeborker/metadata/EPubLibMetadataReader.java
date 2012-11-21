@@ -217,6 +217,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 
 	@Override
 	public void fillEbookPropertyItem(final List<MetadataProperty> metadataProperties, final EbookPropertyItem item) {
+		item.clearMetadata();
 		for(MetadataProperty metadataProperty : metadataProperties) {
 			for(EPUB_METADATA_TYPES type : EPUB_METADATA_TYPES.values()) {
 				if(type.getName().equals(metadataProperty.getName())) {

@@ -2,6 +2,7 @@ package org.rr.jeborker.db.item;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -10,6 +11,8 @@ import java.util.zip.CRC32;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ReflectionUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.IDBObject;
 
 import com.orientechnologies.orient.core.record.impl.ORecordBytes;
@@ -75,12 +78,18 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * The author of the ebook.
 	 */
-	@ViewField(name = "Author", orderPriority = 101)
 	@Index(type= "FULLTEXT")
+	private List<String> authors;
+
+	/**
+	 * One of the authors of the ebook.
+	 */
+	@Index(type= "FULLTEXT")
+	@ViewField(name = "Author", orderPriority = 101)
 	private String author;
 	
 	/**
-	 * The author's name in a good sortable manner
+	 * The author's name in a good sortable manner (last name first if possible)
 	 */
 	@ViewField(name = "Author Sort", orderPriority = 100)
 	@Index(type= "FULLTEXT")
@@ -227,12 +236,18 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		for (Field field : dbViewFields) {
 			try {
 				if(field.getAnnotation(ProtectedField.class) == null) {
-					field.set(this, null);
+					String setter = "set" + StringUtils.capitalize(field.getName());
+					try {
+						ReflectionUtils.invokeMethod(this, setter, new Object[] {null});
+					} catch (Exception e) {
+						LoggerFactory.logWarning(this, "Clear for field " + field.getName() + " with setter " + setter + " has failed." , e);
+					}
 				}
 			} catch (Exception e) {
 				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
 			}
-		}		
+		}
+		this.setAuthors(null);
 	}  
 	
 	/**
@@ -258,19 +273,27 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 
 	public String getTitle() {
-		return title!=null?title.trim():title;
+		return title != null ? title.trim() : title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	public String getAuthor() {
-		return author;
+	public List<String> getAuthors() {
+		if(authors != null) {
+			return new ArrayList<String>(authors);
+		}
+		return new ArrayList<String>(0);
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setAuthors(List<String> authors) {
+		this.authors = authors;
+		if(authors != null && !authors.isEmpty()) {
+			String author = authors.get(0);
+			setAuthor(author);
+			setAuthorSort(author);
+		}
 	}
 
 	public String getBasePath() {
@@ -379,6 +402,9 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 
 	public List<EbookKeywordItem> getKeywords() {
+		if(keywords != null) {
+			return new ArrayList<EbookKeywordItem>(keywords);
+		}
 		return keywords;
 	}
 
@@ -415,8 +441,24 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 
 	public void setAuthorSort(String authorSort) {
+		if(StringUtils.isNotEmpty(authorSort)) {
+			authorSort = authorSort.trim();
+			int lastSpaceIdx = authorSort.lastIndexOf(' ');
+			if(lastSpaceIdx != -1) {
+				this.authorSort = authorSort.substring(lastSpaceIdx).trim();
+				return; //done
+			}
+		}
 		this.authorSort = authorSort;
 	}
+	
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}	
 
 	public Date getCreationDate() {
 		return creationDate;
@@ -433,5 +475,4 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	public void setCoverThumbnail(ORecordBytes coverThumbnail) {
 		this.coverThumbnail = coverThumbnail;
 	}
-
 }

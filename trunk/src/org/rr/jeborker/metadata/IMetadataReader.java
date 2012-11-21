@@ -1,9 +1,12 @@
 package org.rr.jeborker.metadata;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.bouncycastle.asn1.cms.MetaData;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 
@@ -14,7 +17,7 @@ public interface IMetadataReader {
 		
 		public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
 		
-		public String getValue(EbookPropertyItem item);
+		public List<String> getValue(EbookPropertyItem item);
 	}	
 	
 	static enum METADATA_TYPES implements MetadataEntryType {
@@ -24,12 +27,23 @@ public interface IMetadataReader {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				item.setAuthor(metadataProperty.getValueAsString());
+				final List<Object> values = metadataProperty.getValues();
+				if(values != null) {
+					final List<String> authors = item.getAuthors();
+					for(Object author : values) {
+						String a = StringUtils.toString(author);
+						if(!StringUtils.isEmpty(a)) {
+							authors.add(a);
+						}
+					}
+					item.setAuthors(authors);
+				}
 			}
 
 			@Override
-			public String getValue(EbookPropertyItem item) {
-				return item.getAuthor();
+			public List<String> getValue(EbookPropertyItem item) {
+				final List<String> authors = item.getAuthors();
+				return new ArrayList<String>(authors);
 			}
 		},
 		TITLE {
@@ -42,8 +56,8 @@ public interface IMetadataReader {
 			}
 			
 			@Override
-			public String getValue(EbookPropertyItem item) {
-				return item.getTitle();
+			public List<String> getValue(EbookPropertyItem item) {
+				return new ArrayList<String>(Collections.singleton(item.getTitle()));
 			}			
 		},
 		SERIES_NAME {
@@ -56,8 +70,8 @@ public interface IMetadataReader {
 			}
 			
 			@Override
-			public String getValue(EbookPropertyItem item) {
-				return item.getSeriesName();
+			public List<String> getValue(EbookPropertyItem item) {
+				return new ArrayList<String>(Collections.singleton(item.getSeriesName()));
 			}						
 		},
 		GENRE {
@@ -70,8 +84,8 @@ public interface IMetadataReader {
 			}
 			
 			@Override
-			public String getValue(EbookPropertyItem item) {
-				return item.getGenre();
+			public List<String> getValue(EbookPropertyItem item) {
+				return new ArrayList<String>(Collections.singleton(item.getGenre()));
 			}				
 		}		
 	}	

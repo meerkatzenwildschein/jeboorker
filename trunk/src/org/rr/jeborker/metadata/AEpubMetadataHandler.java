@@ -19,6 +19,7 @@ import org.rr.commons.utils.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -83,7 +84,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				item.setSeriesIndex(metadataProperty.getValueAsString());
+				METADATA_TYPES.SERIES_NAME.fillItem(metadataProperty, item);
 			}
 		},SUBJECT {
 			public String getName() {
@@ -92,7 +93,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 
 			@Override
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				item.setGenre(metadataProperty.getValueAsString());
+				METADATA_TYPES.GENRE.fillItem(metadataProperty, item);
 			}
 		},PUBLISHER {
 			public String getName() {
@@ -165,7 +166,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				item.setTitle(metadataProperty.getValueAsString());
+				METADATA_TYPES.TITLE.fillItem(metadataProperty, item);
 			}
 		},DATE {
 			public String getName() {
@@ -190,7 +191,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				item.setAuthor(metadataProperty.getValueAsString());
+				METADATA_TYPES.AUTHOR.fillItem(metadataProperty, item);
 			}
 		},TYPE {
 			public String getName() {
