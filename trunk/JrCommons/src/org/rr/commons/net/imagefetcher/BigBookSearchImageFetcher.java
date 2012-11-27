@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
 
-class BingImageFetcher extends AImageFetcher {
+class BigBookSearchImageFetcher extends AImageFetcher {
 	
 	private int page = 0;
 
@@ -29,27 +28,18 @@ class BingImageFetcher extends AImageFetcher {
 	 */
 	private  List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
-		final int pageParameter = ((page -1) * getPageSize()) + 1; //always in 30 steps.
-		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader("http://www.bing.com/images/async?q="+encodesSearchPhrase+"&format=htmlraw&first=" + pageParameter);
+		
+		//http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=katze+tod&ItemPage=1		
+		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader("http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=" + encodesSearchPhrase + "&ItemPage=" + page);
 		try {
 			final byte[] content = resourceLoader.getContent();
 			final String contentString = new String(content);
-			if(contentString.indexOf(" m=\"") != -1) {
-				final String[] splited = contentString.split(" m=\"");
+			if(contentString.indexOf("<img id='item-") != -1) {
+				final String[] splited = contentString.split("<img id='item-");
 				final ArrayList<IImageFetcherEntry> result = new ArrayList<IImageFetcherEntry>(splited.length-1);
 				for (int i = 1; i < splited.length; i++) {
-					final String entry = splited[i].substring(0, splited[i].indexOf('"'));
-					HTMLEntityConverter converter = new HTMLEntityConverter(entry, HTMLEntityConverter.ENCODE_EIGHT_BIT_ASCII);
-					final String decodedEntry = converter.decodeEntities();
-					try {
-						JSONObject jobj = new JSONObject(decodedEntry);
-						IImageFetcherEntry image = new BingImageFetcherEntry(jobj);
-						
-						result.add(image);
-					} catch(JSONException e) {
-						throw new IOException(e);
-					}
-					
+					IImageFetcherEntry image = new BingImageFetcherEntry(splited[i]);
+					result.add(image);
 				}
 				return result;
 			}
@@ -72,16 +62,16 @@ class BingImageFetcher extends AImageFetcher {
 	 */
 	private static class BingImageFetcherEntry extends AImageFetcherEntry {
 		
-		private JSONObject jobj;
+		private String htmlSearchEntry;
 		
-		BingImageFetcherEntry(JSONObject jobj) {
-			this.jobj = jobj;
+		BingImageFetcherEntry(String htmlSearchEntry) {
+			this.htmlSearchEntry = htmlSearchEntry;
 		}
 
 		@Override
 		public URL getThumbnailURL() {
 			try {
-				return new URL(jobj.getString("turl"));
+				return getImageURL();
 			} catch (Exception e) {
 				return null;
 			} 
@@ -90,7 +80,8 @@ class BingImageFetcher extends AImageFetcher {
 		@Override
 		public URL getImageURL() {
 			try {
-				return new URL(jobj.getString("imgurl"));
+				String imageSourceURL = getParameterValue(htmlSearchEntry, "src");
+				return new URL(imageSourceURL);
 			} catch (Exception e) {
 				return null;
 			} 
@@ -99,7 +90,8 @@ class BingImageFetcher extends AImageFetcher {
 		@Override
 		public int getImageWidth() {
 			try {
-				return jobj.getInt("width");
+				String imageWidth = getParameterValue(htmlSearchEntry, "width");
+				return CommonUtils.toNumber(imageWidth).intValue();
 			} catch (Exception e) {
 				return 0;
 			}
@@ -108,7 +100,8 @@ class BingImageFetcher extends AImageFetcher {
 		@Override
 		public int getImageHeight() {
 			try {
-				return jobj.getInt("height");
+				String imageHeight = getParameterValue(htmlSearchEntry, "height");
+				return CommonUtils.toNumber(imageHeight).intValue();
 			} catch (Exception e) {
 				return 0;
 			}
@@ -117,17 +110,27 @@ class BingImageFetcher extends AImageFetcher {
 		@Override
 		public String getTitle() {
 			try {
-				return jobj.getString("t");
-			} catch (JSONException e) {
+				String imageTitle = getParameterValue(htmlSearchEntry, "alt");
+				HTMLEntityConverter converter = new HTMLEntityConverter(imageTitle, HTMLEntityConverter.ENCODE_EIGHT_BIT_ASCII);
+				imageTitle = converter.decodeEntities();
+				return imageTitle;
+			} catch (Exception e) {
 				return "";
 			}
 		}
-	}
-
-	@Override
-	public int getPageSize() {
-		// TODO Auto-generated method stub
-		return 30;
+		
+		/**
+		 * get the first parameter from the given html.
+		 * @param html HTML string to be searched.
+		 * @param parameter Parameter where the value should be returned for.
+		 * @return The value or <code>null</code> if no parameter could be found.
+		 */
+		private String getParameterValue(String html, String parameter) {
+			int parameterStartIndex = html.indexOf(parameter + "='") + parameter.length() + 2;
+			int parameterEndIndex = html.indexOf("'", parameterStartIndex);
+			String value = html.substring(parameterStartIndex, parameterEndIndex);
+			return value;
+		}			
 	}
 
 }

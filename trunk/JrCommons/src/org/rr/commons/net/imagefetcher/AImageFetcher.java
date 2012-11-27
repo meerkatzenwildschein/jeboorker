@@ -3,6 +3,7 @@ package org.rr.commons.net.imagefetcher;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -64,5 +65,10 @@ abstract class AImageFetcher implements IImageFetcher {
 	
 	public String getSearchTerm() {
 		return this.searchTerm;
+	}
+
+	@Override
+	public Iterator<IImageFetcherEntry> getEntriesIterator() {
+		return new ImageFetcherIterator(this);
 	}
 }

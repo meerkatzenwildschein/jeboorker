@@ -1,6 +1,7 @@
 package org.rr.commons.net.imagefetcher;
 
 import java.io.IOException;
+import java.net.URL;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -8,7 +9,11 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 abstract class AImageFetcherEntry implements IImageFetcherEntry {
 	
 	public byte[] getThumbnailImageBytes() throws IOException {
-		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(getThumbnailURL());
+		final URL thumbnailURL = getThumbnailURL();
+		if(thumbnailURL == null) {
+			throw new IOException("Empty URL");
+		}
+		final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(thumbnailURL);
 		try {
 			byte[] thumbnailBytes = resourceHandler.getContent();
 			return thumbnailBytes;
