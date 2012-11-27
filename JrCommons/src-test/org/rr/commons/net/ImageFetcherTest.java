@@ -1,6 +1,7 @@
 package org.rr.commons.net;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -11,30 +12,47 @@ import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
 
 public class ImageFetcherTest extends TestCase {
 	
-	public void testFetcherGoogle() {
+	public void xtestFetcherGoogle() {
 		try {
 			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Google");
 			imageFetcher.setSearchTerm("Der Fänger");
 			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
-				
+				m.getImageURL();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void testFetcherBing() {
+	public void xtestFetcherBigBooks() {
 		try {
-			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Bing");
+			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Big Book Search");
 			imageFetcher.setSearchTerm("Der Fänger");
 			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
-				System.out.println(m.getImageURL());
+				m.getImageURL();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}	
+	
+	public void testFetcherBigBooksIterator() {
+		try {
+			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Big Book Search");
+			imageFetcher.setSearchTerm("Der Fänger");
+			Iterator<IImageFetcherEntry> searchImages = imageFetcher.getEntriesIterator();
+			for(int i=0; searchImages.hasNext(); i++) {
+				IImageFetcherEntry next = searchImages.next();
+				System.out.println(next.getImageURL());
+				if(i == 25) {
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}		
 
 }
