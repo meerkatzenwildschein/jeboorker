@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
+import org.rr.jeborker.db.DefaultDBManager;
+
 
 
 public class ActionEventQueue {
@@ -25,7 +27,8 @@ public class ActionEventQueue {
 	
 				@Override
 				protected Void doInBackground() {
-					while(queue.size()>0) {
+					while(queue.size() > 0) {
+						DefaultDBManager.getInstance().setLocalThreadDbInstance();
 						QueueableActionHolder removed = queue.remove(0);
 						removed.action.invokeRealAction(removed.event);
 					}

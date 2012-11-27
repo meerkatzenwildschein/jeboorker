@@ -50,8 +50,16 @@ public class DefaultDBManager {
 		if (manager == null) {
 			manager = new DefaultDBManager();
 		}
-
+		
 		return manager;
+	}
+	
+	/**
+	 * Just a workaround if there appears a ODatabaseRecordThreadLocal exception. Could happens with
+	 * threading. The database instance is not known to all threads.
+	 */
+	public void setLocalThreadDbInstance() {
+		ODatabaseRecordThreadLocal.INSTANCE.set(DefaultDBManager.getInstance().getDB().getUnderlying());		
 	}
 
 	private DefaultDBManager() {
@@ -161,13 +169,13 @@ public class DefaultDBManager {
 		getDB().close();
 	}
 
-	public void storeObject(final IDBObject item) {
+	public IDBObject storeObject(final IDBObject item) {
 		try {
-			getDB().save(item);
+			return getDB().save(item);
 		} catch (Exception e) {
 			// If storage fails try to delete and store the record.
 			deleteObject(item);
-			getDB().save(item);
+			return getDB().save(item);
 		}
 	}
 
@@ -333,7 +341,7 @@ public class DefaultDBManager {
 	 * @param item
 	 *            {@link IDBObject} instance to be updated.
 	 */
-	public void updateObject(final IDBObject item) {
+	public IDBObject updateObject(final IDBObject item) {
 		// store the bytes before deleting
 		final HashMap<Field, byte[]> data = new HashMap<Field, byte[]>();
 
@@ -349,7 +357,7 @@ public class DefaultDBManager {
 		}
 
 		// store the item and
-		this.storeObject(item);
+		return this.storeObject(item);
 	}
 
 	/**

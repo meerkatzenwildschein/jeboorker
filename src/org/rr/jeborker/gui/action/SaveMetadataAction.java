@@ -10,6 +10,7 @@ import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
 
@@ -25,7 +26,7 @@ class SaveMetadataAction extends AbstractAction {
 	private SaveMetadataAction() {
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("save_16.gif")));
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
-		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
+//		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		putValue(SHORT_DESCRIPTION, Bundle.getString("SaveMetadataAction.tooltip")); //tooltip
 		putValue(Action.NAME, Bundle.getString("SaveMetadataAction.name"));
 		setEnabled(false);
@@ -33,7 +34,7 @@ class SaveMetadataAction extends AbstractAction {
 	}
 	
 	static SaveMetadataAction getInstance() {
-		if(saveMetadataEntryAction==null) {
+		if(saveMetadataEntryAction == null) {
 			saveMetadataEntryAction = new SaveMetadataAction();
 		}
 		return saveMetadataEntryAction;
@@ -48,8 +49,15 @@ class SaveMetadataAction extends AbstractAction {
 		final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
 		
 		if(action.isEnabled()) {
-			MainController.getController().saveProperties(-1, -1);
-			action.setEnabled(false);
+			final MainController controller = MainController.getController();
+			final MainMonitor progressMonitor = controller.getProgressMonitor();
+			progressMonitor.monitorProgressStart(Bundle.getString("SaveMetadataAction.message"));
+			try {
+				controller.saveProperties(-1, -1); //save selected properties
+				action.setEnabled(false);
+			} finally {
+				progressMonitor.monitorProgressStop();
+			}
 		}
 	}
 	

@@ -32,7 +32,7 @@ public class MainMonitor {
 	
 	public void monitorProgressStop(final String message) {
 		started--;
-		if(started<=0) {
+		if(started <= 0) {
 			started = 0;
 						
 			SwingUtilities.invokeLater(new Runnable() {
