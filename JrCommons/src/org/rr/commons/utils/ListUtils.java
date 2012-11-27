@@ -626,7 +626,7 @@ public final class ListUtils implements Serializable {
 					// compare process
 					if (searchType == UtilConstants.SEARCH_REGEXP) {
 						if (compare == UtilConstants.COMPARE_TEXT) {
-							String pattern = String.valueOf(processFilterValue[i]).toLowerCase();
+							String pattern = String.valueOf(processFilterValue[i]).trim().toLowerCase();
 							
 							Pattern p = Pattern.compile(pattern);
 							Matcher m = p.matcher(String.valueOf(next).toLowerCase());
@@ -652,7 +652,7 @@ public final class ListUtils implements Serializable {
 						}
 						
 						if (compare == UtilConstants.COMPARE_TEXT) {
-							if (String.valueOf(next).equalsIgnoreCase(String.valueOf(processFilterValue[i]))) {
+							if (String.valueOf(next).trim().equalsIgnoreCase(String.valueOf(processFilterValue[i]).trim())) {
 								return j;
 							}
 						} else {
@@ -704,7 +704,7 @@ public final class ListUtils implements Serializable {
 
 		for (int i = 0; iterator.hasNext(); i++) {
 			final T next = iterator.next();
-			if ( indexOf(values, next, compare, UtilConstants.SEARCH_DEFAULT)==i ) {
+			if ( indexOf(values, next, compare, UtilConstants.SEARCH_DEFAULT) == i ) {
 				result.add(next);
 			}
 		}
