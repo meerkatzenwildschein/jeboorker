@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -55,9 +56,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.paraj.prodcons.Consumer;
-import org.paraj.prodcons.FeedEngine;
-import org.paraj.prodcons.Producer;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -67,6 +65,7 @@ import org.rr.commons.net.imagefetcher.IImageFetcher;
 import org.rr.commons.net.imagefetcher.IImageFetcherEntry;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
+import org.rr.commons.utils.ThreadUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
@@ -462,62 +461,42 @@ public class ImageDownloadDialog extends JDialog {
 			private SearchResultTableModel(String searchTerm, String searchProviderName) {
 				try { //init
 					final IImageFetcher imageFetcher = factory.getImageFetcher(searchProviderName, searchTerm);
-					final FeedEngine<List<IImageFetcherEntry>> engine = new FeedEngine<List<IImageFetcherEntry>>();
-					final Producer<List<IImageFetcherEntry>> producer = new Producer<List<IImageFetcherEntry>>() {
-						
-						private int invoked = 0;
+					final List<IImageFetcherEntry> imageFetcherEntries = this.createImageFetcherEntries(imageFetcher);
+					
+					thumbnailEntries.addAll(imageFetcherEntries);
+					ThreadUtils.RunnableImpl<IImageFetcherEntry> each = new ThreadUtils.RunnableImpl<IImageFetcherEntry>() {
 						
 						@Override
-						public List<IImageFetcherEntry> produce() throws Exception {
+						public void run(IImageFetcherEntry entry) {
 							try {
-								synchronized(this) {
-									//Calculate the number of needs to fetch the desired number of thumbnails.
-									invoked++;
-									if(imageFetcher.getPageSize() < getMaxDisplayedThumbnails()) {
-										if((invoked - 1) * imageFetcher.getPageSize() >= getMaxDisplayedThumbnails() + (getMaxDisplayedThumbnails() % imageFetcher.getPageSize())) {
-											return null;
-										}										
-									} else {
-										if(invoked > 1) {
-											return null;
-										}
-									}
-								}
-							
-								List<IImageFetcherEntry> imageFetcherEntries = imageFetcher.getNextEntries();
-								return imageFetcherEntries;
-							} catch (Exception e) {
-								LoggerFactory.getLogger().log(Level.WARNING, "Page fetching failed.", e);
-							}
-							return null;
-						}
-					};
-					engine.addProducer(producer);
-					engine.addProducer(producer);
-					engine.addProducer(producer);
-					
-					final Consumer<List<IImageFetcherEntry>> consumer = new Consumer<List<IImageFetcherEntry>>() {
-
-						@Override
-						public void close() {
-						}
-
-						@Override
-						public void consume(List<IImageFetcherEntry> imageFetcherEntries) throws Exception {
-							thumbnailEntries.addAll(imageFetcherEntries);
-							for (IImageFetcherEntry entry : imageFetcherEntries) {
 								createThumbnail(entry);
+							} catch (IOException e) {
+								LoggerFactory.getLogger(this).log(Level.INFO, "Failed fetching " + entry.getImageURL(), e);
 							}
 						}
 					};
-					engine.addConsumer(consumer);
-					engine.addConsumer(consumer);
-					engine.addConsumer(consumer);
-					
-					engine.runUntilAllProcessed();
+					ThreadUtils.loop(imageFetcherEntries, each, 8);
 				} catch (Exception e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Images could not be retrieved.", e);
 				}
+			}
+
+			private List<IImageFetcherEntry> createImageFetcherEntries(final IImageFetcher imageFetcher) {
+				final int max = getMaxDisplayedThumbnails();
+				final Iterator<IImageFetcherEntry> entriesIterator = imageFetcher.getEntriesIterator();
+				List<IImageFetcherEntry> imageFetcherEntries = new ArrayList<IImageFetcherEntry>(max);				
+				while(true) {
+					try {
+						for(int i = 0; i < max; i++) {
+							IImageFetcherEntry entry = entriesIterator.next();
+							imageFetcherEntries.add(entry);
+						}
+					} catch(ArrayIndexOutOfBoundsException e) {
+						//no more entries
+					}
+					break;
+				}
+				return imageFetcherEntries;
 			}
 
 			@Override
