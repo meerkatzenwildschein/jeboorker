@@ -37,11 +37,8 @@ class OpenFolderAction extends AbstractAction {
 				try {
 					//workaround for 6490730. It's already present with my ubuntu
 					//http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6490730
-				    Process oProc = Runtime.getRuntime().exec(new String[] {"/bin/sh", "-c", "/usr/bin/nautilus \""+file.toString()+"\""});
-				    int bExit = oProc.waitFor(); 
-				    if(bExit==0) {
-				    	return;
-				    }
+				    Runtime.getRuntime().exec(new String[] {"/bin/sh", "-c", "/usr/bin/nautilus \""+file.toString()+"\""});
+				    return;
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}

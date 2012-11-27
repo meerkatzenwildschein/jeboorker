@@ -35,10 +35,12 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 			//default search phrase
 			String searchPhrase = "";
 			EbookPropertyItem item = ListUtils.first(DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString()));
+
+			//no author in the search term for now. Big Book Search did not like it.
 			if(item != null) {
 				String authors = ListUtils.join(item.getAuthors(), " ").trim();
 				if(StringUtils.isNotEmpty(authors)) {
-					searchPhrase += item.getAuthors() + " ";
+					searchPhrase += authors + " ";
 				}
 			} 
 			
