@@ -26,6 +26,7 @@ import javax.swing.event.PopupMenuListener;
 import org.rr.commons.collection.CompoundList;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.UtilConstants;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 
@@ -124,8 +125,9 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 		
 		//the first one is the value which is stored to all selected ebooks.
 		Object selectedValue = viewList.remove(0);
-		viewList = ListUtils.distinct(viewList);
+		viewList = ListUtils.distinct(viewList, UtilConstants.COMPARE_TEXT);
 		viewList.remove("");
+		viewList.remove(null);
 		viewList = new CompoundList(Arrays.asList(new Object[] {noChanges, clear}), viewList);
 		Object[] values = viewList.toArray(new Object[viewList.size()]);
 		this.setAvailableValues(values);

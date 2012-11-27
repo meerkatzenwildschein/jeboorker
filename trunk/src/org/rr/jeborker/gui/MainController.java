@@ -117,10 +117,11 @@ public class MainController {
 			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
 				int[] selectedRows = mainWindow.table.getSelectedRows();
 				for (int selectedRow : selectedRows) {
-					final EbookPropertyItem ebookPropertyItem = model.getEbookPropertyItemAt(selectedRow);
-					final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
-					final ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
-					reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
+					model.reloadEbookPropertyItemAt(selectedRow);
+//					final EbookPropertyItem ebookPropertyItem = model.getEbookPropertyItemAt(selectedRow);
+//					final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookPropertyItem.getResourceHandler());
+//					final ArrayList<MetadataProperty> metadataProperties = MainControllerUtils.createMetadataProperties(mainWindow.propertySheet.getProperties());
+//					reader.fillEbookPropertyItem(metadataProperties, ebookPropertyItem);
 				}
 			}
 			refreshTableSelectedItem(false);

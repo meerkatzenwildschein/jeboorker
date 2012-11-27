@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
@@ -111,6 +113,13 @@ class MainControllerUtils {
 						EbookPropertyItemUtils.refreshEbookPropertyItem(item, item.getResourceHandler(), false);		
 						DefaultDBManager.getInstance().updateObject(item);
 					}
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							MainController.getController().refreshTableSelectedItem(true);
+						}
+					});
 				} finally {
 					writer.dispose();
 				}

@@ -11,6 +11,7 @@ import java.util.zip.CRC32;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.IDBObject;
@@ -218,7 +219,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}	
 	
     public boolean equals(Object obj) {
-    	if(this.getFile()==null) {
+    	if(this.getFile() == null) {
     		return false;
     	}
     	
@@ -238,9 +239,17 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 				if(field.getAnnotation(ProtectedField.class) == null) {
 					String setter = "set" + StringUtils.capitalize(field.getName());
 					try {
-						ReflectionUtils.invokeMethod(this, setter, new Object[] {null});
+						ReflectionUtils.invokeMethod(this, setter, new Object[] { null });
 					} catch (Exception e) {
-						LoggerFactory.logWarning(this, "Clear for field " + field.getName() + " with setter " + setter + " has failed." , e);
+						LoggerFactory.logWarning(this, "Clear for field " + field.getName() + " with setter " + setter + " for " + file + " has failed." , e);
+						
+						if(e instanceof ReflectionFailureException) {
+							Throwable cause = ((ReflectionFailureException)e).getCause();
+							if(cause instanceof java.lang.reflect.InvocationTargetException) {
+								LoggerFactory.logWarning(this, "Cause" , ((java.lang.reflect.InvocationTargetException)cause).getCause());
+							}
+						}
+
 					}
 				}
 			} catch (Exception e) {
