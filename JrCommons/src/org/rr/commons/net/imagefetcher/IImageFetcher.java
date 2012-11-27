@@ -1,6 +1,7 @@
 package org.rr.commons.net.imagefetcher;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 public interface IImageFetcher {
@@ -19,8 +20,8 @@ public interface IImageFetcher {
 	public List<IImageFetcherEntry> getNextEntries() throws IOException;
 	
 	/**
-	 * @return The number of entries returned by this {@link IImageFetcher} instance.
+	 * Gets an iterator which automatically fetches the next entries.
+	 * @return Iterator provides all images provided by this {@link IImageFetcher} instance.
 	 */
-	public int getPageSize();
-	
+	public Iterator<IImageFetcherEntry> getEntriesIterator();
 }

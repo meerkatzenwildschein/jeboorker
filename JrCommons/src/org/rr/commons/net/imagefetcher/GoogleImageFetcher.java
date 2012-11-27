@@ -131,7 +131,6 @@ class GoogleImageFetcher extends AImageFetcher {
 		}
 	}
 
-	@Override
 	public int getPageSize() {
 		return 8;
 	}	

@@ -13,18 +13,18 @@ public class ImageFetcherFactory implements IImageFetcherFactory {
 	}
 
 	static enum FETCHER_TYPES implements FetcherType {
+		BIG_BOOK_IMAGES {
+
+			public String getName() {
+				return "Big Book Search";
+			}
+		},		
 		GOOGLE_IMAGES {
 
 			public String getName() {
 				return "Google";
 			}
 
-		},
-		BING_IMAGES {
-
-			public String getName() {
-				return "Bing";
-			}
 		}
 	}
 	
@@ -51,8 +51,8 @@ public class ImageFetcherFactory implements IImageFetcherFactory {
 		switch (type) {
 		case GOOGLE_IMAGES:
 			return new GoogleImageFetcher();
-		case BING_IMAGES:
-			return new BingImageFetcher();
+		case BIG_BOOK_IMAGES:
+			return new BigBookSearchImageFetcher();
 		}
 
 		return null;

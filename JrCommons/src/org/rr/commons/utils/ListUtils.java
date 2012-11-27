@@ -791,7 +791,7 @@ public final class ListUtils implements Serializable {
 	}
 
 	/**
-	 * gets the first entry from teh given list. If the list is <code>null</code> 
+	 * gets the first entry from the given list. If the list is <code>null</code> 
 	 * or empty <code>null</code> is returned.
 	 * @param object The list where the first entry should be fetched from.
 	 * @return The desired list entry or <code>null</code>.
