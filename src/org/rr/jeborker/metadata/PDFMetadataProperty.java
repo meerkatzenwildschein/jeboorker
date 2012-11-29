@@ -41,7 +41,11 @@ class PDFMetadataProperty extends MetadataProperty {
 	PDFMetadataProperty(final String tagName, final Object value, final String listElementName) {
 		super(tagName, value);
 		this.listElementName = listElementName;
-		this.value = value;
+		if(value instanceof String) {
+			this.value = StringUtils.trim((String)value); 
+		} else {
+			this.value = value;			
+		}
 		
 		final int namespaceSeparatorIndex = tagName.indexOf(':');
 		if(namespaceSeparatorIndex!=-1) {

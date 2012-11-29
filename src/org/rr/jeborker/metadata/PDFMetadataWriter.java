@@ -235,7 +235,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		try {
 			if(plainMetadata.length > 9 && new String(plainMetadata, 0, 9).startsWith("<?xpacket")) {
 				//XMP 
-				if(XMPUtils.isValidXMP(plainMetadata) && XMLUtils.isValidXML(plainMetadata)) {
+				if(XMPUtils.isValidXMP(plainMetadata)) {
 					final byte[] pdfData = ebookResource.getContent();
 					final PdfReader pdfReader = new PdfReader(pdfData);
 					

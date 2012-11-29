@@ -25,6 +25,9 @@ public class MetadataProperty implements Cloneable {
 	MetadataProperty(String name, Object value) {
 		this.name = name;
 		this.values = new ArrayList<Object>(1);
+		if(value instanceof String) {
+			value = StringUtils.trim((String)value); 
+		}
 		this.values.add(value);
 	}
 	
