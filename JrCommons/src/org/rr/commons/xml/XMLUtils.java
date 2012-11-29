@@ -48,7 +48,7 @@ public class XMLUtils {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		XMLFormatter formatter = new XMLFormatter(out);
 		formatter.setMaxCDataLength(maxCDataLength);
-		
+		formatter.setIndent(0);
 		if(indent >= 0) {
 			formatter.setIndent(indent);
 		}
