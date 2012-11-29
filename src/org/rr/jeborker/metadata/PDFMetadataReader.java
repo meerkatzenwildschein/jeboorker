@@ -129,10 +129,15 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			} else {
 				Object value = schemaChild.getTextContent();
 				if(tagName.endsWith("Date") || tagName.endsWith("SourceModified")) {
-					Date dateValue = DateConversionUtils.toDate(StringUtils.toString(value));
-					if(value != null && value.toString().isEmpty()) {
-						//2004-12-11T00:00:+0Z
-						value = dateValue;
+					final String stringValue = StringUtils.toString(value);
+					if(stringValue.isEmpty()) {
+						continue; //no sense to add an empty Date.
+					} else {
+						Date dateValue = DateConversionUtils.toDate(stringValue);
+						if(value != null && value.toString().isEmpty()) {
+							//2004-12-11T00:00:+0Z
+							value = dateValue;
+						}
 					}
 				}
 				final PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, value, null);
