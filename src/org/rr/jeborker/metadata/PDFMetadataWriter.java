@@ -20,7 +20,6 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.xml.XMLUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageInfo;
 import org.rr.pm.image.ImageProviderFactory;
