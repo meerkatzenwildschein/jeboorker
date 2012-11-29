@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
 
 public class XMPUtils {
 	
+	private static final char[] XMPMETA = "<x:xmpmeta".toCharArray();
+	
 	/**
 	 * Fast check if this xmp contains any usable data.
 	 * @param xmpMetadataBytes The xmp data to be tested.
@@ -89,20 +91,21 @@ public class XMPUtils {
 	 */
 	public static boolean containsXMPMetaTag(byte[] xmpMetadataBytes) {
 		for (int i = 0; i < xmpMetadataBytes.length - 10; i++) {
-			if(xmpMetadataBytes[i] == '<') {
-				if(xmpMetadataBytes[i + 1] == 'x' &&
-					xmpMetadataBytes[i + 2] == ':' &&
-					xmpMetadataBytes[i + 3] == 'x' &&
-					xmpMetadataBytes[i + 4] == 'm' &&
-					xmpMetadataBytes[i + 5] == 'p' &&
-					xmpMetadataBytes[i + 6] == 'm' &&
-					xmpMetadataBytes[i + 7] == 'e' &&
-					xmpMetadataBytes[i + 8] == 't' &&
-					xmpMetadataBytes[i + 9] == 'a') {
-					
-					return true;
+			boolean found = false;
+			int len = XMPMETA.length;
+			for(int j = 0; j < len; j++) {
+				byte c = xmpMetadataBytes[i+j];
+				if(c == XMPMETA[j]) {
+					found = true;
+				} else {
+					found = false;
+					break;
 				}
-			}			
+			}
+			
+			if(found) {
+				return true;
+			}
 		}		
 		return false;
 	}
