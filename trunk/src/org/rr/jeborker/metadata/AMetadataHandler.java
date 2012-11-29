@@ -1,8 +1,6 @@
 package org.rr.jeborker.metadata;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +14,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-
 
 
 public class AMetadataHandler {
@@ -27,7 +22,7 @@ public class AMetadataHandler {
 	 * Creates a document from the given xml bytes.
 	 * @return The desired document
 	 */
-	protected static Document getDocument(byte[] xml, IResourceHandler ebookResource) {
+	protected Document getDocument(byte[] xml, IResourceHandler ebookResource) {
 		try {
 			if(xml != null) {
 				return XMLUtils.getDocument(xml);
@@ -47,20 +42,7 @@ public class AMetadataHandler {
 	 * @throws IOException 
 	 */
 	protected byte[] getDocumentBytes(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
-		return formatDocument(document).getBytes("UTF-8");
-	}
-	
-	private String formatDocument(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
-        OutputFormat format = new OutputFormat(document, "UTF-8", true);
-        format.setLineWidth(160);
-//        format.setIndenting(true);
-        format.setIndent(2);
-//        format.setEncoding("UTF-8");
-        Writer out = new StringWriter();
-        XMLSerializer serializer = new XMLSerializer(out, format);
-        serializer.serialize(document);
-
-        return out.toString();
+		return XMLUtils.formatDocument(document).getBytes("UTF-8");
 	}
 	
 	/**

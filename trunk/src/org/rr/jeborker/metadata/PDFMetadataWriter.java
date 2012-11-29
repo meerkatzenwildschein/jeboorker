@@ -184,7 +184,7 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 	 * @throws DocumentException
 	 * @throws Exception
 	 */
-	private void writeMetadata(final PdfReader pdfReader, final byte[] xmp, HashMap<String, String> moreInfo) throws IOException, DocumentException, Exception {
+	private void writeMetadata(final PdfReader pdfReader, final byte[] xmp, HashMap<String, String> moreInfo) throws IOException, DocumentException, Exception {		
 		final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResource, "tmp");
 		PdfStamper stamper = null;
 		OutputStream ebookResourceOutputStream = null;
@@ -192,8 +192,8 @@ class PDFMetadataWriter extends APDFMetadataHandler implements IMetadataWriter {
 		try {
 			ebookResourceOutputStream = tmpEbookResourceLoader.getContentOutputStream(false);
 			stamper = new PdfStamper(pdfReader, ebookResourceOutputStream);
-			stamper.setXmpMetadata(xmp);
-			if(moreInfo!=null) {
+			stamper.setXmpMetadata(XMPUtils.handleMissingXMPRootTag(xmp));
+			if(moreInfo != null) {
 				//to delete old entries, itext need to null them.
 				HashMap<String, String> oldInfo = pdfReader.getInfo();
 				HashMap<String, String> newInfo = new HashMap<String, String>(oldInfo.size() + moreInfo.size());
