@@ -495,8 +495,12 @@ class FileResourceHandler extends AResourceHandler {
 				if(!overwrite && targetRecourceLoader.exists() && !targetRecourceLoader.isDirectoryResource()) {
 					throw new IOException("file already exists " + targetRecourceLoader.getResourceString());
 				}
-				FileUtils.deleteQuietly(((FileResourceHandler)targetRecourceLoader).file);
-				FileUtils.moveFile(this.file, ((FileResourceHandler)targetRecourceLoader).file);
+				boolean deleted = FileUtils.deleteQuietly(((FileResourceHandler)targetRecourceLoader).file);
+				if(deleted) {
+					FileUtils.moveFile(this.file, ((FileResourceHandler)targetRecourceLoader).file);
+				} else {
+					throw new IOException("File " + ((FileResourceHandler)targetRecourceLoader).file + " is locked");
+				}
 				return;
 			} else {
 				super.moveTo(targetRecourceLoader, overwrite);
