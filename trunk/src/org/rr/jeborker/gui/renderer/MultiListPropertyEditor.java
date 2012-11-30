@@ -18,7 +18,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -40,7 +39,8 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 	private static final String clear = "<" + Bundle.getString("ComboBoxPropertyEditor.clear") + ">";
 	private Object oldValue;
 	private Icon[] icons;
-	private boolean inputChanged = false;
+	private boolean editorInputChanged = false;
+	private boolean selectionChanged = false;
 
 	public MultiListPropertyEditor() {
 		editor = new JComboBox() {
@@ -59,15 +59,8 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 			@Override
 			public void focusGained(FocusEvent e) {
 				String text = ((JTextField)combo.getEditor().getEditorComponent()).getText();
-				if(noChanges.equals(text) || clear.equals(text)) {
+				if(noChanges.equals(text) || clear.equals(text) || text == null) {
 					((JTextField)combo.getEditor().getEditorComponent()).setText("");
-					SwingUtilities.invokeLater(new Runnable() {
-						
-						@Override
-						public void run() {
-							combo.setSelectedIndex(1);
-						}
-					});
 				} 
 			}
 
@@ -76,7 +69,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				inputChanged = true;
+				editorInputChanged = true;
 			}
 			
 		});
@@ -88,11 +81,14 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 				MultiListPropertyEditor.this.firePropertyChange(oldValue, combo.getSelectedItem());
+				selectionChanged = true;
 			}
 
 			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+				selectionChanged = true;
 			}
 		});
+		
 		combo.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
@@ -104,17 +100,23 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 	}
 
 	public Object getValue() {
-		Object result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();
-		if(clear.equals(result)) {
-			result = "";
-		} else if(noChanges.equals(result)) {
-			result = null;
-		} else if(inputChanged) {
+		int selectedIndex = ((JComboBox) editor).getSelectedIndex();
+		Object result;
+		if(selectedIndex == -1) {
+			//editor value
 			result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();
-		} else if(result != null && result.toString().isEmpty()) {
+		} else if(!editorInputChanged && selectedIndex == 0) {
+			//no change
 			result = null;
-		} 
-
+		} else if(!(editorInputChanged || selectionChanged) && selectedIndex == 1) {
+			//no change
+			result = null;
+		} else if((editorInputChanged || selectionChanged) && selectedIndex == 1) {
+			//clear
+			result = "";
+		} else {
+			result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();
+		}
 		return result;
 	}
 

@@ -166,7 +166,10 @@ public class CellEditorAdapter
     // made visible
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        cellEditor.requestFocus();
+    	//not a good idea with combboxes which immediately closes there popup with a requestFocus.
+    	if(cellEditor instanceof JTextField) {
+    		cellEditor.requestFocus();
+    	}
       }
     });
 
