@@ -196,17 +196,24 @@ public class EpubReader {
 	}	
 
 	private Resources readResources(ZipInputStream in, String defaultHtmlEncoding) throws IOException {
-		Resources result = new Resources();
-		for(ZipEntry zipEntry = in.getNextEntry(); zipEntry != null; zipEntry = in.getNextEntry()) {
-			if(zipEntry.isDirectory()) {
-				continue;
+		try {
+			Resources result = new Resources();
+			for(ZipEntry zipEntry = in.getNextEntry(); zipEntry != null; zipEntry = in.getNextEntry()) {
+				if(zipEntry.isDirectory()) {
+					continue;
+				}
+				Resource resource = ResourceUtil.createResource(zipEntry, in);
+				if(resource.getMediaType() == MediatypeService.XHTML) {
+					resource.setInputEncoding(defaultHtmlEncoding);
+				}
+				result.add(resource);
 			}
-			Resource resource = ResourceUtil.createResource(zipEntry, in);
-			if(resource.getMediaType() == MediatypeService.XHTML) {
-				resource.setInputEncoding(defaultHtmlEncoding);
-			}
-			result.add(resource);
+			return result;
+		} finally {
+			//need to be closed after reading. Otherwise the file stays locked.
+			try {
+				in.close();
+			} catch(IOException e) {/*quietly*/}
 		}
-		return result;
 	}
 }
