@@ -91,8 +91,12 @@ public class EpubReader {
 	}
 	
 	public Book readEpub(ZipInputStream in, String encoding, String name) throws IOException {
-		Book result = new Book(name);
 		Resources resources = readResources(in, encoding);
+		return readEpub(resources, encoding, name);
+	}
+	
+	public Book readEpub( Resources resources, String encoding, String name ) throws IOException {
+		Book result = new Book(name);
 		handleMimeType(result, resources);
 		String packageResourceHref = getPackageResourceHref(resources);
 		Resource packageResource = processPackageResource(packageResourceHref, result, resources);
@@ -103,7 +107,7 @@ public class EpubReader {
 		result.setUnlistedResources(unlistedResources);
 		result = postProcessBook(result);
 		return result;
-	}
+	}	
 
 	private Book postProcessBook(Book book) {
 		if (bookProcessor != null) {
@@ -134,7 +138,7 @@ public class EpubReader {
 		try {
 			PackageDocumentReader.read(packageResource, this, book, resources);
 		} catch (Exception e) {
-			log.log(Level.WARNING, e.getMessage(), e);
+			log.log(Level.WARNING, e.getMessage() + " " + packageResourceHref, e);
 		}
 		return packageResource;
 	}
