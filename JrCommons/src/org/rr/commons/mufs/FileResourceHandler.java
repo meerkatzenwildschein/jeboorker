@@ -260,7 +260,8 @@ class FileResourceHandler extends AResourceHandler {
 	
 	@Override
 	public boolean moveToTrash() throws IOException {
-		return ResourceHandlerUtils.moveToTrash(this);
+		com.sun.jna.platform.FileUtils.getInstance().moveToTrash(new File[]{new File(this.toString())});
+		return !exists();
 	}	
 
 	public String toString() {
