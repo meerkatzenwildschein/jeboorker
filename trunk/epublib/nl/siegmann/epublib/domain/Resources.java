@@ -1,6 +1,7 @@
 package nl.siegmann.epublib.domain;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -289,6 +290,14 @@ public class Resources implements Serializable {
 		}
 		href = StringUtil.substringBefore(href, Constants.FRAGMENT_SEPARATOR_CHAR);
 		Resource result = resources.get(href);
+		if(result == null && href.contains("%")) {
+			try {
+				//Do a try with URL decoding the href entry. 
+				result = resources.get(URLDecoder.decode(href, "UTF-8"));
+			} catch (Exception e) {
+				//just a quiet try.
+			}
+		}
 		return result;
 	}
 	
