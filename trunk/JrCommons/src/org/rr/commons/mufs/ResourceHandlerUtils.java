@@ -18,10 +18,6 @@ import javax.swing.filechooser.FileSystemView;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 
-import com.sun.jna.platform.FileUtils;
-import com.sun.jna.platform.win32.Shell32;
-import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
-
 /**
  * A class providing some util methods to be used with 
  * {@link IResourceHandler} instances.

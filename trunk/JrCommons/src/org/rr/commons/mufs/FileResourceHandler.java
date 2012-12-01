@@ -260,7 +260,13 @@ class FileResourceHandler extends AResourceHandler {
 	
 	@Override
 	public boolean moveToTrash() throws IOException {
-		com.sun.jna.platform.FileUtils.getInstance().moveToTrash(new File[]{new File(this.toString())});
+		try {
+			if(!ResourceHandlerUtils.moveToTrash(this)) {
+				com.sun.jna.platform.FileUtils.getInstance().moveToTrash(new File[] { new File(this.toString()) });
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return !exists();
 	}	
 
@@ -496,12 +502,8 @@ class FileResourceHandler extends AResourceHandler {
 				if(!overwrite && targetRecourceLoader.exists() && !targetRecourceLoader.isDirectoryResource()) {
 					throw new IOException("file already exists " + targetRecourceLoader.getResourceString());
 				}
-				boolean deleted = FileUtils.deleteQuietly(((FileResourceHandler)targetRecourceLoader).file);
-				if(deleted) {
-					FileUtils.moveFile(this.file, ((FileResourceHandler)targetRecourceLoader).file);
-				} else {
-					throw new IOException("File " + ((FileResourceHandler)targetRecourceLoader).file + " is locked");
-				}
+				FileUtils.deleteQuietly(((FileResourceHandler) targetRecourceLoader).file);
+				FileUtils.moveFile(this.file, ((FileResourceHandler) targetRecourceLoader).file);
 				return;
 			} else {
 				super.moveTo(targetRecourceLoader, overwrite);
