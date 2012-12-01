@@ -24,7 +24,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.ZipUtils;
+import org.rr.commons.utils.zip.ZipUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;

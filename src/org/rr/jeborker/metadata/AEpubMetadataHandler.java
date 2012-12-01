@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.ZipEntry;
 
 import nl.siegmann.epublib.domain.Identifier;
 
@@ -14,8 +13,8 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.ZipUtils;
-import org.rr.commons.utils.ZipUtils.ZipDataEntry;
+import org.rr.commons.utils.zip.ZipUtils;
+import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -514,17 +513,15 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		final List<ZipDataEntry> extract = ZipUtils.extract(zipData, new ZipUtils.ZipFileFilter() {
 			
 			@Override
-			public boolean accept(ZipEntry entry) {
+			public boolean accept(final String entryName) {
 				if(certainEntryName[0] == null) {
-					final String entryName = getName(entry.getName());
-					
-					if(coverFile!=null && entry.getName().equals(exactCoverFileName)) {
+					if(coverFile!=null && entryName.equals(exactCoverFileName)) {
 						//exact match with path and file name.
-						certainEntryName[0] = entry.getName();
+						certainEntryName[0] = entryName;
 						return true;
 					} else if (entryName.startsWith(guessCoverFileName) && (entryName.endsWith(".jpg") || entryName.endsWith(".jpeg"))) {
-						if(coverFile!=null && entry.getName().equals(exactCoverFileName)) {
-							certainEntryName[0] = entry.getName();
+						if(coverFile!=null && entryName.equals(exactCoverFileName)) {
+							certainEntryName[0] = entryName;
 						}
 						return true;
 					} else if (entryName.startsWith("cover") && (entryName.endsWith(".jpg") || entryName.endsWith(".jpeg"))) {

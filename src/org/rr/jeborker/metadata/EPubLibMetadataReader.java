@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +15,13 @@ import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Relator;
 import nl.siegmann.epublib.domain.Resource;
+import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubReader;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.ZipUtils.ZipDataEntry;
+import org.rr.commons.utils.zip.ZipUtils;
+import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,11 +35,11 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	@Override
 	public List<MetadataProperty> readMetaData() {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final EpubReader reader = new EpubReader();
+		
 		
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final Book epub = reader.readEpub(new ByteArrayInputStream(zipData), ebookResourceHandler.getName());
+			final Book epub = readBook(zipData, ebookResourceHandler);
 			final Metadata metadata = epub.getMetadata();
 			
 			final List<MetadataProperty> metadataList = this.createMetadataList(metadata);
@@ -49,6 +51,19 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		}
 		return new ArrayList<MetadataProperty>(0);
 	}
+	
+	private Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler) throws IOException {
+		final EpubReader reader = new EpubReader();
+		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, new ZipUtils.EmptyZipFileFilter(), -1);
+		final Resources resources = new Resources();
+		for(ZipDataEntry entry : extracted) {
+			Resource resource = new Resource(entry.data, entry.path);
+			resources.add(resource);
+		}
+		
+		final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
+		return epub;
+}
 
 	/**
 	 * Read all metadata entries from the given {@link Metadata} instance into {@link EpubLibMetadataProperty}.
@@ -160,11 +175,10 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	 */
 	public byte[] getCover() {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final EpubReader reader = new EpubReader();
-		
 		byte[] result = null;
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
+			final byte[] zipData = this.getContent(ebookResourceHandler);
+			final Book epub = readBook(zipData, ebookResourceHandler);
 			final Resource coverImage = epub.getCoverImage();
 			if(coverImage != null) {
 				final byte[] data = coverImage.getData();
