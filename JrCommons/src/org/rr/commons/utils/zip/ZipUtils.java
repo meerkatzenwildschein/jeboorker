@@ -1,35 +1,31 @@
-package org.rr.commons.utils;
+package org.rr.commons.utils.zip;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.jar.JarInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 
 public class ZipUtils {
-	
 
 	public static List<String> list(byte[] zipData) {
-		if(zipData==null) {
+		if (zipData == null) {
 			return null;
 		}
 
-		JarInputStream jar = null;
+		ZipInputStream jar = null;
 		try {
-			jar = new JarInputStream(new ByteArrayInputStream(zipData));
+			jar = new ZipInputStream(new ByteArrayInputStream(zipData));
 			final ArrayList<String> result = new ArrayList<String>();
 			
 			ZipEntry nextEntry;
-			while ((nextEntry=jar.getNextEntry()) != null) {
+			while ((nextEntry = jar.getNextEntry()) != null) {
 				String name = nextEntry.getName();
 				result.add(name);
 			}
@@ -43,28 +39,27 @@ public class ZipUtils {
 		}
 	}
     	
-	
-	public static List<ZipDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
+	public static List<ZipDataEntry> extract(byte[] zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
 		if(zipData==null) {
 			return null;
 		}
-		if(maxEntries<0) {
+		if(maxEntries < 0) {
 			maxEntries = Integer.MAX_VALUE;
 		}
 		
-		JarInputStream jar = null;
+		org.rr.commons.utils.zip.ZipInputStream zipIn = null;
 		try {
-			jar = new JarInputStream(new ByteArrayInputStream(zipData));
+			zipIn = new org.rr.commons.utils.zip.ZipInputStream(new ByteArrayInputStream(zipData), zipDataFileNameEncoding);
 			final ArrayList<ZipDataEntry> result = new ArrayList<ZipDataEntry>();
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final byte[] readBuff = new byte[4096];
 
-			ZipEntry nextEntry;
-			while ((nextEntry=jar.getNextEntry()) != null && maxEntries > result.size()) {
-				if(filter==null || filter.accept(nextEntry)) {
+			org.rr.commons.utils.zip.ZipEntry nextEntry;
+			while ((nextEntry=zipIn.getNextEntry()) != null && maxEntries > result.size()) {
+				if(filter==null || filter.accept(nextEntry.getName())) {
 					int len = 0;
-					while ((len = jar.read(readBuff)) != -1) {
+					while ((len = zipIn.read(readBuff)) != -1) {
 						bout.write(readBuff, 0, len);
 					}
 					result.add(new ZipDataEntry(nextEntry.getName(), bout.toByteArray()));
@@ -75,10 +70,14 @@ public class ZipUtils {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(jar!=null) {
-				try {jar.close();} catch (IOException e) {}
+			if (zipIn != null) {
+				try {zipIn.close();} catch (IOException e) {}
 			}
 		}
+	}
+	
+	public static List<ZipDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
+		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
 	}
 
 	/**
@@ -95,14 +94,14 @@ public class ZipUtils {
 			return null;
 		}
 		
-		JarInputStream jar = null;
+		org.rr.commons.utils.zip.ZipInputStream jar = null;
 		try {
-			jar = new JarInputStream(new ByteArrayInputStream(zipData));
+			jar = new org.rr.commons.utils.zip.ZipInputStream(new ByteArrayInputStream(zipData));
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final byte[] readBuff = new byte[4096];
 
-			ZipEntry nextEntry;
+			org.rr.commons.utils.zip.ZipEntry nextEntry;
 			while ((nextEntry=jar.getNextEntry()) != null) {
 				if(nextEntry.getName().equals(entry)) {
 					int len = 0;
@@ -135,7 +134,7 @@ public class ZipUtils {
 		}
 		
 		try {
-			final JarInputStream jar = new JarInputStream(new ByteArrayInputStream(zipData));
+			final ZipInputStream jar = new ZipInputStream(new ByteArrayInputStream(zipData));
 			final ArrayList<ZipDataEntry> result = new ArrayList<ZipDataEntry>();
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -238,6 +237,10 @@ public class ZipUtils {
 		
 		public byte[] data;
 		
+		public ZipDataEntry(org.rr.commons.utils.zip.ZipEntry entry) {
+			path = entry.getName();
+		}
+		
 		public ZipDataEntry(String path, byte[] data) {
 			this.path = path;
 			this.data = data;
@@ -254,6 +257,15 @@ public class ZipUtils {
 	}
 	
 	public static interface ZipFileFilter {
-		public boolean accept(ZipEntry entry);
+		public boolean accept(String entry);
+	}
+	
+	public static class EmptyZipFileFilter implements ZipFileFilter {
+
+		@Override
+		public boolean accept(String entry) {
+			return true;
+		}
+		
 	}
 }
