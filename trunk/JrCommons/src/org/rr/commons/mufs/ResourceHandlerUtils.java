@@ -16,6 +16,11 @@ import java.util.logging.Level;
 import javax.swing.filechooser.FileSystemView;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.ReflectionUtils;
+
+import com.sun.jna.platform.FileUtils;
+import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 
 /**
  * A class providing some util methods to be used with 
@@ -476,40 +481,41 @@ public class ResourceHandlerUtils {
 	 * @throws IOException
 	 */
 	static boolean moveToTrash(final IResourceHandler resourceHandler) throws IOException {
-	    //Die zu löschende Datei in den Ordner ~/.local/share/Trash/files verschieben.
+	    //Die zu loeschende Datei in den Ordner ~/.local/share/Trash/files verschieben.
 	    //Im Ordner ~/.local/share/Trash/info eine Datei mit dem gleichen Basename, aber Endung .trashinfo anlegen. In dieser Datei steht der Pfad, der angibt, wo die Datei stand, als sie gelöscht wurde. Außerdem ein Zeitstempel der Löschung.
-		
-		final File trashFilesFolder = new File(System.getProperty("user.home") + "/.local/share/Trash/files/");
-		if(trashFilesFolder.isDirectory()) {
-			final File trashInfoFolder = new File(trashFilesFolder.getParent() + "/info");
-			if(trashInfoFolder.isDirectory()) {
-				String extension = ".trashinfo";
-				int extensionNum = 0;
-				File trashInfo;
-				
-				while( (trashInfo =  new File(trashInfoFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "")  + extension)).exists() ) {
-					extensionNum ++;
+		if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+			final File trashFilesFolder = new File(System.getProperty("user.home") + "/.local/share/Trash/files/");
+			if(trashFilesFolder.isDirectory()) {
+				final File trashInfoFolder = new File(trashFilesFolder.getParent() + "/info");
+				if(trashInfoFolder.isDirectory()) {
+					String extension = ".trashinfo";
+					int extensionNum = 0;
+					File trashInfo;
+					
+					while( (trashInfo =  new File(trashInfoFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "")  + extension)).exists() ) {
+						extensionNum ++;
+					}
+					
+					{ //create trashinfo
+						StringBuilder trashInfoContent = new StringBuilder();
+						trashInfoContent.append("[Trash]").append(System.getProperty("line.separator"));
+						
+						// Path=/home/admin/Videos/video.avi
+						trashInfoContent.append("Path=").append(resourceHandler.toString()).append(System.getProperty("line.separator"));
+						
+						// DeletionDate=2012-09-10T13:58:13
+						trashInfoContent.append("DeletionDate=").append(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").format(new Date())).append(System.getProperty("line.separator"));
+						
+						IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(trashInfo);
+						resourceLoader.writeStringContent(trashInfoContent.toString(), System.getProperty("file.encoding"));
+					}
+					
+					resourceHandler.moveTo(ResourceHandlerFactory.getResourceLoader(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
+					return true;
 				}
-				
-				{ //create trashinfo
-					StringBuilder trashInfoContent = new StringBuilder();
-					trashInfoContent.append("[Trash]").append(System.getProperty("line.separator"));
-					
-					// Path=/home/admin/Videos/video.avi
-					trashInfoContent.append("Path=").append(resourceHandler.toString()).append(System.getProperty("line.separator"));
-					
-					// DeletionDate=2012-09-10T13:58:13
-					trashInfoContent.append("DeletionDate=").append(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").format(new Date())).append(System.getProperty("line.separator"));
-					
-					IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(trashInfo);
-					resourceLoader.writeStringContent(trashInfoContent.toString(), System.getProperty("file.encoding"));
-				}
-				
-				resourceHandler.moveTo(ResourceHandlerFactory.getResourceLoader(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
-				return true;
 			}
 		}
-		
 		return false;
 	}
+
 }
