@@ -85,6 +85,9 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	
 	public void loadProperties(EbookPropertyItem item) {
 		this.resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
+		if(this.reader != null) {
+			this.reader.dispose();
+		}
 		this.reader = MetadataHandlerFactory.getReader(resourceHandler);
 		
 		Property[] newProperties = createProperties(resourceHandler, item, reader);
@@ -322,5 +325,12 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			return metadataProperties;
 		}		
 	}
+	
+	public void dispose() {
+		if(this.reader != null) {
+			this.reader.dispose();
+			this.reader = null;
+		}
+	}	
 
 }

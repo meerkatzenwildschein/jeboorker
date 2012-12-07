@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
+import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.apache.jempbox.xmp.XMPUtils;
+import org.bouncycastle.util.encoders.Base64;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
@@ -26,23 +29,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.itextpdf.text.pdf.PRStream;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStream;
 
-
-class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
+class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMetadataReader {
 
 	private IResourceHandler ebookResource;
 	
-	private PdfReader pdfReader;
+	private PDFCommonDocument pdfDoc;
 	
-	private HashMap<String, String> pdfInfo;
-	
-	PDFMetadataReader(IResourceHandler ebookResource) {
+	PDFCommonMetadataReader(final IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
+		this.pdfDoc = PDFCommonDocument.getInstance(PDFCommonDocument.ITEXT, ebookResource);
 	}
 	
 	@Override
@@ -54,11 +50,8 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	public List<MetadataProperty> readMetaData() {
 		try {
 			final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
-			final PdfReader pdfReader = getReader();
-			
-			//XMP example: http://itextpdf.com/examples/iia.php?id=217
-			final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-			if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
+			final byte[] xmpMetadataBytes = getXmpMetadata();
+			if(xmpMetadataBytes != null) {
 				final Document document = getDocument(xmpMetadataBytes, ebookResource);
 				final XMPMetadata metadata = document != null ? new XMPMetadata(document) : new XMPMetadata();
 
@@ -68,14 +61,14 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 				}
 			}
 			
-			final HashMap<String, String> pdfInfo = getPdfInfo(getReader());
+			final Map<String, String> pdfInfo = getInfo();
 			if(pdfInfo != null) {
 				for (Entry<String, String> entry : pdfInfo.entrySet()) {
 					final String key = entry.getKey();
-					final Object value = entry.getValue();
+					final String value = entry.getValue();
 					try {
 						if(key.endsWith("Date") || key.endsWith("SourceModified")) {
-							final Date dateValue = DateConversionUtils.toDate((String)value);
+							final Date dateValue = DateConversionUtils.toDate(value);
 							if(dateValue != null) {
 								result.add(new MetadataProperty(key, dateValue, Date.class));
 							} else {
@@ -90,7 +83,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 				}
 			} else {
 				LoggerFactory.logWarning(this, "Could not get metadata from " + ebookResource, new RuntimeException("dumpstack"));
-			}				
+			}					
 			
 			return result;
 		} catch (Exception e) {
@@ -98,6 +91,24 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		}
 		return new ArrayList<MetadataProperty>(0);
 	}
+	
+	private byte[] getXmpMetadata() {
+		try {
+			return pdfDoc.getXMPMetadata();
+		} catch (IOException e) {
+			LoggerFactory.logWarning(this.getClass(), "Could not read xmp metadata for pdf " + ebookResource, e);
+		}
+		return null;
+	}
+	
+	private Map<String, String> getInfo() {
+		try {
+			return pdfDoc.getInfo();
+		} catch (IOException e) {
+			LoggerFactory.logWarning(this.getClass(), "Could not read info metadata for pdf " + ebookResource, e);
+		}
+		return null;
+	}	
 	
 	private void addSchemaProperties(final ArrayList<MetadataProperty> result, final XMPSchema schema) throws IOException {
 		if(schema==null) {
@@ -145,34 +156,13 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 			}
 		}
 	}
-	
-	/**
-	 * Gets the PDF reader. The reader will be created and cached for
-	 * the next time. 
-	 * @return The desired reader.
-	 * @throws IOException
-	 */
-	private PdfReader getReader() throws IOException {
-		if(pdfReader==null) {
-			//bytes will also be completely loaded by the PdfReader. 
-			System.gc();
-			byte[] pdfBytes = ebookResource.getContent();
-			pdfReader = new PdfReader(pdfBytes);
-		}
-		return pdfReader;
-	}	
-	
-	private HashMap<String, String> getPdfInfo(PdfReader reader) {
-		if(pdfInfo==null) {
-			pdfInfo = reader.getInfo();
-		}
-		return pdfInfo; 
-	}	
 
 	@Override
 	public void dispose() {
-		this.pdfReader = null;
-		this.pdfInfo = null;
+		if(this.pdfDoc != null) {
+			this.pdfDoc.dispose();
+		}
+		this.pdfDoc = null;
 	}
 	
 	protected void finalize() throws Throwable {
@@ -221,11 +211,11 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	public byte[] getCover() {
 		byte[] tumbnailData = null;
 		try {
-			byte[] fetchThumbnail = fetchXMPThumbnail(pdfReader, ebookResource);
-			if(pdfReader!=null && fetchThumbnail!=null) {
+			byte[] fetchThumbnail = fetchXMPThumbnail(ebookResource);
+			if(fetchThumbnail!=null) {
 				return fetchThumbnail;
-			} else if(pdfReader != null) {
-				return fetchCoverFromPDFContent(pdfReader);
+			} else {
+				return pdfDoc.fetchCoverFromPDFContent();
 			}
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read cover for pdf " + ebookResource, e);
@@ -234,69 +224,46 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 	}	
 	
 	/**
-	 * Tries to extract the cover by looking for the embedded images of the pdf. The first
-	 * image which seems to be a cover will be returned.
-	 *  
-	 * @param pdfReader The reader for accessing the pdf content.
-	 * @return The desired image or <code>null</code> if the image couldn't be read.
+	 * Fetches the thumbnail from the xmp metadata.
+	 * @param pdfReader The reader instance to be used to read the XMP data
+	 * @return The thumbnail or <code>null</code> if not thumbnail is embedded.
 	 * @throws Exception
 	 */
-	private byte[] fetchCoverFromPDFContent(final PdfReader pdfReader) throws Exception {
-		for (int i = 0; i < pdfReader.getXrefSize(); i++) {
-			PdfObject pdfobj = pdfReader.getPdfObject(i);
-			if(pdfobj!=null) {
-				if (pdfobj.isStream()) {
-					PdfStream stream = (PdfStream) pdfobj;
-					
-					PdfObject pdfsubtype = stream.get(PdfName.SUBTYPE);
-					if (pdfsubtype == null) {
-						//throw new Exception("Not an image stream");
-						continue;
-					}
-					if (!pdfsubtype.toString().equals(PdfName.IMAGE.toString())) {
-						//throw new Exception("Not an image stream");
-						continue;
-					}
-	
-					// now you have a PDF stream object with an image
-					byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);		
-					if(img.length > 1000) {
-						int width = 0;
-						int height = 0;
-						try {
-							width = Integer.parseInt(stream.get(PdfName.WIDTH).toString());
-							height = Integer.parseInt(stream.get(PdfName.HEIGHT).toString());
-							
-							if(width<=0 || height<=0) {
-								continue;
-							}
-							
-							PdfObject bitspercomponent = stream.get(PdfName.BITSPERCOMPONENT);
-							if(bitspercomponent!=null) {
-								Number bitspercomponentNum = CommonUtils.toNumber(bitspercomponent.toString());
-								if(bitspercomponentNum!=null && bitspercomponentNum.intValue()==1) {
-									//no b/w images
-									continue;
-								}
-							}							
-						} catch(Exception e) {}
-						
-						double aspectRatio = ((double)height) / ((double)width);
-						if(width > 150 && aspectRatio > 1.5d && aspectRatio < 1.7d) {
-							return img;
-						}
+	byte[] fetchXMPThumbnail(final IResourceHandler ebookResource) throws Exception {
+		if(ebookResource == null) {
+			return null;
+		}
+		final byte[] xmpMetadataBytes = pdfDoc.getXMPMetadata();
+		byte[] result = null;
+		
+		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
+			final Document document = getDocument(xmpMetadataBytes, ebookResource);
+			final XMPMetadata xmp = new XMPMetadata(document);
+			final XMPSchemaBasic xmpBasicSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
+			
+			if(xmpBasicSchema != null) {
+				//Thumbnails could have xap: or xmp: namespace in the BasicSchema.
+				Thumbnail thumbnail = xmpBasicSchema.getThumbnail(null, "xap");
+				if(thumbnail == null) {
+					thumbnail = xmpBasicSchema.getThumbnail(null, "xmp");
+				}
+				if (thumbnail != null) {
+					String image = thumbnail.getImage();					
+					byte[] decodeBase64 = Base64.decode(image);
+					if(decodeBase64!=null && decodeBase64.length > 5) {
+						result = decodeBase64;
 					}
 				}
 			}
 		}
-		return null;
-	}
-
+		return result;
+	}		
+	
 	@Override
 	public String getPlainMetaData() {
 		try {
-			final byte[] xmpMetadataBytes = getReader().getMetadata();	
-			if(xmpMetadataBytes!=null && xmpMetadataBytes.length > 0) {
+			final byte[] xmpMetadataBytes = pdfDoc.getXMPMetadata();
+			if(xmpMetadataBytes != null && xmpMetadataBytes.length > 0) {
 				String xml = new String(xmpMetadataBytes, "UTF-8");
 				xml = new HTMLEntityConverter(xml, -1).decodeEntities();
 				
@@ -354,16 +321,7 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 				result.add(property);
 				authorProperty = property;
 			} 
-			/*else if(property.getName().equalsIgnoreCase("creator")) {
-				result.add(property);
-				creatorProperty = property;
-			}*/
 		}
-		
-		//if author and creator exists and don't have the same content, remove the creator prop.
-		/*if(authorProperty != null && creatorProperty != null && !authorProperty.getValueAsString().equals(creatorProperty.getValueAsString())) {
-			result.remove(creatorProperty);
-		}*/
 		
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {
@@ -417,5 +375,5 @@ class PDFMetadataReader extends APDFMetadataHandler implements IMetadataReader {
 		} 
 		return Collections.unmodifiableList(result);
 	}
-
+	
 }

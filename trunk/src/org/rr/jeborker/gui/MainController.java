@@ -650,7 +650,8 @@ public class MainController {
 	
 	private void setImage(final IMetadataReader reader) {
 		final List<IResourceHandler> ebookResource = reader != null ? reader.getEbookResource() : null;
-		if (ebookResource != null && !ebookResource.isEmpty()) {
+		final byte[] cover = reader!= null ? reader.getCover() : null;
+		if (cover != null && ebookResource != null && !ebookResource.isEmpty()) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
 			final String coverFileName = StringUtils.replace(ebookResource.get(0).getResourceString(), new String[] {".", "/", "\\"}, "_");
 			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
@@ -660,12 +661,7 @@ public class MainController {
 			@Override
 			public InputStream getContentInputStream() {
 				if(byteArrayInputStream == null) {
-					final byte[] cover = reader.getCover();
-					if(cover != null) {
-						byteArrayInputStream = new ByteArrayInputStream(cover);
-					} else {
-						byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-					}
+					byteArrayInputStream = new ByteArrayInputStream(cover);
 				}
 				byteArrayInputStream.reset();
 				return byteArrayInputStream;
