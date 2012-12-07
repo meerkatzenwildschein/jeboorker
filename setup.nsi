@@ -71,9 +71,13 @@ Section -Main SEC0000
     File lib\commons-io-2.0.jar
     File lib\commons-lang-2.5.jar
     File lib\itextpdf-5.3.4.jar
+    File lib\commons-logging-1.1.1.jar
+    File lib\pdfbox-1.7.2-nightly.jar
     File lib\jeboorker.jar
     File lib\jsoup-1.7.1.jar
     File lib\junique-1.0.4.jar
+    File lib\jna-3.4.0.jar
+    File lib\platform-3.4.0.jar
     
     SetOutPath $INSTDIR\lib\epublib
     File lib\epublib\commons-vfs-1.0.jar
@@ -82,7 +86,6 @@ Section -Main SEC0000
     
     SetOutPath $INSTDIR\lib\orientdb
     File lib\orientdb\javassist-3.16.1-GA.jar
-    File lib\orientdb\jna-3.4.0.jar
     File lib\orientdb\orient-commons-1.2.0.jar
     File lib\orientdb\orientdb-core-1.2.0.jar
     File lib\orientdb\orientdb-nativeos-1.2.0.jar
@@ -155,9 +158,13 @@ Section /o -un.Main UNSEC0000
     Delete /REBOOTOK $INSTDIR\lib\junique-1.0.4.jar
     Delete /REBOOTOK $INSTDIR\lib\jeboorker.jar
     Delete /REBOOTOK $INSTDIR\lib\itextpdf-5.3.4.jar
+    Delete /REBOOTOK $INSTDIR\lib\commons-logging-1.1.1.jar
+    Delete /REBOOTOK $INSTDIR\lib\platform-3.4.0.jar
     Delete /REBOOTOK $INSTDIR\lib\commons-lang-2.5.jar
     Delete /REBOOTOK $INSTDIR\lib\commons-io-2.0.jar
     Delete /REBOOTOK $INSTDIR\lib\bcprov-jdk15on-147.jar
+    Delete /REBOOTOK $INSTDIR\lib\jna-3.4.0.jar
+    Delete /REBOOTOK $INSTDIR\lib\platform-3.4.0.jar
     RMDir  $INSTDIR\lib
     
     Delete /REBOOTOK $INSTDIR\Jeboorker32.exe
