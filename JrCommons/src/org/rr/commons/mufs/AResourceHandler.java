@@ -9,14 +9,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
-
-import eu.medsea.mimeutil.MimeUtil;
 
 /**
  * The {@link AResourceHandler} provides some provider implementation independant methods.
@@ -149,16 +146,6 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			LoggerFactory.logInfo(this, "Could not guess format for " + this, e1);
 			return null; //IO is not good. No reason to continue.
 		}		
-		
-		try {
-			Collection mimeTypes = MimeUtil.getMimeTypes(this.getContentInputStream());
-			if(!mimeTypes.isEmpty()) {
-				final String detectedMime = mimeTypes.iterator().next().toString();
-				return detectedMime;
-			}
-		} catch (Exception e) {
-			//unimportand.
-		}
 		
 		return null;
 	}
