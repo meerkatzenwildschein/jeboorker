@@ -8,13 +8,11 @@ import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.apache.jempbox.xmp.XMPUtils;
+import org.bouncycastle.util.encoders.Base64;
 import org.rr.commons.mufs.IResourceHandler;
 import org.w3c.dom.Document;
 
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.codec.Base64;
-
-public class APDFMetadataHandler extends AMetadataHandler {
+public class APDFCommonMetadataHandler extends AMetadataHandler {
 	
 	protected static final String PDF_KEYWORDS = "Keywords";
 	protected static final String PDF_PRODUCER = "PDF Producer";
@@ -93,39 +91,10 @@ public class APDFMetadataHandler extends AMetadataHandler {
 		return xmpSchema;
 	}	
 	
-	/**
-	 * Fetches the thumbnail from the xmp metadata.
-	 * @param pdfReader The reader instance to be used to read the XMP data
-	 * @return The thumbnail or <code>null</code> if not thumbnail is embedded.
-	 * @throws Exception
-	 */
-	byte[] fetchXMPThumbnail(final PdfReader pdfReader, final IResourceHandler ebookResource) throws Exception {
-		if(pdfReader == null || ebookResource == null) {
-			return null;
+	public void dispose() {
+		if(this.schemas != null) {
+			this.schemas.clear();
+			this.schemas = null;
 		}
-		final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-		byte[] result = null;
-		
-		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
-			final Document document = getDocument(xmpMetadataBytes, ebookResource);
-			final XMPMetadata xmp = new XMPMetadata(document);
-			final XMPSchemaBasic xmpBasicSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
-			
-			if(xmpBasicSchema != null) {
-				//Thumbnails could have xap: or xmp: namespace in the BasicSchema.
-				Thumbnail thumbnail = xmpBasicSchema.getThumbnail(null, "xap");
-				if(thumbnail == null) {
-					thumbnail = xmpBasicSchema.getThumbnail(null, "xmp");
-				}
-				if (thumbnail != null) {
-					String image = thumbnail.getImage();					
-					byte[] decodeBase64 = Base64.decode(image);
-					if(decodeBase64!=null && decodeBase64.length > 5) {
-						result = decodeBase64;
-					}
-				}
-			}
-		}
-		return result;
 	}	
 }

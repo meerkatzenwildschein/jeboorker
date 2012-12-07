@@ -7,7 +7,6 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.xml.XMLUtils;
 import org.w3c.dom.Document;
@@ -22,13 +21,13 @@ public class AMetadataHandler {
 	 * Creates a document from the given xml bytes.
 	 * @return The desired document
 	 */
-	protected Document getDocument(byte[] xml, IResourceHandler ebookResource) {
+	protected Document getDocument(byte[] xml, IResourceHandler ebookResource) throws IOException {
 		try {
 			if(xml != null) {
 				return XMLUtils.getDocument(xml);
 			}
 		} catch (Exception e) {
-			LoggerFactory.logWarning(AMetadataHandler.class, "Could not read metadata document " + ebookResource, e);
+			throw new IOException("Could not read metadata document " + ebookResource, e);
 		}
 		return null;
 	}
