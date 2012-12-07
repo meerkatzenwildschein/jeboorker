@@ -13,6 +13,8 @@ public class XMPUtils {
 	
 	private static final char[] XMPMETA = "<x:xmpmeta".toCharArray();
 	
+	private static final char[] XMPPACKET = "<?xpacket".toCharArray();
+	
 	/**
 	 * Fast check if this xmp contains any usable data.
 	 * @param xmpMetadataBytes The xmp data to be tested.
@@ -44,7 +46,11 @@ public class XMPUtils {
 			return false;
 		}
 		
-		return true;
+		if(contains(XMPPACKET, xmpMetadataBytes)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -85,17 +91,30 @@ public class XMPUtils {
 	}
 	
 	/**
+	 * Simple test if <?xpacket is contained by the given byte array. 
+	 * @param xmpMetadataBytes The bytes to be tested.
+	 * @return <code>true</code> if <?xpacket is contained and <code>false</code> otherwise. 
+	 */
+	public static boolean containsXMPPacketTag(byte[] xmpMetadataBytes) {
+		return contains(XMPPACKET, xmpMetadataBytes);
+	}
+	
+	/**
 	 * Simple test if <x:xmpmeta is contained by the given byte array. 
 	 * @param xmpMetadataBytes The bytes to be tested.
 	 * @return <code>true</code> if <x:xmpmeta is contained and <code>false</code> otherwise. 
 	 */
 	public static boolean containsXMPMetaTag(byte[] xmpMetadataBytes) {
+		return contains(XMPMETA, xmpMetadataBytes);
+	}	
+	
+	private static boolean contains(final char[] values, final byte[] xmpMetadataBytes) {
 		for (int i = 0; i < xmpMetadataBytes.length - 10; i++) {
 			boolean found = false;
-			int len = XMPMETA.length;
+			int len = values.length;
 			for(int j = 0; j < len; j++) {
 				byte c = xmpMetadataBytes[i+j];
-				if(c == XMPMETA[j]) {
+				if(c == values[j]) {
 					found = true;
 				} else {
 					found = false;

@@ -170,7 +170,7 @@ public class Resources implements Serializable {
 		}
 		if(StringUtil.isBlank(resource.getHref())) {
 			if(resource.getMediaType() == null) {
-				throw new IllegalArgumentException("Resource must have either a MediaType or a href");
+				throw new IllegalArgumentException("Resource " + resource.getId() + " must have either a MediaType or a href");
 			}
 			int i = 1;
 			String href = createHref(resource.getMediaType(), i);
