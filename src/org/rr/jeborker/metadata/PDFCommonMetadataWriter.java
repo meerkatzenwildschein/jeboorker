@@ -162,14 +162,8 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		}
 	}
 	
-	private byte[] fetchXMPMetadata() {
-		final PDFCommonMetadataReader reader = (PDFCommonMetadataReader) MetadataHandlerFactory.getReader(ebookResource);
-		try {
-			String fetchXMPThumbnail = reader.getPlainMetaData();
-			return fetchXMPThumbnail.getBytes();
-		} finally {
-			reader.dispose();
-		}		
+	private byte[] fetchXMPMetadata() throws IOException {
+		return pdfDoc.getXMPMetadata();	
 	}
 	
 	private byte[] fetchXMPThumbnail() throws Exception {
