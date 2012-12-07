@@ -101,24 +101,22 @@ public class ImageUtils {
 		try {
 			try {
 				bin = resourceLoader.getContentInputStream();
-				
-				if(jpegCodecClass!=null) {
-					final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
-					bi = decoder.decodeAsBufferedImage();
-				}
-			} catch (Exception e) {
-			}
-			
-			try {
-				if(bi == null && bin != null) {
-					bi = ImageIO.read(bin);
-				}
+				bi = ImageIO.read(bin);
 			} catch (Exception e) {
 			}
 			
 			if(bi == null && bin != null) {
 				bi = decodeJpegInternal(resourceLoader);
 			}
+			
+			if(bi == null && bin != null) {
+				try {
+					if(jpegCodecClass!=null) {
+						final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
+						bi = decoder.decodeAsBufferedImage();
+					}
+				} catch(Exception e) {}
+			}			
 		} finally {
 			IOUtils.closeQuietly(bin);
 		}
