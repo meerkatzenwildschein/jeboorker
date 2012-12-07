@@ -631,6 +631,9 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 	}
 
 	public void setModel(PropertySheetTableModel model) {
+		if(this.model != null) {
+			this.model.dispose();
+		}
 		this.model = model;
 		this.table.setModel(model);
 		setTable(this.table);
