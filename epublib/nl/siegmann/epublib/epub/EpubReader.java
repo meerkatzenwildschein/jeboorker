@@ -125,7 +125,7 @@ public class EpubReader {
 		Resources resources = book.getResources();
 		Collection<Resource> allResourcesCollection = allResources.getAll();
 		for (Resource resource : allResourcesCollection) {
-			if(!resources.containsByHref(resource.getHref())) {
+			if(!resources.containsByHref(resource.getHref()) && resource.getSize() > 0) {
 				result.add(resource);
 				log.warning((book.getName() != null ? book.getName() : "Resource") + " with href '" + resource.getHref() + "' is not a registered member");
 			}
