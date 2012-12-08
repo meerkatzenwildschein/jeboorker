@@ -1,5 +1,9 @@
 package org.rr.jeborker.metadata;
 
+import java.util.Date;
+
+import org.rr.commons.utils.DateConversionUtils;
+
 
 class EpubLibMetadataProperty<T> extends MetadataProperty {
 	
@@ -24,6 +28,16 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	T getType() {
 		return this.epubLibMetadataEntry;
 	}
+	
+	Date getValueAsDate() {
+		Date date;
+		if(!this.getValues().isEmpty() && this.getValues().get(0) instanceof Date) {
+			date = (Date) this.getValues().get(0);
+		} else {
+			date = DateConversionUtils.toDate(this.getValueAsString());
+		}
+		return date;
+	}	
 	
 	@Override
 	public boolean isEditable() {

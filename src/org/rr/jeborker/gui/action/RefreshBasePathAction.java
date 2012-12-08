@@ -87,8 +87,8 @@ class RefreshBasePathAction extends AbstractAction {
 	 * @param item The item to be refreshed
 	 * @param resourceLoader The IResourceHandler for the given item. Can be <code>null</code>.
 	 */
-	static void refreshEbookPropertyItem(EbookPropertyItem item, IResourceHandler resourceLoader) {
-		if(resourceLoader==null) {
+	static void refreshEbookPropertyItem(final EbookPropertyItem item, IResourceHandler resourceLoader) {
+		if(resourceLoader == null) {
 			resourceLoader = ResourceHandlerFactory.getResourceLoader(item.getFile());
 		}
 		

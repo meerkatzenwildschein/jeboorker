@@ -11,7 +11,6 @@ import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.FilterPanelController;
 import org.rr.jeborker.gui.MainController;

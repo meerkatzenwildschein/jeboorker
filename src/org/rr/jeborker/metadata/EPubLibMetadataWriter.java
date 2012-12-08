@@ -22,7 +22,6 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.zip.ZipUtils;
 import org.rr.pm.image.IImageProvider;
@@ -82,17 +81,18 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				author.setRelator(((Author) meta.getType()).getRelator());
 				metadata.addContributor(author);
 			} else if(EPUB_METADATA_TYPES.DATE.getName().equals(meta.getName())) {
-				Date date;
-				if(!meta.getValues().isEmpty() && meta.getValues().get(0) instanceof Date) {
-					date = (Date) meta.getValues().get(0);
-				} else {
-					date = DateConversionUtils.toDate(meta.getValueAsString());
-				}
-				
+				Date date = meta.getValueAsDate();
 				if(date != null) {
-					metadata.addDate(new nl.siegmann.epublib.domain.Date(date));
+					metadata.addDate(new nl.siegmann.epublib.domain.Date(date));						
 				} else {
 					throw new RuntimeException("Invalid date '" + meta.getValueAsString() + "'");
+				}
+			} else if(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.CREATION_DATE.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.MODIFICATION_DATE.getName().equals(meta.getName())) {
+				Date date = meta.getValueAsDate();
+				if(date != null) {
+					metadata.addDate(new nl.siegmann.epublib.domain.Date(date, ((nl.siegmann.epublib.domain.Date)meta.getType()).getEvent()));
+				} else {
+					metadata.addDate(new nl.siegmann.epublib.domain.Date(meta.getValueAsString(), ((nl.siegmann.epublib.domain.Date)meta.getType()).getEvent()));
 				}
 			} else if(EPUB_METADATA_TYPES.IDENTIFIER.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.UUID.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.ISBN.getName().equals(meta.getName())) {
 				Identifier identifier = new Identifier(((Identifier)meta.getType()).getScheme(), meta.getValueAsString());
@@ -118,7 +118,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 			}
 		}
 	}
-	
+
 	private void writeBook(final Book epub, final IResourceHandler ebookResourceHandler) throws IOException {
 		final EpubWriter writer = new EpubWriter();
 		final IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");

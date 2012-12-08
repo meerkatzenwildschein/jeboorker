@@ -10,6 +10,7 @@ import javax.xml.namespace.QName;
 
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Date.Event;
 import nl.siegmann.epublib.domain.Identifier;
 import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
@@ -36,7 +37,6 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	public List<MetadataProperty> readMetaData() {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		
-		
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final Book epub = readBook(zipData, ebookResourceHandler);
@@ -52,6 +52,10 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		return new ArrayList<MetadataProperty>(0);
 	}
 	
+	/**
+	 * Read all entries from, the given zip data and creates a {@link Book} instance from them. 
+	 * @throws IOException
+	 */
 	private Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler) throws IOException {
 		final EpubReader reader = new EpubReader();
 		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, new ZipUtils.EmptyZipFileFilter(), -1);
@@ -120,8 +124,17 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		}
 		
 		List<nl.siegmann.epublib.domain.Date> dates = metadata.getDates();
-		for (nl.siegmann.epublib.domain.Date date : dates) {
-			result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.DATE.getName(), date.toString(), date));
+		for (nl.siegmann.epublib.domain.Date date : dates) { 
+			Event event = date.getEvent();
+			if(event != null && Event.PUBLICATION.equals(event)) {
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName(), date.getValue(), date));	
+			} else if(event != null && Event.CREATION.equals(event)) {
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.CREATION_DATE.getName(), date.getValue(), date));	
+			} else if(event != null && Event.MODIFICATION.equals(event)) {
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.MODIFICATION_DATE.getName(), date.getValue(), date));	
+			} else {
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.DATE.getName(), date.getValue(), date));
+			}
 		}
 		
 		List<Identifier> identifiers = metadata.getIdentifiers();

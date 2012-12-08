@@ -634,7 +634,7 @@ public class MainController {
 							setImage(null);
 						}
 						
-						mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, items.get(0)));
+						mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, null, items.get(0)));
 					}
 				}				
 			} else {

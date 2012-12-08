@@ -176,6 +176,33 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				item.setCreationDate(DateConversionUtils.toDate(metadataProperty.getValueAsString()));
 			}
+		},PUBLICATION_DATE {
+			public String getName() {
+				return "pubdate";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setPublishingDate(DateConversionUtils.toDate(metadataProperty.getValueAsString()));
+			}
+		},CREATION_DATE {
+			public String getName() {
+				return "createdate";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setCreationDate(DateConversionUtils.toDate(metadataProperty.getValueAsString()));
+			}
+		},MODIFICATION_DATE {
+			public String getName() {
+				return "modifydate";
+			}
+
+			@Override
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				//no EbookPropertyItem
+			}
 		},CREATOR {
 			public String getName() {
 				return "creator";
