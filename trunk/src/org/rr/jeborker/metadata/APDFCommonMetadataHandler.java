@@ -3,14 +3,8 @@ package org.rr.jeborker.metadata;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
-import org.apache.jempbox.xmp.XMPSchemaBasic;
-import org.apache.jempbox.xmp.XMPUtils;
-import org.bouncycastle.util.encoders.Base64;
-import org.rr.commons.mufs.IResourceHandler;
-import org.w3c.dom.Document;
 
 public class APDFCommonMetadataHandler extends AMetadataHandler {
 	

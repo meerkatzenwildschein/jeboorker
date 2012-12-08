@@ -29,6 +29,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	private IMetadataReader reader;
 
 	private IResourceHandler resourceHandler;
+	
+	private List<MetadataProperty> allMetaData;
 
 	public boolean isChanged() {
 		List<Property> properties = this.getProperties();
@@ -143,6 +145,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		return Collections.emptyList();		
 	}
 	
+	public List<MetadataProperty> getAllMetaData() {
+		return allMetaData;
+	}
+
 	/**
 	 * Creates all Property elements supported by the ebook format given
 	 * with the {@link EbookPropertyItem} parameter.
@@ -179,7 +185,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param resourceLoader The {@link IResourceHandler} providing the ebook data.
 	 */
 	protected void setupMetadata(final ArrayList<Property> result, final List<EbookPropertyItem> items, final IMetadataReader reader) {
-		final List<MetadataProperty> allMetaData = reader.readMetaData();
+		allMetaData = reader.readMetaData();
 		for (int i = 0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
 			final List<Object> values = metadataProperty.getValues();

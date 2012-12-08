@@ -122,6 +122,15 @@ public class MetadataProperty implements Cloneable {
 	}
 	
 	/**
+	 * Tells if the metadata value is valid. For example if a value could not be
+	 * parsed to a date or a number but it should be one, this method returns false.
+	 * @return <code>true</code> if the value is valid and <code>false</code> otherwise.
+	 */
+	public boolean isValid() {
+		return true;
+	}
+	
+	/**
 	 * Creates a new {@link MetadataProperty} instance with the data of this {@link MetadataProperty}.
 	 */
 	public MetadataProperty clone() {
