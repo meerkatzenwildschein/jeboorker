@@ -62,7 +62,9 @@ public class ZipUtils {
 					while ((len = zipIn.read(readBuff)) != -1) {
 						bout.write(readBuff, 0, len);
 					}
-					result.add(new ZipDataEntry(nextEntry.getName(), bout.toByteArray()));
+					if(!nextEntry.isDirectory()) {
+						result.add(new ZipDataEntry(nextEntry.getName(), bout.toByteArray()));
+					}
 					bout.reset();
 				}
 			}
