@@ -135,16 +135,12 @@ abstract class PDFCommonDocument {
 		private PdfReader pdfReader;
 		
 		ItextPDFDocument(IResourceHandler pdfFile) {
-			System.gc();
-			InputStream pdfInputStream = null;
 			try {
-				pdfInputStream = pdfFile.getContentInputStream();
-				this.pdfReader = new PdfReader(pdfInputStream);
+				byte[] pdfdata = pdfFile.getContent();
+				this.pdfReader = new PdfReader(pdfdata);
 			} catch(Exception e) {
 				throw new RuntimeException(e);
-			} finally {
-				IOUtils.closeQuietly(pdfInputStream);
-			}				
+			} 			
 		}
 		
 		@Override
@@ -290,10 +286,9 @@ abstract class PDFCommonDocument {
 		private PDDocument doc;
 		
 		PDFBoxPDFDocument(IResourceHandler pdfFile) {
-			System.gc();
 			InputStream pdfInputStream = null;
 			try {
-				pdfInputStream = pdfFile.getContentInputStream();
+				pdfInputStream = new ByteArrayInputStream(pdfFile.getContent());
 				this.doc = PDDocument.load(pdfInputStream);
 			} catch(Exception e) {
 				throw new RuntimeException(e);

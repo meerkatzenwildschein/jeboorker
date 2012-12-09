@@ -31,5 +31,11 @@ public interface IMetadataWriter {
 	 * but it's not a must.
 	 */
 	public void dispose();	
+	
+	/**
+	 * Tells if the dispose method was already invoked for this {@link IMetadataReader} instance.
+	 * @return <code>true</code> if dispose was invoked and <code>false</code> otherwise.
+	 */
+	public boolean isDisposed();	
 
 }

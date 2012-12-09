@@ -35,7 +35,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	private IResourceHandler ebookResource;
 	
 	private PDFCommonDocument pdfDoc;
-	
+
 	PDFCommonMetadataReader(final IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
 		this.pdfDoc = PDFCommonDocument.getInstance(PDFCommonDocument.ITEXT, ebookResource);
@@ -163,10 +163,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			this.pdfDoc.dispose();
 		}
 		this.pdfDoc = null;
-	}
-	
-	protected void finalize() throws Throwable {
-		dispose();
+		super.dispose();
 	}
 
 	@Override
