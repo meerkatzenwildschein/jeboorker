@@ -9,6 +9,8 @@ import org.rr.commons.mufs.IResourceHandler;
 
 public class MetadataHandlerFactory {
 	
+	private static IMetadataReader latestReader = null;
+	
 	/**
 	 * Gets a reader which supports multiple ebook resources.
 	 * @param resources The resources to be handled by the {@link IMetadataReader}.
@@ -16,9 +18,9 @@ public class MetadataHandlerFactory {
 	 */
 	public static IMetadataReader getReader(final List<IResourceHandler> resources) {
 		if(resources.size() == 1) {
-			return getReader(resources.get(0));
+			return latestReader = getReader(resources.get(0));
 		} else {
-			return new MultiMetadataHandler(resources);
+			return latestReader = new MultiMetadataHandler(resources);
 		}
 	}
 	
@@ -29,12 +31,16 @@ public class MetadataHandlerFactory {
 	 * 	for the given {@link IResourceHandler}.
 	 */
 	public static IMetadataReader getReader(final IResourceHandler resource) {
+		if(getCachedReader(resource) != null) {
+			return getCachedReader(resource);
+		}
+		
 		final String mimeType = resource.getMimeType();
 		if(mimeType!=null) {
 			if(resource.getMimeType().equals(MIME_EPUB)) {
-				return new EPubLibMetadataReader(resource);
+				return latestReader = new EPubLibMetadataReader(resource);
 			} else if(resource.getMimeType().equals(MIME_PDF)) {
-				return new PDFCommonMetadataReader(resource);
+				return latestReader = new PDFCommonMetadataReader(resource);
 			}
 		}
 		return null;
@@ -105,4 +111,17 @@ public class MetadataHandlerFactory {
 		}	
 		return false;
 	}	
+	
+	/**
+	 * The latest {@link IMetadataReader} instance is cached and always this one is delivered if it's already usable.
+	 * @param resourceHandler The {@link IResourceHandler} for the requested {@link IMetadataReader} instance.
+	 * @return The cached {@link IMetadataReader} or <code>null</code> if the latest {@link IMetadataReader} is no longer usable.
+	 */
+	private static IMetadataReader getCachedReader(IResourceHandler resourceHandler) {
+		if(latestReader != null && !latestReader.isDisposed() && latestReader.getEbookResource() != null && latestReader.getEbookResource().size() == 1 && resourceHandler.equals(latestReader.getEbookResource().get(0))) {
+			return latestReader;
+		}
+		return null;
+	}
+	
 }

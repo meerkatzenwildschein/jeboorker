@@ -12,7 +12,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
-class MultiMetadataHandler implements IMetadataReader, IMetadataWriter {
+class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, IMetadataWriter {
 
 	private List<IResourceHandler> ebookResourceHandler;
 	
@@ -125,6 +125,7 @@ class MultiMetadataHandler implements IMetadataReader, IMetadataWriter {
 
 	@Override
 	public void dispose() {
+		super.dispose();
 	}
 
 	@Override

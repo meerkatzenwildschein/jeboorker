@@ -15,7 +15,23 @@ import org.w3c.dom.NodeList;
 
 
 
-public class AMetadataHandler {
+abstract class AMetadataHandler {
+	
+	protected boolean isDisposed;
+	
+	public boolean isDisposed() {
+		return this.isDisposed;
+	}
+	
+	public void dispose() {
+		isDisposed = true;
+	}	
+	
+	protected void finalize() throws Throwable {
+		if(!isDisposed()) {
+			dispose();
+		}
+	}	
 
 	/**
 	 * Creates a document from the given xml bytes.

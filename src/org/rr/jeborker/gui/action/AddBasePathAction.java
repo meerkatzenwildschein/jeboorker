@@ -118,9 +118,9 @@ class AddBasePathAction extends AbstractAction {
 		int count = ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
 			
 			@Override
-			public boolean accept(IResourceHandler loader) {
-				if(loader.isFileResource() && loader.isEbookFormat()) {
-					final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(loader, baseFolder);
+			public boolean accept(IResourceHandler resource) {
+				if(resource.isFileResource() && resource.isEbookFormat()) {
+					final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
 					addEbookPropertyItem(item);
 					return true;
 				}

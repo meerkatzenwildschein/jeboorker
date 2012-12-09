@@ -89,12 +89,12 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		this.ebookResource = null;
 		if(pdfDoc != null) {
 			pdfDoc.dispose();
 			pdfDoc = null;
 		}
+		super.dispose();
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
 
-public class APDFCommonMetadataHandler extends AMetadataHandler {
+abstract class APDFCommonMetadataHandler extends AMetadataHandler {
 	
 	protected static final String PDF_KEYWORDS = "Keywords";
 	protected static final String PDF_PRODUCER = "PDF Producer";
@@ -90,5 +90,7 @@ public class APDFCommonMetadataHandler extends AMetadataHandler {
 			this.schemas.clear();
 			this.schemas = null;
 		}
+		super.dispose();
 	}	
+		
 }

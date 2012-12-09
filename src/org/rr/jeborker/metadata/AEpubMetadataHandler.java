@@ -3,6 +3,7 @@ package org.rr.jeborker.metadata;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import nl.siegmann.epublib.domain.Identifier;
@@ -28,13 +29,15 @@ import org.w3c.dom.NodeList;
 abstract class AEpubMetadataHandler extends AMetadataHandler {
 	
 	private IResourceHandler ebookResourceHandler;
+	
+	private Date ebookResourceHandlerTimestamp;
 
 	private byte[] containerOpfData = null;
 	
 	protected byte[] zipContent = null;
 	
 	private String opfFileName = null;
-	
+
 	protected static interface MetadataEntryType {
 		String getName();
 		
@@ -248,6 +251,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	
 	AEpubMetadataHandler(IResourceHandler ebookResourceHandler) {
 		this.ebookResourceHandler = ebookResourceHandler;
+		this.ebookResourceHandlerTimestamp = ebookResourceHandler.getModifiedAt();
 	}	
 	
 	/**
@@ -304,7 +308,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * gets the container opf file content bytes containing the metdadata informations.
 	 */
 	protected byte[] getContainerOPF(final IResourceHandler ebookResource) throws IOException {
-		if (this.containerOpfData == null) {
+		if (this.containerOpfData == null || isModified()) {
 			final byte[] zipData = this.getContent(ebookResource);
 			return getContainerOPF(zipData);
 		}
@@ -335,7 +339,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * is cached so it's performance safe so invoke this method frequently.
 	 */
 	protected byte[] getContent(final IResourceHandler ebookResource) throws IOException {
-		if (this.zipContent == null) {
+		if (this.zipContent == null || isModified()) {
 			this.zipContent = ebookResource.getContent();
 		}
 		return this.zipContent;
@@ -476,6 +480,8 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		this.zipContent = null;
 		this.ebookResourceHandler = null;
 		this.opfFileName = null;
+		this.isDisposed = true;
+		super.dispose();
 	}
 
 	/**
@@ -594,5 +600,12 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		}
 		return result;
 	}	
+	
+	protected boolean isModified() {
+		if(this.ebookResourceHandlerTimestamp != null && this.ebookResourceHandler.getModifiedAt() != null) {
+			return !this.ebookResourceHandler.getModifiedAt().equals(ebookResourceHandlerTimestamp);
+		}
+		return true;
+	}
 	
 }
