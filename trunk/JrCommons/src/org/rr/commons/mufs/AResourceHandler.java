@@ -142,8 +142,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			LoggerFactory.logInfo(this, "File not found " + this, e);
 			return null; //No file, no reason to continue.
 		} catch (IOException e1) {
-			
-			LoggerFactory.logInfo(this, "Could not guess format for " + this, e1);
+//			LoggerFactory.logInfo(this, "Could not guess format for " + this, e1);
 			return null; //IO is not good. No reason to continue.
 		}		
 		
