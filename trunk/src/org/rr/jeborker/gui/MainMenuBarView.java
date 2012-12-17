@@ -23,6 +23,10 @@ class MainMenuBarView extends JMenuBar {
 	private static final long serialVersionUID = -8134987169763660105L;
 	
 	JMenu fileMenuBar;
+	
+	JMenu metadataMenuBar;
+
+	JMenu helpMenuBar;	
 
 	JMenu mnVerzeichnisEntfernen;
 
@@ -30,8 +34,6 @@ class MainMenuBarView extends JMenuBar {
 	
 	JMenu mnVerzeichnisShowHide;
 	
-	JMenu metadataMenuBar;
-
 	MainMenuBarView() {
 		this.init();
 	}
@@ -39,6 +41,7 @@ class MainMenuBarView extends JMenuBar {
 	private void init() {
 		add(createFileMenu());
 		add(createMetadataMenuEntry());
+		add(createHelpMenu());
 	}
 	
 	/**
@@ -132,6 +135,16 @@ class MainMenuBarView extends JMenuBar {
 
 		
 		return fileMenuBar;
+	}
+	
+	private JMenu createHelpMenu() {
+		this.helpMenuBar = new JMenu(Bundle.getString("EborkerMainView.help"));
+
+		JMenuItem logItem = new JMenuItem();
+		logItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_LOG_MONITOR_ACTION, null));
+		helpMenuBar.add(logItem);
+		
+		return this.helpMenuBar;
 	}
 
 	/**
