@@ -24,8 +24,6 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	
 	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<IResourceHandler>();
 	
-	private static final long heapMaxSize = Runtime.getRuntime().maxMemory();
-	
 	private HashMap<String, Object> metaMap;
 	
 	private static final Thread shutdownThread = new Thread(new Runnable() {
@@ -336,9 +334,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	protected void cleanHeapIfNeeded(long heapRequired) {
 		//MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		long heapFreeSize = Runtime.getRuntime().freeMemory();
-		long remaining = heapMaxSize - heapFreeSize - heapRequired;
-		if(heapFreeSize < 5000000) {
-			System.err.println("Garbage collector triggered manually. Only " + remaining + " bytes remaining.");
+		if(heapFreeSize < heapRequired) {
+			System.err.println("Garbage collector triggered manually. Only " + heapFreeSize + " bytes remaining.");
 			System.gc();
 		}
 	}

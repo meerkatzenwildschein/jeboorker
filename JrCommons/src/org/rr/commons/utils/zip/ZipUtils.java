@@ -136,23 +136,23 @@ public class ZipUtils {
 		}
 		
 		try {
-			final ZipInputStream jar = new ZipInputStream(new ByteArrayInputStream(zipData));
+			final ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(zipData));
 			final ArrayList<ZipDataEntry> result = new ArrayList<ZipDataEntry>();
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final byte[] readBuff = new byte[4096];
 
 			ZipEntry nextEntry;
-			while ((nextEntry=jar.getNextEntry()) != null) {
+			while ((nextEntry=zip.getNextEntry()) != null) {
 				int len = 0;
-				while ((len = jar.read(readBuff)) != -1) {
+				while ((len = zip.read(readBuff)) != -1) {
 					bout.write(readBuff, 0, len);
 				}
 
 				result.add(new ZipDataEntry(nextEntry.getName(), bout.toByteArray()));
 				bout.reset();
 			}
-			jar.close();
+			zip.close();
 			
 			Collections.sort(result);
 			return result;
@@ -224,7 +224,7 @@ public class ZipUtils {
 			IOUtils.closeQuietly(zipOutputStream);
 		}
 		byte[] result = output.toByteArray();
-		if(result.length>0) {
+		if(result.length > 0) {
 			return result;
 		}
 		return null;
