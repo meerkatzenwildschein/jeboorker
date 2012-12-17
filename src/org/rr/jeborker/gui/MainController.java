@@ -29,6 +29,7 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
@@ -164,7 +165,7 @@ public class MainController {
 	 * @return The desired EBorkerMainController.
 	 */
 	public static MainController getController() {
-		if(controller==null) {
+		if(controller == null) {
 			controller = new MainController();
 			controller.initialize();
 		}
@@ -181,6 +182,7 @@ public class MainController {
 	
 	private void initialize() {
 		mainWindow = new MainView();
+		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.version + " started");
 		initListeners();
 		initSubController();
 		

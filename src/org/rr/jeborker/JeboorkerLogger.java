@@ -1,12 +1,16 @@
 package org.rr.jeborker;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 import org.rr.jeborker.gui.MainController;
 
 public class JeboorkerLogger extends Handler {
-
+	
+	public static final StringBuilder log = new StringBuilder();
+	
 	@Override
 	public void close() throws SecurityException {
 	}
@@ -18,6 +22,7 @@ public class JeboorkerLogger extends Handler {
 	@Override
 	public void publish(LogRecord record) {
 		toConsole(record);
+		toAppLog(record);
 		if(MainController.isInitialized()) {
 			toMonitor(record);
 		}
@@ -32,7 +37,7 @@ public class JeboorkerLogger extends Handler {
 	}
 	
 	private static void toMonitor(LogRecord record) {
-		if(record.getMessage()!=null) {
+		if (record.getMessage() != null) {
 			String thrownCause = "";
 			if(record.getThrown() != null) {
 				thrownCause = record.getThrown().getMessage();
@@ -44,5 +49,19 @@ public class JeboorkerLogger extends Handler {
 		}
 	}
 	
-
+	private static void toAppLog(LogRecord record) {
+		if (record.getMessage() != null) {
+			log.append(record.getMessage());
+			log.append("\n");
+		}
+		
+		if(record.getThrown() != null) {
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter printWriter = new PrintWriter(stringWriter);
+			record.getThrown().printStackTrace(new PrintWriter(stringWriter));
+			printWriter.flush();
+			printWriter.close();
+			log.append(stringWriter.getBuffer());
+		}
+	}
 }
