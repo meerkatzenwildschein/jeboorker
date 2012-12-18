@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -167,8 +168,9 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		}
 		
 		// remove the listener from the old table
-		if (this.table != null)
+		if (this.table != null) {
 			this.table.getSelectionModel().removeListSelectionListener(selectionListener);
+		}
 
 		// prepare the new table
 		table.getSelectionModel().addListSelectionListener(selectionListener);
@@ -178,6 +180,11 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		
 		// use the new table as our table
 		this.table = table;
+	}
+	
+	public ListSelectionModel getSelectionModel() {
+		ListSelectionModel selectionModel = this.table.getSelectionModel();
+		return selectionModel;
 	}
 
 	/**
