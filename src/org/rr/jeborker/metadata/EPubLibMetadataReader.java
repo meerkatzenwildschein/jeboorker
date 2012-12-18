@@ -319,10 +319,6 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		return result;
 	}
 
-	private MetadataProperty createSupportedMetadataProperty(String tagName) {
-		return new EpubLibMetadataProperty<Void>(tagName, "", null);
-	}
-
 	@Override
 	public String getPlainMetaData() {
 		try {
