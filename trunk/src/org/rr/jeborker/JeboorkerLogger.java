@@ -2,6 +2,8 @@ package org.rr.jeborker;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -51,7 +53,7 @@ public class JeboorkerLogger extends Handler {
 	
 	private static void toAppLog(LogRecord record) {
 		if (record.getMessage() != null) {
-			log.append(record.getMessage());
+			log.append(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + record.getLevel() + ": " + record.getMessage());
 			log.append("\n");
 		}
 		
