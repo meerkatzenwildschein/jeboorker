@@ -4,9 +4,11 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
@@ -120,7 +122,10 @@ class MainControllerUtils {
 							MainController.getController().refreshTableSelectedItem(true);
 						}
 					});
-				} finally {
+				}
+				 catch(Exception e) {
+					 LoggerFactory.getLogger().log(Level.WARNING, "Could not write multiple Metadata", e);
+				 } finally { 
 					writer.dispose();
 				}
 			}

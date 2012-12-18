@@ -42,6 +42,7 @@ import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
+import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheet;
@@ -386,6 +387,11 @@ public class MainController {
 	public void setRatingToSelectedEntry(int rating) {
 		final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
 		final Property ratingProperty = model.getRatingProperty();
+		final int ratingIdx = model.getRatingIndex();
+		
+		if(ratingIdx >= 0) {
+			mainWindow.propertySheet.getSelectionModel().setSelectionInterval(ratingIdx, ratingIdx);
+		}
 		
 		if(ratingProperty != null) {
 			ratingProperty.setValue(rating);
@@ -393,11 +399,16 @@ public class MainController {
 			List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
 			for (EbookPropertyItem item : selectedEbookPropertyItems) {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
-				MetadataProperty ratingMetaData = reader.createRatingMetaData();
-				
-				final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetaData, Collections.singletonList(item), 0);
-				this.addMetadataProperty(createProperty);				
-				createProperty.setValue(rating);
+				List<MetadataProperty> metadataByType = reader.getMetadataByType(true, model.getAllMetaData(), METADATA_TYPES.RATING);
+				if(!metadataByType.isEmpty()) {
+					MetadataProperty ratingMetaData = metadataByType.get(0);
+					
+					final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetaData, Collections.singletonList(item), 0);
+					createProperty.setValue(rating);
+					this.addMetadataProperty(createProperty);
+				} else {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "Rating entry is not available.");
+				}
 			}
 		}
 	}

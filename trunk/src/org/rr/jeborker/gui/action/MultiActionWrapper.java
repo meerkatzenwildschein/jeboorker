@@ -34,6 +34,7 @@ class MultiActionWrapper extends AbstractAction {
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, firstActionInstance.getValue(ApplicationAction.SINGLETON_ACTION_KEY));
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final Iterator<IResourceHandler> iterator = handlers.iterator();

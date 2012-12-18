@@ -294,11 +294,6 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 	
 	@Override
-	public MetadataProperty createRatingMetaData() {
-		return new MetadataProperty("Rating", "");
-	}
-	
-	@Override
 	public String getPlainMetaDataMime() {
 		return "text/xml";
 	}
@@ -345,7 +340,11 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			case SERIES_NAME:
 				search = "seriesname";
 				name = "seriesname";
-				break;						
+				break;		
+			case RATING:
+				search = "rating";
+				name = "Rating";
+				break;					
 			case AUTHOR:
 				return this.getAuthorMetaData(create, props);
 			default:

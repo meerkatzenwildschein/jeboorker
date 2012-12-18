@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.beans.PropertyEditor;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JPanel;
@@ -31,6 +32,9 @@ public class StarRatingPropertyEditor extends JPanel implements PropertyEditor {
 	}
 
 	public void setValue(Object value) {
+		if(value instanceof List) {
+			value = ((List)value).get(0);
+		}
 		Number number = CommonUtils.toNumber(value);
 		if (number != null) {
 			float rating = number.floatValue() / 2f;

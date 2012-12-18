@@ -75,12 +75,6 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public MetadataProperty createRatingMetaData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		for(METADATA_TYPES type : METADATA_TYPES.values()) {
 			for(MetadataProperty metadataProperty : metadataProperties) {
