@@ -10,6 +10,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -76,8 +78,6 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	private boolean labelSetupComplete = false;
 
 	public EbookTableCellComponent() {
-		
-		
 		//workaround for a swing bug. The first time, the editor is used, the 
 		//ui color instance draws the wrong color but have the right rgb values.
 		Color color;
@@ -136,6 +136,16 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		gbc_test.insets = new Insets(3, 0, 0, 0);
 		gbc_test.gridx = 2;
 		gbc_test.gridy = 1;
+		starRater.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(starRater.getSelection() > 0) {
+					MainController.getController().setRatingToSelectedEntry(starRater.getSelection() * 2);
+				}				
+			}
+			
+		});
 		add(starRater, gbc_test);		
 		
 		secondLineLabel = new JLabel("");

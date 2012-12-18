@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.cms.MetaData;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
@@ -20,7 +21,7 @@ public interface IMetadataReader {
 		public List<String> getValue(EbookPropertyItem item);
 	}	
 	
-	static enum METADATA_TYPES implements MetadataEntryType {
+	public static enum METADATA_TYPES implements MetadataEntryType {
 		AUTHOR {
 			public String getName() {
 				return "author";
@@ -87,7 +88,27 @@ public interface IMetadataReader {
 			public List<String> getValue(EbookPropertyItem item) {
 				return new ArrayList<String>(Collections.singleton(item.getGenre()));
 			}				
-		}		
+		},
+		RATING {
+			public String getName() {
+				return "rating";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				String raintgValue = metadataProperty.getValueAsString();
+				Number num = CommonUtils.toNumber(raintgValue);
+				if(num != null) {
+					item.setRating(num.intValue());
+				} else {
+					item.setRating(null);
+				}
+			}
+			
+			@Override
+			public List<String> getValue(EbookPropertyItem item) {
+				return new ArrayList<String>(Collections.singleton(item.getRating() != null ? Integer.valueOf(item.getRating()).toString() : null));
+			}				
+		}			
 	}	
 	
 	/**
@@ -107,12 +128,6 @@ public interface IMetadataReader {
 	 * @return All supported metadata entries.
 	 */
 	public List<MetadataProperty> getSupportedMetaData();
-	
-	/**
-	 * Gets a new, empty metadata property for the rating value.
-	 * @return The desired metadata property.
-	 */
-	public MetadataProperty createRatingMetaData();	
 	
 	/**
 	 * Sets the {@link EbookPropertyItem} properties from the given {@link MetadataProperty}.

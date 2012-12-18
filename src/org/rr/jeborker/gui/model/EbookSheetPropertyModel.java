@@ -85,6 +85,20 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		return null;
 	}
 	
+	/**
+	 * The rating property.
+	 * @return The desired rating property or <code>null</code> if no rating property is exists.
+	 */
+	public int getRatingIndex() {
+		List<Property> properties = getProperties();
+		for (int i = 0; i < properties.size(); i++) {
+			if(properties.get(i).getName().toLowerCase().indexOf("rating") != -1) {
+				return i;
+			}
+		}
+		return -1;
+	}	
+	
 	public void loadProperties(EbookPropertyItem item) {
 		this.resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
 		if(this.reader != null) {

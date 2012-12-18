@@ -319,11 +319,6 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		return result;
 	}
 
-	@Override
-	public MetadataProperty createRatingMetaData() {
-		return createSupportedMetadataProperty("calibre:rating");
-	}
-
 	private MetadataProperty createSupportedMetadataProperty(String tagName) {
 		return new EpubLibMetadataProperty<Void>(tagName, "", null);
 	}
@@ -363,6 +358,10 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			Meta seriesName = new Meta(EPUB_METADATA_TYPES.CALIBRE_SERIES.getName(), "");
 			newProperty = new EpubLibMetadataProperty<Meta>(seriesName.getName(), "", seriesName);
 			break;
+		case RATING:
+			Meta ratingName = new Meta(EPUB_METADATA_TYPES.CALIBRE_RATING.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Meta>(ratingName.getName(), "", ratingName);
+			break;			
 		default: newProperty = null;
 		}
 
