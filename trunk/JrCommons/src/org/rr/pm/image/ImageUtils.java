@@ -106,12 +106,21 @@ public class ImageUtils {
 			}
 			
 			if(bi == null && bin != null) {
-				bi = decodeJpegInternal(resourceLoader);
+				try {
+					bin.reset();
+					bi = decodeJpegInternal(bin, resourceLoader);
+				} catch (IOException e) {
+					try {
+						bi = decodeJpegInternal(resourceLoader.getContentInputStream(), resourceLoader);
+					} catch (IOException e1) {
+					}
+				}
 			}
 			
 			if(bi == null && bin != null) {
 				try {
-					if(jpegCodecClass!=null) {
+					if(jpegCodecClass != null) {
+						bin.reset();
 						final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
 						bi = decoder.decodeAsBufferedImage();
 					}
@@ -128,7 +137,7 @@ public class ImageUtils {
 	 * @param resourceLoader The jpeg resource to be loaded.
 	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
 	 */
-	private static BufferedImage decodeJpegInternal(IResourceHandler resourceLoader) {
+	private static BufferedImage decodeJpegInternal(InputStream in, IResourceHandler resourceLoader) {
 		try {
 			JpegDecoder decoder = new JpegDecoder();
 			return toBufferedImage(decoder.decode(resourceLoader.getContentInputStream()));

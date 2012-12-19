@@ -47,6 +47,11 @@ public class ResourceHandlerFactory {
 			public InputStream getContentInputStream() {
 				return new ByteArrayInputStream(content);
 			}
+
+			@Override
+			public long length() {
+				return content.length;
+			}
 		});
 	}	
 	

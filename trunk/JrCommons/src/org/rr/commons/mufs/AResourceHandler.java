@@ -7,10 +7,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -330,13 +333,19 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	 * To prevent this, the garbage collector is triggered if not enough space is 
 	 * present.
 	 * @param heapRequired The amount of heap needed in the near future.
+	 * @throws IOException 
 	 */
-	protected void cleanHeapIfNeeded(long heapRequired) {
-		//MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-		long heapFreeSize = Runtime.getRuntime().freeMemory();
-		if(heapFreeSize < heapRequired) {
-			System.err.println("Garbage collector triggered manually. Only " + heapFreeSize + " bytes remaining.");
+	protected void cleanHeapIfNeeded(long heapRequired) throws IOException {
+		final MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+		final long heapFreeSize = heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed();
+
+		if(heapFreeSize < heapRequired * 2) {
+			LoggerFactory.getLogger().log(Level.INFO , "Garbage collector triggered manually. " + heapFreeSize + " bytes remaining but " + heapRequired + " required.");
 			System.gc();
+			try {Thread.sleep(100);} catch (InterruptedException e) {}
+//			if(heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed() < heapRequired) {
+//				throw new IOException("Not enough memory to read file " + getName() + " size " + size() + ". Only " + (heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed() ) + " free");
+//			}
 		}
 	}
 	

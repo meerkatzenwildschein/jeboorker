@@ -61,6 +61,7 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 
 	@Override
 	public InputStream getContentInputStream() throws IOException {
+		this.cleanHeapIfNeeded(this.data.length());
 		if(this.data != null) {
 			return this.data.getContentInputStream();
 		} else {

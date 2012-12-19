@@ -163,7 +163,15 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public byte[] getContent() throws IOException {
-		this.cleanHeapIfNeeded(this.file.length());
+		try {
+			this.cleanHeapIfNeeded(this.file.length());
+			return FileUtils.readFileToByteArray(this.file);
+		} catch(Error e) {
+			if(e instanceof OutOfMemoryError) {
+				System.gc();
+				
+			}
+		}
 		return FileUtils.readFileToByteArray(this.file);
 	}
 
