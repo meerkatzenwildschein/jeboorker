@@ -86,7 +86,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			}					
 			
 			return result;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for pdf " + ebookResource, e);
 		}
 		return new ArrayList<MetadataProperty>(0);

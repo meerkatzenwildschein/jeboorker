@@ -679,6 +679,11 @@ public class MainController {
 				byteArrayInputStream.reset();
 				return byteArrayInputStream;
 			}
+
+			@Override
+			public long length() {
+				return cover.length;
+			}
 			}));
 		} else {
 			setImageViewerResource(null);

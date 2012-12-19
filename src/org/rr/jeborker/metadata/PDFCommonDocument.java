@@ -135,12 +135,17 @@ abstract class PDFCommonDocument {
 		private PdfReader pdfReader;
 		
 		ItextPDFDocument(IResourceHandler pdfFile) {
+			byte[] pdfdata = null;
 			try {
-				byte[] pdfdata = pdfFile.getContent();
+				pdfdata = pdfFile.getContent();
+				
+				//use byte[] instead of InputStream because itext read the stream
+				//into a ByteArrayOutputStream and than does a toByteArray() which 
+				//does another copy of the bytes.
 				this.pdfReader = new PdfReader(pdfdata);
-			} catch(Exception e) {
-				throw new RuntimeException(e);
-			} 			
+			} catch(Throwable e) {
+				throw new RuntimeException(e.getMessage() + " at '" + pdfFile.getName() + "'", e);
+			}
 		}
 		
 		@Override
@@ -288,10 +293,10 @@ abstract class PDFCommonDocument {
 		PDFBoxPDFDocument(IResourceHandler pdfFile) {
 			InputStream pdfInputStream = null;
 			try {
-				pdfInputStream = new ByteArrayInputStream(pdfFile.getContent());
+				pdfInputStream = pdfFile.getContentInputStream();
 				this.doc = PDDocument.load(pdfInputStream);
-			} catch(Exception e) {
-				throw new RuntimeException(e);
+			} catch(Throwable e) {
+				throw new RuntimeException(e + " at '" + pdfFile.getName() + "'");
 			} finally {
 				IOUtils.closeQuietly(pdfInputStream);
 			}			

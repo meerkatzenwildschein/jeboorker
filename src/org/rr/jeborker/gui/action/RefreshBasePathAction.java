@@ -65,7 +65,7 @@ class RefreshBasePathAction extends AbstractAction {
 					doRefreshBasePath(path, e, controller.getProgressMonitor());
 				}
 			}
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			LoggerFactory.log(Level.WARNING, this, "Path " + path, ex);
 		} finally {
 			controller.refreshTable(true);
