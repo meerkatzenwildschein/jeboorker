@@ -90,7 +90,7 @@ public class NCXDocument {
 			TableOfContents tableOfContents = new TableOfContents(readTOCReferences(navMapElement.getChildNodes(), book));
 			book.setTableOfContents(tableOfContents);
 		} catch (Exception e) {
-			log.log(Level.WARNING, e.getMessage(), e);
+			log.log(Level.WARNING, e.getMessage() + " at " + book.getName(), e);
 		}
 		return ncxResource;
 	}
