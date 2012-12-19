@@ -120,9 +120,13 @@ class AddBasePathAction extends AbstractAction {
 			@Override
 			public boolean accept(IResourceHandler resource) {
 				if(resource.isFileResource() && resource.isEbookFormat()) {
-					final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
-					addEbookPropertyItem(item);
-					return true;
+					try {
+						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
+						addEbookPropertyItem(item);
+						return true;
+					} catch(Throwable e) {
+						LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed adding resource " + resource, e);
+					}
 				}
 				return false;
 			}

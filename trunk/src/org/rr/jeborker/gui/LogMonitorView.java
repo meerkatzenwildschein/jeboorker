@@ -19,12 +19,14 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
 import org.rr.jeborker.JeboorkerLogger;
+import javax.swing.JScrollPane;
 
 public class LogMonitorView extends JDialog implements ClipboardOwner {
 	
 	private JButton btnCopy;
 	private JTextArea textArea;
 	private JButton btnClose;
+	private JScrollPane scrollPane;
 	
 	public LogMonitorView(JFrame invoker, StringBuilder logContent) {
 		super(invoker);
@@ -39,15 +41,18 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
+		scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridwidth = 3;
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 0;
+		getContentPane().add(scrollPane, gbc_scrollPane);
+		
 		textArea = new JTextArea();
-		GridBagConstraints gbc_textArea = new GridBagConstraints();
-		gbc_textArea.gridwidth = 3;
-		gbc_textArea.insets = new Insets(0, 0, 5, 0);
-		gbc_textArea.fill = GridBagConstraints.BOTH;
-		gbc_textArea.gridx = 0;
-		gbc_textArea.gridy = 0;
+		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
-		getContentPane().add(textArea, gbc_textArea);
 		
 		btnCopy = new JButton("Copy");
 		GridBagConstraints gbc_btnCopy = new GridBagConstraints();

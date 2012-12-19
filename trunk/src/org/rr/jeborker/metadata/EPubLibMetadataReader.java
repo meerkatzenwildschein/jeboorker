@@ -44,7 +44,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			
 			final List<MetadataProperty> metadataList = this.createMetadataList(metadata);
 			return metadataList;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for epub " + ebookResourceHandler, e);
 		} finally {
 			ebookResourceHandler.dispose();
