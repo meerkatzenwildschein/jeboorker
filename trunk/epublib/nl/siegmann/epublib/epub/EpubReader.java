@@ -136,9 +136,13 @@ public class EpubReader {
 	private Resource processPackageResource(String packageResourceHref, Book book, Resources resources) {
 		Resource packageResource = resources.remove(packageResourceHref);
 		try {
-			PackageDocumentReader.read(packageResource, this, book, resources);
+			if(packageResource != null) {
+				PackageDocumentReader.read(packageResource, this, book, resources);
+			} else {
+				log.log(Level.WARNING, "Reference " + packageResourceHref + " for epub " + book.getName() + " did not exists");
+			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, e.getMessage() + " " + packageResourceHref, e);
+			log.log(Level.WARNING, e.getMessage() + " " + packageResourceHref + " for epub " + book.getName(), e);
 		}
 		return packageResource;
 	}
