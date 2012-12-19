@@ -11,7 +11,9 @@ public class LoggerFactory {
 	
 	private static final boolean DEBUG = true;
 	
-	private static final HashSet<Handler> loggers = new HashSet<Handler>();
+	private static final HashSet<Handler> LOGGERS = new HashSet<Handler>();
+	
+	private static final Logger LOGGER = Logger.getLogger("global").getParent();
 
 	/**
 	 * Gets a logger to be used for logging
@@ -81,14 +83,15 @@ public class LoggerFactory {
 	 * @param handler The handler to be used for each logger.
 	 */
 	public static void addHandler(Handler handler) {
-		loggers.add(handler);
+		LOGGER.addHandler(handler);
+		LOGGERS.add(handler);
 	}
 	
 	private static void publish(LogRecord record) {
-		if(loggers.isEmpty()) {
+		if(LOGGERS.isEmpty()) {
 			Logger.getAnonymousLogger().log(record);
 		} else {
-			for (Handler logger : loggers) {
+			for (Handler logger : LOGGERS) {
 				logger.publish(record);
 			}
 		}
