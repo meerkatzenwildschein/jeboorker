@@ -145,7 +145,7 @@ abstract class PDFCommonDocument {
 				this.pdfReader = new PdfReader(pdfdata);
 			} catch(Throwable e) {
 				throw new RuntimeException(e.getMessage() + " at '" + pdfFile.getName() + "'", e);
-			}
+			} 
 		}
 		
 		@Override
