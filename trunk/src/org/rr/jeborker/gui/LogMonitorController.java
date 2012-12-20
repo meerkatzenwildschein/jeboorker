@@ -10,9 +10,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 
 public class LogMonitorController {
 	
-	private LogMonitorView logMonitorView = null;
-	
-	private static int locationOffset = 0;
+	private static LogMonitorView logMonitorView = null;
 	
 	public static LogMonitorController getInstance() {
 		LogMonitorController controller = new LogMonitorController();
@@ -25,7 +23,7 @@ public class LogMonitorController {
 	}	
 	
 	private LogMonitorView getView() {
-		if(logMonitorView==null) {
+		if(logMonitorView == null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
 			logMonitorView = new LogMonitorView(mainWindow, JeboorkerLogger.log);
 			this.initialize();
@@ -35,8 +33,7 @@ public class LogMonitorController {
 	
 	private void initialize() {
 		JFrame mainWindow = MainController.getController().getMainWindow();
-		locationOffset = locationOffset + 10;
-		logMonitorView.setLocation(mainWindow.getLocation().x + locationOffset, mainWindow.getLocation().y + locationOffset);
+		logMonitorView.setLocation(mainWindow.getLocation().x, mainWindow.getLocation().y);
 		logMonitorView.setSize(800, 600);
 		logMonitorView.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		restorePropeties();
@@ -44,7 +41,6 @@ public class LogMonitorController {
 	
 	public void close() {
 		storeProperties();
-		locationOffset -= 10;
 		
 		logMonitorView.setVisible(false);
 		logMonitorView.dispose();
@@ -53,8 +49,8 @@ public class LogMonitorController {
 	private void storeProperties() {
 		JeboorkerPreferences.addEntryNumber("logDialogSizeWidth", getView().getSize().width);
 		JeboorkerPreferences.addEntryNumber("logDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addEntryNumber("logDialogLocationX", getView().getLocation().x - locationOffset);
-		JeboorkerPreferences.addEntryNumber("logDialogLocationY", getView().getLocation().y - locationOffset);
+		JeboorkerPreferences.addEntryNumber("logDialogLocationX", getView().getLocation().x);
+		JeboorkerPreferences.addEntryNumber("logDialogLocationY", getView().getLocation().y);
 	}	
 
 	private void restorePropeties() {

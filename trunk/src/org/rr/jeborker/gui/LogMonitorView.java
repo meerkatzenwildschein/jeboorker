@@ -51,6 +51,7 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 		getContentPane().add(scrollPane, gbc_scrollPane);
 		
 		textArea = new JTextArea();
+		textArea.setMargin(new Insets(3, 3, 3, 3));
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
 		
@@ -79,7 +80,7 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogMonitorView.this.setVisible(false);
+				LogMonitorController.getInstance().close();
 			}
 		});
 		
@@ -96,7 +97,11 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 			}
 			
 			private void setLogText() {
-				textArea.setText(JeboorkerLogger.log.toString());
+				int end = JeboorkerLogger.log.length();
+				int start = end > 10000 ? end - 10000 : 0;
+				char[] c = new char[end];
+				JeboorkerLogger.log.getChars(start, end, c, 0);
+				textArea.setText(new String(c));
 			}
 			
 		});
