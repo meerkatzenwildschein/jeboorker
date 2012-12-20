@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.1.7.0
+VIProductVersion 0.1.8.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -68,9 +68,11 @@ Section -Main SEC0000
     
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
-    File lib\commons-io-2.0.jar
+    File lib\bcpkix-jdk15on-147.jar
+    File lib\bcprov-ext-jdk15on-147.jar
+    File lib\commons-io-2.4.jar
     File lib\commons-lang-2.5.jar
-    File lib\itextpdf-5.3.4.jar
+    File lib\itextpdf-5.3.5.jar
     File lib\commons-logging-1.1.1.jar
     File lib\pdfbox-1.7.2-nightly.jar
     File lib\jeboorker.jar
@@ -135,47 +137,6 @@ done${UNSECTION_ID}:
 
 # Uninstaller sections
 Section /o -un.Main UNSEC0000
-    Delete /REBOOTOK $INSTDIR\lib\epubcheck\saxon.jar
-    Delete /REBOOTOK $INSTDIR\lib\epubcheck\jing.jar
-    Delete /REBOOTOK $INSTDIR\lib\epubcheck\epubcheck-1.2.jar
-    RMDir  $INSTDIR\lib\epubcheck
-    
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\javassist-3.16.1-GA.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\jna-3.4.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orient-commons-1.2.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-core-1.2.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-nativeos-1.2.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\orientdb-object-1.2.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\orientdb\persistence-api-1.0.jar
-    RMDir  $INSTDIR\lib\orientdb
-    
-    Delete /REBOOTOK $INSTDIR\lib\epublib\commons-vfs-1.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\epublib\htmlcleaner-2.2.jar
-    Delete /REBOOTOK $INSTDIR\lib\epublib\kxml2-2.2.2.jar
-    RMDir  $INSTDIR\lib\epublib
-    
-    Delete /REBOOTOK $INSTDIR\lib\jsoup-1.7.1.jar
-    Delete /REBOOTOK $INSTDIR\lib\junique-1.0.4.jar
-    Delete /REBOOTOK $INSTDIR\lib\jeboorker.jar
-    Delete /REBOOTOK $INSTDIR\lib\itextpdf-5.3.4.jar
-    Delete /REBOOTOK $INSTDIR\lib\commons-logging-1.1.1.jar
-    Delete /REBOOTOK $INSTDIR\lib\platform-3.4.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\commons-lang-2.5.jar
-    Delete /REBOOTOK $INSTDIR\lib\commons-io-2.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\bcprov-jdk15on-147.jar
-    Delete /REBOOTOK $INSTDIR\lib\jna-3.4.0.jar
-    Delete /REBOOTOK $INSTDIR\lib\platform-3.4.0.jar
-    RMDir  $INSTDIR\lib
-    
-    Delete /REBOOTOK $INSTDIR\Jeboorker32.exe
-    Delete /REBOOTOK $INSTDIR\Jeboorker64.exe
-    Delete /REBOOTOK $INSTDIR\Jeboorker32.lap
-    Delete /REBOOTOK $INSTDIR\Jeboorker64.lap
-    Delete /REBOOTOK $INSTDIR\Jeboorker.bat
-    Delete /REBOOTOK $INSTDIR\msvcr71.dll
-    Delete /REBOOTOK $INSTDIR\msvcr100.dll
-    Delete /REBOOTOK $INSTDIR\Readme.txt
-    
     RMDir $INSTDIR
     DeleteRegValue HKLM "${REGKEY}\Components" Main
 SectionEnd
