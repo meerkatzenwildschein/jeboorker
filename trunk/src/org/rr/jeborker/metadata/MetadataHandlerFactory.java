@@ -57,7 +57,7 @@ public class MetadataHandlerFactory {
 		if(resources.size() == 1) {
 			return getWriter(resources.get(0));
 		} else {
-			return new MultiMetadataHandler(resources);
+			return wrap(new MultiMetadataHandler(resources));
 		}
 	}	
 	
@@ -71,9 +71,9 @@ public class MetadataHandlerFactory {
 		final String mimeType = resource.getMimeType();
 		if(mimeType!=null) {
 			if(resource.getMimeType().equals(MIME_EPUB)) {
-				return new EPubLibMetadataWriter(resource);
+				return wrap(new EPubLibMetadataWriter(resource));
 			} else if(resource.getMimeType().equals(MIME_PDF)) {
-				return new PDFCommonMetadataWriter(resource);
+				return wrap(new PDFCommonMetadataWriter(resource));
 			}
 		}
 		return null;
@@ -125,4 +125,50 @@ public class MetadataHandlerFactory {
 		return null;
 	}
 	
+	/**
+	 * Wrap the given {@link IMetadataWriter} with the {@link MetadataWriterWrapper}.
+	 * @param writer The writer instance to be wrapped.
+	 * @return The MetadataWriterWrapper wrapping the given {@link IMetadataWriter} instance.
+	 */
+	private static IMetadataWriter wrap(final IMetadataWriter writer) {
+		return new MetadataWriterWrapper(writer);
+	}
+	
+	private static class MetadataWriterWrapper implements IMetadataWriter {
+
+		private IMetadataWriter writer;
+		
+		MetadataWriterWrapper(IMetadataWriter writer) {
+			this.writer = writer;
+		}
+		
+		@Override
+		public void writeMetadata(List<MetadataProperty> props) {
+			writer.writeMetadata(props);
+			latestReader = null;
+		}
+
+		@Override
+		public void setCover(byte[] cover) {
+			writer.setCover(cover);
+			latestReader = null;
+		}
+
+		@Override
+		public void storePlainMetadata(byte[] plainMetadata) {
+			writer.storePlainMetadata(plainMetadata);
+			latestReader = null;
+		}
+
+		@Override
+		public void dispose() {
+			writer.dispose();
+		}
+
+		@Override
+		public boolean isDisposed() {
+			return writer.isDisposed();
+		}
+		
+	}
 }
