@@ -122,12 +122,9 @@ class MainControllerUtils {
 							MainController.getController().refreshTableSelectedItem(true);
 						}
 					});
-				}
-				 catch(Exception e) {
+				} catch(Exception e) {
 					 LoggerFactory.getLogger().log(Level.WARNING, "Could not write multiple Metadata", e);
-				 } finally { 
-					writer.dispose();
-				}
+				} 
 			}
 		}
 	}

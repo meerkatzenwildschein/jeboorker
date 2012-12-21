@@ -38,13 +38,16 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 	@Override
 	public void writeMetadata(List<MetadataProperty> props) {
 		try {
-			final byte[] fetchXMPThumbnail = fetchXMPThumbnail();
+			final PDFCommonMetadataReader reader = (PDFCommonMetadataReader) MetadataHandlerFactory.getReader(ebookResource);
+			final byte[] fetchXMPThumbnail = reader.fetchXMPThumbnail(ebookResource);			
+			final List<MetadataProperty> readMetaData = reader.readMetaData();
+			
 			HashMap<String, String> info = new HashMap<String, String>();
 			XMPMetadata blankXMP = new XMPMetadata();
 
 			// flag wich tells if xmp meta data where really be created.
 			// so no empty xmp doc will be inserted.
-			boolean xmpMetadataSet = false;
+			boolean xmpMetadataSet = countXMPMetadataProperties(readMetaData) != countXMPMetadataProperties(props);
 			for (MetadataProperty metadataProperty : props) {
 				final String name = metadataProperty.getName();
 				final List<Object> value = metadataProperty.getValues();
@@ -85,16 +88,6 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
 		}
-	}
-
-	@Override
-	public void dispose() {
-		this.ebookResource = null;
-		if(pdfDoc != null) {
-			pdfDoc.dispose();
-			pdfDoc = null;
-		}
-		super.dispose();
 	}
 
 	@Override
@@ -166,13 +159,18 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		return pdfDoc.getXMPMetadata();	
 	}
 	
-	private byte[] fetchXMPThumbnail() throws Exception {
-		final PDFCommonMetadataReader reader = (PDFCommonMetadataReader) MetadataHandlerFactory.getReader(ebookResource);
-		try {
-			byte[] fetchXMPThumbnail = reader.fetchXMPThumbnail(ebookResource);
-			return fetchXMPThumbnail;
-		} finally {
-			reader.dispose();
+	/**
+	 * Evaluates the number of {@link PDFMetadataProperty} instances in the given {@link MetadataProperty} list.
+	 * @param metadataProperties The list to be tested.
+	 * @return The number of {@link PDFMetadataProperty} in the given list.
+	 */
+	private int countXMPMetadataProperties(final List<MetadataProperty> metadataProperties) {
+		int count = 0;
+		for(MetadataProperty metadataProperty : metadataProperties) {
+			if (metadataProperty instanceof PDFMetadataProperty) {
+				count ++;
+			}
 		}
+		return count;
 	}
 }

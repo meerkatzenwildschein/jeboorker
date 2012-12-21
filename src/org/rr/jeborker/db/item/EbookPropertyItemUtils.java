@@ -24,7 +24,6 @@ public class EbookPropertyItemUtils {
 	
     /**
      * Get all fields which are marked with a {@link ViewField} annotation.
-     * @param itemClass TODO
      * @return The desired fields.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -70,15 +69,11 @@ public class EbookPropertyItemUtils {
 
 		IMetadataReader reader = MetadataHandlerFactory.getReader(resource);
 		if(reader != null) {
-			try {
-				final List<MetadataProperty> metadataProperties = reader.readMetaData();
-				reader.fillEbookPropertyItem(metadataProperties, item);
-				if(refreshCover) {
-					final byte[] imageData = reader.getCover();
-					setupCoverData(item, imageData);
-				}
-			} finally {
-				reader.dispose();
+			final List<MetadataProperty> metadataProperties = reader.readMetaData();
+			reader.fillEbookPropertyItem(metadataProperties, item);
+			if(refreshCover) {
+				final byte[] imageData = reader.getCover();
+				setupCoverData(item, imageData);
 			}
 		}
 	}

@@ -159,8 +159,6 @@ public class PlainMetadataEditorController {
 					writer.storePlainMetadata(metadataContent.getBytes("UTF-8"));
 				} catch (UnsupportedEncodingException e1) {
 					LoggerFactory.logWarning(this, "Could not encode data to UTF-8 " + resourceHandler, e1);
-				} finally {
-					writer.dispose();
 				}
 
 				close();
@@ -204,7 +202,6 @@ public class PlainMetadataEditorController {
 		xmlMetadataView.setVisible(false);
 		xmlMetadataView.dispose();
 		if(this.reader != null) {
-			this.reader.dispose();
 			this.reader = null;
 		}
 	}

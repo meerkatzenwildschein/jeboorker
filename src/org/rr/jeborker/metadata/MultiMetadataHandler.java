@@ -118,11 +118,6 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public void dispose() {
-		super.dispose();
-	}
-
-	@Override
 	public void writeMetadata(List<MetadataProperty> props) {
 		for (int i = 0; i < ebookResourceHandler.size(); i++) {
 			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);

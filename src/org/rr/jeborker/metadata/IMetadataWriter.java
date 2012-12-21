@@ -25,17 +25,4 @@ public interface IMetadataWriter {
 	 * @param plainMetadata The data to be stored to the ebook.
 	 */
 	public void storePlainMetadata(byte[] plainMetadata);
-	
-	/**
-	 * Some clean up code. Should be invoked at the end of the readers usage
-	 * but it's not a must.
-	 */
-	public void dispose();	
-	
-	/**
-	 * Tells if the dispose method was already invoked for this {@link IMetadataReader} instance.
-	 * @return <code>true</code> if dispose was invoked and <code>false</code> otherwise.
-	 */
-	public boolean isDisposed();	
-
 }
