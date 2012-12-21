@@ -285,12 +285,6 @@ public interface IResourceHandler {
 	 * @return <code>true</code> if the resource is an image or <code>false</code> otherwise.
 	 */
 	public boolean isImageFormat();
-
-	/**
-	 * Tells if this {@link IResourceHandler} instance file format is an ebook.
-	 * @return <code>true</code> if the resource is an ebook or <code>false</code> otherwise.
-	 */
-	public boolean isEbookFormat();
 	
 	/**
 	 * Tells if this {@link IResourceHandler} instance is a remote one, which 

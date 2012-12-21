@@ -103,6 +103,26 @@ public final class CommonUtils implements Serializable {
 	}
 	
 	/**
+	 * Tries to convert the given parameter into a Boolean instance.
+	 * @return the boolean instance or <code>null</code> if the given parameter could not be converted. 
+	 */
+	public static Boolean toBoolean(final Object object) {
+		if(object == null) {
+			return null;
+		} else if(object instanceof Boolean) {
+			return (Boolean) object;
+		} else {
+			String objString = object.toString().toLowerCase().trim();
+			if(objString.equals("true") || objString.equals("0") || objString.equals("yes")) {
+				return Boolean.TRUE;
+			} else if(objString.equals("false") || objString.equals("1") || objString.equals("no")) {
+				return Boolean.FALSE;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Creates a <code>Number</code> object for the <code>Object</code>
 	 * specified with the <code>object</code> parameter.
 	 * 
