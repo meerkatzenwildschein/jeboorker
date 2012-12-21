@@ -2,6 +2,7 @@ package org.rr.jeborker.metadata;
 
 import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
 import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
+import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,8 @@ public class MetadataHandlerFactory {
 				return latestReader = new EPubLibMetadataReader(resource);
 			} else if(resource.getMimeType().equals(MIME_PDF)) {
 				return latestReader = new PDFCommonMetadataReader(resource);
+			} else if(resource.getMimeType().equals(MIME_CBZ)) {
+				return latestReader = new ComicBookMetadataReader(resource);
 			}
 		}
 		return null;
@@ -115,6 +118,8 @@ public class MetadataHandlerFactory {
 			if(resourceHandler.getMimeType().equals(MIME_EPUB)) {
 				return true;
 			} else if(resourceHandler.getMimeType().equals(MIME_PDF)) {
+				return true;
+			} else if(resourceHandler.getMimeType().equals(MIME_CBZ)) {
 				return true;
 			}
 		}	
