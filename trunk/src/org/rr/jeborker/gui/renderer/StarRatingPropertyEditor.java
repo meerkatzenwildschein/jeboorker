@@ -31,6 +31,7 @@ public class StarRatingPropertyEditor extends JPanel implements PropertyEditor {
 		return this;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setValue(Object value) {
 		if(value instanceof List) {
 			value = ((List)value).get(0);
