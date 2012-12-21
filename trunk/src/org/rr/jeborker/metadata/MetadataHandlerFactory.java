@@ -3,9 +3,11 @@ package org.rr.jeborker.metadata;
 import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
 import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.ListUtils;
 
 public class MetadataHandlerFactory {
 	
@@ -17,6 +19,11 @@ public class MetadataHandlerFactory {
 	 * @return The desired {@link IMetadataReader} instance.
 	 */
 	public static IMetadataReader getReader(final List<IResourceHandler> resources) {
+		IMetadataReader cachedReader = null;
+		if((cachedReader = getCachedReader(resources)) != null) {
+			return cachedReader;
+		}
+		
 		if(resources.size() == 1) {
 			return latestReader = getReader(resources.get(0));
 		} else {
@@ -31,8 +38,9 @@ public class MetadataHandlerFactory {
 	 * 	for the given {@link IResourceHandler}.
 	 */
 	public static IMetadataReader getReader(final IResourceHandler resource) {
-		if(getCachedReader(resource) != null) {
-			return getCachedReader(resource);
+		IMetadataReader cachedReader = null;
+		if((cachedReader = getCachedReader(Collections.singletonList(resource))) != null) {
+			return cachedReader;
 		}
 		
 		final String mimeType = resource.getMimeType();
@@ -118,9 +126,17 @@ public class MetadataHandlerFactory {
 	 * @param resourceHandler The {@link IResourceHandler} for the requested {@link IMetadataReader} instance.
 	 * @return The cached {@link IMetadataReader} or <code>null</code> if the latest {@link IMetadataReader} is no longer usable.
 	 */
-	private static IMetadataReader getCachedReader(IResourceHandler resourceHandler) {
-		if(latestReader != null && !latestReader.isDisposed() && latestReader.getEbookResource() != null && latestReader.getEbookResource().size() == 1 && resourceHandler.equals(latestReader.getEbookResource().get(0))) {
-			return latestReader;
+	private static IMetadataReader getCachedReader(final List<IResourceHandler> resourceHandler) {
+		if(latestReader != null && latestReader.getEbookResource() != null) {
+			if(resourceHandler.size() > 1 && resourceHandler.size() == latestReader.getEbookResource().size()) {
+				List<IResourceHandler> ebookResource = latestReader.getEbookResource();
+				List<IResourceHandler> difference = ListUtils.difference(ebookResource, resourceHandler);
+				if(difference.isEmpty()) {
+					return latestReader;
+				}
+			} else if(latestReader.getEbookResource().size() == 1 && resourceHandler.size() == 1 && resourceHandler.get(0).equals(latestReader.getEbookResource().get(0))) {
+				return latestReader;
+			}
 		}
 		return null;
 	}
@@ -134,6 +150,10 @@ public class MetadataHandlerFactory {
 		return new MetadataWriterWrapper(writer);
 	}
 	
+	/**
+	 * Wrapper for all {@link IMetadataWriter}. It's needed for resetting the cached {@link IMetadataReader} instance
+	 * because the reader data are out of date after a writer does it's write.
+	 */
 	private static class MetadataWriterWrapper implements IMetadataWriter {
 
 		private IMetadataWriter writer;
@@ -159,16 +179,5 @@ public class MetadataHandlerFactory {
 			writer.storePlainMetadata(plainMetadata);
 			latestReader = null;
 		}
-
-		@Override
-		public void dispose() {
-			writer.dispose();
-		}
-
-		@Override
-		public boolean isDisposed() {
-			return writer.isDisposed();
-		}
-		
 	}
 }

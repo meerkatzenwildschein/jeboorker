@@ -84,13 +84,4 @@ abstract class APDFCommonMetadataHandler extends AMetadataHandler {
 
 		return xmpSchema;
 	}	
-	
-	public void dispose() {
-		if(this.schemas != null) {
-			this.schemas.clear();
-			this.schemas = null;
-		}
-		super.dispose();
-	}	
-		
 }

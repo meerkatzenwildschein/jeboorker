@@ -163,16 +163,4 @@ public interface IMetadataReader {
 	 */
 	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type);
 	
-	/**
-	 * Some clean up code. Should be invoked at the end of the readers usage
-	 * but it's not a must.
-	 */
-	public void dispose();
-	
-	/**
-	 * Tells if the dispose method was already invoked for this {@link IMetadataReader} instance.
-	 * @return <code>true</code> if dispose was invoked and <code>false</code> otherwise.
-	 */
-	public boolean isDisposed();
-	
 }

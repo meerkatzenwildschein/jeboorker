@@ -474,15 +474,6 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		}
 		return null;
 	}
-	
-	public void dispose() {
-		this.containerOpfData = null;
-		this.zipContent = null;
-		this.ebookResourceHandler = null;
-		this.opfFileName = null;
-		this.isDisposed = true;
-		super.dispose();
-	}
 
 	/**
 	 * Gets the cover name from the metadata node.

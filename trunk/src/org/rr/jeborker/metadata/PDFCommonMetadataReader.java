@@ -111,7 +111,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}	
 	
 	private void addSchemaProperties(final ArrayList<MetadataProperty> result, final XMPSchema schema) throws IOException {
-		if(schema==null) {
+		if(schema == null) {
 			return;
 		}
 		
@@ -158,15 +158,6 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	@Override
-	public void dispose() {
-		if(this.pdfDoc != null) {
-			this.pdfDoc.dispose();
-		}
-		this.pdfDoc = null;
-		super.dispose();
-	}
-
-	@Override
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		item.clearMetadata();
 		MetadataProperty authorMetadataProperty = null;
@@ -209,7 +200,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		byte[] tumbnailData = null;
 		try {
 			byte[] fetchThumbnail = fetchXMPThumbnail(ebookResource);
-			if(fetchThumbnail!=null) {
+			if(fetchThumbnail != null) {
 				return fetchThumbnail;
 			} else {
 				return pdfDoc.fetchCoverFromPDFContent();
