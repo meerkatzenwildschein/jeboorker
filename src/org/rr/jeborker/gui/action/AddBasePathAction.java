@@ -1,5 +1,9 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Iterator;
@@ -119,7 +123,7 @@ class AddBasePathAction extends AbstractAction {
 			
 			@Override
 			public boolean accept(IResourceHandler resource) {
-				if(resource.isFileResource() && resource.isEbookFormat()) {
+				if(resource.isFileResource() && isSupportedEbookFormat(resource)) {
 					try {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
 						addEbookPropertyItem(item);
@@ -134,7 +138,25 @@ class AddBasePathAction extends AbstractAction {
 		return count;
 	}
 	
-	
+	/**
+	 * Tells if this {@link AResourceHandler} instance file format is an image.
+	 * @return <code>true</code> if the resource is an image or <code>false</code> otherwise.
+	 */
+	private static boolean isSupportedEbookFormat(IResourceHandler resource) {
+		final String mime = resource.getMimeType();
+		if(mime==null || mime.length()==0) {
+			return false;
+		}
+		
+		if(mime.equals(MIME_EPUB)) {
+			return true;
+		} else if(mime.equals(MIME_PDF)) {
+			return true;
+		} else if(mime.equals(MIME_CBZ)) {
+			return true;
+		}
+		return false;
+	}		
 
 	
 	/**
