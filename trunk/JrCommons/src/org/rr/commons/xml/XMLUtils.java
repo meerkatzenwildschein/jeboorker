@@ -13,6 +13,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
@@ -89,6 +90,24 @@ public class XMLUtils {
 		throw new IOException("No xml data");
 	}
 
+    /**
+     *  Create new XML document.
+     *
+     * @param  rootElementName  name of the root element to add, or <code>null</code> if the
+     *      document should not have any root just yet
+     * @throws ParserConfigurationException 
+     */
+    public Document createEmptyDocument(String rootElementName) throws ParserConfigurationException {
+    	final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    	final DocumentBuilder builder = factory.newDocumentBuilder();
+        Document result = builder.newDocument();
+
+        if (rootElementName != null) {
+            Element rootElement = result.createElement(rootElementName);
+            result.appendChild(rootElement);
+        }
+        return result;
+    }	
 	
 	/**
 	 * Tests if the given xml data could be parsed into a document.

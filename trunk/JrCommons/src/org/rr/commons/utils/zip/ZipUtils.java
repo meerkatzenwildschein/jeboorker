@@ -15,13 +15,17 @@ import org.rr.commons.log.LoggerFactory;
 public class ZipUtils {
 
 	public static List<String> list(byte[] zipData) {
+		return list(new ByteArrayInputStream(zipData));
+	}
+	
+	public static List<String> list(InputStream zipData) {
 		if (zipData == null) {
 			return null;
 		}
 
 		ZipInputStream jar = null;
 		try {
-			jar = new ZipInputStream(new ByteArrayInputStream(zipData));
+			jar = new ZipInputStream(zipData);
 			final ArrayList<String> result = new ArrayList<String>();
 			
 			ZipEntry nextEntry;
@@ -33,13 +37,17 @@ public class ZipUtils {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(jar!=null) {
+			if(jar != null) {
 				try {jar.close();} catch (IOException e) {}
 			}
 		}
 	}
     	
 	public static List<ZipDataEntry> extract(byte[] zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
+		return extract(new ByteArrayInputStream(zipData), zipDataFileNameEncoding, filter, maxEntries);
+	}
+	
+	public static List<ZipDataEntry> extract(InputStream zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
 		if(zipData==null) {
 			return null;
 		}
@@ -49,7 +57,7 @@ public class ZipUtils {
 		
 		org.rr.commons.utils.zip.ZipInputStream zipIn = null;
 		try {
-			zipIn = new org.rr.commons.utils.zip.ZipInputStream(new ByteArrayInputStream(zipData), zipDataFileNameEncoding);
+			zipIn = new org.rr.commons.utils.zip.ZipInputStream(zipData, zipDataFileNameEncoding);
 			final ArrayList<ZipDataEntry> result = new ArrayList<ZipDataEntry>();
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -78,8 +86,16 @@ public class ZipUtils {
 		}
 	}
 	
+	public static List<ZipDataEntry> extract(InputStream zipData, ZipFileFilter filter, int maxEntries) {
+		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
+	}
+	
 	public static List<ZipDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
 		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
+	}
+	
+	public static ZipDataEntry extract(byte[] zipData, String entry) {
+		return extract(new ByteArrayInputStream(zipData), entry);
 	}
 
 	/**
@@ -88,7 +104,7 @@ public class ZipUtils {
 	 * @param entry The entry to be extracted. for example 'META-INF/container.xml'
 	 * @return The desired entry or <code>null</code> if the entry is not in the zip.
 	 */
-	public static ZipDataEntry extract(byte[] zipData, String entry) {
+	public static ZipDataEntry extract(InputStream zipData, String entry) {
 		if(entry==null) {
 			return null;
 		}
@@ -98,7 +114,7 @@ public class ZipUtils {
 		
 		org.rr.commons.utils.zip.ZipInputStream jar = null;
 		try {
-			jar = new org.rr.commons.utils.zip.ZipInputStream(new ByteArrayInputStream(zipData));
+			jar = new org.rr.commons.utils.zip.ZipInputStream(zipData);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final byte[] readBuff = new byte[4096];

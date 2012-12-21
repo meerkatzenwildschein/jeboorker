@@ -125,6 +125,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 				return (this.mime = "application/epub+zip");
 			} else if(lowerCasedResourceString.endsWith(".pdf")) {
 				return (this.mime = "application/pdf");
+			} else if(lowerCasedResourceString.endsWith(".cbz")) {
+				return (this.mime = "application/x-cbz");
 			} else if(lowerCasedResourceString.endsWith(".html") || lowerCasedResourceString.endsWith(".htm")) {
 				return (this.mime = "text/html");
 			} else if(lowerCasedResourceString.endsWith(".xml")) {
@@ -159,25 +161,6 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public boolean isImageFormat() {
 		return getMimeType()!=null && getMimeType().startsWith("image/");
 	}
-	
-	/**
-	 * Tells if this {@link AResourceHandler} instance file format is an image.
-	 * @return <code>true</code> if the resource is an image or <code>false</code> otherwise.
-	 */
-	@Override
-	public boolean isEbookFormat() {
-		final String mime = getMimeType();
-		if(mime==null || mime.length()==0) {
-			return false;
-		}
-		
-		if(mime.equals("application/epub+zip")) {
-			return true;
-		} else if(mime.equals("application/pdf")) {
-			return true;
-		}
-		return false;
-	}	
 	
 	/**
 	 * Gets the file extension of the file resource. The last three characters behind the dot must not 
