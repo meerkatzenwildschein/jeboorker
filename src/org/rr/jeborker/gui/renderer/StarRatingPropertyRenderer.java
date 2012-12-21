@@ -25,6 +25,7 @@ public class StarRatingPropertyRenderer extends JPanel implements TableCellRende
 		this.add(starRater, BorderLayout.CENTER);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setRatingValue(Object value) {
 		if(value instanceof List) {
 			value = ((List)value).get(0);
