@@ -9,8 +9,13 @@ import java.io.Writer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -73,6 +78,19 @@ public class XMLUtils {
         return out.toString();
 	}
 	
+	public static String formatDocument2(Document document) throws TransformerException {
+	    DOMSource domSource = new DOMSource(document);
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    StreamResult streamResult = new StreamResult(out);
+	    TransformerFactory tf = TransformerFactory.newInstance();
+
+	    Transformer serializer = tf.newTransformer();
+	    serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	    serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+	    serializer.transform(domSource, streamResult);	
+	    return new String(out.toByteArray());
+	}
+	
 	/**
 	 * Creates a document from the given xml bytes.
 	 * @return The desired document. Never returns null but throws some Exception.
@@ -89,7 +107,7 @@ public class XMLUtils {
 		}
 		throw new IOException("No xml data");
 	}
-
+	
     /**
      *  Create new XML document.
      *
@@ -98,12 +116,28 @@ public class XMLUtils {
      * @throws ParserConfigurationException 
      */
     public static Document createEmptyDocument(String rootElementName) throws ParserConfigurationException {
+    	return createEmptyDocument(rootElementName, null);
+    }
+
+    /**
+     *  Create new XML document.
+     *
+     * @param  rootElementName  name of the root element to add, or <code>null</code> if the
+     *      document should not have any root just yet
+     * @throws ParserConfigurationException 
+     */
+    public static Document createEmptyDocument(String rootElementName, String namespace) throws ParserConfigurationException {
     	final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     	final DocumentBuilder builder = factory.newDocumentBuilder();
         Document result = builder.newDocument();
 
         if (rootElementName != null) {
-            Element rootElement = result.createElement(rootElementName);
+        	Element rootElement;
+        	if(namespace != null && !namespace.isEmpty()) {
+        		rootElement = result.createElement(rootElementName);
+        	} else {
+        		rootElement = result.createElementNS(rootElementName, namespace);
+        	}
             result.appendChild(rootElement);
         }
         return result;
