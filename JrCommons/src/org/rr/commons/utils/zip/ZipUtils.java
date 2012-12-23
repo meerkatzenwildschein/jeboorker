@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -183,21 +184,33 @@ public class ZipUtils {
 	 * @param zipData The zip data where the given entry should be added.
 	 * @param entry The entry to be added.
 	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
-	 */
+	 */	
 	public static byte[] add(byte[] zipData, ZipDataEntry entry) {
-		if(entry==null) {
-			return null;
+		ByteArrayInputStream in = new ByteArrayInputStream(zipData);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		add(in, out, entry);
+		return out.toByteArray();
+	}
+	
+	/**
+	 * Adds or replaces the given entry to existing zip data. Note that the whole zip is copied.
+	 * The given InputStream and OutputStream is flushed and closed.
+	 * 
+	 * @param zipDateInputStream The zip data where the given entry should be added.
+	 * @param OutputStream zipDateOutputStream The target for the zip data with the new or replaced entry.
+	 * @param entry The entry to be added.
+	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
+	 */
+	public static boolean add(InputStream zipDateInputStream, OutputStream zipDateOutputStream, ZipDataEntry entry) {
+		boolean success = false;
+		if (entry == null || zipDateInputStream == null || zipDateOutputStream == null) {
+			return success;
 		}
-		if(zipData==null) {
-			return null;
-		}
-		
-		ByteArrayInputStream input = new ByteArrayInputStream(zipData);
-	    ByteArrayOutputStream output = new ByteArrayOutputStream();
-	    ZipInputStream zipInputStream = new ZipInputStream(input);
-	    ZipOutputStream zipOutputStream = new ZipOutputStream(output);
-	    
-	    try {
+
+		try {
+		    ZipInputStream zipInputStream = new ZipInputStream(zipDateInputStream);
+		    ZipOutputStream zipOutputStream = new ZipOutputStream(zipDateOutputStream);
+		    
 	    	boolean replaceSuccess = false;
 		    ZipEntry zipEntryIn;
 		    while ((zipEntryIn = zipInputStream.getNextEntry()) != null) {
@@ -232,19 +245,17 @@ public class ZipUtils {
 		        zipInputStream.closeEntry();
 		        zipOutputStream.closeEntry();
 		    }
-		} catch(Exception e) {
+		    success = true;
+		} catch(Throwable e) {
 			LoggerFactory.logWarning(ZipUtils.class, "could not add data to zip", e);
-			return null;
+			success = false;
 		} finally {
-			IOUtils.closeQuietly(zipInputStream);
-			IOUtils.closeQuietly(zipOutputStream);
+			IOUtils.closeQuietly(zipDateInputStream);
+			IOUtils.closeQuietly(zipDateOutputStream);
 		}
-		byte[] result = output.toByteArray();
-		if(result.length > 0) {
-			return result;
-		}
-		return null;
-	}	
+		return success;
+	}
+	
 	
 	/**
 	 * Just a data holder class.
