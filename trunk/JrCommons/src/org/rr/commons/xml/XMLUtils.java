@@ -134,9 +134,9 @@ public class XMLUtils {
         if (rootElementName != null) {
         	Element rootElement;
         	if(namespace != null && !namespace.isEmpty()) {
-        		rootElement = result.createElement(rootElementName);
-        	} else {
         		rootElement = result.createElementNS(rootElementName, namespace);
+        	} else {
+        		rootElement = result.createElement(rootElementName);        		
         	}
             result.appendChild(rootElement);
         }
