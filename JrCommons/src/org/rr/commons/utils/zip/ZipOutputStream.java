@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Vector;
 import java.util.zip.CRC32;
+import java.util.zip.Deflater;
 import java.util.zip.ZipException;
 
 /**

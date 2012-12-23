@@ -97,7 +97,7 @@ public class XMLUtils {
      *      document should not have any root just yet
      * @throws ParserConfigurationException 
      */
-    public Document createEmptyDocument(String rootElementName) throws ParserConfigurationException {
+    public static Document createEmptyDocument(String rootElementName) throws ParserConfigurationException {
     	final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     	final DocumentBuilder builder = factory.newDocumentBuilder();
         Document result = builder.newDocument();
