@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata.comicbook;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,21 @@ public class ComicBookDocument {
 
 	private final List<ComicBookPageInfo> pages = new ArrayList<ComicBookPageInfo>();
 	
+	private List<String> archiveEntries;
+	
 	final byte[] comicInfoXml;
 	
-	byte[] cover = null;
-
-	ComicBookDocument(byte[] xml) {
-		this.comicInfoXml = xml;
+	private byte[] cover = null;
+	
+	private String xmlFilePath;
+	
+	private IArchiveHandler archiveHandler;
+	
+	ComicBookDocument(IArchiveHandler archiveHandler) {
+		this.archiveHandler = archiveHandler;
+		this.comicInfoXml = archiveHandler.getComicXmlData();
+		this.xmlFilePath = archiveHandler.getComicXmlFilename();
+		this.archiveEntries = archiveHandler.getArchiveEntries();
 	}
 	
 	public String getTitle() {
@@ -50,19 +60,21 @@ public class ComicBookDocument {
 		info.put("Number", number);
 	}
 
-	public int getCount() {
-		return (Integer) info.get("Count");
+	public Integer getCount() {
+		Object value = info.get("Count");
+		return ComicBookUtils.getAsInteger(value);
 	}
 
-	public void setCount(int count) {
+	public void setCount(Integer count) {
 		info.put("Count", count);
 	}
 
-	public int getVolume() {
-		return (Integer) info.get("Volume");
+	public Integer getVolume() {
+		Object value = info.get("Volume");
+		return ComicBookUtils.getAsInteger(value);
 	}
 
-	public void setVolume(int volume) {
+	public void setVolume(Integer volume) {
 		info.put("Volume", volume);
 	}
 
@@ -82,11 +94,12 @@ public class ComicBookDocument {
 		info.put("AlternateNumber", alternateNumber);
 	}
 
-	public int getAlternateCount() {
-		return (Integer) info.get("AlternateCount");
+	public Integer getAlternateCount() {
+		Object value = info.get("AlternateCount");
+		return ComicBookUtils.getAsInteger(value);
 	}
 
-	public void setAlternateCount(int alternateCount) {
+	public void setAlternateCount(Integer alternateCount) {
 		info.put("AlternateCount", alternateCount);
 	}
 
@@ -106,19 +119,21 @@ public class ComicBookDocument {
 		info.put("Notes", notes);
 	}
 
-	public int getYear() {
-		return (Integer) info.get("Year");
+	public Integer getYear() {
+		Object value = info.get("Year");
+		return ComicBookUtils.getAsInteger(value);
 	}
 
-	public void setYear(int year) {
+	public void setYear(Integer year) {
 		info.put("Year", year);
 	}
 
-	public int getMonth() {
-		return (Integer) info.get("Month");
+	public Integer getMonth() {
+		Object value = info.get("Month");
+		return ComicBookUtils.getAsInteger(value);
 	}
 
-	public void setMonth(int month) {
+	public void setMonth(Integer month) {
 		info.put("Month", month);
 	}
 
@@ -210,11 +225,12 @@ public class ComicBookDocument {
 		info.put("Web", web);
 	}
 
-	public int getPageCount() {
-		return (Integer) info.get("PageCount");
+	public Integer getPageCount() {
+		Object value = info.get("PageCount");
+		return ComicBookUtils.getAsInteger(value);
 	}
 
-	public void setPageCount(int pageCount) {
+	public void setPageCount(Integer pageCount) {
 		info.put("PageCount", pageCount);
 	}
 
@@ -235,7 +251,8 @@ public class ComicBookDocument {
 	}
 
 	public YeyNoType getBlackAndWhite() {
-		return (YeyNoType) info.get("BlackAndWhite");
+		Object value = info.get("BlackAndWhite");
+		return ComicBookUtils.getAsYesNoType(value);
 	}
 
 	public void setBlackAndWhite(YeyNoType blackAndWhite) {
@@ -243,7 +260,8 @@ public class ComicBookDocument {
 	}
 
 	public YeyNoType getManga() {
-		return (YeyNoType) info.get("Manga");
+		Object value = info.get("Manga");
+		return ComicBookUtils.getAsYesNoType(value);
 	}
 
 	public void setManga(YeyNoType manga) {
@@ -259,14 +277,37 @@ public class ComicBookDocument {
 	}
 
 	public byte[] getCover() {
-		return cover;
-	}
-
-	void setCover(byte[] cover) {
-		this.cover = cover;
+		if(this.cover == null) {
+			//search for the page which specifies the cover image in the archive
+			for(ComicBookPageInfo page : pages) {
+				if(page.getType() != null && page.getType().equals(ComicPageType.TYPE_FRONTCOVER)) {
+					int index = page.getImage();
+					String archiveEntry = archiveEntries.get(index);
+						try {
+							this.cover = archiveHandler.getArchiveEntry(archiveEntry);
+						} catch (IOException e) {
+						}
+					break;
+				}
+			}
+			
+			//simply get the first image as cover image
+			if(this.cover == null && !archiveEntries.isEmpty()) {
+				try {
+					this.cover = archiveHandler.getArchiveEntry(archiveEntries.get(0));
+				} catch (IOException e) {
+				}
+			}
+		}
+		return this.cover;
 	}
 
 	public byte[] getComicInfoXml() {
 		return comicInfoXml;
 	}
+	
+	String getComicInfoFilePath() {
+		return this.xmlFilePath;
+	}
+	
 }

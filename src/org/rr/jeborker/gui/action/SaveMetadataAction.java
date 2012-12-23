@@ -1,11 +1,13 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
@@ -55,6 +57,8 @@ class SaveMetadataAction extends AbstractAction {
 			try {
 				controller.saveProperties(-1, -1); //save selected properties
 				action.setEnabled(false);
+			} catch(Exception ex) {
+				LoggerFactory.getLogger().log(Level.WARNING, "Saving metadata has failed.", ex);
 			} finally {
 				progressMonitor.monitorProgressStop();
 			}
