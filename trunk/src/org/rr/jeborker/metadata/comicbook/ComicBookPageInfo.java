@@ -1,74 +1,75 @@
 package org.rr.jeborker.metadata.comicbook;
 
-public class ComicBookPageInfo {
+import java.util.HashMap;
 
-	private int image; //required
+public class ComicBookPageInfo {
 	
-	private ComicPageType story;
-	
-	private boolean doublePage;
-	
-	private long imageSize;
-	
-	private String key;
-	
-	private int imageWidth;
-	
-	private int imageHeight;
-	
-	public int getImage() {
-		return image;
+	private HashMap<String, Object> info = new HashMap<String, Object>();
+
+	public Integer getImage() {
+		Object value = info.get("Image");
+		return ComicBookUtils.getAsInteger(value);
 	}
 	
-	public void setImage(int image) {
-		this.image = image;
+	public void setImage(Integer image) {
+		info.put("Image", image);
 	}
 	
 	public ComicPageType getType() {
-		return story;
+		Object value = info.get("Type");
+		return ComicBookUtils.getAsComicPageType(value);
 	}
 	
 	public void setType(ComicPageType story) {
-		this.story = story;
+		info.put("Type", story);
 	}
 	
-	public boolean isDoublePage() {
-		return doublePage;
+	public Boolean getDoublePage() {
+		Object value = info.get("DoublePage");
+		return ComicBookUtils.getAsBoolean(value);
 	}
 	
-	public void setDoublePage(boolean doublePage) {
-		this.doublePage = doublePage;
+	public void setDoublePage(Boolean doublePage) {
+		info.put("DoublePage", doublePage);
 	}
 	
-	public long getImageSize() {
-		return imageSize;
+	public Long getImageSize() {
+		Object value = info.get("ImageSize");
+		return ComicBookUtils.getAsLong(value);
 	}
 	
-	public void setImageSize(long imageSize) {
-		this.imageSize = imageSize;
+	public void setImageSize(Long imageSize) {
+		info.put("ImageSize", imageSize);
 	}
 	
 	public String getKey() {
-		return key;
+		return (String) info.get("Key");
 	}
 	
 	public void setKey(String key) {
-		this.key = key;
+		info.put("Key", key);
 	}
 	
-	public int getImageWidth() {
-		return imageWidth;
+	public Integer getImageWidth() {
+		Object value = info.get("ImageWidth");
+		return ComicBookUtils.getAsInteger(value);
 	}
 	
-	public void setImageWidth(int imageWidth) {
-		this.imageWidth = imageWidth;
+	public void setImageWidth(Integer imageWidth) {
+		info.put("ImageWidth", imageWidth);
 	}
 	
-	public int getImageHeight() {
-		return imageHeight;
+	public Integer getImageHeight() {
+		Object value = info.get("ImageHeight");
+		return ComicBookUtils.getAsInteger(value);
 	}
 	
-	public void setImageHeight(int imageHeight) {
-		this.imageHeight = imageHeight;
+	public void setImageHeight(Integer imageHeight) {
+		info.put("ImageHeight", imageHeight);
 	}
+	
+	public HashMap<String, Object> getInfo() {
+		return info;
+	}
+
 }

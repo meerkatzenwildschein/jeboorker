@@ -85,6 +85,8 @@ public class MetadataHandlerFactory {
 				return wrap(new EPubLibMetadataWriter(resource));
 			} else if(resource.getMimeType().equals(MIME_PDF)) {
 				return wrap(new PDFCommonMetadataWriter(resource));
+			} else if(resource.getMimeType().equals(MIME_CBZ)) {
+				return wrap(new ComicBookMetadataWriter(resource));
 			}
 		}
 		return null;
