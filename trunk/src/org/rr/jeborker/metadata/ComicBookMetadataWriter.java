@@ -7,9 +7,7 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.metadata.comicbook.ComicBookDocument;
-import org.rr.jeborker.metadata.comicbook.ComicBookPageInfo;
 import org.rr.jeborker.metadata.comicbook.ComicBookReader;
 import org.rr.jeborker.metadata.comicbook.ComicBookWriter;
 
@@ -28,29 +26,14 @@ class ComicBookMetadataWriter implements IMetadataWriter {
 			final ComicBookDocument doc = reader.getDocument();
 			final ComicBookWriter writer = new ComicBookWriter(doc, resource);
 			final HashMap<String, Object> docInfo = doc.getInfo();
-			final List<ComicBookPageInfo> docPages = doc.getPages();
+//			final List<ComicBookPageInfo> docPages = doc.getPages();
 			
 			docInfo.clear();
-			docPages.clear();
 			
 			for(MetadataProperty prop : props) {
 				String name = prop.getName();
 				String value = prop.getValueAsString();
-				if(name.startsWith("Page_")) {
-					String pageNumString = name.substring(5, name.indexOf('_', 5));
-					String propName = name.substring(name.indexOf('_', 5) + 1);
-					int pageNum = CommonUtils.toNumber(pageNumString).intValue();
-					ComicBookPageInfo page;
-					if(docPages.size() > pageNum) {
-						page = docPages.get(pageNum);
-					} else {
-						page = new ComicBookPageInfo();
-						docPages.add(page);
-					}
-					page.getInfo().put(propName, value);
-				} else {
-					docInfo.put(name, value);
-				}
+				docInfo.put(name, value);
 			}
 			writer.writeDocument();
 		} catch (IOException e) {
