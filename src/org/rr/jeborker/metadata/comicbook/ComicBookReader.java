@@ -42,7 +42,7 @@ public class ComicBookReader {
 	private ComicBookDocument buildDocument(IArchiveHandler archiveHandler) throws IOException {
 		final ComicBookDocument doc = new ComicBookDocument(archiveHandler);
 		byte[] comicXmlData = archiveHandler.getComicXmlData();
-		if(comicXmlData != null) {
+		if(comicXmlData != null && comicXmlData.length > 0) {
 			try {
 				Document document = XMLUtils.getDocument(comicXmlData);
 				Element comicInfoElement = document.getDocumentElement();
