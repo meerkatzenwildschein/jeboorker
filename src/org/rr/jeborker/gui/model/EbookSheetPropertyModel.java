@@ -295,8 +295,11 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				return "02";
 			} else if(name1.equals("title")) {
 				return "03";
+			} else if(name1.startsWith("page_")) {
+				return "90" + name1;
+			} else {
+				return "50" + name1;
 			}
-			return name1;
 		}
 	}	
 	
