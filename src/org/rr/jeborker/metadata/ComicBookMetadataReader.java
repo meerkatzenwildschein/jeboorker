@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -13,7 +12,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.comicbook.ComicBookDocument;
-import org.rr.jeborker.metadata.comicbook.ComicBookPageInfo;
 import org.rr.jeborker.metadata.comicbook.ComicBookReader;
 
 class ComicBookMetadataReader implements IMetadataReader {
@@ -299,17 +297,6 @@ class ComicBookMetadataReader implements IMetadataReader {
 					LoggerFactory.logWarning(this, "could not handle property " + key + " and value " + value, e);
 				}
 			}		
-			
-			Iterator<ComicBookPageInfo> pages = document.getPages().iterator();
-			for(int i = 0; pages.hasNext(); i++) {
-				ComicBookPageInfo page = pages.next();
-				HashMap<String, Object> pageInfo = page.getInfo();
-				String key = "Page_" + i + "_";
-				for (Entry<String, Object> e : pageInfo.entrySet()) {
-					MetadataProperty metadataProperty = new MetadataProperty(key + e.getKey(), e.getValue());
-					result.add(metadataProperty);					
-				}
-			}
 		} catch (Throwable e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for comicbook " + ebookResourceHandler, e);
 		}
