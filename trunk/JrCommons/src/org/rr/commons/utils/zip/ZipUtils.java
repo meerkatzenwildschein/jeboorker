@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -65,8 +64,8 @@ public class ZipUtils {
 			final byte[] readBuff = new byte[4096];
 
 			org.rr.commons.utils.zip.ZipEntry nextEntry;
-			while ((nextEntry=zipIn.getNextEntry()) != null && maxEntries > result.size()) {
-				if(filter==null || filter.accept(nextEntry.getName())) {
+			while ((nextEntry = zipIn.getNextEntry()) != null && maxEntries > result.size()) {
+				if( filter == null || (!nextEntry.isDirectory() && filter.accept(nextEntry.getName())) ) {
 					int len = 0;
 					while ((len = zipIn.read(readBuff)) != -1) {
 						bout.write(readBuff, 0, len);
@@ -142,42 +141,7 @@ public class ZipUtils {
 		return null;
 	}
 	
-	/**
-	 * Extracts the given zip data.
-	 * @param zipData The data to be extracted.
-	 * @return A list with the ziped content.
-	 */
-	public static List<ZipDataEntry> extractAll(byte[] zipData) {
-		if(zipData==null) {
-			return null;
-		}
-		
-		try {
-			final ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(zipData));
-			final ArrayList<ZipDataEntry> result = new ArrayList<ZipDataEntry>();
 
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			final byte[] readBuff = new byte[4096];
-
-			ZipEntry nextEntry;
-			while ((nextEntry=zip.getNextEntry()) != null) {
-				int len = 0;
-				while ((len = zip.read(readBuff)) != -1) {
-					bout.write(readBuff, 0, len);
-				}
-
-				result.add(new ZipDataEntry(nextEntry.getName(), bout.toByteArray()));
-				bout.reset();
-			}
-			zip.close();
-			
-			Collections.sort(result);
-			return result;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}	
-	
 	/**
 	 * Adds or replaces the given entry to existing zip data. Note that the whole
 	 * zip is copied.
