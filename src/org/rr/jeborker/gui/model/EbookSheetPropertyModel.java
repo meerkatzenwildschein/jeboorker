@@ -167,7 +167,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @return A couple of properties for the given {@link EbookPropertyItem} never returns <code>null</code>.
 	 */
 	private Property[] createProperties(final IResourceHandler resourceHandler, final EbookPropertyItem item, final IMetadataReader reader) {
-		if(resourceHandler==null) {
+		if(resourceHandler == null) {
 			return new Property[0];
 		}
 		final ArrayList<Property> result = new ArrayList<Property>(20);
