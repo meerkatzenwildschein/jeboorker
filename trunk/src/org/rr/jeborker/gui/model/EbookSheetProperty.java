@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -131,6 +132,13 @@ class EbookSheetProperty extends DefaultProperty {
 	@Override
 	public Object getValue() {
 		if(propertyIndex >= 0) {
+			List<String> validValues = metadataProperty.getValidValues();
+			if(!validValues.isEmpty()) {
+				ArrayList<Object> values = new ArrayList<Object>();
+				values.add(metadataProperty.getValues().get(propertyIndex));
+				values.addAll(validValues);
+				return values;
+			}
 			return metadataProperty.getValues().get(propertyIndex);
 		} else {
 			final List<Object> values = metadataProperty.getValues();
@@ -158,5 +166,15 @@ class EbookSheetProperty extends DefaultProperty {
 	 */
 	private boolean isMultiSelection() {
 		return MainController.getController().getSelectedEbookPropertyItemRows().length > 1;
+	}
+
+	@Override
+	public Class<?> getPropertyEditorClass() {
+		return this.metadataProperty.getPropertyEditorClass();
+	}
+
+	@Override
+	public Class getPropertyRendererClass() {
+		return this.metadataProperty.getPropertyRendererClass();
 	}
 }

@@ -1,6 +1,7 @@
 package org.rr.jeborker.metadata;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.rr.commons.utils.ListUtils;
@@ -16,6 +17,12 @@ public class MetadataProperty implements Cloneable {
 	protected List<Object> values;
 	
 	private Class<?> propertyClass = null;
+	
+	private Class<?> propertyEditorClass = null;
+	
+	private Class<?> propertyRendererClass = null;
+	
+	private List<String> validValues = null;
 	
 	MetadataProperty(String name, List<Object> values) {
 		this.name = name;
@@ -122,12 +129,27 @@ public class MetadataProperty implements Cloneable {
 	}
 	
 	/**
-	 * Tells if the metadata value is valid. For example if a value could not be
-	 * parsed to a date or a number but it should be one, this method returns false.
-	 * @return <code>true</code> if the value is valid and <code>false</code> otherwise.
+	 * Get a list of values which are valid for this {@link MetadataProperty}.
 	 */
-	public boolean isValid() {
-		return true;
+	public List<String> getValidValues() {
+		if(validValues == null) {
+			return Collections.emptyList();
+		}
+		return validValues;
+	}
+	
+	/**
+	 * Add values to the list of valid values.
+	 * @param values The list of valid values.
+	 */
+	void addValidValues(List<String> values) {
+		if(values != null) {
+			if(validValues == null) {
+				validValues = new ArrayList<String>(values);
+			} else {
+				validValues.addAll(values);
+			}
+		}
 	}
 	
 	/**
@@ -136,6 +158,25 @@ public class MetadataProperty implements Cloneable {
 	public MetadataProperty clone() {
 		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, this.values);
 		newMetadataProperty.propertyClass = this.propertyClass;
+		newMetadataProperty.propertyEditorClass = this.propertyEditorClass;
+		newMetadataProperty.propertyRendererClass = this.propertyRendererClass;
+		newMetadataProperty.validValues = this.validValues;
 		return newMetadataProperty;
+	}
+
+	public Class<?> getPropertyEditorClass() {
+		return propertyEditorClass;
+	}
+
+	public void setPropertyEditorClass(Class<?> propertyEditorClass) {
+		this.propertyEditorClass = propertyEditorClass;
+	}
+
+	public Class<?> getPropertyRendererClass() {
+		return propertyRendererClass;
+	}
+
+	public void setPropertyRendererClass(Class<?> propertyRendererClass) {
+		this.propertyRendererClass = propertyRendererClass;
 	}
 }

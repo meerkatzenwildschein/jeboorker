@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.Icon;
@@ -11,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.rr.commons.utils.DateConversionUtils;
+import org.rr.commons.utils.ListUtils;
 
 import com.l2fprod.common.model.DefaultObjectRenderer;
 import com.l2fprod.common.model.ObjectRenderer;
@@ -55,6 +57,9 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
         	} else {
         		setText(String.valueOf(value));
         	}
+        } else if(value instanceof List<?>) {
+    		Object first = ListUtils.first((List<?>) value);
+    		setText(String.valueOf(first));        	
         }
     }
 
