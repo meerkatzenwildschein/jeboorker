@@ -46,7 +46,7 @@ public class CellEditorAdapter
   extends AbstractCellEditor
   implements TableCellEditor, TreeCellEditor {
 
-  protected PropertyEditor editor;
+  private PropertyEditor editor;
   protected int clickCountToStart = 1;
 
   class CommitEditing implements ActionListener {
