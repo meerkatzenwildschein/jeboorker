@@ -91,4 +91,17 @@ public abstract class AbstractProperty implements Property {
   public Property[] getSubProperties() {
   	return null;
   }
+  
+	@Override
+	public Class getPropertyEditorClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class getPropertyRendererClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+  
 }

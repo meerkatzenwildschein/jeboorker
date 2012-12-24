@@ -76,7 +76,7 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
    */
   public synchronized TableCellRenderer getRenderer(Property property) {
 	  if(property != null && property.getName() != null) {
-		  Class clz= (Class) propertyNameToRenderer.get(property.getName().toLowerCase());
+		  Class clz = (Class) propertyNameToRenderer.get(property.getName().toLowerCase());
 		  if(clz != null) {
 			  try {
 				return (TableCellRenderer) clz.newInstance();
@@ -86,6 +86,19 @@ public class PropertyRendererRegistry implements PropertyRendererFactory {
 				ex.printStackTrace();
 			}
 		  }
+	  }
+	  
+	  if(property != null && property.getPropertyRendererClass() != null) {
+		  Class clz = property.getPropertyRendererClass();
+		  if(clz != null) {
+			  try {
+				return (TableCellRenderer) clz.newInstance();
+			} catch (InstantiationException ex) {
+				ex.printStackTrace();
+			} catch (IllegalAccessException ex) {
+				ex.printStackTrace();
+			}
+		  }		  
 	  }
 
    // editors bound to the property descriptor have the highest priority
