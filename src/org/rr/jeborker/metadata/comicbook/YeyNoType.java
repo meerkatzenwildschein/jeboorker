@@ -2,11 +2,11 @@ package org.rr.jeborker.metadata.comicbook;
 
 public class YeyNoType {
 
-	private static final String YES = "Yes";
+	public static final String YES = "Yes";
 	
-	private static final String NO = "No";
+	public static final String NO = "No";
 	
-	private static final String UNKNOWN = "Unknown";
+	public static final String UNKNOWN = "Unknown";
 	
 	private String type;
 	

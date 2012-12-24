@@ -275,6 +275,8 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		result.add(new MetadataProperty("Subject", ""));
 		result.add(new MetadataProperty("Producer", ""));
 		result.add(new MetadataProperty("AgeSuggestion", ""));
+		
+		MetadataProperty ratingProperty = new MetadataProperty("Rating", "");
 		result.add(new MetadataProperty("Rating", ""));
 		result.add(new MetadataProperty("SeriesIndex", ""));
 		result.add(new MetadataProperty("SeriesName", ""));
