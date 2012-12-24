@@ -46,8 +46,9 @@ public class DesktopUtils {
 				success = openWindowsFolder(file);
 			}
 			return success;
+		} else {
+			return true;
 		}
-		return false;
 	}
 
 
