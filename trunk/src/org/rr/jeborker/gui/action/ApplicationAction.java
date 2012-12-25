@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.SwingUtilities;
 
 /**
  * {@link ApplicationAction} is an Action delegate which is delivered if
@@ -47,6 +48,20 @@ public class ApplicationAction extends AbstractAction {
 		this.realAction = realAction;
 		this.setEnabled(realAction.isEnabled());
 	}
+	
+	/**
+	 * Invoked this {@link ApplicationAction} instance with
+	 * <code>SwingUtilities.invokeLater</code> on the AWT thread. 
+	 */
+	public void invokeLaterAction() {
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				invokeAction(null);
+			}
+		});
+	}	
 
 	public void invokeAction() {
 		this.invokeAction(null);

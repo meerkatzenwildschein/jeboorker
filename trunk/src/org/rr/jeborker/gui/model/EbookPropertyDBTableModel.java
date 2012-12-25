@@ -20,6 +20,8 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.OrderDirection;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.action.ApplicationAction;
 
 public class EbookPropertyDBTableModel implements TableModel {
 
@@ -117,6 +119,9 @@ public class EbookPropertyDBTableModel implements TableModel {
 //			LoggerFactory.logInfo(this, "", ex);
 			return null;
 		}
+		
+		this.handleDeletedEbookResources(ebookPropertyItem);
+		
 		if(ebookPropertyItem != null) {
 			switch(columnIndex) {
 				case 0:
@@ -124,6 +129,17 @@ public class EbookPropertyDBTableModel implements TableModel {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Simply tests if the given EbookPropertyItem is already present on harddisk. 
+	 * @param ebookPropertyItem
+	 */
+	private void handleDeletedEbookResources(final EbookPropertyItem ebookPropertyItem) {
+		if(!ebookPropertyItem.getResourceHandler().exists()) {
+			ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookPropertyItem.getResourceHandler().toString());
+			action.invokeLaterAction();
+		}		
 	}
 	
 	/**
@@ -266,10 +282,10 @@ public class EbookPropertyDBTableModel implements TableModel {
 	    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());
 	    		
 	    		this.dbItems = new IteratorList<EbookPropertyItem>(items);
-	    		if(this.dbItems==null) {
+	    		if(this.dbItems == null) {
 	    			this.dbItems = Collections.emptyList();
 	    		}
-	    		if(this.addedItems==null) {
+	    		if(this.addedItems == null) {
 	    			this.addedItems = new ArrayList<EbookPropertyItem>();
 	    		} else {
 	    			this.addedItems.clear();
