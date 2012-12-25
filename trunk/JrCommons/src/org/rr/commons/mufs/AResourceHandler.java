@@ -322,13 +322,9 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		final MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		final long heapFreeSize = heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed();
 
-		if(heapFreeSize < heapRequired * 2) {
-			LoggerFactory.getLogger().log(Level.INFO , "Garbage collector triggered manually. " + heapFreeSize + " bytes remaining but " + heapRequired + " required.");
+		if(heapFreeSize < (heapRequired * 1.2)) {
+			LoggerFactory.getLogger().log(Level.INFO , "Garbage collector triggered manually. " + heapFreeSize + " bytes remaining but " + heapRequired + " required for " + getName());
 			System.gc();
-			try {Thread.sleep(100);} catch (InterruptedException e) {}
-//			if(heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed() < heapRequired) {
-//				throw new IOException("Not enough memory to read file " + getName() + " size " + size() + ". Only " + (heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed() ) + " free");
-//			}
 		}
 	}
 	

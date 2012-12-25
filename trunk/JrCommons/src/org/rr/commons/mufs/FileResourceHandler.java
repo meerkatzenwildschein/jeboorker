@@ -169,7 +169,7 @@ class FileResourceHandler extends AResourceHandler {
 		} catch(Error e) {
 			if(e instanceof OutOfMemoryError) {
 				System.gc();
-				
+				try {Thread.sleep(100);} catch (InterruptedException e1) {}
 			}
 		}
 		return FileUtils.readFileToByteArray(this.file);
