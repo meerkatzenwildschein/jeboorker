@@ -1,6 +1,9 @@
 #http://www.redskaper.com/HowToRun.html
 # This is a .lap file comment
 -Djava.class.path=.\lib\jeboorker.jar;.\lib\junique-1.0.4.jar
+-Xmx256m 
+-XX:+AggressiveOpts 
+
 #-DJAVA_HOME=${FOUND_JAVA_HOME}
 janel.main.class=org.rr.jeborker.Jeboorker
 #janel.java.bundle=SDK

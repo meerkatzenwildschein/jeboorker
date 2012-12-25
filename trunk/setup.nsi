@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.1.8.0
+VIProductVersion 0.1.9.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -72,7 +72,7 @@ Section -Main SEC0000
     File lib\bcprov-ext-jdk15on-147.jar
     File lib\commons-io-2.4.jar
     File lib\commons-lang-2.5.jar
-    File lib\itextpdf-5.3.5.jar
+    File lib\itext-5.jar
     File lib\commons-logging-1.1.1.jar
     File lib\pdfbox-1.7.2-nightly.jar
     File lib\jeboorker.jar
