@@ -1,1 +1,1 @@
-start /MIN cmd /C java -Xmx256m -XX:+AggressiveOpts -Djava.class.path=.\lib\jeboorker.jar;.\lib\junique-1.0.4.jar org.rr.jeborker.Jeboorker 
+runnhide.vbs "java -Xmx256m -XX:+AggressiveOpts -Djava.class.path=.\lib\jeboorker.jar;.\lib\junique-1.0.4.jar org.rr.jeborker.Jeboorker"
