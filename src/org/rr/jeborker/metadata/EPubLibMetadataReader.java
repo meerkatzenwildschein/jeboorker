@@ -231,8 +231,9 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 					final String coverNameReference = findMetadataCoverNameReference(metadataNode, document);
 					final String coverName = findManifestCoverName(manifestNode, coverNameReference, document);
 					final ZipDataEntry extract = extractCoverFromZip(zipData, coverName != null ? coverName : coverNameReference);
-					if (extract != null && extract.data != null && extract.data.length > 0) {
-						return extract.data;
+					byte[] result;
+					if (extract != null && extract.data != null && (result = extract.getBytes()).length > 0) {
+						return result;
 					}
 				}
 			}

@@ -276,7 +276,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			final String fullPathString = "full-path=";
 			final ZipDataEntry containerXml = ZipUtils.extract(zipData, "META-INF/container.xml");
 			if(containerXml!=null) {
-				final String containerXmlData = new String(containerXml.data);
+				final String containerXmlData = new String(containerXml.getBytes());
 				final int fullPathIndex = containerXmlData.indexOf(fullPathString);
 				if(fullPathIndex!=-1) {
 					final int startIdx = fullPathIndex + fullPathString.length() + 1;
@@ -324,7 +324,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			if (opfFile != null) {
 				final ZipDataEntry containerXml = ZipUtils.extract(zipData, opfFile);
 				if (containerXml != null) {
-					this.containerOpfData = containerXml.data;
+					this.containerOpfData = containerXml.getBytes();
 				} else {
 					LoggerFactory.logWarning(this, "Could not get file" + opfFile, new RuntimeException("dumpstack"));
 				}
