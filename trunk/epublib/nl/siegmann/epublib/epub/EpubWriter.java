@@ -148,7 +148,7 @@ public class EpubWriter {
 		mimetypeZipEntry.setMethod(ZipEntry.STORED);
 		byte[] mimetypeBytes = MediatypeService.EPUB.getName().getBytes();
 		mimetypeZipEntry.setSize(mimetypeBytes.length);
-		mimetypeZipEntry.setCrc(CommonUtils.calculateCrc(mimetypeBytes));
+		mimetypeZipEntry.setCrc(calculateCrc(mimetypeBytes));
 		resultStream.putNextEntry(mimetypeZipEntry);
 		resultStream.write(mimetypeBytes);
 	}
@@ -173,5 +173,10 @@ public class EpubWriter {
 	public void setBookProcessor(BookProcessor bookProcessor) {
 		this.bookProcessor = bookProcessor;
 	}
-	
+
+	private static long calculateCrc(byte[] data) {
+		CRC32 crc = new CRC32();
+		crc.update(data);
+		return crc.getValue();
+	}	
 }
