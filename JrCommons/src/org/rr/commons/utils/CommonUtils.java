@@ -3,6 +3,7 @@ package org.rr.commons.utils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
+import java.util.zip.CRC32;
 
 public final class CommonUtils implements Serializable {
 
@@ -16,7 +17,7 @@ public final class CommonUtils implements Serializable {
 	 */
 	private static Pattern doublePattern = Pattern.compile("-?\\d+(\\.\\d*)?");
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static int compareTo(Object value1, Object value2) {
 		if (value1 == null && value2 == null) {
 			return 0;
@@ -202,7 +203,10 @@ public final class CommonUtils implements Serializable {
 		return false;
 	}
 	
-	public static void execute() {
-		
+
+	public static long calculateCrc(byte[] data) {
+		CRC32 crc = new CRC32();
+		crc.update(data);
+		return crc.getValue();
 	}
 }
