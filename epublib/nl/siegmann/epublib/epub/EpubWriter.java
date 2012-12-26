@@ -16,6 +16,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.IOUtil;
 
+import org.rr.commons.utils.CommonUtils;
 import org.xmlpull.v1.XmlSerializer;
 
 /**
@@ -147,15 +148,9 @@ public class EpubWriter {
 		mimetypeZipEntry.setMethod(ZipEntry.STORED);
 		byte[] mimetypeBytes = MediatypeService.EPUB.getName().getBytes();
 		mimetypeZipEntry.setSize(mimetypeBytes.length);
-		mimetypeZipEntry.setCrc(calculateCrc(mimetypeBytes));
+		mimetypeZipEntry.setCrc(CommonUtils.calculateCrc(mimetypeBytes));
 		resultStream.putNextEntry(mimetypeZipEntry);
 		resultStream.write(mimetypeBytes);
-	}
-
-	private long calculateCrc(byte[] data) {
-		CRC32 crc = new CRC32();
-		crc.update(data);
-		return crc.getValue();
 	}
 
 	String getNcxId() {
