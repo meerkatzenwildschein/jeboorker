@@ -30,7 +30,7 @@ class CBZArchiveHandler implements IArchiveHandler {
 	@Override
 	public byte[] getArchiveEntry(String archiveEntry) throws IOException {
 		ZipDataEntry extract = ZipUtils.extract(resource.getContentInputStream(), archiveEntry);
-		return extract.data;
+		return extract.getBytes();
 	}
 
 	@Override
@@ -52,7 +52,7 @@ class CBZArchiveHandler implements IArchiveHandler {
 		Collections.sort(archiveEntries);
 		
 		if(!comicInfoXml.isEmpty()) {
-			comicInfoXmlContent = comicInfoXml.get(0).data;
+			comicInfoXmlContent = comicInfoXml.get(0).getBytes();
 			comicInfoXmlFilePath = comicInfoXml.get(0).path;
 		}
 	}
@@ -85,7 +85,7 @@ class CBZArchiveHandler implements IArchiveHandler {
 		OutputStream out = tmpEbookResource.getContentOutputStream(false);
 		InputStream in = resource.getContentInputStream();
 		
-		boolean success = ZipUtils.add(in, out, zipDataEntry);
+		boolean success = ZipUtils.add(in, out, zipDataEntry, true);
 		if(success && tmpEbookResource.size() > 0) {
 			//new temp pdf looks good. Move the new temp one over the old one. 
 			tmpEbookResource.moveTo(resource, true);
