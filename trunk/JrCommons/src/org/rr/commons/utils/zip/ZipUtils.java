@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ReflectionUtils;
 
 public class ZipUtils {
 
@@ -166,15 +168,35 @@ public class ZipUtils {
 	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
 	 */
 	public static boolean add(InputStream zipDateInputStream, OutputStream zipDateOutputStream, ZipDataEntry entry) {
+		return add(zipDateInputStream, zipDateOutputStream, entry, false);
+	}
+	
+	/**
+	 * Adds or replaces the given entry to existing zip data. Note that the whole zip is copied.
+	 * The given InputStream and OutputStream is flushed and closed.
+	 * 
+	 * @param zipDateInputStream The zip data where the given entry should be added.
+	 * @param OutputStream zipDateOutputStream The target for the zip data with the new or replaced entry.
+	 * @param entry The entry to be added.
+	 * @param storeOnly Did not compress the zip if <code>true</code> and does if <code>false</code>.
+	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
+	 */
+	public static boolean add(InputStream zipDateInputStream, OutputStream zipDataOutputStream, ZipDataEntry entry, boolean storeOnly) {
 		boolean success = false;
-		if (entry == null || zipDateInputStream == null || zipDateOutputStream == null) {
+		if (entry == null || zipDateInputStream == null || zipDataOutputStream == null) {
 			return success;
 		}
 
+		ZipOutputStream zipOutputStream = null;
+		ZipInputStream zipInputStream = null;
 		try {
-		    ZipInputStream zipInputStream = new ZipInputStream(zipDateInputStream);
-		    ZipOutputStream zipOutputStream = new ZipOutputStream(zipDateOutputStream);
-		    
+		    zipInputStream = new ZipInputStream(zipDateInputStream);
+		    zipOutputStream = new ZipOutputStream(zipDataOutputStream);
+		    if(storeOnly) {
+		    	zipOutputStream.setMethod(ZipEntry.STORED);
+		    } else {
+		    	zipOutputStream.setMethod(ZipEntry.DEFLATED);
+		    }
 	    	boolean replaceSuccess = false;
 		    ZipEntry zipEntryIn;
 		    while ((zipEntryIn = zipInputStream.getNextEntry()) != null) {
@@ -183,15 +205,22 @@ public class ZipUtils {
 		    	if(zipEntryIn.getName().equals(entry.path)) {
 		    		//replace
 		    		out = new ZipEntry(zipEntryIn.getName());
-		    		read = new ByteArrayInputStream(entry.data);
+		    		read = entry.data;
 		    		replaceSuccess = true;
 		    	} else {
 		    		//add
 		    		out = new ZipEntry(zipEntryIn.getName());
 		    		read = zipInputStream;
 		    	}
+		    	byte[] readBytes = IOUtils.toByteArray(read);
+		    	if(storeOnly) {
+		    		//no need with compression
+			    	out.setSize(readBytes.length);
+			    	long crc = CommonUtils.calculateCrc(readBytes);
+			    	out.setCrc(crc);
+		    	}
 	            zipOutputStream.putNextEntry(out);
-	            IOUtils.copy(read, zipOutputStream);
+	            IOUtils.copy(new ByteArrayInputStream(readBytes), zipOutputStream);
 	            zipOutputStream.flush();
 	            
 	            
@@ -202,7 +231,7 @@ public class ZipUtils {
 		    if(!replaceSuccess) {
 		    	//new entry must be added
 		    	ZipEntry out = new ZipEntry(entry.path);
-		    	InputStream read = new ByteArrayInputStream(entry.data);
+		    	InputStream read = entry.data;
 		    	zipOutputStream.putNextEntry(out);
 		    	IOUtils.copy(read, zipOutputStream);
 		    	zipOutputStream.flush();
@@ -214,8 +243,8 @@ public class ZipUtils {
 			LoggerFactory.logWarning(ZipUtils.class, "could not add data to zip", e);
 			success = false;
 		} finally {
-			IOUtils.closeQuietly(zipDateInputStream);
-			IOUtils.closeQuietly(zipDateOutputStream);
+			IOUtils.closeQuietly(zipInputStream);
+			IOUtils.closeQuietly(zipOutputStream);
 		}
 		return success;
 	}
@@ -228,16 +257,21 @@ public class ZipUtils {
 		
 		public String path;
 		
-		public byte[] data;
+		public InputStream data;
 		
 		public ZipDataEntry(org.rr.commons.utils.zip.ZipEntry entry) {
 			path = entry.getName();
 		}
 		
-		public ZipDataEntry(String path, byte[] data) {
+		public ZipDataEntry(String path, InputStream data) {
 			this.path = path;
 			this.data = data;
 		}
+		
+		public ZipDataEntry(String path, byte[] data) {
+			this.path = path;
+			this.data = new ByteArrayInputStream(data);
+		}		
 
 		@Override
 		public int compareTo(ZipDataEntry o) {
@@ -246,6 +280,21 @@ public class ZipUtils {
 		
 		public String toString() {
 			return path;
+		}
+		
+		public byte[] getBytes() {
+			if(!ReflectionUtils.getFields(data.getClass(), ReflectionUtils.VISIBILITY_VISIBLE_ALL).isEmpty()) {
+				try {
+					return (byte[]) ReflectionUtils.getFieldValue(data, "buf", false);
+				} catch (Exception e) {
+				}					
+			}
+			
+			try {
+				return IOUtils.toByteArray(this.data);
+			} catch (Exception e) {
+				return null;
+			}
 		}
 	}
 	
