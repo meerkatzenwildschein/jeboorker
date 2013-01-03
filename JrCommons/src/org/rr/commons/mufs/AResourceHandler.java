@@ -427,6 +427,10 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		return listResources;
 	}
 	
+	public final IResourceHandler[] listDirectoryResources() throws IOException {
+		return listDirectoryResources(null);
+	}
+	
 	/**
 	 * The default implementation did not support these feature.
 	 * The {@link #getName()} result is returned.

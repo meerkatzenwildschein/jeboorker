@@ -97,11 +97,11 @@ public class URLResourceHandler extends AResourceHandler {
 	public boolean isDirectoryResource() {
 		return false;
 	}
-
+	
 	@Override
-	public IResourceHandler[] listDirectoryResources() throws IOException {
+	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) throws IOException {
 		return new IResourceHandler[0];
-	}
+	}	
 
 	@Override
 	public IResourceHandler[] listFileResources() throws IOException {

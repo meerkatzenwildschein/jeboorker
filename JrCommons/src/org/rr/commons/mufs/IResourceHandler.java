@@ -184,7 +184,16 @@ public interface IResourceHandler {
 	 * 
 	 * @return All these {@link IResourceHandler} which have this {@link IResourceHandler} as parent.
 	 */
-	public IResourceHandler[] listDirectoryResources()throws IOException;	
+	public IResourceHandler[] listDirectoryResources() throws IOException;	
+	
+	/**
+	 * Lists all resources which could have child resources.
+	 * 
+	 * @param filter A filter to be used for filter the result child resources.
+	 * 	set it to <code>null</code> for no filter
+	 * @return All these {@link IResourceHandler} which have this {@link IResourceHandler} as parent.
+	 */
+	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) throws IOException;		
 	
 	/**
 	 * Lists all resources which could not have child resources.

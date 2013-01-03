@@ -116,7 +116,7 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 	}
 
 	@Override
-	public IResourceHandler[] listDirectoryResources() throws IOException {
+	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) throws IOException {
 		if(this.children==null) {
 			return new IResourceHandler[0];
 		}
@@ -124,7 +124,11 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 		ArrayList<IResourceHandler> directoryChilds = new ArrayList<IResourceHandler>();
 		for (int i = 0; i < children.length; i++) {
 			if(children[i].isDirectoryResource()) {
-				directoryChilds.add(children[i]);
+				if(filter != null && filter.accept(children[i])) {
+					directoryChilds.add(children[i]);
+				} else if(filter == null) {
+					directoryChilds.add(children[i]);
+				}				
 			}
 		}
 		return directoryChilds.toArray(new IResourceHandler[directoryChilds.size()]);

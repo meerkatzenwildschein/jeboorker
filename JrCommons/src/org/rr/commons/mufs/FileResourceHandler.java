@@ -288,7 +288,7 @@ class FileResourceHandler extends AResourceHandler {
 	 * @return all child {@link IResourceHandler} instances.
 	 */	
 	@Override
-	public IResourceHandler[] listResources(final ResourceNameFilter filter) {
+	public IResourceHandler[] listResources(final ResourceNameFilter filter) throws IOException {
 		final ArrayList<IResourceHandler> resourceResult = new ArrayList<IResourceHandler>();
 		IResourceHandler[] listFileResources = this.listFileResources();
 		IResourceHandler[] listDirectoryResources = this.listDirectoryResources();
@@ -316,13 +316,13 @@ class FileResourceHandler extends AResourceHandler {
 	}
 
 	/**
-	 * Lists all {@link File}s which are children of this {@link IResourceHandler} instance.
-	 * And which are directories.
+	 * Lists all {@link File}s which are children of this {@link IResourceHandler} instance
+	 * and which are directories.
 	 * 
 	 * @return all child {@link IResourceHandler} instances.
 	 */	
 	@Override
-	public IResourceHandler[] listDirectoryResources() {
+	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) {
 		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
 		
 		synchronized(fileSystemViewInstance) {
@@ -331,8 +331,12 @@ class FileResourceHandler extends AResourceHandler {
 				if(files[i].isDirectory()) {
 					IResourceHandler resourceLoader;
 					resourceLoader = ResourceHandlerFactory.getResourceLoader(files[i].getPath());
-					if(resourceLoader!=null) {
-						result.add(resourceLoader);
+					if(resourceLoader != null) {
+						if(filter != null && filter.accept(resourceLoader)) {
+							result.add(resourceLoader);
+						} else if(filter == null) {
+							result.add(resourceLoader);
+						}
 					}
 				}
 			}
