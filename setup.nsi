@@ -75,8 +75,9 @@ Section -Main SEC0000
     File lib\commons-lang-2.5.jar
     File lib\itext-5.jar
     File lib\commons-logging-1.1.1.jar
-    File lib\pdfbox-1.7.2-nightly.jar
     File lib\jeboorker.jar
+    File lib\jrcommons.jar
+    File lib\jrswingcommons.jar
     File lib\jsoup-1.7.1.jar
     File lib\junique-1.0.4.jar
     File lib\jna-3.4.0.jar
