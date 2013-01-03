@@ -425,7 +425,7 @@ public class FTPResourceHandler extends AResourceHandler {
 	}
 
 	@Override
-	public IResourceHandler[] listDirectoryResources() throws IOException {
+	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) throws IOException {
 		if (this.childDirectories == null) {
 			FTPClient connection = this.getConnection();
 			try {
@@ -435,7 +435,11 @@ public class FTPResourceHandler extends AResourceHandler {
 					if (listDirectories[i].isDirectory() && !listDirectories[i].getName().equals(".") && !listDirectories[i].getName().equals("..")) {
 						FTPResourceHandler newResourceHandler = new FTPResourceHandler(addURLPath(this.ftpURL, listDirectories[i].getName()), this,
 								listDirectories[i]);
-						result.add(newResourceHandler);
+						if(filter != null && filter.accept(newResourceHandler)) {
+							result.add(newResourceHandler);
+						} else if(filter == null) {
+							result.add(newResourceHandler);
+						}						
 					}
 				}
 

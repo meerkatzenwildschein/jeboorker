@@ -91,11 +91,11 @@ class InputStreamResourceHandler extends AResourceHandler {
 	public boolean isValidResource(String resource) {
 		return false;
 	}
-
+	
 	@Override
-	public IResourceHandler[] listDirectoryResources() {
+	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) {
 		return new IResourceHandler[0];
-	}
+	}	
 
 	@Override
 	public IResourceHandler[] listFileResources() {

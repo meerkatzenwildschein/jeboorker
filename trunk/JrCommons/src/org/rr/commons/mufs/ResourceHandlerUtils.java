@@ -325,14 +325,53 @@ public class ResourceHandlerUtils {
 	 * @param baseFolder Folder to start reading.
 	 * @param filter The filter where we have the possibility to do something with the files.
 	 */
-	public static int readAllFilesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
-		return readAllFileFromBasePathRecursive(baseFolder, baseFolder, filter);
+	public static int readAllDirectoriesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
+		return readAllDirectoriesFromBasePathRecursive(baseFolder, baseFolder, filter);
+	}
+	
+	private static int readAllDirectoriesFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
+		int count = 0;
+		if(baseFolder == null || baseFolder.isFileResource()) {
+			return count;
+		}
+		
+		//collect all ebook files from the baseFolder
+		try {
+			count = baseFolder.listDirectoryResources(filter).length;
+		} catch (IOException e) {
+			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading folder.", e);
+		}
+		
+		//go into depth 
+		IResourceHandler[] listDirectoryResources;
+		try {
+			listDirectoryResources = baseFolder.listDirectoryResources();
+			for (int i = 0; i < listDirectoryResources.length; i++) {
+				count += readAllDirectoriesFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter);
+			}
+		} catch (IOException e) {
+			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading subfolders.", e);
+		}
+		return count;
 	}	
 	
-	private static int readAllFileFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
+	/**
+	 * Reads all files starting from the baseFolder. You can do what you want with each file
+	 * using the {@link ResourceNameFilter}. For performance reasons, there is no list result
+	 * because it's more performant to do whatever else directly during the iteration process
+	 * instead of creating a list and after that doing something with the list.
+	 * 
+	 * @param baseFolder Folder to start reading.
+	 * @param filter The filter where we have the possibility to do something with the files.
+	 */
+	public static int readAllFilesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
+		return readAllFilesFromBasePathRecursive(baseFolder, baseFolder, filter);
+	}	
+	
+	private static int readAllFilesFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
 		int count = 0;
-		if(baseFolder==null || baseFolder.isFileResource()) {
-			return 0;
+		if(baseFolder == null || baseFolder.isFileResource()) {
+			return count;
 		}
 		
 		//collect all ebook files from the baseFolder
@@ -347,7 +386,7 @@ public class ResourceHandlerUtils {
 		try {
 			listDirectoryResources = baseFolder.listDirectoryResources();
 			for (int i = 0; i < listDirectoryResources.length; i++) {
-				count += readAllFileFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter);
+				count += readAllFilesFromBasePathRecursive(listDirectoryResources[i], topLevelBaseFolder, filter);
 			}
 		} catch (IOException e) {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading subfolders.", e);
