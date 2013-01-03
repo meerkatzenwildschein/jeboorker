@@ -146,9 +146,9 @@
 	</target>
 
 	<target name="jar" depends="init">
-		<jar destfile="lib/jeboorker.jar" basedir="." includes="**/*.class"></jar>
-		<jar destfile="lib/jrcommons.jar" basedir="${JrCommons.location}" includes="**/*.class"></jar>
-		<jar destfile="lib/jrswingcommons.jar" basedir="${JrSwingCommons.location}" includes="**/*.class"></jar>
+		<jar destfile="lib/jeboorker.jar" basedir="./bin" includes="**/*.*"></jar>
+		<jar destfile="lib/jrcommons.jar" basedir="${JrCommons.location}/bin" includes="**/*.*"></jar>
+		<jar destfile="lib/jrswingcommons.jar" basedir="${JrSwingCommons.location}/bin" includes="**/*.*"></jar>
 	</target>
 	
 	<target name="dist" depends="build,jar" />	
