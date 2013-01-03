@@ -27,7 +27,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/platform-3.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/pdfbox-1.7.2-nightly.jar" sourcepath="/pdfbox"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/itext"/>
+	<classpathentry kind="lib" path="lib/itext-5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
