@@ -1,17 +1,23 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
 
+import javax.swing.SwingUtilities;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
+import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -38,7 +44,6 @@ public class ActionUtils {
 			LoggerFactory.logWarning(ActionUtils.class, "Database shutdown failed.", e1);
 		}
 		
-		JeboorkerUtils.shutdown();
 		System.exit(0);		
 	}
 
@@ -87,6 +92,48 @@ public class ActionUtils {
 		} finally {
 			controller.refreshTable(true);
 		}
-	}		
+	}	
 	
+	/**
+	 * Deletes the given item from the database and the view.
+	 * @param item The item to be deleted.
+	 */
+	public static void removeEbookPropertyItem(final EbookPropertyItem item) {
+		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+		final MainController controller = MainController.getController();
+		
+		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				boolean removed = controller.removeEbookPropertyItem(item);
+				if(!removed) {
+					DefaultDBManager.getInstance().deleteObject(item);
+				}
+				progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleted", item.getFileName()));
+			}
+		});
+	}	
+	
+	/**
+	 * Tells if this {@link AResourceHandler} instance file format is an image.
+	 * @return <code>true</code> if the resource is an image or <code>false</code> otherwise.
+	 */
+	public static boolean isSupportedEbookFormat(IResourceHandler resource) {
+		final String mime = resource.getMimeType();
+		if(mime==null || mime.length()==0) {
+			return false;
+		}
+		
+		if(mime.equals(MIME_EPUB)) {
+			return true;
+		} else if(mime.equals(MIME_PDF)) {
+			return true;
+		} else if(mime.equals(MIME_CBZ)) {
+			return true;
+		}
+		return false;
+	}		
 }

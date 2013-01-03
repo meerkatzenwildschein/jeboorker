@@ -59,7 +59,7 @@ public class JeboorkerPreferences {
 	 */
 	public static List<String> getBasePath() {
 		String basePath = APP_NODE.get("basePath", "");
-		if(basePath.length()==0) {
+		if(basePath.length() == 0) {
 			return Collections.emptyList();
 		} else if(basePath.indexOf(File.pathSeparator)==-1) {
 			return Collections.singletonList(basePath);

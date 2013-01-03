@@ -52,6 +52,7 @@ public class EbookPropertyItemUtils {
 		item.setFile(resource.getResourceString());
 		item.setBasePath(topLevelBaseFolder.getResourceString());
 		item.setMimeType(resource.getMimeType());
+		item.setTimestamp(resource.getModifiedAt().getTime());
 		refreshEbookPropertyItem(item, resource, true);
 		
 		return item;
@@ -75,6 +76,7 @@ public class EbookPropertyItemUtils {
 				final byte[] imageData = reader.getCover();
 				setupCoverData(item, imageData);
 			}
+			item.setTimestamp(resource.getModifiedAt().getTime());
 		}
 	}
 	
