@@ -1,1 +1,1 @@
-java -Xmx256m -XX:+AggressiveOpts -Djava.class.path=.\lib\jeboorker.jar;\lib\jrcommons.jar;\lib\jrswingcommons.jar;.\lib\junique-1.0.4.jar org.rr.jeborker.Jeboorker
+java -Xmx256m -XX:+AggressiveOpts -Djava.class.path=.\lib\jeboorker.jar;.\lib\jrcommons.jar;.\lib\jrswingcommons.jar;.\lib\junique-1.0.4.jar org.rr.jeborker.Jeboorker
