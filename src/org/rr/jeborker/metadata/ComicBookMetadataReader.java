@@ -92,7 +92,10 @@ class ComicBookMetadataReader implements IMetadataReader {
 
 	@Override
 	public byte[] getCover() {
-		return doc.getCover();
+		if(doc != null) {
+			return doc.getCover();
+		}
+		return null;
 	}
 
 	@Override

@@ -177,6 +177,11 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	private String ageSuggestion;
 	
 	/**
+	 * Timestamp of the ebook file. 
+	 */
+	private long timestamp = 0l;
+	
+	/**
 	 * A small thumbnail of the cover.
 	 */
 	private ORecordBytes coverThumbnail;
@@ -483,5 +488,13 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	
 	public void setCoverThumbnail(ORecordBytes coverThumbnail) {
 		this.coverThumbnail = coverThumbnail;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 }

@@ -58,7 +58,7 @@ class RefreshBasePathAction extends AbstractAction {
 						doRefreshBasePath(basePath, e, controller.getProgressMonitor());
 					}
 				}				
-			} else if(path!=null && path.length() > 0) {
+			} else if(path != null && path.length() > 0) {
 				if(!ResourceHandlerFactory.getResourceLoader(path).isDirectoryResource()) {
 					messageFinished = "The folder " + path + " did not exists.";
 				} else {			
@@ -94,20 +94,47 @@ class RefreshBasePathAction extends AbstractAction {
 		
 		//remove the entry from db and view.
 		if(!resourceLoader.exists()) {
-			RemoveBasePathAction.removeEbookPropertyItem(item);
+			ActionUtils.removeEbookPropertyItem(item);
 			return;
 		} else {
 			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
 			DefaultDBManager.getInstance().updateObject(item);
-			SwingUtilities.invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					MainController.getController().refreshTableSelectedItem(true);
-				}
-			});
+System.out.println(item);			
+			if(isSelectedItem(item)) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						MainController.getController().refreshTableSelectedItem(true);
+					}
+				});
+			} else {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						int row = MainController.getController().getTableModel().searchRow(item);
+						MainController.getController().refreshTableItem(new int[] {row}, false);
+					}
+				});				
+			}
 			
 		}
+	}
+	
+	/**
+	 * Tests if the given item is a selected one in the view.
+	 * @param item The item to be tested if it's selected.
+	 * @return <code>true</code> if the given item is selected in the view and false otherwise.
+	 */
+	private static boolean isSelectedItem(final EbookPropertyItem item) {
+		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();	
+		for(EbookPropertyItem selected : selectedEbookPropertyItems) {
+			if(item.equals(selected)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

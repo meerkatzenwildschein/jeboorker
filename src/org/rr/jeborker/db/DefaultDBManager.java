@@ -17,6 +17,7 @@ import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.Index;
+import org.rr.jeborker.db.item.TimeCachePropertyItem;
 
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
@@ -86,16 +87,17 @@ public class DefaultDBManager {
 		// OPEN / CREATE THE DATABASE
 		if (!dbResourceHandler.exists()) {
 			db = new OObjectDatabaseTx("local:" + dbFile).create();
-			this.registerEntityClasses(new Class[] {EbookPropertyItem.class, EbookKeywordItem.class}, db);
+			this.registerEntityClasses(new Class[] {EbookPropertyItem.class, EbookKeywordItem.class, TimeCachePropertyItem.class}, db);
 			
 			this.createIndices(db, EbookPropertyItem.class);
 			this.createIndices(db, EbookKeywordItem.class);
+			this.createIndices(db, TimeCachePropertyItem.class);
 			
 			db.close();
 		}
 		
 		db = OObjectDatabasePool.global().acquire("local:" + dbFile, "admin", "admin");
-		this.registerEntityClasses(new Class<?>[] {EbookPropertyItem.class, EbookKeywordItem.class}, db);
+		this.registerEntityClasses(new Class<?>[] {EbookPropertyItem.class, EbookKeywordItem.class, TimeCachePropertyItem.class}, db);
 
 		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
 

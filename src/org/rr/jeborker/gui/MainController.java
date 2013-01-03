@@ -252,13 +252,9 @@ public class MainController {
 			refreshSheetProperties();
 		}
 	}
-
-	/**
-	 * Refresh the selected table rows.
-	 */
-	public void refreshTableSelectedItem(final boolean refreshMetadataSheet) {
+	
+	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
 		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
-		int[] selectedRows = getSelectedEbookPropertyItemRows() ;
 		if(selectedRows==null || selectedRows.length==0) {
 			return;
 		} else {
@@ -276,6 +272,14 @@ public class MainController {
 		if(refreshMetadataSheet) {
 			refreshSheetProperties();
 		}
+	}
+
+	/**
+	 * Refresh the selected table rows.
+	 */
+	public void refreshTableSelectedItem(final boolean refreshMetadataSheet) {
+		int[] selectedRows = getSelectedEbookPropertyItemRows() ;
+		refreshTableItem(selectedRows, refreshMetadataSheet);
 	}
 	
 	/**

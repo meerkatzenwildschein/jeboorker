@@ -31,7 +31,7 @@ class RemoveBasePathAction extends AbstractAction {
 		this.path = text;
 		if(REMOVE_ALL.equals(text)) {
 			putValue(Action.NAME, Bundle.getString("RemoveBasePathAction.removeAll.name"));
-		} else if(text==null) {
+		} else if(text == null) {
 			putValue(Action.NAME, Bundle.getString("ReadEbookFolderAction.name"));
 		} else {
 			putValue(Action.NAME, text);
@@ -120,29 +120,6 @@ class RemoveBasePathAction extends AbstractAction {
 				controller.refreshTable(true);
 			}
 		});		
-	}
-	
-	/**
-	 * Deletes the given item from the database and the view.
-	 * @param item The item to be deleted.
-	 */
-	static void removeEbookPropertyItem(final EbookPropertyItem item) {
-		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
-		final MainController controller = MainController.getController();
-		
-		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				boolean removed = controller.removeEbookPropertyItem(item);
-				if(!removed) {
-					DefaultDBManager.getInstance().deleteObject(item);
-				}
-				progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleted", item.getFileName()));
-			}
-		});
 	}
 	
 }

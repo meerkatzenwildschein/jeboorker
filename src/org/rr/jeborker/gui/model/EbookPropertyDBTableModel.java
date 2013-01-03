@@ -15,13 +15,12 @@ import javax.swing.table.TableModel;
 import org.rr.commons.collection.CompoundList;
 import org.rr.commons.collection.IteratorList;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.jeborker.FileRefreshBackgroundThread;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.OrderDirection;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.gui.action.ActionFactory;
-import org.rr.jeborker.gui.action.ApplicationAction;
 
 public class EbookPropertyDBTableModel implements TableModel {
 
@@ -120,7 +119,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			return null;
 		}
 		
-		this.handleDeletedEbookResources(ebookPropertyItem);
+		FileRefreshBackgroundThread.getInstance().addEbook(ebookPropertyItem);
 		
 		if(ebookPropertyItem != null) {
 			switch(columnIndex) {
@@ -130,17 +129,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 		}
 		return null;
 	}
-	
-	/**
-	 * Simply tests if the given EbookPropertyItem is already present on harddisk. 
-	 * @param ebookPropertyItem
-	 */
-	private void handleDeletedEbookResources(final EbookPropertyItem ebookPropertyItem) {
-		if(!ebookPropertyItem.getResourceHandler().exists()) {
-			ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, ebookPropertyItem.getResourceHandler().toString());
-			action.invokeLaterAction();
-		}		
-	}
+
 	
 	/**
 	 * Gets the {@link EbookPropertyItem} displayed in the given row.
@@ -176,6 +165,22 @@ public class EbookPropertyDBTableModel implements TableModel {
 				}
 			}
 		}
+	}
+	
+	public int searchRow(EbookPropertyItem item) {
+		if(item == null) {
+			return -1;
+		}
+		
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		for(int i = 0; i < ebookItems.size(); i++) {
+			EbookPropertyItem ebookPropertyItem = ebookItems.get(i);
+			if(ebookPropertyItem.equals(item)) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 
 	@Override

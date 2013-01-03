@@ -24,7 +24,7 @@ public class Jeboorker {
 
 	public static boolean isRuntime = false;
 
-	public static String version = "0.1.9~bernie";
+	public static String version = "0.2.0";
 
 	private static MainController mainController = null; 
 	
