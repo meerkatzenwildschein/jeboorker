@@ -1,37 +1,17 @@
 package org.rr.jeborker.metadata;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jempbox.xmp.XMPUtils;
-import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDResources;
-import org.apache.pdfbox.pdmodel.common.PDMetadata;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
-import org.xml.sax.SAXException;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRStream;
@@ -67,9 +47,6 @@ abstract class PDFCommonDocument {
 		case ITEXT:
 			result = new PDFCommonDocument.ItextPDFDocument(pdfFile);
 			break;
-		case PDFBOX:
-			result = new PDFCommonDocument.PDFBoxPDFDocument(pdfFile);
-			break;			
 		}
 		result.setResourceHandler(pdfFile);
 		return result;
@@ -279,198 +256,6 @@ abstract class PDFCommonDocument {
 			return null;
 		}
 		
-	}
-	
-	private static class PDFBoxPDFDocument extends PDFCommonDocument {
-		
-		private static final List<String> DCT_FILTERS = new ArrayList<String>() {{
-			add( COSName.DCT_DECODE.getName() );
-			add( COSName.DCT_DECODE_ABBREVIATION.getName() );			
-		}};			
-		
-		private PDDocument doc;
-		
-		PDFBoxPDFDocument(IResourceHandler pdfFile) {
-			InputStream pdfInputStream = null;
-			try {
-				pdfInputStream = pdfFile.getContentInputStream();
-				this.doc = PDDocument.load(pdfInputStream);
-			} catch(Throwable e) {
-				throw new RuntimeException(e + " at '" + pdfFile.getName() + "'");
-			} finally {
-				IOUtils.closeQuietly(pdfInputStream);
-			}			
-		}
-		
-		/**
-		 * Get the xmp metadata bytes from the given doc.
-		 * @param doc The doc which contains the desired metadata.
-		 * @return The metadata bytes or <code>null</code> if there're no metadata to return.
-		 * @throws IOException
-		 */		
-		@Override
-		public byte[] getXMPMetadata() throws IOException {
-			if(this.xmpMetadata == null) {
-				final PDDocumentCatalog catalog = doc.getDocumentCatalog();
-				final PDMetadata metadata = catalog.getMetadata();
-	
-				// to read the XML metadata
-				if(metadata != null) {
-					final InputStream xmlInputStream = metadata.createInputStream();
-					try {
-						byte[] xmpMetadataBytes = IOUtils.toByteArray(xmlInputStream);
-						if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
-							this.xmpMetadata = xmpMetadataBytes;
-						}
-					} finally {
-						IOUtils.closeQuietly(xmlInputStream);
-					}
-				}
-			}
-			return this.xmpMetadata;
-		}
-		
-		private PDDocumentInformation convertInfo(Map<String, String> moreInfo) {
-			if(moreInfo != null) {
-				final PDDocumentInformation pdfInfo = new PDDocumentInformation();
-				for (Entry<String, String> entry : moreInfo.entrySet()) {
-					final String key = entry.getKey();
-					final String value = entry.getValue();
-					
-					pdfInfo.setCustomMetadataValue(key, value);
-				}
-				return pdfInfo;
-			}		
-			return null;
-		}
-
-		@Override
-		public Map<String, String> getInfo() throws IOException {
-			if(moreInfo == null) {
-				moreInfo = new HashMap<String, String>();
-				final PDDocumentInformation pdfInfo = doc.getDocumentInformation();
-				if(pdfInfo != null) {
-					final Set<String> metadataKeys = pdfInfo.getMetadataKeys();
-					for (String key : metadataKeys) {					
-						final String value = pdfInfo.getCustomMetadataValue(key);
-						moreInfo.put(key, value);
-					}				
-				}
-			}
-				
-			return moreInfo;
-		}
-
-		@Override
-		public void write() throws IOException {
-			final IResourceHandler ebookResource = getResourceHandler();
-			final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResource, "tmp");
-			OutputStream ebookResourceOutputStream = null;
-			
-			try {
-				ebookResourceOutputStream = tmpEbookResourceLoader.getContentOutputStream(false);
-				byte[] xmp = this.xmpMetadata;
-				if(XMPUtils.isValidXMP(xmp)) {
-					byte[] handledXMP = XMPUtils.handleMissingXMPRootTag(xmp);
-				    PDMetadata newMetadata = new PDMetadata(doc, new ByteArrayInputStream(handledXMP), false);
-				    PDDocumentCatalog catalog = doc.getDocumentCatalog();
-				    catalog.setMetadata( newMetadata );
-				}
-				
-				final PDDocumentInformation pdInfo = convertInfo(this.moreInfo);		
-				if(this.moreInfo != null) {
-					doc.setDocumentInformation(pdInfo);
-				}
-		        
-				doc.save(ebookResourceOutputStream);
-			} catch (COSVisitorException e) {
-				throw new IOException(e);
-			} catch (ParserConfigurationException e) {
-				throw new IOException(e);
-			} catch (SAXException e) {
-				throw new IOException(e);
-			} catch (TransformerFactoryConfigurationError e) {
-				throw new IOException(e);
-			} catch (TransformerException e) {
-				throw new IOException(e);
-			} finally {
-				if (ebookResourceOutputStream != null) {
-					try {
-						ebookResourceOutputStream.flush();
-					} catch (IOException e) {
-					}
-					IOUtils.closeQuietly(ebookResourceOutputStream);
-				}
-				if(tmpEbookResourceLoader.size() > 0) {
-					//new temp pdf looks good. Move the new temp one over the old one. 
-					tmpEbookResourceLoader.moveTo(ebookResource, true);
-				} else {
-					tmpEbookResourceLoader.delete();
-				}
-			}			
-		}	
-
-		@Override
-		public void dispose() {
-			if(this.doc != null) {
-				try {this.doc.close();} catch(Exception e) {}
-				this.doc = null;
-			}
-		}
-
-		@Override
-		/**
-		 * Tries to extract the cover by looking for the embedded images of the pdf. The first
-		 * image which seems to be a cover will be returned.
-		 *  
-		 * @param pdfReader The reader for accessing the pdf content.
-		 * @return The desired image or <code>null</code> if there is no image found.
-		 * @throws IOException
-		 */
-		public byte[] fetchCoverFromPDFContent() throws IOException {
-			@SuppressWarnings("unchecked")
-			List<PDPage> pages = doc.getDocumentCatalog().getAllPages();
-		    Iterator<PDPage> pagesIter = pages.iterator(); 
-
-		    for(int i = 1; pagesIter.hasNext(); i++) {
-				final PDPage page = pagesIter.next();
-				final PDResources resources = page.getResources();
-				Map<String, PDXObjectImage> pageImages = resources.getImages();
-				if (pageImages != null) {
-					Iterator<String> imageIter = pageImages.keySet().iterator();
-					while (imageIter.hasNext()) {
-						String key = imageIter.next();
-						PDXObjectImage image = (PDXObjectImage) pageImages.get(key);
-
-						int width = image.getWidth();
-						int height = image.getHeight();
-						double aspectRatio = ((double) height) / ((double) width);
-						boolean take = false;
-						if(i == 1 && height > 500) {
-							take = true;
-						} else if(width > 150 && aspectRatio > MIN_IMAGE_COVER_WIDTH && aspectRatio < MAX_IMAGE_COVER_WIDTH) {
-							take = true;
-						}
-						
-						if (width > 150 && take) {
-							if (image.getBitsPerComponent() != 1) { // no b/w images
-								InputStream partiallyFilteredStream = image.getPDStream().getPartiallyFilteredStream( DCT_FILTERS );
-								byte[] byteArray = IOUtils.toByteArray(partiallyFilteredStream);
-								if(byteArray != null) {
-									return byteArray;
-								}
-							}
-						}
-					}
-				}
-				
-				if(i > 5) {
-					//check first five pages only
-					return null;
-				}
-			}
-			return null;
-		}
 	}	
 	
 }
