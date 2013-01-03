@@ -151,5 +151,5 @@
 		<jar destfile="lib/jrswingcommons.jar" basedir="${JrSwingCommons.location}/bin" includes="**/*.*"></jar>
 	</target>
 	
-	<target name="dist" depends="build,jar" />	
+	<target name="dist" depends="init,jar" />	
 </project>
