@@ -67,15 +67,17 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 					final String key = entry.getKey();
 					final String value = entry.getValue();
 					try {
-						if(key.endsWith("Date") || key.endsWith("SourceModified")) {
-							final Date dateValue = DateConversionUtils.toDate(value);
-							if(dateValue != null) {
-								result.add(new MetadataProperty(key, dateValue, Date.class));
+						if(value != null && !value.isEmpty()) { //no sense having empty entries.
+							if(key.endsWith("Date") || key.endsWith("SourceModified")) {
+								final Date dateValue = DateConversionUtils.toDate(value);
+								if(dateValue != null) {
+									result.add(new MetadataProperty(key, dateValue, Date.class));
+								} else {
+									result.add(new MetadataProperty(key, value));
+								}
 							} else {
 								result.add(new MetadataProperty(key, value));
 							}
-						} else {
-							result.add(new MetadataProperty(key, value));
 						}
 					} catch(Exception e) {
 						LoggerFactory.logWarning(this, "could not handle property " + key + " and value " + value, e);

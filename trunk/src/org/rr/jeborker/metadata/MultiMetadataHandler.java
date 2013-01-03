@@ -134,16 +134,18 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 						final List<MetadataProperty> metadataByType = reader.getMetadataByType(createNew, readMetaData, type);
 						
 						if(!metadataByType.isEmpty()) {
-							MetadataProperty metadataProperty = metadataByType.get(0);
+							final MultiMetadataPropertyDelegate metadataProperty = new MultiMetadataPropertyDelegate(metadataByType);
+							
 							Object oldValue = metadataProperty.getValues().isEmpty() ? null : metadataProperty.getValues().get(0);
 							if(value != null && !value.equals(oldValue)) {
-								metadataProperty.setValue(value, 0);
-								if(!StringUtils.toString(value).isEmpty() && !readMetaData.contains(metadataProperty)) {
-									readMetaData.add(metadataProperty);
+								if(!StringUtils.toString(value).isEmpty() && !readMetaData.contains(metadataProperty.getFirstMetadataProperty())) {
+									//add if not already exists.
+									readMetaData.add(metadataProperty.getFirstMetadataProperty());
 								} else if(StringUtils.toString(value).isEmpty()) {
 									//remove empty metadata entries
-									readMetaData.remove(metadataProperty);
+									readMetaData.remove(metadataProperty.getFirstMetadataProperty());
 								}
+								metadataProperty.setValue(value, 0);
 								change = true;
 							}
 						}
@@ -172,6 +174,55 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 
 	@Override
 	public void storePlainMetadata(byte[] plainMetadata) {
+	}
+	
+	/**
+	 * Helps to handle multiple metadata with the same type so the new value
+	 * is set to all metadata entries which already have the same value.
+	 */
+	private static class MultiMetadataPropertyDelegate {
+		
+		private List<MetadataProperty> metaData;
+		
+		private List<Object> metaDataRefValue;
+		
+		/**
+		 * Take sure that a min of one entry is in the given metadata.
+		 */
+		MultiMetadataPropertyDelegate(List<MetadataProperty> metaData) {
+			this.metaData = metaData;
+			this.metaDataRefValue = metaData.get(0).getValues();
+		}
+		
+		public List<Object> getValues() {
+			return metaDataRefValue;
+		}
+
+		/**
+		 * Set the value to each MetadataProperty that already have the same value 
+		 * as the first one. Other values won't be touched.
+		 * @param value The value to set.
+		 * @param idx The index auf the value.
+		 */
+		void setValue(final Object value, final int idx) {
+			Object refValue = getRefValue(idx);
+			for(MetadataProperty d : metaData) {
+				if(d.getValues().get(0).equals(refValue)) {
+					d.setValue(value, idx);
+				}
+			}
+		}
+		
+		/**
+		 * Get the first {@link MetadataProperty} instance.
+		 */
+		MetadataProperty getFirstMetadataProperty() {
+			return metaData.get(0);
+		}
+		
+		private Object getRefValue(int idx) {
+			return metaDataRefValue.get(idx);
+		}
 	}
 
 }
