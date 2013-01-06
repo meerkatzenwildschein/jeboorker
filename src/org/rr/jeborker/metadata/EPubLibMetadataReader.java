@@ -21,6 +21,7 @@ import nl.siegmann.epublib.epub.EpubReader;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.zip.ZipUtils;
 import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -75,7 +76,29 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	 * @return All available metadata from teh given {@link Metadata} instance.
 	 */
 	private List<MetadataProperty> createMetadataList(final Metadata metadata) {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>() {
+
+			@Override
+			public boolean add(MetadataProperty e) {
+				List<Object> values = e.getValues();
+				if(!isListEmpty(values)) {
+					return super.add(e);
+				}
+				return false;
+			}
+			
+			private boolean isListEmpty(List<Object> values) {
+				if(values != null && !values.isEmpty()) {
+					for(Object value : values) {
+						if(!StringUtils.isEmpty(value != null ? String.valueOf(value) : null)) {
+							return false;
+						}
+					}
+				}	
+				return true;
+			}
+			
+		};
 		
 		List<Author> authors = metadata.getAuthors();
 		for (Author author : authors) {
