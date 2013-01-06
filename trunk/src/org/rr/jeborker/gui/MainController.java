@@ -87,7 +87,6 @@ public class MainController {
 	 */
 	private class PropertySheetListSelectionListener implements ListSelectionListener {
 
-		
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting()) {
