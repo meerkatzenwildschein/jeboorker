@@ -87,6 +87,7 @@ public class MainController {
 	 */
 	private class PropertySheetListSelectionListener implements ListSelectionListener {
 
+		
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			if(!e.getValueIsAdjusting()) {
@@ -95,6 +96,7 @@ public class MainController {
 				setSelectedMetadataProperty(selectedMetadataProperty);
 			}
 		}
+		
 	}
 	
 	/**
@@ -651,7 +653,7 @@ public class MainController {
 							setImage(null);
 						}
 						
-						mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader, null, items.get(0)));
+						mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader.getSupportedMetaData(), model.getAllMetaData(), items.get(0)));
 					}
 				}				
 			} else {
