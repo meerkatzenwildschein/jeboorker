@@ -128,7 +128,7 @@ public class EpubReader {
 			if(!resources.containsByHref(resource.getHref()) && resource.getSize() > 0) {
 				resource.setPackageHref(null);
 				result.add(resource);
-				log.warning((book.getName() != null ? book.getName() : "Resource") + " with href '" + resource.getHref() + "' is not a registered member");
+//				log.warning((book.getName() != null ? book.getName() : "Resource") + " with href '" + resource.getHref() + "' is not a registered member");
 			}
 		}
 		return result;
