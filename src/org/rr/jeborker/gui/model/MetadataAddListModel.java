@@ -21,14 +21,12 @@ public class MetadataAddListModel extends AbstractListModel {
 	
 	private List<MetadataProperty> currentMetaData;
 	
-	private final IMetadataReader reader;
-	
 	private final EbookPropertyItem item;
 	
-	public MetadataAddListModel(final IMetadataReader reader, final List<MetadataProperty> currentMetaData, final EbookPropertyItem item) {
-		this.reader = reader;
+	public MetadataAddListModel(final List<MetadataProperty> supportedMetaData, final List<MetadataProperty> currentMetaData, final EbookPropertyItem item) {
 		this.item = item;
 		this.currentMetaData = currentMetaData;
+		this.supportedMetaData = supportedMetaData;
 	}
 	
 	@Override
@@ -49,10 +47,6 @@ public class MetadataAddListModel extends AbstractListModel {
 	
 	private void initialize() {
 		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
-		if(this.currentMetaData == null) {
-			this.currentMetaData = reader.readMetaData();
-		}
-		supportedMetaData = reader.getSupportedMetaData();
 		for (MetadataProperty supportedProperty : supportedMetaData) {
 			for (MetadataProperty currentMetadataProperty : currentMetaData) {
 				if(supportedProperty.getName().equals(currentMetadataProperty.getName())) {
