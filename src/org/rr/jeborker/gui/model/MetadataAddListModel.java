@@ -8,7 +8,6 @@ import javax.swing.Action;
 
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
-import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 public class MetadataAddListModel extends AbstractListModel {
