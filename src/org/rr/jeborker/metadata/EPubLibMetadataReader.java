@@ -67,7 +67,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		
 		final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
 		return epub;
-}
+	}
 
 	/**
 	 * Read all metadata entries from the given {@link Metadata} instance into {@link EpubLibMetadataProperty}.
