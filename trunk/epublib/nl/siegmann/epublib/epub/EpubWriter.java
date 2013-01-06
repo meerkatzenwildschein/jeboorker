@@ -16,7 +16,6 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.IOUtil;
 
-import org.rr.commons.utils.CommonUtils;
 import org.xmlpull.v1.XmlSerializer;
 
 /**
@@ -83,8 +82,12 @@ public class EpubWriter {
 			writeResource(resource, resultStream);
 		}
 		for(Resource resource: book.getUnlistedResources().getAll()) {
-			writeResource(resource, resultStream);
+			writeResource(resource, resultStream, true);
 		}		
+	}
+	
+	private void writeResource(Resource resource, ZipOutputStream resultStream) throws IOException {
+		writeResource(resource, resultStream, false);
 	}
 
 	/**
@@ -94,13 +97,18 @@ public class EpubWriter {
 	 * @param resultStream
 	 * @throws IOException
 	 */
-	private void writeResource(Resource resource, ZipOutputStream resultStream)
+	private void writeResource(Resource resource, ZipOutputStream resultStream, boolean unlisted)
 			throws IOException {
 		if(resource == null) {
 			return;
 		}
 		try {
-			resultStream.putNextEntry(new ZipEntry("OEBPS/" + resource.getHref()));
+			if(unlisted) {
+				//unlisted ones are stored with full path
+				resultStream.putNextEntry(new ZipEntry(resource.getHref()));
+			} else {
+				resultStream.putNextEntry(new ZipEntry("OEBPS/" + resource.getHref()));
+			}
 			InputStream inputStream = resource.getInputStream();
 			IOUtil.copy(inputStream, resultStream);
 			inputStream.close();

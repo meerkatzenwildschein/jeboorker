@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Date;

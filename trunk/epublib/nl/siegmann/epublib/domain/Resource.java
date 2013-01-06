@@ -38,6 +38,7 @@ public class Resource implements Serializable {
 		
 	private String fileName;
 	private long cachedSize;
+	private String packageHref;
 	
 	private static final Logger log = Logger.getLogger(Resource.class.getName());
 	
@@ -283,7 +284,7 @@ public class Resource implements Serializable {
 	 * @return
 	 */
 	public String getHref() {
-		return href;
+		return fixHref();
 	}
 
 	/**
@@ -370,5 +371,40 @@ public class Resource implements Serializable {
 				"mediaType", mediaType,
 				"href", href,
 				"size", (data == null ? 0 : data.length));
+	}
+
+	public String getPackageHref() {
+		return packageHref;
+	}
+
+	public void setPackageHref(String packageHref) {
+		this.packageHref = packageHref;
+	}
+	
+	/**
+	 * Strips off the package prefixes up to the href of the packageHref.
+	 * 
+	 * Example:
+	 * If the packageHref is "OEBPS/content.opf" then a resource href like "OEBPS/foo/bar.html" will be turned into "foo/bar.html"
+	 * 
+	 * @param packageHref
+	 * @param resourcesByHref
+	 * @return
+	 */
+	private String fixHref() {
+		int lastSlashPos = packageHref != null ? packageHref.lastIndexOf('/') : -1;
+		if (lastSlashPos < 0) {
+			return this.href;
+		}
+		String packagePath = packageHref.substring(0, lastSlashPos + 1);
+		if (StringUtil.isNotBlank(this.href) || this.href.length() > lastSlashPos) {
+			if (this.href.startsWith(packagePath)) {
+				// fix only entries within the given packageHref. The entry could be
+				// destroyed in the case that the ref is not in the given package.
+				return this.href.substring(lastSlashPos + 1);
+			}
+		}
+		return this.href;
+
 	}
 }
