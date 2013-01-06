@@ -48,7 +48,8 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	public static void read(Resource packageResource, EpubReader epubReader, Book book, Resources resources) throws UnsupportedEncodingException, SAXException, IOException, ParserConfigurationException {
 		Document packageDocument = ResourceUtil.getAsDocument(packageResource);
 		String packageHref = packageResource.getHref();
-		resources = fixHrefs(packageHref, resources);
+		resources = setPackageResources(resources, packageHref);
+//		resources = fixHrefs(packageHref, resources);
 		readGuide(packageDocument, epubReader, book, resources);
 		
 		// Books sometimes use non-identifier ids. We map these here to legal ones
@@ -64,6 +65,16 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		if (book.getCoverPage() == null && book.getSpine().size() > 0) {
 			book.setCoverPage(book.getSpine().getResource(0));
 		}
+	}
+	
+	private static Resources setPackageResources(Resources resources, String packageHref) {
+		Resources result = new Resources();
+		Collection<Resource> all = resources.getAll();
+		for(Resource resource : all) {
+			resource.setPackageHref(packageHref);
+			result.add(resource);
+		}	
+		return result;
 	}
 	
 	/**
@@ -156,33 +167,6 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		}
 	}
 
-
-	/**
-	 * Strips off the package prefixes up to the href of the packageHref.
-	 * 
-	 * Example:
-	 * If the packageHref is "OEBPS/content.opf" then a resource href like "OEBPS/foo/bar.html" will be turned into "foo/bar.html"
-	 * 
-	 * @param packageHref
-	 * @param resourcesByHref
-	 * @return
-	 */
-	private static Resources fixHrefs(String packageHref,
-			Resources resourcesByHref) {
-		int lastSlashPos = packageHref.lastIndexOf('/');
-		if(lastSlashPos < 0) {
-			return resourcesByHref;
-		}
-		Resources result = new Resources();
-		for(Resource resource: resourcesByHref.getAll()) {
-			if(StringUtil.isNotBlank(resource.getHref())
-					|| resource.getHref().length() > lastSlashPos) {
-				resource.setHref(resource.getHref().substring(lastSlashPos + 1));
-			}
-			result.add(resource);
-		}
-		return result;
-	}
 
 	/**
 	 * Reads the document's spine, containing all sections in reading order.
