@@ -8,15 +8,12 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.JeboorkerPreferences;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 
@@ -82,59 +79,4 @@ class RefreshBasePathAction extends AbstractAction {
 		AddBasePathAction.readEbookFilesToDB(resourceLoader);
 	}
 	
-	/**
-	 * Refresh the given {@link EbookPropertyItem}. Does also persist it to the db!
-	 * @param item The item to be refreshed
-	 * @param resourceLoader The IResourceHandler for the given item. Can be <code>null</code>.
-	 */
-	static void refreshEbookPropertyItem(final EbookPropertyItem item, IResourceHandler resourceLoader) {
-		if(resourceLoader == null) {
-			resourceLoader = ResourceHandlerFactory.getResourceLoader(item.getFile());
-		}
-		
-		//remove the entry from db and view.
-		if(!resourceLoader.exists()) {
-			ActionUtils.removeEbookPropertyItem(item);
-			return;
-		} else {
-			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
-			DefaultDBManager.getInstance().updateObject(item);
-System.out.println(item);			
-			if(isSelectedItem(item)) {
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						MainController.getController().refreshTableSelectedItem(true);
-					}
-				});
-			} else {
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						int row = MainController.getController().getTableModel().searchRow(item);
-						MainController.getController().refreshTableItem(new int[] {row}, false);
-					}
-				});				
-			}
-			
-		}
-	}
-	
-	/**
-	 * Tests if the given item is a selected one in the view.
-	 * @param item The item to be tested if it's selected.
-	 * @return <code>true</code> if the given item is selected in the view and false otherwise.
-	 */
-	private static boolean isSelectedItem(final EbookPropertyItem item) {
-		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();	
-		for(EbookPropertyItem selected : selectedEbookPropertyItems) {
-			if(item.equals(selected)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 }

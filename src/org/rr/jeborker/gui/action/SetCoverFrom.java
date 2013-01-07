@@ -58,7 +58,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 						byte[] content = dialogResult.getContent();
 						if(content != null) {
 							writer.setCover(dialogResult.getContent());
-							RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
+							ActionUtils.refreshEbookPropertyItem(item, resourceHandler);
 						}
 										
 						MainController.getController().refreshTableRows(getSelectedRowsToRefresh(), true);

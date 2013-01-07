@@ -6,15 +6,18 @@ import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.MainMonitor;
@@ -49,17 +52,72 @@ public class ActionUtils {
 
 	/**
 	 * Refreshes the entries for the given handler.
-	 * @param handler The handler of the entry to be refreshed.
+	 * @param resourceLoader The handler of the entry to be refreshed.
 	 */
-	static void refreshEntry(IResourceHandler handler) {	
+	static void refreshEntry(IResourceHandler resourceLoader) {	
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
-		final Iterable<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", handler.toString());
+		final Iterable<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
 		Iterator<EbookPropertyItem> iterator = items.iterator();
 		if(iterator.hasNext()) {
 			EbookPropertyItem item = iterator.next();
-			RefreshBasePathAction.refreshEbookPropertyItem(item, handler);
+			refreshEbookPropertyItem(item, resourceLoader);
 		}		
 	}
+	
+	/**
+	 * Refresh the given {@link EbookPropertyItem}. Does also persist it to the db!
+	 * @param item The item to be refreshed
+	 * @param resourceLoader The IResourceHandler for the given item. Can be <code>null</code>.
+	 */
+	static void refreshEbookPropertyItem(final EbookPropertyItem item, IResourceHandler resourceLoader) {
+		if(resourceLoader == null) {
+			resourceLoader = ResourceHandlerFactory.getResourceLoader(item.getFile());
+		}
+		
+		//remove the entry from db and view.
+		if(!resourceLoader.exists()) {
+			ActionUtils.removeEbookPropertyItem(item);
+			return;
+		} else {
+			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
+			DefaultDBManager.getInstance().updateObject(item);
+		
+			if(isSelectedItem(item)) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						MainController.getController().refreshTableSelectedItem(true);
+					}
+				});
+			} else {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						int row = MainController.getController().getTableModel().searchRow(item);
+						MainController.getController().refreshTableItem(new int[] {row}, false);
+					}
+				});				
+			}
+			
+		}
+	}
+	
+	/**
+	 * Tests if the given item is a selected one in the view.
+	 * @param item The item to be tested if it's selected.
+	 * @return <code>true</code> if the given item is selected in the view and false otherwise.
+	 */
+	private static boolean isSelectedItem(final EbookPropertyItem item) {
+		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();	
+		for(EbookPropertyItem selected : selectedEbookPropertyItems) {
+			if(item.equals(selected)) {
+				return true;
+			}
+		}
+		return false;
+	}	
 	
 	/**
 	 * Toggles the visibility of the given base path entry. If it's visible
