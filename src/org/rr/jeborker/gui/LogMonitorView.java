@@ -23,6 +23,8 @@ import javax.swing.JScrollPane;
 
 public class LogMonitorView extends JDialog implements ClipboardOwner {
 	
+	private static final int MAX_LOG_DISPLAY = 10000;
+	
 	private JButton btnCopy;
 	private JTextArea textArea;
 	private JButton btnClose;
@@ -98,10 +100,15 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 			
 			private void setLogText() {
 				int end = JeboorkerLogger.log.length();
-				int start = end > 10000 ? end - 10000 : 0;
-				char[] c = new char[end];
+				int start = end > MAX_LOG_DISPLAY ? end - MAX_LOG_DISPLAY : 0;
+				int length = end - start;
+				char[] c = new char[length];
 				JeboorkerLogger.log.getChars(start, end, c, 0);
-				textArea.setText(new String(c));
+				String text = new String(c);
+				if(length == MAX_LOG_DISPLAY) {
+					text = "..." + text;
+				}
+				textArea.setText(text);
 			}
 			
 		});
