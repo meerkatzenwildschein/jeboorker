@@ -106,5 +106,17 @@ public class ProcessExecutor {
 		}
 
 	}
+	
+	public static class EmptyProcessExecutorHandler implements ProcessExecutorHandler {
+
+		@Override
+		public void onStandardOutput(String msg) {
+		}
+
+		@Override
+		public void onStandardError(String msg) {
+		}
+
+	}	
 
 }
