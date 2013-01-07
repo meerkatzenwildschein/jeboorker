@@ -55,7 +55,8 @@ public class DesktopUtils {
 
 
 	private static boolean openWindowsFolder(File file) {
-		if(new File("C:\\Windows\\explorer.exe").exists()) {
+		final String windir = System.getenv("WINDIR");
+		if(new File(windir + File.separator + "explorer.exe").exists()) {
 			try {
 				CommandLine cl = CommandLine.parse("C:\\Windows\\explorer.exe /n /e \"" + file.toString() + "\"");
 				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
