@@ -70,7 +70,7 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 					mergeAndWrite(writer, readMetaData, metaData);
 					
 					//do some refresh to the changed entry.
-					RefreshBasePathAction.refreshEbookPropertyItem(item, resourceHandler);
+					ActionUtils.refreshEbookPropertyItem(item, resourceHandler);
 					
 					SwingUtilities.invokeLater(new Runnable() {
 						
