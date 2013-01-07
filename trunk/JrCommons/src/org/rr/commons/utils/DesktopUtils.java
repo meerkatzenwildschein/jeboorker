@@ -19,7 +19,7 @@ public class DesktopUtils {
 			if(CommonUtils.isLinux() && ResourceHandlerFactory.getResourceLoader("/usr/bin/xdg-open").exists()) {
 				//try with xdg-open from freedesktop.org which is installed with the xdg-utils package. 
 				CommandLine cl = CommandLine.parse("/usr/bin/xdg-open " + file.toURI().toString());
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.LogProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 				return true;
 			} else {
 				Desktop.getDesktop().open(file);
@@ -58,7 +58,7 @@ public class DesktopUtils {
 		if(new File("C:\\Windows\\explorer.exe").exists()) {
 			try {
 				CommandLine cl = CommandLine.parse("C:\\Windows\\explorer.exe /n /e \"" + file.toString() + "\"");
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.LogProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 				return true;
 			} catch(Exception e2) {
 				e2.printStackTrace(); //debug output
@@ -71,7 +71,7 @@ public class DesktopUtils {
 		if(new File("/usr/bin/nemo").exists()) {
 			try {
 				CommandLine cl = CommandLine.parse("/bin/sh -c /usr/bin/nemo \"" + file.toString() + "\"");
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.LogProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 				return true;
 			} catch(Exception e2) {
 				e2.printStackTrace(); //debug output
@@ -81,7 +81,7 @@ public class DesktopUtils {
 				//workaround for 6490730. It's already present with my ubuntu
 				//http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6490730
 				CommandLine cl = CommandLine.parse("/bin/sh -c /usr/bin/nautilus \"" + file.toString() + "\"");
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.LogProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 			    return true;
 			} catch (Exception e2) {
 				e2.printStackTrace(); //debug output
