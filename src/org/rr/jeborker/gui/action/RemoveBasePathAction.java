@@ -63,7 +63,7 @@ class RemoveBasePathAction extends AbstractAction {
 		try {
 			progressMonitor.monitorProgressStart(Bundle.getString("RemoveBasePathAction.message"));
 			try {
-				ArrayList<EbookPropertyItem> itemsToRemove = getItemsToRemove(path);
+				ArrayList<EbookPropertyItem> itemsToRemove = getItemsByBasePath(path);
 				removeAllEbookPropertyItems(itemsToRemove);
 			} catch(Exception ex) {
 				LoggerFactory.logWarning(RemoveBasePathAction.class, "Error while removing ebooks from catalog", ex);
@@ -87,7 +87,7 @@ class RemoveBasePathAction extends AbstractAction {
 	 * @param basePath The base path string
 	 * @return A list over all items with a fitting base path. Never returns null.
 	 */
-	static ArrayList<EbookPropertyItem> getItemsToRemove(final String basePath) {
+	static ArrayList<EbookPropertyItem> getItemsByBasePath(final String basePath) {
 		final String normalizedPath = StringUtils.replace(basePath, File.separator, "");
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		final ArrayList<EbookPropertyItem> toRemove = new ArrayList<EbookPropertyItem>();

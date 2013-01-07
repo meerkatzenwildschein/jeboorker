@@ -73,7 +73,7 @@ class RefreshBasePathAction extends AbstractAction {
 	private void doRefreshBasePath(String path, ActionEvent e, MainMonitor monitor) {
 		IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(path);
 		
-		ArrayList<EbookPropertyItem> itemsToRemove = RemoveBasePathAction.getItemsToRemove(path);
+		ArrayList<EbookPropertyItem> itemsToRemove = RemoveBasePathAction.getItemsByBasePath(path);
 		RemoveBasePathAction.removeAllEbookPropertyItems(itemsToRemove);
 		
 		AddBasePathAction.readEbookFilesToDB(resourceLoader);
