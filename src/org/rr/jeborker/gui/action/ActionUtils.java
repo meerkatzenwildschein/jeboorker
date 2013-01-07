@@ -55,8 +55,7 @@ public class ActionUtils {
 	 * @param resourceLoader The handler of the entry to be refreshed.
 	 */
 	static void refreshEntry(IResourceHandler resourceLoader) {	
-		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
-		final Iterable<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
+		final List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceLoader);
 		Iterator<EbookPropertyItem> iterator = items.iterator();
 		if(iterator.hasNext()) {
 			EbookPropertyItem item = iterator.next();

@@ -3,6 +3,7 @@ package org.rr.jeborker.db.item;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,20 @@ import org.rr.pm.image.ImageUtils;
 import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 
 public class EbookPropertyItemUtils {
+	
+	/**
+	 * Get the {@link EbookPropertyItem}s for the given {@link IResourceHandler}.
+	 * @param resourceLoader The {@link IResourceHandler} instance where the {@link EbookPropertyItem} should be fetched from the database. 
+	 * @return The desired {@link EbookPropertyItem}s.
+	 */
+	public static List<EbookPropertyItem> getEbookPropertyItemByResource(IResourceHandler resourceLoader) {
+		if(resourceLoader == null) {
+			return Collections.emptyList();
+		}
+		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
+		final List<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
+		return items;
+	}
 	
     /**
      * Get all fields which are marked with a {@link ViewField} annotation.

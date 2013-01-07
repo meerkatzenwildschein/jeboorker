@@ -107,7 +107,7 @@ class MainControllerUtils {
 
 					final List<IResourceHandler> notSelectedEbookResources = ListUtils.difference(selectedEbookResources, ebookResources);
 					for (IResourceHandler notSelectedEbookResource : notSelectedEbookResources) {
-						List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", notSelectedEbookResource.toString());
+						List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(notSelectedEbookResource);
 						selectedEbookPropertyItems.addAll(items);
 					}
 					

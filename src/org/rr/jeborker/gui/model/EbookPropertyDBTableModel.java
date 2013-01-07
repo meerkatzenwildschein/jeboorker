@@ -21,6 +21,7 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.OrderDirection;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 
 public class EbookPropertyDBTableModel implements TableModel {
 
@@ -155,7 +156,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 		if(rowIndex >= 0) {
 			final EbookPropertyItem modelItem = this.getEbookPropertyItemAt(rowIndex);
 			if(modelItem != null) {
-				final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", modelItem.getFile());
+				final List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(modelItem.getResourceHandler());
 				
 				if(!items.isEmpty()) {
 					EbookPropertyItem dbItem = items.get(0);

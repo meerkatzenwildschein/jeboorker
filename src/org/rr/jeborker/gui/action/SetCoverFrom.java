@@ -10,8 +10,8 @@ import javax.swing.JFileChooser;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.RefreshAbstractAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataWriter;
@@ -44,7 +44,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 			savePendingMetadata(evt);
 			
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
-			List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
+			List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
 			
 			if(!items.isEmpty()) {
 				final EbookPropertyItem item = items.get(0);
