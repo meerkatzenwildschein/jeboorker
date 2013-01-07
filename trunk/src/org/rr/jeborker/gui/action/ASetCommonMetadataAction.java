@@ -11,6 +11,7 @@ import org.rr.commons.swing.dialogs.SimpleInputDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.RefreshAbstractAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -50,7 +51,7 @@ abstract class ASetCommonMetadataAction extends RefreshAbstractAction implements
 	protected void setMetaData(IResourceHandler resourceHandler, IMetadataReader.METADATA_TYPES type) {
 		final MainController controller = MainController.getController();
 		try {
-			final List<EbookPropertyItem> items = DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString());
+			final List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
 			
 			if(!items.isEmpty()) {
 				final EbookPropertyItem item = items.get(0);

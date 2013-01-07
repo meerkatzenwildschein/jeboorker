@@ -12,8 +12,12 @@ import javax.swing.ImageIcon;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
+import org.rr.commons.mufs.ResourceNameFilter;
 import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 
@@ -72,11 +76,62 @@ class RefreshBasePathAction extends AbstractAction {
 	
 	private void doRefreshBasePath(String path, ActionEvent e, MainMonitor monitor) {
 		IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(path);
-		
-		ArrayList<EbookPropertyItem> itemsToRemove = RemoveBasePathAction.getItemsByBasePath(path);
-		RemoveBasePathAction.removeAllEbookPropertyItems(itemsToRemove);
-		
-		AddBasePathAction.readEbookFilesToDB(resourceLoader);
+		removeDeletedFiles(resourceLoader);
+		refreshEbookFiles(resourceLoader);
+		MainController.getController().refreshTable(true);
 	}
+	
+	/**
+	 * Removes all deleted files from the database.
+	 * @param basePath The folder to be processed.
+	 */
+	static void removeDeletedFiles(final IResourceHandler basePath) {
+		final DefaultDBManager db = DefaultDBManager.getInstance();
+		final ArrayList<EbookPropertyItem> itemsToTest = RemoveBasePathAction.getItemsByBasePath(basePath.toString());
+		for(EbookPropertyItem item : itemsToTest) {
+			final IResourceHandler itemResourceHandler = item.getResourceHandler();
+			if(!itemResourceHandler.exists()) {
+				db.deleteObject(item);
+			}
+		}
+	}
+	
+	/**
+	 * Read all ebook files recursive and stores them directly to the database.
+	 * @param basePath The folder where the ebook search should be started.
+	 */
+	static void refreshEbookFiles(final IResourceHandler basePath) {
+		final DefaultDBManager db = DefaultDBManager.getInstance();
+		ResourceHandlerUtils.readAllFilesFromBasePath(basePath, new ResourceNameFilter() {
+			
+			@Override
+			public boolean accept(IResourceHandler resourceLoader) {
+				if(resourceLoader.isFileResource() && ActionUtils.isSupportedEbookFormat(resourceLoader)) {
+					try {
+						List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceLoader);
+						if(!ebookPropertyItems.isEmpty()) {
+							for(EbookPropertyItem item : ebookPropertyItems) {
+								long fileTimeStamp = resourceLoader.getModifiedAt().getTime();
+								if(item.getTimestamp() == 0 || item.getTimestamp() != fileTimeStamp) {
+									//file has changed
+									EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
+									db.updateObject(item);
+								}
+							}
+						} else {
+							//new ebook
+							final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resourceLoader, basePath);
+							db.storeObject(item);
+						}
+						
+						return true;
+					} catch(Throwable e) {
+						LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed adding resource " + resourceLoader, e);
+					}
+				}
+				return false;
+			}
+		});
+	}	
 	
 }
