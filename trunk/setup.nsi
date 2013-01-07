@@ -73,8 +73,9 @@ Section -Main SEC0000
     File lib\bcprov-ext-jdk15on-147.jar
     File lib\commons-io-2.4.jar
     File lib\commons-lang-2.5.jar
-    File lib\itext-5.jar
     File lib\commons-logging-1.1.1.jar
+    File lib\commons-exec-1.1.jar
+    File lib\itext-5.jar
     File lib\jeboorker.jar
     File lib\jrcommons.jar
     File lib\jrswingcommons.jar
