@@ -67,6 +67,18 @@ Section -Main SEC0000
     File msvcr100.dll
     File Readme.txt
     
+    SetOutPath $INSTDIR\doc\license
+    File doc\license\Bounce_license.txt
+    File doc\license\Commons-Logging_license.txt
+    File doc\license\Epublib_LGPL_license.txt
+    File doc\license\itext_AGPL_license.txt
+    File doc\license\Janel_MIT_license.txt
+    File doc\license\Japura_LGPL_license.txt
+    File doc\license\Jempbox_Apache_license.txt
+    File doc\license\L2fprod_Apache_license.txt
+    File doc\license\HTTP-Components_Apache_license.txt
+    File doc\license\JSON-Simple_Apache_license.txt
+    
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
     File lib\bcpkix-jdk15on-147.jar
@@ -83,6 +95,15 @@ Section -Main SEC0000
     File lib\junique-1.0.4.jar
     File lib\jna-3.4.0.jar
     File lib\platform-3.4.0.jar
+    
+    SetOutPath $INSTDIR\lib\dropbox
+    File lib\dropbox\dropbox-java-sdk-1.5.3.jar
+    File lib\dropbox\httpclient-4.0.3.jar
+    File lib\dropbox\HTTPCOMPONENTS-LICENSE.txt
+    File lib\dropbox\httpcore-4.0.1.jar
+    File lib\dropbox\httpmime-4.0.3.jar
+    File lib\dropbox\json_simple-1.1.jar
+    File lib\dropbox\JSON-SIMPLE-LICENSE.txt
     
     SetOutPath $INSTDIR\lib\epublib
     File lib\epublib\commons-vfs-1.0.jar
