@@ -1,3 +1,4 @@
-The following software is also includes:
+Also other software is delivered or included with Jeboorker. For license please refer the doc/license folder.
 
-- Janel for windows execution (MIT license) http://www.redskaper.com/Janel.jsp
+To startup with another database just add the following parameter to the startup script.
+-Dapplication.suffix=devel 
