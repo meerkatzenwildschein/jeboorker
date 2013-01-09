@@ -332,7 +332,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		for (String coverHref: coverHrefs) {
 			Resource resource = book.getResources().getByHref(coverHref);
 			if (resource == null) {
-				log.warning("Cover resource " + coverHref + " not found");
+				log.warning("Cover resource " + coverHref + " not found in '" + book.getName() + "'");
 				continue;
 			}
 			if (resource.getMediaType() == MediatypeService.XHTML) {

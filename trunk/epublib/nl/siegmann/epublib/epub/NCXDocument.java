@@ -132,13 +132,18 @@ public class NCXDocument {
 	
 	private static String readNavReference(Element navpointElement) {
 		Element contentElement = DOMUtil.getFirstElementByTagNameNS(navpointElement, NAMESPACE_NCX, NCXTags.content);
-		String result = DOMUtil.getAttribute(contentElement, NAMESPACE_NCX, NCXAttributes.src);
-		try {
-			result = URLDecoder.decode(result, Constants.ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			log.warning(e.getMessage());
+		if(contentElement != null) {
+			String result = DOMUtil.getAttribute(contentElement, NAMESPACE_NCX, NCXAttributes.src);
+			try {
+				result = URLDecoder.decode(result, Constants.ENCODING);
+			} catch (UnsupportedEncodingException e) {
+				log.warning(e.getMessage());
+			}
+			return result;
+		} else {
+			log.warning("No Element for Element " + navpointElement.getNodeName());
+			return "";
 		}
-		return result;
 	}
 
 	private static String readNavLabel(Element navpointElement) {
