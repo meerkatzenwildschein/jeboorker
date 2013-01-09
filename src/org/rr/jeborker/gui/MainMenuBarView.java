@@ -241,6 +241,7 @@ class MainMenuBarView extends JMenuBar {
 		final JMenuItem openFolderMenuEntry;
 		final JMenuItem openFileMenuEntry;
 		final JMenuItem deleteFileMenuEntry;
+		final JMenuItem copyToDropboxMenuEntry;
 		if(selectedEbookPropertyItems.size() == 1) {
 			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedEbookPropertyItems.get(0).getFile()));
 			openFolderMenuEntry.setEnabled(true);
@@ -263,9 +264,18 @@ class MainMenuBarView extends JMenuBar {
 			deleteFileMenuEntry.setEnabled(false);				
 		}
 		
+		if(selectedEbookPropertyItems.size() >= 1) {
+			copyToDropboxMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_DROPBOX, selectedEbookPropertyItems.get(0).getFile()));
+			copyToDropboxMenuEntry.setEnabled(true);
+		}  else {
+			copyToDropboxMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_DROPBOX, ""));
+			copyToDropboxMenuEntry.setEnabled(false);			
+		}
+		
 		fileMenuBar.add(openFileMenuEntry);
 		fileMenuBar.add(openFolderMenuEntry);
 		fileMenuBar.add(deleteFileMenuEntry);
+		fileMenuBar.add(copyToDropboxMenuEntry);
 		
 		fileMenuBar.add(new JSeparator());
 		

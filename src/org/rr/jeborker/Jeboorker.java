@@ -13,7 +13,6 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -137,6 +136,7 @@ public class Jeboorker {
 			addPath(new File(result + File.separator + "lib/orientdb/"), jarFileSet);
 			addPath(new File(result + File.separator + "lib/epubcheck/"), jarFileSet);
 			addPath(new File(result + File.separator + "lib/epublib/"), jarFileSet);
+			addPath(new File(result + File.separator + "lib/dropbox/"), jarFileSet);
 		} catch (Exception e1) {
 			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
 			System.exit(-1);
