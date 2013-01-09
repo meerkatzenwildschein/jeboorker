@@ -1,6 +1,7 @@
 #http://www.redskaper.com/HowToRun.html
 # This is a .lap file comment
 -Djava.class.path=.\lib\jeboorker.jar;.\lib\jrcommons.jar;.\lib\jrswingcommons.jar;.\lib\junique-1.0.4.jar
+-client
 -Xmx256m 
 -XX:+AggressiveOpts 
 
