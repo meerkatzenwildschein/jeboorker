@@ -8,16 +8,23 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
 import javax.swing.UIManager;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.gui.MainController;
 
 public class Jeboorker {
@@ -76,6 +83,8 @@ public class Jeboorker {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
+						logSystemInfo();
+						
 						mainController = MainController.getController();
 					} catch (Exception e) {
 						LoggerFactory.log(Level.SEVERE, null, "Main failed", e); 
@@ -89,6 +98,25 @@ public class Jeboorker {
 			
 			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + version + " is already running.");
 		}
+	}
+	
+	/**
+	 * Dumps the application version and the vm start parameters to the log 
+	 */
+	private static void logSystemInfo() {
+		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+		List<String> args = bean.getInputArguments();
+		String argsString = ListUtils.join(args, " ");
+		
+		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.version + " started with " + argsString);
+		
+		Properties props = System.getProperties();
+		Set<Object> keys = props.keySet();
+		for(Object key : keys) {
+			Object value = props.get(key);
+			LoggerFactory.getLogger().info(StringUtils.toString(key) + "=" + StringUtils.toString(value));
+		}
+		
 	}
 
 	private static void setupLookAndFeel() {

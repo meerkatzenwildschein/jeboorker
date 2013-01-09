@@ -184,7 +184,6 @@ public class MainController {
 	
 	private void initialize() {
 		mainWindow = new MainView();
-		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.version + " started");
 		initListeners();
 		initSubController();
 		
