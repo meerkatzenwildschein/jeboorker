@@ -78,6 +78,19 @@ Section -Main SEC0000
     File doc\license\L2fprod_Apache_license.txt
     File doc\license\HTTP-Components_Apache_license.txt
     File doc\license\JSON-Simple_Apache_license.txt
+    File doc\license\Dropbox_MIT_license.txt
+    File doc\license\Orientdb_Apache_license.txt
+    File doc\license\JSoup_MIT_license.txt
+    File doc\license\Junique_LGPL_license.txt
+    File doc\license\Bouncycastle_MIT_license.txt
+    File doc\license\Commons-VFS_license.txt
+    File doc\license\Commons-Lang_license.txt
+    File doc\license\Commons-IO_license.txt
+    File doc\license\Commons-Excec_license.txt
+    File doc\license\Commons-Net_license.txt
+    File doc\license\Java-Unrar_license.txt
+    File doc\license\Htmlcleaner_BSD_license.txt
+    File doc\license\KXML_license.txt
     
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
@@ -99,11 +112,9 @@ Section -Main SEC0000
     SetOutPath $INSTDIR\lib\dropbox
     File lib\dropbox\dropbox-java-sdk-1.5.3.jar
     File lib\dropbox\httpclient-4.0.3.jar
-    File lib\dropbox\HTTPCOMPONENTS-LICENSE.txt
     File lib\dropbox\httpcore-4.0.1.jar
     File lib\dropbox\httpmime-4.0.3.jar
     File lib\dropbox\json_simple-1.1.jar
-    File lib\dropbox\JSON-SIMPLE-LICENSE.txt
     
     SetOutPath $INSTDIR\lib\epublib
     File lib\epublib\commons-vfs-1.0.jar
