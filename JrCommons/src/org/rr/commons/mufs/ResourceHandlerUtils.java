@@ -11,11 +11,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.apache.commons.exec.CommandLine;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ProcessExecutor;
+import org.rr.commons.utils.ProcessExecutorHandler;
 import org.rr.commons.utils.ReflectionUtils;
 
 /**
@@ -553,4 +558,45 @@ public class ResourceHandlerUtils {
 		return false;
 	}
 
+	/**
+	 * Get a list over all external drives. 
+	 * @return All external drives. never returns <code>null</code>.
+	 */
+	public static List<IResourceHandler> getExternalDriveResources() {
+		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+		if(CommonUtils.isLinux()) {
+			try {
+				CommandLine cl = CommandLine.parse("/bin/df");
+				Future<Long> runProcess = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
+					
+					@Override
+					public void onStandardOutput(String msg) {
+						int mediaIdx = msg.lastIndexOf("/media/");
+						if(msg.indexOf("/media/") != -1) {
+							String path = msg.substring(mediaIdx);
+							File f = new File(path);
+							if(f.isDirectory()) {
+								result.add(ResourceHandlerFactory.getResourceLoader(f));
+							}
+						}
+					}
+					
+					@Override
+					public void onStandardError(String msg) {
+					}
+				}, 5000);
+				runProcess.get(); //wait
+			} catch (Exception e) {
+				LoggerFactory.getLogger(ResourceHandlerUtils.class).log(Level.WARNING, "/bin/df has failed.", e);
+			}
+		} else {
+			FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+			File[] roots = fileSystemView.getRoots();
+			for(File root : roots) {
+				//TODO for windows
+			}			
+		}
+
+		return result;
+	}
 }
