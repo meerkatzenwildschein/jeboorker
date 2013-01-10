@@ -9,7 +9,6 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.dialogs.SimpleInputDialog;
 import org.rr.commons.utils.ListUtils;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.RefreshAbstractAction;
