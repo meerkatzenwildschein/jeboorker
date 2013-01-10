@@ -575,7 +575,7 @@ public class ResourceHandlerUtils {
 						if(msg.indexOf("/media/") != -1) {
 							String path = msg.substring(mediaIdx);
 							File f = new File(path);
-							if(f.isDirectory()) {
+							if(f.isDirectory() && f.canWrite()) {
 								result.add(ResourceHandlerFactory.getResourceLoader(f));
 							}
 						}
@@ -590,10 +590,17 @@ public class ResourceHandlerUtils {
 				LoggerFactory.getLogger(ResourceHandlerUtils.class).log(Level.WARNING, "/bin/df has failed.", e);
 			}
 		} else {
-			FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-			File[] roots = fileSystemView.getRoots();
-			for(File root : roots) {
-				//TODO for windows
+			File[] roots = File.listRoots();
+			for(int i = roots.length - 1; i >= 0; i--) {
+				File root = roots[i];
+				if(root.canWrite()) {
+					result.add(ResourceHandlerFactory.getResourceLoader(root));
+				}
+				if(root.getPath().equalsIgnoreCase("d:\\")) {
+					//C is mostly no external drive and A is a floppy which causes timeouts while
+					//getting some information from it. No need for this.
+					break;
+				}				
 			}			
 		}
 
