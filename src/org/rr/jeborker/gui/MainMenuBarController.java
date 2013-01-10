@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -18,6 +19,8 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -208,14 +211,28 @@ public class MainMenuBarController {
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile());
 			menu.add(action);
 		}
-		
+
+		JMenu copyToSubMenu = createCopyToMenu(items, selectedEbookPropertyItemRows);
+		menu.add(copyToSubMenu);
+
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
 		menu.add(action);
 		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
-		menu.add(action);
-		
 		return menu;
+	}	
+	
+	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
+		JMenu copyToSubMenu = new JMenu(Bundle.getString("MainMenuBarController.copyToSubMenu"));
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
+		copyToSubMenu.add(action);
+		
+		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
+		for(IResourceHandler externalResource : externalDriveResources) {
+			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+			action.putValue(Action.NAME, externalResource.toString());
+			copyToSubMenu.add(action);
+		}
+		return copyToSubMenu;
 	}	
 	
 	/**

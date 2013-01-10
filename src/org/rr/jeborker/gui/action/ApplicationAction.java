@@ -95,4 +95,10 @@ public class ApplicationAction extends AbstractAction {
 		super.setEnabled(newValue);
 		realAction.setEnabled(newValue);
 	}
+
+	@Override
+	public void putValue(String key, Object newValue) {
+		super.putValue(key, newValue);
+		realAction.putValue(key, newValue);
+	}
 }

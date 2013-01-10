@@ -43,7 +43,6 @@ public class CopyToDropboxAction extends AbstractAction {
 
 	CopyToDropboxAction(String text) {
 		this.source = text;
-		//putValue(Action.NAME, Bundle.getString("OpenFileAction.name"));
 		putValue(Action.NAME, Bundle.getString("CopyToDropboxAction.name"));
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("copy_dropbox_16.gif")));
 		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("copy_dropbox_22.gif")));		
@@ -53,7 +52,9 @@ public class CopyToDropboxAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		IResourceHandler resource = ResourceHandlerFactory.getResourceLoader(source);
         try {
-        	MainController.getController().getProgressMonitor().monitorProgressStart("Uploading file " + resource.getName());
+        	String message = Bundle.getFormattedString("CopyToDropboxAction.uploading", resource.getName());
+        	MainController.getController().getProgressMonitor().monitorProgressStart(message);
+        	
 			doUpload(resource);
 		} catch (Exception ex) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Upload failed", ex);
