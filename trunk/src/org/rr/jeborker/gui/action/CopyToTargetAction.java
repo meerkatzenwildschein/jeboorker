@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.filechooser.FileSystemView;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -26,16 +27,12 @@ public class CopyToTargetAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(source);
-		Object target = getValue(Action.NAME);
+		IResourceHandler target = (IResourceHandler) getValue("TARGET");
         try {
         	String message = Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), StringUtils.toString(target));
         	MainController.getController().getProgressMonitor().monitorProgressStart(message);
-        	if(target instanceof IResourceHandler) {
-        		this.copy(sourceResource, (IResourceHandler) target);
-        	} else {
-        		IResourceHandler targetResource = ResourceHandlerFactory.getResourceLoader(StringUtils.toString(target));
-        		this.copy(sourceResource, targetResource);
-        	}
+        	
+        	this.copy(sourceResource, (IResourceHandler) target);
 		} catch (Exception ex) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Copy " + this.source + " to " + StringUtils.toString(target) + " failed", ex);
 		} finally {

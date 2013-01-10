@@ -16,10 +16,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.JeboorkerPreferences;
@@ -221,15 +223,27 @@ public class MainMenuBarController {
 		return menu;
 	}	
 	
+	/**
+	 * Creates the copy to submenu.
+	 * @return
+	 */
 	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
 		JMenu copyToSubMenu = new JMenu(Bundle.getString("MainMenuBarController.copyToSubMenu"));
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
+		
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, new int[0]);
+		copyToSubMenu.add(action);
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
+		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceLoader(FileSystemView.getFileSystemView().getHomeDirectory());
+		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
+		action.putValue("TARGET", homeFolder);
 		copyToSubMenu.add(action);
 		
 		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
 		for(IResourceHandler externalResource : externalDriveResources) {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
 			action.putValue(Action.NAME, externalResource.toString());
+			action.putValue("TARGET", externalResource);
 			copyToSubMenu.add(action);
 		}
 		return copyToSubMenu;
