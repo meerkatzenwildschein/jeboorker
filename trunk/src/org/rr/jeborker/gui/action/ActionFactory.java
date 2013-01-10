@@ -30,7 +30,7 @@ public class ActionFactory {
 	
 	public static enum COMMON_ACTION_TYPES {
 		ADD_BASE_PATH_ACTION, REMOVE_BASE_PATH_ACTION, REFRESH_BASE_PATH_ACTION, SHOW_HIDE_BASE_PATH_ACTION, REFRESH_ENTRY_ACTION, QUIT_ACTION, SEARCH_ACTION, REMOVE_METADATA_ENTRY_ACTION, SAVE_METADATA_ACTION, OPEN_FOLDER_ACTION,
-		OPEN_FILE_ACTION, DELETE_FILE_ACTION, COPY_TO_DROPBOX, VIEW_LOG_MONITOR_ACTION
+		OPEN_FILE_ACTION, DELETE_FILE_ACTION, COPY_TO_DROPBOX, COPY_TO_TARGET, VIEW_LOG_MONITOR_ACTION
 	}
 	
 	public static enum DYNAMIC_ACTION_TYPES implements ActionType {
@@ -105,6 +105,18 @@ public class ActionFactory {
 			public boolean canHandle(IResourceHandler resourceHandler) {
 				return resourceHandler.isFileResource();
 			}			
+		},
+		COPY_TO_TARGET_ACTION {
+			
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return CopyToTargetAction.class;
+			}
+			
+			@Override
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return resourceHandler.isFileResource();
+			}			
 		}
 	}	
 	
@@ -149,7 +161,10 @@ public class ActionFactory {
 				break;
 			case COPY_TO_DROPBOX:
 				action = new CopyToDropboxAction(text);			
-				break;				
+				break;		
+			case COPY_TO_TARGET:
+				action = new CopyToTargetAction(text);			
+				break;					
 			case VIEW_LOG_MONITOR_ACTION:
 				action = new ShowLogAction(text);
 				break;

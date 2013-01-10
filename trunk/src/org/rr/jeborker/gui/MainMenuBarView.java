@@ -114,8 +114,9 @@ class MainMenuBarView extends JMenuBar {
 			@Override
 			public void menuSelected(MenuEvent e) {
 				final MainController controller = MainController.getController();
+				int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();					
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
-				final List<Component> menuActions = createDynamicFileMenu(selectedItems);
+				final List<Component> menuActions = createDynamicFileMenu(selectedItems, selectedEbookPropertyItemRows);
 				
 				fileMenuBar.removeAll();
 				for (Component menuAction : menuActions) {
@@ -146,14 +147,14 @@ class MainMenuBarView extends JMenuBar {
 		
 		return this.helpMenuBar;
 	}
-
+	
 	/**
 	 * Creates all menu entries for the file menu. This method is always invoked
 	 * if the file menu is opened.
 	 * @param items Currently selected items.
 	 * @return The menu entries for the file menu.
 	 */
-	private List<Component> createDynamicFileMenu(List<EbookPropertyItem> selectedEbookPropertyItems) {
+	private List<Component> createDynamicFileMenu(List<EbookPropertyItem> selectedEbookPropertyItems, int[] selectedEbookPropertyItemRows) {
 		ArrayList<Component> fileMenuBar = new ArrayList<Component>();
 		
 		JMenuItem mntmAddEbooks = new JMenuItem();
@@ -241,7 +242,6 @@ class MainMenuBarView extends JMenuBar {
 		final JMenuItem openFolderMenuEntry;
 		final JMenuItem openFileMenuEntry;
 		final JMenuItem deleteFileMenuEntry;
-		final JMenuItem copyToDropboxMenuEntry;
 		if(selectedEbookPropertyItems.size() == 1) {
 			openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedEbookPropertyItems.get(0).getFile()));
 			openFolderMenuEntry.setEnabled(true);
@@ -264,24 +264,23 @@ class MainMenuBarView extends JMenuBar {
 			deleteFileMenuEntry.setEnabled(false);				
 		}
 		
+		JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu(selectedEbookPropertyItems, selectedEbookPropertyItemRows);
 		if(selectedEbookPropertyItems.size() >= 1) {
-			copyToDropboxMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_DROPBOX, selectedEbookPropertyItems.get(0).getFile()));
-			copyToDropboxMenuEntry.setEnabled(true);
+			copyToSubMenu.setEnabled(true);
 		}  else {
-			copyToDropboxMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_DROPBOX, ""));
-			copyToDropboxMenuEntry.setEnabled(false);			
+			copyToSubMenu.setEnabled(false);
 		}
 		
 		fileMenuBar.add(openFileMenuEntry);
 		fileMenuBar.add(openFolderMenuEntry);
+		fileMenuBar.add(copyToSubMenu);
 		fileMenuBar.add(deleteFileMenuEntry);
-		fileMenuBar.add(copyToDropboxMenuEntry);
 		
 		fileMenuBar.add(new JSeparator());
 		
 		//quit menu entry
 		JMenuItem mntmQuit = new JMenuItem();
-		mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
+		mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, (String) null));
 		fileMenuBar.add(mntmQuit);
 		
 		return fileMenuBar;
