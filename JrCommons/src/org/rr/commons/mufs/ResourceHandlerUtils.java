@@ -584,7 +584,7 @@ public class ResourceHandlerUtils {
 					@Override
 					public void onStandardError(String msg) {
 					}
-				}, 5000);
+				}, 2000);
 				runProcess.get(); //wait
 			} catch (Exception e) {
 				LoggerFactory.getLogger(ResourceHandlerUtils.class).log(Level.WARNING, "/bin/df has failed.", e);
