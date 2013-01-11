@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -51,7 +52,13 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public InputStream getContentInputStream() throws IOException {
-		InputStream inputStream = this.url.openConnection().getInputStream();
+		URLConnection connection = this.url.openConnection();
+		if(connection instanceof HttpURLConnection) {
+			((HttpURLConnection) connection).setConnectTimeout(10 * 1000); //10 sec timeout
+			((HttpURLConnection) connection).setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
+		}
+		connection.connect();
+		InputStream inputStream = connection.getInputStream();
 		inStream.add(inputStream);
 		return inputStream;
 	}
