@@ -327,7 +327,6 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	 * @return
 	 */
 	private static void readCover(Document packageDocument, Book book) {
-		
 		Collection<String> coverHrefs = findCoverHrefs(packageDocument);
 		for (String coverHref: coverHrefs) {
 			Resource resource = book.getResources().getByHref(coverHref);
