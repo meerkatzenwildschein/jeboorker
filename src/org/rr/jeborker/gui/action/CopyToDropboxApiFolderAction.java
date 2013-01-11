@@ -31,7 +31,7 @@ import com.dropbox.client2.session.Session.AccessType;
 import com.dropbox.client2.session.WebAuthSession;
 import com.dropbox.client2.session.WebAuthSession.WebAuthInfo;
 
-public class CopyToDropboxAction extends AbstractAction {
+public class CopyToDropboxApiFolderAction extends AbstractAction {
 	
 	private static final String DROPBOX_AUTH_SECRET = "dropboxAuthSecret";
 	private static final String DROPBOX_AUTH_KEY = "dropboxAuthKey";
@@ -41,7 +41,7 @@ public class CopyToDropboxAction extends AbstractAction {
 	//source file to copy
 	String source;
 
-	CopyToDropboxAction(String text) {
+	CopyToDropboxApiFolderAction(String text) {
 		this.source = text;
 		putValue(Action.NAME, Bundle.getString("CopyToDropboxAction.name"));
 		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("copy_dropbox_16.gif")));
