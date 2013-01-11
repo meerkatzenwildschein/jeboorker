@@ -98,7 +98,7 @@ public class ActionFactory {
 			
 			@Override
 			public Class<? extends Action> getActionClass() {
-				return CopyToDropboxAction.class;
+				return CopyToDropboxApiFolderAction.class;
 			}
 			
 			@Override
@@ -160,7 +160,7 @@ public class ActionFactory {
 				action = new DeleteFileAction(text);			
 				break;
 			case COPY_TO_DROPBOX:
-				action = new CopyToDropboxAction(text);			
+				action = new CopyToDropboxApiFolderAction(text);			
 				break;		
 			case COPY_TO_TARGET:
 				action = new CopyToTargetAction(text);			
