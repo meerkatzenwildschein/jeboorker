@@ -72,7 +72,7 @@ public class CopyToDropboxAction extends AbstractAction {
 	 */
 	private void doUpload(IResourceHandler resource) throws DropboxException, MalformedURLException, IOException, URISyntaxException {
 		// https://www.dropbox.com/developers
-		AppKeyPair appKey = new AppKeyPair("z8mvgnac9a1c5ad", "tm585kkw5tc98dr");
+		AppKeyPair appKey = new AppKeyPair("xxx", "xxx");
 		
         WebAuthSession session = new WebAuthSession(appKey, ACCESS_TYPE);
         WebAuthInfo authInfo = session.getAuthInfo();
