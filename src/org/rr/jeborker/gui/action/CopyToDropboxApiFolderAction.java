@@ -14,6 +14,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -72,7 +73,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 */
 	private void doUpload(IResourceHandler resource) throws DropboxException, MalformedURLException, IOException, URISyntaxException {
 		// https://www.dropbox.com/developers
-		AppKeyPair appKey = new AppKeyPair("xxx", "xxx");
+		AppKeyPair appKey = new AppKeyPair("z8mvgnac9a1c5ad", "tm585kkw5tc98dr");
 		
         WebAuthSession session = new WebAuthSession(appKey, ACCESS_TYPE);
         WebAuthInfo authInfo = session.getAuthInfo();
@@ -81,22 +82,26 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
         InputStream inputStream = resource.getContentInputStream();
         @SuppressWarnings("unused") Entry newEntry;
         
-        if(JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY) != null && !JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY).isEmpty()) {
-        	// re-auth specific stuff
-        	try {
-        		reauthToDropbox();
-        		
-        		//throws the DropboxUnlinkedException if auth was detracted.
-        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null); 
-        	} catch(DropboxUnlinkedException e) {
-        		// retry with an auth if the old auth are no longer be valid.
-        		authToDropbox(session, authInfo, pair);
-        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
-        	}
-        } else {
-            authToDropbox(session, authInfo, pair);
-            newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
-        }
+        try {
+	        if(JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY) != null && !JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY).isEmpty()) {
+	        	// re-auth specific stuff
+	        	try {
+	        		reauthToDropbox();
+	        		
+	        		//throws the DropboxUnlinkedException if auth was detracted.
+	        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null); 
+	        	} catch(DropboxUnlinkedException e) {
+	        		// retry with an auth if the old auth are no longer be valid.
+	        		authToDropbox(session, authInfo, pair);
+	        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
+	        	}
+	        } else {
+	            authToDropbox(session, authInfo, pair);
+	            newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
+	        }
+        } finally {
+        	IOUtils.closeQuietly(inputStream);
+	    }
 	}
 
 	/**

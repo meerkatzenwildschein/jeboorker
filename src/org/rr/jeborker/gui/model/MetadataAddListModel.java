@@ -30,7 +30,7 @@ public class MetadataAddListModel extends AbstractListModel {
 	
 	@Override
 	public int getSize() {
-		if(supportedMetaData == null) {
+		if(supportedMetaData == null || actionsForMetadataProperties == null) {
 			initialize();
 		}
 		return supportedMetaData.size();
@@ -38,7 +38,7 @@ public class MetadataAddListModel extends AbstractListModel {
 	
 	@Override
 	public Object getElementAt(int index) {
-		if(supportedMetaData == null) {
+		if(supportedMetaData == null || actionsForMetadataProperties == null) {
 			initialize();
 		}					
 		return actionsForMetadataProperties.get(index);

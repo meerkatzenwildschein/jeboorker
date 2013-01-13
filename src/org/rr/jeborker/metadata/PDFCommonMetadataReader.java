@@ -67,7 +67,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 					final String key = entry.getKey();
 					final String value = entry.getValue();
 					try {
-						if(value != null && !value.isEmpty()) { //no sense having empty entries.
+						if(value != null && !value.trim().isEmpty()) { //no sense having empty entries.
 							if(key.endsWith("Date") || key.endsWith("SourceModified")) {
 								final Date dateValue = DateConversionUtils.toDate(value);
 								if(dateValue != null) {

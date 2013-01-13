@@ -397,6 +397,9 @@ public class DefaultDBManager {
 	public boolean deleteObject(IDBObject item) {
 		try {
 			getDB().delete(item);
+			if(item instanceof EbookPropertyItem) {
+				EbookPropertyItemUtils.deleteCoverThumbnail(((EbookPropertyItem)item).getResourceHandler());
+			}
 		} catch (Exception e) {
 			return false;
 		}

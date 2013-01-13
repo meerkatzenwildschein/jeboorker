@@ -16,6 +16,8 @@ import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -34,11 +36,15 @@ import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -258,9 +264,9 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 * @return The thumbnail image to be displayed in the renderer.
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
-		byte[] coverThumbnail = item.getCoverThumbnail() != null ? item.getCoverThumbnail().toStream() : null;
+		byte[] coverThumbnail = EbookPropertyItemUtils.getCoverThumbnailBytes(item.getResourceHandler());
 		if(item != null && coverThumbnail != null && coverThumbnail.length > 0) {
-			final String coverThumbnailCRC32 = String.valueOf(item.getCoverThumbnailCRC32());
+			final String coverThumbnailCRC32 = String.valueOf(CommonUtils.calculateCrc(coverThumbnail));
 			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
 				return thumbnailCache.get(coverThumbnailCRC32);
 			}
@@ -351,7 +357,12 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 			result.insert(0, ", ");
 		}
 		
-		List<String> authors = item.getAuthors();
+		List<String> authors;
+		if(item.getAuthor() == null) {
+			authors = Collections.emptyList();
+		} else {
+			authors = item.getAuthor() != null ? ListUtils.split(item.getAuthor(), IDBObject.LIST_SEPARATOR_CHAR) : new ArrayList<String>();		
+		}
 		if(!authors.isEmpty()) {
 			StringBuilder b = new StringBuilder();
 			for(String author : authors) {

@@ -72,6 +72,7 @@ class RefreshBasePathAction extends AbstractAction {
 			controller.refreshTable(true);
 			controller.getProgressMonitor().monitorProgressStop(messageFinished);
 		}
+		System.gc();
 	}
 	
 	private void doRefreshBasePath(String path, ActionEvent e, MainMonitor monitor) {
@@ -106,6 +107,7 @@ class RefreshBasePathAction extends AbstractAction {
 			
 			@Override
 			public boolean accept(IResourceHandler resourceLoader) {
+System.out.println(resourceLoader);				
 				if(resourceLoader.isFileResource() && ActionUtils.isSupportedEbookFormat(resourceLoader)) {
 					try {
 						List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceLoader);
@@ -132,6 +134,7 @@ class RefreshBasePathAction extends AbstractAction {
 				return false;
 			}
 		});
+System.out.println("finish");		
 	}	
 	
 }

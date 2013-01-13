@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.action.ApplicationAction;
@@ -61,12 +62,22 @@ public class FileRefreshBackgroundThread extends Thread {
 				// ebook file has been deleted
 				ActionUtils.removeEbookPropertyItem(ebookPropertyItem);
 				LoggerFactory.getLogger(this).log(Level.INFO, "Removed deleted entry " + ebookPropertyItem.getResourceHandler().getName());
-			} else if (ebookPropertyItem.getTimestamp() > 0l && ebookPropertyItem.getTimestamp() < resourceHandler.getModifiedAt().getTime()) {
+			} else if (isRefreshNeeded(ebookPropertyItem, resourceHandler)) {
 				// ebook file has been changed until the last time.
-				ApplicationAction refreshAction = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString());
-				refreshAction.invokeAction();
-				LoggerFactory.getLogger(this).log(Level.INFO, "Changed entry " + ebookPropertyItem.getResourceHandler().getName() + " refreshed.");
+				List<EbookPropertyItem> reloadedItem = EbookPropertyItemUtils.getEbookPropertyItemByResource(ebookPropertyItem.getResourceHandler());
+				if(!reloadedItem.isEmpty() && isRefreshNeeded(reloadedItem.get(0), resourceHandler)) {
+					ApplicationAction refreshAction = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString());
+					refreshAction.invokeAction();
+					LoggerFactory.getLogger(this).log(Level.INFO, "Changed entry " + ebookPropertyItem.getResourceHandler().getName() + " refreshed.");
+				}
 			}
+		}
+		
+		private boolean isRefreshNeeded(EbookPropertyItem ebookPropertyItem, IResourceHandler resourceHandler) {
+			if(ebookPropertyItem.getTimestamp() > 0l && ebookPropertyItem.getTimestamp() < resourceHandler.getModifiedAt().getTime()) {
+				return true;
+			}
+			return false;
 		}
 	}
 }

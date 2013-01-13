@@ -60,6 +60,7 @@ class AddBasePathAction extends AbstractAction {
 				addBasePath(controller, selectedDirectory, selectedDirectory.toString());				
 			}
 		}
+		System.gc();
 	}
 
 	private void addBasePath(final MainController controller, final IResourceHandler selectedDirectory, String path) {

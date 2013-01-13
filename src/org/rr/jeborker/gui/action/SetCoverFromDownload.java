@@ -10,6 +10,7 @@ import org.rr.commons.swing.dialogs.ImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.DefaultDBManager;
+import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 
@@ -38,7 +39,7 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 
 			//no author in the search term for now. Big Book Search did not like it.
 			if(item != null) {
-				String authors = ListUtils.join(item.getAuthors(), " ").trim();
+				String authors = item.getAuthor() != null ? item.getAuthor().replace(IDBObject.LIST_SEPARATOR_CHAR, " ") : null;
 				if(StringUtils.isNotEmpty(authors)) {
 					searchPhrase += authors + " ";
 				}
