@@ -173,9 +173,9 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		String path = "";
 		for(Resource resource : resources) {
 			if(resource.getMediaType().getName().startsWith("image")) {
-				File href = new File(resource.getHref());
-				if(href.getParent() != null) {
-					path = href.getParent() + "/";
+				String hrefParent = new File(resource.getHref()).getParent();
+				if(hrefParent != null) {
+					path = hrefParent + "/";
 				}
 				break;
 			}
