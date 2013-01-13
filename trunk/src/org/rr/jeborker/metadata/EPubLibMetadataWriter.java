@@ -189,12 +189,13 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 					count ++;
 					return "";
 				} 
-				return String.valueOf(count);
+				return String.valueOf(count++);
 			}
 		};
 
 		String newCoverFileName;
-		while(epub.getResources().containsByHref(newCoverFileName = path + desiredFileName  + additional.toString() + "." + fileExtension )) {}
+		while(epub.getResources().containsByHref(newCoverFileName = path + desiredFileName  + additional.toString() + "." + fileExtension )) {
+		}
 		return newCoverFileName;
 	}
 

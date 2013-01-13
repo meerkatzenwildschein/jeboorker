@@ -29,9 +29,9 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -40,9 +40,9 @@ import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
 import org.rr.jeborker.gui.model.EmptyListModel;
 import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
+import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
-import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheet;
@@ -644,7 +644,7 @@ public class MainController {
 					if(items.get(0) != null) {
 						model.loadProperties(items.get(0));
 						IMetadataReader reader = model.getMetadataReader();
-						byte[] coverThumbnail = items.get(0).getCoverThumbnail() != null ? items.get(0).getCoverThumbnail().toStream() : null;
+						byte[] coverThumbnail = EbookPropertyItemUtils.getCoverThumbnailBytes(items.get(0).getResourceHandler());
 						if(coverThumbnail != null && coverThumbnail.length > 0) {
 							setImage(reader);
 						} else {

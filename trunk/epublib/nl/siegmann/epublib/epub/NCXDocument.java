@@ -78,7 +78,7 @@ public class NCXDocument {
 		Resource ncxResource = null;
 		if(book.getSpine().getTocResource() == null) {
 			log.warning("Book does not contain a table of contents file");
-			return ncxResource;
+			return null;
 		}
 		try {
 			ncxResource = book.getSpine().getTocResource();
@@ -87,8 +87,12 @@ public class NCXDocument {
 			}
 			Document ncxDocument = ResourceUtil.getAsDocument(ncxResource);
 			Element navMapElement = DOMUtil.getFirstElementByTagNameNS(ncxDocument.getDocumentElement(), NAMESPACE_NCX, NCXTags.navMap);
-			TableOfContents tableOfContents = new TableOfContents(readTOCReferences(navMapElement.getChildNodes(), book));
-			book.setTableOfContents(tableOfContents);
+			if(navMapElement != null) {
+				TableOfContents tableOfContents = new TableOfContents(readTOCReferences(navMapElement.getChildNodes(), book));
+				book.setTableOfContents(tableOfContents);
+			} else {
+				log.warning("table of contents file did not contains a navMap");
+			}
 		} catch (Exception e) {
 			log.log(Level.WARNING, e.getMessage() + " at " + book.getName(), e);
 		}

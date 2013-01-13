@@ -27,8 +27,8 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	public DeleteFileAction(final IResourceHandler resourceLoader) {
 		this.fileToDelete = resourceLoader;
 		putValue(Action.NAME, Bundle.getString("DeleteFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("remove_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("remove_22.gif")));		
+		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("delete_16.gif")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("delete_22.gif")));		
 	}
 
 	@Override

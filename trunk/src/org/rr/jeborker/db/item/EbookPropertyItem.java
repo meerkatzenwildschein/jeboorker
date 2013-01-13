@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.zip.CRC32;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -15,8 +14,6 @@ import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.IDBObject;
-
-import com.orientechnologies.orient.core.record.impl.ORecordBytes;
 
 public class EbookPropertyItem implements IDBObject, Serializable {
 	
@@ -75,12 +72,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	@ViewField(name = "Creation Date", orderPriority = 50)
 	private Date creationDate;	
-
-	/**
-	 * The author of the ebook.
-	 */
-	@Index(type= "FULLTEXT")
-	private List<String> authors;
 
 	/**
 	 * One of the authors of the ebook.
@@ -181,11 +172,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	private long timestamp = 0l;
 	
-	/**
-	 * A small thumbnail of the cover.
-	 */
-	private ORecordBytes coverThumbnail;
-	
 	public EbookPropertyItem() {
 		super();
 	}
@@ -261,22 +247,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
 			}
 		}
-		this.setAuthors(null);
 	}  
-	
-	/**
-	 * Get the CRC32 checksum for the cover thumbnail.
-	 * @return The desired checksum or 0 if no thumbnail is set.
-	 */
-	public long getCoverThumbnailCRC32() {
-		CRC32 crc32 = new CRC32();
-		if(getCoverThumbnail() != null) {
-			crc32.update(getCoverThumbnail().toStream());
-			return crc32.getValue();
-		} else {
-			return 0;
-		}
-	}
 
 	public String getFile() {
 		return this.file;
@@ -292,22 +263,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public List<String> getAuthors() {
-		if(authors != null) {
-			return new ArrayList<String>(authors);
-		}
-		return new ArrayList<String>(0);
-	}
-
-	public void setAuthors(List<String> authors) {
-		this.authors = authors;
-		if(authors != null && !authors.isEmpty()) {
-			String author = authors.get(0);
-			setAuthor(author);
-			setAuthorSort(author);
-		}
 	}
 
 	public String getBasePath() {
@@ -480,14 +435,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	public ORecordBytes getCoverThumbnail() {
-		return coverThumbnail;
-	}
-	
-	public void setCoverThumbnail(ORecordBytes coverThumbnail) {
-		this.coverThumbnail = coverThumbnail;
 	}
 
 	public long getTimestamp() {

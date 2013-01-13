@@ -206,7 +206,8 @@ abstract class PDFCommonDocument {
 
 		@Override
 		public byte[] fetchCoverFromPDFContent() throws IOException {
-			for (int i = 0; i < pdfReader.getXrefSize(); i++) {
+			int xrefSize = pdfReader.getXrefSize();
+			for (int i = 0; i < xrefSize; i++) { //process the first ten xrefs.
 				PdfObject pdfobj = pdfReader.getPdfObject(i);
 				if(pdfobj != null) {
 					if (pdfobj.isStream()) {
@@ -223,7 +224,7 @@ abstract class PDFCommonDocument {
 						}
 		
 						// now you have a PDF stream object with an image
-						byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);		
+						byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);	
 						if(img.length > 1000) {
 							int width = 0;
 							int height = 0;
@@ -231,7 +232,7 @@ abstract class PDFCommonDocument {
 								width = Integer.parseInt(stream.get(PdfName.WIDTH).toString());
 								height = Integer.parseInt(stream.get(PdfName.HEIGHT).toString());
 								
-								if(width<=0 || height<=0) {
+								if(width <= 0 || height <= 0) {
 									continue;
 								}
 								

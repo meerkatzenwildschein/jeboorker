@@ -6,4 +6,5 @@ package org.rr.jeborker.db;
  */
 public interface IDBObject {
 
+	public static final String LIST_SEPARATOR_CHAR = ";";
 }

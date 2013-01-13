@@ -123,7 +123,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			final List<MetadataProperty> readMetaData = reader.readMetaData();
+			final List<MetadataProperty> readMetaData = new ArrayList<MetadataProperty>(reader.readMetaData());
 			
 			boolean change = false;
 			for(METADATA_TYPES type : METADATA_TYPES.values()) {

@@ -102,10 +102,10 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 		if(book.getCoverImage() != null || coverMeta != null) { 
 			serializer.startTag(NAMESPACE_OPF, OPFTags.meta);
 			serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.name, OPFValues.meta_cover);
-			if(coverMeta != null) {
-				serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.content, coverMeta.getContent());
-			} else {
+			if(book.getCoverImage() != null) {
 				serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.content, book.getCoverImage().getId());
+			} else {
+				serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.content, coverMeta.getContent());
 			}
 			serializer.endTag(NAMESPACE_OPF, OPFTags.meta);
 		}
