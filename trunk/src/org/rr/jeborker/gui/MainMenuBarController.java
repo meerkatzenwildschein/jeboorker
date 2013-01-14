@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
-import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -224,19 +224,21 @@ public class MainMenuBarController {
 	}	
 	
 	/**
-	 * Creates the copy to submenu.
-	 * @return
+	 * Creates the <code>copy to</code> submenu.
 	 */
 	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
 		JMenu copyToSubMenu = new JMenu(Bundle.getString("MainMenuBarController.copyToSubMenu"));
+		copyToSubMenu.setIcon(new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("copy_16.gif")));
 		
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, new int[0]);
 		copyToSubMenu.add(action);
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
-		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceLoader(FileSystemView.getFileSystemView().getHomeDirectory());
+		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceLoader(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
+		action.putValue(Action.SMALL_ICON, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("home_16.gif")));
+		action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("home_22.gif")));					
 		copyToSubMenu.add(action);
 		
 		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
@@ -244,6 +246,9 @@ public class MainMenuBarController {
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
 			action.putValue(Action.NAME, externalResource.toString());
 			action.putValue("TARGET", externalResource);
+			action.putValue(Action.SMALL_ICON, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("removable_drive_16.gif")));
+			action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("removable_drive_22.gif")));					
+			
 			copyToSubMenu.add(action);
 		}
 		return copyToSubMenu;
