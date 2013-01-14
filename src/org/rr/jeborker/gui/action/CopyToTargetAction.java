@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.filechooser.FileSystemView;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
