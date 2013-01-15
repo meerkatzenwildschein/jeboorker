@@ -48,6 +48,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 			c.setSelectedFile(new File(filename));
 		}
 		c.setDialogType(IFileChooser.DIALOG_TPYE.SAVE);
+		c.setTitle(Bundle.getString("SaveCoverToFileAction.saveDialogTitle"));
 		
 		RETURN_OPTION rVal = c.showDialog(controller.getMainWindow());
 

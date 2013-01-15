@@ -74,8 +74,11 @@ public class FileRefreshBackgroundThread extends Thread {
 			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
 			if (!resourceHandler.exists()) {
 				// ebook file has been deleted
-				ActionUtils.removeEbookPropertyItem(ebookPropertyItem);
-				LoggerFactory.getLogger(this).log(Level.INFO, "Removed deleted entry " + ebookPropertyItem.getResourceHandler().getName());
+				List<EbookPropertyItem> reloadedItem = EbookPropertyItemUtils.getEbookPropertyItemByResource(ebookPropertyItem.getResourceHandler());
+				if(!reloadedItem.isEmpty()) {
+					ActionUtils.removeEbookPropertyItem(ebookPropertyItem);
+					LoggerFactory.getLogger(this).log(Level.INFO, "Removed deleted entry " + ebookPropertyItem.getResourceHandler().getName());
+				}
 			} else if (isRefreshNeeded(ebookPropertyItem, resourceHandler)) {
 				// ebook file has been changed until the last time.
 				List<EbookPropertyItem> reloadedItem = EbookPropertyItemUtils.getEbookPropertyItemByResource(ebookPropertyItem.getResourceHandler());
