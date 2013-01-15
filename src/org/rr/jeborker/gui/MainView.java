@@ -15,8 +15,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -46,6 +48,7 @@ import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
@@ -171,9 +174,11 @@ public class MainView extends JFrame{
 		table.setDragEnabled(true);
 		table.setTransferHandler(new TransferHandler() {
 
-            public boolean canImport(TransferHandler.TransferSupport info) {
+			private static final long serialVersionUID = -371360766111031218L;
+
+			public boolean canImport(TransferHandler.TransferSupport info) {
                 //only import Strings
-                if (!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
                     return false;
                 }
 
@@ -191,7 +196,7 @@ public class MainView extends JFrame{
                 }
                 
                 // Check for String flavor
-                if (!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
                 	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
                     return false;
                 }
@@ -207,50 +212,78 @@ public class MainView extends JFrame{
                 	IResourceHandler targetRecourceDirectory = value.getResourceHandler().getParentResource();
                 	int dropRow = dl.getRow();
                 	Transferable t = info.getTransferable();
-                	String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                	data = data.replace("\r", "");
-                	List<String> splitData = ListUtils.split(data, '\n');
-                	for(String splitDataItem : splitData) {
-                		if(!StringUtils.toString(splitDataItem).trim().isEmpty()) {
-	                		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(new File(new URI(splitDataItem)));
-	                		IResourceHandler targetResource = ResourceHandlerFactory.getResourceLoader(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
-	                		if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
-	                			sourceResource.copyTo(targetResource, false);
-	                			EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
-	                			ActionUtils.addEbookPropertyItem(newItem);
-	                		} else {
-	                			if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-	                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
-	                			} else {
-	                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
-	                			}
-	                		}
-                		}
+                	List<File> transferedFiles = Collections.emptyList();
+                	if(info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                		String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+                		transferedFiles = getFileList(data);
+                	} else if(info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                		transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);                		
                 	}
+                	for(File splitDataItem : transferedFiles) {
+                		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(splitDataItem);
+                		IResourceHandler targetResource = ResourceHandlerFactory.getResourceLoader(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
+                		if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
+                			sourceResource.copyTo(targetResource, false);
+                			EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
+                			ActionUtils.addEbookPropertyItem(newItem);
+                		} else {
+                			if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
+                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
+                			} else {
+                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
+                			}
+                		}
+            	}
                 } 
                 catch (Exception e) { return false; }
 
                 return true;
             }
             
+            private List<File> getFileList(String data) {
+            	ArrayList<File> result = new ArrayList<File>();
+            	data = data.replace("\r", "");
+            	List<String> splitData = ListUtils.split(data, '\n');
+            	for(String splitDataItem : splitData) {
+            		if(!StringUtils.toString(splitDataItem).trim().isEmpty()) {
+            			try {
+							result.add(new File(new URI(splitDataItem)));
+						} catch (URISyntaxException e) {
+							LoggerFactory.getLogger().log(Level.INFO, "Could not format " + splitDataItem);
+						}
+            		}
+            	}            	
+            	return result;
+            }
+            
             public int getSourceActions(JComponent c) {
                 return COPY;
             }
             
+            /**
+             * Create a new Transferable that is used to drag files from jeboorker to a native application.
+             */
             protected Transferable createTransferable(JComponent c) {
-                JTable list = (JTable) c;
-                int[] selectedRows = list.getSelectedRows();
-        
-                List<URI> uriList = new ArrayList<URI>();
+                final JTable list = (JTable) c;
+                final int[] selectedRows = list.getSelectedRows();
+                final List<URI> uriList = new ArrayList<URI>();
+                final List<String> files = new ArrayList<String>();
+                
                 for (int i = 0; i < selectedRows.length; i++) {
                 	EbookPropertyItem val = (EbookPropertyItem) table.getModel().getValueAt(selectedRows[i], 0);
                 	try {
                 		uriList.add(new File(val.getFile()).toURI());
+                		files.add(new File(val.getFile()).getPath());
 					} catch (Exception e) {
 						LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
 					}
+                }    
+                
+                if(CommonUtils.isLinux()) {
+                	return new URIListTransferable(uriList);
+                } else {
+                	return new TransferableFile(files);
                 }
-                return new URIListTransferable(uriList);
             }
         });
 		
