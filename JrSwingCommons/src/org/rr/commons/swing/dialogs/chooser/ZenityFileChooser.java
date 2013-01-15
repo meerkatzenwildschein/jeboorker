@@ -3,9 +3,12 @@ package org.rr.commons.swing.dialogs.chooser;
 import java.awt.Component;
 import java.io.File;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteWatchdog;
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.dialogs.chooser.IFileChooser.RETURN_OPTION;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
@@ -20,6 +23,8 @@ class ZenityFileChooser implements IFileChooser {
 	private File selectedDir;
 	
 	private DIALOG_TPYE type = DIALOG_TPYE.OPEN;
+	
+	private RETURN_OPTION returnValue;
 	
 	@Override
 	public void setSelectedFile(File file) {
@@ -78,12 +83,13 @@ class ZenityFileChooser implements IFileChooser {
 				File file = new File(result.toString());
 				this.setSelectedFile(new File(file.getName()));
 				this.setCurrentDirectory(file.getParentFile());
-				return RETURN_OPTION.APPROVE;
+				return returnValue = RETURN_OPTION.APPROVE;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerFactory.getLogger().log(Level.SEVERE, "Failed to open zenity dialog", e);
+			return returnValue = RETURN_OPTION.ERROR;
 		}	
-		return RETURN_OPTION.CANCEL;
+		return returnValue = RETURN_OPTION.CANCEL;
 	}
 	
 	static boolean isSupported() {
@@ -91,6 +97,11 @@ class ZenityFileChooser implements IFileChooser {
 			return new File("/usr/bin/zenity").exists();
 		}
 		return false;
+	}
+
+	@Override
+	public RETURN_OPTION getReturnValue() {
+		return this.returnValue;
 	}
 
 }

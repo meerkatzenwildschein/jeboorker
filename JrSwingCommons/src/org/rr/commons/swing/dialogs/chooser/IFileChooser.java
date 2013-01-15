@@ -24,4 +24,6 @@ public interface IFileChooser {
 	public void setDialogType(DIALOG_TPYE type);
 	
 	public RETURN_OPTION showDialog(Component parent);
+
+	public RETURN_OPTION getReturnValue();
 }
