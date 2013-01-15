@@ -149,6 +149,23 @@ public class ActionUtils {
 		} finally {
 			controller.refreshTable(true);
 		}
+	}
+	
+	/**
+	 * Adds the given item to the database and to the ui.
+	 * @param item The item to be added.
+	 */
+	public static void addEbookPropertyItem(final EbookPropertyItem item) {
+		MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
+		DefaultDBManager.getInstance().storeObject(item);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				MainController.getController().addEbookPropertyItem(item);
+			}
+		});
 	}	
 	
 	/**

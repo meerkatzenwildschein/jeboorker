@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -17,7 +16,6 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.ResourceNameFilter;
 import org.rr.jeborker.JeboorkerPreferences;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
@@ -123,7 +121,7 @@ class AddBasePathAction extends AbstractAction {
 				if(resource.isFileResource() && ActionUtils.isSupportedEbookFormat(resource)) {
 					try {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
-						addEbookPropertyItem(item);
+						ActionUtils.addEbookPropertyItem(item);
 						return true;
 					} catch(Throwable e) {
 						LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed adding resource " + resource, e);
@@ -133,23 +131,6 @@ class AddBasePathAction extends AbstractAction {
 			}
 		});
 		return count;
-	}
-	
-	/**
-	 * Adds the given item to the database and to the ui.
-	 * @param item The item to be added.
-	 */
-	static void addEbookPropertyItem(final EbookPropertyItem item) {
-		MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
-		DefaultDBManager.getInstance().storeObject(item);
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				MainController.getController().addEbookPropertyItem(item);
-			}
-		});
 	}
 
 }
