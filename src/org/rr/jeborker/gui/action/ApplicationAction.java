@@ -7,6 +7,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
+import org.rr.jeborker.FileRefreshBackgroundThread;
+
 /**
  * {@link ApplicationAction} is an Action delegate which is delivered if
  * an action is requested from the {@link ActionFactory}.
@@ -70,7 +72,12 @@ public class ApplicationAction extends AbstractAction {
 	public void invokeAction(ActionEvent e) {
 		final Object noThreading = realAction.getValue(NON_THREADED_ACTION_KEY);
 		if(noThreading instanceof Boolean && ((Boolean) noThreading).booleanValue()) {
-			this.realAction.actionPerformed(e);
+			FileRefreshBackgroundThread.setDisabled(true);
+			try {
+				this.realAction.actionPerformed(e);
+			} finally {
+				FileRefreshBackgroundThread.setDisabled(false);
+			}
 		} else {
 			ActionEventQueue.addActionEvent(this, e);
 		}		
@@ -82,7 +89,12 @@ public class ApplicationAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		this.invokeAction(e);
+		FileRefreshBackgroundThread.setDisabled(true);
+		try {
+			this.invokeAction(e);
+		} finally {
+			FileRefreshBackgroundThread.setDisabled(false);
+		}
 	}	
 	
 	@Override

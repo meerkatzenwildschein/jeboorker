@@ -220,7 +220,7 @@ public class MainView extends JFrame{
 	                			ActionUtils.addEbookPropertyItem(newItem);
 	                		} else {
 	                			if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-	                				LoggerFactory.getLogger().log(Level.INFO, splitDataItem + " is not a supported ebook format.");
+	                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
 	                			} else {
 	                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
 	                			}
