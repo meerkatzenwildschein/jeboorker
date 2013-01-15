@@ -15,7 +15,7 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 
 	private static final long serialVersionUID = 4772310971481868593L;
 
-	private IFileChooser imageFileChooserT;
+	private IFileChooser fileChooser;
 
 	private static File previousSelectedFile;
 	
@@ -28,30 +28,31 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 	
 	@Override
 	public synchronized IFileChooser doOnce() {
-		if(imageFileChooserT == null) {
-			imageFileChooserT = ChooserDialogFactory.getFileChooser();
+		if(fileChooser == null) {
+			fileChooser = ChooserDialogFactory.getFileChooser();
 			if(previousSelectedFile != null) {
-				imageFileChooserT.setSelectedFile(previousSelectedFile);
+				fileChooser.setSelectedFile(previousSelectedFile);
 			}
-			imageFileChooserT.setDialogType(IFileChooser.DIALOG_TPYE.OPEN);
-			imageFileChooserT.showDialog(MainController.getController().getMainWindow());
-			previousSelectedFile = imageFileChooserT.getSelectedFile();
+			fileChooser.setDialogType(IFileChooser.DIALOG_TPYE.OPEN);
+			fileChooser.setTitle(Bundle.getString("SetCoverFromFileAction.fileDialogTitle"));
+			fileChooser.showDialog(MainController.getController().getMainWindow());
+			previousSelectedFile = fileChooser.getSelectedFile();
 			
-			setDialogOption(imageFileChooserT.getReturnValue().ordinal());
-			if(imageFileChooserT.getSelectedFile() != null) {
-				setDialogResult(ResourceHandlerFactory.getResourceLoader(imageFileChooserT.getCurrentDirectory() + File.separator + imageFileChooserT.getSelectedFile()));
+			setDialogOption(fileChooser.getReturnValue().ordinal());
+			if(fileChooser.getSelectedFile() != null) {
+				setDialogResult(ResourceHandlerFactory.getResourceLoader(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
 			}
 		}
 		
-		return this.imageFileChooserT;
+		return this.fileChooser;
 	}
 
 	@Override
 	public void setDoOnceResult(IFileChooser result) {
-		this.imageFileChooserT = result;
-		setDialogOption(imageFileChooserT.getReturnValue().ordinal());
-		if(imageFileChooserT.getSelectedFile() != null) {
-			setDialogResult(ResourceHandlerFactory.getResourceLoader(imageFileChooserT.getCurrentDirectory() + File.separator + imageFileChooserT.getSelectedFile()));
+		this.fileChooser = result;
+		setDialogOption(fileChooser.getReturnValue().ordinal());
+		if(fileChooser.getSelectedFile() != null) {
+			setDialogResult(ResourceHandlerFactory.getResourceLoader(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
 		}		
 	}
 }
