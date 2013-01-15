@@ -26,7 +26,10 @@ public class DefaultFileChooser implements IFileChooser {
 	
 	@Override
 	public File getSelectedFile() {
-		return new File(c.getSelectedFile().getName());
+		if(c.getSelectedFile() != null) {
+			return new File(c.getSelectedFile().getName());
+		}
+		return null;
 	}	
 
 	@Override
