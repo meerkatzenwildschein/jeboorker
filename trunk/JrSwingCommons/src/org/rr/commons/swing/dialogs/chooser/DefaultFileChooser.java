@@ -62,7 +62,7 @@ public class DefaultFileChooser implements IFileChooser {
 		} else if(type.equals(DIALOG_TPYE.SAVE)) {
 			result = c.showSaveDialog(parent);
 		} 
-		
+
 		if(result == JFileChooser.APPROVE_OPTION) {
 			return this.returnValue = RETURN_OPTION.APPROVE;
 		} else if(result == JFileChooser.CANCEL_OPTION) {
