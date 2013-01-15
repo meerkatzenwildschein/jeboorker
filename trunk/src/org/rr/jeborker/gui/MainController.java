@@ -255,7 +255,7 @@ public class MainController {
 	
 	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
 		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
-		if(selectedRows==null || selectedRows.length==0) {
+		if(selectedRows==null || selectedRows.length == 0) {
 			return;
 		} else {
 			int editingRow = mainWindow.table.getEditingRow();
@@ -318,6 +318,14 @@ public class MainController {
 	 */
 	public void setImageViewerResource(IResourceHandler imageResource) {
 		mainWindow.imageViewer.setImageResource(imageResource);
+	}
+	
+	/**
+	 * Gets the {@link IResourceHandler} for the image which is displayed in the image viewer.
+	 * @return The desired {@link IResourceHandler} or <code>null</code>.
+	 */
+	public IResourceHandler getImageViewerResource() {
+		return mainWindow.imageViewer.getImageResource();
 	}
 	
 	/**

@@ -49,7 +49,9 @@ class MultiActionWrapper extends AbstractAction {
 		final int size = handlers.size();
 		
 		//skip the first and use the firstActionInstance action we have already created with the constructor
-		iterator.next();
+		if(iterator.hasNext()) {
+			iterator.next();
+		}
 		
 		Object doOnce;
 		transferValues(firstActionInstance);

@@ -1,0 +1,68 @@
+package org.rr.jeborker.gui.action;
+
+import java.awt.FileDialog;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
+import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.gui.MainController;
+
+public class SaveCoverToFileAction extends AbstractAction {
+
+	private String ebook;
+	
+	private static final String PATH_PREF_KEY =  SaveCoverToFileAction.class.getSimpleName() + "LatestPath";
+
+	SaveCoverToFileAction(String text) {
+		this.ebook = text;
+		putValue(Action.NAME, Bundle.getString("SaveCoverToFileAction.name"));
+		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("file_16.gif")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("file_22.gif")));		
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		final MainController controller = MainController.getController();
+		final IResourceHandler imageViewerResource = controller.getImageViewerResource();
+		final String fileExtension = ResourceHandlerUtils.getFileExtension(imageViewerResource);
+		
+		String filename = "cover" + (fileExtension != null ? fileExtension : "");
+		String dir = JeboorkerPreferences.getEntryString(PATH_PREF_KEY);		
+		JFileChooser c = new JFileChooser();
+		if(dir != null) {
+			c.setCurrentDirectory(new File(dir));
+		}
+		if(filename != null) {
+			c.setSelectedFile(new File(filename));
+		}
+		
+		int rVal = c.showSaveDialog(controller.getMainWindow());
+
+		if (rVal == JFileChooser.APPROVE_OPTION) {
+			filename = c.getSelectedFile().getName();
+			dir = c.getCurrentDirectory().toString();
+			JeboorkerPreferences.addEntryString(PATH_PREF_KEY, dir);
+			
+			String targetString = dir + File.separator + filename;
+			IResourceHandler targetRecource = ResourceHandlerFactory.getResourceLoader(targetString);
+			try {
+				imageViewerResource.copyTo(targetRecource, true);
+				MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("SaveCoverToFileAction.finished", new String[] {targetString}));
+			} catch (IOException e1) {
+				LoggerFactory.getLogger().log(Level.WARNING, "Failed to save cover for " + ebook);
+			}
+		} 
+	}
+
+}
