@@ -26,4 +26,6 @@ public interface IFileChooser {
 	public RETURN_OPTION showDialog(Component parent);
 
 	public RETURN_OPTION getReturnValue();
+	
+	public void setTitle(String title);
 }
