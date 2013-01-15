@@ -13,6 +13,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import org.rr.commons.collection.CompoundList;
+import org.rr.commons.collection.InsertList;
 import org.rr.commons.collection.IteratorList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.FileRefreshBackgroundThread;
@@ -32,7 +33,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     
     private ArrayList<EbookPropertyItem> addedItems;
     
-    private CompoundList<EbookPropertyItem> allItems;
+    private List<EbookPropertyItem> allItems;
     
     private final List<Field> orderByColumns = new ArrayList<Field>();
     
@@ -305,14 +306,20 @@ public class EbookPropertyDBTableModel implements TableModel {
     }
     
     /**
-     * Attaches an {@link EbookPropertyItem} to the end.
+     * Attaches an {@link EbookPropertyItem} to the specified row. If the row parameter
+     * is -1 the value is added to the end of the list.
      * @param item The item to be attached.
+     * @param row The row where the {@link EbookPropertyItem} should be added to.
      */
-    public void addRow(EbookPropertyItem item) {
-    	final boolean added = this.allItems.add(item);
-    	if(added) {
-    		final int ins = this.allItems.size()-1;
-	    	fireTableRowsInserted(ins, ins);
+    public void addRow(EbookPropertyItem item, int row) {
+    	if(row == -1) {
+    		if(this.allItems.add(item)) {
+        		final int ins = this.allItems.size() - 1;
+    	    	fireTableRowsInserted(ins, ins);    			
+    		}
+    	} else {
+    		this.allItems = new InsertList<EbookPropertyItem>(this.allItems, item, row);
+    		fireTableRowsInserted(row, row);
     	}
     }
     

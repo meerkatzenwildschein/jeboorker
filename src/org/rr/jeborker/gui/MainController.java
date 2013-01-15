@@ -439,10 +439,10 @@ public class MainController {
 	 * {@link EbookPropertyItem} will be shown to the ui.
 	 * @param item The item to be added.
 	 */
-	public void addEbookPropertyItem(final EbookPropertyItem item) {
+	public void addEbookPropertyItem(final EbookPropertyItem item, int row) {
 		TableModel model = mainWindow.table.getModel();
 		if (model instanceof EbookPropertyDBTableModel) {
-			((EbookPropertyDBTableModel) model).addRow(item);
+			((EbookPropertyDBTableModel) model).addRow(item, row);
 		}
 	}
 	
