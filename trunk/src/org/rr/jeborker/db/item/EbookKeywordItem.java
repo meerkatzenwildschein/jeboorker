@@ -6,6 +6,8 @@ import org.rr.jeborker.db.IDBObject;
 
 public class EbookKeywordItem implements IDBObject, Serializable {
 	
+	private static final long serialVersionUID = 7014204744694619778L;
+
 	public EbookKeywordItem() {}
 	
 	public EbookKeywordItem(String keyword) {
