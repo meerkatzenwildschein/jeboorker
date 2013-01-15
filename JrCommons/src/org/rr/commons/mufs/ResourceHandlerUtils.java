@@ -557,6 +557,33 @@ public class ResourceHandlerUtils {
 		}
 		return false;
 	}
+	
+	/**
+	 * Evaluates the file extension for the given {@link IResourceHandler}. If the file
+	 * did not have a valid extension, the extension is created from the mime type 
+	 * of the file.
+	 */
+	public static String getFileExtension(IResourceHandler resourceHandler) {
+		if(resourceHandler == null) {
+			return null;
+		}
+		
+		String fileExtension = resourceHandler.getFileExtension();
+		if(fileExtension != null && !fileExtension.isEmpty()) {
+			return fileExtension;
+		}
+		
+		String mimeType = resourceHandler.getMimeType();
+		if(mimeType != null && !mimeType.isEmpty() &&! mimeType.startsWith("application")) {
+			String extension = mimeType.substring(mimeType.indexOf('/') + 1);
+			if(extension.equals("jpeg")) {
+				return ".jpg";
+			}
+			return "." + extension;
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Get a list over all external drives. 

@@ -8,15 +8,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.rr.commons.log.LoggerFactory;
 
 
 /**
@@ -94,6 +98,11 @@ class FileResourceHandler extends AResourceHandler {
 	@Override
 	public boolean isValidResource(final String resource) {
 		if(resource.startsWith(FILE_URL)) {
+			try {
+				URLDecoder.decode(resource, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				return false;
+			}
 			return true;
 		}
 		
@@ -142,7 +151,15 @@ class FileResourceHandler extends AResourceHandler {
 	public IResourceHandler createInstance(final String resource) {
 		final FileResourceHandler result = new FileResourceHandler();
 		if(resource.startsWith(FILE_URL)) {
-			result.setFile(new File(resource.substring(FILE_URL.length())));
+			String fileUrlResource = resource.substring(FILE_URL.length());
+			if(fileUrlResource.indexOf('%') != -1) {
+				try {
+					fileUrlResource = URLDecoder.decode(fileUrlResource, "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					LoggerFactory.getLogger().log(Level.SEVERE, "Failed to decode file string " + fileUrlResource);
+				}
+			}
+			result.setFile(new File(fileUrlResource));
 		} else {
 			result.setFile(new File(resource));
 		}
