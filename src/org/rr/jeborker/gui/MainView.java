@@ -6,16 +6,26 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,14 +36,23 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.button.JMenuButton;
 import org.rr.common.swing.image.SimpleImageViewer;
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -149,7 +168,118 @@ public class MainView extends JFrame{
 		table.setDefaultEditor(Object.class, new EbookTableCellEditor());
 		table.setTableHeader(null);
 		table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
-				
+		table.setDragEnabled(true);
+		table.setTransferHandler(new TransferHandler() {
+
+            public boolean canImport(TransferHandler.TransferSupport info) {
+                //only import Strings
+                if (!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    return false;
+                }
+
+                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+                if (dl.getRow() == -1) {
+                    return false;
+                }
+                
+                return true;
+            }
+
+            public boolean importData(TransferHandler.TransferSupport info) {
+                if (!info.isDrop()) {
+                    return false;
+                }
+                
+                // Check for String flavor
+                if (!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
+                    return false;
+                }
+
+                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+                EbookPropertyDBTableModel listModel = (EbookPropertyDBTableModel) table.getModel();
+                int index = dl.getRow();
+                // Get the current string under the drop.
+                EbookPropertyItem value = (EbookPropertyItem) listModel.getValueAt(index, 0);
+
+                // Get the string that is being dropped.
+                try {
+                	IResourceHandler targetRecourceDirectory = value.getResourceHandler().getParentResource();
+                	int dropRow = dl.getRow();
+                	Transferable t = info.getTransferable();
+                	String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+                	data = data.replace("\r", "");
+                	List<String> splitData = ListUtils.split(data, '\n');
+                	for(String splitDataItem : splitData) {
+                		if(!StringUtils.toString(splitDataItem).trim().isEmpty()) {
+	                		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(new File(new URI(splitDataItem)));
+	                		IResourceHandler targetResource = ResourceHandlerFactory.getResourceLoader(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
+	                		if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
+	                			sourceResource.copyTo(targetResource, false);
+	                			EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
+	                			ActionUtils.addEbookPropertyItem(newItem);
+	                		} else {
+	                			LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);
+	                		}
+                		}
+                	}
+                } 
+                catch (Exception e) { return false; }
+
+                return true;
+            }
+            
+            public int getSourceActions(JComponent c) {
+                return COPY;
+            }
+            
+            protected Transferable createTransferable(JComponent c) {
+                JTable list = (JTable) c;
+                int[] selectedRows = list.getSelectedRows();
+        
+                final StringBuffer buff = new StringBuffer();
+
+                for (int i = 0; i < selectedRows.length; i++) {
+                	EbookPropertyItem val = (EbookPropertyItem) table.getModel().getValueAt(selectedRows[i], 0);
+                	try {
+						String uri = "file://" + val.getResourceHandler().toString().replaceAll(" ", "%20");
+	                    buff.append(uri);
+	                    if (i != selectedRows.length - 1) {
+	                        buff.append("\n");
+	                    }						
+					} catch (Exception e) {
+						LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
+					}
+                }
+                
+                return new Transferable() {
+
+                     public DataFlavor[] getTransferDataFlavors() {
+                         try {
+							return new DataFlavor[] { new DataFlavor("text/uri-list") };
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
+                         return new DataFlavor[0];
+                     }
+
+                     public boolean isDataFlavorSupported(DataFlavor flavor) {
+                    	 boolean result = flavor.getMimeType().indexOf("text/uri-list") != -1;                 	 
+                    	 return result;
+                     }
+
+                     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                         if (!isDataFlavorSupported(flavor)) {
+                             throw new UnsupportedFlavorException(flavor);
+                         }
+                         return new ByteArrayInputStream(buff.toString().getBytes());
+                     }
+				};
+            }
+            
+       
+        });
+		
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
 		gbl_propertyContentPanel.columnWidths = new int[]{0, 25, 25, 0};
@@ -314,4 +444,32 @@ public class MainView extends JFrame{
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
+	public class TransferableFile implements Transferable
+	{
+	   private List<String> fileList ;
+
+	   public TransferableFile(List<String> files) {
+	      fileList = files;
+	   }
+
+	   // Returns an object which represents the data to be transferred.
+	   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+	      if( flavor.equals(DataFlavor.javaFileListFlavor) )
+	         return fileList ;
+
+	      throw new UnsupportedFlavorException(flavor);
+	   }
+
+	   // Returns an array of DataFlavor objects indicating the flavors
+	   // the data can be provided in.
+	   public DataFlavor[] getTransferDataFlavors() {
+	      return new DataFlavor[] {DataFlavor.javaFileListFlavor} ;
+	   }
+
+	   // Returns whether or not the specified data flavor is supported for this object.
+	   public boolean isDataFlavorSupported(DataFlavor flavor) {
+	      return flavor.equals(DataFlavor.javaFileListFlavor) ;
+	   }
+	}	
+	
 }
