@@ -51,7 +51,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 				
 				this.doOnce();
 				if (this.dialogOption == JFileChooser.APPROVE_OPTION) {
-					if(dialogResult!=null) {
+					if(dialogResult != null) {
 						controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("SetMetadataCoverAction.message", dialogResult.getName(), item.toString()));
 						controller.getProgressMonitor().setProgress(index, max);
 						

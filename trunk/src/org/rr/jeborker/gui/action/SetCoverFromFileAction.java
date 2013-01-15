@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui.action;
 
-import java.awt.Frame;
 import java.io.File;
 
 import javax.swing.Action;
@@ -8,14 +7,15 @@ import javax.swing.ImageIcon;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.swing.dialogs.ImageFileChooser;
-import org.rr.commons.utils.ArrayUtils;
+import org.rr.commons.swing.dialogs.chooser.ChooserDialogFactory;
+import org.rr.commons.swing.dialogs.chooser.IFileChooser;
+import org.rr.jeborker.gui.MainController;
 
-class SetCoverFromFileAction extends SetCoverFrom<ImageFileChooser> implements IDoOnlyOnceAction<ImageFileChooser> {
+class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOnlyOnceAction<IFileChooser> {
 
 	private static final long serialVersionUID = 4772310971481868593L;
 
-	private ImageFileChooser imageFileChooserT;
+	private IFileChooser imageFileChooserT;
 
 	private static File previousSelectedFile;
 	
@@ -27,19 +27,19 @@ class SetCoverFromFileAction extends SetCoverFrom<ImageFileChooser> implements I
 	}
 	
 	@Override
-	public synchronized ImageFileChooser doOnce() {
+	public synchronized IFileChooser doOnce() {
 		if(imageFileChooserT == null) {
-			imageFileChooserT = new ImageFileChooser();
-			imageFileChooserT.setVisible(true);
-			if(previousSelectedFile!=null) {
+			imageFileChooserT = ChooserDialogFactory.getFileChooser();
+			if(previousSelectedFile != null) {
 				imageFileChooserT.setSelectedFile(previousSelectedFile);
 			}
-			imageFileChooserT.showOpenDialog(ArrayUtils.get(Frame.getFrames(), 0));
+			imageFileChooserT.setDialogType(IFileChooser.DIALOG_TPYE.OPEN);
+			imageFileChooserT.showDialog(MainController.getController().getMainWindow());
 			previousSelectedFile = imageFileChooserT.getSelectedFile();
 			
-			setDialogOption(imageFileChooserT.getReturnValue());
+			setDialogOption(imageFileChooserT.getReturnValue().ordinal());
 			if(imageFileChooserT.getSelectedFile() != null) {
-				setDialogResult(ResourceHandlerFactory.getResourceLoader(imageFileChooserT.getSelectedFile()));
+				setDialogResult(ResourceHandlerFactory.getResourceLoader(imageFileChooserT.getCurrentDirectory() + File.separator + imageFileChooserT.getSelectedFile()));
 			}
 		}
 		
@@ -47,11 +47,11 @@ class SetCoverFromFileAction extends SetCoverFrom<ImageFileChooser> implements I
 	}
 
 	@Override
-	public void setDoOnceResult(ImageFileChooser result) {
+	public void setDoOnceResult(IFileChooser result) {
 		this.imageFileChooserT = result;
-		setDialogOption(imageFileChooserT.getReturnValue());
+		setDialogOption(imageFileChooserT.getReturnValue().ordinal());
 		if(imageFileChooserT.getSelectedFile() != null) {
-			setDialogResult(ResourceHandlerFactory.getResourceLoader(imageFileChooserT.getSelectedFile()));
+			setDialogResult(ResourceHandlerFactory.getResourceLoader(imageFileChooserT.getCurrentDirectory() + File.separator + imageFileChooserT.getSelectedFile()));
 		}		
 	}
 }
