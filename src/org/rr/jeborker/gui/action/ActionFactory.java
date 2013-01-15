@@ -6,8 +6,8 @@ import java.util.List;
 import javax.swing.Action;
 
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -25,7 +25,13 @@ public class ActionFactory {
 		 * @param resourceHandler The resource to be tested.
 		 * @return <code>true</code> if the resource can be handled by the action or <code>false</code> if not.
 		 */
-		boolean canHandle(final IResourceHandler resourceHandler);
+		boolean canHandle(final EbookPropertyItem item);
+		
+		/**
+		 * Tells if the action is able to handle multiple selections.
+		 * @return <code>true</code> if multi select is supported and <code>false</code> otherwise.
+		 */
+		boolean hasMultiSelectionSupport();
 	}
 	
 	public static enum COMMON_ACTION_TYPES {
@@ -42,9 +48,14 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+			public boolean canHandle(EbookPropertyItem item) {
+				return MetadataHandlerFactory.hasCoverWriterSupport(item.getResourceHandler());
 			}
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
 		},
 		SET_COVER_FROM_DOWNLOAD_ACTION {
 
@@ -54,10 +65,33 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+			public boolean canHandle(EbookPropertyItem item) {
+				return MetadataHandlerFactory.hasCoverWriterSupport(item.getResourceHandler());
 			}
-		},		
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
+		},	
+		SAVE_COVER_TO_FILE_ACTION {
+
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return SaveCoverToFileAction.class;
+			}
+
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				IResourceHandler coverThumbnailResource = EbookPropertyItemUtils.getCoverThumbnail(item.getResourceHandler());
+				return coverThumbnailResource != null && EbookPropertyItemUtils.getCoverThumbnail(item.getResourceHandler()).exists();
+			}
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return false;
+			}			
+		},			
 		EDIT_PLAIN_METADATA_ACTION {
 
 			@Override
@@ -66,9 +100,14 @@ public class ActionFactory {
 			}
 			
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return MetadataHandlerFactory.hasPlainMetadataSupport(resourceHandler);
+			public boolean canHandle(EbookPropertyItem item) {
+				return MetadataHandlerFactory.hasPlainMetadataSupport(item.getResourceHandler());
 			}
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
 		},
 		REFRESH_ENTRY_ACTION {
 
@@ -78,9 +117,14 @@ public class ActionFactory {
 			}
 			
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
+			public boolean canHandle(EbookPropertyItem item) {
 				return true;
 			}
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
 		},
 		DELETE_FILE_ACTION {
 			
@@ -90,8 +134,13 @@ public class ActionFactory {
 			}
 			
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return resourceHandler.isFileResource();
+			public boolean canHandle(EbookPropertyItem item) {
+				return item.getResourceHandler().isFileResource();
+			}
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
 			}			
 		},
 		COPY_TO_DROPBOX_ACTION {
@@ -102,8 +151,13 @@ public class ActionFactory {
 			}
 			
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return resourceHandler.isFileResource();
+			public boolean canHandle(EbookPropertyItem item) {
+				return item.getResourceHandler().isFileResource();
+			}	
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
 			}			
 		},
 		COPY_TO_TARGET_ACTION {
@@ -114,8 +168,13 @@ public class ActionFactory {
 			}
 			
 			@Override
-			public boolean canHandle(IResourceHandler resourceHandler) {
-				return resourceHandler.isFileResource();
+			public boolean canHandle(EbookPropertyItem item) {
+				return item.getResourceHandler().isFileResource();
+			}	
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
 			}			
 		}
 	}	
@@ -188,21 +247,20 @@ public class ActionFactory {
 		final ArrayList<IResourceHandler> resourceHandlers = new ArrayList<IResourceHandler>(items.size()); 
 		
 		//create the resource handle list.
+		boolean canHandle = true;
 		for (EbookPropertyItem item : items) {
-			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
-			resourceHandlers.add(resourceHandler);
+			resourceHandlers.add(item.getResourceHandler());
+			if(!type.canHandle(item)) {
+				canHandle = false;
+			} 			
+		}
+		
+		if(!type.hasMultiSelectionSupport() && items.size() > 1) {
+			canHandle = false;
 		}
 		
 		//test whether the Action is able to handle all given items.
-		boolean canHandle = true;
-		if(!resourceHandlers.isEmpty()) {
-			for (IResourceHandler resourceHandler : resourceHandlers) {
-				if(!type.canHandle(resourceHandler)) {
-					canHandle = false;
-					break;
-				} 
-			}
-		} else {
+		if(items.isEmpty()) {
 			//no selection
 			canHandle = false;
 		}

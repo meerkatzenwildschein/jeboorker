@@ -176,6 +176,13 @@ public class MainMenuBarController {
 				menu.add(action);
 			}
 		}	
+		
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				menu.add(action);
+			}			
+		}
 		return menu;
 	}
 	

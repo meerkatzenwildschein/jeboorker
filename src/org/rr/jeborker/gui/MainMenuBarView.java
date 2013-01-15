@@ -92,6 +92,10 @@ class MainMenuBarView extends JMenuBar {
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
 		coverSubMenu.add(new JMenuItem(action));
 		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
+		coverSubMenu.add(new JMenuItem(action));
+		
+		
 		result.add(coverSubMenu);		
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);

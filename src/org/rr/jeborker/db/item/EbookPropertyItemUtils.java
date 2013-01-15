@@ -207,7 +207,7 @@ public class EbookPropertyItemUtils {
 	 * @return The desired {@link IResourceHandler} instance for the cover thumbnail. Returns <code>null</code> if 
 	 *   no cover is stored for the given ebook {@link IResourceHandler}. 
 	 */
-	private static IResourceHandler getCoverThumbnail(final IResourceHandler ebookResource) {
+	public static IResourceHandler getCoverThumbnail(final IResourceHandler ebookResource) {
 		IResourceHandler coverThumbnailResourceHandler = getCoverThumbnailResourceHandler(ebookResource);
 		if(coverThumbnailResourceHandler.exists()) {
 			return coverThumbnailResourceHandler;
