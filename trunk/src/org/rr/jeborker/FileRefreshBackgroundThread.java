@@ -19,6 +19,8 @@ public class FileRefreshBackgroundThread extends Thread {
 
 	private static final List<EbookPropertyItem> items = Collections.synchronizedList(new ArrayList<EbookPropertyItem>());
 
+	private static boolean isDisabled = false;
+	
 	public FileRefreshBackgroundThread(Worker worker) {
 		super(worker);
 	}
@@ -32,7 +34,19 @@ public class FileRefreshBackgroundThread extends Thread {
 	}
 
 	public void addEbook(EbookPropertyItem item) {
-		items.add(item);
+		if(!isDisabled) {
+			items.add(item);
+		}
+	}
+	
+	/**
+	 * Disabled the {@link FileRefreshBackgroundThread}. The {@link #addEbook(EbookPropertyItem)} method
+	 * did no longer add books if the {@link FileRefreshBackgroundThread} is set to disabled.
+	 * @param disabled <code>true</code> for disabling the {@link FileRefreshBackgroundThread} and <code>false</code>
+	 *  to enable it.
+	 */
+	public static void setDisabled(boolean disabled) {
+		isDisabled = disabled; 
 	}
 
 	private static class Worker implements Runnable {
