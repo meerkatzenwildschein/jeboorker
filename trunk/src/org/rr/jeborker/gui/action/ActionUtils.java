@@ -156,6 +156,15 @@ public class ActionUtils {
 	 * @param item The item to be added.
 	 */
 	public static void addEbookPropertyItem(final EbookPropertyItem item) {
+		addEbookPropertyItem(item, -1);
+	}	
+	
+	/**
+	 * Adds the given item to the database and to the ui.
+	 * @param item The item to be added.
+	 * @param row The row where the item should be added to.
+	 */
+	public static void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
 		MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
 		DefaultDBManager.getInstance().storeObject(item);
 		
@@ -163,10 +172,10 @@ public class ActionUtils {
 			
 			@Override
 			public void run() {
-				MainController.getController().addEbookPropertyItem(item);
+				MainController.getController().addEbookPropertyItem(item, row);
 			}
 		});
-	}	
+	}		
 	
 	/**
 	 * Deletes the given item from the database and the view.

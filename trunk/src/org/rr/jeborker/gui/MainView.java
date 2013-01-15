@@ -225,7 +225,7 @@ public class MainView extends JFrame{
                 		if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
                 			sourceResource.copyTo(targetResource, false);
                 			EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
-                			ActionUtils.addEbookPropertyItem(newItem);
+                			ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
                 		} else {
                 			if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
                 				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
