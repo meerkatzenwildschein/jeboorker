@@ -8,10 +8,10 @@ import java.util.logging.Level;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.swing.dialogs.chooser.IFileChooser.RETURN_OPTION;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
+import org.rr.commons.utils.StringUtils;
 
 /**
  * {@link IFileChooser} implementation for Linux with zenity
@@ -25,6 +25,8 @@ class ZenityFileChooser implements IFileChooser {
 	private DIALOG_TPYE type = DIALOG_TPYE.OPEN;
 	
 	private RETURN_OPTION returnValue;
+	
+	private String title;
 	
 	@Override
 	public void setSelectedFile(File file) {
@@ -54,13 +56,19 @@ class ZenityFileChooser implements IFileChooser {
 	@Override
 	public RETURN_OPTION showDialog(Component parent) {
 		String commandLineString = "/usr/bin/zenity --file-selection --confirm-overwrite ";
-		if(type.equals(DIALOG_TPYE.SAVE)) {
-			commandLineString += "--save ";
-		}
-		if(getSelectedFile() != null && getSelectedFile().getName() != null) {
-			commandLineString += "--filename=\"" + getSelectedFile().getName()+"\" ";
-		}
 		CommandLine cl = CommandLine.parse(commandLineString);
+		if(type.equals(DIALOG_TPYE.SAVE)) {
+			cl.addArgument("--save");
+		}
+		
+		if(getSelectedFile() != null && getSelectedFile().getName() != null) {
+			cl.addArgument("--filename=" + getSelectedFile().getName());
+		}
+		
+		if(this.title != null) {
+			cl.addArgument("--title=" + StringUtils.replace(this.title, " ", "\u00A0"));
+		}		
+
 		final StringBuilder result = new StringBuilder();
 		try {
 			Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
@@ -102,6 +110,11 @@ class ZenityFileChooser implements IFileChooser {
 	@Override
 	public RETURN_OPTION getReturnValue() {
 		return this.returnValue;
+	}
+
+	@Override
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }

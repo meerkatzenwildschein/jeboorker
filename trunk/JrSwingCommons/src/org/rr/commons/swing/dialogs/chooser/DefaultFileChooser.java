@@ -74,4 +74,9 @@ public class DefaultFileChooser implements IFileChooser {
 		return this.returnValue;
 	}
 
+	@Override
+	public void setTitle(String title) {
+		c.setDialogTitle(title);
+	}
+
 }
