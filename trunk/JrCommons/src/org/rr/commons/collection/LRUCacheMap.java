@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class LRUCacheMap<K, V> extends LinkedHashMap<K, V>{
 	
+	private static final long serialVersionUID = 4709696324495431394L;
+	
 	private final int maxSize;
 	
 	/**
