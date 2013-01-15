@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui.action;
 
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -9,12 +8,14 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
+import org.rr.commons.swing.dialogs.chooser.ChooserDialogFactory;
+import org.rr.commons.swing.dialogs.chooser.IFileChooser;
+import org.rr.commons.swing.dialogs.chooser.IFileChooser.RETURN_OPTION;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainController;
 
@@ -38,18 +39,19 @@ public class SaveCoverToFileAction extends AbstractAction {
 		final String fileExtension = ResourceHandlerUtils.getFileExtension(imageViewerResource);
 		
 		String filename = "cover" + (fileExtension != null ? fileExtension : "");
-		String dir = JeboorkerPreferences.getEntryString(PATH_PREF_KEY);		
-		JFileChooser c = new JFileChooser();
+		String dir = JeboorkerPreferences.getEntryString(PATH_PREF_KEY);
+		IFileChooser c = ChooserDialogFactory.getFileChooser();
 		if(dir != null) {
 			c.setCurrentDirectory(new File(dir));
 		}
 		if(filename != null) {
 			c.setSelectedFile(new File(filename));
 		}
+		c.setDialogType(IFileChooser.DIALOG_TPYE.SAVE);
 		
-		int rVal = c.showSaveDialog(controller.getMainWindow());
+		RETURN_OPTION rVal = c.showDialog(controller.getMainWindow());
 
-		if (rVal == JFileChooser.APPROVE_OPTION) {
+		if (rVal == IFileChooser.RETURN_OPTION.APPROVE) {
 			filename = c.getSelectedFile().getName();
 			dir = c.getCurrentDirectory().toString();
 			JeboorkerPreferences.addEntryString(PATH_PREF_KEY, dir);
