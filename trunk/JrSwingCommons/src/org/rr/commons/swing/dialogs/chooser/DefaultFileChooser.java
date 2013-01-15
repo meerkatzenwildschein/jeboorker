@@ -14,6 +14,8 @@ public class DefaultFileChooser implements IFileChooser {
 	
 	private DIALOG_TPYE type;
 	
+	private RETURN_OPTION returnValue;
+	
 	public DefaultFileChooser() {
 		this.c = new JFileChooser();
 	}
@@ -24,7 +26,7 @@ public class DefaultFileChooser implements IFileChooser {
 	
 	@Override
 	public File getSelectedFile() {
-		return c.getSelectedFile();
+		return new File(c.getSelectedFile().getName());
 	}	
 
 	@Override
@@ -59,12 +61,17 @@ public class DefaultFileChooser implements IFileChooser {
 		} 
 		
 		if(result == JFileChooser.APPROVE_OPTION) {
-			return RETURN_OPTION.APPROVE;
+			return this.returnValue = RETURN_OPTION.APPROVE;
 		} else if(result == JFileChooser.CANCEL_OPTION) {
-			return RETURN_OPTION.CANCEL;
+			return this.returnValue = RETURN_OPTION.CANCEL;
 		} else {
-			return RETURN_OPTION.ERROR;
+			return this.returnValue = RETURN_OPTION.ERROR;
 		}
+	}
+
+	@Override
+	public RETURN_OPTION getReturnValue() {
+		return this.returnValue;
 	}
 
 }
