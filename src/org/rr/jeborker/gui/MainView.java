@@ -12,12 +12,11 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,6 +41,7 @@ import javax.swing.border.EmptyBorder;
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.button.JMenuButton;
+import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -219,7 +219,11 @@ public class MainView extends JFrame{
 	                			EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
 	                			ActionUtils.addEbookPropertyItem(newItem);
 	                		} else {
-	                			LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);
+	                			if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
+	                				LoggerFactory.getLogger().log(Level.INFO, splitDataItem + " is not a supported ebook format.");
+	                			} else {
+	                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
+	                			}
 	                		}
                 		}
                 	}
@@ -237,47 +241,17 @@ public class MainView extends JFrame{
                 JTable list = (JTable) c;
                 int[] selectedRows = list.getSelectedRows();
         
-                final StringBuffer buff = new StringBuffer();
-
+                List<URI> uriList = new ArrayList<URI>();
                 for (int i = 0; i < selectedRows.length; i++) {
                 	EbookPropertyItem val = (EbookPropertyItem) table.getModel().getValueAt(selectedRows[i], 0);
                 	try {
-						String uri = "file://" + val.getResourceHandler().toString().replaceAll(" ", "%20");
-	                    buff.append(uri);
-	                    if (i != selectedRows.length - 1) {
-	                        buff.append("\n");
-	                    }						
+                		uriList.add(new File(val.getFile()).toURI());
 					} catch (Exception e) {
 						LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
 					}
                 }
-                
-                return new Transferable() {
-
-                     public DataFlavor[] getTransferDataFlavors() {
-                         try {
-							return new DataFlavor[] { new DataFlavor("text/uri-list") };
-						} catch (ClassNotFoundException e) {
-							e.printStackTrace();
-						}
-                         return new DataFlavor[0];
-                     }
-
-                     public boolean isDataFlavorSupported(DataFlavor flavor) {
-                    	 boolean result = flavor.getMimeType().indexOf("text/uri-list") != -1;                 	 
-                    	 return result;
-                     }
-
-                     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-                         if (!isDataFlavorSupported(flavor)) {
-                             throw new UnsupportedFlavorException(flavor);
-                         }
-                         return new ByteArrayInputStream(buff.toString().getBytes());
-                     }
-				};
+                return new URIListTransferable(uriList);
             }
-            
-       
         });
 		
 		JPanel propertyContentPanel = new JPanel();
