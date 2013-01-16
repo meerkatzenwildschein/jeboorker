@@ -69,6 +69,14 @@ public class SimpleImageViewer extends JComponent {
     }
     
     /**
+     * Gets the image which is currently displayed.
+     * @return The diesried image or <code>null</code> if no image is displayed.
+     */
+    public BufferedImage getImage() {
+    	return this.currentDisplayImage;
+    }
+    
+    /**
      * Needed if this component is only be used for painting but 
      * is not added to a container. The given {@link Runnable} is
      * always invoked after an image has been loaded and a repaint is neeed.
