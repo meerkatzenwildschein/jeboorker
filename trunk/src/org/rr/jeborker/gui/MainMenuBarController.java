@@ -12,10 +12,12 @@ import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +29,7 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class MainMenuBarController {
 
@@ -163,26 +166,7 @@ public class MainMenuBarController {
 		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 		final JPopupMenu menu = new JPopupMenu();
 		
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				menu.add(action);
-			}
-		}
-		
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				menu.add(action);
-			}
-		}	
-		
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				menu.add(action);
-			}			
-		}
+		addCoverMenuItems(menu, items, selectedEbookPropertyItemRows);
 		return menu;
 	}
 	
@@ -235,7 +219,7 @@ public class MainMenuBarController {
 	 */
 	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
 		JMenu copyToSubMenu = new JMenu(Bundle.getString("MainMenuBarController.copyToSubMenu"));
-		copyToSubMenu.setIcon(new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("copy_16.gif")));
+		copyToSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("copy_16.png")));
 		
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, new int[0]);
 		copyToSubMenu.add(action);
@@ -244,8 +228,8 @@ public class MainMenuBarController {
 		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceLoader(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
-		action.putValue(Action.SMALL_ICON, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("home_16.gif")));
-		action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("home_22.gif")));					
+		action.putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("home_16.png")));
+		action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("home_22.png")));					
 		copyToSubMenu.add(action);
 		
 		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
@@ -253,12 +237,33 @@ public class MainMenuBarController {
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
 			action.putValue(Action.NAME, externalResource.toString());
 			action.putValue("TARGET", externalResource);
-			action.putValue(Action.SMALL_ICON, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("removable_drive_16.gif")));
-			action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(org.rr.jeborker.gui.action.Bundle.getResource("removable_drive_22.gif")));					
+			action.putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("removable_drive_16.png")));
+			action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("removable_drive_22.png")));					
 			
 			copyToSubMenu.add(action);
 		}
 		return copyToSubMenu;
+	}	
+	
+	static void addCoverMenuItems(JComponent menu, List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
+		Action action;
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));	
+
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));	
+		
+		menu.add(new JSeparator());
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));
 	}	
 	
 	/**

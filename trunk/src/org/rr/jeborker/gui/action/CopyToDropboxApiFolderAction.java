@@ -20,6 +20,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.DropboxAPI.Entry;
@@ -45,8 +46,8 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	CopyToDropboxApiFolderAction(String text) {
 		this.source = text;
 		putValue(Action.NAME, Bundle.getString("CopyToDropboxAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("copy_dropbox_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("copy_dropbox_22.gif")));		
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("copy_dropbox_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("copy_dropbox_22.png")));		
 	}
 
 	@Override

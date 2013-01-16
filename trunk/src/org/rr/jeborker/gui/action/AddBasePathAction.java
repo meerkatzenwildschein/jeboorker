@@ -20,6 +20,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 /**
  * Add a folder action.
@@ -39,8 +40,8 @@ class AddBasePathAction extends AbstractAction {
 				path = text;
 			}
 		}
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("add_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("add_22.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("add_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("add_22.png")));
 	}
 	
 	@Override

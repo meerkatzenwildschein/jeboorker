@@ -14,6 +14,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.RefreshAbstractAction;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
@@ -34,7 +35,8 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	SetCoverFrom(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
 		putValue(Action.NAME, Bundle.getString("SetCoverFromFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("image_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_22.png")));
 	}
 	
 	@Override

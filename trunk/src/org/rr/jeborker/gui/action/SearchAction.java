@@ -15,6 +15,7 @@ import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.FilterPanelController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class SearchAction extends AbstractAction {
 
@@ -23,7 +24,7 @@ class SearchAction extends AbstractAction {
 	private static final String QUERY_IDENTIFER = SearchAction.class.getName();
 
 	SearchAction() {
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("play_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("play_16.png")));
 	}
 	
 	public void actionPerformed(ActionEvent e) {
