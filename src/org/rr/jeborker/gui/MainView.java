@@ -365,7 +365,7 @@ public class MainView extends JFrame{
 				propertySheet.setShowCategoryButton(false);
 				
 				addMetadataButton = new JMenuButton();
-				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.gif")));
+				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
 				propertySheet.addToolbarComponent(addMetadataButton);
 				
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));

@@ -18,6 +18,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.MainMonitor;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class RemoveBasePathAction extends AbstractAction {
 
@@ -36,8 +37,8 @@ class RemoveBasePathAction extends AbstractAction {
 		} else {
 			putValue(Action.NAME, text);
 		}
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("remove_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("remove_22.gif")));		
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("remove_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("remove_22.png")));		
 	}
 	
 	@Override

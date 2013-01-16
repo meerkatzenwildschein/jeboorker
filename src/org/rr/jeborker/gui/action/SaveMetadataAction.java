@@ -13,6 +13,7 @@ import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
 
@@ -26,7 +27,8 @@ class SaveMetadataAction extends AbstractAction {
 	private static SaveMetadataAction saveMetadataEntryAction = null;
 	
 	private SaveMetadataAction() {
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("save_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("save_16.png")));
+//		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("save_22.png")));
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
 //		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		putValue(SHORT_DESCRIPTION, Bundle.getString("SaveMetadataAction.tooltip")); //tooltip

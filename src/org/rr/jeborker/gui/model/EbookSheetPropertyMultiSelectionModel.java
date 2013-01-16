@@ -21,8 +21,11 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 	public void loadProperties(List<EbookPropertyItem> items) {
 		final List<IResourceHandler> ebookResourceHandlers = new ArrayList<IResourceHandler>(items.size());
 		for (int i = 0; i < items.size(); i++) {
-			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(items.get(i).getFile());
-			ebookResourceHandlers.add(resourceHandler);
+			EbookPropertyItem ebookPropertyItem = items.get(i);
+			if(ebookPropertyItem != null && ebookPropertyItem.getFile() != null) {
+				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(ebookPropertyItem.getFile());
+				ebookResourceHandlers.add(resourceHandler);
+			}
 		}
 		
 		final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookResourceHandlers);

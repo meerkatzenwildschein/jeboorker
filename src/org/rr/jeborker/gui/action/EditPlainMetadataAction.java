@@ -9,6 +9,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.event.RefreshAbstractAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.PlainMetadataEditorController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class EditPlainMetadataAction extends RefreshAbstractAction {
 	
@@ -24,7 +25,8 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 		}
 		
 		putValue(Action.NAME, Bundle.getFormattedString("EditPlainMetadataAction.name", additionalName));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("edit_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("edit_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("edit_22.png")));
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import org.rr.commons.swing.dialogs.chooser.IFileChooser;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser.RETURN_OPTION;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class SaveCoverToFileAction extends AbstractAction {
 
@@ -28,8 +29,8 @@ public class SaveCoverToFileAction extends AbstractAction {
 	SaveCoverToFileAction(String text) {
 		this.ebook = text;
 		putValue(Action.NAME, Bundle.getString("SaveCoverToFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("file_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("file_22.gif")));		
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("file_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("file_22.png")));		
 	}
 	
 	@Override

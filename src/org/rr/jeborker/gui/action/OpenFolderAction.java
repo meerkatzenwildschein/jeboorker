@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.DesktopUtils;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class OpenFolderAction extends AbstractAction {
 
@@ -20,8 +21,8 @@ class OpenFolderAction extends AbstractAction {
 	OpenFolderAction(String text) {
 		this.folder = text;
 		putValue(Action.NAME, Bundle.getString("OpenFolderAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("folder_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("folder_22.gif")));		
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("folder_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("folder_22.png")));		
 	}
 	
 	@Override

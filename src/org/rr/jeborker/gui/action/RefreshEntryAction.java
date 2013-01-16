@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class RefreshEntryAction extends AbstractAction {
 
@@ -22,7 +23,8 @@ class RefreshEntryAction extends AbstractAction {
 	public RefreshEntryAction(final IResourceHandler handler) {
 		this.handler = handler;
 		putValue(Action.NAME, Bundle.getString("RefreshEntryAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("refresh_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("refresh_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("refresh_22.png")));
 	}
 
 	@Override

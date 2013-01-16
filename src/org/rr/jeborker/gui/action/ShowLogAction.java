@@ -7,6 +7,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import org.rr.jeborker.gui.LogMonitorController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 
 class ShowLogAction extends AbstractAction {
@@ -19,8 +20,8 @@ class ShowLogAction extends AbstractAction {
 		} else {
 			putValue(Action.NAME, text);
 		}
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("view_log_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("view_log_22.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("view_log_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("view_log_22.png")));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 	

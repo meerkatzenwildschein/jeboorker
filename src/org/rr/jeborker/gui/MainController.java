@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
@@ -327,6 +328,14 @@ public class MainController {
 	public IResourceHandler getImageViewerResource() {
 		return mainWindow.imageViewer.getImageResource();
 	}
+	
+	/**
+	 * Gets the {@link BufferedImage} for the image which is displayed in the image viewer.
+	 * @return The desired {@link BufferedImage} or <code>null</code>.
+	 */
+	public BufferedImage getImage() {
+		return mainWindow.imageViewer.getImage();
+	}	
 	
 	/**
 	 * Removes the metadata property which is currently selected in the property sheet.

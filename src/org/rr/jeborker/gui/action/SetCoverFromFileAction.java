@@ -10,6 +10,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.dialogs.chooser.ChooserDialogFactory;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOnlyOnceAction<IFileChooser> {
 
@@ -22,7 +23,8 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 	SetCoverFromFileAction(IResourceHandler resourceHandler) {
 		super(resourceHandler);
 		putValue(Action.NAME, Bundle.getString("SetCoverFromFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("image_16.gif")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_22.png")));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 	

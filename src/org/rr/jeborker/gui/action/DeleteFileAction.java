@@ -11,6 +11,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer> {
 
@@ -27,8 +28,8 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	public DeleteFileAction(final IResourceHandler resourceLoader) {
 		this.fileToDelete = resourceLoader;
 		putValue(Action.NAME, Bundle.getString("DeleteFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(Bundle.getResource("delete_16.gif")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("delete_22.gif")));		
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("delete_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("delete_22.png")));		
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -17,6 +18,7 @@ import javax.swing.event.MenuListener;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class MainMenuBarView extends JMenuBar {
 
@@ -86,19 +88,11 @@ class MainMenuBarView extends JMenuBar {
 		final ArrayList<JMenuItem> result = new ArrayList<JMenuItem>();
 		
 		JMenu coverSubMenu = new JMenu("Cover");
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, rowsToRefreshAfter);
-		coverSubMenu.add(new JMenuItem(action));
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
-		coverSubMenu.add(new JMenuItem(action));
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
-		coverSubMenu.add(new JMenuItem(action));
-		
-		
+		coverSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("image_16.png")));
+		MainMenuBarController.addCoverMenuItems(coverSubMenu, items, rowsToRefreshAfter);
 		result.add(coverSubMenu);		
 		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, rowsToRefreshAfter);
 		result.add(new JMenuItem(action));		
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, rowsToRefreshAfter);
