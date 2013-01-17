@@ -268,8 +268,33 @@ public class DateConversionUtils {
 		W3C_MINUTE {
 			//2010-11-27T23:00+00:00
 			//2010-11-27 23:00+00:00
-			
 			private final Pattern W3C_MINUTE_DATE_PATTERN_1 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}[+-]\\d{2}:??\\d{2}");
+			
+			//2009-08-04T00:00:00
+			//2009-08-04 00:00:00			
+			private final Pattern W3C_MINUTE_DATE_PATTERN_2 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:\\d{2}");
+			
+			public Date getDate(String dateString) {
+				try {
+					if(dateString.indexOf(' ')!=-1) {
+						dateString = StringUtils.replace(dateString, " ", "T");
+					}
+					return new W3CDateFormat().parse(dateString);
+				} catch (ParseException e) {
+					throw new RuntimeException("could not parse date " + dateString);
+				}
+			}
+			
+			public boolean isMatching(String dateString) {
+				return W3C_MINUTE_DATE_PATTERN_1.matcher(dateString).matches() || W3C_MINUTE_DATE_PATTERN_2.matcher(dateString).matches();
+			}
+			
+			public String getString(Date date) {
+				return new W3CDateFormat(W3CDateFormat.Pattern.MINUTE).format(date);
+			}			
+		},
+		W3C_MINUTE2 {
+			private final Pattern W3C_MINUTE_DATE_PATTERN_1 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:\\d{2}");
 			
 			public Date getDate(String dateString) {
 				try {

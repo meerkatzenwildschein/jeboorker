@@ -4,17 +4,16 @@ import java.util.AbstractList;
 import java.util.List;
 
 /**
- * The {@link InsertList} allows to map a value to a specific
+ * The {@link InsertElementList} allows to map a value to a specific
  * index into the map without modifying the original {@link List}. 
  */
-public class InsertList<E> extends AbstractList<E> {
+public class InsertElementList<E> extends AbstractList<E> {
 
 	private List<E> list;
 	private E value;
 	private int idx;
 	
-	public InsertList(List<E> list, E value, int index) {
-		//use a CompoundList with a empty list for taking sure that adding is supported.
+	public InsertElementList(List<E> list, E value, int index) {
 		this.list = list;
 		this.value = value;
 		this.idx = index;
