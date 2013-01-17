@@ -70,8 +70,11 @@ public class ApplicationAction extends AbstractAction {
 	}
 	
 	public void invokeAction(ActionEvent e) {
-		final Object noThreading = realAction.getValue(NON_THREADED_ACTION_KEY);
-		if(noThreading instanceof Boolean && ((Boolean) noThreading).booleanValue()) {
+		final Object noRealActionThreading = realAction.getValue(NON_THREADED_ACTION_KEY);
+		final boolean noRealActionThreadingValue = noRealActionThreading instanceof Boolean && ((Boolean) noRealActionThreading).booleanValue();
+		final Object noAppActionThreading = this.getValue(NON_THREADED_ACTION_KEY);
+		final boolean noAppActionThreadingValue = noAppActionThreading instanceof Boolean && ((Boolean) noAppActionThreading).booleanValue();
+		if(noRealActionThreadingValue || noAppActionThreadingValue) {
 			FileRefreshBackgroundThread.setDisabled(true);
 			try {
 				this.realAction.actionPerformed(e);

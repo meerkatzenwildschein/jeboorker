@@ -499,15 +499,6 @@ public class MainController {
 		return false;
 	}
 	
-	public void removeEbookPropertyItems(List<EbookPropertyItem> items) {
-		TableModel model = mainWindow.table.getModel();
-		if(model instanceof EbookPropertyDBTableModel) {
-			mainWindow.table.clearSelection();
-			mainWindow.table.editingStopped(new ChangeEvent(this));
-			((EbookPropertyDBTableModel)model).removeRows(items);
-		}	
-	}
-	
 	/**
 	 * gets the current model for the main table.
 	 * @return The desired model. <code>null</code> if the model is not initialized.

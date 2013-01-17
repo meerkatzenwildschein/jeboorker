@@ -86,6 +86,7 @@ public class FileRefreshBackgroundThread extends Thread {
 				EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
 				if(reloadedItem != null && isRefreshNeeded(reloadedItem, resourceHandler)) {
 					ApplicationAction refreshAction = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString());
+					refreshAction.putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE);
 					refreshAction.invokeAction();
 					LoggerFactory.getLogger(this).log(Level.INFO, "Changed entry " + ebookPropertyItem.getResourceHandler().getName() + " refreshed.");
 				}

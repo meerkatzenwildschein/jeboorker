@@ -241,7 +241,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		Resources resources = epub.getResources();
 		Collection<String> allHrefs = resources.getAllHrefs();
 		for(String href : allHrefs) {
-			if(new File(href).getName().toLowerCase().startsWith("cover") && (href.endsWith(".jpg") || href.endsWith(".jpeg"))) {
+			if(new File(href).getName().toLowerCase().indexOf("cover") != -1 && (href.endsWith(".jpg") || href.endsWith(".jpeg"))) {
 				Resource resourcerByHref = resources.getByHref(href);
 				if(resourcerByHref != null) {
 					try {
