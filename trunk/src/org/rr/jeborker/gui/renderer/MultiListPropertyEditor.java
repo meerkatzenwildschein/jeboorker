@@ -29,10 +29,6 @@ import org.rr.commons.utils.UtilConstants;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 
-/**
- * ComboBoxPropertyEditor. <br>
- * 
- */
 public class MultiListPropertyEditor extends AbstractPropertyEditor {
 
 	private static final String noChanges = "<" + Bundle.getString("ComboBoxPropertyEditor.noChanges") + ">";
@@ -65,11 +61,15 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 			}
 
 		});
+
 		combo.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
 				editorInputChanged = true;
+				if (e.getKeyChar() == '\n' || e.getKeyChar() == '\t') {
+					MultiListPropertyEditor.this.firePropertyChange(oldValue, combo.getSelectedItem());
+				}				
 			}
 			
 		});
@@ -88,14 +88,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 				selectionChanged = true;
 			}
 		});
-		
-		combo.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_TAB) {
-					MultiListPropertyEditor.this.firePropertyChange(oldValue, combo.getSelectedItem());
-				}
-			}
-		});
+
 		combo.setSelectedIndex(-1);
 	}
 
