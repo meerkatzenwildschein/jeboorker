@@ -1,7 +1,9 @@
 package org.rr.jeborker.metadata;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,8 +27,6 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.zip.ZipUtils;
 import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
 	
@@ -182,6 +182,9 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		
 		List<Meta> otherMeta = metadata.getOtherMeta();
 		for(Meta meta : otherMeta) {
+			if("cover".equals(meta.getName().toLowerCase())) {
+				continue;
+			}
 			result.add(new EpubLibMetadataProperty<Meta>(meta.getName(), meta.getContent(), meta));
 		}
 		
@@ -220,49 +223,39 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 				final byte[] data = coverImage.getData();
 				result = data;
 			}
+			if(result == null) {
+				result = searchCoverImage(epub);
+			}			
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get cover for " + ebookResourceHandler, e);
 		}
 		
-		if(result == null) {
-			result = getCoverDirty();
-		}
 		return result;
 	}
 	
 	/**
-	 * Searches the cover image in the zip data, extracts it and put it into the given {@link EbookPropertyItem}.
-	 * 
-	 * @param zipData
-	 *            The epub zip data.
-	 * @param item
-	 *            The item to be setup
-	 * @param metadataNode
-	 *            The metadata node possibly containing some hints where the cover is.
+	 * Searches the given {@link Book} for an image which seems to be the cover image.
+	 * @return The desired cover image bytes or <code>null</code> if nbo cover could be found.
 	 */
-	public byte[] getCoverDirty() {
-		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		try {
-			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final byte[] containerXmlData = getContainerOPF(zipData);
-			final Document document = getDocument(containerXmlData, ebookResourceHandler);
-			if(document!=null) {
-				final Element metadataNode = this.getMetadataElement(document);
-				if(metadataNode != null) {
-					final Element manifestNode = this.getManifestElement(document);
-		
-					final String coverNameReference = findMetadataCoverNameReference(metadataNode, document);
-					final String coverName = findManifestCoverName(manifestNode, coverNameReference, document);
-					final ZipDataEntry extract = extractCoverFromZip(zipData, coverName != null ? coverName : coverNameReference);
-					byte[] result;
-					if (extract != null && extract.data != null && (result = extract.getBytes()).length > 0) {
-						return result;
+	public byte[] searchCoverImage(Book epub) {
+		Resources resources = epub.getResources();
+		Collection<String> allHrefs = resources.getAllHrefs();
+		for(String href : allHrefs) {
+			if(new File(href).getName().toLowerCase().startsWith("cover") && (href.endsWith(".jpg") || href.endsWith(".jpeg"))) {
+				Resource resourcerByHref = resources.getByHref(href);
+				if(resourcerByHref != null) {
+					try {
+						byte[] data = resourcerByHref.getData();
+						if(data != null && data.length > 0) {
+							return resourcerByHref.getData();
+						}
+					} catch (IOException e) {
+						break;
 					}
 				}
 			}
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this, "Could not get cover for " + ebookResourceHandler, e);
 		}
+		
 		return null;
 	}	
 

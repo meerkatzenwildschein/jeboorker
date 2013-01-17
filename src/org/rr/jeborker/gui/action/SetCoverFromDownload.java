@@ -24,8 +24,8 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 	SetCoverFromDownload(IResourceHandler resourceHandler) {
 		super(resourceHandler);
 		putValue(Action.NAME, Bundle.getString("SetCoverFromDownloadAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_16.png")));		
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_22.png")));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_websearch_16.png")));		
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_websearch_22.png")));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 
