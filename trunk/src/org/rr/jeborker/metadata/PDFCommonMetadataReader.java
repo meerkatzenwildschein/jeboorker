@@ -143,7 +143,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				Object value = schemaChild.getTextContent();
 				if(tagName.endsWith("Date") || tagName.endsWith("SourceModified")) {
 					final String stringValue = StringUtils.toString(value);
-					if(stringValue.isEmpty()) {
+					if(stringValue.trim().isEmpty()) {
 						continue; //no sense to add an empty Date.
 					} else {
 						Date dateValue = DateConversionUtils.toDate(stringValue);
@@ -153,8 +153,10 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 						}
 					}
 				}
-				final PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, value, null);
-				result.add(pdfMetadataProperty);
+				if(!StringUtils.toString(value).trim().isEmpty()) {
+					final PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, value, null);
+					result.add(pdfMetadataProperty);
+				}
 			}
 		}
 	}
