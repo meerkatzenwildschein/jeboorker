@@ -1,7 +1,6 @@
 package org.rr.commons.collection;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ public class InsertList<E> extends AbstractList<E> {
 	
 	public InsertList(List<E> list, E value, int index) {
 		//use a CompoundList with a empty list for taking sure that adding is supported.
-		this.list = new CompoundList<E>(list, new ArrayList<E>());
+		this.list = list;
 		this.value = value;
 		this.idx = index;
 	}
