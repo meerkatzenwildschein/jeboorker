@@ -45,6 +45,7 @@ public class MetadataAddListModel extends AbstractListModel {
 	}
 	
 	private void initialize() {
+		//temove those metadata from the button list which are already in use and only be single ones.
 		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
 		for (MetadataProperty supportedProperty : supportedMetaData) {
 			for (MetadataProperty currentMetadataProperty : currentMetaData) {

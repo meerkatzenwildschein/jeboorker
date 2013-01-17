@@ -162,15 +162,16 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	@Override
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		item.clearMetadata();
-		MetadataProperty authorMetadataProperty = null;
+		List<MetadataProperty> authorMetadataProperty = new ArrayList<MetadataProperty>(2);
+		List<MetadataProperty> creatorMetadataProperty = new ArrayList<MetadataProperty>(2);
 		for (MetadataProperty metadataProperty : metadataProperties) {
 			final String name = metadataProperty.getName().toLowerCase();
 			if(name.equals("title")) {
 				item.setTitle(metadataProperty.getValueAsString());
 			} else if(name.equals("author")) {
-				authorMetadataProperty = metadataProperty;
-			} else if(authorMetadataProperty == null && name.equals("creator")) {
-				authorMetadataProperty = metadataProperty;
+				authorMetadataProperty.add(metadataProperty);
+			} else if(authorMetadataProperty.isEmpty() && name.equals("creator")) {
+				creatorMetadataProperty.add(metadataProperty);
 			} else if(name.equals("keywords")) {
 				List<String> keywords = ListUtils.split(metadataProperty.getValueAsString(), ",");
 				List<EbookKeywordItem> asEbookKeywordItem = EbookPropertyItemUtils.getAsEbookKeywordItem(keywords);
@@ -192,8 +193,14 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				item.setSeriesName(metadataProperty.getValueAsString());
 			}
 		}
-		if(authorMetadataProperty != null) {
-			METADATA_TYPES.AUTHOR.fillItem(authorMetadataProperty, item);
+		if(!authorMetadataProperty.isEmpty()) {
+			for(MetadataProperty property : authorMetadataProperty) {
+				METADATA_TYPES.AUTHOR.fillItem(property, item);
+			}
+		} else {
+			for(MetadataProperty property : creatorMetadataProperty) {
+				METADATA_TYPES.AUTHOR.fillItem(property, item);
+			}
 		}
 	}
 

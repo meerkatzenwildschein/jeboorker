@@ -320,9 +320,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 		
 		for (Field field : selectedFields) {
 			//do not add the folowing ones.
-			if(field.getName().equalsIgnoreCase("authors")) {
-				continue;
-			} else if(field.getName().equalsIgnoreCase("author")) {
+			if(field.getName().equalsIgnoreCase("author")) {
 				continue;
 			}  else if(field.getName().equalsIgnoreCase("authorSort")) {
 				continue;

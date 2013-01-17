@@ -34,8 +34,8 @@ public interface IMetadataReader {
 				if(values != null) {
 					final List<String> authors = item.getAuthor() != null ? ListUtils.split(item.getAuthor(), IDBObject.LIST_SEPARATOR_CHAR) : new ArrayList<String>();
 					for(Object author : values) {
-						String a = StringUtils.toString(author);
-						if(!StringUtils.isEmpty(a)) {
+						String a = StringUtils.toString(author).trim();
+						if(!StringUtils.isEmpty(a) && !authors.contains(a)) {
 							authors.add(a);
 						}
 					}

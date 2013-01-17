@@ -156,7 +156,7 @@ public class MetadataProperty implements Cloneable {
 	 * Creates a new {@link MetadataProperty} instance with the data of this {@link MetadataProperty}.
 	 */
 	public MetadataProperty clone() {
-		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, this.values);
+		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, new ArrayList<Object>(this.values));
 		newMetadataProperty.propertyClass = this.propertyClass;
 		newMetadataProperty.propertyEditorClass = this.propertyEditorClass;
 		newMetadataProperty.propertyRendererClass = this.propertyRendererClass;

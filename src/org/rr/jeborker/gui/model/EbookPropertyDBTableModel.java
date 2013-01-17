@@ -12,8 +12,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import org.rr.commons.collection.BlindElementList;
 import org.rr.commons.collection.CompoundList;
-import org.rr.commons.collection.InsertList;
+import org.rr.commons.collection.InsertElementList;
 import org.rr.commons.collection.IteratorList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.FileRefreshBackgroundThread;
@@ -30,8 +31,6 @@ public class EbookPropertyDBTableModel implements TableModel {
     protected EventListenerList listenerList = new EventListenerList();
     
     private List<EbookPropertyItem> dbItems;
-    
-    private ArrayList<EbookPropertyItem> addedItems;
     
     private List<EbookPropertyItem> allItems;
     
@@ -284,7 +283,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     private List<EbookPropertyItem> getEbookItems() {
     	//NO BREAKPOINT HERE!
     	if(Jeboorker.isRuntime) {
-	    	if(isDirty() || dbItems==null) {
+	    	if(isDirty() || dbItems == null) {
 	    		this.dirty = false;
 	    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());
 	    		
@@ -292,11 +291,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	    		if(this.dbItems == null) {
 	    			this.dbItems = Collections.emptyList();
 	    		}
-	    		if(this.addedItems == null) {
-	    			this.addedItems = new ArrayList<EbookPropertyItem>();
-	    		} else {
-	    			this.addedItems.clear();
-	    		}
+	    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
 	    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
 	    	}
 	    	return this.allItems;
@@ -318,7 +313,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     	    	fireTableRowsInserted(ins, ins);    			
     		}
     	} else {
-    		this.allItems = new InsertList<EbookPropertyItem>(this.allItems, item, row);
+    		this.allItems = new InsertElementList<EbookPropertyItem>(this.allItems, item, row);
     		fireTableRowsInserted(row, row);
     	}
     }
@@ -332,7 +327,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 				if(toRemove!=null && toRemove.equals(item)) {
 					DefaultDBManager.getInstance().deleteObject(toRemove);
 					if(!isDirty()) {
-						allItems.remove(i);
+						this.allItems = new BlindElementList<EbookPropertyItem>(this.allItems, i);
 						fireTableRowsDeleted(i, i);
 					}
 					removed = true;
@@ -344,14 +339,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			}
 		}
 		return removed;
-	}    
-	
-	public void removeRows(List<EbookPropertyItem> items) {
-		this.allItems.removeAll(items);
-		for (EbookPropertyItem ebookPropertyItem : items) {
-			DefaultDBManager.getInstance().deleteObject(ebookPropertyItem);
-		}
-	}	
+	} 
 
     /**
      * @return <code>true</code> if a refresh is needed and <code>false</code> otherwise.
