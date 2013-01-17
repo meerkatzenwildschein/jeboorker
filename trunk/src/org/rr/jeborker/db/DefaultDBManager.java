@@ -22,6 +22,7 @@ import org.rr.jeborker.db.item.PreferenceItem;
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
+import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -177,6 +178,7 @@ public class DefaultDBManager {
 		} catch (Exception e) {
 			// If storage fails try to delete and store the record.
 			deleteObject(item);
+			deleteObject(reload(item));
 			return getDB().save(item);
 		}
 	}
@@ -415,5 +417,17 @@ public class DefaultDBManager {
 	 */
 	public IDBObject newInstance(Class<? extends IDBObject> item) {
 		return getDB().newInstance(item);
+	}
+	
+	/**
+	 * Rereads the given item from the database.
+	 * @return The new item or <code>null</code> if the item is no longer present in the database. 
+	 */
+	public IDBObject reload(IDBObject item) {
+		if(item != null) {
+			ORID identity = getDB().getIdentity(item);
+			return (IDBObject) getDB().load(identity);
+		}
+		return null;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
@@ -56,6 +57,7 @@ public class FileRefreshBackgroundThread extends Thread {
 			while (true) {
 				while (!items.isEmpty()) {
 					EbookPropertyItem ebookPropertyItem = items.remove(0);
+					DefaultDBManager.getInstance().setLocalThreadDbInstance();
 					this.processItem(ebookPropertyItem);
 				}
 				
@@ -74,15 +76,15 @@ public class FileRefreshBackgroundThread extends Thread {
 			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
 			if (!resourceHandler.exists()) {
 				// ebook file has been deleted
-				List<EbookPropertyItem> reloadedItem = EbookPropertyItemUtils.getEbookPropertyItemByResource(ebookPropertyItem.getResourceHandler());
-				if(!reloadedItem.isEmpty()) {
+				EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
+				if(reloadedItem != null) {
 					ActionUtils.removeEbookPropertyItem(ebookPropertyItem);
 					LoggerFactory.getLogger(this).log(Level.INFO, "Removed deleted entry " + ebookPropertyItem.getResourceHandler().getName());
 				}
 			} else if (isRefreshNeeded(ebookPropertyItem, resourceHandler)) {
 				// ebook file has been changed until the last time.
-				List<EbookPropertyItem> reloadedItem = EbookPropertyItemUtils.getEbookPropertyItemByResource(ebookPropertyItem.getResourceHandler());
-				if(!reloadedItem.isEmpty() && isRefreshNeeded(reloadedItem.get(0), resourceHandler)) {
+				EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
+				if(reloadedItem != null && isRefreshNeeded(reloadedItem, resourceHandler)) {
 					ApplicationAction refreshAction = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString());
 					refreshAction.invokeAction();
 					LoggerFactory.getLogger(this).log(Level.INFO, "Changed entry " + ebookPropertyItem.getResourceHandler().getName() + " refreshed.");

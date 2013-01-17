@@ -39,6 +39,16 @@ public class EbookPropertyItemUtils {
 	}
 	
 	/**
+	 * Reloads the given item from the database.
+	 * @param item Item to be reloaded.
+	 * @return The reloaded item or <code>null</code> if the item no longer exists in the database.
+	 */
+	public static EbookPropertyItem reloadEbookPropertyItem(EbookPropertyItem item) {
+		EbookPropertyItem refreshed = (EbookPropertyItem) DefaultDBManager.getInstance().reload(item);
+		return refreshed;
+	}
+	
+	/**
 	 * Get the {@link EbookPropertyItem}s for the given {@link IResourceHandler}.
 	 * @param resourceLoader The {@link IResourceHandler} instance where the {@link EbookPropertyItem} should be fetched from the database. 
 	 * @return The desired {@link EbookPropertyItem}s.
