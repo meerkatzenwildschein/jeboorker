@@ -231,6 +231,13 @@ public class ZipUtils {
 		    if(!replaceSuccess) {
 		    	//new entry must be added
 		    	ZipEntry out = new ZipEntry(entry.path);
+		    	if(storeOnly) {
+		    		//no need with compression
+		    		byte[] bytes = entry.getBytes();
+			    	out.setSize(bytes.length);
+			    	long crc = CommonUtils.calculateCrc(bytes);
+			    	out.setCrc(crc);
+		    	}		    	
 		    	InputStream read = entry.data;
 		    	zipOutputStream.putNextEntry(out);
 		    	IOUtils.copy(read, zipOutputStream);
