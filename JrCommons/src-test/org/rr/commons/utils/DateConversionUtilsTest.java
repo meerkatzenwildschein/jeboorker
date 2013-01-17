@@ -1,12 +1,10 @@
 package org.rr.commons.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import junit.framework.TestCase;
 
 public class DateConversionUtilsTest extends TestCase {
 
+	
 	//http://en.wikipedia.org/wiki/Date_format_by_country
 	//http://en.wikipedia.org/wiki/ISO_8601_usage
 	//http://en.wikipedia.org/wiki/DIN_5008
@@ -50,6 +48,7 @@ public class DateConversionUtilsTest extends TestCase {
 		assertTrue(DateConversionUtils.toDateTime("2010-11-27T23:00:11+00:00").toString().equals("Sun Nov 28 00:00:11 CET 2010"));
 		assertTrue(DateConversionUtils.toDate("2010-11-27T23:00+00:00").toString().equals("Sun Nov 28 00:00:00 CET 2010"));
 		assertTrue(DateConversionUtils.toDate("2010-11").toString().equals("Mon Nov 01 00:00:00 CET 2010"));
+		assertTrue(DateConversionUtils.toDate("2009-08-04T00:00:00").toString().equals("Tue Aug 04 00:00:00 CEST 2009"));		
 		
 		//W3C stolen T
 		assertTrue(DateConversionUtils.toDate("2010-09-22 11:15:52.216000+02:00").toString().equals("Wed Sep 22 00:00:00 CEST 2010"));
