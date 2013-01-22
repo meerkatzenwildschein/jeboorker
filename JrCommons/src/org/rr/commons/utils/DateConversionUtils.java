@@ -588,7 +588,10 @@ public class DateConversionUtils {
 				try {
 					Date parse = POTENTIAL_FORMATS[i].parse(dateString);
 					return parse;
-				} catch (ParseException e) {}
+				} catch (ParseException e) {
+				} catch (Exception e) {
+					 e.printStackTrace();
+				 }
 			}
 		} 
 		return null;
