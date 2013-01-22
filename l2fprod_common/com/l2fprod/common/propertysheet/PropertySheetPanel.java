@@ -45,6 +45,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableColumnModel;
 
 import com.l2fprod.common.swing.IconPool;
 import com.l2fprod.common.swing.LookAndFeelTweaks;
@@ -642,6 +643,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 			this.model.dispose();
 		}
 		this.model = model;
+		this.table.setColumnModel(new DefaultTableColumnModel());
 		this.table.setModel(model);
 		setTable(this.table);
 	}

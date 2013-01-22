@@ -380,7 +380,7 @@ public class PropertySheetTable extends JTable {
    * @param type the type for which a renderer should be found
    * @return a renderer for the given object type
    */
-  private TableCellRenderer getCellRenderer(Class type) {
+  private TableCellRenderer getCellRenderer(Class<?> type) {
     // try to create one from the factory
     TableCellRenderer renderer = getRendererFactory().createTableCellRenderer(type);
 
@@ -447,7 +447,9 @@ public class PropertySheetTable extends JTable {
     newModel.addTableModelListener(cancelEditing);
 
     // ensure the "value" column can not be resized
-    getColumnModel().getColumn(1).setResizable(false);
+    if(getColumnModel().getColumnCount() >= 2) {
+    	getColumnModel().getColumn(1).setResizable(false);
+    }
   }
 
   /**

@@ -17,13 +17,9 @@
  */
 package com.l2fprod.common.propertysheet;
 
-import com.l2fprod.common.swing.ObjectTableModel;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
+
+import com.l2fprod.common.swing.ObjectTableModel;
 
 /**
  * PropertySheetTableModel. <br>
