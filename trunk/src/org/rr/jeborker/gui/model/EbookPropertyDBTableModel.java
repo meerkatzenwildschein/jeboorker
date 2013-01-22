@@ -16,6 +16,7 @@ import org.rr.commons.collection.BlindElementList;
 import org.rr.commons.collection.CompoundList;
 import org.rr.commons.collection.InsertElementList;
 import org.rr.commons.collection.IteratorList;
+import org.rr.commons.collection.ReplacementElementList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.FileRefreshBackgroundThread;
 import org.rr.jeborker.Jeboorker;
@@ -161,7 +162,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 				if(item != null) {
 					EbookPropertyItem dbItem = item;
 					if(dbItem.getFile().equals(modelItem.getFile())) {
-						ebookItems.set(rowIndex, dbItem);
+						this.allItems = new ReplacementElementList<EbookPropertyItem>(ebookItems, rowIndex, dbItem);
 					}
 				}
 			}

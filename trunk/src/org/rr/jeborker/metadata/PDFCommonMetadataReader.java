@@ -146,10 +146,14 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 					if(stringValue.trim().isEmpty()) {
 						continue; //no sense to add an empty Date.
 					} else {
-						Date dateValue = DateConversionUtils.toDate(stringValue);
-						if(value != null && value.toString().isEmpty()) {
-							//2004-12-11T00:00:+0Z
-							value = dateValue;
+						try {
+							Date dateValue = DateConversionUtils.toDate(stringValue);
+							if(value != null && value.toString().isEmpty()) {
+								//2004-12-11T00:00:+0Z
+								value = dateValue;
+							}
+						} catch(java.lang.NumberFormatException e) {
+							e.printStackTrace();
 						}
 					}
 				}

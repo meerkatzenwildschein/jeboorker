@@ -650,16 +650,18 @@ public class MainController {
 					mainWindow.propertySheet.setModel(model);
 					
 					if(items.get(0) != null) {
-						model.loadProperties(items.get(0));
+						EbookPropertyItem ebookPropertyItem = items.get(0);
+						model.loadProperties(ebookPropertyItem);
 						IMetadataReader reader = model.getMetadataReader();
-						byte[] coverThumbnail = EbookPropertyItemUtils.getCoverThumbnailBytes(items.get(0).getResourceHandler());
+						byte[] coverThumbnail = EbookPropertyItemUtils.getCoverThumbnailBytes(ebookPropertyItem.getResourceHandler());
 						if(coverThumbnail != null && coverThumbnail.length > 0) {
 							setImage(reader);
 						} else {
 							setImage(null);
 						}
-						
-						mainWindow.addMetadataButton.setListModel(new MetadataAddListModel(reader.getSupportedMetaData(), model.getAllMetaData(), items.get(0)));
+						List<MetadataProperty> allMetaData = model.getAllMetaData();
+						MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetaData(), allMetaData, ebookPropertyItem);
+						mainWindow.addMetadataButton.setListModel(metadataAddListModel);
 					}
 				}				
 			} else {

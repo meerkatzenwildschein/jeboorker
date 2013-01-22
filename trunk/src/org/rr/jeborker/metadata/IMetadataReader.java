@@ -45,8 +45,11 @@ public interface IMetadataReader {
 
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
-				final List<String> authors = item.getAuthor() != null ? ListUtils.split(item.getAuthor(), IDBObject.LIST_SEPARATOR_CHAR) : new ArrayList<String>();
-				return authors;
+				if(item != null) {
+					final List<String> authors = item.getAuthor() != null ? ListUtils.split(item.getAuthor(), IDBObject.LIST_SEPARATOR_CHAR) : new ArrayList<String>();
+					return authors;
+				}
+				return Collections.emptyList();
 			}
 		},
 		TITLE {
