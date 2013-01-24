@@ -85,7 +85,19 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				}
 			} else {
 				LoggerFactory.logWarning(this, "Could not get metadata from " + ebookResource, new RuntimeException("dumpstack"));
-			}					
+			}
+			
+			try {
+				byte[] fetchThumbnail = fetchXMPThumbnail(ebookResource);
+				if(fetchThumbnail == null) {
+					fetchThumbnail = pdfDoc.fetchCoverFromPDFContent();
+				}
+				if(fetchThumbnail != null) {
+					result.add(new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), fetchThumbnail));
+				}
+			} catch (Exception e) {
+				LoggerFactory.logWarning(this.getClass(), "Could not read cover for pdf " + ebookResource, e);
+			}			
 			
 			return result;
 		} catch (Throwable e) {
@@ -197,6 +209,8 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				item.setSeriesIndex(metadataProperty.getValueAsString());
 			} else if(name.equals("seriesname")) {
 				item.setSeriesName(metadataProperty.getValueAsString());
+			} else if(name.equals(IMetadataReader.METADATA_TYPES.COVER.getName())) {
+				IMetadataReader.METADATA_TYPES.COVER.fillItem(metadataProperty, item);
 			}
 		}
 		if(!authorMetadataProperty.isEmpty()) {
@@ -209,22 +223,6 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			}
 		}
 	}
-
-	@Override
-	public byte[] getCover() {
-		byte[] tumbnailData = null;
-		try {
-			byte[] fetchThumbnail = fetchXMPThumbnail(ebookResource);
-			if(fetchThumbnail != null) {
-				return fetchThumbnail;
-			} else {
-				return pdfDoc.fetchCoverFromPDFContent();
-			}
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this.getClass(), "Could not read cover for pdf " + ebookResource, e);
-		}
-		return tumbnailData;
-	}	
 	
 	/**
 	 * Fetches the thumbnail from the xmp metadata.
@@ -353,6 +351,10 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				break;					
 			case AUTHOR:
 				return this.getAuthorMetaData(create, props);
+			case COVER:
+				search = "cover";
+				name = "Cover";
+				break;
 			default:
 				return null;
 		}

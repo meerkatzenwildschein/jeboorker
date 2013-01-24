@@ -176,12 +176,6 @@ public class MetadataHandlerFactory {
 		}
 
 		@Override
-		public void setCover(byte[] cover) {
-			writer.setCover(cover);
-			latestReader = null;
-		}
-
-		@Override
 		public void storePlainMetadata(byte[] plainMetadata) {
 			writer.storePlainMetadata(plainMetadata);
 			latestReader = null;

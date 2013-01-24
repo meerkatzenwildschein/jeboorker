@@ -10,6 +10,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -26,11 +27,11 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	private boolean changed = false;
 	
-	private IMetadataReader reader;
+	protected IMetadataReader reader;
 
 	private IResourceHandler resourceHandler;
 	
-	private List<MetadataProperty> allMetaData;
+	protected List<MetadataProperty> allMetaData;
 
 	public boolean isChanged() {
 		List<Property> properties = this.getProperties();
@@ -49,12 +50,20 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	@Override
 	public void addProperty(int index, Property property) {
 		super.addProperty(index, property);
+		if(property instanceof EbookSheetProperty) {
+			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
+			allMetaData.add(metadataProperty);
+		}
 		changed = true;
 	}
 
 	@Override
 	public void addProperty(Property property) {
 		super.addProperty(property);
+		if(property instanceof EbookSheetProperty) {
+			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
+			allMetaData.add(metadataProperty);
+		}		
 		changed = true;
 	}
 
@@ -62,6 +71,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public void removeProperty(Property property) {
 		property.setValue("");
 		super.removeProperty(property);
+		if(property instanceof EbookSheetProperty) {
+			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
+			allMetaData.remove(metadataProperty);
+		}		
 		changed = true;
 	}
 
@@ -159,6 +172,27 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public List<MetadataProperty> getAllMetaData() {
 		return allMetaData;
 	}
+	
+	/**
+	 * Get the cover bytes from the metadata.
+	 * @return The desired cover bytes or <code>null</code> if no cover bytes are present.
+	 */
+	public byte[] getCover() {
+		IMetadataReader metadataReader = getMetadataReader();
+		if(metadataReader != null) {
+			List<MetadataProperty> metadataByType = metadataReader.getMetadataByType(false, allMetaData, IMetadataReader.METADATA_TYPES.COVER);
+			if(metadataByType != null && !metadataByType.isEmpty()) {
+				MetadataProperty metadataProperty = metadataByType.get(0);
+				if(metadataProperty.getValues() != null && !metadataProperty.getValues().isEmpty()) {
+					Object value = metadataProperty.getValues().get(0);
+					if(value instanceof byte[])  {
+						return (byte[]) value;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Creates all Property elements supported by the ebook format given
@@ -170,7 +204,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		if(resourceHandler == null) {
 			return new Property[0];
 		}
-		final ArrayList<Property> result = new ArrayList<Property>(20);
+		
+		final List<Property> properties = setupMetadata(Collections.singletonList(item), reader);
 		
 		final DefaultProperty fileNameProperty = new DefaultProperty();
 		fileNameProperty.setDisplayName(Bundle.getString("EbookPropertySheetProperty.property.name.file"));
@@ -178,14 +213,12 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		fileNameProperty.setEditable(false);
 		fileNameProperty.setDeletable(false);
 		fileNameProperty.setValue(resourceHandler);
-		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : "");
-		result.add(fileNameProperty);
+		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : "");		
+		properties.add(fileNameProperty);
 		
-		setupMetadata(result, Collections.singletonList(item), reader);
+		Collections.sort(properties, PROPERTY_COMPARATOR);
 		
-		Collections.sort(result, PROPERTY_COMPARATOR);
-		
-		return result.toArray(new Property[result.size()]);
+		return properties.toArray(new Property[properties.size()]);
 	}	
 	
 	
@@ -195,7 +228,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param result The list where the metadata properties should be attched to.
 	 * @param resourceLoader The {@link IResourceHandler} providing the ebook data.
 	 */
-	protected void setupMetadata(final ArrayList<Property> result, final List<EbookPropertyItem> items, final IMetadataReader reader) {
+	protected List<Property> setupMetadata(final List<EbookPropertyItem> items, final IMetadataReader reader) {
+		final ArrayList<Property> result = new ArrayList<Property>(items.size() + 1);
 		allMetaData = reader.readMetaData();
 		for (int i = 0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
@@ -219,6 +253,18 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				}
 			}
 		}
+		
+		this.removeCoverProperty(result);
+		
+		return result;
+	}
+	
+	protected void removeCoverProperty(List<Property> result) {
+		for(Property property : new ArrayList<Property>(result)) {
+			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(property.getName())) {
+				result.remove(property);
+			}
+		}		
 	}
 	
 	
@@ -348,6 +394,27 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		if(this.reader != null) {
 			this.reader = null;
 		}
+	}
+	
+	/**
+	 * search for the property which has the ebook file as value
+	 * @param properties The properties to be searched.
+	 * @return The desired {@link IResourceHandler} or <code>null</code> if no {@link IResourceHandler} could be found.
+	 */
+	public List<IResourceHandler> getPropertyResourceHandler() {
+		final List<Property> properties = getProperties();
+		for (Property property : properties) {
+			if(property.getValue() instanceof IResourceHandler) {
+				return Collections.singletonList((IResourceHandler) property.getValue());
+			}
+		}
+		
+		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+		final List<IResourceHandler> result = new ArrayList<IResourceHandler>(selectedEbookPropertyItems.size());
+		for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
+			result.add(ebookPropertyItem.getResourceHandler());
+		}
+		return result;
 	}	
 
 }

@@ -39,9 +39,9 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 	public void writeMetadata(List<MetadataProperty> props) {
 		try {
 			final PDFCommonMetadataReader reader = (PDFCommonMetadataReader) MetadataHandlerFactory.getReader(ebookResource);
-			final byte[] fetchXMPThumbnail = reader.fetchXMPThumbnail(ebookResource);			
 			final List<MetadataProperty> readMetaData = reader.readMetaData();
-			
+
+			byte[] fetchXMPThumbnail = reader.fetchXMPThumbnail(ebookResource);
 			HashMap<String, String> info = new HashMap<String, String>();
 			XMPMetadata blankXMP = new XMPMetadata();
 
@@ -73,7 +73,11 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 						String dateValue = DateConversionUtils.toString((Date) firstValue, DateConversionUtils.DATE_FORMATS.PDF);
 						info.put(name, dateValue);
 					} else {
-						info.put(name, StringUtils.toString(firstValue));
+						if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
+							fetchXMPThumbnail = (byte[]) firstValue;
+						} else {
+							info.put(name, StringUtils.toString(firstValue));
+						}
 					}
 				}
 			}
@@ -87,18 +91,6 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 			pdfDoc.write();
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
-		}
-	}
-
-	@Override
-	public void setCover(byte[] coverData) {
-		try {
-			final byte[] xmpMetadataBytes = fetchXMPMetadata();
-			final XMPMetadata xmp = attachCoverToXmp(coverData, getDocument(xmpMetadataBytes, ebookResource));
-			pdfDoc.setXMPMetadata(xmp.asByteArray());
-			pdfDoc.write();
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this, "Could not write cover for " + ebookResource, e);
 		}
 	}
 
@@ -153,10 +145,6 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Could not write metadata to " + ebookResource, e);
 		}
-	}
-	
-	private byte[] fetchXMPMetadata() throws IOException {
-		return pdfDoc.getXMPMetadata();	
 	}
 	
 	/**

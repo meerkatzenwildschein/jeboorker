@@ -8,7 +8,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
@@ -16,7 +15,6 @@ import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 import com.l2fprod.common.propertysheet.Property;
 
 public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyModel {
-
 	
 	public void loadProperties(List<EbookPropertyItem> items) {
 		final List<IResourceHandler> ebookResourceHandlers = new ArrayList<IResourceHandler>(items.size());
@@ -28,18 +26,20 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 			}
 		}
 		
-		final IMetadataReader reader = MetadataHandlerFactory.getReader(ebookResourceHandlers);
-		final ArrayList<MetadataProperty> allMetadata = new ArrayList<MetadataProperty>(METADATA_TYPES.values().length);
-		final ArrayList<Property> result = new ArrayList<Property>(allMetadata.size());
+		reader = MetadataHandlerFactory.getReader(ebookResourceHandlers);
+		allMetaData = new ArrayList<MetadataProperty>(METADATA_TYPES.values().length);
+		final ArrayList<Property> result = new ArrayList<Property>(allMetaData.size());
 		
 		for(METADATA_TYPES type : METADATA_TYPES.values()) {
 			List<MetadataProperty> l = Collections.emptyList();
 			MetadataProperty metadataProperty = reader.getMetadataByType(true, l, type).get(0);
-			allMetadata.add(metadataProperty);
+			allMetaData.add(metadataProperty);
 			
 			Property property = createProperty(metadataProperty, items, type);
 			result.add(property);
 		}
+		
+		this.removeCoverProperty(result);
 		
 		Collections.sort(result, PROPERTY_COMPARATOR);
 		

@@ -113,8 +113,21 @@ public class EbookPropertyItemUtils {
 			final List<MetadataProperty> metadataProperties = reader.readMetaData();
 			reader.fillEbookPropertyItem(metadataProperties, item);
 			if(refreshCover) {
-				final byte[] imageData = reader.getCover();
-				setupCoverData(item, imageData);
+				boolean refreshed = false;
+				List<MetadataProperty> metadataByType = reader.getMetadataByType(false, metadataProperties, IMetadataReader.METADATA_TYPES.COVER);
+				if(metadataByType != null && !metadataByType.isEmpty()) {
+					MetadataProperty metadataProperty = metadataByType.get(0);
+					if(metadataProperty.getValues() != null && !metadataProperty.getValues().isEmpty()) {
+						Object value = metadataProperty.getValues().get(0);
+						if(value instanceof byte[]) {
+							setupCoverData(item, (byte[]) value);
+							refreshed = true;
+						}
+					}
+				}
+				if(!refreshed) {
+					setupCoverData(item, null);
+				}
 			}
 			item.setTimestamp(resource.getModifiedAt().getTime());
 		}

@@ -239,6 +239,14 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				//no EbookPropertyItem
 			}
+		},COVER {
+			public String getName() {
+				return "cover";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				METADATA_TYPES.COVER.fillItem(metadataProperty, item);
+			}
 		}
 	}
 	

@@ -32,7 +32,6 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -103,25 +102,27 @@ public class MainController {
 	 * Saves/Writes the metadata properties if something has changed. 
 	 */
 	public void saveProperties(int minSelectionIndex, int maxSelectionIndex) {
-		final List<Property> sheetProperties = mainWindow.propertySheet.getProperties();
+		final EbookSheetPropertyModel sheetModel = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
+		final List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
+		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
 		if(getEbookSheetPropertyModel().isChanged()) {
 			//write properties
-			MainControllerUtils.writeProperties(sheetProperties);
-			EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
-			int rowCount = model.getRowCount();
+			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
+			EbookPropertyDBTableModel tableModel = (EbookPropertyDBTableModel) mainWindow.table.getModel();
+			int rowCount = tableModel.getRowCount();
 
 			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
-				model.reloadEbookPropertyItemAt(minSelectionIndex);
+				tableModel.reloadEbookPropertyItemAt(minSelectionIndex);
 			}
 			
 			if(maxSelectionIndex >= 0 && maxSelectionIndex != minSelectionIndex && maxSelectionIndex < rowCount) {
-				model.reloadEbookPropertyItemAt(maxSelectionIndex);
+				tableModel.reloadEbookPropertyItemAt(maxSelectionIndex);
 			}
 			
 			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
 				int[] selectedRows = mainWindow.table.getSelectedRows();
 				for (int selectedRow : selectedRows) {
-					model.reloadEbookPropertyItemAt(selectedRow);
+					tableModel.reloadEbookPropertyItemAt(selectedRow);
 				}
 			}
 			refreshTableSelectedItem(false);
@@ -642,7 +643,7 @@ public class MainController {
 					
 					model.loadProperties(items);
 					
-					setImage(null);
+					setImage(null, null);
 					mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
 				} else if (items.size() == 1) {
 					//single selection
@@ -652,13 +653,14 @@ public class MainController {
 					if(items.get(0) != null) {
 						EbookPropertyItem ebookPropertyItem = items.get(0);
 						model.loadProperties(ebookPropertyItem);
-						IMetadataReader reader = model.getMetadataReader();
-						byte[] coverThumbnail = EbookPropertyItemUtils.getCoverThumbnailBytes(ebookPropertyItem.getResourceHandler());
-						if(coverThumbnail != null && coverThumbnail.length > 0) {
-							setImage(reader);
+						byte[] cover = model.getCover();
+						if(cover != null && cover.length > 0) {
+							setImage(cover, ebookPropertyItem);
 						} else {
-							setImage(null);
+							setImage(null, null);
 						}
+						
+						IMetadataReader reader = model.getMetadataReader();
 						List<MetadataProperty> allMetaData = model.getAllMetaData();
 						MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetaData(), allMetaData, ebookPropertyItem);
 						mainWindow.addMetadataButton.setListModel(metadataAddListModel);
@@ -667,7 +669,7 @@ public class MainController {
 			} else {
 				//no selection
 				mainWindow.propertySheet.setModel(new EbookSheetPropertyMultiSelectionModel());
-				setImage(null);
+				setImage(null, null);
 				mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());						
 			}
 		} catch (Exception e) {
@@ -675,12 +677,10 @@ public class MainController {
 		}
 	}
 	
-	private void setImage(final IMetadataReader reader) {
-		final List<IResourceHandler> ebookResource = reader != null ? reader.getEbookResource() : null;
-		final byte[] cover = reader!= null ? reader.getCover() : null;
-		if (cover != null && ebookResource != null && !ebookResource.isEmpty()) {
+	private void setImage(final byte[] cover, final EbookPropertyItem ebookPropertyItem) {
+		if (cover != null && ebookPropertyItem != null) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
-			final String coverFileName = StringUtils.replace(ebookResource.get(0).getResourceString(), new String[] {".", "/", "\\"}, "_");
+			final String coverFileName = StringUtils.replace(ebookPropertyItem.getResourceHandler().getResourceString(), new String[] {".", "/", "\\"}, "_");
 			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
 				
 			ByteArrayInputStream byteArrayInputStream = null;

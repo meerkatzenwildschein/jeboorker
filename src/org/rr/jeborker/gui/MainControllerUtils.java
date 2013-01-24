@@ -2,7 +2,6 @@ package org.rr.jeborker.gui;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -84,19 +83,16 @@ class MainControllerUtils {
 	 * Writes the given l2fprod sheet properties as metadata to the ebook.
 	 * @param properties The properties to be written.
 	 */
-	static void writeProperties(final List<Property> properties) {
+	static void writeProperties(final List<MetadataProperty> properties, List<IResourceHandler> ebookResources) {
 		if(properties==null || properties.isEmpty()) {
 			return; //nothing to do.
 		}
-		
-		List<IResourceHandler> ebookResources = getPropertyResourceHandler(properties);
 		
 		if(ebookResources != null && !ebookResources.isEmpty()) {
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(ebookResources);
 			if(writer != null) {
 				try {
-					final ArrayList<MetadataProperty> target = createMetadataProperties(properties);
-					writer.writeMetadata(target);
+					writer.writeMetadata(properties);
 					
 					//now the data was written, it's time to refresh the database entry
 					final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
@@ -147,23 +143,4 @@ class MainControllerUtils {
 		return target;
 	}
 
-	/**
-	 * search for the property which has the ebook file as value
-	 * @param properties The properties to be searched.
-	 * @return The desired {@link IResourceHandler} or <code>null</code> if no {@link IResourceHandler} could be found.
-	 */
-	static List<IResourceHandler> getPropertyResourceHandler(final List<Property> properties) {
-		for (Property property : properties) {
-			if(property.getValue() instanceof IResourceHandler) {
-				return Collections.singletonList((IResourceHandler) property.getValue());
-			}
-		}
-		
-		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
-		final List<IResourceHandler> result = new ArrayList<IResourceHandler>(selectedEbookPropertyItems.size());
-		for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
-			result.add(ebookPropertyItem.getResourceHandler());
-		}
-		return result;
-	}	
 }

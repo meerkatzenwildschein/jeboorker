@@ -33,17 +33,15 @@ class ComicBookMetadataWriter implements IMetadataWriter {
 			for(MetadataProperty prop : props) {
 				String name = prop.getName();
 				String value = prop.getValueAsString();
+				if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name)) {
+					continue;
+				}
 				docInfo.put(name, value);
 			}
 			writer.writeDocument();
 		} catch (IOException e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Failed to store metadata to " + resource, e);
 		}
-	}
-
-	@Override
-	public void setCover(byte[] cover) {
-		//not supported with comic book
 	}
 
 	@Override
