@@ -12,8 +12,11 @@ import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
+import java.awt.image.LookupOp;
 import java.awt.image.PixelGrabber;
+import java.awt.image.ShortLookupTable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +43,14 @@ import com.sun.image.codec.jpeg.JPEGImageDecoder;
 public class ImageUtils {
 	
 	private static final Class<?> jpegCodecClass = ReflectionUtils.getClassForName("com.sun.image.codec.jpeg.JPEGCodec");
+	
+	private static final short[] invertTable;
+	static {
+		invertTable = new short[256];
+		for (int i = 0; i < 256; i++) {
+			invertTable[i] = (short) (255 - i);
+		}
+	}	
 	
 	/**
 	 * Creates the image bytes from the given image.
@@ -95,7 +106,6 @@ public class ImageUtils {
 	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
 	 */
 	public static BufferedImage decodeJpeg(IResourceHandler resourceLoader) {
-		//something about 200 ms faster than ImageIO.read and jai
 		BufferedImage bi = null;
 		InputStream bin = null;
 		try {
@@ -120,6 +130,7 @@ public class ImageUtils {
 			if(bi == null && bin != null) {
 				try {
 					if(jpegCodecClass != null) {
+						//something about 200 ms faster than ImageIO.read and jai
 						bin.reset();
 						final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
 						bi = decoder.decodeAsBufferedImage();
@@ -487,4 +498,23 @@ public class ImageUtils {
 	    return cm.hasAlpha();
 	}
 	
+	/**
+	 * Inverts the colors of the given image.
+	 * @param src The image to be invert.
+	 * @return The inverted image.
+	 */
+	public static BufferedImage invertImage(final BufferedImage src) {
+		final int w = src.getWidth();
+		final int h = src.getHeight();
+		final BufferedImage dst = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		 
+		final BufferedImageOp invertOp = new LookupOp(new ShortLookupTable(0, invertTable), null);			
+		if(src.getType() == BufferedImage.TYPE_BYTE_INDEXED || src.getType() == 12) {
+			BufferedImage newSrc = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+			newSrc.getGraphics().drawImage(src, 0, 0, null);
+			return invertOp.filter(newSrc, dst);
+		} else {
+			return invertOp.filter(src, dst);	
+		}
+	}	
 }

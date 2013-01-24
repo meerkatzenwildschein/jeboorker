@@ -9,4 +9,6 @@ public interface IImageFetcherFactory {
 	public IImageFetcher getImageFetcher(String fetcherName, String searchTerm);
 	
 	public List<String> getFetcherNames();
+	
+	public boolean searchTermSupport();
 }

@@ -3,9 +3,9 @@ package org.rr.commons.net.imagefetcher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageFetcherFactory implements IImageFetcherFactory {
+public class ImageWebSearchFetcherFactory implements IImageFetcherFactory {
 	
-	private static ImageFetcherFactory factorySingleton;
+	private static ImageWebSearchFetcherFactory factorySingleton;
 	
 	private static interface FetcherType {
 
@@ -32,9 +32,9 @@ public class ImageFetcherFactory implements IImageFetcherFactory {
 	 * get the singleton instance for the ImageFetcherFactory here.
 	 * @return
 	 */
-	public static ImageFetcherFactory getInstance() {
+	public static ImageWebSearchFetcherFactory getInstance() {
 		if(factorySingleton == null) {
-			factorySingleton = new ImageFetcherFactory();
+			factorySingleton = new ImageWebSearchFetcherFactory();
 		}
 		return factorySingleton;
 	}
@@ -85,6 +85,11 @@ public class ImageFetcherFactory implements IImageFetcherFactory {
 			result.add(type.getName());
 		}
 		return result;
+	}
+
+	@Override
+	public boolean searchTermSupport() {
+		return true;
 	}
 	
 	
