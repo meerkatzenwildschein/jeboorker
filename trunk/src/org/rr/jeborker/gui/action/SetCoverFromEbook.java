@@ -1,31 +1,36 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+
+import java.util.logging.Level;
+
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
+import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
+import org.rr.commons.net.imagefetcher.ImageZipFileFetcherFactory;
 import org.rr.commons.swing.dialogs.ImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.DefaultDBManager;
-import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements IDoOnlyOnceAction<ImageDownloadDialog> {
+class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDoOnlyOnceAction<ImageDownloadDialog> {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
 	private ImageDownloadDialog imageDownloadDialog;
 
-	SetCoverFromDownload(IResourceHandler resourceHandler) {
+	SetCoverFromEbook(IResourceHandler resourceHandler) {
 		super(resourceHandler);
-		putValue(Action.NAME, Bundle.getString("SetCoverFromDownloadAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_websearch_16.png")));		
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_websearch_22.png")));
+		putValue(Action.NAME, Bundle.getString("SetCoverFromEbookAction.name"));
+		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_ebook_16.png")));
+		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_ebook_22.png")));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 
@@ -33,33 +38,15 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 	public ImageDownloadDialog doOnce() {
 		if(imageDownloadDialog == null) {
 			final MainController controller = MainController.getController();
-			imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), ImageWebSearchFetcherFactory.getInstance());
-			
-			//default search phrase
-			String searchPhrase = "";
 			EbookPropertyItem item = ListUtils.first(DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString()));
-
-			//no author in the search term for now. Big Book Search did not like it.
-			if(item != null) {
-				String authors = item.getAuthor() != null ? item.getAuthor().replace(IDBObject.LIST_SEPARATOR_CHAR, " ") : null;
-				if(StringUtils.isNotEmpty(authors)) {
-					searchPhrase += authors + " ";
-				}
-			} 
-			
-			if(item != null && StringUtils.isNotEmpty(item.getTitle())) {
-				searchPhrase += item.getTitle();
+			IImageFetcherFactory fetcher;
+			if(MIME_CBZ.equals(item.getMimeType()) || MIME_EPUB.equals(item.getMimeType())) {
+				fetcher = new ImageZipFileFetcherFactory(item.getResourceHandler());
 			} else {
-				searchPhrase += this.resourceHandler.getName();
-				searchPhrase = searchPhrase.substring(0, searchPhrase.length() - this.resourceHandler.getFileExtension().length()).trim();
-				if(searchPhrase.endsWith(".")) {
-					searchPhrase = searchPhrase.substring(0, searchPhrase.length()-1);
-				}				
+				LoggerFactory.log(Level.WARNING, this, "No image fetcher instance for " + item.getResourceHandler());
+				return null;
 			}
-			searchPhrase = StringUtils.replace(searchPhrase, "-", " ");
-			
-			imageDownloadDialog.setSearchPhrase(searchPhrase);
-			
+			imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), fetcher);
 			imageDownloadDialog.setVisible(true);
 			
 			IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();

@@ -49,7 +49,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void addProperty(int index, Property property) {
-		super.addProperty(index, property);
+		if(!isCoverProperty(property)) { 
+			super.addProperty(index, property);
+		}
+		
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
 			allMetaData.add(metadataProperty);
@@ -59,7 +62,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void addProperty(Property property) {
-		super.addProperty(property);
+		if(!isCoverProperty(property)) { 
+			super.addProperty(property);
+		}
+		
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
 			allMetaData.add(metadataProperty);
@@ -261,12 +267,23 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	
 	protected void removeCoverProperty(List<Property> result) {
 		for(Property property : new ArrayList<Property>(result)) {
-			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(property.getName())) {
+			if(isCoverProperty(property)) {
 				result.remove(property);
 			}
 		}		
 	}
 	
+	/**
+	 * tests if the given {@link Property} instance is a cover property instance.
+	 * @param property The {@link Property} instance to be tested.
+	 * @return <code>true</code> if the given {@link Property} is a cover and <code>false</code> otherwise.
+	 */
+	private boolean isCoverProperty(Property property) {
+		if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(property.getName())) {
+			return true;
+		}		
+		return false;
+	}
 	
 	/**
 	 * searches for all metadata properties matching to the given one and returns them. 
