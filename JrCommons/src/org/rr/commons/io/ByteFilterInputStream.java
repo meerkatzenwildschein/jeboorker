@@ -9,9 +9,13 @@ import java.io.InputStream;
  */
 public class ByteFilterInputStream extends FilterInputStream {
 
-	private byte[] filterBytes;
+	private final byte[] filterBytes;
 	
-	public ByteFilterInputStream(InputStream in, byte[] filterBytes) {
+	/**
+	 * @param in {@link InputStream} that should be filtered.
+	 * @param filterBytes The bytes which should be filtered. Each single byte in the array will match to the filter.
+	 */
+	public ByteFilterInputStream(final InputStream in, final byte[] filterBytes) {
 		super(in);
 		this.filterBytes = filterBytes;
 	}
