@@ -43,7 +43,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			final Book epub = readBook(zipData, ebookResourceHandler);
 			final Metadata metadata = epub.getMetadata();
 			
-			final List<MetadataProperty> metadataList = this.createMetadataList(metadata);
+			final List<MetadataProperty> metadataList = this.createMetadataList(epub, metadata);
 			return metadataList;
 		} catch (Throwable e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for epub " + ebookResourceHandler, e);
@@ -74,8 +74,9 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	 * Read all metadata entries from the given {@link Metadata} instance into {@link EpubLibMetadataProperty}.
 	 * @param metadata The metadata instance where the entries read from.
 	 * @return All available metadata from teh given {@link Metadata} instance.
+	 * @throws IOException 
 	 */
-	private List<MetadataProperty> createMetadataList(final Metadata metadata) {
+	private List<MetadataProperty> createMetadataList(final Book epub, final Metadata metadata) throws IOException {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>() {
 
 			@Override
@@ -198,41 +199,18 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.LANGUAGE.getName(), language, null));
 		}
 		
-		return result;
-	}
-
-
-	/**
-	 * Searches the cover image in the zip data, extracts it and put it into the given {@link EbookPropertyItem}.
-	 * 
-	 * @param zipData
-	 *            The epub zip data.
-	 * @param item
-	 *            The item to be setup
-	 * @param metadataNode
-	 *            The metadata node possibly containing some hints where the cover is.
-	 */
-	public byte[] getCover() {
-		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		byte[] result = null;
-		try {
-			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final Book epub = readBook(zipData, ebookResourceHandler);
-			final Resource coverImage = epub.getCoverImage();
-			if(coverImage != null) {
-				final byte[] data = coverImage.getData();
-				result = data;
-			}
-			if(result == null) {
-				result = searchCoverImage(epub);
-			}			
-		} catch (Exception e) {
-			LoggerFactory.logWarning(this, "Could not get cover for " + ebookResourceHandler, e);
+		final Resource coverImage = epub.getCoverImage();
+		final byte[] data;
+		if(coverImage != null) {
+			data = coverImage.getData();
+		} else {
+			data = searchCoverImage(epub);
 		}
+		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), data, null));
 		
 		return result;
 	}
-	
+
 	/**
 	 * Searches the given {@link Book} for an image which seems to be the cover image.
 	 * @return The desired cover image bytes or <code>null</code> if nbo cover could be found.
@@ -366,7 +344,10 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		case RATING:
 			Meta ratingName = new Meta(EPUB_METADATA_TYPES.CALIBRE_RATING.getName(), "");
 			newProperty = new EpubLibMetadataProperty<Meta>(ratingName.getName(), "", ratingName);
-			break;			
+			break;	
+		case COVER:
+			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), null, null);
+			break;
 		default: newProperty = null;
 		}
 

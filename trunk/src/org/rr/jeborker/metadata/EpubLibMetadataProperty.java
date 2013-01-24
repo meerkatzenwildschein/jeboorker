@@ -41,9 +41,6 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	
 	@Override
 	public boolean isEditable() {
-		if(getName().equals("cover")) {
-			return false;
-		}
 		return true;
 	}
 
@@ -77,6 +74,7 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	@Override
 	public MetadataProperty clone() {
 		EpubLibMetadataProperty<?> newMetadataProperty = new EpubLibMetadataProperty(this.name, this.value, this.epubLibMetadataEntry);
+		newMetadataProperty.values = this.values;
 		return newMetadataProperty;
 	}
 

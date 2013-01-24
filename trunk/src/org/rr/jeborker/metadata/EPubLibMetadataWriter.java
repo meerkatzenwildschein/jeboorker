@@ -109,6 +109,18 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				metadata.setLanguage(meta.getValueAsString());
 			} else if(EPUB_METADATA_TYPES.FORMAT.getName().equals(meta.getName())) {
 				metadata.setFormat(meta.getValueAsString());
+			} else if(EPUB_METADATA_TYPES.COVER.getName().equals(meta.getName())) {
+				boolean isCover = false;
+				if(meta.getValues() != null && !meta.getValues().isEmpty()) {
+					byte[] cover = (byte[]) meta.getValues().get(0);
+					if(cover != null) {
+						this.setCover(epub, cover);
+						isCover = true;
+					}
+				}
+				if(!isCover) {
+					epub.setCoverImage(null);
+				}
 			} else {
 				Meta m = new Meta( meta.getName(), meta.getValueAsString() );
 				metadata.addOtherMeta(m);
@@ -127,14 +139,8 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		}
 	}
 	
-	@Override
-	public void setCover(final byte[] cover) {
-//		if(true) setCoverOld(cover);
-		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final EpubReader reader = new EpubReader();
-		
+	private void setCover(final Book epub, final byte[] cover) {
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
 			final Resource oldCoverImage = epub.getCoverImage();
 			
 			if(oldCoverImage != null) {
@@ -157,9 +163,8 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				newCoverImage.setId("cover");
 				epub.setCoverImage(newCoverImage);
 			}
-			
-			writeBook(epub, ebookResourceHandler);
 		} catch (Exception e) {
+			final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 			LoggerFactory.logWarning(this.getClass(), "could not write cover for " + ebookResourceHandler.getName(), e);
 		}			
 	}

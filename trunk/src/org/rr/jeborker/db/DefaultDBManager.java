@@ -177,8 +177,8 @@ public class DefaultDBManager {
 			return getDB().save(item);
 		} catch (Exception e) {
 			// If storage fails try to delete and store the record.
-			deleteObject(item);
-			deleteObject(reload(item));
+			getDB().delete(item);
+			getDB().delete(reload(item));
 			return getDB().save(item);
 		}
 	}

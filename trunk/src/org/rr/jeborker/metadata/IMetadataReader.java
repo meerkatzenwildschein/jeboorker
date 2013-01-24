@@ -11,6 +11,7 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 
 
 public interface IMetadataReader {
@@ -63,7 +64,10 @@ public interface IMetadataReader {
 			
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
-				return new ArrayList<String>(Collections.singleton(item.getTitle()));
+				if(item != null) {
+					return new ArrayList<String>(Collections.singleton(item.getTitle()));
+				}
+				return Collections.emptyList();
 			}			
 		},
 		SERIES_NAME {
@@ -113,6 +117,24 @@ public interface IMetadataReader {
 			public List<String> getValue(EbookPropertyItem item) {
 				return new ArrayList<String>(Collections.singleton(item.getRating() != null ? Integer.valueOf(item.getRating()).toString() : null));
 			}				
+		},	
+		COVER {
+			public String getName() {
+				return "cover";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				if(!metadataProperty.getValues().isEmpty() && metadataProperty.getValues().get(0) instanceof byte[]) {
+					EbookPropertyItemUtils.setupCoverData(item, (byte[]) metadataProperty.getValues().get(0));
+				} else {
+					EbookPropertyItemUtils.setupCoverData(item, null);
+				}
+			}
+			
+			@Override
+			public List<String> getValue(EbookPropertyItem item) {
+				return Collections.emptyList(); //no String value for the cover possible.
+			}				
 		}			
 	}	
 	
@@ -140,12 +162,6 @@ public interface IMetadataReader {
 	 * @param item The item to be filled.
 	 */
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item);
-	
-	/**
-	 * Get the book cover image bytes in a jpeg format.
-	 * @return The cover image data.
-	 */
-	public byte[] getCover();
 	
 	/**
 	 * Get the plain and editable metadata.

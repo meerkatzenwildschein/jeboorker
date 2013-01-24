@@ -214,17 +214,12 @@ abstract class PDFCommonDocument {
 						PdfStream stream = (PdfStream) pdfobj;
 						
 						PdfObject pdfsubtype = stream.get(PdfName.SUBTYPE);
-						if (pdfsubtype == null) {
-							//throw new Exception("Not an image stream");
-							continue;
-						}
-						if (!pdfsubtype.toString().equals(PdfName.IMAGE.toString())) {
-							//throw new Exception("Not an image stream");
+						if (pdfsubtype == null || !pdfsubtype.toString().equals(PdfName.IMAGE.toString())) {
 							continue;
 						}
 		
 						// now you have a PDF stream object with an image
-						byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);	
+						byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);
 						if(img.length > 1000) {
 							int width = 0;
 							int height = 0;

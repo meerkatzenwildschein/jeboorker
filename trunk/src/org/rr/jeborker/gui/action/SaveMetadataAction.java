@@ -73,7 +73,7 @@ class SaveMetadataAction extends AbstractAction {
 		public void metaDataSheetContentChanged(ApplicationEvent evt) {
 			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
 			boolean isEditable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isEditable() : true;
-			if(evt.getMetadataProperty() == null || !isEditable) {
+			if(!isEditable) {
 				action.setEnabled(false);
 			} else {
 				action.setEnabled(true);

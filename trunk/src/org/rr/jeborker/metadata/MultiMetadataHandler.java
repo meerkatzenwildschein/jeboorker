@@ -86,11 +86,6 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public byte[] getCover() {
-		return null;
-	}
-
-	@Override
 	public String getPlainMetaData() {
 		return null;
 	}
@@ -161,15 +156,6 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 				}
 			}
 		}	
-	}
-
-	@Override
-	public void setCover(byte[] cover) {
-		for (int i = 0; i < ebookResourceHandler.size(); i++) {
-			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);
-			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
-			writer.setCover(cover);
-		}		
 	}
 
 	@Override

@@ -60,7 +60,11 @@ class ComicBookMetadataReader implements IMetadataReader {
 				} catch(Exception e) {
 					LoggerFactory.logWarning(this, "could not handle property " + key + " and value " + value, e);
 				}
-			}		
+			}	
+			byte[] cover = doc.getCover();
+			if(cover != null) {
+				result.add(new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), cover));
+			}
 		} catch (Throwable e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for comicbook " + ebookResourceHandler, e);
 		}
@@ -91,14 +95,6 @@ class ComicBookMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public byte[] getCover() {
-		if(doc != null) {
-			return doc.getCover();
-		}
-		return null;
-	}
-
-	@Override
 	public String getPlainMetaData() {
 		return new String(doc.getComicInfoXml());
 	}
@@ -126,7 +122,10 @@ class ComicBookMetadataReader implements IMetadataReader {
 			break;
 		case RATING:
 			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.RATING.getName(), "");
-			break;			
+			break;	
+		case COVER:
+			newProperty = new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), null);
+			break;					
 		default: newProperty = null;
 		}
 

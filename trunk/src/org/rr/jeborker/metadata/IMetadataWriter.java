@@ -13,13 +13,6 @@ public interface IMetadataWriter {
 	public void writeMetadata(List<MetadataProperty> props); 
 	
 	/**
-	 * (Over)writes the cover to the ebook handled by this {@link IMetadataWriter}
-	 * implementation.
-	 * @param cover The cover data to be written.
-	 */
-	public void setCover(byte[] cover);
-	
-	/**
 	 * Stores the given metadata. This can be for example some xml previously
 	 * read with the {@link IMetadataReader#getPlainMetaData()} method.
 	 * @param plainMetadata The data to be stored to the ebook.
