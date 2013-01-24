@@ -19,9 +19,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.LookupOp;
-import java.awt.image.ShortLookupTable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
@@ -64,7 +62,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.net.imagefetcher.IImageFetcher;
 import org.rr.commons.net.imagefetcher.IImageFetcherEntry;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
-import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
+import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
 import org.rr.commons.utils.ThreadUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -98,20 +96,20 @@ public class ImageDownloadDialog extends JDialog {
 	private Color bgColor;
 
 	private Color fgColor;
-	
+
 	public ImageDownloadDialog(JFrame owner, IImageFetcherFactory factory) {
 		super(owner);
 		this.factory = factory;
-		init(owner);
+		init(owner, factory);
 	}
 	
 	public ImageDownloadDialog(IImageFetcherFactory factory) {
 		super();
 		this.factory = factory;
-		init(null);
+		init(null, factory);
 	}
 
-	protected void init(Frame owner) {
+	protected void init(final Frame owner, final IImageFetcherFactory factory) {
 		this.setSize(800, 375);
 		if(owner != null) {
 			//center over the owner frame
@@ -158,42 +156,43 @@ public class ImageDownloadDialog extends JDialog {
 		gbl_borderPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		borderPanel.setLayout(gbl_borderPanel);
 		
-		searchProviderComboBox = new JComboBox();
-		GridBagConstraints gbc_searchProviderComboBox = new GridBagConstraints();
-		gbc_searchProviderComboBox.insets = new Insets(0, 0, 5, 5);
-		gbc_searchProviderComboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_searchProviderComboBox.gridx = 0;
-		gbc_searchProviderComboBox.gridy = 0;
-		borderPanel.add(searchProviderComboBox, gbc_searchProviderComboBox);
-		searchProviderComboBox.setModel(new DefaultComboBoxModel(factory.getFetcherNames().toArray()));
-		
-		searchTextField = new JTextField();
-		GridBagConstraints gbc_searchTextField = new GridBagConstraints();
-		gbc_searchTextField.fill = GridBagConstraints.BOTH;
-		gbc_searchTextField.insets = new Insets(0, 0, 5, 5);
-		gbc_searchTextField.gridx = 1;
-		gbc_searchTextField.gridy = 0;
-		borderPanel.add(searchTextField, gbc_searchTextField);
-		searchTextField.setColumns(10);
-		searchTextField.addKeyListener(new KeyAdapter() {
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-					startSearch();
+		if(factory.searchTermSupport()) {
+			searchProviderComboBox = new JComboBox();
+			GridBagConstraints gbc_searchProviderComboBox = new GridBagConstraints();
+			gbc_searchProviderComboBox.insets = new Insets(0, 0, 5, 5);
+			gbc_searchProviderComboBox.fill = GridBagConstraints.HORIZONTAL;
+			gbc_searchProviderComboBox.gridx = 0;
+			gbc_searchProviderComboBox.gridy = 0;
+			borderPanel.add(searchProviderComboBox, gbc_searchProviderComboBox);
+			searchProviderComboBox.setModel(new DefaultComboBoxModel(factory.getFetcherNames().toArray()));
+			
+			searchTextField = new JTextField();
+			GridBagConstraints gbc_searchTextField = new GridBagConstraints();
+			gbc_searchTextField.fill = GridBagConstraints.BOTH;
+			gbc_searchTextField.insets = new Insets(0, 0, 5, 5);
+			gbc_searchTextField.gridx = 1;
+			gbc_searchTextField.gridy = 0;
+			borderPanel.add(searchTextField, gbc_searchTextField);
+			searchTextField.setColumns(10);
+			searchTextField.addKeyListener(new KeyAdapter() {
+	
+				@Override
+				public void keyReleased(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						startSearch();
+					}
 				}
-			}
-		});		
-		
-		JButton searchButton = new JButton(new SearchAction());
-		searchButton.setMargin(new Insets(0, 8, 0, 8));
-		GridBagConstraints gbc_searchButton = new GridBagConstraints();
-		gbc_searchButton.fill = GridBagConstraints.VERTICAL;
-		gbc_searchButton.insets = new Insets(0, 0, 5, 0);
-		gbc_searchButton.gridx = 2;
-		gbc_searchButton.gridy = 0;
-		borderPanel.add(searchButton, gbc_searchButton);
-		
+			});		
+			
+			JButton searchButton = new JButton(new SearchAction());
+			searchButton.setMargin(new Insets(0, 8, 0, 8));
+			GridBagConstraints gbc_searchButton = new GridBagConstraints();
+			gbc_searchButton.fill = GridBagConstraints.VERTICAL;
+			gbc_searchButton.insets = new Insets(0, 0, 5, 0);
+			gbc_searchButton.gridx = 2;
+			gbc_searchButton.gridy = 0;
+			borderPanel.add(searchButton, gbc_searchButton);
+		}
 		scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
@@ -272,8 +271,9 @@ public class ImageDownloadDialog extends JDialog {
 			final IImageFetcherEntry imageFetcher = (IImageFetcherEntry) view.getModel().getValueAt(0, selectedColumn);
 			if(imageFetcher != null) {
 				try {
-					URL imageURL = imageFetcher.getImageURL();
-					IResourceHandler image = ResourceHandlerFactory.getResourceLoader(imageURL);
+					byte[] imageBytes = imageFetcher.getImageBytes();
+					String path = imageFetcher.getImageURL().getPath();
+					IResourceHandler image = ResourceHandlerFactory.getVirtualResourceLoader(path, imageBytes);
 					closeDialog(image);
 				} catch (Exception e1) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Could not fetch image from " + imageFetcher.getImageURL());
@@ -292,13 +292,22 @@ public class ImageDownloadDialog extends JDialog {
 		dispose();			
 	}
 	
+    public void setVisible(boolean b) {
+    	if(b && !factory.searchTermSupport()) {
+    		startSearch();
+    	}
+        super.setVisible(b);
+    }	
+	
 	private void startSearch() {
 		getGlassPane().setVisible(true);
 		new SwingWorker<SearchResultPanel, SearchResultPanel>() {
 			
 			@Override
 			protected SearchResultPanel doInBackground() throws Exception {
-				SearchResultPanel searchResultPanel = new SearchResultPanel(searchTextField.getText(), searchProviderComboBox.getSelectedItem().toString());
+				String searchText = searchTextField != null ? searchTextField.getText() : null;
+				String selectedItem = searchProviderComboBox != null ? searchProviderComboBox.getSelectedItem().toString() : null;
+				SearchResultPanel searchResultPanel = new SearchResultPanel(searchText, selectedItem);
 				return searchResultPanel;
 			}
 	
@@ -374,24 +383,23 @@ public class ImageDownloadDialog extends JDialog {
 			ImageIcon imageIcon = imageCache.get(thumbnailURL);
 			if(imageIcon == null) {
 				byte[] thumbnailImageBytes = entry.getThumbnailImageBytes();
-				IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceLoader(new ByteArrayInputStream(thumbnailImageBytes)));
-				BufferedImage image = imageProvider.getImage();
-				BufferedImage scaleToMatch = ImageUtils.scaleToMatch(image, cellSize, true);
-				imageIcon = new ImageIcon(scaleToMatch);
-				imageCache.put(thumbnailURL, imageIcon);			
+				if(thumbnailImageBytes != null && thumbnailImageBytes.length > 0) {
+					IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceLoader(new ByteArrayInputStream(thumbnailImageBytes)));
+					BufferedImage image = imageProvider.getImage();
+					if(image != null) {
+						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(image, cellSize, true);
+						if(scaleToMatch != null) {
+							imageIcon = new ImageIcon(scaleToMatch);
+							imageCache.put(thumbnailURL, imageIcon);
+						}
+					}
+				}
 			}
 			return imageIcon;
 		}
 		
 		private class SearchResultTableRenderer extends JPanel implements TableCellRenderer {
-			private final short[] invertTable;
-			{
-				invertTable = new short[256];
-				for (int i = 0; i < 256; i++) {
-					invertTable[i] = (short) (255 - i);
-				}
-			}		
-			
+
 			private JLabel sizeLabel;
 			
 			private JLabel imageLabel;
@@ -426,12 +434,13 @@ public class ImageDownloadDialog extends JDialog {
 				
 				int imageHeight = ((IImageFetcherEntry)value).getImageHeight();
 				int imageWidth = ((IImageFetcherEntry)value).getImageWidth();
-				
-				sizeLabel.setText(imageWidth + "x" + imageHeight);
+				if(imageHeight >= 0 && imageWidth >= 0) {
+					sizeLabel.setText(imageWidth + "x" + imageHeight);
+				} 
 				try {
 					ImageIcon imageIcon = createThumbnail((IImageFetcherEntry) value);
 					if(table.getSelectedColumn() == column) {
-						BufferedImage invertedThumbnail = invertImage((BufferedImage) imageIcon.getImage());
+						BufferedImage invertedThumbnail = ImageUtils.invertImage((BufferedImage) imageIcon.getImage());
 						imageIcon = new ImageIcon(invertedThumbnail);
 					}
 					imageLabel.setIcon(imageIcon);
@@ -440,15 +449,6 @@ public class ImageDownloadDialog extends JDialog {
 				}
 				return this;
 			}
-			
-			private BufferedImage invertImage(final BufferedImage src) {
-				final int w = src.getWidth();
-				final int h = src.getHeight();
-				final BufferedImage dst = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-				 
-				final BufferedImageOp invertOp = new LookupOp(new ShortLookupTable(0, invertTable), null);
-				return invertOp.filter(src, dst);
-				}			
 		}
 		
 		/**
@@ -492,6 +492,8 @@ public class ImageDownloadDialog extends JDialog {
 							imageFetcherEntries.add(entry);
 						}
 					} catch(ArrayIndexOutOfBoundsException e) {
+						//no more entries
+					} catch(NoSuchElementException e) {
 						//no more entries
 					}
 					break;
@@ -538,7 +540,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	public static void main(String[] args) {
-		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog(ImageFetcherFactory.getInstance());
+		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog(ImageWebSearchFetcherFactory.getInstance());
 		imageDownloadDialog.setVisible(true);
 		System.out.println(imageDownloadDialog.getSelectedImage());
 		System.exit(0);
