@@ -101,6 +101,23 @@ public class ActionFactory {
 				return true;
 			}			
 		},
+		SET_COVER_FROM_EBOOK_ACTION {
+
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return SetCoverFromEbook.class;
+			}
+
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				return MetadataHandlerFactory.hasCoverWriterSupport(item.getResourceHandler());
+			}
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return false;
+			}			
+		},		
 		SAVE_COVER_TO_FILE_ACTION {
 
 			@Override

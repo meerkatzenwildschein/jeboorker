@@ -208,7 +208,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		}
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), data, null));
 		
-		return result;
+		return new ArrayList<MetadataProperty>(result);
 	}
 
 	/**
