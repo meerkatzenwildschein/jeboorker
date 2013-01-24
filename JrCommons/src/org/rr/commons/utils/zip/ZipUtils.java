@@ -2,6 +2,7 @@ package org.rr.commons.utils.zip;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,10 +18,14 @@ import org.rr.commons.utils.ReflectionUtils;
 public class ZipUtils {
 
 	public static List<String> list(byte[] zipData) {
-		return list(new ByteArrayInputStream(zipData));
+		return list(new ByteArrayInputStream(zipData), null);
 	}
 	
 	public static List<String> list(InputStream zipData) {
+		return list(zipData, null);
+	}
+	
+	public static List<String> list(InputStream zipData, ZipFileFilter filter) {
 		if (zipData == null) {
 			return null;
 		}
@@ -33,7 +38,9 @@ public class ZipUtils {
 			ZipEntry nextEntry;
 			while ((nextEntry = jar.getNextEntry()) != null) {
 				String name = nextEntry.getName();
-				result.add(name);
+				if(filter.accept(name)) {
+					result.add(name);
+				}
 			}
 			return result;
 		} catch (IOException e) {
@@ -302,6 +309,10 @@ public class ZipUtils {
 			} catch (Exception e) {
 				return null;
 			}
+		}
+		
+		public String getName() {
+			return new File(path).getName();
 		}
 	}
 	
