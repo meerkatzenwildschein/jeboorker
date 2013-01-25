@@ -9,6 +9,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.FileRefreshBackgroundThread;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -120,10 +121,14 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	
 	public void loadProperties(EbookPropertyItem item) {
 		this.resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
-		this.reader = MetadataHandlerFactory.getReader(resourceHandler);
-		
-		Property[] newProperties = createProperties(resourceHandler, item, reader);
-		setProperties(newProperties);
+		if(resourceHandler.exists()) {
+			this.reader = MetadataHandlerFactory.getReader(resourceHandler);
+			Property[] newProperties = createProperties(resourceHandler, item, reader);
+			setProperties(newProperties);
+		} else {
+			setProperties(new Property[0]);
+			FileRefreshBackgroundThread.getInstance().addEbook(item);
+		}
 	}
 	
 	public IMetadataReader getMetadataReader() {
@@ -236,7 +241,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 */
 	protected List<Property> setupMetadata(final List<EbookPropertyItem> items, final IMetadataReader reader) {
 		final ArrayList<Property> result = new ArrayList<Property>(items.size() + 1);
-		allMetaData = reader.readMetaData();
+		final List<MetadataProperty> allMetaData = new ArrayList<MetadataProperty>(this.allMetaData = reader.readMetaData());
+		
 		for (int i = 0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
 			final List<Object> values = metadataProperty.getValues();
