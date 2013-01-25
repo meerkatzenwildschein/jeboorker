@@ -60,9 +60,9 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 						controller.getProgressMonitor().setProgress(index, max);
 						
 						byte[] content = dialogResult.getContent();
-						String imageFileName = dialogResult.getName();
+						String imageFileName = dialogResult.getResourceString();
 						if(content != null) {
-							setupCoverMetadataToModel(content, items);
+							setupCoverMetadataToModel(content, imageFileName, items);
 						}
 						MainController.getController().setImageViewerResource(dialogResult);			
 					}
@@ -79,7 +79,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 		}
 	}
 	
-	private void setupCoverMetadataToModel(byte[] content, List<EbookPropertyItem> items) {
+	private void setupCoverMetadataToModel(byte[] content, String imageFileName, List<EbookPropertyItem> items) {
 		final MainController controller = MainController.getController();
 		final EbookSheetPropertyModel model = controller.getEbookSheetPropertyModel();
 		final IMetadataReader metadataReader = model.getMetadataReader();
@@ -94,6 +94,9 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 		
 		if(coverMetadata != null && !coverMetadata.isEmpty()) {
 			MetadataProperty coverMetadataProperty = coverMetadata.get(0);
+			if(this instanceof SetCoverFromEbook) {
+				coverMetadataProperty.addHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME, imageFileName);
+			}
 			coverMetadataProperty.setValue(content, 0);
 			if(isNewCoverProperty) {
 				ActionUtils.addMetadataItem(coverMetadataProperty, items.get(0));

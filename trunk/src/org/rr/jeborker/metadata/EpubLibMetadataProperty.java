@@ -74,6 +74,7 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	@Override
 	public MetadataProperty clone() {
 		EpubLibMetadataProperty<?> newMetadataProperty = new EpubLibMetadataProperty(this.name, this.value, this.epubLibMetadataEntry);
+		newMetadataProperty.hints = this.hints;
 		newMetadataProperty.values = this.values;
 		return newMetadataProperty;
 	}

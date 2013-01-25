@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -110,7 +112,13 @@ public class ActionFactory {
 
 			@Override
 			public boolean canHandle(EbookPropertyItem item) {
-				return MetadataHandlerFactory.hasCoverWriterSupport(item.getResourceHandler());
+				String mime = item.getMimeType();
+				if(mime != null) {
+					if(mime.equals(MIME_EPUB)) {
+						return MetadataHandlerFactory.hasCoverWriterSupport(item.getResourceHandler());
+					} 
+				}
+				return false;
 			}
 			
 			@Override

@@ -243,6 +243,7 @@ class PDFMetadataProperty extends MetadataProperty {
 		newMetadataProperty.propertyClass = this.propertyClass;
 		newMetadataProperty.childs = this.childs;
 		newMetadataProperty.namespace = this.namespace;
+		newMetadataProperty.hints = this.hints;
 		return newMetadataProperty;
 	}		
 

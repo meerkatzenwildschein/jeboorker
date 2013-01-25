@@ -75,6 +75,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 					} else {
 						if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
 							fetchXMPThumbnail = (byte[]) firstValue;
+							xmpMetadataSet = true;
 						} else {
 							info.put(name, StringUtils.toString(firstValue));
 						}

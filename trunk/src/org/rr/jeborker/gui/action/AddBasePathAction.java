@@ -49,6 +49,7 @@ class AddBasePathAction extends AbstractAction {
 		final MainController controller = MainController.getController();
 		String path = this.path;
 		
+		controller.clearSelection();
 		if(this.path != null && this.path.length() > 0) {
 			IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceLoader(path);
 			addBasePath(controller, selectedDirectory, path);

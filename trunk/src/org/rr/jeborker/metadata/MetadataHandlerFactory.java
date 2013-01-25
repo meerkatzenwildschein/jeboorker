@@ -45,7 +45,7 @@ public class MetadataHandlerFactory {
 		}
 		
 		final String mimeType = resource.getMimeType();
-		if(mimeType!=null) {
+		if (mimeType != null) {
 			latestReader = null;
 			if(resource.getMimeType().equals(MIME_EPUB)) {
 				return latestReader = new EPubLibMetadataReader(resource);

@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.gui.MainController;
 
@@ -137,10 +138,29 @@ public class Jeboorker {
 			addPath(new File(result + File.separator + "lib/epubcheck/"), jarFileSet);
 			addPath(new File(result + File.separator + "lib/epublib/"), jarFileSet);
 			addPath(new File(result + File.separator + "lib/dropbox/"), jarFileSet);
+			addPath(new File(result + File.separator + "lib/jmupdf/"), jarFileSet);
+			
+			String nativeLibPath = result + File.separator + "lib/jmupdf/";
+			ReflectionUtils.addLibraryPath(nativeLibPath);
 		} catch (Exception e1) {
 			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
 			System.exit(-1);
 		} 
+	}
+	
+	/**
+	 * Load native resource file
+	 */
+	private static void loadDll(String path) {
+		try {
+			if (ReflectionUtils.is64bit()) {
+				System.loadLibrary(path + "libjmupdf64.so");
+			} else {
+				System.loadLibrary(path + "libjmupdf32.so");
+			}
+		} catch (Exception e) {
+			System.out.println("Native library could not be loaded.");
+		}
 	}
 
 	/**

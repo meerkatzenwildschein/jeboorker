@@ -22,6 +22,8 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 		String additionalName = "";
 		if(handler != null && handler.getMimeType().equals("application/pdf")) {
 			additionalName = "XMP";
+		} else {
+			additionalName = "XML";
 		}
 		
 		putValue(Action.NAME, Bundle.getFormattedString("EditPlainMetadataAction.name", additionalName));
