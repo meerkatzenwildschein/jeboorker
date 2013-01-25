@@ -92,7 +92,7 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 
 	@Override
 	public String getResourceString() {
-		return "vfs:"+this.name;
+		return this.name;
 	}
 
 	@Override
