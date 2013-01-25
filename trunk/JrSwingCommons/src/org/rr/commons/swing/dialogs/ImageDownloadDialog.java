@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -110,7 +111,11 @@ public class ImageDownloadDialog extends JDialog {
 	}
 
 	protected void init(final Frame owner, final IImageFetcherFactory factory) {
-		this.setSize(800, 375);
+		if(factory.searchTermSupport()) {
+			this.setSize(800, 375);
+		} else {
+			this.setSize(800, 330);
+		}
 		if(owner != null) {
 			//center over the owner frame
 			this.setLocation(owner.getBounds().x + owner.getBounds().width/2 - this.getSize().width/2, owner.getBounds().y + 50);
@@ -272,7 +277,7 @@ public class ImageDownloadDialog extends JDialog {
 			if(imageFetcher != null) {
 				try {
 					byte[] imageBytes = imageFetcher.getImageBytes();
-					String path = imageFetcher.getImageURL().getPath();
+					String path = imageFetcher.getImageURL().toString();
 					IResourceHandler image = ResourceHandlerFactory.getVirtualResourceLoader(path, imageBytes);
 					closeDialog(image);
 				} catch (Exception e1) {
@@ -436,7 +441,14 @@ public class ImageDownloadDialog extends JDialog {
 				int imageWidth = ((IImageFetcherEntry)value).getImageWidth();
 				if(imageHeight >= 0 && imageWidth >= 0) {
 					sizeLabel.setText(imageWidth + "x" + imageHeight);
-				} 
+				} else {
+					try {
+						String path = ((IImageFetcherEntry)value).getImageURL().getPath();
+						sizeLabel.setText(new File(path).getName());
+					} catch(Exception e) {
+						//no label in case something goes wrong
+					}
+				}
 				try {
 					ImageIcon imageIcon = createThumbnail((IImageFetcherEntry) value);
 					if(table.getSelectedColumn() == column) {
