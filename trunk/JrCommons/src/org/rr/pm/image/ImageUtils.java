@@ -59,9 +59,15 @@ public class ImageUtils {
 	 * @return The converted bytes or <code>null</code> if something went wrong with the conversion.
 	 */
 	public static byte[] getImageBytes(BufferedImage image, String mime) {
-		if(image==null) {
+		if (image == null) {
 			return null;
 		}
+		
+		//image/jpg did not always work with ImageIO.getImageWritersByMIMEType
+		if(mime.equals("image/jpg")) {
+			mime = "image/jpeg";
+		}
+		
 		Iterator<ImageWriter> imageWritersByFormatName = ImageIO.getImageWritersByMIMEType(mime);
 		if(imageWritersByFormatName.hasNext()) {
 			ImageWriter writer = imageWritersByFormatName.next();

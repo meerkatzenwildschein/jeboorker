@@ -8,13 +8,13 @@ import junit.framework.TestCase;
 
 import org.rr.commons.net.imagefetcher.IImageFetcher;
 import org.rr.commons.net.imagefetcher.IImageFetcherEntry;
-import org.rr.commons.net.imagefetcher.ImageFetcherFactory;
+import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
 
 public class ImageFetcherTest extends TestCase {
 	
 	public void xtestFetcherGoogle() {
 		try {
-			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Google");
+			IImageFetcher imageFetcher = ImageWebSearchFetcherFactory.getInstance().getImageFetcher("Google");
 			imageFetcher.setSearchTerm("Der Fänger");
 			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
@@ -27,7 +27,7 @@ public class ImageFetcherTest extends TestCase {
 	
 	public void xtestFetcherBigBooks() {
 		try {
-			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Big Book Search");
+			IImageFetcher imageFetcher = ImageWebSearchFetcherFactory.getInstance().getImageFetcher("Big Book Search");
 			imageFetcher.setSearchTerm("Der Fänger");
 			List<IImageFetcherEntry> searchImages = imageFetcher.getNextEntries();
 			for(IImageFetcherEntry m : searchImages) {
@@ -40,7 +40,7 @@ public class ImageFetcherTest extends TestCase {
 	
 	public void testFetcherBigBooksIterator() {
 		try {
-			IImageFetcher imageFetcher = ImageFetcherFactory.getInstance().getImageFetcher("Big Book Search");
+			IImageFetcher imageFetcher = ImageWebSearchFetcherFactory.getInstance().getImageFetcher("Big Book Search");
 			imageFetcher.setSearchTerm("Der Fänger");
 			Iterator<IImageFetcherEntry> searchImages = imageFetcher.getEntriesIterator();
 			for(int i=0; searchImages.hasNext(); i++) {
