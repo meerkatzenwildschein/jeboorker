@@ -92,6 +92,7 @@ Section -Main SEC0000
     File doc\license\Htmlcleaner_BSD_license.txt
     File doc\license\KXML_license.txt
     File doc\license\Yasis-Icons_license.txt
+    File doc\license\JMuPDF_license.txt
     
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
