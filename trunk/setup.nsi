@@ -88,7 +88,6 @@ Section -Main SEC0000
     File doc\license\Commons-IO_license.txt
     File doc\license\Commons-Excec_license.txt
     File doc\license\Commons-Net_license.txt
-    File doc\license\Java-Unrar_license.txt
     File doc\license\Htmlcleaner_BSD_license.txt
     File doc\license\KXML_license.txt
     File doc\license\Yasis-Icons_license.txt
