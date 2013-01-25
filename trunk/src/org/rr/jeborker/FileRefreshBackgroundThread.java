@@ -56,9 +56,14 @@ public class FileRefreshBackgroundThread extends Thread {
 		public void run() {
 			while (true) {
 				while (!items.isEmpty()) {
-					EbookPropertyItem ebookPropertyItem = items.remove(0);
-					DefaultDBManager.getInstance().setLocalThreadDbInstance();
-					this.processItem(ebookPropertyItem);
+					EbookPropertyItem ebookPropertyItem = null;
+					try {
+						ebookPropertyItem = items.remove(0);
+						DefaultDBManager.getInstance().setLocalThreadDbInstance();
+						this.processItem(ebookPropertyItem);
+					} catch(Exception e) {
+						LoggerFactory.log(Level.WARNING, this, "Failed to handle " + ebookPropertyItem + " in background process", e);
+					}
 				}
 				
 				// wait a moment before restart
