@@ -476,12 +476,19 @@ public class MainController {
 	 * @return all selected rows or an empty array if no row is selected. Never returns <code>null</code>.
 	 */
 	public int[] getSelectedEbookPropertyItemRows() {
-		if(mainWindow!=null && mainWindow.table != null) {
+		if (mainWindow != null && mainWindow.table != null) {
 			final int[] selectedRows = mainWindow.table.getSelectedRows();
 			return selectedRows;
 		} else {
 			return new int[0];
 		}
+	}
+
+	/**
+	 * Clears the selection on the main table.
+	 */
+	public void clearSelection() {
+		mainWindow.table.clearSelection();
 	}
 	
 	/**

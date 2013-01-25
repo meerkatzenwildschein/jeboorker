@@ -16,6 +16,7 @@ import nl.siegmann.epublib.domain.MediaType;
 import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Resource;
+import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.epub.EpubWriter;
 
@@ -114,7 +115,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				if(meta.getValues() != null && !meta.getValues().isEmpty()) {
 					byte[] cover = (byte[]) meta.getValues().get(0);
 					if(cover != null) {
-						this.setCover(epub, cover);
+						this.setCover(epub, meta, cover);
 						isCover = true;
 					}
 				}
@@ -139,11 +140,30 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		}
 	}
 	
-	private void setCover(final Book epub, final byte[] cover) {
+	private void setCover(final Book epub, final EpubLibMetadataProperty<?> meta, final byte[] cover) {
 		try {
 			final Resource oldCoverImage = epub.getCoverImage();
 			
-			if(oldCoverImage != null) {
+			if(meta.getHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME) != null) {
+				String coverName = (String) meta.getHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME);
+				if(coverName.indexOf("//") != -1) {
+					coverName = coverName.substring(coverName.indexOf("//") + 2);
+				}
+				Resources resources = epub.getResources();
+				Resource coverImage = resources.getByHref(coverName);
+				if(coverImage != null) {
+					epub.setCoverImage(coverImage);
+				} else {
+					while(coverName.indexOf('/') != -1) {
+						coverName = coverName.substring(coverName.indexOf('/') + 1);
+						coverImage = resources.getByHref(coverName);
+						if(coverImage != null) {
+							epub.setCoverImage(coverImage);
+							break;
+						}
+					}
+				}
+			} else if(oldCoverImage != null) {
 				//replace old cover
 				final String targetConversionMime = oldCoverImage.getMediaType().getName();
 				final String oldCoverFileName = new File(oldCoverImage.getHref()).getName();

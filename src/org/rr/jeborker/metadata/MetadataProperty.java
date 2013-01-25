@@ -2,6 +2,7 @@ package org.rr.jeborker.metadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.rr.commons.utils.ListUtils;
@@ -23,6 +24,24 @@ public class MetadataProperty implements Cloneable {
 	private Class<?> propertyRendererClass = null;
 	
 	private List<String> validValues = null;
+	
+	protected HashMap<MetadataProperty.HINTS, Object> hints;
+	
+	static interface ActionType {
+
+		String getName();
+
+	}
+	
+	public static enum HINTS implements ActionType {
+		COVER_FROM_EBOOK_FILE_NAME {
+
+			@Override
+			public String getName() {
+				return "CoverFromEbookFileName";
+			}
+		}
+	}	
 	
 	MetadataProperty(String name, List<Object> values) {
 		this.name = name;
@@ -161,6 +180,7 @@ public class MetadataProperty implements Cloneable {
 		newMetadataProperty.propertyEditorClass = this.propertyEditorClass;
 		newMetadataProperty.propertyRendererClass = this.propertyRendererClass;
 		newMetadataProperty.validValues = this.validValues;
+		newMetadataProperty.hints = this.hints;
 		return newMetadataProperty;
 	}
 
@@ -178,5 +198,26 @@ public class MetadataProperty implements Cloneable {
 
 	public void setPropertyRendererClass(Class<?> propertyRendererClass) {
 		this.propertyRendererClass = propertyRendererClass;
+	}
+	
+	/**
+	 * Adds a hint to this {@link MetadataProperty} instance.
+	 */
+	public void addHint(MetadataProperty.HINTS key, Object value) {
+		if(this.hints == null) {
+			this.hints = new HashMap<MetadataProperty.HINTS, Object>();
+		}
+		this.hints.put(key, value);
+	}
+	
+	/**
+	 * Gets a previously added hint for this {@link MetadataProperty} instance.
+	 * @return The desired hint or <code>null</code> if the desired hint is not available. 
+	 */
+	public Object getHint(MetadataProperty.HINTS key) {
+		if(this.hints != null) {
+			return this.hints.get(key);
+		}
+		return null;
 	}
 }

@@ -1,10 +1,12 @@
 package org.rr.jeborker.metadata;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jempbox.xmp.XMPUtils;
@@ -12,6 +14,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.pm.image.ImageUtils;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRStream;
@@ -106,13 +109,44 @@ abstract class PDFCommonDocument {
 	 */
 	public abstract void dispose();
 	
+	/**
+	 * Renders a page of the given pdf data. 
+	 * @param pdfdata The pdf bytes.
+	 * @param pageNumber The page number to be rendered starting with 1.
+	 * @return The rendered pdf data or <code>null</code> if the pdf could not be rendered.
+	 * @throws IOException
+	 */
+	byte[] renderPage(byte[] pdfdata, int pageNumber) throws Exception {
+		com.jmupdf.pdf.PdfDocument doc = null;
+		com.jmupdf.page.PagePixels pp = null;
+		com.jmupdf.page.Page page = null;
+		try {
+			doc = new com.jmupdf.pdf.PdfDocument(pdfdata);
+
+			page = doc.getPage(pageNumber);
+
+			pp = new com.jmupdf.page.PagePixels(page);
+			pp.setRotation(com.jmupdf.page.Page.PAGE_ROTATE_NONE);
+			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
+			BufferedImage image = pp.getImage();
+			byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
+			return imageBytes;
+		} finally {
+			if (pp != null)
+				pp.dispose();
+			if (doc != null)
+				doc.dispose();
+		}
+	}	
+	
 	
 	private static class ItextPDFDocument extends PDFCommonDocument {
 
 		private PdfReader pdfReader;
 		
+		byte[] pdfdata = null;
+		
 		ItextPDFDocument(IResourceHandler pdfFile) {
-			byte[] pdfdata = null;
 			try {
 				pdfdata = pdfFile.getContent();
 				
@@ -203,9 +237,14 @@ abstract class PDFCommonDocument {
 				this.pdfReader.close();
 			}
 		}
-
-		@Override
+		
 		public byte[] fetchCoverFromPDFContent() throws IOException {
+			try {
+				return renderPage(pdfdata, 1);
+			} catch (Exception e) {
+				LoggerFactory.log(Level.WARNING, this, "could not render PDF " + getResourceHandler());
+			}
+			
 			int xrefSize = pdfReader.getXrefSize();
 			for (int i = 0; i < xrefSize; i++) { //process the first ten xrefs.
 				PdfObject pdfobj = pdfReader.getPdfObject(i);
