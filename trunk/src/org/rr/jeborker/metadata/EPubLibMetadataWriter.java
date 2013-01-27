@@ -40,7 +40,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final Book epub = readBook(zipData, ebookResourceHandler);
+			final Book epub = readBook(zipData, ebookResourceHandler, false);
 			setMetadata(epub, props);
 			
 			writeBook(epub, ebookResourceHandler);
@@ -150,13 +150,23 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 					coverName = coverName.substring(coverName.indexOf("//") + 2);
 				}
 				Resources resources = epub.getResources();
+				Resources unlistedResources = epub.getUnlistedResources();
 				Resource coverImage = resources.getByHref(coverName);
+				Resource unlistedCoverImage = unlistedResources.getByHref(coverName);
 				if(coverImage != null) {
 					epub.setCoverImage(coverImage);
+				} else if(unlistedCoverImage != null) {
+					String href = unlistedCoverImage.getHref();
+					unlistedResources.remove(href);
+					if(href.indexOf('/') != -1) {
+						href = href.substring(href.indexOf('/') + 1);
+					}
+					unlistedCoverImage.setHref(href);
+					epub.setCoverImage(unlistedCoverImage);
 				} else {
 					while(coverName.indexOf('/') != -1) {
 						coverName = coverName.substring(coverName.indexOf('/') + 1);
-						coverImage = resources.getByHref(coverName);
+						coverImage = resources.getByHref(coverName) != null ? resources.getByHref(coverName)  : unlistedResources.getByHref(coverName);
 						if(coverImage != null) {
 							epub.setCoverImage(coverImage);
 							break;

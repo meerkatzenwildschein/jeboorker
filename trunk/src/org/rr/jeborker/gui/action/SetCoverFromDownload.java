@@ -9,9 +9,9 @@ import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
 import org.rr.commons.swing.dialogs.ImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -37,7 +37,7 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 			
 			//default search phrase
 			String searchPhrase = "";
-			EbookPropertyItem item = ListUtils.first(DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString()));
+			EbookPropertyItem item = ListUtils.first(EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler));
 
 			//no author in the search term for now. Big Book Search did not like it.
 			if(item != null) {
