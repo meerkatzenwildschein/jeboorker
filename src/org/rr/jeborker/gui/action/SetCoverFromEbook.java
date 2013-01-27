@@ -17,6 +17,7 @@ import org.rr.commons.swing.dialogs.ImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -38,23 +39,26 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 	public ImageDownloadDialog doOnce() {
 		if(imageDownloadDialog == null) {
 			final MainController controller = MainController.getController();
-			EbookPropertyItem item = ListUtils.first(DefaultDBManager.getInstance().getObject(EbookPropertyItem.class, "file", resourceHandler.toString()));
-			IImageFetcherFactory fetcher;
-			if(MIME_CBZ.equals(item.getMimeType()) || MIME_EPUB.equals(item.getMimeType())) {
-				fetcher = new ImageZipFileFetcherFactory(item.getResourceHandler());
-			} else {
-				LoggerFactory.log(Level.WARNING, this, "No image fetcher instance for " + item.getResourceHandler());
-				return null;
-			}
-			imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), fetcher);
-			imageDownloadDialog.setVisible(true);
+			final EbookPropertyItem item = ListUtils.first(EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler));
 			
-			IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();
-			if(selectedImage != null) {
-				setDialogOption(JFileChooser.APPROVE_OPTION);
-				setDialogResult(selectedImage);
-			} else {
-				setDialogOption(JFileChooser.CANCEL_OPTION);
+			IImageFetcherFactory fetcher;
+			if(item != null) {
+				if(MIME_CBZ.equals(item.getMimeType()) || MIME_EPUB.equals(item.getMimeType())) {
+					fetcher = new ImageZipFileFetcherFactory(item.getResourceHandler());
+				} else {
+					LoggerFactory.log(Level.WARNING, this, "No image fetcher instance for " + item.getResourceHandler());
+					return null;
+				}
+				imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), fetcher);
+				imageDownloadDialog.setVisible(true);
+				
+				IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();
+				if(selectedImage != null) {
+					setDialogOption(JFileChooser.APPROVE_OPTION);
+					setDialogResult(selectedImage);
+				} else {
+					setDialogOption(JFileChooser.CANCEL_OPTION);
+				}
 			}
 		}
 		

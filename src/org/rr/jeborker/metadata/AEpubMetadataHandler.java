@@ -1,6 +1,7 @@
 package org.rr.jeborker.metadata;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +17,10 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.zip.LazyZipEntryStream;
 import org.rr.commons.utils.zip.ZipUtils;
 import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
+import org.rr.commons.utils.zip.ZipUtils.ZipFileFilter;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -345,17 +348,67 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * Read all entries from, the given zip data and creates a {@link Book} instance from them. 
 	 * @throws IOException
 	 */
-	protected Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler) throws IOException {
+	protected Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler, final boolean lazy) throws IOException {
 		final EpubReader reader = new EpubReader();
-		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, new ZipUtils.EmptyZipFileFilter(), -1);
 		final Resources resources = new Resources();
+		final EpubZipFileFilter epubZipFileFilter = new EpubZipFileFilter(lazy);
+		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, epubZipFileFilter, -1);
+		final List<String> lazyEntries = epubZipFileFilter.getLazyEntries();
+		
 		for(ZipDataEntry entry : extracted) {
 			Resource resource = new Resource(entry.data, entry.path);
 			resources.add(resource);
 		}
 		
+		for(String entry : lazyEntries) {
+			Resource resource = new Resource(new LazyZipEntryStream(ebookResourceHandler, entry), entry);
+			resources.add(resource);
+		}			
+		
 		final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
 		return epub;
 	}	
 	
+	/**
+	 * Zip file filter that collects all zip file entries and support lazy handling for
+	 * having not all files to be extracted. Only these files will be extracted which
+	 * are commonly used by the {@link EpubReader}.
+	 */
+	private static class EpubZipFileFilter implements ZipFileFilter {
+
+		boolean lazy = false;
+		
+		List<String> lazyEntries = new ArrayList<String>();
+		
+		EpubZipFileFilter(boolean lazy) {
+			this.lazy = lazy;
+		}
+		@Override
+		public boolean accept(String entry) {
+			boolean accept = true;
+			if(lazy) {
+				String lowerCaseEntry = entry.toLowerCase();
+				if(lowerCaseEntry.endsWith("/container.xml")) {
+					accept = true;
+				} else if(lowerCaseEntry.endsWith(".opf")) {
+					accept = true;
+				} else if(lowerCaseEntry.endsWith(".ncx")) {
+					accept = true;
+				} else if(lowerCaseEntry.endsWith("cover.jpg") || lowerCaseEntry.endsWith("cover.jpeg")) {
+					accept = true;
+				} else {
+					accept = false;
+				}
+			}
+			
+			if(!accept) {
+				lazyEntries.add(entry);
+			}
+			return accept;
+		}
+		
+		public List<String> getLazyEntries() {
+			return this.lazyEntries;
+		}
+	}
 }

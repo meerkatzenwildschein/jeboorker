@@ -389,6 +389,10 @@ public class DefaultDBManager {
 				return iRecord.field(field).eq(value).go();
 			}
 
+			@Override
+			public void end() {
+			}
+
 		}.execute((Object[]) null);
 		return new ODocumentMapper<T>(result, db);
 	}

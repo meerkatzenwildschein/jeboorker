@@ -668,9 +668,11 @@ public class MainController {
 						}
 						
 						IMetadataReader reader = model.getMetadataReader();
-						List<MetadataProperty> allMetaData = model.getAllMetaData();
-						MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetaData(), allMetaData, ebookPropertyItem);
-						mainWindow.addMetadataButton.setListModel(metadataAddListModel);
+						if(reader != null) {
+							List<MetadataProperty> allMetaData = model.getAllMetaData();
+							MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetaData(), allMetaData, ebookPropertyItem);
+							mainWindow.addMetadataButton.setListModel(metadataAddListModel);
+						}
 					}
 				}				
 			} else {

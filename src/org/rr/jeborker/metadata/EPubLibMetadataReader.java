@@ -37,7 +37,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		
 		try {
 			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final Book epub = readBook(zipData, ebookResourceHandler);
+			final Book epub = readBook(zipData, ebookResourceHandler, true);
 			final Metadata metadata = epub.getMetadata();
 			
 			final List<MetadataProperty> metadataList = this.createMetadataList(epub, metadata);
