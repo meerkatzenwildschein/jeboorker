@@ -193,7 +193,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 
 	/**
 	 * Searches the given {@link Book} for an image which seems to be the cover image.
-	 * @return The desired cover image bytes or <code>null</code> if nbo cover could be found.
+	 * @return The desired cover image bytes or <code>null</code> if no cover could be found.
 	 */
 	public byte[] searchCoverImage(Book epub) {
 		Resources resources = epub.getResources();
