@@ -175,10 +175,14 @@ public class DefaultDBManager {
 	public IDBObject storeObject(final IDBObject item) {
 		try {
 			return getDB().save(item);
-		} catch (Exception e) {
+		} catch (Exception e1) {
+			try {
 			// If storage fails try to delete and store the record.
 			getDB().delete(item);
-			getDB().delete(reload(item));
+			} catch (Exception e2) {
+				getDB().delete(reload(item));
+			}
+			
 			return getDB().save(item);
 		}
 	}
