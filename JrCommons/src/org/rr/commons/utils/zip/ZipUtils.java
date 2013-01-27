@@ -38,7 +38,7 @@ public class ZipUtils {
 			ZipEntry nextEntry;
 			while ((nextEntry = jar.getNextEntry()) != null) {
 				String name = nextEntry.getName();
-				if(filter.accept(name)) {
+				if(filter == null || filter.accept(name)) {
 					result.add(name);
 				}
 			}
