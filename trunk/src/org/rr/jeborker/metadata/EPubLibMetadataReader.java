@@ -19,13 +19,10 @@ import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Relator;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
-import nl.siegmann.epublib.epub.EpubReader;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.zip.ZipUtils;
-import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
@@ -53,23 +50,6 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		return new ArrayList<MetadataProperty>(0);
 	}
 	
-	/**
-	 * Read all entries from, the given zip data and creates a {@link Book} instance from them. 
-	 * @throws IOException
-	 */
-	private Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler) throws IOException {
-		final EpubReader reader = new EpubReader();
-		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, new ZipUtils.EmptyZipFileFilter(), -1);
-		final Resources resources = new Resources();
-		for(ZipDataEntry entry : extracted) {
-			Resource resource = new Resource(entry.data, entry.path);
-			resources.add(resource);
-		}
-		
-		final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
-		return epub;
-	}
-
 	/**
 	 * Read all metadata entries from the given {@link Metadata} instance into {@link EpubLibMetadataProperty}.
 	 * @param metadata The metadata instance where the entries read from.

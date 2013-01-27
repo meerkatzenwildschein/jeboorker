@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.xml.namespace.QName;
 
@@ -17,7 +18,6 @@ import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
-import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.epub.EpubWriter;
 
 import org.rr.commons.log.LoggerFactory;
@@ -37,10 +37,10 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	@Override
 	public void writeMetadata(List<MetadataProperty> props) {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final EpubReader reader = new EpubReader();
 		
 		try {
-			final Book epub = reader.readEpub(ebookResourceHandler.getContentInputStream(), ebookResourceHandler.getName());
+			final byte[] zipData = this.getContent(ebookResourceHandler);
+			final Book epub = readBook(zipData, ebookResourceHandler);
 			setMetadata(epub, props);
 			
 			writeBook(epub, ebookResourceHandler);
@@ -83,7 +83,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 				if(date != null) {
 					metadata.addDate(new nl.siegmann.epublib.domain.Date(date));						
 				} else {
-					throw new RuntimeException("Invalid date '" + meta.getValueAsString() + "'");
+					LoggerFactory.log(Level.WARNING, this, "Skipping invalid date '" + meta.getValueAsString() + "' at " + getEbookResource().get(0));
 				}
 			} else if(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.CREATION_DATE.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.MODIFICATION_DATE.getName().equals(meta.getName())) {
 				Date date = meta.getValueAsDate();

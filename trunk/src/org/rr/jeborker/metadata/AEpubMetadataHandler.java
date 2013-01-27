@@ -5,7 +5,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Identifier;
+import nl.siegmann.epublib.domain.Resource;
+import nl.siegmann.epublib.domain.Resources;
+import nl.siegmann.epublib.epub.EpubReader;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -336,5 +340,22 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		}
 		return true;
 	}
+	
+	/**
+	 * Read all entries from, the given zip data and creates a {@link Book} instance from them. 
+	 * @throws IOException
+	 */
+	protected Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler) throws IOException {
+		final EpubReader reader = new EpubReader();
+		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, new ZipUtils.EmptyZipFileFilter(), -1);
+		final Resources resources = new Resources();
+		for(ZipDataEntry entry : extracted) {
+			Resource resource = new Resource(entry.data, entry.path);
+			resources.add(resource);
+		}
+		
+		final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
+		return epub;
+	}	
 	
 }
