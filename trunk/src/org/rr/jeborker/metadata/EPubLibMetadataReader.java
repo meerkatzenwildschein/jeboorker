@@ -163,7 +163,8 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		
 		List<Meta> otherMeta = metadata.getOtherMeta();
 		for(Meta meta : otherMeta) {
-			if("cover".equals(meta.getName().toLowerCase())) {
+			//no need to read the cover meta entry. It's already provided by the Reader and added later.
+			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(meta.getName())) {
 				continue;
 			}
 			result.add(new EpubLibMetadataProperty<Meta>(meta.getName(), meta.getContent(), meta));
