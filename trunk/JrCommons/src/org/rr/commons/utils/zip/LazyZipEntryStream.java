@@ -26,6 +26,7 @@ public class LazyZipEntryStream extends InputStream {
 				contentInputStream = zipResource.getContentInputStream();
 				ZipDataEntry extract = ZipUtils.extract(contentInputStream, entry);
 				data = new ByteArrayInputStream(extract.getBytes());
+				data.mark(Integer.MAX_VALUE);
 			} finally {
 				if(contentInputStream != null) {
 					IOUtils.closeQuietly(contentInputStream);
@@ -71,7 +72,12 @@ public class LazyZipEntryStream extends InputStream {
 	public boolean markSupported() {
 		return true;
 	}
-	
-	
 
+	@Override
+	public synchronized void reset() throws IOException {
+		if(data != null) {
+			data.reset();
+		}
+	}
+	
 }
