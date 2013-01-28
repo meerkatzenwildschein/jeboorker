@@ -224,6 +224,7 @@ public class DefaultDBManager {
 			// List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
 			// System.out.println(System.currentTimeMillis() - time);
 			// return new ODocumentMapper<T>(listResult, db);
+			System.out.println(sql);
 			return new ODocumentMapper<T>(sql, getDB());
 		} catch (NullPointerException e) {
 			return Collections.emptyList();

@@ -316,11 +316,21 @@ public class MainMenuBarController {
 	}
 	
 	void restoreProperties() {
+		List<String> path = JeboorkerPreferences.getBasePath();
 		String basePathPropString = JeboorkerPreferences.getEntryString("mainMenuBasePathHide");
 		if(basePathPropString!=null && !basePathPropString.isEmpty()) {
 			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
-			for(String basePath : split) {		
-				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
+			for(String basePath : split) {	
+				if(!path.contains(basePath)) {
+					//there is no base path for the hidden path
+					ArrayList<String> s = new ArrayList<String>(split);
+					boolean remove = s.remove(basePath);
+					if(remove) {
+						JeboorkerPreferences.addEntryString("mainMenuBasePathHide", ListUtils.join(s, String.valueOf(File.pathSeparatorChar)));
+					}
+				} else {
+					ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
+				}
 			}
 		}
 	}
