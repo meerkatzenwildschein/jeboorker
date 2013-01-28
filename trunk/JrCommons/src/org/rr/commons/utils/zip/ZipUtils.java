@@ -57,7 +57,7 @@ public class ZipUtils {
 	}
 	
 	public static List<ZipDataEntry> extract(InputStream zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
-		if(zipData==null) {
+		if(zipData == null) {
 			return null;
 		}
 		if(maxEntries < 0) {

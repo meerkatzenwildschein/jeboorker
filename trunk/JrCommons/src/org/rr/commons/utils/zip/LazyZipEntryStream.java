@@ -60,4 +60,18 @@ public class LazyZipEntryStream extends InputStream {
 		}
 	}
 
+	@Override
+	public synchronized void mark(int readlimit) {
+		if(data != null) {
+			data.mark(readlimit);
+		}
+	}
+
+	@Override
+	public boolean markSupported() {
+		return true;
+	}
+	
+	
+
 }

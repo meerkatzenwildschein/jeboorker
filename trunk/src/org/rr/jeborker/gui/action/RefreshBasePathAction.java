@@ -134,7 +134,6 @@ class RefreshBasePathAction extends AbstractAction {
 				return false;
 			}
 		});
-System.out.println("finish");		
 	}	
 	
 }
