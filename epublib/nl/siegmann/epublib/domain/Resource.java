@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -112,7 +113,7 @@ public class Resource implements Serializable {
 	 */
 	public Resource(InputStream in, String href) throws IOException {
 		this(null, (byte[]) null, href, MediatypeService.determineMediaType(href));
-		this.in = in;
+		setInputStream(in);
 	}
 	
 	/**
@@ -161,6 +162,25 @@ public class Resource implements Serializable {
 		this.data = data;
 	}
 	
+	private void setInputStream(InputStream in) {
+		if(in.markSupported()) {
+			//mark the start of the InputStream
+			in.mark(Integer.MAX_VALUE);
+		}
+		this.in = in;
+	}
+	
+	private void resetInputStream() {
+		if(in.markSupported()) {
+			//go to the begin of the InputStream 
+			try {
+				in.reset();
+			} catch (IOException e) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "InputStream reset for resource " + this.fileName + " has failed.", e);
+			}
+		}		
+	}
+	
 	/**
 	 * Gets the contents of the Resource as an InputStream.
 	 * 
@@ -169,6 +189,10 @@ public class Resource implements Serializable {
 	 * @throws IOException
 	 */
 	public InputStream getInputStream() throws IOException {
+		if(this.in != null) {
+			resetInputStream();
+			return in;
+		}
 		return new ByteArrayInputStream(getData());
 	}
 
@@ -185,6 +209,7 @@ public class Resource implements Serializable {
 		
 		if ( data == null ) {
 			if( in != null ) {
+				resetInputStream();
 				data = IOUtil.toByteArray(in);
 				in.close();
 				in = null;
