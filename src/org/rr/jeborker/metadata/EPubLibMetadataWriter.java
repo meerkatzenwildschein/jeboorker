@@ -2,6 +2,8 @@ package org.rr.jeborker.metadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -20,6 +22,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -39,8 +42,8 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 		
 		try {
-			final byte[] zipData = this.getContent(ebookResourceHandler);
-			final Book epub = readBook(zipData, ebookResourceHandler, false);
+			boolean lazy = ebookResourceHandler.size() > 10000000; //10MB
+			final Book epub = readBook(ebookResourceHandler.getContentInputStream(), ebookResourceHandler, lazy);
 			setMetadata(epub, props);
 			
 			writeBook(epub, ebookResourceHandler);
@@ -242,26 +245,37 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	 */
 	private void writeZipData(byte[] content, final String file) throws IOException {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final byte[] zipData = this.getContent(ebookResourceHandler);
-		final byte[] newZipData = ZipUtils.add(zipData, new ZipUtils.ZipDataEntry(file, content));
-		if (newZipData != null && newZipData.length > 0) {
-			final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");
-			tmpEbookResourceLoader.setContent(newZipData);
-			if(tmpEbookResourceLoader.size() > 0) {
-				tmpEbookResourceLoader.moveTo(ebookResourceHandler, true);
-			} else {
-				tmpEbookResourceLoader.delete();
+		final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");
+		OutputStream contentOutputStream = null;
+		InputStream contentInputStream = null;
+		boolean success = false;
+		
+		try {
+			contentOutputStream = tmpEbookResourceLoader.getContentOutputStream(false);
+			contentInputStream = ebookResourceHandler.getContentInputStream();
+			success = ZipUtils.add(contentInputStream, contentOutputStream, new ZipUtils.ZipDataEntry(file, content));
+		} finally {
+			if(contentOutputStream != null) {
+				contentOutputStream.flush();
+				IOUtils.closeQuietly(contentOutputStream);
 			}
-			
-			super.zipContent = newZipData;
+			if(contentInputStream != null) {
+				IOUtils.closeQuietly(contentInputStream);
+			}
+		}
+		
+		if(success && tmpEbookResourceLoader.size() > 0) {
+			tmpEbookResourceLoader.moveTo(ebookResourceHandler, true);
+		} else {
+			tmpEbookResourceLoader.delete();
 		}
 	}
 
 	@Override
 	public void storePlainMetadata(byte[] plainMetadata) {
 		try {
-			final byte[] zipData = this.getContent(getEbookResource().get(0));
-			this.writeZipData(plainMetadata, getOpfFile(zipData));
+			final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
+			this.writeZipData(plainMetadata, getOpfFile(ebookResourceHandler));
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Could not write metadata to " + getEbookResource(), e);
 		}

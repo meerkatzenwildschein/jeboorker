@@ -1,6 +1,7 @@
 package org.rr.jeborker.metadata;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,6 +13,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubReader;
 
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
@@ -33,8 +35,6 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	private Date ebookResourceHandlerTimestamp;
 
 	private byte[] containerOpfData = null;
-	
-	protected byte[] zipContent = null;
 	
 	private String opfFileName = null;
 
@@ -278,19 +278,28 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * 
 	 * @param zipData The zip data bytes.
 	 * @return The desired file name or <code>null</code> if no one could be found.
+	 * @throws IOException 
 	 */
-	protected String getOpfFile(byte[] zipData) {
+	protected String getOpfFile(final IResourceHandler ebookResource) throws IOException {
 		if(this.opfFileName == null) {
 			final String fullPathString = "full-path=";
-			final ZipDataEntry containerXml = ZipUtils.extract(zipData, "META-INF/container.xml");
-			if(containerXml!=null) {
-				final String containerXmlData = new String(containerXml.getBytes());
-				final int fullPathIndex = containerXmlData.indexOf(fullPathString);
-				if(fullPathIndex!=-1) {
-					final int startIdx = fullPathIndex + fullPathString.length() + 1;
-					final int endIdx = containerXmlData.indexOf('"', startIdx);
-					final String fullPathValue = containerXmlData.substring(startIdx, endIdx);
-					this.opfFileName = fullPathValue;
+			InputStream contentInputStream = null;
+			try {
+				contentInputStream = ebookResource.getContentInputStream();
+				final ZipDataEntry containerXml = ZipUtils.extract(contentInputStream, "META-INF/container.xml");
+				if(containerXml!=null) {
+					final String containerXmlData = new String(containerXml.getBytes());
+					final int fullPathIndex = containerXmlData.indexOf(fullPathString);
+					if(fullPathIndex!=-1) {
+						final int startIdx = fullPathIndex + fullPathString.length() + 1;
+						final int endIdx = containerXmlData.indexOf('"', startIdx);
+						final String fullPathValue = containerXmlData.substring(startIdx, endIdx);
+						this.opfFileName = fullPathValue;
+					}
+				}
+			} finally {
+				if(contentInputStream != null) {
+					IOUtils.closeQuietly(contentInputStream);
 				}
 			}
 		}
@@ -302,41 +311,27 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 */
 	protected byte[] getContainerOPF(final IResourceHandler ebookResource) throws IOException {
 		if (this.containerOpfData == null || isModified()) {
-			final byte[] zipData = this.getContent(ebookResource);
-			return getContainerOPF(zipData);
-		}
-		return this.containerOpfData;
-	}	
-	
-	/**
-	 * gets the container opf file content bytes containing the metdadata informations.
-	 */
-	protected byte[] getContainerOPF(final byte[] zipData) throws IOException {
-		if (this.containerOpfData == null) {
-			final String opfFile = this.getOpfFile(zipData);
+			final String opfFile = this.getOpfFile(ebookResource);
 			if (opfFile != null) {
-				final ZipDataEntry containerXml = ZipUtils.extract(zipData, opfFile);
-				if (containerXml != null) {
-					this.containerOpfData = containerXml.getBytes();
-				} else {
-					LoggerFactory.logWarning(this, "Could not get file" + opfFile, new RuntimeException("dumpstack"));
+				InputStream contentInputStream = null;
+				try {
+					contentInputStream = ebookResource.getContentInputStream();				
+					final ZipDataEntry containerXml = ZipUtils.extract(contentInputStream, opfFile);
+					if (containerXml != null) {
+						this.containerOpfData = containerXml.getBytes();
+					} else {
+						LoggerFactory.logWarning(this, "Could not get file" + opfFile, new RuntimeException("dumpstack"));
+					}
+				} finally {
+					if(contentInputStream != null) {
+						IOUtils.closeQuietly(contentInputStream);
+					}
 				}
 			}
 		}
 		return this.containerOpfData;
 	}
 
-	/**
-	 * Get the zip data content bytes from the epub+zip file. The content
-	 * is cached so it's performance safe so invoke this method frequently.
-	 */
-	protected byte[] getContent(final IResourceHandler ebookResource) throws IOException {
-		if (this.zipContent == null || isModified()) {
-			this.zipContent = ebookResource.getContent();
-		}
-		return this.zipContent;
-	}	
-	
 	protected boolean isModified() {
 		if(this.ebookResourceHandlerTimestamp != null && this.ebookResourceHandler.getModifiedAt() != null) {
 			return !this.ebookResourceHandler.getModifiedAt().equals(ebookResourceHandlerTimestamp);
@@ -348,25 +343,29 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * Read all entries from, the given zip data and creates a {@link Book} instance from them. 
 	 * @throws IOException
 	 */
-	protected Book readBook(final byte[] zipData, final IResourceHandler ebookResourceHandler, final boolean lazy) throws IOException {
-		final EpubReader reader = new EpubReader();
-		final Resources resources = new Resources();
-		final EpubZipFileFilter epubZipFileFilter = new EpubZipFileFilter(lazy);
-		final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, epubZipFileFilter, -1);
-		final List<String> lazyEntries = epubZipFileFilter.getLazyEntries();
-		
-		for(ZipDataEntry entry : extracted) {
-			Resource resource = new Resource(entry.data, entry.path);
-			resources.add(resource);
+	protected Book readBook(final InputStream zipData, final IResourceHandler ebookResourceHandler, final boolean lazy) throws IOException {
+		try {
+			final EpubReader reader = new EpubReader();
+			final Resources resources = new Resources();
+			final EpubZipFileFilter epubZipFileFilter = new EpubZipFileFilter(lazy);
+			final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, epubZipFileFilter, -1);
+			final List<String> lazyEntries = epubZipFileFilter.getLazyEntries();
+			
+			for(ZipDataEntry entry : extracted) {
+				Resource resource = new Resource(entry.data, entry.path);
+				resources.add(resource);
+			}
+			
+			for(String entry : lazyEntries) {
+				Resource resource = new Resource(new LazyZipEntryStream(ebookResourceHandler, entry), entry);
+				resources.add(resource);
+			}			
+			
+			final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
+			return epub;
+		} finally {
+			IOUtils.closeQuietly(zipData);
 		}
-		
-		for(String entry : lazyEntries) {
-			Resource resource = new Resource(new LazyZipEntryStream(ebookResourceHandler, entry), entry);
-			resources.add(resource);
-		}			
-		
-		final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
-		return epub;
 	}	
 	
 	/**
