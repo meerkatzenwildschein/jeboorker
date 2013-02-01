@@ -59,7 +59,7 @@ class ODocumentMapper<T> extends AbstractList<T> {
 	 * @return <code>true</code> if there is  a limit statement at the query and <code>false</code> otherwise.
 	 */
 	private boolean isQueryLimit() {
-		return sql!=null && sql.indexOf(" " + LIMIT + " ")!=-1;
+		return sql != null && sql.indexOf(" " + LIMIT + " ") != -1;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -21,6 +21,7 @@ import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
+import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -218,13 +219,15 @@ public class MainMenuBarController {
 	 * Creates the <code>copy to</code> submenu.
 	 */
 	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
-		JMenu copyToSubMenu = new JMenu(Bundle.getString("MainMenuBarController.copyToSubMenu"));
+		String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
+		JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 		copyToSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("copy_16.png")));
+		copyToSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 		
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, new int[0]);
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
 		copyToSubMenu.add(action);
 		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
 		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceLoader(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
@@ -234,7 +237,7 @@ public class MainMenuBarController {
 		
 		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
 		for(IResourceHandler externalResource : externalDriveResources) {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, new int[0]);
+			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
 			action.putValue(Action.NAME, externalResource.toString());
 			action.putValue("TARGET", externalResource);
 			action.putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("removable_drive_16.png")));

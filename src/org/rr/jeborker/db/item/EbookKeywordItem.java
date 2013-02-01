@@ -14,7 +14,7 @@ public class EbookKeywordItem implements IDBObject, Serializable {
 		this.setKeyword(keyword);
 	}
 
-	@Index(type= "FULLTEXT")
+	@Index(type = "FULLTEXT")
 	private String lowercaseKeyword;
 	
 	private String keyword;
