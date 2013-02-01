@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookKeywordItem;
@@ -23,6 +24,8 @@ import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
 import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -53,17 +56,15 @@ public class DefaultDBManager {
 			manager = new DefaultDBManager();
 		}
 		
+		/**
+		 * Just a workaround if there appears a ODatabaseRecordThreadLocal exception. Could happens with
+		 * threading. The database instance is not known to all threads.
+		 */
+		ODatabaseRecordThreadLocal.INSTANCE.set(manager.getDB().getUnderlying());
+		
 		return manager;
 	}
 	
-	/**
-	 * Just a workaround if there appears a ODatabaseRecordThreadLocal exception. Could happens with
-	 * threading. The database instance is not known to all threads.
-	 */
-	public void setLocalThreadDbInstance() {
-		ODatabaseRecordThreadLocal.INSTANCE.set(DefaultDBManager.getInstance().getDB().getUnderlying());		
-	}
-
 	private DefaultDBManager() {
 	}
 
@@ -141,28 +142,51 @@ public class DefaultDBManager {
 	public <T> void createIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
 		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(Index.class, itemClass);
 		for (Field field : dbViewFields) {
+			final String fieldName = field.getName();
 			try {
 				final String indexType = ((Index) field.getAnnotation(Index.class)).type();
 				final StringBuilder sql = new StringBuilder();
 
 				// CREATE PROPERTY User.id STRING
 				try {
-					sql.append("CREATE PROPERTY " + itemClass.getSimpleName() + "." + field.getName() + " STRING");
+					sql.append("CREATE PROPERTY " + itemClass.getSimpleName() + "." + fieldName + " STRING");
 					db.command(new OCommandSQL(sql.toString())).execute();
 				} catch (Exception e) {
-					LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + field.getName(), e);
+					LoggerFactory.log(Level.SEVERE, this, "could not create index property " + itemClass.getSimpleName() + "." + fieldName, e);
 				} finally {
 					sql.setLength(0);
 				}
 
 				// CREATE INDEX <name> [ON <class-name> (prop-names)] <type> [<key-type>]
-				sql.append("CREATE INDEX indexFor").append(itemClass.getSimpleName()).append(field.getName()).append(" ON ").append(itemClass.getSimpleName())
-						.append("(").append(field.getName()).append(") ").append(indexType);
+				String indexName = getIndexName(itemClass, fieldName);
+
+				sql.append("CREATE INDEX ").append(indexName).append(" ON ").append(itemClass.getSimpleName())
+						.append("(").append(fieldName).append(") ").append(indexType);
 				db.command(new OCommandSQL(sql.toString())).execute();
 			} catch (Exception e) {
-				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + field.getName(), e);
+				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + fieldName, e);
 			}
 		}
+	}
+	
+	/**
+	 * Creates a of an index for the given parameters.
+	 */
+	private String getIndexName(final Class<?> itemClass, String fieldName) {
+		String type = getIndexType(itemClass, fieldName);
+		return "indexFor" + itemClass.getSimpleName() + "_" + fieldName + "_" + type;
+	}
+	
+	/**
+	 * Get the index type for the given field.
+	 * @param itemClass The Class instance where the index type should be fetched from.
+	 * @param fieldName The name if the field
+	 * @return The index type name.
+	 */
+	private String getIndexType(final Class<?> itemClass, String fieldName) {
+		Field field = ReflectionUtils.getField(itemClass, fieldName);
+		final String indexType = ((Index) field.getAnnotation(Index.class)).type();
+		return indexType;
 	}
 
 	/**
@@ -224,7 +248,6 @@ public class DefaultDBManager {
 			// List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
 			// System.out.println(System.currentTimeMillis() - time);
 			// return new ODocumentMapper<T>(listResult, db);
-			System.out.println(sql);
 			return new ODocumentMapper<T>(sql, getDB());
 		} catch (NullPointerException e) {
 			return Collections.emptyList();
@@ -383,6 +406,24 @@ public class DefaultDBManager {
 	 * @return A list with all results.
 	 */
 	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
+		//first try to get the desired object using the index.
+		final String indexName = getIndexName(class1, field);
+		final OIndex index = getDB().getMetadata().getIndexManager().getIndex(indexName);
+		if(index != null && index.getType().equals("DICTIONARY")) {
+			Object idxDoc = index.get(value);
+			if(idxDoc instanceof ODocument) {
+				ORID identity = ((ODocument)idxDoc).getIdentity();
+				return Collections.singletonList((T) getDB().load(identity));
+			} else if(idxDoc instanceof ORecordId) {
+				ORID identity = ((ORecordId)idxDoc).getIdentity();
+				return Collections.singletonList((T) getDB().load(identity));
+			} else if(idxDoc == null) {
+				//index exists but has no entry
+				return Collections.emptyList();
+			}
+		}
+System.out.println("no index " + indexName);
+		//search with native query
 		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
 
 			@Override
@@ -390,8 +431,8 @@ public class DefaultDBManager {
 				return iRecord.field(field).eq(value).go();
 			}
 
-			@Override
 			public void end() {
+				//since orientdb 1.3
 			}
 
 		}.execute((Object[]) null);
@@ -424,8 +465,8 @@ public class DefaultDBManager {
 	 *            The class for the new {@link IDBObject}.
 	 * @return The desired object instance.
 	 */
-	public IDBObject newInstance(Class<? extends IDBObject> item) {
-		return getDB().newInstance(item);
+	public <T> T newInstance(Class<T> item) {
+		return (T) getDB().newInstance(item);
 	}
 	
 	/**

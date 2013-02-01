@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -684,6 +686,19 @@ public class MainController {
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
 		}
+	}
+	
+	/**
+	 * Get the name of the component that currently has the focus
+	 * @return The name of the focus component.
+	 */
+	public boolean isMainTableFocused() {
+		JFrame mainWindow = MainController.getController().getMainWindow();
+		Component focusOwner = mainWindow.getFocusOwner();
+		if(focusOwner != null && focusOwner instanceof JTable && "MainTable".equals(focusOwner.getName())) {
+			return true;
+		}
+		return false;
 	}
 	
 	private void setImage(final byte[] cover, final EbookPropertyItem ebookPropertyItem) {

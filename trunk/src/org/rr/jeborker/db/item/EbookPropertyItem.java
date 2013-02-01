@@ -28,7 +28,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	@ViewField(name = "file name", orderPriority = 0)
 	@ProtectedField
-	@Index(type= "FULLTEXT")
+	@Index(type= "DICTIONARY")
 	private String file;
 	
 	/**
@@ -36,7 +36,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	@ViewField(name = "Base Path", orderPriority = 0)
 	@ProtectedField
-	@Index(type= "FULLTEXT")
+	@Index(type= "DICTIONARY")
 	private String basePath;
 	
 	/**
@@ -44,21 +44,18 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 */
 	@ViewField(name = "Mime type", orderPriority = 0)
 	@ProtectedField
-	@Index(type= "FULLTEXT")
 	private String mimeType;
 	
 	/**
 	 * Title of the ebook. This property is ready from the ebook meta data.
 	 */
 	@ViewField(name = "Title", orderPriority = 99)
-	@Index(type= "FULLTEXT")
 	private String title;
 	
 	/**
 	 * Language of the ebook
 	 */
 	@ViewField(name = "Language", orderPriority = 30)
-	@Index(type= "FULLTEXT")
 	private String language;
 	
 	/**
@@ -76,7 +73,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * One of the authors of the ebook.
 	 */
-	@Index(type= "FULLTEXT")
 	@ViewField(name = "Author", orderPriority = 101)
 	private String author;
 	
@@ -84,7 +80,6 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * The author's name in a good sortable manner (last name first if possible)
 	 */
 	@ViewField(name = "Author Sort", orderPriority = 100)
-	@Index(type= "FULLTEXT")
 	private String authorSort;	
 
 	/**
@@ -96,14 +91,12 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * ISBN number of the ebook
 	 */
 	@ViewField(name = "ISBN", orderPriority = 50)
-	@Index(type= "FULLTEXT")
 	private String isbn;
 	
 	/**
 	 * Description / summary of the book.
 	 */
 	@ViewField(name = "Description", orderPriority = 20)
-	@Index(type= "FULLTEXT")
 	private String description;
 	
 	/**
@@ -116,28 +109,24 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * publisher of the ebook.
 	 */
 	@ViewField(name = "Publisher", orderPriority = 80)
-	@Index(type= "FULLTEXT")
 	private String publisher;
 	
 	/**
 	 * The subject is for example "Belletristik/Krimis, Thriller, Spionage"
 	 */
 	@ViewField(name = "Genre", orderPriority = 90)
-	@Index(type= "FULLTEXT")
 	private String genre;
 	
 	/**
 	 * If the ebook is part of a series like a trilogy, the name of the serie could be stored here.
 	 */
 	@ViewField(name = "Series name", orderPriority = 90)
-	@Index(type= "FULLTEXT")
 	private String seriesName;
 	
 	/**
 	 * If the ebook is part of a series like a trilogy, the number of the serie could be stored here.
 	 */
 	@ViewField(name = "Series index", orderPriority = 89)
-	@Index(type= "FULLTEXT")
 	private String seriesIndex;
 	
 	/**
@@ -150,21 +139,18 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * Something like "All rights reserved" 
 	 */
 	@ViewField(name = "Rights", orderPriority = 10)
-	@Index(type= "FULLTEXT")
 	private String rights;
 	
 	/**
 	 * The release scope for the book. For example "Germany"
 	 */
 	@ViewField(name = "Coverage", orderPriority = 10)
-	@Index(type= "FULLTEXT")
 	private String coverage;
 	
 	/**
 	 * age suggestion. Something like '12-13' or simple '12'.
 	 */
 	@ViewField(name = "Age suggestion", orderPriority = 80)
-	@Index(type= "FULLTEXT")
 	private String ageSuggestion;
 	
 	/**

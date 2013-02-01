@@ -12,8 +12,12 @@ import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.jeborker.db.DefaultDBManager;
+import org.rr.jeborker.db.item.PreferenceItem;
 
 public class JeboorkerPreferences {
+	
+	private static final String BASE_PATH = "basePath";
 	
 	private static final Preferences APP_NODE;
 	static {
@@ -22,13 +26,14 @@ public class JeboorkerPreferences {
 	}
 
 	public static void addBasePath(final String path) {
-		String basePath = APP_NODE.get("basePath", "");
-		if(basePath.length()==0) {
+		String basePath = getEntryString(BASE_PATH);
+		if (basePath.length() == 0) {
 			basePath = path;
 		} else {
 			basePath += (File.pathSeparator + path);
 		}
-		APP_NODE.put("basePath", basePath);
+		
+		addEntryString(BASE_PATH, basePath);
 	}
 	
 	/**
@@ -50,7 +55,7 @@ public class JeboorkerPreferences {
 			newBasePath.deleteCharAt(newBasePath.length()-1);
 		}
 		
-		APP_NODE.put("basePath", newBasePath.toString());
+		addEntryString(BASE_PATH, newBasePath.toString());
 	}	
 	
 	/**
@@ -58,10 +63,10 @@ public class JeboorkerPreferences {
 	 * @return The stored base path entries. never returns <code>null</code>.
 	 */
 	public static List<String> getBasePath() {
-		String basePath = APP_NODE.get("basePath", "");
+		String basePath = getEntryString(BASE_PATH);
 		if(basePath.length() == 0) {
 			return Collections.emptyList();
-		} else if(basePath.indexOf(File.pathSeparator)==-1) {
+		} else if (basePath.indexOf(File.pathSeparator) == -1) {
 			return Collections.singletonList(basePath);
 		} else {
 			String[] split = basePath.split(File.pathSeparator);
@@ -75,7 +80,7 @@ public class JeboorkerPreferences {
 	 * @param value The value which can be accessed with the given key.
 	 */
 	public static void addEntryString(final String key, final String value) {
-		APP_NODE.put(key, value);
+		addEntryToDB(key, value);
 	}
 	
 	/**
@@ -84,7 +89,12 @@ public class JeboorkerPreferences {
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static String getEntryString(final String key) {
-		return APP_NODE.get(key, "");
+		String result;
+		if((result = getEntryFromDB(key)) != null) {
+			return result;
+		} else {
+			return APP_NODE.get(key, "");
+		}
 	}
 	
 	/**
@@ -93,7 +103,7 @@ public class JeboorkerPreferences {
 	 * @param value The value which can be accessed with the given key.
 	 */
 	public static void addEntryNumber(final String key, final Number value) {
-		APP_NODE.put(key, String.valueOf(value.doubleValue()));
+		addEntryToDB(key, String.valueOf(value.doubleValue()));
 	}
 	
 	/**
@@ -102,9 +112,14 @@ public class JeboorkerPreferences {
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static Number getEntryAsNumber(final String key) {
-		String value = APP_NODE.get(key, "");
-		if(value!=null && value.length()>0) {
-			return Double.valueOf(APP_NODE.get(key, ""));
+		String result;
+		if((result = getEntryFromDB(key)) != null) {
+		} else {
+			result = APP_NODE.get(key, "");
+		}
+		
+		if(result != null && result.length() > 0) {
+			return Double.valueOf(result);
 		} else {
 			return null;
 		}
@@ -120,6 +135,42 @@ public class JeboorkerPreferences {
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
+	}
+	
+	/**
+	 * Fetch a previously stored string value with it's key from the DB.
+	 * @param key The key to access the value.
+	 * @return The desired value or <code>null</code> if the value wasn't stored.
+	 */	
+	private static String getEntryFromDB(final String key) {
+		final DefaultDBManager db = DefaultDBManager.getInstance();
+		final List<PreferenceItem> result = db.getObject(PreferenceItem.class, "name", key);
+		
+		if(result.isEmpty()) {
+			return null;
+		} else {
+			return result.get(0).getValue();
+		}
+	}
+	
+	private static void addEntryToDB(final String key, final String value) {
+		final DefaultDBManager db = DefaultDBManager.getInstance();
+		final PreferenceItem newPreferenceItem = db.newInstance(PreferenceItem.class);
+		
+		newPreferenceItem.setName(key);
+		newPreferenceItem.setValue(value);
+		
+		deleteEntryFromDB(key);
+		db.storeObject(newPreferenceItem);
+		APP_NODE.remove(key);
+	}
+	
+	private static void deleteEntryFromDB(final String key) {
+		final DefaultDBManager db = DefaultDBManager.getInstance();
+		final List<PreferenceItem> result = db.getObject(PreferenceItem.class, "name", key);
+		for(PreferenceItem item : result) {
+			db.deleteObject(item);
+		}
 	}
 	
 	/**

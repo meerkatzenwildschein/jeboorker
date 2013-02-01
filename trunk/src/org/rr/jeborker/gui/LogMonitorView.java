@@ -18,6 +18,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;
 import javax.swing.JScrollPane;
 
@@ -38,6 +39,7 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 	}
 	
 	private void initialize() {
+		setTitle(Jeboorker.app + " " + " Logfile");
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
@@ -59,7 +61,7 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
 		
-		btnCopy = new JButton("Copy");
+		btnCopy = new JButton(Bundle.getString("LogMonitorView.copy"));
 		GridBagConstraints gbc_btnCopy = new GridBagConstraints();
 		gbc_btnCopy.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCopy.gridx = 1;
@@ -75,7 +77,7 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 			}
 		});
 		
-		btnClose = new JButton("Close");
+		btnClose = new JButton(Bundle.getString("LogMonitorView.close"));
 		GridBagConstraints gbc_btnClose = new GridBagConstraints();
 		gbc_btnClose.gridx = 2;
 		gbc_btnClose.gridy = 1;

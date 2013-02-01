@@ -1,10 +1,15 @@
 package org.rr.jeborker.db.item;
 
-public class PreferenceItem {
+import java.io.Serializable;
 
-	@Index(type= "FULLTEXT")
+import org.rr.jeborker.db.IDBObject;
+
+public class PreferenceItem implements IDBObject, Serializable {
+
+	@Index(type= "DICTIONARY")
 	private String name;
 	
+	@Index(type= "DICTIONARY")
 	private String value;
 
 	public String getName() {

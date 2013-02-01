@@ -41,7 +41,7 @@ public class ActionFactory {
 	
 	public static enum COMMON_ACTION_TYPES {
 		ADD_BASE_PATH_ACTION, REMOVE_BASE_PATH_ACTION, REFRESH_BASE_PATH_ACTION, SHOW_HIDE_BASE_PATH_ACTION, REFRESH_ENTRY_ACTION, QUIT_ACTION, SEARCH_ACTION, REMOVE_METADATA_ENTRY_ACTION, SAVE_METADATA_ACTION, OPEN_FOLDER_ACTION,
-		OPEN_FILE_ACTION, DELETE_FILE_ACTION, VIEW_LOG_MONITOR_ACTION
+		OPEN_FILE_ACTION, DELETE_FILE_ACTION, VIEW_LOG_MONITOR_ACTION, COPY_TO_CLIPBOARD_ACTION, PASTE_FROM_CLIPBOARD_ACTION
 	}
 	
 	public static enum DYNAMIC_ACTION_TYPES implements ActionType {
@@ -243,6 +243,42 @@ public class ActionFactory {
 			public boolean hasMultiSelectionSupport() {
 				return true;
 			}			
+		},
+		COPY_TO_CLIPBOARD_ACTION {
+			
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return CopyToClipboardAction.class;
+			}
+			
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				return item.getResourceHandler().isFileResource() &&
+						CopyToClipboardAction.hasValidCopySelection();
+			}	
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
+		},
+		PASTE_FROM_CLIPBOARD_ACTION {
+			
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return PasteFromClipboardAction.class;
+			}
+			
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				return PasteFromClipboardAction.hasValidClipboardContent() &&
+				item.getResourceHandler().isFileResource();
+			}	
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return false;
+			}			
 		}
 	}	
 	
@@ -288,7 +324,12 @@ public class ActionFactory {
 			case VIEW_LOG_MONITOR_ACTION:
 				action = new ShowLogAction(text);
 				break;
-				
+			case COPY_TO_CLIPBOARD_ACTION:
+				action = new CopyToClipboardAction(null);
+				break;
+			case PASTE_FROM_CLIPBOARD_ACTION:
+				action = new PasteFromClipboardAction(null);
+				break;				
 		}
 		
 		if(action != null) {

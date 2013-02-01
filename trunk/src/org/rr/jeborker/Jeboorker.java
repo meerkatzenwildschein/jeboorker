@@ -32,6 +32,8 @@ public class Jeboorker {
 	public static boolean isRuntime = false;
 
 	public static String version = "0.2.4";
+	
+	public static String app = "Jeboorker";
 
 	private static MainController mainController = null; 
 	

@@ -114,9 +114,15 @@ class MultiActionWrapper extends AbstractAction {
 		values.put(key, newValue);
 	}
 	
+	@Override
+	public Object getValue(String key) {
+		return firstActionInstance.getValue(key);
+	}	
+	
 	private void transferValues(Action objectInstance) {
 		for (Entry<String, Object> e : values.entrySet()) {
 			objectInstance.putValue(e.getKey(), e.getValue());
-		}		
+		}	
 	}
+
 }

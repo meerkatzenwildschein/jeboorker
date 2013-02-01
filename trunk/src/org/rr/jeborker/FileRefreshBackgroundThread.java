@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
@@ -59,7 +58,6 @@ public class FileRefreshBackgroundThread extends Thread {
 					EbookPropertyItem ebookPropertyItem = null;
 					try {
 						ebookPropertyItem = items.remove(0);
-						DefaultDBManager.getInstance().setLocalThreadDbInstance();
 						this.processItem(ebookPropertyItem);
 					} catch(Exception e) {
 						LoggerFactory.log(Level.WARNING, this, "Failed to handle " + ebookPropertyItem + " in background process", e);

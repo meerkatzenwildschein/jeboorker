@@ -8,23 +8,23 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.ActionMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -43,19 +43,15 @@ import javax.swing.border.EmptyBorder;
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.button.JMenuButton;
+import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
-import org.rr.jeborker.gui.action.ActionUtils;
+import org.rr.jeborker.gui.action.PasteFromClipboardAction;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -114,13 +110,27 @@ public class MainView extends JFrame{
 	 */
 	public MainView() {
 		initialize();
+		initializeGlobalKeystrokes();
 	}
 
+	private void initializeGlobalKeystrokes() {
+		final InputMap inputMap = this.getRootPane().getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW);
+		final ActionMap actionMap = this.getRootPane().getActionMap();
+		
+		KeyStroke quitKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK);
+		inputMap.put(quitKeyStroke, "QUIT");
+		actionMap.put("QUIT", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
+		
+		KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK);
+		inputMap.put(saveKeyStroke, "SAVE");
+		actionMap.put("SAVE", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));		
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this.setTitle("Jeboorker v" + Jeboorker.version);
+		this.setTitle(Jeboorker.app + " " + Jeboorker.version);
 		this.setBounds(100, 100, 792, 622);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
@@ -165,6 +175,7 @@ public class MainView extends JFrame{
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
 		
 		table = new JTable();
+		table.setName("MainTable");
 		table.setRowHeight(74);
 		table.setModel(new EbookPropertyDBTableModel());
 		table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
@@ -172,6 +183,10 @@ public class MainView extends JFrame{
 		table.setTableHeader(null);
 		table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
 		table.setDragEnabled(true);
+		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
+		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
+		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
 		table.setTransferHandler(new TransferHandler() {
 
 			private static final long serialVersionUID = -371360766111031218L;
@@ -202,58 +217,8 @@ public class MainView extends JFrame{
                 }
 
                 JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-                EbookPropertyDBTableModel listModel = (EbookPropertyDBTableModel) table.getModel();
-                int index = dl.getRow();
-                // Get the current string under the drop.
-                EbookPropertyItem value = (EbookPropertyItem) listModel.getValueAt(index, 0);
-
-                // Get the string that is being dropped.
-                try {
-                	IResourceHandler targetRecourceDirectory = value.getResourceHandler().getParentResource();
-                	int dropRow = dl.getRow();
-                	Transferable t = info.getTransferable();
-                	List<File> transferedFiles = Collections.emptyList();
-                	if(info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                		String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                		transferedFiles = getFileList(data);
-                	} else if(info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                		transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);                		
-                	}
-                	for(File splitDataItem : transferedFiles) {
-                		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(splitDataItem);
-                		IResourceHandler targetResource = ResourceHandlerFactory.getResourceLoader(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
-                		if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
-                			sourceResource.copyTo(targetResource, false);
-                			EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
-                			ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-                		} else {
-                			if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
-                			} else {
-                				LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
-                			}
-                		}
-            	}
-                } 
-                catch (Exception e) { return false; }
-
-                return true;
-            }
-            
-            private List<File> getFileList(String data) {
-            	ArrayList<File> result = new ArrayList<File>();
-            	data = data.replace("\r", "");
-            	List<String> splitData = ListUtils.split(data, '\n');
-            	for(String splitDataItem : splitData) {
-            		if(!StringUtils.toString(splitDataItem).trim().isEmpty()) {
-            			try {
-							result.add(new File(new URI(splitDataItem)));
-						} catch (URISyntaxException e) {
-							LoggerFactory.getLogger().log(Level.INFO, "Could not format " + splitDataItem);
-						}
-            		}
-            	}            	
-            	return result;
+                int dropRow = dl.getRow();
+                return PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), dropRow);
             }
             
             public int getSourceActions(JComponent c) {
@@ -280,9 +245,9 @@ public class MainView extends JFrame{
                 }    
                 
                 if(CommonUtils.isLinux()) {
-                	return new URIListTransferable(uriList);
+                	return new URIListTransferable(uriList, null);
                 } else {
-                	return new TransferableFile(files);
+                	return new FileTransferable(files);
                 }
             }
         });
@@ -372,8 +337,6 @@ public class MainView extends JFrame{
 				propertySheet.addToolbarComponent(removeMetadataButton);
 				
 				saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
-				saveMetadataButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), "PRESSED");
-				saveMetadataButton.getActionMap().put("PRESSED", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 				saveMetadataButton.setText("");
 				propertySheet.addToolbarComponent(saveMetadataButton);				
 				
@@ -414,6 +377,7 @@ public class MainView extends JFrame{
 				imageViewerPanel.add(imageViewer, BorderLayout.CENTER);
 				propertySheetImageSplitPane.setRightComponent(imageViewerPanel);
 				propertySheetImageSplitPane.setLeftComponent(sheetPanel);
+				propertySheetImageSplitPane.setDividerLocation(getSize().height / 2);
 				
 				mainSplitPane.setDividerLocation(getSize().width - 220);
 				
@@ -451,32 +415,4 @@ public class MainView extends JFrame{
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
-	public class TransferableFile implements Transferable
-	{
-	   private List<String> fileList ;
-
-	   public TransferableFile(List<String> files) {
-	      fileList = files;
-	   }
-
-	   // Returns an object which represents the data to be transferred.
-	   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-	      if( flavor.equals(DataFlavor.javaFileListFlavor) )
-	         return fileList ;
-
-	      throw new UnsupportedFlavorException(flavor);
-	   }
-
-	   // Returns an array of DataFlavor objects indicating the flavors
-	   // the data can be provided in.
-	   public DataFlavor[] getTransferDataFlavors() {
-	      return new DataFlavor[] {DataFlavor.javaFileListFlavor} ;
-	   }
-
-	   // Returns whether or not the specified data flavor is supported for this object.
-	   public boolean isDataFlavorSupported(DataFlavor flavor) {
-	      return flavor.equals(DataFlavor.javaFileListFlavor) ;
-	   }
-	}	
-	
 }
