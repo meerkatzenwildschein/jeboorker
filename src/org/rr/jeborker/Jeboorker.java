@@ -31,7 +31,7 @@ public class Jeboorker {
 
 	public static boolean isRuntime = false;
 
-	public static String version = "0.2.4";
+	public static String version = "0.2.5";
 	
 	public static String app = "Jeboorker";
 
@@ -148,21 +148,6 @@ public class Jeboorker {
 			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
 			System.exit(-1);
 		} 
-	}
-	
-	/**
-	 * Load native resource file
-	 */
-	private static void loadDll(String path) {
-		try {
-			if (ReflectionUtils.is64bit()) {
-				System.loadLibrary(path + "libjmupdf64.so");
-			} else {
-				System.loadLibrary(path + "libjmupdf32.so");
-			}
-		} catch (Exception e) {
-			System.out.println("Native library could not be loaded.");
-		}
 	}
 
 	/**
