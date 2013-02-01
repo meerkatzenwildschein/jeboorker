@@ -394,6 +394,22 @@ public class ReflectionUtils implements Serializable {
 	}
 	
 	/**
+	 * Get the field from the given class with the given name. 
+	 * @param clazz The class wehere the Field instance shoudl be fetched from.
+	 * @param name The name of the desired field. 
+	 * @return The desired Field instance or <code>null</code> if no such field could be found.
+	 */
+	public static Field getField(final Class<?> clazz, String name) {
+		List<Field> fields = getFields(clazz, VISIBILITY_VISIBLE_ALL);
+		for(Field field : fields) {
+			if(field.getName().equals(name)) {
+				return field;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Fetches all Fields from the specified class.
 	 * 
 	 * @param clazz The class where the fields should be fetched from.

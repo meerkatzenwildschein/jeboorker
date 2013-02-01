@@ -13,6 +13,8 @@ import javax.swing.JList;
 import javax.swing.UIManager;
 
 import org.rr.commons.utils.MathUtils;
+import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.UtilConstants;
 
 public class SwingUtils {
 	/**
@@ -178,4 +180,31 @@ public class SwingUtils {
 		window.setLocation((screenSize.width - size.width) / 2, (screenSize.height - size.height) / 2);
 	}
 	
+	/**
+	 * Get the mnemonic from the given text. The mnemonic is marked by a leading & character.
+	 * @param text The mnemonic search text. 
+	 * @return The mnemonic or -1 if no mnemonic could be found.
+	 */
+	public static int getMnemonicKeyCode(String text) {
+		for(int i = 0 ; i < text.length(); i++) {
+			char c = text.charAt(i);
+			if(c == '&') {
+				try {
+					return (int) text.charAt(i + 1);
+				} catch(IndexOutOfBoundsException e) {
+					return -1;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Removes the mnemonic marker from the given string and returnes the result.
+	 * @param text The text where the marker should be removed from.
+	 * @return The text where the first mnemonic char is removed.
+	 */
+	public static String removeMnemonicMarker(String text) {
+		return StringUtils.replace(text, "&", "", 0, 1, UtilConstants.COMPARE_BINARY);
+	}
 }
