@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import javax.swing.SwingWorker;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.jeborker.db.DefaultDBManager;
 
 
 
@@ -28,10 +29,11 @@ public class ActionEventQueue {
 	
 				@Override
 				protected Void doInBackground() {
+					DefaultDBManager.setDefaultDBThreadInstance();
 					while(queue.size() > 0) {
 						try {
-						QueueableActionHolder removed = queue.remove(0);
-						removed.action.invokeRealAction(removed.event);
+							QueueableActionHolder removed = queue.remove(0);
+							removed.action.invokeRealAction(removed.event);
 						} catch(Throwable e) {
 							LoggerFactory.getLogger().log(Level.SEVERE, "Action has failed" , e);
 						}

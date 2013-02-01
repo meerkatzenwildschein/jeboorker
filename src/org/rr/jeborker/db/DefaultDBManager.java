@@ -65,6 +65,14 @@ public class DefaultDBManager {
 		return manager;
 	}
 	
+	/**
+	 * Just a workaround if there appears a ODatabaseRecordThreadLocal exception. Could happens with
+	 * threading. The database instance is not known to all threads.
+	 */	
+	public static void setDefaultDBThreadInstance() {
+		ODatabaseRecordThreadLocal.INSTANCE.set(manager.getDB().getUnderlying());
+	}
+	
 	private DefaultDBManager() {
 	}
 
