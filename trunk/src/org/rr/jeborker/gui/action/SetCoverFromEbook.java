@@ -9,13 +9,13 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
+import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageZipFileFetcherFactory;
 import org.rr.commons.swing.dialogs.ImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
@@ -29,10 +29,12 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 
 	SetCoverFromEbook(IResourceHandler resourceHandler) {
 		super(resourceHandler);
-		putValue(Action.NAME, Bundle.getString("SetCoverFromEbookAction.name"));
+		String name = Bundle.getString("SetCoverFromEbookAction.name");
+		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_ebook_16.png")));
 		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_ebook_22.png")));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
+		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 
 	@Override

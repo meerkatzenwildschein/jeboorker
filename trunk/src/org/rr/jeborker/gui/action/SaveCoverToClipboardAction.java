@@ -11,6 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.dnd.ImageTransferable;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -18,9 +19,11 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 public class SaveCoverToClipboardAction extends AbstractAction implements ClipboardOwner {
 
 	SaveCoverToClipboardAction(String text) {
-		putValue(Action.NAME, Bundle.getString("SaveCoverToClipboardAction.name"));
+		String name = Bundle.getString("SaveCoverToClipboardAction.name");
+		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("copy_16.png")));
 		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("copy_22.png")));
+		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 
 	@Override
