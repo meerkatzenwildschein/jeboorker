@@ -30,15 +30,34 @@ public class InsertElementListTest extends TestCase {
 		insertList = new InsertElementList<String>(defaultList, insertValue, 1);
 		assertEquals(insertValue, insertList.get(1));
 		
-		printList(insertList);
-		
 		insertList = new InsertElementList<String>(defaultList, insertValue, 8);
 		assertEquals(insertValue, insertList.get(8));
 	}
 	
+	public void testAdd() {
+		String insertValue = "insertValue";
+		InsertElementList<String> insertList = new InsertElementList<String>(defaultList, insertValue, 3);
+		insertList.add(insertValue);
+		assertEquals(insertValue, insertList.get(insertList.size()-1));
+		
+		insertList.add(2, "i2");
+		insertList.add(3, "i3");
+		insertList.add(5, "i5");
+		
+		assertEquals("i2", insertList.get(2));
+		assertEquals("i3", insertList.get(3));
+		assertEquals("i5", insertList.get(5));
+		assertEquals(insertValue, insertList.get(4));
+		
+		assertEquals(2, insertList.indexOf("i2"));
+		assertEquals(5, insertList.indexOf("i5"));
+		printList(insertList);
+	}
+	
 	private void printList(List<String> list) {
+		int count = 0;
 		for(String s : list) {
-			System.out.println(s);
+			System.out.println(count++ + ":" + s);
 		}
 	}
 }

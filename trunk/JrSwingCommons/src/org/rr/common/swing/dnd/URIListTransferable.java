@@ -8,17 +8,24 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import org.rr.commons.utils.StringUtils;
+
 public class URIListTransferable implements Transferable {
 	
 	private List<URI> uris;
 	
-	public URIListTransferable(List<URI> uris) {
+	private String action;
+	
+	private static String LINE_BREAK = "\n";
+	
+	public URIListTransferable(List<URI> uris, String action) {
 		this.uris = uris;
+		this.action = action;
 	}
 
     public DataFlavor[] getTransferDataFlavors() {
         try {
-			return new DataFlavor[] { new DataFlavor("text/uri-list") };
+			return new DataFlavor[] { new DataFlavor("text/uri-list"), new DataFlavor("x-special/gnome-copied-files") };
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -26,19 +33,34 @@ public class URIListTransferable implements Transferable {
     }
 
     public boolean isDataFlavorSupported(DataFlavor flavor) {
-   	 boolean result = flavor.getMimeType().indexOf("text/uri-list") != -1;                 	 
-   	 return result;
+      	 boolean result = flavor.getMimeType().indexOf("x-special/gnome-copied-files") != -1 ||
+        			flavor.getMimeType().indexOf("text/uri-list") != -1;                 	 
+        	 return result;
     }
 
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if (!isDataFlavorSupported(flavor)) {
             throw new UnsupportedFlavorException(flavor);
         }
-        StringBuilder result = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
         for(URI uri : uris) {
-        	result.append(uri.toString()).append("\r\n");
+        	String uriString = uri.toString();
+        	uriString = StringUtils.replace(uriString, "file:", "file://");
+        	buffer.append(uriString).append(LINE_BREAK);
+        }
+        String transferString = buffer.toString();
+        if(transferString.endsWith(LINE_BREAK)) {
+        	transferString = transferString.substring(0, transferString.length() - LINE_BREAK.length());
         }
         
-        return new ByteArrayInputStream(result.toString().getBytes());
+        String addAction = addAction(transferString);
+        return new ByteArrayInputStream(addAction.getBytes());
+    }
+    
+    private String addAction(String transferString) {
+    	if(action != null && action.length() > 0) {
+    		return "copy\n" + transferString;
+    	}
+    	return transferString;
     }
 }

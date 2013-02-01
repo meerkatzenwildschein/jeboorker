@@ -1,6 +1,7 @@
 package org.rr.commons.collection;
 
 import java.util.AbstractList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,12 +22,11 @@ public class InsertElementList<E> extends AbstractList<E> {
 	
 	@Override
 	public E get(int index) {
-		if(idx > index) {
-			return list.get(index);
-		} else if(idx == index) {
+		int internalListIndex = getInternalListIndex(index);
+		if(internalListIndex == -1) {
 			return value;
 		} else {
-			return list.get(index - 1);
+			return list.get(internalListIndex);
 		}
 	}
 
@@ -35,4 +35,35 @@ public class InsertElementList<E> extends AbstractList<E> {
 		return list.size() + 1;
 	}
 
+	@Override
+	public boolean add(E e) {
+		return list.add(e);
+	}
+
+	@Override
+	public void add(int index, E e) {
+		if(index < idx) {
+			list.add(index, e);
+		} else if(index == idx) {
+			idx++;
+			list.add(index, e);
+		} else {
+			list.add(index - 1, e);
+		}
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		return list.addAll(c);
+	}
+
+	private int getInternalListIndex(int index) {
+		if(idx > index) {
+			return index;
+		} else if(idx == index) {
+			return -1; //mapped object
+		} else {
+			return index - 1;
+		}			
+	}
 }
