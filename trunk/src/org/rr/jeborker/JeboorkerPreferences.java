@@ -89,12 +89,14 @@ public class JeboorkerPreferences {
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static String getEntryString(final String key) {
-		String result;
-		if((result = getEntryFromDB(key)) != null) {
-			return result;
-		} else {
-			return APP_NODE.get(key, "");
-		}
+		if(key != null) {
+			String result;
+			if((result = getEntryFromDB(key)) != null) {
+				return result;
+			} else {
+				return APP_NODE.get(key, "");
+			}
+		} return "";
 	}
 	
 	/**

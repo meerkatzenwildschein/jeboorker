@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 
 import nl.siegmann.epublib.domain.Author;
@@ -27,6 +28,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.zip.ZipUtils;
+import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
@@ -145,61 +147,99 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	
 	private void setCover(final Book epub, final EpubLibMetadataProperty<?> meta, final byte[] cover) {
 		try {
-			final Resource oldCoverImage = epub.getCoverImage();
-			
 			if(meta.getHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME) != null) {
-				String coverName = (String) meta.getHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME);
-				if(coverName.indexOf("//") != -1) {
-					coverName = coverName.substring(coverName.indexOf("//") + 2);
-				}
-				Resources resources = epub.getResources();
-				Resources unlistedResources = epub.getUnlistedResources();
-				Resource coverImage = resources.getByHref(coverName);
-				Resource unlistedCoverImage = unlistedResources.getByHref(coverName);
-				if(coverImage != null) {
-					epub.setCoverImage(coverImage);
-				} else if(unlistedCoverImage != null) {
-					String href = unlistedCoverImage.getHref();
-					unlistedResources.remove(href);
-					if(href.indexOf('/') != -1) {
-						href = href.substring(href.indexOf('/') + 1);
-					}
-					unlistedCoverImage.setHref(href);
-					epub.setCoverImage(unlistedCoverImage);
-				} else {
-					while(coverName.indexOf('/') != -1) {
-						coverName = coverName.substring(coverName.indexOf('/') + 1);
-						coverImage = resources.getByHref(coverName) != null ? resources.getByHref(coverName)  : unlistedResources.getByHref(coverName);
-						if(coverImage != null) {
-							epub.setCoverImage(coverImage);
-							break;
-						}
-					}
-				}
-			} else if(oldCoverImage != null) {
-				//replace old cover
-				final String targetConversionMime = oldCoverImage.getMediaType().getName();
-				final String oldCoverFileName = new File(oldCoverImage.getHref()).getName();
-				final IImageProvider coverImageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceLoader(oldCoverFileName, cover));
-				final byte[] imageBytes = ImageUtils.getImageBytes(coverImageProvider.getImage(), targetConversionMime);
-				oldCoverImage.setData(imageBytes);
-				epub.setCoverImage(oldCoverImage);
+				this.changeExistingCover(epub, meta);
 			} else {
-				//create new cover
-				final IResourceHandler imageResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("DummyImageCoverName", cover);
-				final String mimeType = imageResourceLoader.getMimeType();
-				final String fileExtension = mimeType.substring(mimeType.indexOf('/') + 1);
-				final Resource newCoverImage = new Resource(cover, new MediaType(mimeType, "." + mimeType.substring(mimeType.indexOf('/') + 1) ));
-				
-				String coverFilePath = getCoverFile(epub, "cover", fileExtension);
-				newCoverImage.setHref(coverFilePath);
-				newCoverImage.setId("cover");
-				epub.setCoverImage(newCoverImage);
+				final Resource oldCoverImage = epub.getCoverImage();
+				if(oldCoverImage != null) {
+					if(differes(oldCoverImage.getData(), cover)) {
+						String message = Bundle.getString("EPubLibMetadataWriter.overwriteCover.message");
+						String title = Bundle.getString("EPubLibMetadataWriter.overwriteCover.title");
+						int result = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_CANCEL_OPTION, "EPubLibMetadataWriter_Cover_Ovwerwrite_Key", -1);
+						 
+						if(result == JOptionPane.YES_OPTION) {
+							this.replaceOldCover(epub, cover, oldCoverImage);
+						} else if(result == JOptionPane.NO_OPTION) {
+							this.createNewCover(epub, cover);
+						} else {
+							return;
+						}						
+					} else {
+						epub.setCoverImage(oldCoverImage);
+					}
+				} else {
+					this.createNewCover(epub, cover);
+				}
 			}
 		} catch (Exception e) {
 			final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 			LoggerFactory.logWarning(this.getClass(), "could not write cover for " + ebookResourceHandler.getName(), e);
 		}			
+	}
+	
+	private boolean differes(byte[] source, byte[] target) {
+		if(source.length != target.length) {
+			return true;
+		}
+		for(int i = 0; i < source.length; i++) {
+			if(source[i] != target[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void createNewCover(final Book epub, final byte[] cover) throws IOException {
+		final IResourceHandler imageResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("DummyImageCoverName", cover);
+		final String mimeType = imageResourceLoader.getMimeType();
+		final String fileExtension = mimeType.substring(mimeType.indexOf('/') + 1);
+		final Resource newCoverImage = new Resource(cover, new MediaType(mimeType, "." + mimeType.substring(mimeType.indexOf('/') + 1) ));
+		
+		String coverFilePath = getCoverFile(epub, "cover", fileExtension);
+		newCoverImage.setHref(coverFilePath);
+		newCoverImage.setId("cover");
+		epub.setCoverImage(newCoverImage);
+	}
+
+	private void replaceOldCover(final Book epub, final byte[] cover, final Resource oldCoverImage) throws IOException {
+		final String targetConversionMime = oldCoverImage.getMediaType().getName();
+		final String oldCoverFileName = new File(oldCoverImage.getHref()).getName();
+		final IImageProvider coverImageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceLoader(oldCoverFileName, cover));
+		final byte[] imageBytes = ImageUtils.getImageBytes(coverImageProvider.getImage(), targetConversionMime);
+		oldCoverImage.setData(imageBytes);
+		epub.setCoverImage(oldCoverImage);
+	}
+
+	private void changeExistingCover(final Book epub, final EpubLibMetadataProperty<?> meta) {
+		//use existing cover
+		String coverName = (String) meta.getHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME);
+		if(coverName.indexOf("//") != -1) {
+			coverName = coverName.substring(coverName.indexOf("//") + 2);
+		}
+		Resources resources = epub.getResources();
+		Resources unlistedResources = epub.getUnlistedResources();
+		Resource coverImage = resources.getByHref(coverName);
+		Resource unlistedCoverImage = unlistedResources.getByHref(coverName);
+		if(coverImage != null) {
+			epub.setCoverImage(coverImage);
+		} else if(unlistedCoverImage != null) {
+			String href = unlistedCoverImage.getHref();
+			unlistedResources.remove(href);
+			if(href.indexOf('/') != -1) {
+				href = href.substring(href.indexOf('/') + 1);
+			}
+			unlistedCoverImage.setHref(href);
+			epub.setCoverImage(unlistedCoverImage);
+		} else {
+			while(coverName.indexOf('/') != -1) {
+				coverName = coverName.substring(coverName.indexOf('/') + 1);
+				coverImage = resources.getByHref(coverName) != null ? resources.getByHref(coverName)  : unlistedResources.getByHref(coverName);
+				if(coverImage != null) {
+					epub.setCoverImage(coverImage);
+					break;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -210,7 +250,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 		final Collection<Resource> resources = epub.getResources().getAll();
 		String path = "";
 		for(Resource resource : resources) {
-			if(resource.getMediaType().getName().startsWith("image")) {
+			if(resource.getMediaType() != null && resource.getMediaType().getName() != null && resource.getMediaType().getName().startsWith("image")) {
 				String hrefParent = new File(resource.getHref()).getParent();
 				if(hrefParent != null) {
 					path = hrefParent + "/";

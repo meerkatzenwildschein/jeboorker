@@ -26,10 +26,12 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -49,6 +51,7 @@ import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.PasteFromClipboardAction;
@@ -415,4 +418,38 @@ public class MainView extends JFrame{
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
+	/**
+	 * Shows a dialog to the user.
+	 * @param message The message of the dialog
+	 * @param title The dialog title.
+	 * @param option The dialog option: JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.YES_NO_OPTION, JOptionPane.OK_CANCEL_OPTION
+	 * @return 0: yes/ok, 1: no, 2:cancel, -1 none
+	 */
+	int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
+		Number showAgain = JeboorkerPreferences.getEntryAsNumber(showAgainKey);
+		if(showAgain == null) {
+		    int n;
+		    boolean dontShowAgain;
+		    if(showAgainKey != null) {
+			    JCheckBox checkbox = new JCheckBox(Bundle.getString("EborkerMainView.messagebox.showAgainMessage"));  
+			    Object[] params = {message, checkbox};  
+		    	n = JOptionPane.showConfirmDialog(this, params, title, option);
+		    	dontShowAgain = checkbox.isSelected();  
+		    } else {
+		    	n = JOptionPane.showConfirmDialog(this, message, title, option);
+		    	dontShowAgain = false;  		    	
+		    }
+		    
+		    if(dontShowAgain) {
+		    	if(defaultValue >= 0) {
+		    		JeboorkerPreferences.addEntryNumber(showAgainKey, defaultValue);
+		    	} else {
+		    		JeboorkerPreferences.addEntryNumber(showAgainKey, n);
+		    	}
+		    }
+			return n;
+		} else {
+			return showAgain.intValue();
+		}
+	}
 }

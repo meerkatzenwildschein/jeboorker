@@ -72,12 +72,14 @@ public class SortOrderComponentController {
 	 */
 	private void restoreProperties() {
 		String sortColumnOrder = JeboorkerPreferences.getEntryString("sortColumnOrder");
+		if(sortColumnOrder != null) {
 		if(sortColumnOrder.equalsIgnoreCase("asc")) {
 			ActionEvent e = new ActionEvent(ascButton, ActionEvent.ACTION_PERFORMED, null);
 			ascButton.getAction().actionPerformed(e);
 		} else if(sortColumnOrder.equalsIgnoreCase("desc")) {
 			ActionEvent e = new ActionEvent(descButton, ActionEvent.ACTION_PERFORMED, null);
 			descButton.getAction().actionPerformed(e);
+		}
 		}
 	}	
 }

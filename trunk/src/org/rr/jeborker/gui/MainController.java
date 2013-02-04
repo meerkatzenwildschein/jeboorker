@@ -727,5 +727,18 @@ public class MainController {
 			setImageViewerResource(null);
 		}
 	}	
+	
+	/**
+	 * Shows a dialog to the user.
+	 * @param message The message of the dialog
+	 * @param title The dialog title.
+	 * @param option The dialog option: JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.YES_NO_OPTION, JOptionPane.OK_CANCEL_OPTION
+	 * @param defaultValue The value which is stored if the user do not want to see the dialog again. 
+	 * 		-1 for store the result value instead.
+	 * @return 0: yes/ok, 1: no, 2:cancel, -1 none
+	 */
+	public int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
+		return mainWindow.showMessageBox(message, title, option, showAgainKey, defaultValue);
+	}
 }
 
