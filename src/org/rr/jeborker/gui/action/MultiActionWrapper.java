@@ -116,6 +116,9 @@ class MultiActionWrapper extends AbstractAction {
 	
 	@Override
 	public Object getValue(String key) {
+		if(super.getValue(key) != null) {
+			return super.getValue(key);
+		}
 		return firstActionInstance.getValue(key);
 	}	
 	

@@ -427,10 +427,10 @@ public class DefaultDBManager {
 				return Collections.singletonList((T) getDB().load(identity));
 			} else if(idxDoc == null) {
 				//index exists but has no entry
-				return Collections.emptyList();
+//				return Collections.emptyList();
 			}
 		}
-System.out.println("no index " + indexName);
+
 		//search with native query
 		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
 

@@ -254,6 +254,7 @@ public class Resource implements Serializable {
 	 */
 	public void setData(byte[] data) {
 		this.data = data;
+		this.in = null;
 	}
 	
 	/**
