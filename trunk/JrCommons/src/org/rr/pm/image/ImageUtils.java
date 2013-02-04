@@ -325,7 +325,7 @@ public class ImageUtils {
 	 * @return The croped image or the given one if no crop is needed.
 	 */
 	public static BufferedImage crop(BufferedImage image) {
-		if(image==null) {
+		if(image == null) {
 			return null;
 		}
 		
@@ -368,6 +368,9 @@ public class ImageUtils {
 				int cropedWidth = maxCol - minCol;
 				int cropedHeight = maxRow - minRow;
 				
+				if(cropedWidth < 10 || cropedHeight < 10) {
+					return image;
+				}
 				BufferedImage scaledImage = new BufferedImage(cropedWidth, cropedHeight, image.getType() != -1 ? image.getType() : BufferedImage.TYPE_INT_RGB);
 				Graphics scaledImageGraphics = scaledImage.getGraphics();
 				scaledImageGraphics.drawImage(image, 0, 0, scaledImage.getWidth(), scaledImage.getHeight(), minCol, minRow, maxCol, maxRow, null);
