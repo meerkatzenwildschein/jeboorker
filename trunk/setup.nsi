@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.2.4.0
+VIProductVersion 0.2.5.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -109,6 +109,12 @@ Section -Main SEC0000
     File lib\junique-1.0.4.jar
     File lib\jna-3.4.0.jar
     File lib\platform-3.4.0.jar
+    
+    SetOutPath $INSTDIR\lib\jmupdf
+    File lib\jmupdf\jmupdf.jar
+    File lib\jmupdf\jmupdf-viewer.jar
+    File lib\jmupdf\jmupdf32.dll
+    File lib\jmupdf\jmupdf64.dll
     
     SetOutPath $INSTDIR\lib\dropbox
     File lib\dropbox\dropbox-java-sdk-1.5.3.jar
