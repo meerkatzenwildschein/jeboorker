@@ -159,7 +159,8 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 	private static void writeIdentifiers(List<Identifier> identifiers, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException  {
 		Identifier bookIdIdentifier = Identifier.getBookIdIdentifier(identifiers);
 		if(bookIdIdentifier == null) {
-			return;
+			bookIdIdentifier = new Identifier();
+			identifiers.add(bookIdIdentifier);
 		}
 		
 		serializer.startTag(NAMESPACE_DUBLIN_CORE, DCTags.identifier);

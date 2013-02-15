@@ -15,7 +15,7 @@ import nl.siegmann.epublib.util.StringUtil;
  */
 public class MediatypeService {
 
-	public static final MediaType XHTML = new MediaType("application/xhtml+xml", ".xhtml", new String[] {".htm", ".html", ".xhtml"});
+	public static final MediaType XHTML = new MediaType("application/xhtml+xml", ".xhtml", new String[] {".htm", ".html", ".xhtml", ".xml"});
 	public static final MediaType EPUB = new MediaType("application/epub+zip", ".epub");
 	public static final MediaType NCX = new MediaType("application/x-dtbncx+xml", ".ncx");
 	
