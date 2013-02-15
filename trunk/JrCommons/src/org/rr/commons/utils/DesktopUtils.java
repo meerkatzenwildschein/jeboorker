@@ -16,7 +16,7 @@ public class DesktopUtils {
 	 */
 	public static boolean openFile(final File file) {
 		try {
-			if(CommonUtils.isLinux() && ResourceHandlerFactory.getResourceLoader("/usr/bin/xdg-open").exists()) {
+			if(CommonUtils.isLinux() && ResourceHandlerFactory.getResourceHandler("/usr/bin/xdg-open").exists()) {
 				//try with xdg-open from freedesktop.org which is installed with the xdg-utils package. 
 				CommandLine cl = CommandLine.parse("/usr/bin/xdg-open " + file.toURI().toString());
 				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	

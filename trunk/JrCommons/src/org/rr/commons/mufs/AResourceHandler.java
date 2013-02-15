@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -69,7 +68,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public IResourceHandler getTemporaryResource() {
 		try {
 			File tmp = File.createTempFile(this.getName(), ".tmp");
-			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(tmp);
+			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(tmp);
 			
 			temporaryResourceLoader.add(resourceLoader);
 			return resourceLoader;
@@ -323,7 +322,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		final long heapFreeSize = heapMemoryUsage.getCommitted() - heapMemoryUsage.getUsed();
 
 		if(heapFreeSize < (heapRequired * 1.2)) {
-			LoggerFactory.getLogger().log(Level.INFO , "Garbage collector triggered manually. " + heapFreeSize + " bytes remaining but " + heapRequired + " required for " + getName());
+//			LoggerFactory.getLogger().log(Level.INFO , "Garbage collector triggered manually. " + heapFreeSize + " bytes remaining but " + heapRequired + " required for " + getName());
 			System.gc();
 		}
 	}

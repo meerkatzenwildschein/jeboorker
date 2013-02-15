@@ -64,7 +64,7 @@ public interface IResourceHandler {
 	
 	/**
 	 * Creates a new Instance of the {@link IResourceHandler} with the given resource.
-	 * Better using {@link ResourceHandlerFactory#getResourceLoader(String)} but
+	 * Better using {@link ResourceHandlerFactory#getResourceHandler(String)} but
 	 * if you're shure you have the right {@link IResourceHandler} instance, it's possible
 	 * to create a new one of the same type.
 	 * 

@@ -44,7 +44,7 @@ public class FTPResourceHandlerTest {
 	
 	public static void testFTPResourcehandler() {
 		try {
-			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(target);
+			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(target);
 //			IResourceHandler[] listDirectoryResources = resourceLoader.getParentResource().listDirectoryResources();
 //			for (int i = 0; i < listDirectoryResources.length; i++) {
 //				System.out.println(listDirectoryResources[i].getName());
@@ -67,7 +67,7 @@ public class FTPResourceHandlerTest {
 	
 	public static void testFTPResourcehandler2() {
 		try {
-			IResourceHandler resourceLoader2 = ResourceHandlerFactory.getResourceLoader(target2);
+			IResourceHandler resourceLoader2 = ResourceHandlerFactory.getResourceHandler(target2);
 			
 			IResourceHandler[] listFileResources2 = resourceLoader2.listFileResources();
 		

@@ -13,7 +13,7 @@ abstract class AImageFetcherEntry implements IImageFetcherEntry {
 		if(thumbnailURL == null) {
 			throw new IOException("Empty URL");
 		}
-		final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(thumbnailURL);
+		final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(thumbnailURL);
 		try {
 			byte[] thumbnailBytes = resourceHandler.getContent();
 			return thumbnailBytes;
@@ -23,7 +23,7 @@ abstract class AImageFetcherEntry implements IImageFetcherEntry {
 	}	
 	
 	public byte[] getImageBytes() throws IOException {
-		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceLoader(getImageURL());
+		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(getImageURL());
 		try {
 			byte[] imageBytes = resourceHandler.getContent();
 			return imageBytes;

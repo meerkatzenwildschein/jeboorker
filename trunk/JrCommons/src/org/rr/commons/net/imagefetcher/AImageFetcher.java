@@ -25,7 +25,7 @@ abstract class AImageFetcher implements IImageFetcher {
 	protected static String getExternalIP() throws IOException {
 		for (String service : IP_SERVICES) {
 			try {
-				final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(service);
+				final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(service);
 				byte[] content = resourceLoader.getContent();
 				if(content != null) {
 					String ip = new String(content).replaceAll("[\\r\\n\\s]", "");
