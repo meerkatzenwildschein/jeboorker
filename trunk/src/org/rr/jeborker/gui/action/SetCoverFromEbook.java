@@ -1,7 +1,7 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
-import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
 
 import java.util.logging.Level;
 
@@ -45,7 +45,7 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 			
 			IImageFetcherFactory fetcher;
 			if(item != null) {
-				if(MIME_CBZ.equals(item.getMimeType()) || MIME_EPUB.equals(item.getMimeType())) {
+				if(MIME_CBZ.getMime().equals(item.getMimeType()) || MIME_EPUB.getMime().equals(item.getMimeType())) {
 					fetcher = new ImageZipFileFetcherFactory(item.getResourceHandler());
 				} else {
 					LoggerFactory.log(Level.WARNING, this, "No image fetcher instance for " + item.getResourceHandler());

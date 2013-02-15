@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.Action;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -114,7 +115,7 @@ public class ActionFactory {
 			public boolean canHandle(EbookPropertyItem item) {
 				String mime = item.getMimeType();
 				if(mime != null) {
-					if(mime.equals(MIME_EPUB)) {
+					if(mime.equals(MIME_EPUB.getMime())) {
 						return MetadataHandlerFactory.hasCoverWriterSupport(item.getResourceHandler());
 					} 
 				}
@@ -279,6 +280,23 @@ public class ActionFactory {
 			public boolean hasMultiSelectionSupport() {
 				return false;
 			}			
+		},
+		CONVERT_EBOOK_ACTION {
+			
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return ConvertEbookAction.class;
+			}
+			
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				return !ConverterFactory.getConverter(item.getResourceHandler()).isEmpty();
+			}	
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
 		}
 	}	
 	
@@ -367,7 +385,7 @@ public class ActionFactory {
 			canHandle = false;
 		}
 		
-		Action action = new MultiActionWrapper(type.getActionClass(), resourceHandlers, refreshRowsAfter);
+		Action action = new MultiActionWrapper(type.getActionClass(), items, resourceHandlers, refreshRowsAfter);
 		if(!canHandle) {
 			action.setEnabled(false);
 		}
@@ -393,4 +411,5 @@ public class ActionFactory {
 		}
 		return result;
 	}
+	
 }

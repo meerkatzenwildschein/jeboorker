@@ -19,7 +19,7 @@ public class FileRefreshBackgroundThread extends Thread {
 
 	private static final List<EbookPropertyItem> items = Collections.synchronizedList(new ArrayList<EbookPropertyItem>());
 
-	private static boolean isDisabled = false;
+	private static int isDisabled = 0;
 	
 	public FileRefreshBackgroundThread(Worker worker) {
 		super(worker);
@@ -34,7 +34,7 @@ public class FileRefreshBackgroundThread extends Thread {
 	}
 
 	public void addEbook(EbookPropertyItem item) {
-		if(!isDisabled) {
+		if(isDisabled == 0) {
 			items.add(item);
 		}
 	}
@@ -46,7 +46,11 @@ public class FileRefreshBackgroundThread extends Thread {
 	 *  to enable it.
 	 */
 	public static void setDisabled(boolean disabled) {
-		isDisabled = disabled; 
+		if(disabled) {
+			isDisabled ++;
+		} else {
+			isDisabled --;
+		}
 	}
 
 	private static class Worker implements Runnable {
@@ -54,7 +58,7 @@ public class FileRefreshBackgroundThread extends Thread {
 		@Override
 		public void run() {
 			while (true) {
-				while (!items.isEmpty()) {
+				while (!items.isEmpty() && isDisabled == 0) {
 					EbookPropertyItem ebookPropertyItem = null;
 					try {
 						ebookPropertyItem = items.remove(0);

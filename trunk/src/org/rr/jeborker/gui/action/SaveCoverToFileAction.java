@@ -62,7 +62,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 			JeboorkerPreferences.addEntryString(PATH_PREF_KEY, dir);
 			
 			String targetString = dir + File.separator + filename;
-			IResourceHandler targetRecource = ResourceHandlerFactory.getResourceLoader(targetString);
+			IResourceHandler targetRecource = ResourceHandlerFactory.getResourceHandler(targetString);
 			try {
 				imageViewerResource.copyTo(targetRecource, true);
 				MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("SaveCoverToFileAction.finished", new String[] {targetString}));

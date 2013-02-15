@@ -120,7 +120,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	}	
 	
 	public void loadProperties(EbookPropertyItem item) {
-		this.resourceHandler = ResourceHandlerFactory.getResourceLoader(item.getFile());
+		this.resourceHandler = ResourceHandlerFactory.getResourceHandler(item.getFile());
 		if(resourceHandler.exists()) {
 			this.reader = MetadataHandlerFactory.getReader(resourceHandler);
 			Property[] newProperties = createProperties(resourceHandler, item, reader);

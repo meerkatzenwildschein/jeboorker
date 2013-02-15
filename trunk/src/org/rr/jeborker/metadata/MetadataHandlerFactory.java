@@ -1,8 +1,8 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
-import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
-import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,11 +47,11 @@ public class MetadataHandlerFactory {
 		final String mimeType = resource.getMimeType();
 		if (mimeType != null) {
 			latestReader = null;
-			if(resource.getMimeType().equals(MIME_EPUB)) {
+			if(resource.getMimeType().equals(MIME_EPUB.getMime())) {
 				return latestReader = new EPubLibMetadataReader(resource);
-			} else if(resource.getMimeType().equals(MIME_PDF)) {
+			} else if(resource.getMimeType().equals(MIME_PDF.getMime())) {
 				return latestReader = new PDFCommonMetadataReader(resource);
-			} else if(resource.getMimeType().equals(MIME_CBZ)) {
+			} else if(resource.getMimeType().equals(MIME_CBZ.getMime())) {
 				return latestReader = new ComicBookMetadataReader(resource);
 			}
 		}
@@ -81,11 +81,11 @@ public class MetadataHandlerFactory {
 	public static IMetadataWriter getWriter(final IResourceHandler resource) {
 		final String mimeType = resource.getMimeType();
 		if(mimeType!=null) {
-			if(resource.getMimeType().equals(MIME_EPUB)) {
+			if(resource.getMimeType().equals(MIME_EPUB.getMime())) {
 				return wrap(new EPubLibMetadataWriter(resource));
-			} else if(resource.getMimeType().equals(MIME_PDF)) {
+			} else if(resource.getMimeType().equals(MIME_PDF.getMime())) {
 				return wrap(new PDFCommonMetadataWriter(resource));
-			} else if(resource.getMimeType().equals(MIME_CBZ)) {
+			} else if(resource.getMimeType().equals(MIME_CBZ.getMime())) {
 				return wrap(new ComicBookMetadataWriter(resource));
 			}
 		}
@@ -100,9 +100,9 @@ public class MetadataHandlerFactory {
 	public static boolean hasCoverWriterSupport(final IResourceHandler resourceHandler) {
 		final String mimeType = resourceHandler.getMimeType();
 		if(mimeType!=null) {
-			if(resourceHandler.getMimeType().equals(MIME_EPUB)) {
+			if(resourceHandler.getMimeType().equals(MIME_EPUB.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_PDF)) {
+			} else if(resourceHandler.getMimeType().equals(MIME_PDF.getMime())) {
 				return true;
 			}
 		}	
@@ -117,11 +117,11 @@ public class MetadataHandlerFactory {
 	public static boolean hasPlainMetadataSupport(final IResourceHandler resourceHandler) {
 		final String mimeType = resourceHandler.getMimeType();
 		if(mimeType!=null) {
-			if(resourceHandler.getMimeType().equals(MIME_EPUB)) {
+			if(resourceHandler.getMimeType().equals(MIME_EPUB.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_PDF)) {
+			} else if(resourceHandler.getMimeType().equals(MIME_PDF.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_CBZ)) {
+			} else if(resourceHandler.getMimeType().equals(MIME_CBZ.getMime())) {
 				return true;
 			}
 		}	

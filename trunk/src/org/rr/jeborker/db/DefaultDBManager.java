@@ -1,6 +1,7 @@
 package org.rr.jeborker.db;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerUtils;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -26,11 +28,11 @@ import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.index.OIndex;
+import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
 import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
@@ -45,6 +47,8 @@ public class DefaultDBManager {
 	private static DefaultDBManager manager;
 
 	private static OObjectDatabaseTx db;
+	
+	private static final Class<?>[] KNOWN_CLASSES = new Class<?>[] {EbookPropertyItem.class, EbookKeywordItem.class, PreferenceItem.class};
 
 	/**
 	 * Gets a shared {@link ConfigManager} instance.
@@ -92,26 +96,59 @@ public class DefaultDBManager {
 		final String dbName = "jeborkerDB";
 		final String configPath = JeboorkerUtils.getConfigDirectory();
 		final String dbFile = configPath + dbName;
-		final IResourceHandler dbResourceHandler = ResourceHandlerFactory.getResourceLoader(dbFile);
+		final IResourceHandler dbResourceHandler = ResourceHandlerFactory.getResourceHandler(dbFile);
 
 		// OPEN / CREATE THE DATABASE
 		if (!dbResourceHandler.exists()) {
 			db = new OObjectDatabaseTx("local:" + dbFile).create();
-			this.registerEntityClasses(new Class[] {EbookPropertyItem.class, EbookKeywordItem.class, PreferenceItem.class}, db);
+			this.registerEntityClasses(KNOWN_CLASSES, db);
 			
-			this.createIndices(db, EbookPropertyItem.class);
-			this.createIndices(db, EbookKeywordItem.class);
-			this.createIndices(db, PreferenceItem.class);
+			for(Class<?> c : KNOWN_CLASSES) {
+				this.createIndices(db, c);
+			}
 			
 			db.close();
 		}
 		
 		db = OObjectDatabasePool.global().acquire("local:" + dbFile, "admin", "admin");
-		this.registerEntityClasses(new Class<?>[] {EbookPropertyItem.class, EbookKeywordItem.class, PreferenceItem.class}, db);
-
+		
+		this.registerEntityClasses(KNOWN_CLASSES, db);
+		this.handleAppVersionChange();
+		
 		ODatabaseRecordThreadLocal.INSTANCE.set((ODatabaseRecord) db.getUnderlying().getUnderlying());
-
+		
 		return db;
+	}
+	
+	/**
+	 * Tests if the version of the application has been changed. If a change has been detected 
+	 * the indices will be recreated.
+	 */
+	private void handleAppVersionChange() {
+		final List<PreferenceItem> result = getObject(PreferenceItem.class, "name", "latestUsedVersion");
+		boolean appVersionChanged = false;
+		PreferenceItem versionPreferenceItem;
+		if(result.isEmpty()) {
+			versionPreferenceItem = newInstance(PreferenceItem.class);
+			appVersionChanged = true;
+		} else {
+			versionPreferenceItem = result.get(0);
+			if(!versionPreferenceItem.getValue().equals(Jeboorker.version)) {
+				appVersionChanged = true;
+			}
+		}
+		versionPreferenceItem.setValue(Jeboorker.version);
+		versionPreferenceItem.setName("latestUsedVersion");
+		storeObject(versionPreferenceItem);
+		
+		if(appVersionChanged) {
+			for(Class<?> c : KNOWN_CLASSES) {
+				this.deleteIndices(db, c);
+			}	
+			for(Class<?> c : KNOWN_CLASSES) {
+				this.createIndices(db, c);
+			}						
+		}
 	}
 	
 	/**
@@ -126,22 +163,31 @@ public class DefaultDBManager {
 	}
 
 	public <T> void deleteIndices(final OObjectDatabaseTx db, final Class<?> itemClass) {
-		List<ODocument> indicies = db.query(new OSQLSynchQuery<EbookPropertyItem>("select flatten(indexes) from #0:1"));
-		for (ODocument index : indicies) {
-			if (!"DICTIONARY".equals(index.field("type"))) {
+		Collection<? extends OIndex<?>> indicies = getDB().getMetadata().getIndexManager().getIndexes();
+		for (OIndex<?> index : indicies) {
+			if (!"DICTIONARY".equalsIgnoreCase(index.getName())) {
 				// delete all indices except of the DICTIONARY one.
-				String name = index.field("name");
-				String field = ((ODocument) index.field("indexDefinition")).field("field");
-				try {
-					db.command(new OCommandSQL("DROP INDEX " + name)).execute();
-				} catch (Exception e) {
-					LoggerFactory.log(Level.SEVERE, this, "could not delete index " + name, e);
-				}
-
-				try {
-					db.command(new OCommandSQL("DROP PROPERTY " + itemClass.getSimpleName() + "." + field)).execute();
-				} catch (Exception e) {
-					LoggerFactory.log(Level.SEVERE, this, "could not delete property " + itemClass.getSimpleName() + "." + field, e);
+				String indexName = index.getName();
+				OIndexDefinition definition = index.getDefinition();
+				String itemClassName = definition.getClassName();
+				if(itemClass.getSimpleName().equals(itemClassName)) {
+					List<String> fields = definition.getFields();
+					
+					for(String field : fields) {
+						try {
+							db.command(new OCommandSQL("DROP INDEX " + indexName)).execute();
+						} catch (Exception e) {
+							LoggerFactory.log(Level.SEVERE, this, "could not delete index " + indexName, e);
+						}	
+						
+						try {
+							db.command(new OCommandSQL("DROP PROPERTY " + itemClassName + "." + field)).execute();
+						} catch (Exception e) {
+							LoggerFactory.log(Level.SEVERE, this, "could not delete property " + itemClassName + "." + field, e);
+						}
+						LoggerFactory.log(Level.INFO, this, "Droped index " + indexName);
+					}
+					
 				}
 			}
 		}
@@ -167,12 +213,13 @@ public class DefaultDBManager {
 
 				// CREATE INDEX <name> [ON <class-name> (prop-names)] <type> [<key-type>]
 				String indexName = getIndexName(itemClass, fieldName);
-
+				
 				sql.append("CREATE INDEX ").append(indexName).append(" ON ").append(itemClass.getSimpleName())
 						.append("(").append(fieldName).append(") ").append(indexType);
 				db.command(new OCommandSQL(sql.toString())).execute();
+				LoggerFactory.log(Level.INFO, this, "Created index for " + indexName);
 			} catch (Exception e) {
-				LoggerFactory.log(Level.SEVERE, this, "could not clear EbookPropertyItem field " + fieldName, e);
+				LoggerFactory.log(Level.SEVERE, this, "Failed to create index for " + fieldName, e);
 			}
 		}
 	}

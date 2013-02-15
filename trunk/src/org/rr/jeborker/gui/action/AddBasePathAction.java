@@ -38,7 +38,7 @@ class AddBasePathAction extends AbstractAction {
 			putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		} else {
 			putValue(Action.NAME, text);
-			if(ResourceHandlerFactory.hasResourceLoader(text)) {
+			if(ResourceHandlerFactory.hasResourceHandler(text)) {
 				path = text;
 			}
 		}
@@ -54,12 +54,12 @@ class AddBasePathAction extends AbstractAction {
 		
 		controller.clearSelection();
 		if(this.path != null && this.path.length() > 0) {
-			IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceLoader(path);
+			IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceHandler(path);
 			addBasePath(controller, selectedDirectory, path);
 		} else {
 			final List<File> directorySelections = controller.getDirectorySelection();
 			for (File directorySelection : directorySelections) {
-				IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceLoader(directorySelection);
+				IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceHandler(directorySelection);
 				addBasePath(controller, selectedDirectory, selectedDirectory.toString());				
 			}
 		}

@@ -40,12 +40,12 @@ public class MetadataAddListModel extends AbstractListModel {
 	public Object getElementAt(int index) {
 		if(supportedMetaData == null || actionsForMetadataProperties == null) {
 			initialize();
-		}					
+		}			
 		return actionsForMetadataProperties.get(index);
 	}
 	
 	private void initialize() {
-		//temove those metadata from the button list which are already in use and only be single ones.
+		//remove those metadata from the button list which are already in use and only be single ones.
 		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
 		for (MetadataProperty supportedProperty : supportedMetaData) {
 			for (MetadataProperty currentMetadataProperty : currentMetaData) {

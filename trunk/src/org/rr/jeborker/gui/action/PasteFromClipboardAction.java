@@ -145,11 +145,11 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 				transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);                		
 			}
 			for(File splitDataItem : transferedFiles) {
-				IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(splitDataItem);
-				IResourceHandler targetResource = ResourceHandlerFactory.getResourceLoader(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
+				IResourceHandler sourceResource = ResourceHandlerFactory.getResourceHandler(splitDataItem);
+				IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
 				if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
 					sourceResource.copyTo(targetResource, false);
-					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceLoader(value.getBasePath()));
+					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(value.getBasePath()));
 					ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
 				} else {
 					if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {

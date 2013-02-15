@@ -18,7 +18,7 @@ class RefreshEntryAction extends AbstractAction {
 	final IResourceHandler handler;
 	
 	public RefreshEntryAction(final String file) {
-		this(ResourceHandlerFactory.getResourceLoader(file));
+		this(ResourceHandlerFactory.getResourceHandler(file));
 	}
 	
 	public RefreshEntryAction(final IResourceHandler handler) {

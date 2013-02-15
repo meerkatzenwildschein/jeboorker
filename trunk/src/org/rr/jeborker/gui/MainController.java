@@ -422,7 +422,7 @@ public class MainController {
 		} else {
 			List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
 			for (EbookPropertyItem item : selectedEbookPropertyItems) {
-				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceLoader(item.getFile()));
+				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceHandler(item.getFile()));
 				List<MetadataProperty> metadataByType = reader.getMetadataByType(true, model.getAllMetaData(), METADATA_TYPES.RATING);
 				if(!metadataByType.isEmpty()) {
 					MetadataProperty ratingMetaData = metadataByType.get(0);
@@ -454,7 +454,9 @@ public class MainController {
 	public void addEbookPropertyItem(final EbookPropertyItem item, int row) {
 		TableModel model = mainWindow.table.getModel();
 		if (model instanceof EbookPropertyDBTableModel) {
+			this.clearSelection();
 			((EbookPropertyDBTableModel) model).addRow(item, row);
+			mainWindow.table.setEditingRow(row -1);
 		}
 	}
 	
@@ -536,7 +538,7 @@ public class MainController {
 	 */
 	public List<File> getDirectorySelection() {
 		String lastEbookFolder = JeboorkerPreferences.getEntryString("lastEbookFolder");
-		IResourceHandler lastEbookFolderResourceLoader = ResourceHandlerFactory.getResourceLoader(lastEbookFolder);
+		IResourceHandler lastEbookFolderResourceLoader = ResourceHandlerFactory.getResourceHandler(lastEbookFolder);
 		if(lastEbookFolderResourceLoader == null || !lastEbookFolderResourceLoader.isDirectoryResource()) {
 			lastEbookFolder = null;
 		}
@@ -633,6 +635,7 @@ public class MainController {
 	public void refreshSheetProperties() {
 		try {
 			if(mainWindow.table.getSelectedRowCount() >= 1) {
+				final int rowCount = mainWindow.table.getRowCount();
 				final int[] selectedRows = mainWindow.table.getSelectedRows();
 				final int[] modelRowsIndex = new int[selectedRows.length];
 				final List<EbookPropertyItem> items = new ArrayList<EbookPropertyItem>(selectedRows.length);
@@ -642,7 +645,9 @@ public class MainController {
 					} else {
 						modelRowsIndex[i] = selectedRows[i];
 					}	
-					items.add(((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowsIndex[i]));
+					if(modelRowsIndex[i] < rowCount) {
+						items.add(((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowsIndex[i]));
+					}
 				}
 				
 				if(items.size() > 1) {
@@ -705,7 +710,7 @@ public class MainController {
 		if (cover != null && ebookPropertyItem != null) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
 			final String coverFileName = StringUtils.replace(ebookPropertyItem.getResourceHandler().getResourceString(), new String[] {".", "/", "\\"}, "_");
-			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceLoader(coverFileName, new VirtualStaticResourceDataLoader() {
+			setImageViewerResource(ResourceHandlerFactory.getVirtualResourceHandler(coverFileName, new VirtualStaticResourceDataLoader() {
 				
 			ByteArrayInputStream byteArrayInputStream = null;
 				

@@ -52,7 +52,7 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 					byte[] encodeJpeg = ImageUtils.getImageBytes((BufferedImage) transferData, "image/jpeg");
 					image = new ByteArrayInputStream(encodeJpeg);
 					setDialogOption(JFileChooser.APPROVE_OPTION);
-					setDialogResult(ResourceHandlerFactory.getVirtualResourceLoader("cover.jpg", encodeJpeg));
+					setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg));
 				} else {
 					LoggerFactory.getLogger().log(Level.INFO, "No image data in Clipboard");
 				}
@@ -67,7 +67,7 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 	public void setDoOnceResult(ByteArrayInputStream image) {
 		this.image = image;
 		try {
-			setDialogResult(ResourceHandlerFactory.getVirtualResourceLoader("cover.jpg", IOUtils.toByteArray(image)));
+			setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", IOUtils.toByteArray(image)));
 		} catch (IOException e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Failed to copy data", e);
 		}

@@ -6,6 +6,8 @@ import java.util.EventObject;
 
 import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.EventListenerList;
 import javax.swing.table.TableCellEditor;
 
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -42,6 +44,7 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 			MainController.getController().setRatingToSelectedEntry(starRater.getSelection() * 2);
 		}
 		starRater.setSelection(0);
+		fireEditingStopped();
 		return true;
 	}
 
@@ -64,5 +67,25 @@ public class EbookTableCellEditor extends EbookTableCellComponent implements Tab
 
 		return tableCellComponent;
 	}
+	
+    /**
+     * Notifies all listeners that have registered interest for
+     * notification on this event type.  The event instance 
+     * is created lazily.
+     *
+     * @see EventListenerList
+     */
+    protected void fireEditingStopped() {
+	// Guaranteed to return a non-null array
+	Object[] listeners = listenerList.getListenerList();
+	// Process the listeners last to first, notifying
+	// those that are interested in this event
+	for (int i = listeners.length-2; i>=0; i-=2) {
+	    if (listeners[i]==CellEditorListener.class) {
+		// Lazily create the event:
+		((CellEditorListener)listeners[i+1]).editingStopped(new ChangeEvent(this));
+	    }	       
+	}
+    }	
 
 }

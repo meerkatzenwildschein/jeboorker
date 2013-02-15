@@ -173,7 +173,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * @return The desired {@link IResourceHandler}.
 	 */
 	public IResourceHandler getResourceHandler() {
-		return ResourceHandlerFactory.getResourceLoader(this.getFile());
+		return ResourceHandlerFactory.getResourceHandler(this.getFile());
 	}
 	
 	/**

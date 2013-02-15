@@ -28,7 +28,7 @@ public class EbookPropertyItemUtils {
 	
 	private static final String thumbnailFolder = JeboorkerUtils.getConfigDirectory() + "thumbs/";
 	static {
-		IResourceHandler thumbnailFolderResource = ResourceHandlerFactory.getResourceLoader(thumbnailFolder);
+		IResourceHandler thumbnailFolderResource = ResourceHandlerFactory.getResourceHandler(thumbnailFolder);
 		if(!thumbnailFolderResource.exists()) {
 			try {
 				thumbnailFolderResource.mkdirs();
@@ -105,7 +105,7 @@ public class EbookPropertyItemUtils {
 	 */
 	public static void refreshEbookPropertyItem(final EbookPropertyItem item, IResourceHandler resource, boolean refreshCover) {
 		if(resource == null) {
-			resource = ResourceHandlerFactory.getResourceLoader(item.getFile());
+			resource = ResourceHandlerFactory.getResourceHandler(item.getFile());
 		}
 
 		IMetadataReader reader = MetadataHandlerFactory.getReader(resource);
@@ -145,7 +145,7 @@ public class EbookPropertyItemUtils {
 		//create thumbnail to be stored
 		try {
 			if(imageData != null && imageData.length > 0) {
-				IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceLoader(UUID.randomUUID().toString(), imageData));
+				IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceHandler(UUID.randomUUID().toString(), imageData));
 				if(imageProvider != null) {
 					BufferedImage thumbnailImage = ImageUtils.scaleToHeight(imageProvider.getImage(), 100);
 					
@@ -245,6 +245,6 @@ public class EbookPropertyItemUtils {
 	 */
 	private static IResourceHandler getCoverThumbnailResourceHandler(final IResourceHandler ebookResource) {
 		final String thumbnail = thumbnailFolder + UUID.nameUUIDFromBytes(ebookResource.toString().getBytes()) + ".jpg";
-		return ResourceHandlerFactory.getResourceLoader(thumbnail);
+		return ResourceHandlerFactory.getResourceHandler(thumbnail);
 	}
 }

@@ -2,8 +2,10 @@ package org.rr.jeborker.db;
 
 import java.util.AbstractList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.rr.commons.collection.CompoundList;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 import com.orientechnologies.orient.core.record.ORecordInternal;
@@ -24,6 +26,8 @@ class ODocumentMapper<T> extends AbstractList<T> {
 
 	private OSQLSynchQuery<T> query;
 	
+	private String sqlSring;
+	
 	private static final String LIMIT = "LIMIT";
 	
 	public ODocumentMapper(List<?> documents, OObjectDatabaseTx db) {
@@ -38,7 +42,7 @@ class ODocumentMapper<T> extends AbstractList<T> {
 		this.db = db;
 		
 //		sql.append(" " + LIMIT + " " + limit);
-		String sqlSring = sql.toString();
+		this.sqlSring = sql.toString();
 		this.query = new OSQLSynchQuery<T>(sqlSring);	
 	}	
 	
@@ -50,8 +54,26 @@ class ODocumentMapper<T> extends AbstractList<T> {
 	}
 	
 	private List<?> getNextDocuments() {
-		List<?> result = db.query(query);
-		return result;
+		try {
+			List<?> result = db.query(query);
+			return result;
+		} catch(com.orientechnologies.orient.core.sql.OCommandSQLParsingException e) {
+			//Annoying orientdb sql-parser bug in orientdb <= 1.2. Remove the WHERE condition if it occurs.
+			if(sqlSring.indexOf("WHERE") != -1) {
+				String orderByStatement = "";
+				int orderByIdx = -1;
+				if((orderByIdx = sqlSring.indexOf("order by")) != -1) {
+					orderByStatement = sqlSring.substring(orderByIdx);
+				}				
+				String shortenQuery = sqlSring.substring(0, sqlSring.indexOf("WHERE")) + " " + orderByStatement;
+				this.query = new OSQLSynchQuery<T>(shortenQuery);		
+				List<?> result = db.query(query);
+				LoggerFactory.getLogger().log(Level.WARNING, "Failed restoring query " + sqlSring, e);
+				return result;
+			} else {
+				throw e;
+			}
+		}
 	}
 	
 	/**

@@ -1,8 +1,5 @@
 package org.rr.jeborker.gui.renderer;
 
-import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
-import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -42,6 +39,8 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.JeboorkerConstants;
+import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -274,7 +273,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 			try {
 				final byte[] coverData = coverThumbnail;
 				if(coverData!=null) {
-					final IResourceHandler virtualImageResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("TableCellRendererImageData", coverData);
+					final IResourceHandler virtualImageResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("TableCellRendererImageData", coverData);
 					final IImageProvider imageProvider = ImageProviderFactory.getImageProvider(virtualImageResourceLoader);
 					final BufferedImage image = imageProvider.getImage();
 					if(image != null) {	
@@ -418,15 +417,15 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 	 * Gets the string value for the file format to be displayed in the renderer.
 	 * For example "pdf" if it's a pdf file.
 	 * @param item The item where the string should be evaluated for.
-	 * @return The detected file format string or an empty string if the format coult not
+	 * @return The detected file format string or an empty string if the format could not
 	 * be detected. Never returns <code>null</code>.
 	 */
 	private String getDataFormat(EbookPropertyItem item) {
-		if(item!=null) {
-			if(MIME_EPUB.equals(item.getMimeType())) {
-				return "epub";
-			} else if(MIME_PDF.equals(item.getMimeType())) {
-				return "pdf";
+		if (item != null) {
+			for(SUPPORTED_MIMES mime : JeboorkerConstants.SUPPORTED_MIMES.values()) {
+				if(mime.getMime().equals(item.getMimeType())) {
+					return mime.getName();
+				}
 			}
 		}
 		return "";
