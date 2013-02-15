@@ -36,7 +36,7 @@ class GoogleImageFetcher extends AImageFetcher {
 		final int pageParameter = ((page -1) * getPageSize()) + 1; //always in page size steps.
 		final String urlString = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+encodesSearchPhrase+"&userip=" + ip + "&rsz=8" + (page <=1 ? "" : "&start=" + pageParameter);
 		
-		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(urlString);
+		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(urlString);
 		try {
 			final byte[] content = resourceLoader.getContent();
 			try {

@@ -278,7 +278,7 @@ public class ImageDownloadDialog extends JDialog {
 				try {
 					byte[] imageBytes = imageFetcher.getImageBytes();
 					String path = imageFetcher.getImageURL().toString();
-					IResourceHandler image = ResourceHandlerFactory.getVirtualResourceLoader(path, imageBytes);
+					IResourceHandler image = ResourceHandlerFactory.getVirtualResourceHandler(path, imageBytes);
 					closeDialog(image);
 				} catch (Exception e1) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Could not fetch image from " + imageFetcher.getImageURL());
@@ -389,7 +389,7 @@ public class ImageDownloadDialog extends JDialog {
 			if(imageIcon == null) {
 				byte[] thumbnailImageBytes = entry.getThumbnailImageBytes();
 				if(thumbnailImageBytes != null && thumbnailImageBytes.length > 0) {
-					IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceLoader(new ByteArrayInputStream(thumbnailImageBytes)));
+					IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceHandler(new ByteArrayInputStream(thumbnailImageBytes)));
 					BufferedImage image = imageProvider.getImage();
 					if(image != null) {
 						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(image, cellSize, true);

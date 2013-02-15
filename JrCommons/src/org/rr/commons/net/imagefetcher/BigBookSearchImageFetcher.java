@@ -30,7 +30,7 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
 		
 		//http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=katze+tod&ItemPage=1		
-		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader("http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=" + encodesSearchPhrase + "&ItemPage=" + page);
+		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler("http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=" + encodesSearchPhrase + "&ItemPage=" + page);
 		try {
 			final byte[] content = resourceLoader.getContent();
 			final String contentString = new String(content);

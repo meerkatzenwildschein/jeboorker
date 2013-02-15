@@ -30,7 +30,7 @@ public class ResourceHandlerFactory {
 	 * @param childs The childs to be provided by the virtual resource loader.
 	 * @return The desired virtual resource handler instance.
 	 */
-	public static IResourceHandler getVirtualResourceLoader(String name, final IResourceHandler[] childs) {
+	public static IResourceHandler getVirtualResourceHandler(String name, final IResourceHandler[] childs) {
 		return new VirtualStaticResourceHandler(name, childs);
 	}
 	
@@ -40,7 +40,7 @@ public class ResourceHandlerFactory {
 	 * @param childs The childs to be provided by the virtual resource loader.
 	 * @return The desired virtual resource handler instance.
 	 */
-	public static IResourceHandler getVirtualResourceLoader(String name, final byte[] content) {
+	public static IResourceHandler getVirtualResourceHandler(String name, final byte[] content) {
 		return new VirtualStaticResourceHandler(name, new VirtualStaticResourceDataLoader() {
 			
 			@Override
@@ -61,7 +61,7 @@ public class ResourceHandlerFactory {
 	 * @param childs The childs to be provided by the virtual resource loader.
 	 * @return The desired virtual resource handler instance.
 	 */
-	public static IResourceHandler getVirtualResourceLoader(String name, final VirtualStaticResourceDataLoader content) {
+	public static IResourceHandler getVirtualResourceHandler(String name, final VirtualStaticResourceDataLoader content) {
 		return new VirtualStaticResourceHandler(name, content);
 	}	
 	
@@ -73,7 +73,7 @@ public class ResourceHandlerFactory {
 	 * @param inputStream The resource handled by the {@link IResourceHandler}
 	 * @return The desired {@link IResourceHandler} instance.
 	 */
-	public static IResourceHandler getResourceLoader(InputStream inputStream) {
+	public static IResourceHandler getResourceHandler(InputStream inputStream) {
 		if(inputStream == null) {
 			throw new NullPointerException("could not load null resource");
 		}
@@ -87,7 +87,7 @@ public class ResourceHandlerFactory {
 	 * @param file The resource handled by the {@link IResourceHandler}
 	 * @return The desired {@link IResourceHandler} instance.
 	 */
-	public static IResourceHandler getResourceLoader(final File file) {
+	public static IResourceHandler getResourceHandler(final File file) {
 		if(file == null) {
 			throw new NullPointerException("could not load null resource");
 		}
@@ -102,8 +102,8 @@ public class ResourceHandlerFactory {
 	 * @return The desired {@link IResourceHandler} instance or <code>null</code> if no {@link IResourceHandler} 
 	 * available for the given resource string.
 	 */
-	public static IResourceHandler getResourceLoader(URL url) {
-		return getResourceLoader(url.toString());
+	public static IResourceHandler getResourceHandler(URL url) {
+		return getResourceHandler(url.toString());
 	}
 	
 	/**
@@ -116,25 +116,27 @@ public class ResourceHandlerFactory {
 	 * @return The sibling {@link IResourceHandler}.
 	 */
 	public static IResourceHandler getTemporaryResourceLoader(String sibling, final String extension) {
-		IResourceHandler resourceLoader = getResourceLoader(sibling);
-		return getTemporaryResourceLoader(resourceLoader, extension);
+		IResourceHandler resourceLoader = getResourceHandler(sibling);
+		return getUniqueResourceHandler(resourceLoader, extension);
 	}
 
 	/**
-	 * Get a {@link IResourceHandler} instance with the given, additional extension. The
-	 * result {@link IResourceHandler} will not exists. if the sibling the the extension already
-	 * exists a number will be added at the end of the result {@link IResourceHandler}.
+	 * Get a {@link IResourceHandler} instance with the given, additional extension. If the sibling 
+	 * with the desired extension already exists a number will be attached at the end of the filename.
 	 * 
 	 * @param sibling the sibling {@link IResourceHandler}.
 	 * @param extension the extension for the sibling {@link IResourceHandler}.
 	 * @return The sibling {@link IResourceHandler}.
 	 */
-	public static IResourceHandler getTemporaryResourceLoader(IResourceHandler sibling, final String extension) {
-		final String tmpFileName = sibling.toString() + "." + extension;
+	public static IResourceHandler getUniqueResourceHandler(IResourceHandler sibling, final String extension) {
+		String siblingString = sibling.toString();
+		if(siblingString.lastIndexOf('.') != -1) {
+			siblingString = siblingString.substring(0, siblingString.lastIndexOf('.'));
+		}
 		
 		int extensionNum = 0;
 		IResourceHandler result = null;
-		while( (result = getResourceLoader(tmpFileName + (extensionNum != 0 ? extensionNum : "") )).exists() ) {
+		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : "") + "." + extension)).exists() ) {
 			extensionNum ++;
 		}
 		return result;
@@ -147,8 +149,8 @@ public class ResourceHandlerFactory {
 	 * @return The desired {@link IResourceHandler} instance or <code>null</code> if no {@link IResourceHandler} 
 	 * available for the given resource string.
 	 */
-	public static IResourceHandler getResourceLoader(final String resource) {
-		if(resource == null || resource.length()==0) {
+	public static IResourceHandler getResourceHandler(final String resource) {
+		if(resource == null || resource.isEmpty()) {
 			return null;
 		}
 		
@@ -179,8 +181,8 @@ public class ResourceHandlerFactory {
 	 * @param resource The resource string to be tested.
 	 * @return <code>true</code> if a resourceloader could be created from the given string and <code>false</code> otherwise.
 	 */
-	public static boolean hasResourceLoader(final String resource) {
-		IResourceHandler loader = getResourceLoader(resource);
+	public static boolean hasResourceHandler(final String resource) {
+		IResourceHandler loader = getResourceHandler(resource);
 		return loader!=null;
 	}
 	
@@ -195,7 +197,7 @@ public class ResourceHandlerFactory {
 	public static IResourceHandler getUserHomeResourceLoader() {
 		if(userHome==null) {
 			String userHomeProp = System.getProperty("user.name");
-			userHome = getResourceLoader(userHomeProp);
+			userHome = getResourceHandler(userHomeProp);
 		}
 		return userHome;
 	}

@@ -303,7 +303,7 @@ public class ResourceHandlerUtils {
 		File[] roots = File.listRoots();
 		final ArrayList<IResourceHandler> resultRoots = new ArrayList<IResourceHandler>(roots.length+1);
 		for (int i = 0; i < roots.length; i++) {
-			resultRoots.add(ResourceHandlerFactory.getResourceLoader(roots[i]));
+			resultRoots.add(ResourceHandlerFactory.getResourceHandler(roots[i]));
 		}
 		
 		//attach the virtual drives like the Desktop folder. At Windows, The Desktop folder
@@ -312,9 +312,9 @@ public class ResourceHandlerUtils {
 		roots = fileSystemView.getRoots();
 		for (int i = 0; i < roots.length; i++) {
 			if(fileSystemView.getSystemDisplayName(roots[i]).startsWith("Desktop")) {
-				resultRoots.add(0, ResourceHandlerFactory.getResourceLoader(roots[i]));
+				resultRoots.add(0, ResourceHandlerFactory.getResourceHandler(roots[i]));
 			} else if(roots[i].getName().startsWith("Desktop")) {
-				resultRoots.add(0, ResourceHandlerFactory.getResourceLoader(roots[i]));
+				resultRoots.add(0, ResourceHandlerFactory.getResourceHandler(roots[i]));
 			}
 		}
 		
@@ -546,11 +546,11 @@ public class ResourceHandlerUtils {
 						// DeletionDate=2012-09-10T13:58:13
 						trashInfoContent.append("DeletionDate=").append(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").format(new Date())).append(System.getProperty("line.separator"));
 						
-						IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(trashInfo);
+						IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(trashInfo);
 						resourceLoader.writeStringContent(trashInfoContent.toString(), System.getProperty("file.encoding"));
 					}
 					
-					resourceHandler.moveTo(ResourceHandlerFactory.getResourceLoader(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
+					resourceHandler.moveTo(ResourceHandlerFactory.getResourceHandler(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
 					return true;
 				}
 			}
@@ -603,7 +603,7 @@ public class ResourceHandlerUtils {
 							String path = msg.substring(mediaIdx);
 							File f = new File(path);
 							if(f.isDirectory() && f.canWrite()) {
-								result.add(ResourceHandlerFactory.getResourceLoader(f));
+								result.add(ResourceHandlerFactory.getResourceHandler(f));
 							}
 						}
 					}
@@ -621,7 +621,7 @@ public class ResourceHandlerUtils {
 			for(int i = roots.length - 1; i >= 0; i--) {
 				File root = roots[i];
 				if(root.canWrite()) {
-					result.add(ResourceHandlerFactory.getResourceLoader(root));
+					result.add(ResourceHandlerFactory.getResourceHandler(root));
 				}
 				if(root.getPath().equalsIgnoreCase("d:\\")) {
 					//C is mostly no external drive and A is a floppy which causes timeouts while

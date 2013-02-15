@@ -347,7 +347,7 @@ class FileResourceHandler extends AResourceHandler {
 			for (int i = 0; i < files.length; i++) {
 				if(files[i].isDirectory()) {
 					IResourceHandler resourceLoader;
-					resourceLoader = ResourceHandlerFactory.getResourceLoader(files[i].getPath());
+					resourceLoader = ResourceHandlerFactory.getResourceHandler(files[i].getPath());
 					if(resourceLoader != null) {
 						if(filter != null && filter.accept(resourceLoader)) {
 							result.add(resourceLoader);
@@ -375,7 +375,7 @@ class FileResourceHandler extends AResourceHandler {
 			for (int i = 0; i < files.length; i++) {
 				if(files[i].isFile()) {
 					IResourceHandler resourceLoader;
-					resourceLoader = ResourceHandlerFactory.getResourceLoader(files[i].getPath());
+					resourceLoader = ResourceHandlerFactory.getResourceHandler(files[i].getPath());
 					if(resourceLoader!=null) {
 						result.add(resourceLoader);
 					}
@@ -405,7 +405,7 @@ class FileResourceHandler extends AResourceHandler {
 			File[] files = fileSystemViewInstance.getFiles(this.file, !showHidden);
 			IResourceHandler[] resultResources = new IResourceHandler[files.length];
 			for (int i = 0; i < resultResources.length; i++) {
-				resultResources[i] = ResourceHandlerFactory.getResourceLoader(files[i]);
+				resultResources[i] = ResourceHandlerFactory.getResourceHandler(files[i]);
 			}		
 			return resultResources;
 		}
@@ -596,7 +596,7 @@ class FileResourceHandler extends AResourceHandler {
 	@Override
 	public IResourceHandler addPathStatement(String statement) throws ResourceHandlerException {
 		final File file = new File(this.file.getPath() + File.separatorChar + statement);
-		return ResourceHandlerFactory.getResourceLoader(file);
+		return ResourceHandlerFactory.getResourceHandler(file);
 	}
 	
 	/**
@@ -660,7 +660,7 @@ class FileResourceHandler extends AResourceHandler {
 	@Override
 	public IResourceHandler createNewFolder() throws IOException {
 		synchronized(fileSystemViewInstance) {
-			return ResourceHandlerFactory.getResourceLoader(fileSystemViewInstance.createNewFolder(this.file));
+			return ResourceHandlerFactory.getResourceHandler(fileSystemViewInstance.createNewFolder(this.file));
 		}
 	}
 	
