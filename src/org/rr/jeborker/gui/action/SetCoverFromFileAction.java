@@ -45,7 +45,7 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 			
 			setDialogOption(fileChooser.getReturnValue().ordinal());
 			if(fileChooser.getSelectedFile() != null) {
-				setDialogResult(ResourceHandlerFactory.getResourceLoader(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
+				setDialogResult(ResourceHandlerFactory.getResourceHandler(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
 			}
 		}
 		
@@ -57,7 +57,7 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 		this.fileChooser = result;
 		setDialogOption(fileChooser.getReturnValue().ordinal());
 		if(fileChooser.getSelectedFile() != null) {
-			setDialogResult(ResourceHandlerFactory.getResourceLoader(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
+			setDialogResult(ResourceHandlerFactory.getResourceHandler(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
 		}		
 	}
 }

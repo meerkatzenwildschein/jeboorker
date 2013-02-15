@@ -33,7 +33,7 @@ class ShowHideBasePathAction extends AbstractAction {
 			} else if(HIDE_ALL.equals(text)) {
 				path = text;
 				putValue(Action.NAME, Bundle.getString("ShowHideBasePathAction.hideAll.name"));
-			} else if(ResourceHandlerFactory.hasResourceLoader(text)) {
+			} else if(ResourceHandlerFactory.hasResourceHandler(text)) {
 				path = text;
 				putValue(Action.NAME, text);
 			}

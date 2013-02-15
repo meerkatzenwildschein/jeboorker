@@ -23,7 +23,7 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	final IResourceHandler fileToDelete;
 
 	DeleteFileAction(final String text) {
-		this(ResourceHandlerFactory.getResourceLoader(text));
+		this(ResourceHandlerFactory.getResourceHandler(text));
 	}
 	
 	public DeleteFileAction(final IResourceHandler resourceLoader) {

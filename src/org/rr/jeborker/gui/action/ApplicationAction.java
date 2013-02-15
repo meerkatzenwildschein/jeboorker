@@ -78,6 +78,9 @@ public class ApplicationAction extends AbstractAction {
 			FileRefreshBackgroundThread.setDisabled(true);
 			try {
 				this.realAction.actionPerformed(e);
+				if(this.realAction instanceof IFinalizeAction) {
+					((IFinalizeAction)this.realAction).finalizeAction(0);
+				}
 			} finally {
 				FileRefreshBackgroundThread.setDisabled(false);
 			}
@@ -87,7 +90,15 @@ public class ApplicationAction extends AbstractAction {
 	}
 	
 	void invokeRealAction(ActionEvent e) {
-		this.realAction.actionPerformed(e);
+		FileRefreshBackgroundThread.setDisabled(true);
+		try {
+			this.realAction.actionPerformed(e);
+			if(this.realAction instanceof IFinalizeAction) {
+				((IFinalizeAction)this.realAction).finalizeAction(0);
+			}
+		} finally {
+			FileRefreshBackgroundThread.setDisabled(false);
+		}		
 	}
 
 	@Override

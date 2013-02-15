@@ -136,7 +136,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 
 	private void writeBook(final Book epub, final IResourceHandler ebookResourceHandler) throws IOException {
 		final EpubWriter writer = new EpubWriter();
-		final IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");
+		final IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResourceHandler, "tmp");
 		writer.write(epub, temporaryResourceLoader.getContentOutputStream(false));
 		if(temporaryResourceLoader.size() > 0) {
 			temporaryResourceLoader.moveTo(ebookResourceHandler, true);
@@ -190,7 +190,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	}
 	
 	private void createNewCover(final Book epub, final byte[] cover) throws IOException {
-		final IResourceHandler imageResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader("DummyImageCoverName", cover);
+		final IResourceHandler imageResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("DummyImageCoverName", cover);
 		final String mimeType = imageResourceLoader.getMimeType();
 		final String fileExtension = mimeType.substring(mimeType.indexOf('/') + 1);
 		final Resource newCoverImage = new Resource(cover, new MediaType(mimeType, "." + mimeType.substring(mimeType.indexOf('/') + 1) ));
@@ -204,7 +204,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	private void replaceOldCover(final Book epub, final byte[] cover, final Resource oldCoverImage) throws IOException {
 		final String targetConversionMime = oldCoverImage.getMediaType().getName();
 		final String oldCoverFileName = new File(oldCoverImage.getHref()).getName();
-		final IImageProvider coverImageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceLoader(oldCoverFileName, cover));
+		final IImageProvider coverImageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceHandler(oldCoverFileName, cover));
 		final byte[] imageBytes = ImageUtils.getImageBytes(coverImageProvider.getImage(), targetConversionMime);
 		oldCoverImage.setData(imageBytes);
 		epub.setCoverImage(oldCoverImage);
@@ -285,7 +285,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	 */
 	private void writeZipData(byte[] content, final String file) throws IOException {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResourceHandler, "tmp");
+		final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResourceHandler, "tmp");
 		OutputStream contentOutputStream = null;
 		InputStream contentInputStream = null;
 		boolean success = false;

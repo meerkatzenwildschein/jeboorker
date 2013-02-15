@@ -228,7 +228,7 @@ public class MainMenuBarController {
 		copyToSubMenu.add(action);
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
-		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceLoader(System.getProperty("user.home"));
+		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceHandler(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
 		action.putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("home_16.png")));

@@ -182,7 +182,7 @@ abstract class PDFCommonDocument {
 		@Override
 		public void write() throws IOException {
 			final IResourceHandler ebookResource = getResourceHandler();
-			final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getTemporaryResourceLoader(ebookResource, "tmp");
+			final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResource, "tmp");
 			PdfStamper stamper = null;
 			OutputStream ebookResourceOutputStream = null;
 			

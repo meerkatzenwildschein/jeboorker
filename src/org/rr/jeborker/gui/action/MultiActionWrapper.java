@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,11 +13,16 @@ import javax.swing.Action;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.RefreshAbstractAction;
 
 class MultiActionWrapper extends AbstractAction {
 
 	private static final long serialVersionUID = -2128569488506763407L;
+	
+	public static final String SELECTED_ROWS_TO_REFRESH_KEY = "SELECTED_ROWS_TO_REFRESH_KEY";
+	
+	public static final String SELECTED_ITEMS_TO_REFRESH_KEY = "SELECTED_ITEMS_TO_REFRESH_KEY";
 
 	private final Action firstActionInstance;
 	
@@ -24,13 +30,15 @@ class MultiActionWrapper extends AbstractAction {
 	
 	private  int[] selectedRowsToRefresh;
 	
+	private  List<EbookPropertyItem> selectedItemsToRefresh;
+	
 	private HashMap<String, Object> values = new HashMap<String, Object>();
 
-	public MultiActionWrapper(final Class<? extends Action> actionClass, final List<IResourceHandler> handlers, int[] selectedRowsToRefresh) {
+	public MultiActionWrapper(final Class<? extends Action> actionClass, List<EbookPropertyItem> items, final List<IResourceHandler> handlers, int[] selectedRowsToRefresh) {
 		this.handlers = handlers;
 		this.selectedRowsToRefresh = selectedRowsToRefresh;
 		this.firstActionInstance = createInstance(actionClass, (handlers.isEmpty() ? null : handlers.get(0)), selectedRowsToRefresh);
-		
+		this.selectedItemsToRefresh = items;
 		init();
 	}
 	
@@ -61,20 +69,29 @@ class MultiActionWrapper extends AbstractAction {
 			doOnce = null;
 		}
 		
-		this.doActionAt(firstActionInstance, e, 0, size);
+		List<Action> actions = new ArrayList<Action>(size);
+		actions.add(this.doActionAt(firstActionInstance, e, 0, size));
 		
 		//create an action instance for all the other handlers. 
-		for (int i=1; iterator.hasNext(); i++) {
+		for (int i = 1; iterator.hasNext(); i++) {
 			IResourceHandler handler = iterator.next();
 			Action action = createInstance(firstActionInstance.getClass(), handler, selectedRowsToRefresh);
 			
-			if(action!=null) {
+			if(action != null) {
 				if(doOnce!=null && action instanceof IDoOnlyOnceAction<?>) {
 					((IDoOnlyOnceAction)action).setDoOnceResult(doOnce);
 				}				
-				this.doActionAt(action, e, i, size);			
+				actions.add(this.doActionAt(action, e, i, size));			
 			} else {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
+			}
+		}
+		
+		//do the finalize for all actions
+		if(firstActionInstance instanceof IFinalizeAction) {
+			for(int i = 0; i < actions.size() ; i++) {
+				Action a = actions.get(i);
+				((IFinalizeAction)a).finalizeAction(i);
 			}
 		}
 	}
@@ -83,12 +100,13 @@ class MultiActionWrapper extends AbstractAction {
 	 * Invokes the action method to the given action.
 	 * @param action The action to be executed.
 	 */
-	public void doActionAt(Action action, ActionEvent e, int entryIndex, int entrySize) {
+	public Action doActionAt(Action action, ActionEvent e, int entryIndex, int entrySize) {
 		if(firstActionInstance instanceof IDoOnlyOnceAction<?>) {
 			((IDoOnlyOnceAction<?>)action).prepareFor(entryIndex, entrySize);
 		}
 		
 		action.actionPerformed(e);
+		return action;
 	}
 	
 	/**
@@ -123,6 +141,8 @@ class MultiActionWrapper extends AbstractAction {
 	}	
 	
 	private void transferValues(Action objectInstance) {
+		objectInstance.putValue(SELECTED_ROWS_TO_REFRESH_KEY, this.selectedRowsToRefresh);
+		objectInstance.putValue(SELECTED_ITEMS_TO_REFRESH_KEY, this.selectedItemsToRefresh);
 		for (Entry<String, Object> e : values.entrySet()) {
 			objectInstance.putValue(e.getKey(), e.getValue());
 		}	

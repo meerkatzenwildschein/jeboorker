@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.rr.commons.utils.DateConversionUtils;
@@ -75,7 +76,7 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 	public MetadataProperty clone() {
 		EpubLibMetadataProperty<?> newMetadataProperty = new EpubLibMetadataProperty(this.name, this.value, this.epubLibMetadataEntry);
 		newMetadataProperty.hints = this.hints;
-		newMetadataProperty.values = this.values;
+		newMetadataProperty.values = new ArrayList<Object>(this.values);
 		return newMetadataProperty;
 	}
 

@@ -52,7 +52,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		IResourceHandler resource = ResourceHandlerFactory.getResourceLoader(source);
+		IResourceHandler resource = ResourceHandlerFactory.getResourceHandler(source);
         try {
         	String message = Bundle.getFormattedString("CopyToDropboxAction.uploading", resource.getName());
         	MainController.getController().getProgressMonitor().monitorProgressStart(message);

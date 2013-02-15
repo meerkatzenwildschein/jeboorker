@@ -24,7 +24,7 @@ public class CopyToTargetAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceLoader(source);
+		IResourceHandler sourceResource = ResourceHandlerFactory.getResourceHandler(source);
 		IResourceHandler target = (IResourceHandler) getValue("TARGET");
         try {
         	String message = Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), StringUtils.toString(target));
@@ -40,7 +40,7 @@ public class CopyToTargetAction extends AbstractAction {
 
 	private void copy(IResourceHandler source, IResourceHandler target) throws IOException {
 		if(target.isDirectoryResource()) {
-			target = ResourceHandlerFactory.getResourceLoader(target.toString() + File.separator + source.getName());
+			target = ResourceHandlerFactory.getResourceHandler(target.toString() + File.separator + source.getName());
 		}
 		source.copyTo(target, false);
 	}

@@ -100,6 +100,15 @@ public class MetadataProperty implements Cloneable {
 	public void setValue(final Object value, final int idx) {
 		ListUtils.set(this.values, value, idx >= 0 ? idx : 0);
 	}
+
+	/**
+	 * Drop all existing values and set this ones from the given List.
+	 * @param newValues The new values for this {@link MetadataProperty} instance.
+	 */
+	public void setValues(final List<Object> newValues) {
+		this.values.clear();
+		this.values.addAll(newValues);
+	}
 	
 	public Class<?> getPropertyClass() {
 		if(propertyClass!=null) {

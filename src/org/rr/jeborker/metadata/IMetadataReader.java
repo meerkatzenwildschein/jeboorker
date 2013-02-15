@@ -64,7 +64,7 @@ public interface IMetadataReader {
 			
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
-				if(item != null) {
+				if(item != null && item.getTitle() != null) {
 					return new ArrayList<String>(Collections.singleton(item.getTitle()));
 				}
 				return Collections.emptyList();
@@ -81,7 +81,11 @@ public interface IMetadataReader {
 			
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
-				return new ArrayList<String>(Collections.singleton(item.getSeriesName()));
+				if(item != null && item.getSeriesName() != null) {
+					return new ArrayList<String>(Collections.singleton(item.getSeriesName()));
+				} else {
+					return Collections.emptyList();
+				}
 			}						
 		},
 		GENRE {
@@ -95,7 +99,11 @@ public interface IMetadataReader {
 			
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
-				return new ArrayList<String>(Collections.singleton(item.getGenre()));
+				if(item != null && item.getGenre() != null) {
+					return new ArrayList<String>(Collections.singleton(item.getGenre()));
+				} else {
+					return Collections.emptyList();
+				}
 			}				
 		},
 		RATING {
@@ -115,7 +123,11 @@ public interface IMetadataReader {
 			
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
-				return new ArrayList<String>(Collections.singleton(item.getRating() != null ? Integer.valueOf(item.getRating()).toString() : null));
+				if(item != null && item.getRating() != null) {
+					return new ArrayList<String>(Collections.singleton( Integer.valueOf(item.getRating()).toString()));
+				} else {
+					return Collections.emptyList();
+				}
 			}				
 		},	
 		COVER {

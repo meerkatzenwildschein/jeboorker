@@ -17,6 +17,8 @@ import javax.swing.event.MenuListener;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.converter.ConverterFactory;
+import org.rr.jeborker.converter.IEBookConverter;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -230,10 +232,15 @@ class MainMenuBarView extends JMenuBar {
 			
 			@Override
 			public void menuSelected(MenuEvent e) {
+				final MainController controller = MainController.getController();
+				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
+				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
+				
 				editMenuBar.removeAll();
-				createDynamicEditMenu();
+				createDynamicEditMenu(selectedItems, selectedEbookPropertyItemRows);
 				editMenuBar.add(new JSeparator());
-				createDynamicMetadataMenuEntries();
+				createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
+				createConvertMenuEntry(selectedItems, selectedEbookPropertyItemRows);
 			}
 			
 			@Override
@@ -244,11 +251,7 @@ class MainMenuBarView extends JMenuBar {
 			public void menuCanceled(MenuEvent e) {
 			}
 			
-			private void createDynamicEditMenu() {
-				final MainController controller = MainController.getController();
-				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
-				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
-
+			private void createDynamicEditMenu(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
 				JMenuItem copyClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
 				copyClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
 				editMenuBar.add(copyClipboard);	
@@ -264,11 +267,7 @@ class MainMenuBarView extends JMenuBar {
 			 * @param items Items for the menu items.
 			 * @return The list of menu entries.
 			 */
-			private void createDynamicMetadataMenuEntries() {
-				final MainController controller = MainController.getController();
-				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
-				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
-				
+			private void createDynamicMetadataMenuEntries(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
 				String name = Bundle.getString("EborkerMainView.cover");
 				JMenu coverSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 				coverSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
@@ -281,7 +280,28 @@ class MainMenuBarView extends JMenuBar {
 				
 				action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, selectedItems, selectedEbookPropertyItemRows);
 				editMenuBar.add(new JMenuItem(action));				
-			}			
+			}
+			
+			private void createConvertMenuEntry(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
+				String name = Bundle.getString("EborkerMainView.convert");
+				JMenu convertSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
+				convertSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
+				convertSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("convert_16.png")));
+				convertSubMenu.setEnabled(false);
+				
+				if(!selectedItems.isEmpty() && sameType(selectedItems)) {
+					List<IEBookConverter> converter = ConverterFactory.getConverter(selectedItems.get(0).getResourceHandler());
+					for(IEBookConverter c : converter) {
+						Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.CONVERT_EBOOK_ACTION, selectedItems, selectedEbookPropertyItemRows);
+						action.putValue("converterClass", c.getClass());
+						JMenuItem converterMenuItem = new JMenuItem(action);
+						converterMenuItem.setText(c.getConversionSourceType().getName() + " -> " + c.getConversionTargetType().getName());
+						convertSubMenu.add(converterMenuItem);
+						convertSubMenu.setEnabled(true);
+					}
+				} 
+				editMenuBar.add(convertSubMenu);
+			}
 		});		
 
 		
@@ -298,6 +318,25 @@ class MainMenuBarView extends JMenuBar {
 		helpMenuBar.add(logItem);
 		
 		return this.helpMenuBar;
+	}
+	
+	/**
+	 * Tests of the selected {@link EbookPropertyItem} are from the same mime type. 
+	 */
+	private static boolean sameType(List<EbookPropertyItem> selectedItems) {
+		String type = null;
+		for(EbookPropertyItem item : selectedItems) {
+			if(type == null) {
+				type = item.getMimeType();
+			} else {
+				if(item.getMimeType().equals(type)) {
+					continue;
+				} else {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 }

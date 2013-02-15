@@ -39,7 +39,7 @@ class RefreshBasePathAction extends AbstractAction {
 		if(REFRESH_ALL.equals(text)) {
 			path = text;
 			putValue(Action.NAME, Bundle.getString("RefreshBasePathAction.refreshAll.name"));
-		} else if(ResourceHandlerFactory.hasResourceLoader(text)) {
+		} else if(ResourceHandlerFactory.hasResourceHandler(text)) {
 			path = text;
 		}
 		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("refresh_16.png")));
@@ -56,12 +56,12 @@ class RefreshBasePathAction extends AbstractAction {
 			if(REFRESH_ALL.equals(path)) {
 				final List<String> basePaths = JeboorkerPreferences.getBasePath();
 				for (String basePath : basePaths) {
-					if(ResourceHandlerFactory.getResourceLoader(basePath).isDirectoryResource()) {
+					if(ResourceHandlerFactory.getResourceHandler(basePath).isDirectoryResource()) {
 						doRefreshBasePath(basePath, e, controller.getProgressMonitor());
 					}
 				}				
 			} else if(path != null && path.length() > 0) {
-				if(!ResourceHandlerFactory.getResourceLoader(path).isDirectoryResource()) {
+				if(!ResourceHandlerFactory.getResourceHandler(path).isDirectoryResource()) {
 					messageFinished = "The folder " + path + " did not exists.";
 				} else {			
 					doRefreshBasePath(path, e, controller.getProgressMonitor());
@@ -77,7 +77,7 @@ class RefreshBasePathAction extends AbstractAction {
 	}
 	
 	private void doRefreshBasePath(String path, ActionEvent e, MainMonitor monitor) {
-		IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceLoader(path);
+		IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(path);
 		removeDeletedFiles(resourceLoader);
 		refreshEbookFiles(resourceLoader);
 		MainController.getController().refreshTable(true);

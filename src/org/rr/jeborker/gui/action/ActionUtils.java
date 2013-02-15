@@ -1,8 +1,8 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.jeborker.JeboorkerConstants.MIME_CBZ;
-import static org.rr.jeborker.JeboorkerConstants.MIME_EPUB;
-import static org.rr.jeborker.JeboorkerConstants.MIME_PDF;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -73,7 +73,7 @@ public class ActionUtils {
 	 */
 	static void refreshEbookPropertyItem(final EbookPropertyItem item, IResourceHandler resourceLoader) {
 		if(resourceLoader == null) {
-			resourceLoader = ResourceHandlerFactory.getResourceLoader(item.getFile());
+			resourceLoader = ResourceHandlerFactory.getResourceHandler(item.getFile());
 		}
 		
 		//remove the entry from db and view.
@@ -213,11 +213,11 @@ public class ActionUtils {
 			return false;
 		}
 		
-		if(mime.equals(MIME_EPUB)) {
+		if(mime.equals(MIME_EPUB.getMime())) {
 			return true;
-		} else if(mime.equals(MIME_PDF)) {
+		} else if(mime.equals(MIME_PDF.getMime())) {
 			return true;
-		} else if(mime.equals(MIME_CBZ)) {
+		} else if(mime.equals(MIME_CBZ.getMime())) {
 			return true;
 		}
 		return false;

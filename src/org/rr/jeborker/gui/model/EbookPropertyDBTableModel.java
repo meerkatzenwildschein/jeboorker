@@ -85,8 +85,8 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public int getRowCount() {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
-		if(ebookItems!=null) {
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
+		if(ebookItems != null) {
 			final int size = ebookItems.size();
 			if(size > oldSize) {
 				final int old = oldSize;
@@ -108,12 +108,12 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
 		final EbookPropertyItem ebookPropertyItem;
 		try {
 			if(ebookItems.size() < rowIndex) {
 				setDirty();
-				ebookItems = this.getEbookItems();
+				ebookItems = this.getEbookItems(false);
 			}
 			ebookPropertyItem = ebookItems.get(rowIndex);
 		} catch(IndexOutOfBoundsException ex) {
@@ -138,7 +138,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 * @return The desired {@link EbookPropertyItem} or possibly <code>null</code>.
 	 */
 	public EbookPropertyItem getEbookPropertyItemAt(int rowIndex) {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
 		try {
 			return ebookItems.get(rowIndex);
 		} catch(IndexOutOfBoundsException ex) {
@@ -153,7 +153,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 * @param rowIndex Index of {@link EbookPropertyItem} to be reloaded.
 	 */
 	public void reloadEbookPropertyItemAt(int rowIndex) {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
 		if(rowIndex >= 0) {
 			final EbookPropertyItem modelItem = this.getEbookPropertyItemAt(rowIndex);
 			if(modelItem != null) {
@@ -174,7 +174,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			return -1;
 		}
 		
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
 		for(int i = 0; i < ebookItems.size(); i++) {
 			EbookPropertyItem ebookPropertyItem = ebookItems.get(i);
 			if(ebookPropertyItem.equals(item)) {
@@ -281,7 +281,7 @@ public class EbookPropertyDBTableModel implements TableModel {
      *  for using them from cache.
      * @return The desired {@link EbookPropertyItem}s.
      */
-    private List<EbookPropertyItem> getEbookItems() {
+    private List<EbookPropertyItem> getEbookItems(boolean clearQueryConditions) {
     	//NO BREAKPOINT HERE!
     	if(Jeboorker.isRuntime) {
 	    	if(isDirty() || dbItems == null) {
