@@ -130,10 +130,10 @@ Section -Main SEC0000
     
     SetOutPath $INSTDIR\lib\orientdb
     File lib\orientdb\javassist-3.16.1-GA.jar
-    File lib\orientdb\orient-commons-1.2.0.jar
-    File lib\orientdb\orientdb-core-1.2.0.jar
-    File lib\orientdb\orientdb-nativeos-1.2.0.jar
-    File lib\orientdb\orientdb-object-1.2.0.jar
+    File lib\orientdb\orient-commons-1.4.0-SNAPSHOT.jar
+    File lib\orientdb\orientdb-core-1.4.0-SNAPSHOT.jar
+    File lib\orientdb\orientdb-nativeos-1.4.0-SNAPSHOT.jar
+    File lib\orientdb\orientdb-object-1.4.0-SNAPSHOT.jar
     File lib\orientdb\persistence-api-1.0.jar
     
     SetOutPath $INSTDIR\lib\epubcheck
