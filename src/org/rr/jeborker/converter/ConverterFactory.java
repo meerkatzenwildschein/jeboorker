@@ -11,9 +11,13 @@ import org.rr.jeborker.JeboorkerConstants;
 public class ConverterFactory {
 
 	public static List<IEBookConverter> getConverter(IResourceHandler resource) {
-		if(resource!= null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ.getMime().equals(resource.getMimeType())) {
+		if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ.getMime().equals(resource.getMimeType())) {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
 			result.add(new CbzToEpubConverter(resource));
+			return result;
+		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime().equals(resource.getMimeType())) {
+			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
+			result.add(new PdfToCBZConverter(resource));
 			return result;
 		}
 		return Collections.emptyList();
