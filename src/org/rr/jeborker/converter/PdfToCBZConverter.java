@@ -36,6 +36,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 
 			pp = new com.jmupdf.page.PagePixels(page);
 			pp.setRotation(com.jmupdf.page.Page.PAGE_ROTATE_NONE);
+			pp.setZoom(1.5f);
 			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
 			BufferedImage image = pp.getImage();
 			byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
