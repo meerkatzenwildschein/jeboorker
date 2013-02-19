@@ -3,6 +3,7 @@ package nl.siegmann.epublib.epub;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -108,8 +110,22 @@ public class PackageDocumentReader extends PackageDocumentBase {
 			String mediaTypeName = DOMUtil.getAttribute(itemElement, NAMESPACE_OPF, OPFAttributes.media_type);
 			Resource resource = resources.remove(href);
 			if(resource == null) {
-				log.warning("resource with href '" + href + "' not found");
-				continue;
+				//Possibly any charset could be used to store file names in zip files. Try all available ones
+				//to find the referring resource.
+				SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
+				for(Charset c : availableCharsets.values()) {
+					String newEncodedHref = new String(href.getBytes(), c);
+					if(resources.containsByHref(newEncodedHref)) {
+						resource = resources.remove(newEncodedHref);
+						resource.setHref(href);
+						break;
+					}
+				}
+				
+				if(resource == null) {
+					log.warning("resource with href '" + href + "' not found");
+					continue;
+				}
 			}
 			resource.setId(id);
 			MediaType mediaType = MediatypeService.getMediaTypeByName(mediaTypeName);
