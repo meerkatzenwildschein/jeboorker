@@ -92,6 +92,7 @@ Section -Main SEC0000
     File doc\license\KXML_license.txt
     File doc\license\Yasis-Icons_license.txt
     File doc\license\JMuPDF_license.txt
+    File doc\license\TrueZip_EPL_license.txt
     
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
@@ -101,6 +102,7 @@ Section -Main SEC0000
     File lib\commons-lang-2.5.jar
     File lib\commons-logging-1.1.1.jar
     File lib\commons-exec-1.1.jar
+    File lib\commons-compress-1.4.1.jar
     File lib\itext-5.jar
     File lib\jeboorker.jar
     File lib\jrcommons.jar
@@ -109,6 +111,11 @@ Section -Main SEC0000
     File lib\junique-1.0.4.jar
     File lib\jna-3.4.0.jar
     File lib\platform-3.4.0.jar
+    File lib\truezip-driver-file-7.7.1.jar
+    File lib\truezip-driver-zip-7.7.1.jar
+    File lib\truezip-file-7.7.1.jar
+    File lib\truezip-kernel-7.7.1.jar
+    File lib\truezip-swing-7.7.1.jar
     
     SetOutPath $INSTDIR\lib\jmupdf
     File lib\jmupdf\jmupdf.jar
