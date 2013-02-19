@@ -1,6 +1,8 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -11,6 +13,7 @@ import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -39,20 +42,33 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	public void actionPerformed(ActionEvent e) {
 		try {
 			if(this.doOnce().intValue() == JOptionPane.YES_OPTION) {
-				if(!fileToDelete.moveToTrash()) {
-					fileToDelete.delete();
-					if(fileToDelete.exists()) {
-						LoggerFactory.logWarning(this.getClass(), "could not delete file " + fileToDelete);
-					} else {
-						ActionUtils.refreshEntry(fileToDelete);
+				if(fileToDelete == null) {
+					//delete selected files if no ones are specified
+					List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+					for(EbookPropertyItem item : selectedEbookPropertyItems) {
+						IResourceHandler resourceHandler = item.getResourceHandler();
+						doDelete(resourceHandler);
 					}
 				} else {
-					ActionUtils.refreshEntry(fileToDelete);
+					doDelete(fileToDelete);
 				}
 			}
 		} catch (Exception e1) {
 			LoggerFactory.logWarning(this, "could not delete file " + fileToDelete, e1);
 		}
+	}
+	
+	private static void doDelete(IResourceHandler fileToDelete) throws IOException {
+		if(!fileToDelete.moveToTrash()) {
+			fileToDelete.delete();
+			if(fileToDelete.exists()) {
+				LoggerFactory.logWarning(DeleteFileAction.class, "could not delete file " + fileToDelete);
+			} else {
+				ActionUtils.refreshEntry(fileToDelete);
+			}
+		} else {
+			ActionUtils.refreshEntry(fileToDelete);
+		}		
 	}
 	
 	@Override

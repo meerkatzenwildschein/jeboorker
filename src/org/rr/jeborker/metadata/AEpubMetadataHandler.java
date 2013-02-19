@@ -19,10 +19,10 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.zip.LazyZipEntryStream;
-import org.rr.commons.utils.zip.ZipUtils;
-import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
-import org.rr.commons.utils.zip.ZipUtils.ZipFileFilter;
+import org.rr.commons.utils.truezip.LazyTrueZipEntryStream;
+import org.rr.commons.utils.truezip.TrueZipDataEntry;
+import org.rr.commons.utils.truezip.TrueZipUtils;
+import org.rr.commons.utils.zip.ZipFileFilter;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -285,8 +285,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			final String fullPathString = "full-path=";
 			InputStream contentInputStream = null;
 			try {
-				contentInputStream = ebookResource.getContentInputStream();
-				final ZipDataEntry containerXml = ZipUtils.extract(contentInputStream, "META-INF/container.xml");
+				final TrueZipDataEntry containerXml = TrueZipUtils.extract(ebookResource, "META-INF/container.xml");
 				if(containerXml!=null) {
 					final String containerXmlData = new String(containerXml.getBytes());
 					final int fullPathIndex = containerXmlData.indexOf(fullPathString);
@@ -315,8 +314,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			if (opfFile != null) {
 				InputStream contentInputStream = null;
 				try {
-					contentInputStream = ebookResource.getContentInputStream();				
-					final ZipDataEntry containerXml = ZipUtils.extract(contentInputStream, opfFile);
+					final TrueZipDataEntry containerXml = TrueZipUtils.extract(ebookResource, opfFile);
 					if (containerXml != null) {
 						this.containerOpfData = containerXml.getBytes();
 					} else {
@@ -348,16 +346,16 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			final EpubReader reader = new EpubReader();
 			final Resources resources = new Resources();
 			final EpubZipFileFilter epubZipFileFilter = new EpubZipFileFilter(lazy);
-			final List<ZipDataEntry> extracted = ZipUtils.extract(zipData, epubZipFileFilter, -1);
+			final List<TrueZipDataEntry> extracted = TrueZipUtils.extract(ebookResourceHandler, epubZipFileFilter);
 			final List<String> lazyEntries = epubZipFileFilter.getLazyEntries();
 			
-			for(ZipDataEntry entry : extracted) {
-				Resource resource = new Resource(entry.data, entry.path);
+			for(TrueZipDataEntry entry : extracted) {
+				Resource resource = new Resource(entry.getBytes(), entry.path);
 				resources.add(resource);
 			}
 			
 			for(String entry : lazyEntries) {
-				Resource resource = new Resource(new LazyZipEntryStream(ebookResourceHandler, entry), entry);
+				Resource resource = new Resource(new LazyTrueZipEntryStream(ebookResourceHandler, entry), entry);
 				resources.add(resource);
 			}			
 			

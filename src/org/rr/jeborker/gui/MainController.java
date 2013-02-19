@@ -110,7 +110,7 @@ public class MainController {
 		if(getEbookSheetPropertyModel().isChanged()) {
 			//write properties
 			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
-			EbookPropertyDBTableModel tableModel = (EbookPropertyDBTableModel) mainWindow.table.getModel();
+			EbookPropertyDBTableModel tableModel = getTableModel();
 			int rowCount = tableModel.getRowCount();
 
 			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
@@ -242,7 +242,7 @@ public class MainController {
 	 * Refresh the whole table.
 	 */
 	public void refreshTable(final boolean refreshMetadataSheet) {
-		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
+		final EbookPropertyDBTableModel model = getTableModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			((EbookPropertyDBTableModel)model).setDirty();
 		}
@@ -258,7 +258,7 @@ public class MainController {
 	}
 	
 	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
-		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
+		final EbookPropertyDBTableModel model = getTableModel();
 		if(selectedRows==null || selectedRows.length == 0) {
 			return;
 		} else {
@@ -292,7 +292,7 @@ public class MainController {
 	 * @param refreshMetadataSheet do also refresh the metadata sheet. 
 	 */
 	public void refreshTableRows(final int[] rows, boolean refreshMetadataSheet) {
-		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainWindow.table.getModel();
+		final EbookPropertyDBTableModel model = getTableModel();
 		if(rows==null || rows.length==0) {
 			return;
 		} else {
@@ -451,12 +451,12 @@ public class MainController {
 	 * {@link EbookPropertyItem} will be shown to the ui.
 	 * @param item The item to be added.
 	 */
-	public void addEbookPropertyItem(final EbookPropertyItem item, int row) {
-		TableModel model = mainWindow.table.getModel();
+	public void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
+		TableModel model = getTableModel();
 		if (model instanceof EbookPropertyDBTableModel) {
-			this.clearSelection();
+			clearSelection();
 			((EbookPropertyDBTableModel) model).addRow(item, row);
-			mainWindow.table.setEditingRow(row -1);
+			mainWindow.table.stopEdit();
 		}
 	}
 	
@@ -468,7 +468,7 @@ public class MainController {
 		final int[] selectedRows = getSelectedEbookPropertyItemRows();
 		final ArrayList<EbookPropertyItem> result = new ArrayList<EbookPropertyItem>(selectedRows.length);
 		for (int i = 0; i < selectedRows.length; i++) {
-			EbookPropertyItem valueAt = (EbookPropertyItem) mainWindow.table.getModel().getValueAt(selectedRows[i], 0);
+			EbookPropertyItem valueAt = (EbookPropertyItem) getTableModel().getValueAt(selectedRows[i], 0);
 			result.add(valueAt);
 		}
 		
@@ -501,7 +501,7 @@ public class MainController {
 	 * @param item The {@link EbookPropertyItem} to be removed.
 	 */
 	public boolean removeEbookPropertyItem(EbookPropertyItem item) {
-		TableModel model = mainWindow.table.getModel();
+		TableModel model = getTableModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			mainWindow.table.clearSelection();
 			mainWindow.table.editingStopped(new ChangeEvent(this));
@@ -516,7 +516,7 @@ public class MainController {
 	 * @return The desired model. <code>null</code> if the model is not initialized.
 	 */
 	public EbookPropertyDBTableModel getTableModel() {
-		TableModel model = mainWindow.table.getModel();
+		final TableModel model = mainWindow.table.getModel();
 		return (EbookPropertyDBTableModel) model;
 	}
 	
@@ -646,7 +646,7 @@ public class MainController {
 						modelRowsIndex[i] = selectedRows[i];
 					}	
 					if(modelRowsIndex[i] < rowCount) {
-						items.add(((EbookPropertyDBTableModel) mainWindow.table.getModel()).getEbookPropertyItemAt(modelRowsIndex[i]));
+						items.add(getTableModel().getEbookPropertyItemAt(modelRowsIndex[i]));
 					}
 				}
 				

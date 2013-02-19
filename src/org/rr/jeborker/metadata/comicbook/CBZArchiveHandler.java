@@ -1,8 +1,7 @@
 package org.rr.jeborker.metadata.comicbook;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,8 +9,9 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.zip.ZipUtils;
-import org.rr.commons.utils.zip.ZipUtils.ZipDataEntry;
+import org.rr.commons.utils.truezip.TrueZipDataEntry;
+import org.rr.commons.utils.truezip.TrueZipUtils;
+import org.rr.commons.utils.zip.ZipFileFilter;
 
 class CBZArchiveHandler implements IArchiveHandler {
 	
@@ -29,14 +29,14 @@ class CBZArchiveHandler implements IArchiveHandler {
 
 	@Override
 	public byte[] getArchiveEntry(String archiveEntry) throws IOException {
-		ZipDataEntry extract = ZipUtils.extract(resource.getContentInputStream(), archiveEntry);
+		TrueZipDataEntry extract = TrueZipUtils.extract(resource, archiveEntry);
 		return extract.getBytes();
 	}
 
 	@Override
 	public void readArchive() throws IOException {
 		archiveEntries.clear();
-		List<ZipDataEntry> comicInfoXml = ZipUtils.extract(resource.getContentInputStream(), new ZipUtils.ZipFileFilter() {
+		List<TrueZipDataEntry> comicInfoXml = TrueZipUtils.extract(resource, new ZipFileFilter() {
 			
 			@Override
 			public boolean accept(String entry) {
@@ -47,7 +47,7 @@ class CBZArchiveHandler implements IArchiveHandler {
 				}
 				return false;
 			}
-		}, -1);
+		});
 		
 		Collections.sort(archiveEntries);
 		
@@ -79,20 +79,10 @@ class CBZArchiveHandler implements IArchiveHandler {
 
 	@Override
 	public boolean replaceComicInfoXml(byte[] comicInfoXml, String comicInfoFilePath) throws IOException {
-		final ZipUtils.ZipDataEntry zipDataEntry = new ZipUtils.ZipDataEntry(comicInfoFilePath, comicInfoXml);
-		
-		IResourceHandler tmpEbookResource = resource.getTemporaryResource();
-		OutputStream out = tmpEbookResource.getContentOutputStream(false);
-		InputStream in = resource.getContentInputStream();
-		
-		boolean success = ZipUtils.add(in, out, zipDataEntry, true);
-		if(success && tmpEbookResource.size() > 0) {
-			//new temp pdf looks good. Move the new temp one over the old one. 
-			tmpEbookResource.moveTo(resource, true);
-		} else {
+		boolean success = TrueZipUtils.add(resource, comicInfoFilePath, new ByteArrayInputStream(comicInfoXml));
+		if(!success) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Writing CBZ " + resource + " has failed.");
-			tmpEbookResource.delete();
-		}		
+		}	
 		
 		return true;
 	}

@@ -48,6 +48,7 @@ import org.rr.common.swing.button.JMenuButton;
 import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
+import org.rr.common.swing.table.JRTable;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.Jeboorker;
@@ -78,7 +79,7 @@ public class MainView extends JFrame{
 	
 	private static final long serialVersionUID = 6837919427429399376L;
 	
-	JTable table;
+	JRTable table;
 	
 	JProgressBar progressBar;
 	
@@ -177,7 +178,7 @@ public class MainView extends JFrame{
 		gbc_mainSplitPane.gridy = 2;
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
 		
-		table = new JTable();
+		table = new JRTable();
 		table.setName("MainTable");
 		table.setRowHeight(74);
 		table.setModel(new EbookPropertyDBTableModel());
@@ -188,8 +189,10 @@ public class MainView extends JFrame{
 		table.setDragEnabled(true);
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
 		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
 		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
+		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);		
 		table.setTransferHandler(new TransferHandler() {
 
 			private static final long serialVersionUID = -371360766111031218L;
