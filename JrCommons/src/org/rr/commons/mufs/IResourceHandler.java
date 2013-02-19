@@ -1,5 +1,6 @@
 package org.rr.commons.mufs;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -109,7 +110,7 @@ public interface IResourceHandler {
 	 * 
 	 * @return The an {@link InputStream} to the resource.
 	 */
-	public InputStream getContentInputStream() throws IOException;
+	public ResourceHandlerInputStream getContentInputStream() throws IOException;
 
 	/**
 	 * Gets an {@link OutputStream} for the resource handled by this {@link IResourceHandler} instance.
@@ -370,5 +371,10 @@ public interface IResourceHandler {
 	 * @return The meta object or <code>null</code>.
 	 */
 	public Object getMeta(String key);
+	
+	/**
+	 * Gets a local file for the given ResourceHandler.
+	 */
+	public File toFile();
 
 }

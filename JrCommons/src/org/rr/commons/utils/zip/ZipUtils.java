@@ -2,7 +2,6 @@ package org.rr.commons.utils.zip;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,7 +12,6 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.ReflectionUtils;
 
 public class ZipUtils {
 
@@ -113,39 +111,16 @@ public class ZipUtils {
 	 * @param entry The entry to be extracted. for example 'META-INF/container.xml'
 	 * @return The desired entry or <code>null</code> if the entry is not in the zip.
 	 */
-	public static ZipDataEntry extract(InputStream zipData, String entry) {
-		if(entry==null) {
-			return null;
-		}
-		if(zipData==null) {
-			return null;
-		}
-		
-		org.rr.commons.utils.zip.ZipInputStream jar = null;
-		try {
-			jar = new org.rr.commons.utils.zip.ZipInputStream(zipData);
-
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			final byte[] readBuff = new byte[4096];
-
-			org.rr.commons.utils.zip.ZipEntry nextEntry;
-			while ((nextEntry=jar.getNextEntry()) != null) {
-				if(nextEntry.getName().equals(entry)) {
-					int len = 0;
-					while ((len = jar.read(readBuff)) != -1) {
-						bout.write(readBuff, 0, len);
-					}
-					ZipDataEntry zipDataEntry = new ZipDataEntry(nextEntry.getName(), bout.toByteArray());
-					bout.reset();
-					return zipDataEntry;
-				}
+	public static ZipDataEntry extract(InputStream zipData, final String entry) {
+		List<ZipDataEntry> extract = extract(zipData, new ZipFileFilter() {
+			
+			@Override
+			public boolean accept(String e) {
+				return entry.equals(e);
 			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if(jar!=null) {
-				try {jar.close();} catch (IOException e) {}
-			}
+		}, Integer.MAX_VALUE);
+		if(!extract.isEmpty()) {
+			return extract.get(0);
 		}
 		return null;
 	}
@@ -262,70 +237,5 @@ public class ZipUtils {
 		}
 		return success;
 	}
-	
-	
-	/**
-	 * Just a data holder class.
-	 */
-	public static class ZipDataEntry implements Comparable<ZipDataEntry> {
-		
-		public String path;
-		
-		public InputStream data;
-		
-		public ZipDataEntry(org.rr.commons.utils.zip.ZipEntry entry) {
-			path = entry.getName();
-		}
-		
-		public ZipDataEntry(String path, InputStream data) {
-			this.path = path;
-			this.data = data;
-		}
-		
-		public ZipDataEntry(String path, byte[] data) {
-			this.path = path;
-			this.data = new ByteArrayInputStream(data);
-		}		
 
-		@Override
-		public int compareTo(ZipDataEntry o) {
-			return o.path.compareTo(path);
-		}
-		
-		public String toString() {
-			return path;
-		}
-		
-		public byte[] getBytes() {
-			if(!ReflectionUtils.getFields(data.getClass(), ReflectionUtils.VISIBILITY_VISIBLE_ALL).isEmpty()) {
-				try {
-					return (byte[]) ReflectionUtils.getFieldValue(data, "buf", false);
-				} catch (Exception e) {
-				}					
-			}
-			
-			try {
-				return IOUtils.toByteArray(this.data);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		
-		public String getName() {
-			return new File(path).getName();
-		}
-	}
-	
-	public static interface ZipFileFilter {
-		public boolean accept(String entry);
-	}
-	
-	public static class EmptyZipFileFilter implements ZipFileFilter {
-
-		@Override
-		public boolean accept(String entry) {
-			return true;
-		}
-		
-	}
 }

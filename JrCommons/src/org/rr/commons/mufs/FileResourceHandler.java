@@ -198,11 +198,11 @@ class FileResourceHandler extends AResourceHandler {
 	 * @return The desired {@link InputStream}.
 	 */
 	@Override
-	public InputStream getContentInputStream() throws IOException {
+	public ResourceHandlerInputStream getContentInputStream() throws IOException {
 		this.cleanHeapIfNeeded(this.file.length());
 		try {
 			FileInputStream fIn = new FileInputStream(this.file);
-			BufferedInputStream buffIn = new BufferedInputStream(fIn) ;
+			ResourceHandlerInputStream buffIn = new ResourceHandlerInputStream(this, fIn) ;
 			return buffIn;
 		} catch (Exception e) {
 			throw new IOException(e);
@@ -662,6 +662,12 @@ class FileResourceHandler extends AResourceHandler {
 		synchronized(fileSystemViewInstance) {
 			return ResourceHandlerFactory.getResourceHandler(fileSystemViewInstance.createNewFolder(this.file));
 		}
+	}
+
+
+	@Override
+	public File toFile() {
+		return getFile();
 	}
 	
 }

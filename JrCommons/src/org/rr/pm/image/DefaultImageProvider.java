@@ -64,7 +64,11 @@ class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	 */
 	public BufferedImage getImage() {
 		try {
-			return ImageIO.read(resourceLoader.getContentInputStream());
+			BufferedImage image = ImageIO.read(resourceLoader.getContentInputStream());
+			if(image == null) {
+				LoggerFactory.logWarning(this, "could not read image", new Exception("Dumpstack"));
+			}
+			return image;
 		} catch (IOException e) {
 			LoggerFactory.logWarning(this, "could not read image", e);
 		}
