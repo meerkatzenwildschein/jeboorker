@@ -220,7 +220,7 @@ public interface IResourceHandler {
 	public String getName();
 	
 	/**
-	 * Gets the file extension of the file resource.
+	 * Gets the file extension of the file resource. The returned file extension did not contains the dot!
 	 * @return The file extension. If no extension is detected, an empty String is returned.
 	 */
 	public String getFileExtension();

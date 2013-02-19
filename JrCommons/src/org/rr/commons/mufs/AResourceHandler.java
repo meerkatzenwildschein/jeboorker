@@ -189,17 +189,17 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 					}
 				} else if(mimeFormatPart.equals("png")) {
 					if(!fileName.endsWith(".png")) {
-						return ""; //no jpeg extension. all after the dot belongs to the file name.
+						return ""; //no png extension. all after the dot belongs to the file name.
 					}
 				} else if(mimeFormatPart.equals("gif")) {
 					if(!fileName.endsWith(".gif")) {
-						return ""; //no jpeg extension. all after the dot belongs to the file name.
+						return ""; //no gif extension. all after the dot belongs to the file name.
 					}
 				}
 			}
 			
 			//return with the chars behind the last dot. 
-			return fileName.substring(this.getName().lastIndexOf('.')+1);
+			return fileName.substring(this.getName().lastIndexOf('.') + 1);
 		} catch (Exception e) {
 			return "";
 		}
