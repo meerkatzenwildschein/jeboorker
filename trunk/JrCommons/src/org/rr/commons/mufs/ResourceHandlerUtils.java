@@ -584,6 +584,19 @@ public class ResourceHandlerUtils {
 		
 		return null;
 	}
+	
+	/**
+	 * Get the file name of the given {@link IResourceHandler} instance without path and file extension. 
+	 * @return The desired file name. Never returns <code>null</code> but an empty {@link String} is possible.
+	 */
+	public static String getFileNameWithoutFileExtension(IResourceHandler resourceHandler) {
+		String name = resourceHandler.getName();
+		String fileExtension = resourceHandler.getFileExtension();
+		if(!fileExtension.isEmpty() && name.endsWith("." + fileExtension)) {
+			name = name.substring(0, name.length() - fileExtension.length() - 1);
+		}
+		return name;
+	}
 
 	/**
 	 * Get a list over all external drives. 
