@@ -106,8 +106,12 @@ public class MetadataProperty implements Cloneable {
 	 * @param newValues The new values for this {@link MetadataProperty} instance.
 	 */
 	public void setValues(final List<Object> newValues) {
-		this.values.clear();
-		this.values.addAll(newValues);
+		if(this.values != null) {
+			this.values.clear();
+			this.values.addAll(newValues);
+		} else {
+			this.values = new ArrayList<Object>(newValues);
+		}
 	}
 	
 	public Class<?> getPropertyClass() {

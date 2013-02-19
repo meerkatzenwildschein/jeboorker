@@ -48,7 +48,7 @@ public class JeboorkerConstants {
 
 			@Override
 			public String getName() {
-				return "Comic book";
+				return "cbz";
 			}
 
 			@Override

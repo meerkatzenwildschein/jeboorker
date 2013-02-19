@@ -16,6 +16,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import org.rr.common.swing.SwingUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.converter.IEBookConverter;
@@ -295,7 +296,8 @@ class MainMenuBarView extends JMenuBar {
 						Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.CONVERT_EBOOK_ACTION, selectedItems, selectedEbookPropertyItemRows);
 						action.putValue("converterClass", c.getClass());
 						JMenuItem converterMenuItem = new JMenuItem(action);
-						converterMenuItem.setText(c.getConversionSourceType().getName() + " -> " + c.getConversionTargetType().getName());
+						
+						converterMenuItem.setText(StringUtils.capitalize(c.getConversionSourceType().getName()) + " " + Bundle.getString("MainMenuBarView.conversion.connector") + " " + StringUtils.capitalize(c.getConversionTargetType().getName()));
 						convertSubMenu.add(converterMenuItem);
 						convertSubMenu.setEnabled(true);
 					}
