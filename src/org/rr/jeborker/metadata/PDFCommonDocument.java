@@ -28,8 +28,6 @@ abstract class PDFCommonDocument {
 
 	public static final int ITEXT = 0;
 	
-	public static final int PDFBOX = 1;
-	
 	private static final double MIN_IMAGE_COVER_WIDTH = 1.4d;
 	
 	private static final double MAX_IMAGE_COVER_WIDTH = 1.7d;
