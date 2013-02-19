@@ -19,14 +19,7 @@ public class TrueZipUtilsTest extends TestCase{
 		
 		List<String> list = TrueZipUtils.list(resourceHandler);
 		System.out.println(list);
-		
-//		FileInputStream fileInputStream = new FileInputStream(file);
-//		byte[] readFileToByteArray = FileUtils.readFileToByteArray(file);
-//		list = SevenZipUtils.list(readFileToByteArray);
-//		fileInputStream.close();
-//		System.out.println(list);
-		
-		
-//		file.delete();
+
+		file.delete();
 	}
 }
