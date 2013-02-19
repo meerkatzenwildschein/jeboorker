@@ -23,6 +23,7 @@
 	<classpathentry kind="lib" path="lib/dropbox/dropbox-java-sdk-1.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/dropbox/json_simple-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jmupdf/jmupdf.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.4.1.jar" sourcepath="lib/commons-compress-1.4.1-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/platform-3.4.0.jar"/>
