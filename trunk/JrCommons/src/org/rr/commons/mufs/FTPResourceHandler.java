@@ -185,8 +185,8 @@ public class FTPResourceHandler extends AResourceHandler {
 	 * @return The an {@link InputStream} to the resource.
 	 */
 	@Override
-	public InputStream getContentInputStream() throws IOException {
-		return new InputStream() {
+	public ResourceHandlerInputStream getContentInputStream() throws IOException {
+		return new ResourceHandlerInputStream(this, new InputStream() {
 
 			private InputStream retrieveFileStream = null;
 
@@ -240,7 +240,7 @@ public class FTPResourceHandler extends AResourceHandler {
 					releaseConnection(connection);
 				}
 			}
-		};
+		});
 	}
 
 	@Override

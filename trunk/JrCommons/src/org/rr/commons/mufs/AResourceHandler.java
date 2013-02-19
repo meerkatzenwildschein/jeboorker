@@ -470,4 +470,23 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		}
 		return metaMap.get(key);
 	}
+	
+	@Override
+	public File toFile() {
+		String name = getName();
+		String fileExtension = getFileExtension();
+		if(fileExtension != null && name.endsWith(fileExtension)) {
+			name = name.substring(0, name.length() - fileExtension.length() - 1);
+		}
+		
+		try {
+			File createTempFile = File.createTempFile(name, fileExtension);
+			IResourceHandler tmpResourceHandler = ResourceHandlerFactory.getResourceHandler(createTempFile);
+			tmpResourceHandler.setContent(this.getContent());
+			tmpResourceHandler.dispose();
+			return createTempFile;
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}	
 }

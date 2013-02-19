@@ -7,16 +7,22 @@ import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
+import org.rr.commons.utils.ReflectionUtils;
 
 class InputStreamResourceHandler extends AResourceHandler {
 	
-	private InputStream inputStream;
+	private ResourceHandlerInputStream inputStream;
 	
 	InputStreamResourceHandler(InputStream inputStream) {
-		if(!(inputStream instanceof BufferedInputStream)) {
-			this.inputStream = new BufferedInputStream(inputStream);
+		if(inputStream instanceof BufferedInputStream) {
+			try {
+				InputStream in = (InputStream) ReflectionUtils.getFieldValue(inputStream, "in", false);
+				this.inputStream = new ResourceHandlerInputStream(this, in);
+			} catch (Exception e) {
+				this.inputStream = new ResourceHandlerInputStream(this, inputStream);
+			}
 		} else {
-			this.inputStream = inputStream;
+			this.inputStream = new ResourceHandlerInputStream(this, inputStream);
 		}
 	}
 	
@@ -57,7 +63,7 @@ class InputStreamResourceHandler extends AResourceHandler {
 	}
 
 	@Override
-	public InputStream getContentInputStream() throws IOException {
+	public ResourceHandlerInputStream getContentInputStream() throws IOException {
 		return this.inputStream;
 	}
 

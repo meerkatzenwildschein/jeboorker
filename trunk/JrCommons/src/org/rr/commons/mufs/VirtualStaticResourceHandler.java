@@ -2,7 +2,6 @@ package org.rr.commons.mufs;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,13 +59,15 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 	}
 
 	@Override
-	public InputStream getContentInputStream() throws IOException {
+	public ResourceHandlerInputStream getContentInputStream() throws IOException {
 		this.cleanHeapIfNeeded(this.data.length());
+		ResourceHandlerInputStream in;
 		if(this.data != null) {
-			return this.data.getContentInputStream();
+			in = new ResourceHandlerInputStream(this, this.data.getContentInputStream(), (int) this.data.length());
 		} else {
-			return new ByteArrayInputStream(new byte[0]);
+			in = new ResourceHandlerInputStream(this, new ByteArrayInputStream(new byte[0]), 0);
 		}
+		return in;
 	}
 
 	@Override

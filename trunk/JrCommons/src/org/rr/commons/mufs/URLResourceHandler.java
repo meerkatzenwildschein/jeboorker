@@ -51,7 +51,7 @@ public class URLResourceHandler extends AResourceHandler {
 	}
 
 	@Override
-	public InputStream getContentInputStream() throws IOException {
+	public ResourceHandlerInputStream getContentInputStream() throws IOException {
 		URLConnection connection = this.url.openConnection();
 		if(connection instanceof HttpURLConnection) {
 			((HttpURLConnection) connection).setConnectTimeout(10 * 1000); //10 sec timeout
@@ -59,8 +59,9 @@ public class URLResourceHandler extends AResourceHandler {
 		}
 		connection.connect();
 		InputStream inputStream = connection.getInputStream();
+		ResourceHandlerInputStream in = new ResourceHandlerInputStream(this, inputStream);
 		inStream.add(inputStream);
-		return inputStream;
+		return in;
 	}
 
 	@Override
