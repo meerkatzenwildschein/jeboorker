@@ -589,7 +589,7 @@ public final class ListUtils implements Serializable {
 	 *            
 	 * @return The index for the found <code>match</code> in the <code>values</code> array.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static int indexOf(final List<?> values, final Object match, final int compare, final int searchType) {
 		//test the comperation mode
 		if (compare > UtilConstants.COMPARE_TEXT || compare < UtilConstants.COMPARE_BINARY) {
