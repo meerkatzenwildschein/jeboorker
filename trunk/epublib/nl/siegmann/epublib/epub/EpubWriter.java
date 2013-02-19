@@ -8,14 +8,15 @@ import java.io.Writer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.IOUtil;
 
+import org.rr.commons.utils.truezip.TrueZipUtils;
+import org.rr.commons.utils.truezip.ZipOutputStream;
+import org.rr.commons.utils.truezip.ZipEntry;
 import org.xmlpull.v1.XmlSerializer;
 
 /**
@@ -45,7 +46,7 @@ public class EpubWriter {
 
 	public void write(Book book, OutputStream out) throws IOException {
 		book = processBook(book);
-		ZipOutputStream resultStream = new ZipOutputStream(out);
+		ZipOutputStream resultStream = TrueZipUtils.createZipOutputStream(out);
 		writeMimeType(resultStream);
 		writeContainer(resultStream);
 		initTOCResource(book);
