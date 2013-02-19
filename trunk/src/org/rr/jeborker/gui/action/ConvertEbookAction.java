@@ -1,7 +1,6 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -45,6 +44,8 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 		final int[] selectedRowsToRefresh = (int[]) getValue(MultiActionWrapper.SELECTED_ROWS_TO_REFRESH_KEY);
 		
 		try {
+			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", resource.getName()));
+			
 			IResourceHandler targetResourceLoader = converter.convert();
 			EbookPropertyItem sourceItem = null;
 			for(int rowIndex : selectedRowsToRefresh) {
@@ -59,6 +60,8 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 			this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceLoader, ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath()));
 		} catch (Exception ex) {
 			LoggerFactory.logWarning((Object) this, "", ex);
+		} finally {
+			controller.getProgressMonitor().monitorProgressStop();
 		}
 	}
 

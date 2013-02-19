@@ -5,10 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Spine;
@@ -17,13 +15,10 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.zip.LazyZipEntryStream;
-import org.rr.commons.utils.zip.ZipUtils;
+import org.rr.commons.utils.truezip.LazyTrueZipEntryStream;
+import org.rr.commons.utils.truezip.TrueZipUtils;
 import org.rr.jeborker.JeboorkerConstants;
 import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
-import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.MetadataHandlerFactory;
-import org.rr.jeborker.metadata.MetadataProperty;
 
 /**
  * A converter for comic cbz files to epub 
@@ -38,7 +33,7 @@ class CbzToEpubConverter implements IEBookConverter {
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
-		final List<String> cbzEntries = ZipUtils.list(this.cbzResource.getContentInputStream());
+		final List<String> cbzEntries = TrueZipUtils.list(this.cbzResource);
 		final Book epub = this.createEpub(cbzEntries);
 		final EpubWriter writer = new EpubWriter();
 		
@@ -63,16 +58,19 @@ class CbzToEpubConverter implements IEBookConverter {
 		List<Resource> resources = new ArrayList<Resource>(cbzEntries.size());
 		for(int i = 0; i < cbzEntries.size(); i++) {
 			final String cbzEntry = cbzEntries.get(i);
-			final Resource imageResource = new Resource(new LazyZipEntryStream(this.cbzResource, cbzEntry), cbzEntry);
-			
-			resources.add(imageResource);	
-			epub.addResource(imageResource);
-			
-			this.attachSpineEntry(epub, spine, imageResource);
-			
-			//the first image from the cbz is the cover image.
-			if(i == 0) {
-				epub.setCoverImage(imageResource);
+			if(isImage(cbzEntry)) {
+				final String cbzHrefEntry = createHrefEntry(cbzEntry, epub);
+				final Resource imageResource = new Resource(new LazyTrueZipEntryStream(this.cbzResource, cbzEntry), cbzHrefEntry);
+				
+				resources.add(imageResource);	
+				epub.addResource(imageResource);
+				
+				this.attachSpineEntry(epub, spine, imageResource);
+				
+				//the first image from the cbz is the cover image.
+				if(i == 0) {
+					epub.setCoverImage(imageResource);
+				}
 			}
 		}
 		epub.setSpine(spine);
@@ -117,6 +115,34 @@ class CbzToEpubConverter implements IEBookConverter {
 	@Override
 	public SUPPORTED_MIMES getConversionTargetType() {
 		return JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
+	}
+	
+	private String createHrefEntry(final String cbzEntry, final Book epub) {
+		try {
+			StringBuilder result = new StringBuilder();
+			for(int i = 0; i < cbzEntry.length(); i++) {
+				char c = cbzEntry.charAt(i);
+				if(Character.isWhitespace(c)) {
+					result.append('_');
+				} else if(Character.isDigit(c)) {
+					result.append(c);
+				} else if(c >= 'A' || c <= 'z') {
+					result.append(c);
+				} else if(c == '/') {
+					result.setLength(0); //remove path segement
+				}
+			}
+			String href = result.toString();
+			while(epub.getResources().getByHref(href) != null) {
+				if(href.lastIndexOf('.') != -1) {
+					href = href.substring(0, href.lastIndexOf('.')) + "_" + href.substring(href.lastIndexOf('.'));
+				}
+			}
+			
+			return href;
+		} catch(Exception e) {
+			return cbzEntry;
+		}
 	}
 	
 }

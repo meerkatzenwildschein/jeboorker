@@ -1,9 +1,8 @@
 package org.rr.jeborker.metadata;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,11 +22,10 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubWriter;
 
-import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.zip.ZipUtils;
+import org.rr.commons.utils.truezip.TrueZipUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -285,30 +283,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	 */
 	private void writeZipData(byte[] content, final String file) throws IOException {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		final IResourceHandler tmpEbookResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResourceHandler, "tmp");
-		OutputStream contentOutputStream = null;
-		InputStream contentInputStream = null;
-		boolean success = false;
-		
-		try {
-			contentOutputStream = tmpEbookResourceLoader.getContentOutputStream(false);
-			contentInputStream = ebookResourceHandler.getContentInputStream();
-			success = ZipUtils.add(contentInputStream, contentOutputStream, new ZipUtils.ZipDataEntry(file, content));
-		} finally {
-			if(contentOutputStream != null) {
-				contentOutputStream.flush();
-				IOUtils.closeQuietly(contentOutputStream);
-			}
-			if(contentInputStream != null) {
-				IOUtils.closeQuietly(contentInputStream);
-			}
-		}
-		
-		if(success && tmpEbookResourceLoader.size() > 0) {
-			tmpEbookResourceLoader.moveTo(ebookResourceHandler, true);
-		} else {
-			tmpEbookResourceLoader.delete();
-		}
+		TrueZipUtils.add(ebookResourceHandler, file, new ByteArrayInputStream(content));
 	}
 
 	@Override
