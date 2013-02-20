@@ -11,7 +11,6 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
-import org.rr.commons.utils.StringUtils;
 
 /**
  * {@link IFileChooser} implementation for Linux with zenity
@@ -66,7 +65,8 @@ class ZenityFileChooser implements IFileChooser {
 		}
 		
 		if(this.title != null) {
-			cl.addArgument("--title=" + StringUtils.replace(this.title, " ", "\u00A0"));
+			
+			cl.addArgument("--title=" + ProcessExecutor.saveWhitespaces(this.title));
 		}		
 
 		final StringBuilder result = new StringBuilder();
