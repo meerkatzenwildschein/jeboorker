@@ -3,6 +3,7 @@ package org.rr.jeborker.metadata;
 import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
 import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
 import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,9 +52,9 @@ public class MetadataHandlerFactory {
 				return latestReader = new EPubLibMetadataReader(resource);
 			} else if(resource.getMimeType().equals(MIME_PDF.getMime())) {
 				return latestReader = new PDFCommonMetadataReader(resource);
-			} else if(resource.getMimeType().equals(MIME_CBZ.getMime())) {
+			} else if(resource.getMimeType().equals(MIME_CBZ.getMime()) || resource.getMimeType().equals(MIME_CBR.getMime())) {
 				return latestReader = new ComicBookMetadataReader(resource);
-			}
+			} 
 		}
 		return null;
 	}
@@ -85,7 +86,7 @@ public class MetadataHandlerFactory {
 				return wrap(new EPubLibMetadataWriter(resource));
 			} else if(resource.getMimeType().equals(MIME_PDF.getMime())) {
 				return wrap(new PDFCommonMetadataWriter(resource));
-			} else if(resource.getMimeType().equals(MIME_CBZ.getMime())) {
+			} else if(resource.getMimeType().equals(MIME_CBZ.getMime()) || resource.getMimeType().equals(MIME_CBR.getMime())) {
 				return wrap(new ComicBookMetadataWriter(resource));
 			}
 		}
@@ -121,7 +122,7 @@ public class MetadataHandlerFactory {
 				return true;
 			} else if(resourceHandler.getMimeType().equals(MIME_PDF.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_CBZ.getMime())) {
+			} else if(resourceHandler.getMimeType().equals(MIME_CBZ.getMime()) || resourceHandler.getMimeType().equals(MIME_CBR.getMime())) {
 				return true;
 			}
 		}	

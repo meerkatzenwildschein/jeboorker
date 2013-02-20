@@ -10,19 +10,19 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
-import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.rar.RarUtils;
 
-public class CBZArchiveHandler extends AArchiveHandler {
+public class CBRArchiveHandler extends AArchiveHandler {
 
-	CBZArchiveHandler(IResourceHandler resource) {
+	CBRArchiveHandler(IResourceHandler resource) {
 		super(resource);
 	}
 
 	@Override
 	public boolean replaceComicInfoXml(byte[] comicInfoXml, String comicInfoFilePath) throws IOException {
-		boolean success = TrueZipUtils.add(resource, comicInfoFilePath, new ByteArrayInputStream(comicInfoXml));
+		boolean success = RarUtils.add(resource, comicInfoFilePath, new ByteArrayInputStream(comicInfoXml));
 		if(!success) {
-			LoggerFactory.getLogger().log(Level.WARNING, "Writing CBZ " + resource + " has failed.");
+			LoggerFactory.getLogger().log(Level.WARNING, "Writing CBR " + resource + " has failed.");
 		}	
 		
 		return success;
@@ -31,7 +31,7 @@ public class CBZArchiveHandler extends AArchiveHandler {
 	@Override
 	public void readArchive() throws IOException {
 		archiveEntries.clear();
-		List<CompressedDataEntry> comicInfoXml = TrueZipUtils.extract(resource, new FileEntryFilter() {
+		List<CompressedDataEntry> comicInfoXml = RarUtils.extract(resource, new FileEntryFilter() {
 			
 			@Override
 			public boolean accept(String entry) {
@@ -54,7 +54,7 @@ public class CBZArchiveHandler extends AArchiveHandler {
 	
 	@Override
 	public byte[] getArchiveEntry(String archiveEntry) throws IOException {
-		CompressedDataEntry extract = TrueZipUtils.extract(resource, archiveEntry);
+		CompressedDataEntry extract = RarUtils.extract(resource, archiveEntry);
 		return extract.getBytes();
 	}	
 }
