@@ -14,9 +14,9 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.IOUtil;
 
-import org.rr.commons.utils.truezip.TrueZipUtils;
-import org.rr.commons.utils.truezip.ZipOutputStream;
-import org.rr.commons.utils.truezip.ZipEntry;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.truezip.ZipEntry;
+import org.rr.commons.utils.compression.truezip.ZipOutputStream;
 import org.xmlpull.v1.XmlSerializer;
 
 /**

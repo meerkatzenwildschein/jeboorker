@@ -9,9 +9,9 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.truezip.TrueZipDataEntry;
-import org.rr.commons.utils.truezip.TrueZipUtils;
-import org.rr.commons.utils.zip.ZipFileFilter;
+import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.zip.ZipFileFilter;
 
 class CBZArchiveHandler implements IArchiveHandler {
 	
@@ -29,14 +29,14 @@ class CBZArchiveHandler implements IArchiveHandler {
 
 	@Override
 	public byte[] getArchiveEntry(String archiveEntry) throws IOException {
-		TrueZipDataEntry extract = TrueZipUtils.extract(resource, archiveEntry);
+		CompressedDataEntry extract = TrueZipUtils.extract(resource, archiveEntry);
 		return extract.getBytes();
 	}
 
 	@Override
 	public void readArchive() throws IOException {
 		archiveEntries.clear();
-		List<TrueZipDataEntry> comicInfoXml = TrueZipUtils.extract(resource, new ZipFileFilter() {
+		List<CompressedDataEntry> comicInfoXml = TrueZipUtils.extract(resource, new ZipFileFilter() {
 			
 			@Override
 			public boolean accept(String entry) {
@@ -84,7 +84,7 @@ class CBZArchiveHandler implements IArchiveHandler {
 			LoggerFactory.getLogger().log(Level.WARNING, "Writing CBZ " + resource + " has failed.");
 		}	
 		
-		return true;
+		return success;
 	}
 
 }

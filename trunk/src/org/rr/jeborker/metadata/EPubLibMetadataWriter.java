@@ -25,7 +25,7 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
