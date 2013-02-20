@@ -15,6 +15,10 @@ public class ConverterFactory {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
 			result.add(new CbzToEpubConverter(resource));
 			return result;
+		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR.getMime().equals(resource.getMimeType())) {
+			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
+			result.add(new CbrToEpubConverter(resource));
+			return result;
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime().equals(resource.getMimeType())) {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
 			result.add(new PdfToCBZConverter(resource));
