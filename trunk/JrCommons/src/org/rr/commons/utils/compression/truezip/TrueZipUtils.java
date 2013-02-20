@@ -1,4 +1,4 @@
-package org.rr.commons.utils.truezip;
+package org.rr.commons.utils.compression.truezip;
 
 import java.io.File;
 import java.io.InputStream;
@@ -10,8 +10,9 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.zip.EmptyZipFileFilter;
-import org.rr.commons.utils.zip.ZipFileFilter;
+import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.zip.EmptyZipFileFilter;
+import org.rr.commons.utils.compression.zip.ZipFileFilter;
 
 import de.schlichtherle.truezip.file.TArchiveDetector;
 import de.schlichtherle.truezip.file.TConfig;
@@ -37,8 +38,8 @@ public class TrueZipUtils {
 	 * @param path qualified zip path of the entry to be extracted.
 	 * @return The desired extracted entries.
 	 */	
-	public static List<TrueZipDataEntry> extract(IResourceHandler zipFileHandler, ZipFileFilter filter) {
-		final List<TrueZipDataEntry> result = new ArrayList<TrueZipDataEntry>();
+	public static List<CompressedDataEntry> extract(IResourceHandler zipFileHandler, ZipFileFilter filter) {
+		final List<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 		final List<String> entryList = list(zipFileHandler);
 		for(String entry : entryList) {
 			if(filter.accept(entry)) {
@@ -55,7 +56,7 @@ public class TrueZipUtils {
 	 * @return The desired extracted entry. Never returns <code>null</code> but the 
 	 * result {@link TrueZipDataEntry} would return no bytes if the zip entry did not exists.
 	 */
-	public static TrueZipDataEntry extract(IResourceHandler zipFileHandler, String name) {
+	public static CompressedDataEntry extract(IResourceHandler zipFileHandler, String name) {
 		return new LazyTrueZipDataEntry(zipFileHandler, name);
 	}
 	

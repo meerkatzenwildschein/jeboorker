@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression.zip;
 
 /*
  * Copyright 1995-1996 Sun Microsystems, Inc.  All Rights Reserved.

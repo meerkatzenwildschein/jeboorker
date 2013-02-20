@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression.zip;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.compression.CompressedDataEntry;
 
 public class ZipUtils {
 
@@ -50,11 +51,11 @@ public class ZipUtils {
 		}
 	}
     	
-	public static List<ZipDataEntry> extract(byte[] zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(byte[] zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
 		return extract(new ByteArrayInputStream(zipData), zipDataFileNameEncoding, filter, maxEntries);
 	}
 	
-	public static List<ZipDataEntry> extract(InputStream zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(InputStream zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
 		if(zipData == null) {
 			return null;
 		}
@@ -62,15 +63,15 @@ public class ZipUtils {
 			maxEntries = Integer.MAX_VALUE;
 		}
 		
-		org.rr.commons.utils.zip.ZipInputStream zipIn = null;
+		org.rr.commons.utils.compression.zip.ZipInputStream zipIn = null;
 		try {
-			zipIn = new org.rr.commons.utils.zip.ZipInputStream(zipData, zipDataFileNameEncoding);
-			final ArrayList<ZipDataEntry> result = new ArrayList<ZipDataEntry>();
+			zipIn = new org.rr.commons.utils.compression.zip.ZipInputStream(zipData, zipDataFileNameEncoding);
+			final ArrayList<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final byte[] readBuff = new byte[4096];
 
-			org.rr.commons.utils.zip.ZipEntry nextEntry;
+			org.rr.commons.utils.compression.zip.ZipEntry nextEntry;
 			while ((nextEntry = zipIn.getNextEntry()) != null && maxEntries > result.size()) {
 				if( filter == null || (!nextEntry.isDirectory() && filter.accept(nextEntry.getName())) ) {
 					int len = 0;
@@ -78,7 +79,7 @@ public class ZipUtils {
 						bout.write(readBuff, 0, len);
 					}
 					if(!nextEntry.isDirectory()) {
-						result.add(new ZipDataEntry(nextEntry.getName(), bout.toByteArray()));
+						result.add(new CompressedDataEntry(nextEntry.getName(), bout.toByteArray()));
 					}
 					bout.reset();
 				}
@@ -93,15 +94,15 @@ public class ZipUtils {
 		}
 	}
 	
-	public static List<ZipDataEntry> extract(InputStream zipData, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(InputStream zipData, ZipFileFilter filter, int maxEntries) {
 		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
 	}
 	
-	public static List<ZipDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
 		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
 	}
 	
-	public static ZipDataEntry extract(byte[] zipData, String entry) {
+	public static CompressedDataEntry extract(byte[] zipData, String entry) {
 		return extract(new ByteArrayInputStream(zipData), entry);
 	}
 
@@ -111,8 +112,8 @@ public class ZipUtils {
 	 * @param entry The entry to be extracted. for example 'META-INF/container.xml'
 	 * @return The desired entry or <code>null</code> if the entry is not in the zip.
 	 */
-	public static ZipDataEntry extract(InputStream zipData, final String entry) {
-		List<ZipDataEntry> extract = extract(zipData, new ZipFileFilter() {
+	public static CompressedDataEntry extract(InputStream zipData, final String entry) {
+		List<CompressedDataEntry> extract = extract(zipData, new ZipFileFilter() {
 			
 			@Override
 			public boolean accept(String e) {
@@ -133,7 +134,7 @@ public class ZipUtils {
 	 * @param entry The entry to be added.
 	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
 	 */	
-	public static byte[] add(byte[] zipData, ZipDataEntry entry) {
+	public static byte[] add(byte[] zipData, CompressedDataEntry entry) {
 		ByteArrayInputStream in = new ByteArrayInputStream(zipData);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		add(in, out, entry);
@@ -149,7 +150,7 @@ public class ZipUtils {
 	 * @param entry The entry to be added.
 	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
 	 */
-	public static boolean add(InputStream zipDateInputStream, OutputStream zipDateOutputStream, ZipDataEntry entry) {
+	public static boolean add(InputStream zipDateInputStream, OutputStream zipDateOutputStream, CompressedDataEntry entry) {
 		return add(zipDateInputStream, zipDateOutputStream, entry, false);
 	}
 	
@@ -163,7 +164,7 @@ public class ZipUtils {
 	 * @param storeOnly Did not compress the zip if <code>true</code> and does if <code>false</code>.
 	 * @return the zip data with the added entry or <code>null</code> if something was wrong.
 	 */
-	public static boolean add(InputStream zipDateInputStream, OutputStream zipDataOutputStream, ZipDataEntry entry, boolean storeOnly) {
+	public static boolean add(InputStream zipDateInputStream, OutputStream zipDataOutputStream, CompressedDataEntry entry, boolean storeOnly) {
 		boolean success = false;
 		if (entry == null || zipDateInputStream == null || zipDataOutputStream == null) {
 			return success;

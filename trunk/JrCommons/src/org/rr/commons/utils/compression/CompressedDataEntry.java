@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -10,28 +10,32 @@ import org.rr.commons.utils.ReflectionUtils;
 /**
  * Just a data holder class.
  */
-public class ZipDataEntry implements Comparable<ZipDataEntry> {
+public class CompressedDataEntry implements Comparable<CompressedDataEntry> {
 
 	public String path;
 
 	public InputStream data;
 
-	public ZipDataEntry(org.rr.commons.utils.zip.ZipEntry entry) {
+	public CompressedDataEntry(org.rr.commons.utils.compression.zip.ZipEntry entry) {
 		path = entry.getName();
 	}
 
-	public ZipDataEntry(String path, InputStream data) {
+	public CompressedDataEntry(String path, InputStream data) {
 		this.path = path;
 		this.data = data;
 	}
 
-	public ZipDataEntry(String path, byte[] data) {
+	public CompressedDataEntry(String path, byte[] data) {
 		this.path = path;
-		this.data = new ByteArrayInputStream(data);
+		if(data != null) {
+			this.data = new ByteArrayInputStream(data);
+		} else {
+			this.data = null;
+		}
 	}
 
 	@Override
-	public int compareTo(ZipDataEntry o) {
+	public int compareTo(CompressedDataEntry o) {
 		return o.path.compareTo(path);
 	}
 
@@ -52,6 +56,10 @@ public class ZipDataEntry implements Comparable<ZipDataEntry> {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public InputStream getData() {
+		return data;
 	}
 
 	public String getName() {

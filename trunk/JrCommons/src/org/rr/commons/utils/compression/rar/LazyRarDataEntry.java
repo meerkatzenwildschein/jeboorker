@@ -1,4 +1,4 @@
-package org.rr.commons.utils.rar;
+package org.rr.commons.utils.compression.rar;
 
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -11,8 +11,9 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
+import org.rr.commons.utils.compression.CompressedDataEntry;
 
-class LazyRarDataEntry extends RarDataEntry {
+class LazyRarDataEntry extends CompressedDataEntry {
 
 	private IResourceHandler rarFileHandler;
 	

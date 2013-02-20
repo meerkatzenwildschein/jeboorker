@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression.zip;
 
 public class EmptyZipFileFilter implements ZipFileFilter {
 	@Override

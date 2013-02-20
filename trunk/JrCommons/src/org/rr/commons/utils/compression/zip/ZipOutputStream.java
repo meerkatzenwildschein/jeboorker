@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression.zip;
 
 /*
  * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -25,12 +25,12 @@ package org.rr.commons.utils.zip;
  * questions.
  */
 
-import static org.rr.commons.utils.zip.ZipConstants64.ZIP64_ENDHDR;
-import static org.rr.commons.utils.zip.ZipConstants64.ZIP64_ENDSIG;
-import static org.rr.commons.utils.zip.ZipConstants64.ZIP64_EXTID;
-import static org.rr.commons.utils.zip.ZipConstants64.ZIP64_LOCSIG;
-import static org.rr.commons.utils.zip.ZipConstants64.ZIP64_MAGICCOUNT;
-import static org.rr.commons.utils.zip.ZipConstants64.ZIP64_MAGICVAL;
+import static org.rr.commons.utils.compression.zip.ZipConstants64.ZIP64_ENDHDR;
+import static org.rr.commons.utils.compression.zip.ZipConstants64.ZIP64_ENDSIG;
+import static org.rr.commons.utils.compression.zip.ZipConstants64.ZIP64_EXTID;
+import static org.rr.commons.utils.compression.zip.ZipConstants64.ZIP64_LOCSIG;
+import static org.rr.commons.utils.compression.zip.ZipConstants64.ZIP64_MAGICCOUNT;
+import static org.rr.commons.utils.compression.zip.ZipConstants64.ZIP64_MAGICVAL;
 
 import java.io.IOException;
 import java.io.OutputStream;

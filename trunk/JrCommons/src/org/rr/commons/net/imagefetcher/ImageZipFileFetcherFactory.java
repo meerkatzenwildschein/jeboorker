@@ -11,9 +11,9 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.truezip.TrueZipDataEntry;
-import org.rr.commons.utils.truezip.TrueZipUtils;
-import org.rr.commons.utils.zip.ZipFileFilter;
+import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.zip.ZipFileFilter;
 
 public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 	
@@ -124,7 +124,7 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 
 							@Override
 							public byte[] getImageBytes() throws IOException {
-								final TrueZipDataEntry extractZipEntry = TrueZipUtils.extract(zipFile, entry);
+								final CompressedDataEntry extractZipEntry = TrueZipUtils.extract(zipFile, entry);
 								final byte[] bytes = extractZipEntry.getBytes();
 //								final IResourceHandler virtualResourceLoader = ResourceHandlerFactory.getVirtualResourceLoader(extractZipEntry.getName(), bytes);
 //								final IImageProvider imageProvider = ImageProviderFactory.getImageProvider(virtualResourceLoader);

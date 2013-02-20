@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression.rar;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -6,15 +6,15 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.zip.ZipDataEntry;
+import org.rr.commons.utils.compression.CompressedDataEntry;
 
-public class LazyZipEntryStream extends InputStream {
+public class LazyRarEntryStream extends InputStream {
 
 	private IResourceHandler zipResource;
 	private String entry;
 	private InputStream data;
 	
-	public LazyZipEntryStream(IResourceHandler zipResource, String entry) {
+	public LazyRarEntryStream(IResourceHandler zipResource, String entry) {
 		this.zipResource = zipResource;
 		this.entry = entry;
 	}
@@ -23,8 +23,7 @@ public class LazyZipEntryStream extends InputStream {
 		if(data == null) {
 			InputStream contentInputStream = null;
 			try {
-				contentInputStream = zipResource.getContentInputStream();
-				ZipDataEntry extract = ZipUtils.extract(contentInputStream, entry);
+				CompressedDataEntry extract = RarUtils.extract(zipResource, entry);
 				data = new ByteArrayInputStream(extract.getBytes());
 				data.mark(Integer.MAX_VALUE);
 			} finally {

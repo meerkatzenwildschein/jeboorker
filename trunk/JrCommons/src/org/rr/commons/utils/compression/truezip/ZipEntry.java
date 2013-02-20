@@ -1,4 +1,4 @@
-package org.rr.commons.utils.truezip;
+package org.rr.commons.utils.compression.truezip;
 
 public class ZipEntry  {
 

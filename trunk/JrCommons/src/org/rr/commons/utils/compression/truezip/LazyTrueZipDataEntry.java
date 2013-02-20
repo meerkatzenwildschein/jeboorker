@@ -1,4 +1,4 @@
-package org.rr.commons.utils.truezip;
+package org.rr.commons.utils.compression.truezip;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -6,11 +6,12 @@ import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.compression.CompressedDataEntry;
 
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
 
-class LazyTrueZipDataEntry extends TrueZipDataEntry {
+class LazyTrueZipDataEntry extends CompressedDataEntry {
 
 	private IResourceHandler zipFileHandler;
 	

@@ -1,4 +1,4 @@
-package org.rr.commons.utils.truezip;
+package org.rr.commons.utils.compression.truezip;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.compression.CompressedDataEntry;
 
 public class LazyTrueZipEntryStream extends InputStream {
 
@@ -22,7 +23,7 @@ public class LazyTrueZipEntryStream extends InputStream {
 		if(data == null) {
 			InputStream contentInputStream = null;
 			try {
-				TrueZipDataEntry extract = TrueZipUtils.extract(zipResource, entry);
+				CompressedDataEntry extract = TrueZipUtils.extract(zipResource, entry);
 				data = new ByteArrayInputStream(extract.getBytes());
 				data.mark(Integer.MAX_VALUE);
 			} finally {
