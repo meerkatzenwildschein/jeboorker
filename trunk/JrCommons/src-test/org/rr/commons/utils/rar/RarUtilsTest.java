@@ -28,7 +28,7 @@ public class RarUtilsTest extends TestCase {
 		CompressedDataEntry extract = RarUtils.extract(rarFileHandler, list.get(1));
 		
 		byte[] bytes = extract.getBytes();
-		assertEquals(contentString, new String(bytes));
+		assertEquals(contentString + "1", new String(bytes));
 		
 		//test end, rar no longer be needed
 		try {
