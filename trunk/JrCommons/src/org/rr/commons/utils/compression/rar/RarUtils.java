@@ -102,18 +102,16 @@ public class RarUtils {
 			
 			//rar archive path
 			if(name.indexOf('/') != -1) {
-				String path = ProcessExecutor.saveWhitespaces(name.substring(0, name.lastIndexOf('/')));
-				cl.addArgument("-ap" + path); 
+				String path = name.substring(0, name.lastIndexOf('/'));
+				cl.addArgument("-ap\"" + path + "\"", false); 
 				name = name.substring(name.lastIndexOf('/') + 1);
 			} else {
 				cl.addArgument("-ap");
 			}
-			ProcessExecutor.saveWhitespaces(name);
 			
 			cl.addArgument("-ep"); //do not use the fs path
 			
 			String rarFilePath = rarFileHandler.toFile().getPath();
-			rarFilePath = ProcessExecutor.saveWhitespaces(rarFilePath);
 			cl.addArgument(rarFilePath); //rar archive
 			
 			File in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
