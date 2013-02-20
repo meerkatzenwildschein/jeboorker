@@ -124,7 +124,7 @@ public class RarUtils {
 			Process exec = Runtime.getRuntime().exec(cl.toString());
 			exec.waitFor();
 			
-			Future<Long> p = ProcessExecutor.runProcess(cl, data, new ProcessExecutorHandler() {
+			Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
 				
 				@Override
 				public void onStandardOutput(String msg) {

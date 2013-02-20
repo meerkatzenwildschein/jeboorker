@@ -232,14 +232,6 @@ public interface IResourceHandler {
 	public String getMimeType();
 	
 	/**
-	 * Gets a temporary {@link IResourceHandler} which can be used for temp files associcated to this resource which are 
-	 * automatically deleted at the end of the application. 
-	 * 
-	 * @return A temporary {@link IResourceHandler}.
-	 */
-	public IResourceHandler getTemporaryResource();
-	
-	/**
 	 * Tries to determine the byte size of the resource. 
 	 * @return size in bytes or 0 if the file did not exists.
 	 */

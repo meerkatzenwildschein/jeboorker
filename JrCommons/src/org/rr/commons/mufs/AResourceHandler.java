@@ -24,67 +24,13 @@ import org.rr.commons.log.LoggerFactory;
  */
 abstract class AResourceHandler implements IResourceHandler, Comparable<IResourceHandler> {
 	
-	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<IResourceHandler>();
-	
 	private HashMap<String, Object> metaMap;
 	
-	private static final Thread shutdownThread = new Thread(new Runnable() {
-		@Override
-		public void run() {
-			//stores all loaded which could not be deleted.
-			final ArrayList<IResourceHandler> newTemporaryResourceLoader = new ArrayList<IResourceHandler>();
-			IResourceHandler resourceHandler = null;
-			for (int i = 0; i < temporaryResourceLoader.size(); i++) {
-				try {
-					resourceHandler = temporaryResourceLoader.get(i);
-					if(resourceHandler.exists()) {
-						resourceHandler.delete();
-					}
-				} catch (IOException e) {
-					//do not abort
-					System.err.println("could not delete temporary resource " + String.valueOf(resourceHandler));
-					newTemporaryResourceLoader.add(resourceHandler);
-				}
-			}
-			temporaryResourceLoader.clear();
-			temporaryResourceLoader.addAll(newTemporaryResourceLoader);
-		}
-	});
-	
-	static {
-		Runtime.getRuntime().addShutdownHook(shutdownThread);
-	}
-
 	/**
 	 * The file format. This is a cached value, so the format should not be determeined each time.
 	 */
 	private String mime = null;
 	
-	/**
-	 * Creates a {@link IResourceHandler} file which points to a temporary file which is automatically deleted
-	 * at application end.
-	 */
-	@Override
-	public IResourceHandler getTemporaryResource() {
-		try {
-			File tmp = File.createTempFile(this.getName(), ".tmp");
-			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(tmp);
-			
-			temporaryResourceLoader.add(resourceLoader);
-			return resourceLoader;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	/**
-	 * Deletes all temporary resources previously created with the {@link #getTemporaryResource()}
-	 * method.
-	 */
-	public static void deleteTemporaryResources() {
-		shutdownThread.run();
-	}
-
 	/**
 	 * An empty implementation because it's not needed for all {@link IResourceHandler} implementations.
 	 */
