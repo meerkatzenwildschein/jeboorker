@@ -54,7 +54,7 @@ class LazyRarDataEntry extends CompressedDataEntry {
 							} else if(tmpFileName.indexOf('%') != -1) {
 								tmpFileName = tmpFileName.substring(0, tmpFileName.lastIndexOf('%'));
 							}
-							file.append(tmpFileName.substring(0, tmpFileName.length() - 2));
+							file.append(tmpFileName.trim());
 						}
 					} else {
 					}
