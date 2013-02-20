@@ -1,9 +1,5 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +10,8 @@ import javax.swing.SwingUtilities;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.JeboorkerConstants;
+import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -209,16 +207,14 @@ public class ActionUtils {
 	 */
 	public static boolean isSupportedEbookFormat(IResourceHandler resource) {
 		final String mime = resource.getMimeType();
-		if(mime==null || mime.length()==0) {
+		if(mime == null || mime.length() == 0) {
 			return false;
 		}
 		
-		if(mime.equals(MIME_EPUB.getMime())) {
-			return true;
-		} else if(mime.equals(MIME_PDF.getMime())) {
-			return true;
-		} else if(mime.equals(MIME_CBZ.getMime())) {
-			return true;
+		for(SUPPORTED_MIMES supportedMime : JeboorkerConstants.SUPPORTED_MIMES.values()) {
+			if(supportedMime.getMime().equals(mime)) {
+				return true;
+			}
 		}
 		return false;
 	}		

@@ -61,6 +61,24 @@ public class JeboorkerConstants {
 				return getMime();
 			}			
 			
+		},
+		MIME_CBR {
+
+			@Override
+			public String getName() {
+				return "cbr";
+			}
+
+			@Override
+			public String getMime() {
+				return "application/x-cbr".intern();
+			}
+			
+			@Override
+			public String toString() {
+				return getMime();
+			}			
+			
 		}			
 	};
 	

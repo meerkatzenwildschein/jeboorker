@@ -20,9 +20,9 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.FileEntryFilter;
 import org.rr.commons.utils.compression.truezip.LazyTrueZipEntryStream;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
-import org.rr.commons.utils.compression.zip.ZipFileFilter;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -371,7 +371,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	 * having not all files to be extracted. Only these files will be extracted which
 	 * are commonly used by the {@link EpubReader}.
 	 */
-	private static class EpubZipFileFilter implements ZipFileFilter {
+	private static class EpubZipFileFilter implements FileEntryFilter {
 
 		boolean lazy = false;
 		
