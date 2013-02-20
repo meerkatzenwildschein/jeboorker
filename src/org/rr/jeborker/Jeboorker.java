@@ -25,6 +25,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.compression.rar.RarUtils;
 import org.rr.jeborker.gui.MainController;
 
 public class Jeboorker {
@@ -47,6 +48,13 @@ public class Jeboorker {
 		LoggerFactory.addHandler(new JeboorkerLogger());
 
 		setupClasspath();
+		
+		//Setup the location for the rar executables.
+		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
+			RarUtils.setRarExecFolder(getAppFolder() + File.separator + "exec");
+		} else {
+			RarUtils.setRarExecFolder("/usr/bin");
+		}
 		
 		boolean start = true;
 		try {
