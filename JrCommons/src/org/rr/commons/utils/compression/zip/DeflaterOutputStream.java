@@ -1,4 +1,4 @@
-package org.rr.commons.utils.zip;
+package org.rr.commons.utils.compression.zip;
 
 /*
  * Copyright (c) 1996, 2009, Oracle and/or its affiliates. All rights reserved.

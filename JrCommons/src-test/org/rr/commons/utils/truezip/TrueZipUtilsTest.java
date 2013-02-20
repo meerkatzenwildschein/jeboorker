@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 
 import junit.framework.TestCase;
 

@@ -1,4 +1,4 @@
-package org.rr.commons.utils.rar;
+package org.rr.commons.utils.compression.rar;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,8 +15,8 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
-import org.rr.commons.utils.truezip.TrueZipDataEntry;
-import org.rr.commons.utils.zip.ZipFileFilter;
+import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.zip.ZipFileFilter;
 
 public class RarUtils {
 	
@@ -26,8 +26,8 @@ public class RarUtils {
 	 * @param path qualified rar path of the entry to be extracted.
 	 * @return The desired extracted entries.
 	 */	
-	public static List<RarDataEntry> extract(IResourceHandler rarFileHandler, RarFileFilter rarFileFilter) {
-		ArrayList<RarDataEntry> result = new ArrayList<RarDataEntry>();
+	public static List<CompressedDataEntry> extract(IResourceHandler rarFileHandler, RarFileFilter rarFileFilter) {
+		ArrayList<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 		List<String> list = list(rarFileHandler, rarFileFilter);
 		for(String entry : list) {
 			result.add(extract(rarFileHandler, entry));
@@ -42,7 +42,7 @@ public class RarUtils {
 	 * @return The desired extracted entry. Never returns <code>null</code> but the 
 	 * result {@link TrueZipDataEntry} would return no bytes if the rar entry did not exists.
 	 */
-	public static RarDataEntry extract(IResourceHandler rarFileHandler, String name) {
+	public static CompressedDataEntry extract(IResourceHandler rarFileHandler, String name) {
 		return new LazyRarDataEntry(rarFileHandler, name);
 	}	
 	
@@ -112,12 +112,17 @@ public class RarUtils {
 			
 			cl.addArgument("-ep"); //do not use the fs path
 			
-			cl.addArgument(rarFileHandler.toFile().getPath()); //rar archive
+			String rarFilePath = rarFileHandler.toFile().getPath();
+			rarFilePath = ProcessExecutor.saveWhitespaces(rarFilePath);
+			cl.addArgument(rarFilePath); //rar archive
 			
 			File in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
 			FileUtils.copyInputStreamToFile(data, in);
 			
-			cl.addArgument(in.getPath(), false); //entry to add
+			cl.addArgument(in.getPath()); //entry to add
+			
+			Process exec = Runtime.getRuntime().exec(cl.toString());
+			exec.waitFor();
 			
 			Future<Long> p = ProcessExecutor.runProcess(cl, data, new ProcessExecutorHandler() {
 				

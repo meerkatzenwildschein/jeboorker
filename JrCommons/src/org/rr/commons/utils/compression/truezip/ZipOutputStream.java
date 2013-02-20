@@ -1,4 +1,4 @@
-package org.rr.commons.utils.truezip;
+package org.rr.commons.utils.compression.truezip;
 
 import java.io.IOException;
 import java.io.OutputStream;
