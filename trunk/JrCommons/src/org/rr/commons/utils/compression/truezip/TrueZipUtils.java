@@ -11,8 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
-import org.rr.commons.utils.compression.zip.EmptyZipFileFilter;
-import org.rr.commons.utils.compression.zip.ZipFileFilter;
+import org.rr.commons.utils.compression.EmptyFileEntryFilter;
+import org.rr.commons.utils.compression.FileEntryFilter;
 
 import de.schlichtherle.truezip.file.TArchiveDetector;
 import de.schlichtherle.truezip.file.TConfig;
@@ -38,7 +38,7 @@ public class TrueZipUtils {
 	 * @param path qualified zip path of the entry to be extracted.
 	 * @return The desired extracted entries.
 	 */	
-	public static List<CompressedDataEntry> extract(IResourceHandler zipFileHandler, ZipFileFilter filter) {
+	public static List<CompressedDataEntry> extract(IResourceHandler zipFileHandler, FileEntryFilter filter) {
 		final List<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 		final List<String> entryList = list(zipFileHandler);
 		for(String entry : entryList) {
@@ -64,13 +64,13 @@ public class TrueZipUtils {
 	 * List all entries of the zip file.
 	 */
 	public static List<String> list(IResourceHandler zipFileHandler) {
-		return list(zipFileHandler, new EmptyZipFileFilter());
+		return list(zipFileHandler, new EmptyFileEntryFilter());
 	}
 	
 	/**
 	 * List all entries of the zip file allowed by the given {@link ZipFileFilter} instance.
 	 */	
-	public static List<String> list(IResourceHandler zipFileHandler, ZipFileFilter zipFileFilter) {
+	public static List<String> list(IResourceHandler zipFileHandler, FileEntryFilter zipFileFilter) {
 		File zipFile = zipFileHandler.toFile();
 		TFile archive = new TFile(zipFile.toString());
 		Collection<File> listFiles = FileUtils.listFiles(archive, null, true);

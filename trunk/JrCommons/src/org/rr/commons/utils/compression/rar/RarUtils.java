@@ -18,7 +18,8 @@ import org.rr.commons.utils.ProcessExecutorHandler;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
-import org.rr.commons.utils.compression.zip.ZipFileFilter;
+import org.rr.commons.utils.compression.EmptyFileEntryFilter;
+import org.rr.commons.utils.compression.FileEntryFilter;
 
 public class RarUtils {
 	
@@ -32,12 +33,12 @@ public class RarUtils {
 	}
 	
 	/**
-	 * Extracts all entries from a rar file that are accepted by the given {@link RarFileFilter}.
+	 * Extracts all entries from a rar file that are accepted by the given {@link FileEntryFilter}.
 	 * @param rarFileHandler The rar file in the file system.
 	 * @param path qualified rar path of the entry to be extracted.
 	 * @return The desired extracted entries.
 	 */	
-	public static List<CompressedDataEntry> extract(IResourceHandler rarFileHandler, RarFileFilter rarFileFilter) {
+	public static List<CompressedDataEntry> extract(IResourceHandler rarFileHandler, FileEntryFilter rarFileFilter) {
 		ArrayList<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 		List<String> list = list(rarFileHandler, rarFileFilter);
 		for(String entry : list) {
@@ -61,22 +62,42 @@ public class RarUtils {
 	 * List all entries of the rar file.
 	 */
 	public static List<String> list(IResourceHandler rarFileHandler) {
-		List<String> result = list(rarFileHandler, new RarFileFilter() {
-			
-			@Override
-			public boolean accept(String entry) {
-				return true;
+		List<String> result = list(rarFileHandler, new EmptyFileEntryFilter());
+		return result;
+	}
+	
+	private static void removeDirectoryEntries(List<String> files) {
+		//need to sort previous because the dir path is always directly before
+		//the file entry.
+		Collections.sort(files);
+		ArrayList<String> toRemove = new ArrayList<String>();
+		for(int i = 0; i < files.size(); i++) {
+			String current = files.get(i);
+			if(files.size() > i + 1) {
+				String next = files.get(i + 1);
+				if(next.startsWith(current + "/")) {
+					toRemove.add(current);
+				}
 			}
-		});
-		Collections.sort(result);
+		}
+		files.removeAll(toRemove);
+	}
+	
+	private static List<String> processFileEntryFilter(List<String> files, FileEntryFilter filter) {
+		ArrayList<String> result = new ArrayList<String>(files.size());
+		for(String file: files) {
+			if(filter.accept(file)) {
+				result.add(file);
+			}
+		}
 		return result;
 	}
 	
 	/**
 	 * List all entries of the rar file allowed by the given {@link ZipFileFilter} instance.
 	 */	
-	public static List<String> list(final IResourceHandler rarFileHandler, final RarFileFilter rarFileFilter) {
-		final ArrayList<String> result = new ArrayList<String>();
+	public static List<String> list(final IResourceHandler rarFileHandler, final FileEntryFilter rarFileFilter) {
+		final List<String> result = new ArrayList<String>();
 		final CommandLine cl = new CommandLine(getUnRarExecutable());
 		
 		cl.addArgument("vb");
@@ -91,7 +112,7 @@ public class RarUtils {
 						return;
 					} else if(msg.indexOf(cl.toString()) != -1) {
 						return;
-					} else if(rarFileFilter.accept(msg)) {
+					} else {
 						msg = StringUtils.replace(msg, "\\", "/");
 						result.add(msg);
 					}
@@ -103,8 +124,13 @@ public class RarUtils {
 			}, 100000);
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "To list files in rar " + rarFileHandler, e);
-		}		
-		return result;
+		}
+		
+		//remove dirs
+		removeDirectoryEntries(result);
+		
+		//apply filter
+		return processFileEntryFilter(result, rarFileFilter);
 	}		
 	
 	/**

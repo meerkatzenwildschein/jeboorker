@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.FileEntryFilter;
 
 public class ZipUtils {
 
@@ -24,7 +25,7 @@ public class ZipUtils {
 		return list(zipData, null);
 	}
 	
-	public static List<String> list(InputStream zipData, ZipFileFilter filter) {
+	public static List<String> list(InputStream zipData, FileEntryFilter filter) {
 		if (zipData == null) {
 			return null;
 		}
@@ -51,11 +52,11 @@ public class ZipUtils {
 		}
 	}
     	
-	public static List<CompressedDataEntry> extract(byte[] zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(byte[] zipData, Charset zipDataFileNameEncoding, FileEntryFilter filter, int maxEntries) {
 		return extract(new ByteArrayInputStream(zipData), zipDataFileNameEncoding, filter, maxEntries);
 	}
 	
-	public static List<CompressedDataEntry> extract(InputStream zipData, Charset zipDataFileNameEncoding, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(InputStream zipData, Charset zipDataFileNameEncoding, FileEntryFilter filter, int maxEntries) {
 		if(zipData == null) {
 			return null;
 		}
@@ -94,11 +95,11 @@ public class ZipUtils {
 		}
 	}
 	
-	public static List<CompressedDataEntry> extract(InputStream zipData, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(InputStream zipData, FileEntryFilter filter, int maxEntries) {
 		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
 	}
 	
-	public static List<CompressedDataEntry> extract(byte[] zipData, ZipFileFilter filter, int maxEntries) {
+	public static List<CompressedDataEntry> extract(byte[] zipData, FileEntryFilter filter, int maxEntries) {
 		return extract(zipData, Charset.forName("UTF-8"), filter, maxEntries);
 	}
 	
@@ -113,7 +114,7 @@ public class ZipUtils {
 	 * @return The desired entry or <code>null</code> if the entry is not in the zip.
 	 */
 	public static CompressedDataEntry extract(InputStream zipData, final String entry) {
-		List<CompressedDataEntry> extract = extract(zipData, new ZipFileFilter() {
+		List<CompressedDataEntry> extract = extract(zipData, new FileEntryFilter() {
 			
 			@Override
 			public boolean accept(String e) {

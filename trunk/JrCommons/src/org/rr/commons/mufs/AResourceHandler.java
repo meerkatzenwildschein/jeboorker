@@ -72,6 +72,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 				return (this.mime = "application/pdf");
 			} else if(lowerCasedResourceString.endsWith(".cbz")) {
 				return (this.mime = "application/x-cbz");
+			}  else if(lowerCasedResourceString.endsWith(".cbr")) {
+				return (this.mime = "application/x-cbr");
 			} else if(lowerCasedResourceString.endsWith(".html") || lowerCasedResourceString.endsWith(".htm")) {
 				return (this.mime = "text/html");
 			} else if(lowerCasedResourceString.endsWith(".xml")) {

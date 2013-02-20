@@ -12,8 +12,8 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.FileEntryFilter;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
-import org.rr.commons.utils.compression.zip.ZipFileFilter;
 
 public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 	
@@ -55,7 +55,7 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 				Iterator<String> entries;
 				{
 					try {
-						entries = TrueZipUtils.list(zipFile, new ZipFileFilter() {
+						entries = TrueZipUtils.list(zipFile, new FileEntryFilter() {
 							
 							@Override
 							public boolean accept(String entry) {
