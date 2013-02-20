@@ -279,6 +279,9 @@ class FileResourceHandler extends AResourceHandler {
 		boolean success = this.file.delete();
 		if(!success) {
 			throw new IOException("could not delete resource " + String.valueOf(this.file));
+		} else {
+			//no need to delete this later. It's already done.
+			ResourceHandlerFactory.removeTemporaryResource(this);			
 		}
 		this.isDirectory = null;
 	}

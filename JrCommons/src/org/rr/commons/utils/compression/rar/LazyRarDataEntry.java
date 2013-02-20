@@ -1,6 +1,7 @@
 package org.rr.commons.utils.compression.rar;
 
-import java.util.concurrent.Future;
+import java.io.File;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.apache.commons.exec.CommandLine;
@@ -11,6 +12,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
+import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 
 class LazyRarDataEntry extends CompressedDataEntry {
@@ -24,25 +26,37 @@ class LazyRarDataEntry extends CompressedDataEntry {
 
 	@Override
 	public byte[] getBytes() {
-		final String commandLineString = "/usr/bin/unrar e";
-		final CommandLine cl = CommandLine.parse(commandLineString);
+		final CommandLine cl = new CommandLine(RarUtils.getUnRarExecutable());
+		cl.addArgument("e");
 		
-		cl.addArgument("-n\"" + path + "\"");
+		cl.addArgument("-n\"" + StringUtils.replace(path, "/", File.separator) + "\"", false);
 		cl.addArgument("-o+"); //overwrite existing
-		cl.addArgument(rarFileHandler.toFile().getName());
-		cl.addArgument(FileUtils.getTempDirectoryPath());
+		cl.addArgument(rarFileHandler.toFile().getPath());
 		
+		File out;
 		try {
+			out = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator);
+			out.mkdir();
+			cl.addArgument(out.getPath());
+			
 			final StringBuilder file = new StringBuilder();
-			Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
+			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
 				
 				@Override
 				public void onStandardOutput(String msg) {
 					if(msg.startsWith("Extracting") && msg.indexOf(' ') != -1) {
+						//Extracting  C:\Users\guru\AppData\Local\Temp\923f52d2-14c9-4690-958f-e5d3dd6444f4\file 1.test     \b\b\b\b 14%\b\b\b\b\b  OK 
 						String tmpFileName = msg.substring(msg.indexOf(' ')).trim();
 						if(tmpFileName.endsWith("OK")) {
+							tmpFileName = tmpFileName.substring(0, tmpFileName.length() - 2);
+							if(tmpFileName.indexOf('\b') != -1) {
+								tmpFileName = tmpFileName.substring(0, tmpFileName.indexOf('\b'));
+							} else if(tmpFileName.indexOf('%') != -1) {
+								tmpFileName = tmpFileName.substring(0, tmpFileName.lastIndexOf('%'));
+							}
 							file.append(tmpFileName.substring(0, tmpFileName.length() - 2));
 						}
+					} else {
 					}
 				}
 				
@@ -50,13 +64,17 @@ class LazyRarDataEntry extends CompressedDataEntry {
 				public void onStandardError(String msg) {
 				}
 			}, ExecuteWatchdog.INFINITE_TIMEOUT);
-			p.get(); //wait
 			
 			if(file.length() > 0) {
-				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(file.toString());
-				byte[] content = resourceHandler.getContent();
-				resourceHandler.delete();
-				return content;
+				File extractedFiled = new File(file.toString());
+				if(extractedFiled.exists()) {
+					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(extractedFiled);
+					byte[] content = resourceHandler.getContent();
+					FileUtils.deleteQuietly(new File(file.toString()).getParentFile());
+					return content;
+				}
+			} else {
+				FileUtils.deleteQuietly(out);
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "To list files in rar " + rarFileHandler, e);
