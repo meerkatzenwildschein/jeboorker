@@ -3,6 +3,7 @@ package org.rr.commons.utils.compression.rar;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -18,9 +19,17 @@ import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.zip.ZipFileFilter;
-import org.rr.jeborker.Jeboorker;
 
 public class RarUtils {
+	
+	private static String rarExecFolder;
+	
+	/**
+	 * Set the folder where the rar executables could be found. 
+	 */
+	public static void setRarExecFolder(String rarExecF) {
+		rarExecFolder = rarExecF;
+	}
 	
 	/**
 	 * Extracts all entries from a rar file that are accepted by the given {@link RarFileFilter}.
@@ -52,13 +61,15 @@ public class RarUtils {
 	 * List all entries of the rar file.
 	 */
 	public static List<String> list(IResourceHandler rarFileHandler) {
-		return list(rarFileHandler, new RarFileFilter() {
+		List<String> result = list(rarFileHandler, new RarFileFilter() {
 			
 			@Override
 			public boolean accept(String entry) {
 				return true;
 			}
 		});
+		Collections.sort(result);
+		return result;
 	}
 	
 	/**
@@ -130,7 +141,7 @@ public class RarUtils {
 				
 				@Override
 				public void onStandardOutput(String msg) {
-					System.out.println(msg);
+//					System.out.println(msg);
 				}
 				
 				@Override
@@ -154,9 +165,9 @@ public class RarUtils {
 	 */
 	private static String getRarExecutable() {
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-			return Jeboorker.getAppFolder() + File.separator + "exec" + File.separator + "Rar.exe";
+			return rarExecFolder + File.separator + "Rar.exe";
 		} else if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
-			return "/usr/bin/rar";
+			return rarExecFolder + File.separator + "rar";
 		}
 		throw new RuntimeException("No rar executable!");
 	}
@@ -166,9 +177,9 @@ public class RarUtils {
 	 */
 	static String getUnRarExecutable() {
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-			return Jeboorker.getAppFolder() + File.separator + "exec" + File.separator + "UnRAR.exe";
+			return rarExecFolder + File.separator + "UnRAR.exe";
 		} else if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
-			return "/usr/bin/unrar";
+			return rarExecFolder + File.separator + "unrar";
 		}
 		throw new RuntimeException("No rar executable!");
 	}
