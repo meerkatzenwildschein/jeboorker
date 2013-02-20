@@ -27,32 +27,5 @@ public class JeboorkerUtils {
 		
 		return result;
 	}
-	
-    /**
-     * Determines the type of operating system.
-     * @return One of the constants:
-     * 	<ul>
-     * 		<li>OS_WINDOWS</li>
-     * 		<li>OS_LINUX</li>
-     * 		<li>OS_MAC</li>
-     * 	</ul>
-     */
-    public static int getOS() {
-    	String osName = System.getProperty("os.name").toLowerCase();
-    	if(osName.indexOf("window")!=-1) {
-    		return OS_WINDOWS;
-    	} else if(osName.indexOf("linux")!=-1) {
-    		return OS_LINUX;
-    	} else if(osName.indexOf("mac")!=-1) {
-    		return OS_LINUX;
-    	}
-    	
-    	try {
-    		Class.forName("sun.print.Win32PrintJob"); 
-    		return OS_WINDOWS;
-    	} catch (Exception e) {
-    	}
-    	
-    	return OS_UNKNOWN;
-    }	
+
 }

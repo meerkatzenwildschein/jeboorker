@@ -129,20 +129,28 @@ public class Jeboorker {
 			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 		}
 	}
+	
+	/**
+	 * Get the application folder. Jeboorker muste be configured that the app folder
+	 * is the current directory. 
+	 */
+	public static String getAppFolder() {
+		return System.getProperties().getProperty("user.dir");
+	}
 
 	private static void setupClasspath() {
-		final String result = System.getProperties().getProperty("user.dir");
+		final String appFolder = getAppFolder();
 		final Set<String> jarFileSet = new HashSet<String>();
 		
 		try {
-			addPath(new File(result + File.separator + "lib/"), jarFileSet);
-			addPath(new File(result + File.separator + "lib/orientdb/"), jarFileSet);
-			addPath(new File(result + File.separator + "lib/epubcheck/"), jarFileSet);
-			addPath(new File(result + File.separator + "lib/epublib/"), jarFileSet);
-			addPath(new File(result + File.separator + "lib/dropbox/"), jarFileSet);
-			addPath(new File(result + File.separator + "lib/jmupdf/"), jarFileSet);
+			addPath(new File(appFolder + File.separator + "lib/"), jarFileSet);
+			addPath(new File(appFolder + File.separator + "lib/orientdb/"), jarFileSet);
+			addPath(new File(appFolder + File.separator + "lib/epubcheck/"), jarFileSet);
+			addPath(new File(appFolder + File.separator + "lib/epublib/"), jarFileSet);
+			addPath(new File(appFolder + File.separator + "lib/dropbox/"), jarFileSet);
+			addPath(new File(appFolder + File.separator + "lib/jmupdf/"), jarFileSet);
 			
-			String nativeLibPath = result + File.separator + "lib/jmupdf/";
+			String nativeLibPath = appFolder + File.separator + "lib/jmupdf/";
 			ReflectionUtils.addLibraryPath(nativeLibPath);
 		} catch (Exception e1) {
 			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
