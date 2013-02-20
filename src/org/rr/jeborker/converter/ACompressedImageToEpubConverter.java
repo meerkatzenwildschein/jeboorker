@@ -15,10 +15,6 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.compression.truezip.LazyTrueZipEntryStream;
-import org.rr.commons.utils.compression.truezip.TrueZipUtils;
-import org.rr.jeborker.JeboorkerConstants;
-import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
 
 /**
  * A converter for image archives to epub 
