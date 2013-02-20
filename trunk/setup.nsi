@@ -93,6 +93,11 @@ Section -Main SEC0000
     File doc\license\Yasis-Icons_license.txt
     File doc\license\JMuPDF_license.txt
     File doc\license\TrueZip_EPL_license.txt
+    File doc\license\Unrar_Freeware_license.txt
+    
+    SetOutPath $INSTDIR\exec
+    File 'exec\Rar.exe'
+    File 'exec\UnRAR.exe'
     
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
