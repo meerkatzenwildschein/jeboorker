@@ -2,8 +2,11 @@ package org.rr.commons.mufs;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import org.rr.commons.collection.VolatileHashMap;
 
@@ -16,6 +19,61 @@ public class ResourceHandlerFactory {
 	private static final VolatileHashMap<String, IResourceHandler> resourceHandlerCache = new VolatileHashMap<String, IResourceHandler>(100,100);
 	
 	private static IResourceHandler userHome = null;
+	
+	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<IResourceHandler>();
+	
+	private static final Thread shutdownThread = new Thread(new Runnable() {
+		@Override
+		public void run() {
+			//stores all loaded which could not be deleted.
+			final ArrayList<IResourceHandler> newTemporaryResourceLoader = new ArrayList<IResourceHandler>();
+			IResourceHandler resourceHandler = null;
+			for (int i = 0; i < temporaryResourceLoader.size(); i++) {
+				try {
+					resourceHandler = temporaryResourceLoader.get(i);
+					if(resourceHandler.exists()) {
+						resourceHandler.delete();
+					}
+				} catch (IOException e) {
+					//do not abort
+					System.err.println("could not delete temporary resource " + String.valueOf(resourceHandler));
+					newTemporaryResourceLoader.add(resourceHandler);
+				}
+			}
+			temporaryResourceLoader.clear();
+			temporaryResourceLoader.addAll(newTemporaryResourceLoader);
+		}
+	});
+	
+	static {
+		Runtime.getRuntime().addShutdownHook(shutdownThread);
+	}	
+	
+	/**
+	 * Creates a {@link IResourceHandler} file which points to a temporary file which is automatically deleted
+	 * at application end.
+	 * 
+	 * @param extension The file extension of the temporary file without the dot.
+	 */
+	public static IResourceHandler getTemporaryResource(String extension) {
+		try {
+			File tmp = File.createTempFile(UUID.randomUUID().toString(), extension != null ? "." + extension : ".tmp");
+			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(tmp);
+			
+			temporaryResourceLoader.add(resourceLoader);
+			return resourceLoader;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Deletes all temporary resources previously created with the {@link #getTemporaryResource()}
+	 * method.
+	 */
+	static void deleteTemporaryResources() {
+		shutdownThread.run();
+	}	
 	
 	/**
 	 * reference instances.

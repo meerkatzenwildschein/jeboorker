@@ -1,11 +1,12 @@
 package org.rr.commons.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.apache.commons.exec.CommandLine;
@@ -16,7 +17,10 @@ import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.ShutdownHookProcessDestroyer;
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 
 /**
  * @author Nadav Azaria
@@ -24,16 +28,54 @@ import org.rr.commons.log.LoggerFactory;
  */
 public class ProcessExecutor {
 
-	public static final Long WATCHDOG_EXIST_VALUE = -999L;
-
+	public static final Long WATCHDOG_EXIT_VALUE = -999L;
+	
 	public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
-		return runProcess(commandline, null, handler, watchdogTimeout);
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		ProcessCallable processCallable;
+		if(commandline.getArguments().length > 0) {
+			CommandLine commandLineScript = createCommandLineScript(commandline);	
+			processCallable = new ProcessCallable(watchdogTimeout, handler, commandLineScript);
+		} else {
+			processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
+		}
+		return executor.submit(processCallable);
 	}
 	
-	public static Future<Long> runProcess(final CommandLine commandline, final InputStream stdIn, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		ProcessCallable processCallable = new ProcessCallable(watchdogTimeout, stdIn, handler, commandline);
-		return executor.submit(processCallable);
+	private static CommandLine createCommandLineScript(final CommandLine commandline) {
+		if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+			StringBuilder script = new StringBuilder();
+			script.append("#!/bin/sh");
+			script.append(System.getProperty("line.separator"));
+			script.append(commandline.toString());
+
+			OutputStream contentOutputStream = null;
+			try {
+				IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("sh");
+				contentOutputStream = temporaryScriptResource.getContentOutputStream(false);
+				IOUtils.write(script, contentOutputStream);
+				contentOutputStream.flush();
+				
+				//make executable
+				ExecutorService executor = Executors.newSingleThreadExecutor();
+				ProcessCallable processCallable = new ProcessCallable(10000, new LogProcessExecutorHandler(), 
+						new CommandLine("chmod").addArgument("u+x").addArgument(temporaryScriptResource.toString(), true));
+				Future<Long> submit = executor.submit(processCallable);
+				submit.get(10, TimeUnit.SECONDS);
+				
+				//create command for exec script
+				CommandLine commandLineScript = new CommandLine(temporaryScriptResource.toFile().toString());
+				return commandLineScript;
+			} catch(Exception e) {
+				LoggerFactory.getLogger(ProcessExecutor.class).log(Level.SEVERE, "Could not create script.", e);
+			} finally {
+				if(contentOutputStream != null) {
+					IOUtils.closeQuietly(contentOutputStream);
+				}
+			}
+		}
+			
+		return commandline;
 	}
 	
 	/**
@@ -55,13 +97,10 @@ public class ProcessExecutor {
 
 		private CommandLine commandline;
 		
-		private final InputStream stdIn;
-
-		private ProcessCallable(long watchdogTimeout, final InputStream stdIn, ProcessExecutorHandler handler, CommandLine commandline) {
+		private ProcessCallable(long watchdogTimeout, ProcessExecutorHandler handler, CommandLine commandline) {
 			this.watchdogTimeout = watchdogTimeout;
 			this.handler = handler;
 			this.commandline = commandline;
-			this.stdIn = stdIn;
 		}
 
 		@Override
@@ -70,7 +109,7 @@ public class ProcessExecutor {
 			executor.setProcessDestroyer(new ShutdownHookProcessDestroyer());
 			ExecuteWatchdog watchDog = new ExecuteWatchdog(watchdogTimeout);
 			executor.setWatchdog(watchDog);
-			executor.setStreamHandler(new PumpStreamHandler(new StreamHandler(handler, StreamHandler.STD_OUT), new StreamHandler(handler, StreamHandler.STD_ERR), stdIn));
+			executor.setStreamHandler(new PumpStreamHandler(new StreamHandler(handler, StreamHandler.STD_OUT), new StreamHandler(handler, StreamHandler.STD_ERR)));
 			Long exitValue;
 
 			try {
@@ -80,7 +119,7 @@ public class ProcessExecutor {
 			}
 
 			if (watchDog.killedProcess()) {
-				exitValue = WATCHDOG_EXIST_VALUE;
+				exitValue = WATCHDOG_EXIT_VALUE;
 			}
 
 			return exitValue;
