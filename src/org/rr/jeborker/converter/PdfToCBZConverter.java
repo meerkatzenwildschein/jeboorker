@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
-import org.rr.commons.utils.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.JeboorkerConstants;
 import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.pm.image.ImageUtils;
