@@ -3,6 +3,7 @@ package org.rr.commons.utils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -30,15 +31,31 @@ public class ProcessExecutor {
 
 	public static final Long WATCHDOG_EXIT_VALUE = -999L;
 	
+	public static void runProcessAsScript(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, InterruptedException, ExecutionException {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		ProcessCallable processCallable;
+		CommandLine commandLineScript = null;
+		try {
+			if(commandline.getArguments().length > 0) {
+				commandLineScript = createCommandLineScript(commandline);	
+				processCallable = new ProcessCallable(watchdogTimeout, handler, commandLineScript);
+			} else {
+				processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
+			}
+			Future<Long> submit = executor.submit(processCallable);
+			submit.get();
+		} finally {
+			if(commandLineScript != null) {
+				IResourceHandler execResourceHandler = ResourceHandlerFactory.getResourceHandler(commandLineScript.getExecutable());
+				execResourceHandler.delete();
+			}
+		}
+	}	
+	
 	public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
-		if(commandline.getArguments().length > 0) {
-			CommandLine commandLineScript = createCommandLineScript(commandline);	
-			processCallable = new ProcessCallable(watchdogTimeout, handler, commandLineScript);
-		} else {
-			processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
-		}
+		processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
 		return executor.submit(processCallable);
 	}
 	
@@ -73,6 +90,26 @@ public class ProcessExecutor {
 					IOUtils.closeQuietly(contentOutputStream);
 				}
 			}
+		} else if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
+			StringBuilder script = new StringBuilder(commandline.toString());
+
+			OutputStream contentOutputStream = null;
+			try {
+				IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("bat");
+				contentOutputStream = temporaryScriptResource.getContentOutputStream(false);
+				IOUtils.write(script, contentOutputStream);
+				contentOutputStream.flush();
+				
+				//create command for exec script
+				CommandLine commandLineScript = new CommandLine(temporaryScriptResource.toFile().toString());
+				return commandLineScript;
+			} catch(Exception e) {
+				LoggerFactory.getLogger(ProcessExecutor.class).log(Level.SEVERE, "Could not create script.", e);
+			} finally {
+				if(contentOutputStream != null) {
+					IOUtils.closeQuietly(contentOutputStream);
+				}
+			}			
 		}
 			
 		return commandline;

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 import org.apache.commons.exec.CommandLine;
@@ -15,8 +14,11 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
+import org.rr.commons.utils.ReflectionUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.zip.ZipFileFilter;
+import org.rr.jeborker.Jeboorker;
 
 public class RarUtils {
 	
@@ -64,17 +66,22 @@ public class RarUtils {
 	 */	
 	public static List<String> list(final IResourceHandler rarFileHandler, final RarFileFilter rarFileFilter) {
 		final ArrayList<String> result = new ArrayList<String>();
-		final String commandLineString = "/usr/bin/unrar lb";
-		final CommandLine cl = CommandLine.parse(commandLineString);
+		final CommandLine cl = new CommandLine(getUnRarExecutable());
 		
-		cl.addArgument(rarFileHandler.toFile().getName());
+		cl.addArgument("vb");
+		cl.addArgument(rarFileHandler.toFile().getPath());
 		
 		try {
-			Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
+			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
 				
 				@Override
 				public void onStandardOutput(String msg) {
-					if(rarFileFilter.accept(msg)) {
+					if(msg.trim().isEmpty()) {
+						return;
+					} else if(msg.indexOf(cl.toString()) != -1) {
+						return;
+					} else if(rarFileFilter.accept(msg)) {
+						msg = StringUtils.replace(msg, "\\", "/");
 						result.add(msg);
 					}
 				}
@@ -82,8 +89,7 @@ public class RarUtils {
 				@Override
 				public void onStandardError(String msg) {
 				}
-			}, ExecuteWatchdog.INFINITE_TIMEOUT);
-			p.get(); //wait
+			}, 100000);
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "To list files in rar " + rarFileHandler, e);
 		}		
@@ -94,10 +100,10 @@ public class RarUtils {
 	 * Add / Replace the an entry with the given name and given data
 	 */
 	public static boolean add(IResourceHandler rarFileHandler, String name, InputStream data) {
-		final String commandLineString = "/usr/bin/rar a";
-		final CommandLine cl = CommandLine.parse(commandLineString);
-		
+		final CommandLine cl = new CommandLine(getRarExecutable());
+		File in = null;
 		try {
+			cl.addArgument("a"); //add
 			cl.addArgument("-o+"); //overwrite existing
 			
 			//rar archive path
@@ -114,15 +120,13 @@ public class RarUtils {
 			String rarFilePath = rarFileHandler.toFile().getPath();
 			cl.addArgument(rarFilePath); //rar archive
 			
-			File in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
+			//create a copy of the entry that should be added to the rar.
+			in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
 			FileUtils.copyInputStreamToFile(data, in);
 			
 			cl.addArgument(in.getPath()); //entry to add
 			
-			Process exec = Runtime.getRuntime().exec(cl.toString());
-			exec.waitFor();
-			
-			Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
+			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
 				
 				@Override
 				public void onStandardOutput(String msg) {
@@ -134,15 +138,38 @@ public class RarUtils {
 				}
 			}, ExecuteWatchdog.INFINITE_TIMEOUT);
 			
-			p.get(); //wait
-			
-			if(in.toString().startsWith(FileUtils.getTempDirectoryPath())) {
-				FileUtils.deleteQuietly(in.getParentFile());
-			}
 			return true;
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "Faild to add " + name + " to "+ rarFileHandler, e);
-		}				
+		} finally {
+			if(in != null) {
+				FileUtils.deleteQuietly(in.getParentFile());
+			}
+		}
 		return false;
+	}
+	
+	/**
+	 * Get the rar executable.
+	 */
+	private static String getRarExecutable() {
+		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
+			return Jeboorker.getAppFolder() + File.separator + "exec" + File.separator + "Rar.exe";
+		} else if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+			return "/usr/bin/rar";
+		}
+		throw new RuntimeException("No rar executable!");
+	}
+	
+	/**
+	 * Get the rar executable.
+	 */
+	static String getUnRarExecutable() {
+		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
+			return Jeboorker.getAppFolder() + File.separator + "exec" + File.separator + "UnRAR.exe";
+		} else if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+			return "/usr/bin/unrar";
+		}
+		throw new RuntimeException("No rar executable!");
 	}
 }

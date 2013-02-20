@@ -31,9 +31,9 @@ public class ResourceHandlerFactory {
 			for (int i = 0; i < temporaryResourceLoader.size(); i++) {
 				try {
 					resourceHandler = temporaryResourceLoader.get(i);
-					if(resourceHandler.exists()) {
-						resourceHandler.delete();
-					}
+					
+					//asking for existence throws an exception during shutdown under windows.
+					resourceHandler.delete();
 				} catch (IOException e) {
 					//do not abort
 					System.err.println("could not delete temporary resource " + String.valueOf(resourceHandler));
@@ -71,8 +71,8 @@ public class ResourceHandlerFactory {
 	 * Deletes all temporary resources previously created with the {@link #getTemporaryResource()}
 	 * method.
 	 */
-	static void deleteTemporaryResources() {
-		shutdownThread.run();
+	static void removeTemporaryResource(IResourceHandler handler) {
+		temporaryResourceLoader.remove(handler);
 	}	
 	
 	/**
