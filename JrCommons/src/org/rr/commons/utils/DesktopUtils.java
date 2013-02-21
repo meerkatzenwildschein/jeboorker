@@ -22,8 +22,13 @@ public class DesktopUtils {
 				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 				return true;
 			} else {
-				Desktop.getDesktop().open(file);
-				return true;
+				try {
+					Runtime.getRuntime().exec(new String[] { "rundll32.exe", "url.dll,FileProtocolHandler", file.getAbsolutePath() });
+					return true;
+				} catch (Exception e) {
+					Desktop.getDesktop().open(file);
+					return true;
+				}
 			}
 		} catch (Exception e1) {
 		}
