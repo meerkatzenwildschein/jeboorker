@@ -57,7 +57,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		// Books sometimes use non-identifier ids. We map these here to legal ones
 		Map<String, String> idMapping = new HashMap<String, String>();
 		
-		resources = readManifest(packageDocument, packageHref, epubReader, resources, idMapping);
+		resources = readManifest(book, packageDocument, packageHref, epubReader, resources, idMapping);
 		book.setResources(resources);
 		readCover(packageDocument, book);
 		book.setMetadata(PackageDocumentMetadataReader.readMetadata(packageDocument, book.getResources()));
@@ -89,7 +89,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	 * @param resourcesByHref
 	 * @return a Map with resources, with their id's as key.
 	 */
-	private static Resources readManifest(Document packageDocument, String packageHref,
+	private static Resources readManifest(Book book, Document packageDocument, String packageHref,
 			EpubReader epubReader, Resources resources, Map<String, String> idMapping) {
 		Element manifestElement = DOMUtil.getFirstElementByTagNameNS(packageDocument.getDocumentElement(), NAMESPACE_OPF, OPFTags.manifest);
 		Resources result = new Resources();
@@ -112,18 +112,14 @@ public class PackageDocumentReader extends PackageDocumentBase {
 			if(resource == null) {
 				//Possibly any charset could be used to store file names in zip files. Try all available ones
 				//to find the referring resource.
-				SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
-				for(Charset c : availableCharsets.values()) {
-					String newEncodedHref = new String(href.getBytes(), c);
-					if(resources.containsByHref(newEncodedHref)) {
-						resource = resources.remove(newEncodedHref);
-						resource.setHref(href);
-						break;
-					}
+				resource = findHrefResource(href, resources);
+				if(resource != null) {
+					resources.remove(resource.getHref());
+					resource.setHref(href);					
 				}
-				
+
 				if(resource == null) {
-					log.warning("resource with href '" + href + "' not found");
+					log.warning("resource with href '" + href + "' not found in " + book.getName());
 					continue;
 				}
 			}
@@ -138,7 +134,27 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		return result;
 	}	
 
-	
+	private static Resource findHrefResource(String href, Resources resources) {
+		//Possibly any charset could be used to store file names in zip files. Try all available ones
+		//to find the referring resource.
+		boolean urlEncoded = href.indexOf('%') != -1;
+		SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
+		for(Charset c : availableCharsets.values()) {
+			String newEncodedHref = new String(href.getBytes(), c);
+			if(resources.containsByHref(newEncodedHref)) {
+				return resources.getByHref(newEncodedHref);
+			} else if(urlEncoded) {
+				try {
+					String urlDecodedHref = URLDecoder.decode(href, c.name());
+					if(resources.containsByHref(urlDecodedHref)) {
+						return resources.getByHref(urlDecodedHref);
+					}
+				} catch (UnsupportedEncodingException e) {
+				}
+			}
+		}	
+		return null;
+	}
 	
 	
 	/**
@@ -345,8 +361,13 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	private static void readCover(Document packageDocument, Book book) {
 		Collection<String> coverHrefs = findCoverHrefs(packageDocument);
 		for (String coverHref: coverHrefs) {
-			Resource resource = book.getResources().getByHref(coverHref);
+			Resources resources = book.getResources();
+			Resource resource = resources.getByHref(coverHref);
 			if (resource == null) {
+				resource = findHrefResource(coverHref, resources);
+				if(resource != null) {
+					resource.setHref(coverHref);
+				}
 				log.warning("Cover resource " + coverHref + " not found in '" + book.getName() + "'");
 				continue;
 			}

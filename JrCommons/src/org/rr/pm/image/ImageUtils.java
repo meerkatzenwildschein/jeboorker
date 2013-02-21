@@ -371,7 +371,7 @@ public class ImageUtils {
 				if(cropedWidth < 10 || cropedHeight < 10) {
 					return image;
 				}
-				BufferedImage scaledImage = new BufferedImage(cropedWidth, cropedHeight, image.getType() <= 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
+				BufferedImage scaledImage = new BufferedImage(cropedWidth, cropedHeight, image.getType() > 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
 				Graphics scaledImageGraphics = scaledImage.getGraphics();
 				scaledImageGraphics.drawImage(image, 0, 0, scaledImage.getWidth(), scaledImage.getHeight(), minCol, minRow, maxCol, maxRow, null);
 				scaledImageGraphics.dispose();
