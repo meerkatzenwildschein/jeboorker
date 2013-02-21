@@ -30,7 +30,7 @@ public class RarUtilsTest extends TestCase {
 		String file = FileUtils.getTempDirectory() + File.separator + "te st.rar";
 		IResourceHandler rarFileHandler = ResourceHandlerFactory.getResourceHandler(file);
 		for(int i=0; i<10; i++) {
-			RarUtils.add(rarFileHandler, "dir to/file "+i+".test", new ByteArrayInputStream((contentString + i).getBytes()));
+			RarUtils.add(rarFileHandler, "dir to/file "+i+".jpg", new ByteArrayInputStream((contentString + i).getBytes()));
 		}
 		
 		List<String> list = RarUtils.list(rarFileHandler);
