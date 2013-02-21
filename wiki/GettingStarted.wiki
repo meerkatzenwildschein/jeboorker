@@ -14,5 +14,5 @@ The folders you've added can be toggled in it's visibility state by _File->Show/
 If you do not need a folder, you can remove it by _File->Remove folder_. This folder is only be removed from jeboorker and did not get touched in any other way!
 
 = Adding new books using Drag and Drop =
-You can copy Books simply by Dragging it in the jeboorker list. The book is copied to the same folder where the drop target book is
+You can copy Books simply by Dragging it in the jeboorker list. The book is copied to the same folder as the drop target book is
 located. You can also drag a book from jeboorker to you favourite file manager.
