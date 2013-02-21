@@ -61,10 +61,18 @@ public class DesktopUtils {
 
 	private static boolean openWindowsFolder(File file) {
 		final String windir = System.getenv("WINDIR");
+		try {
+			Desktop.getDesktop().open(new File(file.toString()));
+			return true;
+		} catch (Exception e) {
+		}
+		
 		if(new File(windir + File.separator + "explorer.exe").exists()) {
 			try {
-				CommandLine cl = CommandLine.parse("C:\\Windows\\explorer.exe /n /e \"" + file.toString() + "\"");
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				CommandLine cl = new CommandLine("C:\\Windows\\explorer.exe");
+				cl.addArgument("/e");
+				cl.addArgument("/select,\"" + file.toString() + "\"", false);
+				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 				return true;
 			} catch(Exception e2) {
 				e2.printStackTrace(); //debug output
