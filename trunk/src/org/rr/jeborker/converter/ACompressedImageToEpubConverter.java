@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
@@ -13,6 +14,7 @@ import nl.siegmann.epublib.domain.Spine;
 import nl.siegmann.epublib.epub.EpubWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 
@@ -23,14 +25,18 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 	protected IResourceHandler comicBookResource;
 	
-	public ACompressedImageToEpubConverter(IResourceHandler cbzResource) {
-		this.comicBookResource = cbzResource;
+	public ACompressedImageToEpubConverter(IResourceHandler comicBookResource) {
+		this.comicBookResource = comicBookResource;
 	}
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
-		final List<String> cbzEntries = listEntries(this.comicBookResource);
-		final Book epub = this.createEpub(cbzEntries);
+		final List<String> compressedImageEntries = listEntries(this.comicBookResource);
+		if(compressedImageEntries == null || compressedImageEntries.isEmpty()) {
+			LoggerFactory.getLogger(this).log(Level.WARNING, "The Comic book archive " + comicBookResource.getName() + " is empty.");
+			return null;
+		}		
+		final Book epub = this.createEpub(compressedImageEntries);
 		final EpubWriter writer = new EpubWriter();
 		
 		IResourceHandler targetEpubResource = ResourceHandlerFactory.getUniqueResourceHandler(this.comicBookResource, "epub");
