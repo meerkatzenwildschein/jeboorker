@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -82,6 +83,7 @@ public class TrueZipUtils {
 				result.add(enclEntryName);
 			}
 		}
+		Collections.sort(result);
 		return result;
 	}	
 
