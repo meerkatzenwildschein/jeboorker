@@ -18,6 +18,7 @@ import org.rr.commons.utils.ProcessExecutorHandler;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.CompressionUtils;
 import org.rr.commons.utils.compression.EmptyFileEntryFilter;
 import org.rr.commons.utils.compression.FileEntryFilter;
 
@@ -150,6 +151,11 @@ public class RarUtils {
 				name = name.substring(name.lastIndexOf('/') + 1);
 			} else {
 				cl.addArgument("-ap");
+			}
+			
+			//store only
+			if(CompressionUtils.isStoreOnlyFile(name)) {
+				cl.addArgument("-m0");
 			}
 			
 			cl.addArgument("-ep"); //do not use the fs path

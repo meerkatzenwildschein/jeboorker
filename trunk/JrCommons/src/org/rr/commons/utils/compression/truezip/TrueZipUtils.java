@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.commons.utils.compression.CompressionUtils;
 import org.rr.commons.utils.compression.EmptyFileEntryFilter;
 import org.rr.commons.utils.compression.FileEntryFilter;
 
@@ -99,7 +100,7 @@ public class TrueZipUtils {
 			if(zipFile.length() > 5000000) { //Larger than five MB - don't reassemble the zip file.
 				config.setOutputPreferences(config.getOutputPreferences().set(FsOutputOption.GROW));
 			}
-			if(storeOnly(name)) {
+			if(CompressionUtils.isStoreOnlyFile(name)) {
 				config.setOutputPreferences(config.getOutputPreferences().set(FsOutputOption.STORE));
 			}
 
@@ -124,25 +125,6 @@ public class TrueZipUtils {
 		    config.close();
 		}
 		return true;
-	}
-	
-	/**
-	 * Tells if the zip data should only be stored and not be compressed.
-	 * @param name The name of the zip entry
-	 * @return <code>true</code> for store only and <code>false</code> for compress.
-	 */
-	private static boolean storeOnly(String name) {
-		name = name.toLowerCase();
-		if(name.endsWith(".jpg") || name.endsWith(".jpeg")) {
-			return true;
-		} else if(name.endsWith(".png")) {
-			return true;
-		} else if(name.endsWith(".gif")) {
-			return true;
-		} else if(name.endsWith(".zip") || name.endsWith(".rar")) {
-			return true;
-		}
-		return false;
 	}
 	
 	public static ZipOutputStream createZipOutputStream(OutputStream out) {
