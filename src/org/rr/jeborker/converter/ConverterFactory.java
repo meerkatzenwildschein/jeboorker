@@ -14,10 +14,12 @@ public class ConverterFactory {
 		if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ.getMime().equals(resource.getMimeType())) {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
 			result.add(new CbzToEpubConverter(resource));
+			result.add(new CbzToPdfConverter(resource));
 			return result;
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR.getMime().equals(resource.getMimeType())) {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
 			result.add(new CbrToEpubConverter(resource));
+			result.add(new CbrToPdfConverter(resource));
 			return result;
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime().equals(resource.getMimeType())) {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();

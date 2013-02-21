@@ -67,7 +67,9 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 
 	@Override
 	public void finalizeAction(int count) {
-		ActionUtils.addEbookPropertyItem(newEbookPropertyItem, row + 1 + count);
+		if(newEbookPropertyItem != null) {
+			ActionUtils.addEbookPropertyItem(newEbookPropertyItem, row + 1 + count);
+		}
 	}
 
 }
