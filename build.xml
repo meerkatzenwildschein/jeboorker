@@ -62,12 +62,6 @@
 			</fileset>
 		</copy>
 		<copy includeemptydirs="false" todir="bin">
-			<fileset dir="l2fprod_common">
-				<exclude name="**/*.launch" />
-				<exclude name="**/*.java" />
-			</fileset>
-		</copy>
-		<copy includeemptydirs="false" todir="bin">
 			<fileset dir="bounce">
 				<exclude name="**/*.launch" />
 				<exclude name="**/*.java" />
@@ -75,12 +69,6 @@
 		</copy>
 		<copy includeemptydirs="false" todir="bin">
 			<fileset dir="jempbox">
-				<exclude name="**/*.launch" />
-				<exclude name="**/*.java" />
-			</fileset>
-		</copy>
-		<copy includeemptydirs="false" todir="bin">
-			<fileset dir="japura">
 				<exclude name="**/*.launch" />
 				<exclude name="**/*.java" />
 			</fileset>

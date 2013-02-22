@@ -36,6 +36,7 @@ class MainControllerUtils {
 		JeboorkerPreferences.addEntryNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.table.getRowCount()));
 		JeboorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
+		JeboorkerPreferences.addEntryNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
 	}
 	
@@ -58,13 +59,24 @@ class MainControllerUtils {
 		
 		//restore the divider location at the main window
 		final Number mainWindowDividerLocation = JeboorkerPreferences.getEntryAsNumber("mainWindowDividerLocation");
-		if(mainWindowDividerLocation!=null) {
+		if(mainWindowDividerLocation != null) {
 			int add = 0;
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
 				//however, the splitpane has a difference of 9 between setting and getting the location.				
 				add = 9;
 			}
 			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
+		}
+		
+		//restore the divider location at the main window
+		final Number treeMainTableDividerLocation = JeboorkerPreferences.getEntryAsNumber("treeMainTableDividerLocation");
+		if(treeMainTableDividerLocation != null) {
+			int add = 0;
+			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+				//however, the splitpane has a difference of 9 between setting and getting the location.				
+				add = 9;
+			}
+			mainWindow.treeMainTableSplitPane.setDividerLocation(treeMainTableDividerLocation.intValue() + add);
 		}
 		
 		//restore the divider location in the property sheet 

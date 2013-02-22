@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="l2fprod_common"/>
 	<classpathentry kind="src" path="bounce"/>
 	<classpathentry kind="src" path="jempbox"/>
-	<classpathentry kind="src" path="japura"/>
 	<classpathentry kind="src" path="epublib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_34"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
@@ -27,7 +25,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/platform-3.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/itext-5.jar"/>
+	<classpathentry kind="lib" path="lib/itext-5.jar" sourcepath="/itext"/>
 	<classpathentry kind="lib" path="lib/orientdb/orient-commons-1.4.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-1.4.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/orientdb/orientdb-nativeos-1.4.0-SNAPSHOT.jar"/>
