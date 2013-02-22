@@ -89,4 +89,16 @@
             <classpath refid="JrSwingCommons.classpath"/>
         </java>
     </target>
+	<copy includeemptydirs="false" todir="bin">
+		<fileset dir="japura">
+			<exclude name="**/*.launch" />
+			<exclude name="**/*.java" />
+		</fileset>
+	</copy>
+	<copy includeemptydirs="false" todir="bin">
+		<fileset dir="l2fprod_common">
+			<exclude name="**/*.launch" />
+			<exclude name="**/*.java" />
+		</fileset>
+	</copy>	
 </project>

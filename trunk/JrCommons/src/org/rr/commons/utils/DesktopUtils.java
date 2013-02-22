@@ -82,25 +82,23 @@ public class DesktopUtils {
 	}
 	
 	private static boolean openLinuxFolder(File file) {
-		if(new File("/usr/bin/nemo").exists()) {
+		if(new File("/usr/bin/gnome-open").exists()) {
 			try {
-				CommandLine cl = CommandLine.parse("/bin/sh -c /usr/bin/nemo \"" + file.toString() + "\"");
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				CommandLine cl = CommandLine.parse("/usr/bin/gnome-open \"" + file.toString() + "\"");
+				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				return true;
+			} catch(Exception e2) {
+				e2.printStackTrace(); //debug output
+			}			
+		} else if(new File("/usr/bin/kde-open").exists()) {
+			try {
+				CommandLine cl = CommandLine.parse("/usr/bin/kde-open \"" + file.toString() + "\"");
+				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
 				return true;
 			} catch(Exception e2) {
 				e2.printStackTrace(); //debug output
 			}
-		} if(new File("/usr/bin/nautilus").exists()) {
-			try {
-				//workaround for 6490730. It's already present with my ubuntu
-				//http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6490730
-				CommandLine cl = CommandLine.parse("/bin/sh -c /usr/bin/nautilus \"" + file.toString() + "\"");
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
-			    return true;
-			} catch (Exception e2) {
-				e2.printStackTrace(); //debug output
-			}
-		}		
+		}	
 		return false;
 	}	
 }
