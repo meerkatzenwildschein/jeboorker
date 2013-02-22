@@ -56,7 +56,9 @@ class LazyRarDataEntry extends CompressedDataEntry {
 							}
 							file.append(tmpFileName.trim());
 						}
-					} else {
+					} else if(msg.startsWith("No files to extract")) {
+						//something goes wrong
+						LoggerFactory.getLogger().log(Level.SEVERE, "Failed to extract file " + path + " from rar "+ rarFileHandler);
 					}
 				}
 				
