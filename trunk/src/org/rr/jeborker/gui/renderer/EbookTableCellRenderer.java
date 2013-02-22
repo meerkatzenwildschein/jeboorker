@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.io.Serializable;
 
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.rr.common.swing.SwingUtils;
@@ -34,8 +33,8 @@ public class EbookTableCellRenderer extends EbookTableCellComponent implements T
 			this.setBackground(selectedBgColor);	
 			this.setForeground(selectedFgColor);
 		} else {		
-			this.setBackground(UIManager.getColor("Table.background"));
-			this.setForeground(UIManager.getColor("Table.foreground"));			
+			this.setBackground(SwingUtils.getBackgroundColor());
+			this.setForeground(SwingUtils.getForegroundColor());			
 		}
 		
 		return tableCellComponent;

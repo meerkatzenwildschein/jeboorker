@@ -63,7 +63,7 @@ class MainControllerUtils {
 			int add = 0;
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
 				//however, the splitpane has a difference of 9 between setting and getting the location.				
-				add = 9;
+//				add = 9;
 			}
 			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
 		}
@@ -74,7 +74,7 @@ class MainControllerUtils {
 			int add = 0;
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
 				//however, the splitpane has a difference of 9 between setting and getting the location.				
-				add = 9;
+//				add = 9;
 			}
 			mainWindow.treeMainTableSplitPane.setDividerLocation(treeMainTableDividerLocation.intValue() + add);
 		}

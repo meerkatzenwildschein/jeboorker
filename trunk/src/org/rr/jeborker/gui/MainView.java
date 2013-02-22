@@ -42,7 +42,6 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
-import javax.swing.tree.DefaultTreeModel;
 
 import net.antonioshome.swing.treewrapper.TreeWrapper;
 
@@ -60,6 +59,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.PasteFromClipboardAction;
+import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -71,6 +71,8 @@ import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
 import org.rr.jeborker.gui.renderer.MultiListPropertyEditor;
 import org.rr.jeborker.gui.renderer.MultiListPropertyRenderer;
+import org.rr.jeborker.gui.renderer.ResourceHandlerTreeCellEditor;
+import org.rr.jeborker.gui.renderer.ResourceHandlerTreeCellRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyRenderer;
 
@@ -109,7 +111,6 @@ public class MainView extends JFrame{
 	CheckComboBox<Field> sortColumnComboBox;
 	JToggleButton sortOrderAscButton;
 	JToggleButton sortOrderDescButton;
-	private JPanel treePanel;
 	JSplitPane treeMainTableSplitPane;
 	JTree tree;
 	
@@ -330,22 +331,26 @@ public class MainView extends JFrame{
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 				mainTableScrollPane.setViewportView(table);
 				
-				treePanel = new JPanel();
-				treeMainTableSplitPane.setLeftComponent(treePanel);
-				GridBagLayout gbl_treePanel = new GridBagLayout();
-				gbl_treePanel.columnWidths = new int[]{0, 0};
-				gbl_treePanel.rowHeights = new int[]{0, 0};
-				gbl_treePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-				gbl_treePanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-				treePanel.setLayout(gbl_treePanel);
-				
 				tree = new JTree();
-				TreeWrapper wrapper = new TreeWrapper(tree);
+				new TreeWrapper(tree);
+				JScrollPane treeScroller = new JScrollPane(tree);
+				treeScroller.setOpaque(false);
+				treeScroller.getViewport().setOpaque(false);
+				
+				tree.setRootVisible(false);
+				tree.setModel(new BasePathTreeModel(tree));
+				tree.setEditable(true);
+				tree.setCellRenderer(new ResourceHandlerTreeCellRenderer(tree));
+				tree.setCellEditor(new ResourceHandlerTreeCellEditor(tree));
+				tree.setRowHeight(25);
+				
 				GridBagConstraints gbc_tree = new GridBagConstraints();
 				gbc_tree.fill = GridBagConstraints.BOTH;
 				gbc_tree.gridx = 0;
 				gbc_tree.gridy = 0;
-				treePanel.add(tree, gbc_tree);
+				
+				treeMainTableSplitPane.setLeftComponent(treeScroller);
+				treeMainTableSplitPane.setOneTouchExpandable(true);
 				
 				JPanel sheetPanel = new JPanel();
 				GridBagLayout gbl_sheetPanel = new GridBagLayout();
