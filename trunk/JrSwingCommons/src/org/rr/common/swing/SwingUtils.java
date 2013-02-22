@@ -126,7 +126,9 @@ public class SwingUtils {
 		if(color == null) {
 			color = new JList().getSelectionBackground(); 
 		}
-		return color;
+		
+		//sometimes the UIManager color won't work 
+		return new Color(color.getRed(), color.getGreen(), color.getBlue());
 	}
 	
 	/**
@@ -144,7 +146,9 @@ public class SwingUtils {
 		if(color == null) {
 			color = new JList().getSelectionForeground();
 		}
-		return color;
+		
+		//sometimes the UIManager color won't work 
+		return new Color(color.getRed(), color.getGreen(), color.getBlue());
 	}	
 	
 	/**
@@ -163,7 +167,9 @@ public class SwingUtils {
 		if(color == null) {
 			color = new JList().getForeground();
 		}
-		return color;		
+		
+		//sometimes the UIManager color won't work 
+		return new Color(color.getRed(), color.getGreen(), color.getBlue());
 	}
 	
 	public static Color getBackgroundColor() {
@@ -171,7 +177,9 @@ public class SwingUtils {
 		if(color == null) {
 			color = new JList().getBackground();
 		}
-		return color;		
+		
+		//sometimes the UIManager color won't work
+		return new Color(color.getRed(), color.getGreen(), color.getBlue());
 	}	
 	
 	public static void centerOnScreen(Window window) {
