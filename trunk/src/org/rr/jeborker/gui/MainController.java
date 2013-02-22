@@ -36,6 +36,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
+import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
@@ -248,13 +249,19 @@ public class MainController {
 		}
 		
 		if(mainWindow.table.isEditing()) {
-			mainWindow.table.editingStopped(null);
+			mainWindow.table.stopEdit();
 		}
 			
 		mainWindow.table.tableChanged(new TableModelEvent(model));
 		if(refreshMetadataSheet) {
+			//TODO stop edit cause that a refresh of the property sheet is no longer needed. Test this.
 			refreshSheetProperties();
 		}
+		mainWindow.mainTableScrollPane.getVerticalScrollBar().setValue(0);
+	}
+	
+	public void refreshBasePathTree() {
+		mainWindow.tree.setModel(new BasePathTreeModel());
 	}
 	
 	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
@@ -265,7 +272,7 @@ public class MainController {
 			int editingRow = mainWindow.table.getEditingRow();
 			for (int i = 0; i < selectedRows.length; i++) {
 				if(editingRow != -1 && editingRow == selectedRows[i]) {
-					mainWindow.table.editingStopped(null);
+					mainWindow.table.stopEdit();
 				}
 				
 				model.reloadEbookPropertyItemAt(selectedRows[i]);

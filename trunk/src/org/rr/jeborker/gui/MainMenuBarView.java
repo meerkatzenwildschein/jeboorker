@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -22,11 +21,21 @@ import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.converter.IEBookConverter;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.action.ApplicationAction;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class MainMenuBarView extends JMenuBar {
 
 	private static final long serialVersionUID = -8134987169763660105L;
+
+	private static ImageIcon eyesVisible;
+
+	private static ImageIcon eyesInvisible;
+	
+	static {
+		eyesVisible = new ImageIcon(ImageResourceBundle.getResource("eyes_blue_16.png"));
+		eyesInvisible = new ImageIcon(ImageResourceBundle.getResource("eyes_gray_16.png"));		
+	}
 	
 	JMenu fileMenuBar;
 	
@@ -104,6 +113,8 @@ class MainMenuBarView extends JMenuBar {
 						mnVerzeichnisEntfernen.setEnabled(false);
 					}	
 					
+					mnVerzeichnisEntfernen.add(new JSeparator());		
+					
 					if(basePath.size() > 1) {
 						JMenuItem pathItem = new JMenuItem();
 						pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, "removeAll"));
@@ -126,6 +137,8 @@ class MainMenuBarView extends JMenuBar {
 						mnVerzeichnisRefresh.setEnabled(false);
 					}
 					
+					mnVerzeichnisRefresh.add(new JSeparator());
+					
 					if(basePath.size() > 1) {
 						JMenuItem pathItem = new JMenuItem();
 						pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, "refreshAll"));
@@ -139,12 +152,20 @@ class MainMenuBarView extends JMenuBar {
 					mnVerzeichnisShowHide.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 					for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 						String path = iterator.next();
-						JCheckBoxMenuItem pathItem = new JCheckBoxMenuItem();
+						ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path);
+						
 						boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
-						pathItem.setSelected(isShow);
-						pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path));
+						if(isShow) {
+							action.putValue(Action.SMALL_ICON, eyesVisible);
+						} else {
+							action.putValue(Action.SMALL_ICON, eyesInvisible);
+						}		
+						JMenuItem pathItem = new JMenuItem(action);
 						mnVerzeichnisShowHide.add(pathItem);
 					}
+					
+					mnVerzeichnisShowHide.add(new JSeparator());
+					
 					if(basePath.size() > 1) {
 						{
 							JMenuItem pathItem = new JMenuItem();

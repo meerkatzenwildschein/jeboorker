@@ -36,14 +36,15 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
-
-import net.antonioshome.swing.treewrapper.TreeWrapper;
+import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
@@ -53,6 +54,7 @@ import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.common.swing.table.JRTable;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
@@ -113,6 +115,7 @@ public class MainView extends JFrame{
 	JToggleButton sortOrderDescButton;
 	JSplitPane treeMainTableSplitPane;
 	JTree tree;
+	JScrollPane mainTableScrollPane;
 	
 	/**
 	 * Create the application.
@@ -186,13 +189,13 @@ public class MainView extends JFrame{
 				
 				sortPanel = new JPanel();
 				GridBagConstraints gbc_sortPanel = new GridBagConstraints();
-				gbc_sortPanel.insets = new Insets(0, 0, 5, 0);
+				gbc_sortPanel.insets = new Insets(5, 0, 5, 0);
 				gbc_sortPanel.fill = GridBagConstraints.BOTH;
 				gbc_sortPanel.gridx = 0;
 				gbc_sortPanel.gridy = 0;
 				propertyContentPanel.add(sortPanel, gbc_sortPanel);
 				GridBagLayout gbl_sortPanel = new GridBagLayout();
-				gbl_sortPanel.columnWidths = new int[]{110, 25, 25, 1, 0};
+				gbl_sortPanel.columnWidths = new int[]{110, 30, 30, 1, 0};
 				gbl_sortPanel.rowHeights = new int[]{25, 0};
 				gbl_sortPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 				gbl_sortPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
@@ -327,29 +330,16 @@ public class MainView extends JFrame{
 		            }
 		        });
 				
-				JScrollPane mainTableScrollPane = new JScrollPane();
+				mainTableScrollPane = new JScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 				mainTableScrollPane.setViewportView(table);
 				
-				tree = new JTree();
-				new TreeWrapper(tree);
-				JScrollPane treeScroller = new JScrollPane(tree);
-				treeScroller.setOpaque(false);
-				treeScroller.getViewport().setOpaque(false);
+				JTabbedPane leftTabbedPane = new JTabbedPane();
 				
-				tree.setRootVisible(false);
-				tree.setModel(new BasePathTreeModel(tree));
-				tree.setEditable(true);
-				tree.setCellRenderer(new ResourceHandlerTreeCellRenderer(tree));
-				tree.setCellEditor(new ResourceHandlerTreeCellEditor(tree));
-				tree.setRowHeight(25);
+				JScrollPane treeScroller = createBasePathTree();
+				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), treeScroller);
 				
-				GridBagConstraints gbc_tree = new GridBagConstraints();
-				gbc_tree.fill = GridBagConstraints.BOTH;
-				gbc_tree.gridx = 0;
-				gbc_tree.gridy = 0;
-				
-				treeMainTableSplitPane.setLeftComponent(treeScroller);
+				treeMainTableSplitPane.setLeftComponent(leftTabbedPane);
 				treeMainTableSplitPane.setOneTouchExpandable(true);
 				
 				JPanel sheetPanel = new JPanel();
@@ -458,6 +448,82 @@ public class MainView extends JFrame{
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
+	}
+
+	private JScrollPane createBasePathTree() {
+		tree = new JTree();
+		JScrollPane treeScroller = new JScrollPane(tree);
+		treeScroller.setOpaque(false);
+		treeScroller.getViewport().setOpaque(false);
+		
+		tree.setRootVisible(false);
+		tree.setModel(new BasePathTreeModel());
+		tree.setEditable(true);
+		tree.setCellRenderer(new ResourceHandlerTreeCellRenderer(tree));
+		tree.setCellEditor(new ResourceHandlerTreeCellEditor(tree));
+		tree.setRowHeight(25);
+		
+		tree.setTransferHandler(new TransferHandler() {
+
+			private static final long serialVersionUID = -371360766111031218L;
+
+			public boolean canImport(TransferHandler.TransferSupport info) {
+                //only import Strings
+                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+                    return false;
+                }
+
+                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
+                if (dl.getPath() != null && dl.getPath().getPathCount() <= 1) {
+                    return false;
+                }
+                
+                return true;
+            }
+
+            public boolean importData(TransferHandler.TransferSupport info) {
+                if (!info.isDrop()) {
+                    return false;
+                }
+                
+                // Check for String flavor
+                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
+                    return false;
+                }
+
+                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
+                TreePath dropRow = dl.getPath();
+                Object lastPath = dropRow.getLastPathComponent();
+                Object firstPath = dropRow.getPath()[1]; //is the base path
+                IResourceHandler firstPathResource = ((BasePathTreeModel.PathNode) firstPath).getPathResource();
+                IResourceHandler lastPathPathResource = ((BasePathTreeModel.PathNode) lastPath).getPathResource();
+                try {
+					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
+					tree.startEditingAtPath(dropRow);
+				} catch (Exception e) {
+					return false;
+				} 
+                return true;
+            }
+            
+            public int getSourceActions(JComponent c) {
+                return COPY;
+            }
+            
+            /**
+             * Create a new Transferable that is used to drag files from jeboorker to a native application.
+             */
+            protected Transferable createTransferable(JComponent c) {
+            	return null;
+            }
+        });
+		
+		GridBagConstraints gbc_tree = new GridBagConstraints();
+		gbc_tree.fill = GridBagConstraints.BOTH;
+		gbc_tree.gridx = 0;
+		gbc_tree.gridy = 0;
+		return treeScroller;
 	}
 
 	/**

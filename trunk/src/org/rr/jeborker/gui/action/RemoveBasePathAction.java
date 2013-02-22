@@ -77,6 +77,7 @@ class RemoveBasePathAction extends AbstractAction {
 					@Override
 					public void run() {
 						MainController.getController().refreshTable(false);
+						MainController.getController().refreshBasePathTree();
 					}
 				});
 			}

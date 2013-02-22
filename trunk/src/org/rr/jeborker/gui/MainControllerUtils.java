@@ -63,9 +63,9 @@ class MainControllerUtils {
 			int add = 0;
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
 				//however, the splitpane has a difference of 9 between setting and getting the location.				
-//				add = 9;
+				add = 8;
 			}
-			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
+			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() - add);
 		}
 		
 		//restore the divider location at the main window

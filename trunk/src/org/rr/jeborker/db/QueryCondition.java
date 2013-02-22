@@ -140,10 +140,13 @@ public class QueryCondition {
 	/**
 	 * Removes all conditions with the given identifier.
 	 * @param identifier The identifier for the conditions to be removed.
+	 * @return <code>true</code> if a condition was removed and <code>false</code> if nothing has changed.
 	 */
-	public void removeConditionByIdentifier(final String identifier) {
-		this.remove(this.andChildren, identifier);
-		this.remove(this.orChildren, identifier);
+	public boolean removeConditionByIdentifier(final String identifier) {
+		boolean result = false;
+		result = this.remove(this.andChildren, identifier) || result;
+		result = this.remove(this.orChildren, identifier) || result;
+		return result;
 	}
 	
 	/**
@@ -151,9 +154,10 @@ public class QueryCondition {
 	 * @param conditions for example a list like <code>this.andChildren</cdeo> or <code>this.orChildren</code>.
 	 * @param identifier The identifier of the {@link QueryCondition} to be removed.
 	 */
-	private void remove(final List<QueryCondition> conditions, final String identifier) {
+	private boolean remove(final List<QueryCondition> conditions, final String identifier) {
+		boolean result = false;
 		if(conditions == null || identifier == null) {
-			return;
+			return result;
 		}
 		
 		final ArrayList<QueryCondition> toRemove = new ArrayList<QueryCondition>();
@@ -163,7 +167,8 @@ public class QueryCondition {
 			}
 			condition.removeConditionByIdentifier(identifier);
 		}
-		conditions.removeAll(toRemove);
+		result = conditions.removeAll(toRemove);
+		return result;
 	}
 	
 	public String toString() {

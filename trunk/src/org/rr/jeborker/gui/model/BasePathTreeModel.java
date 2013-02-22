@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -23,11 +22,8 @@ public class BasePathTreeModel extends DefaultTreeModel {
 
 	private DefaultMutableTreeNode root;
 	
-	private JTree tree;
-	
-	public BasePathTreeModel(JTree tree) {
+	public BasePathTreeModel() {
 		super(new DefaultMutableTreeNode("root"));
-		this.tree = tree;
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.init();
 	}
