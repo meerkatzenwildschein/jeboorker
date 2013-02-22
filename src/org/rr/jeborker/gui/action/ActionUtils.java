@@ -124,7 +124,7 @@ public class ActionUtils {
 	 * it's set to hide an other way round. 
 	 * @param path The path to be toggled.
 	 */
-	static void toggleBasePathVisibility(String path) {
+	public static void toggleBasePathVisibility(String path) {
 		final boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 		setBasePathVisibility(path, !isShow);
 	}	
