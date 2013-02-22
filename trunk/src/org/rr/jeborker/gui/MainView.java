@@ -38,9 +38,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultTreeModel;
+
+import net.antonioshome.swing.treewrapper.TreeWrapper;
 
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
@@ -93,21 +97,21 @@ public class MainView extends JFrame{
 	
 	PropertySheetPanel propertySheet;
 	
-	CheckComboBox<Field>  sortColumnComboBox;
-	
-	JToggleButton sortOrderAscButton;
-	
-	JToggleButton sortOrderDescButton;
-	
 	JMenuButton addMetadataButton;
 	
 	JButton removeMetadataButton;
 	
 	JButton saveMetadataButton;
 	
-	JLabel lblSortBy;
-	
 	JPanel rootPanel;
+	private JPanel sortPanel;
+	private JLabel sortLabel;
+	CheckComboBox<Field> sortColumnComboBox;
+	JToggleButton sortOrderAscButton;
+	JToggleButton sortOrderDescButton;
+	private JPanel treePanel;
+	JSplitPane treeMainTableSplitPane;
+	JTree tree;
 	
 	/**
 	 * Create the application.
@@ -149,21 +153,10 @@ public class MainView extends JFrame{
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
-		gridBagLayout.rowHeights = new int[]{4, 0, 350, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{350, 25, 30};
 		gridBagLayout.columnWeights = new double[]{1.0};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 4.9E-324};
 		this.getContentPane().setLayout(gridBagLayout);
-		
-		JPanel filterPanel = FilterPanelController.getView();
-		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
-		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
-		gbc_searchPanel.anchor = GridBagConstraints.NORTH;
-		gbc_searchPanel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_searchPanel.gridx = 0;
-		gbc_searchPanel.gridy = 3;
-		getContentPane().add(filterPanel, gbc_searchPanel);
-		
-
 		
 		
 		mainSplitPane = new JSplitPane();
@@ -175,160 +168,192 @@ public class MainView extends JFrame{
 		gbc_mainSplitPane.insets = new Insets(0, 3, 5, 0);
 		gbc_mainSplitPane.fill = GridBagConstraints.BOTH;
 		gbc_mainSplitPane.gridx = 0;
-		gbc_mainSplitPane.gridy = 2;
+		gbc_mainSplitPane.gridy = 0;
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
-		
-		table = new JRTable();
-		table.setName("MainTable");
-		table.setRowHeight(74);
-		table.setModel(new EbookPropertyDBTableModel());
-		table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
-		table.setDefaultEditor(Object.class, new EbookTableCellEditor());
-		table.setTableHeader(null);
-		table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
-		table.setDragEnabled(true);
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
-		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
-		table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);		
-		table.setTransferHandler(new TransferHandler() {
-
-			private static final long serialVersionUID = -371360766111031218L;
-
-			public boolean canImport(TransferHandler.TransferSupport info) {
-                //only import Strings
-                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
-                    return false;
-                }
-
-                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-                if (dl.getRow() == -1) {
-                    return false;
-                }
-                
-                return true;
-            }
-
-            public boolean importData(TransferHandler.TransferSupport info) {
-                if (!info.isDrop()) {
-                    return false;
-                }
-                
-                // Check for String flavor
-                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
-                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
-                    return false;
-                }
-
-                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-                int dropRow = dl.getRow();
-                return PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), dropRow);
-            }
-            
-            public int getSourceActions(JComponent c) {
-                return COPY;
-            }
-            
-            /**
-             * Create a new Transferable that is used to drag files from jeboorker to a native application.
-             */
-            protected Transferable createTransferable(JComponent c) {
-                final JTable list = (JTable) c;
-                final int[] selectedRows = list.getSelectedRows();
-                final List<URI> uriList = new ArrayList<URI>();
-                final List<String> files = new ArrayList<String>();
-                
-                for (int i = 0; i < selectedRows.length; i++) {
-                	EbookPropertyItem val = (EbookPropertyItem) table.getModel().getValueAt(selectedRows[i], 0);
-                	try {
-                		uriList.add(new File(val.getFile()).toURI());
-                		files.add(new File(val.getFile()).getPath());
-					} catch (Exception e) {
-						LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
-					}
-                }    
-                
-                if(CommonUtils.isLinux()) {
-                	return new URIListTransferable(uriList, null);
-                } else {
-                	return new FileTransferable(files);
-                }
-            }
-        });
 		
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
-		gbl_propertyContentPanel.columnWidths = new int[]{0, 25, 25, 0};
-		gbl_propertyContentPanel.rowHeights = new int[]{25, 0, 0, 0};
-		gbl_propertyContentPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0};
-		gbl_propertyContentPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_propertyContentPanel.columnWidths = new int[]{0};
+		gbl_propertyContentPanel.rowHeights = new int[]{25, 0, 0};
+		gbl_propertyContentPanel.columnWeights = new double[]{1.0};
+		gbl_propertyContentPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		propertyContentPanel.setLayout(gbl_propertyContentPanel);
 		mainSplitPane.setLeftComponent(propertyContentPanel);
 				
-				lblSortBy = new JLabel(Bundle.getString("EborkerMainView.sortby"));
-				GridBagConstraints gbc_lblSortBy = new GridBagConstraints();
-				gbc_lblSortBy.insets = new Insets(0, 0, 5, 5);
-				gbc_lblSortBy.gridx = 0;
-				gbc_lblSortBy.gridy = 0;
-				propertyContentPanel.add(lblSortBy, gbc_lblSortBy);
+				sortPanel = new JPanel();
+				GridBagConstraints gbc_sortPanel = new GridBagConstraints();
+				gbc_sortPanel.insets = new Insets(0, 0, 5, 0);
+				gbc_sortPanel.fill = GridBagConstraints.BOTH;
+				gbc_sortPanel.gridx = 0;
+				gbc_sortPanel.gridy = 0;
+				propertyContentPanel.add(sortPanel, gbc_sortPanel);
+				GridBagLayout gbl_sortPanel = new GridBagLayout();
+				gbl_sortPanel.columnWidths = new int[]{110, 25, 25, 1, 0};
+				gbl_sortPanel.rowHeights = new int[]{25, 0};
+				gbl_sortPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+				gbl_sortPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+				sortPanel.setLayout(gbl_sortPanel);
 				
-				JScrollPane scrollPane = new JScrollPane();
-				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-				gbc_scrollPane.gridwidth = 5;
-				gbc_scrollPane.weightx = 2.0;
-				gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
-				gbc_scrollPane.fill = GridBagConstraints.BOTH;
-				gbc_scrollPane.anchor = GridBagConstraints.NORTHWEST;
-				gbc_scrollPane.gridx = 0;
-				gbc_scrollPane.gridy = 1;
-				propertyContentPanel.add(scrollPane, gbc_scrollPane);
-				scrollPane.setViewportView(table);
+				sortLabel = new JLabel("Sortieren nach:");
+				GridBagConstraints gbc_sortLabel = new GridBagConstraints();
+				gbc_sortLabel.anchor = GridBagConstraints.WEST;
+				gbc_sortLabel.insets = new Insets(0, 0, 0, 5);
+				gbc_sortLabel.gridx = 0;
+				gbc_sortLabel.gridy = 0;
+				sortPanel.add(sortLabel, gbc_sortLabel);
 				
 				sortColumnComboBox = new CheckComboBox<Field>();
-				sortColumnComboBox.setPreferredSize(new Dimension(0,25));
+				sortColumnComboBox.setPreferredSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
-				gbc_sortColumnComboBox.insets = new Insets(0, 0, 5, 5);
-				gbc_sortColumnComboBox.anchor = GridBagConstraints.NORTH;
 				gbc_sortColumnComboBox.fill = GridBagConstraints.HORIZONTAL;
+				gbc_sortColumnComboBox.anchor = GridBagConstraints.NORTH;
 				gbc_sortColumnComboBox.gridx = 3;
 				gbc_sortColumnComboBox.gridy = 0;
-				propertyContentPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
+				sortPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
 				
-				sortOrderAscButton = new JToggleButton();
 				final Icon ascOrderIcon =  new ImageIcon(MainView.class.getResource("resources/sort_asc.gif"));
+				final Icon descOrderIcon = new ImageIcon(MainView.class.getResource("resources/sort_desc.gif"));
+
+				sortOrderAscButton = new JToggleButton();
 				sortOrderAscButton.setIcon(ascOrderIcon);
-				sortOrderAscButton.setPreferredSize(new Dimension(0,25));
-				sortOrderAscButton.setMinimumSize(new Dimension(0,25));
-				GridBagConstraints gbc_sortOrderComboBox = new GridBagConstraints();
-				gbc_sortOrderComboBox.insets = new Insets(0, 0, 5, 5);
-				gbc_sortOrderComboBox.anchor = GridBagConstraints.NORTH;
-				gbc_sortOrderComboBox.fill = GridBagConstraints.HORIZONTAL;
-				gbc_sortOrderComboBox.gridx = 1;
-				gbc_sortOrderComboBox.gridy = 0;
-				propertyContentPanel.add(sortOrderAscButton, gbc_sortOrderComboBox);
+				sortOrderAscButton.setPreferredSize(new Dimension(0, 25));
+				sortOrderAscButton.setMinimumSize(new Dimension(0, 25));
+				GridBagConstraints gbc_sortOrderAscButton = new GridBagConstraints();
+				gbc_sortOrderAscButton.fill = GridBagConstraints.HORIZONTAL;
+				gbc_sortOrderAscButton.anchor = GridBagConstraints.NORTH;
+				gbc_sortOrderAscButton.insets = new Insets(0, 0, 0, 5);
+				gbc_sortOrderAscButton.gridx = 1;
+				gbc_sortOrderAscButton.gridy = 0;
+				sortPanel.add(sortOrderAscButton, gbc_sortOrderAscButton);
 				
 				sortOrderDescButton = new JToggleButton();
-				final Icon descOrderIcon = new ImageIcon(MainView.class.getResource("resources/sort_desc.gif"));
 				sortOrderDescButton.setIcon(descOrderIcon);
-				sortOrderDescButton.setPreferredSize(new Dimension(0,25));
-				sortOrderDescButton.setMinimumSize(new Dimension(0,25));
-				GridBagConstraints gbc_toggleButton = new GridBagConstraints();
-				gbc_toggleButton.anchor = GridBagConstraints.NORTH;
-				gbc_toggleButton.fill = GridBagConstraints.HORIZONTAL;				
-				gbc_toggleButton.insets = new Insets(0, 0, 5, 5);
-				gbc_toggleButton.gridx = 2;
-				gbc_toggleButton.gridy = 0;
-				propertyContentPanel.add(sortOrderDescButton, gbc_toggleButton);				
+				sortOrderDescButton.setPreferredSize(new Dimension(0, 25));
+				sortOrderDescButton.setMinimumSize(new Dimension(0, 25));
+				GridBagConstraints gbc_sortOrderDescButton = new GridBagConstraints();
+				gbc_sortOrderDescButton.fill = GridBagConstraints.HORIZONTAL;
+				gbc_sortOrderDescButton.insets = new Insets(0, 0, 0, 5);
+				gbc_sortOrderDescButton.anchor = GridBagConstraints.NORTH;
+				gbc_sortOrderDescButton.gridx = 2;
+				gbc_sortOrderDescButton.gridy = 0;
+				sortPanel.add(sortOrderDescButton, gbc_sortOrderDescButton);
+				
+				treeMainTableSplitPane = new JSplitPane();
+				treeMainTableSplitPane.setDividerLocation(220);
+				GridBagConstraints gbc_treeMainTableSplitPane = new GridBagConstraints();
+				gbc_treeMainTableSplitPane.fill = GridBagConstraints.BOTH;
+				gbc_treeMainTableSplitPane.gridx = 0;
+				gbc_treeMainTableSplitPane.gridy = 1;
+				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
+				
+				table = new JRTable();
+				table.setName("MainTable");
+				table.setRowHeight(74);
+				table.setModel(new EbookPropertyDBTableModel());
+				table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+				table.setDefaultEditor(Object.class, new EbookTableCellEditor());
+				table.setTableHeader(null);
+				table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
+				table.setDragEnabled(true);
+				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
+				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
+				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);		
+				table.setTransferHandler(new TransferHandler() {
+
+					private static final long serialVersionUID = -371360766111031218L;
+
+					public boolean canImport(TransferHandler.TransferSupport info) {
+		                //only import Strings
+		                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+		                    return false;
+		                }
+		
+		                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+		                if (dl.getRow() == -1) {
+		                    return false;
+		                }
+		                
+		                return true;
+		            }
+		
+		            public boolean importData(TransferHandler.TransferSupport info) {
+		                if (!info.isDrop()) {
+		                    return false;
+		                }
+		                
+		                // Check for String flavor
+		                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+		                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
+		                    return false;
+		                }
+		
+		                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+		                int dropRow = dl.getRow();
+		                return PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), dropRow);
+		            }
+		            
+		            public int getSourceActions(JComponent c) {
+		                return COPY;
+		            }
+		            
+		            /**
+		             * Create a new Transferable that is used to drag files from jeboorker to a native application.
+		             */
+		            protected Transferable createTransferable(JComponent c) {
+		                final JTable list = (JTable) c;
+		                final int[] selectedRows = list.getSelectedRows();
+		                final List<URI> uriList = new ArrayList<URI>();
+		                final List<String> files = new ArrayList<String>();
+		                
+		                for (int i = 0; i < selectedRows.length; i++) {
+		                	EbookPropertyItem val = (EbookPropertyItem) table.getModel().getValueAt(selectedRows[i], 0);
+		                	try {
+		                		uriList.add(new File(val.getFile()).toURI());
+		                		files.add(new File(val.getFile()).getPath());
+									} catch (Exception e) {
+										LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
+									}
+		                }    
+		                
+		                if(CommonUtils.isLinux()) {
+		                	return new URIListTransferable(uriList, null);
+		                } else {
+		                	return new FileTransferable(files);
+		                }
+		            }
+		        });
+				
+				JScrollPane mainTableScrollPane = new JScrollPane();
+				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
+				mainTableScrollPane.setViewportView(table);
+				
+				treePanel = new JPanel();
+				treeMainTableSplitPane.setLeftComponent(treePanel);
+				GridBagLayout gbl_treePanel = new GridBagLayout();
+				gbl_treePanel.columnWidths = new int[]{0, 0};
+				gbl_treePanel.rowHeights = new int[]{0, 0};
+				gbl_treePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+				gbl_treePanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+				treePanel.setLayout(gbl_treePanel);
+				
+				tree = new JTree();
+				TreeWrapper wrapper = new TreeWrapper(tree);
+				GridBagConstraints gbc_tree = new GridBagConstraints();
+				gbc_tree.fill = GridBagConstraints.BOTH;
+				gbc_tree.gridx = 0;
+				gbc_tree.gridy = 0;
+				treePanel.add(tree, gbc_tree);
 				
 				JPanel sheetPanel = new JPanel();
-				GridBagLayout gbl_panel = new GridBagLayout();
-				gbl_panel.columnWidths = new int[]{0, 0};
-				gbl_panel.rowHeights = new int[]{0, 0};
-				gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-				gbl_panel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-				sheetPanel.setLayout(gbl_panel);
+				GridBagLayout gbl_sheetPanel = new GridBagLayout();
+				gbl_sheetPanel.columnWidths = new int[]{0, 0};
+				gbl_sheetPanel.rowHeights = new int[]{0, 0};
+				gbl_sheetPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+				gbl_sheetPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+				sheetPanel.setLayout(gbl_sheetPanel);
 				
 				propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
 				propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
@@ -387,13 +412,22 @@ public class MainView extends JFrame{
 				
 				mainSplitPane.setDividerLocation(getSize().width - 220);
 				
+				
+		JPanel filterPanel = FilterPanelController.getView();
+		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
+		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
+		gbc_searchPanel.anchor = GridBagConstraints.NORTH;
+		gbc_searchPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_searchPanel.gridx = 0;
+		gbc_searchPanel.gridy = 1;
+		getContentPane().add(filterPanel, gbc_searchPanel);
+				
 		JPanel statusPanel = new JPanel();
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
-		gbc_statusPanel.anchor = GridBagConstraints.EAST;
 		gbc_statusPanel.insets = new Insets(3, 3, 3, 3);
 		gbc_statusPanel.fill = GridBagConstraints.BOTH;
 		gbc_statusPanel.gridx = 0;
-		gbc_statusPanel.gridy = 4;
+		gbc_statusPanel.gridy = 2;
 		getContentPane().add(statusPanel, gbc_statusPanel);
 		GridBagLayout gbl_statusPanel = new GridBagLayout();
 		gbl_statusPanel.columnWidths = new int[]{62, 0, 0};
