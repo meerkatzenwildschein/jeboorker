@@ -111,7 +111,7 @@ public class ImageUtils {
 	 * @param resourceLoader The jpeg resource to be loaded.
 	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
 	 */
-	public static BufferedImage decodeJpeg(IResourceHandler resourceLoader) {
+	static BufferedImage decodeJpeg(IResourceHandler resourceLoader) {
 		BufferedImage bi = null;
 		InputStream bin = null;
 		try {
@@ -526,4 +526,27 @@ public class ImageUtils {
 			return invertOp.filter(src, dst);	
 		}
 	}	
+	
+
+    /** 
+     * @author flubshi 
+     */
+    public static BufferedImage convertToGrayScale(final BufferedImage bufferedImage) {
+        final BufferedImage dest = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Color tmp;
+        int val, alpha;
+        for (int y = 0; y < dest.getHeight(); y++) {
+            for (int x = 0; x < dest.getWidth(); x++) {
+                alpha = bufferedImage.getRGB(x, y) & 0xFF000000;
+                tmp = new Color(bufferedImage.getRGB(x, y));
+                // val = (int) (tmp.getRed()+tmp.getGreen()+tmp.getBlue())/3;
+                // val =
+                // Math.max(tmp.getRed(),Math.max(tmp.getGreen(),tmp.getBlue()));
+                val = (int) (tmp.getRed() * 0.3 + tmp.getGreen() * 0.59 + tmp.getBlue() * 0.11);
+                dest.setRGB(x, y, alpha | val | val << 8 & 0x0000FF00 | val << 16 & 0x00FF0000);
+            }
+        }
+        return dest;
+    }
+	
 }
