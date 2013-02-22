@@ -5,8 +5,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -127,7 +129,6 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 	 * @param t The transferable containing the data for the file import.
 	 * @param row The row for the import target. 
 	 */	
-	@SuppressWarnings("unchecked")
 	public static boolean importEbookFromClipboard(Transferable t, int dropRow) {
 		EbookPropertyDBTableModel listModel = MainController.getController().getTableModel();
 		
@@ -137,32 +138,38 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		// Get the string that is being dropped.
 		try {
 			IResourceHandler targetRecourceDirectory = value.getResourceHandler().getParentResource();
-			List<File> transferedFiles = Collections.emptyList();
-			if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-				transferedFiles = PasteFromClipboardAction.getFileList(data);
-			} else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);                		
-			}
-			for(File splitDataItem : transferedFiles) {
-				IResourceHandler sourceResource = ResourceHandlerFactory.getResourceHandler(splitDataItem);
-				IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
-				if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
-					sourceResource.copyTo(targetResource, false);
-					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(value.getBasePath()));
-					ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-				} else {
-					if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-						LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
-					} else {
-						LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
-					}
-				}
-		}
+			importEbookFromClipboard(t, dropRow, value.getBasePath(), targetRecourceDirectory);
 		} 
 		catch (Exception e) { return false; }
 
 		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void importEbookFromClipboard(Transferable t, int dropRow, String basePath, IResourceHandler targetRecourceDirectory)
+			throws UnsupportedFlavorException, IOException {
+		List<File> transferedFiles = Collections.emptyList();
+		if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+			transferedFiles = PasteFromClipboardAction.getFileList(data);
+		} else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+			transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);                		
+		}
+		for(File splitDataItem : transferedFiles) {
+			IResourceHandler sourceResource = ResourceHandlerFactory.getResourceHandler(splitDataItem);
+			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
+			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
+				sourceResource.copyTo(targetResource, false);
+				EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
+				ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
+			} else {
+				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
+				} else {
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
+				}
+			}
+		}
 	}	
 
 }

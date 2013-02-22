@@ -308,7 +308,7 @@ public class EbookPropertyDBTableModel implements TableModel {
      * @param row The row where the {@link EbookPropertyItem} should be added to.
      */
     public void addRow(EbookPropertyItem item, int row) {
-    	if(row == -1) {
+    	if(row < 0) {
     		if(this.allItems.add(item)) {
         		final int ins = this.allItems.size() - 1;
     	    	fireTableRowsInserted(ins, ins);    			

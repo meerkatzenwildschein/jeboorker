@@ -2,15 +2,16 @@ package org.rr.jeborker.gui.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,6 +27,8 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.pm.image.ImageUtils;
 
 public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellRenderer {
 
@@ -39,18 +42,28 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 	
 	protected JCheckBox checkbox;
 	
+	private Object value;
+	
 	private ItemListener checkboxItemListener;
+
+	private boolean isDropCell;
+	
+	private ImageIcon eyesVisible;
+	private ImageIcon eyesInvisible;
 	
 	public ResourceHandlerTreeCellRenderer(JTree tree) {
 		this.tree = tree;
 		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
 		selectedFgColor = SwingUtils.getSelectionForegroundColor();
-		setOpaque(true);
+		setOpaque(false);
+		eyesVisible = new ImageIcon(ImageResourceBundle.getResource("eyes_blue_16.png"));
+		eyesInvisible = new ImageIcon(ImageResourceBundle.getResource("eyes_gray_16.png"));
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 20, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		checkbox = new JCheckBox();
@@ -61,9 +74,21 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 		add(checkbox, gbc_chckbxCheck);
 		checkbox.addItemListener(getCheckboxItemListener());
 		
+		checkbox.setRolloverEnabled(false);
+		checkbox.setIcon(eyesInvisible); //unselected icon
+		checkbox.setSelectedIcon(eyesVisible); //selected icon
+		
+//		checkbox.setRolloverIcon(eyesVisible); //rollover unselected
+		
+		checkbox.setDisabledIcon(eyesInvisible);
+		checkbox.setDisabledSelectedIcon(eyesInvisible);
+		
+//		checkbox.setRolloverSelectedIcon(eyesInvisible); //rollover selected
+		
 		label = new JLabel();
 		label.setOpaque(false);
 		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.fill = GridBagConstraints.BOTH;
 		gbc_label.gridx = 1;
 		gbc_label.gridy = 0;
 		add(label, gbc_label);
@@ -100,22 +125,36 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 			String resourceName = ((IResourceHandler) value).getName();
 			label.setText(resourceName);
 			setCheckboxCheck(((IResourceHandler) value));
+			this.value = value;
 		} else if(value instanceof BasePathTreeModel.PathNode){
 			IResourceHandler pathResource = ((BasePathTreeModel.PathNode)value).getPathResource();
 			label.setText(pathResource.getName());
 			setCheckboxCheck(pathResource);
+			this.value = pathResource;
 		} else {
 			label.setText(StringUtils.toString(value));
 			checkbox.setVisible(false);
 		}
-		
 		try {
-			if (selected) {
+			JTree.DropLocation dropLocation = tree.getDropLocation();
+	        if (dropLocation != null
+	                && dropLocation.getChildIndex() == -1
+	                && tree.getRowForPath(dropLocation.getPath()) == row) {
+
 				this.setBackground(selectedBgColor);
 				this.setForeground(selectedFgColor);
+				label.setForeground(selectedFgColor);
+	            isDropCell = true;
+	        } else if (selected) {
+				this.setBackground(selectedBgColor);
+				this.setForeground(selectedFgColor);
+				label.setForeground(selectedFgColor);
+				isDropCell = false;
 			} else {
 				this.setBackground(SwingUtils.getBackgroundColor());
 				this.setForeground(SwingUtils.getForegroundColor());
+				label.setForeground(SwingUtils.getForegroundColor());
+				isDropCell = false;
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to render Jtree row", e);
@@ -147,7 +186,15 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 		} finally {
 			checkbox.addItemListener(getCheckboxItemListener());
 		}
-		
 	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public boolean isDropCell() {
+		return isDropCell;
+	}
+
 
 }
