@@ -22,6 +22,7 @@ import javax.swing.text.PlainDocument;
 import org.bounce.text.LineNumberMargin;
 import org.bounce.text.xml.XMLEditorKit;
 import org.bounce.text.xml.XMLFoldingMargin;
+import org.rr.commons.swing.layout.EqualsLayout;
 
 
 public class PlainMetadataEditorView extends JDialog {
@@ -37,15 +38,17 @@ public class PlainMetadataEditorView extends JDialog {
 	JButton btnFormat;
 	
 	XMLFoldingMargin xmlFoldingMargin;
+	private JPanel leftBottomPanel;
+	private JPanel rightBottomPanel;
 	
 	PlainMetadataEditorView(JFrame invoker) throws IOException {
 		super(invoker);
 		setTitle(Bundle.getString("PlainMetadataEditorView.title"));
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
@@ -95,32 +98,38 @@ public class PlainMetadataEditorView extends JDialog {
 		
 		GridBagConstraints gbc_editorPane = new GridBagConstraints();
 		gbc_editorPane.insets = new Insets(0, 0, 5, 0);
-		gbc_editorPane.gridwidth = 3;
+		gbc_editorPane.gridwidth = 2;
 		gbc_editorPane.fill = GridBagConstraints.BOTH;
 		gbc_editorPane.gridx = 0;
 		gbc_editorPane.gridy = 0;
 		getContentPane().add(scroller, gbc_editorPane);
 		
+		leftBottomPanel = new JPanel();
+		GridBagConstraints gbc_leftBottomPanel = new GridBagConstraints();
+		gbc_leftBottomPanel.fill = GridBagConstraints.BOTH;
+		gbc_leftBottomPanel.insets = new Insets(0, 5, 5, 0);
+		gbc_leftBottomPanel.gridx = 0;
+		gbc_leftBottomPanel.gridy = 1;
+		getContentPane().add(leftBottomPanel, gbc_leftBottomPanel);
+		leftBottomPanel.setLayout(new EqualsLayout(EqualsLayout.LEFT, 0, new Insets(10,10,10,10)));
+		
 		btnFormat = new JButton(Bundle.getString("PlainMetadataEditorView.format"));
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.anchor = GridBagConstraints.WEST;
-		gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 1;
-		getContentPane().add(btnFormat, gbc_btnNewButton);
+		leftBottomPanel.add(btnFormat);
+		
+		rightBottomPanel = new JPanel();
+		GridBagConstraints gbc_rightBottomPanel = new GridBagConstraints();
+		gbc_rightBottomPanel.insets = new Insets(0, 0, 5, 5);
+		gbc_rightBottomPanel.fill = GridBagConstraints.BOTH;
+		gbc_rightBottomPanel.gridx = 1;
+		gbc_rightBottomPanel.gridy = 1;
+		getContentPane().add(rightBottomPanel, gbc_rightBottomPanel);
+		rightBottomPanel.setLayout(new EqualsLayout(3));
 		
 		btnAbort = new JButton(Bundle.getString("PlainMetadataEditorView.abort"));
-		GridBagConstraints gbc_btnAbort = new GridBagConstraints();
-		gbc_btnAbort.insets = new Insets(0, 0, 0, 5);
-		gbc_btnAbort.gridx = 1;
-		gbc_btnAbort.gridy = 1;
-		getContentPane().add(btnAbort, gbc_btnAbort);
+		rightBottomPanel.add(btnAbort);
 		
 		btnSave = new JButton(Bundle.getString("PlainMetadataEditorView.save"));
-		GridBagConstraints gbc_btnOk = new GridBagConstraints();
-		gbc_btnOk.gridx = 2;
-		gbc_btnOk.gridy = 1;
-		getContentPane().add(btnSave, gbc_btnOk);
+		rightBottomPanel.add(btnSave);
 	}
 
 }
