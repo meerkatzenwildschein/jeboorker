@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -28,9 +28,9 @@ class MainMenuBarView extends JMenuBar {
 
 	private static final long serialVersionUID = -8134987169763660105L;
 
-	private static ImageIcon eyesVisible;
+	private static Icon eyesVisible;
 
-	private static ImageIcon eyesInvisible;
+	private static Icon eyesInvisible;
 	
 	static {
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");

@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;

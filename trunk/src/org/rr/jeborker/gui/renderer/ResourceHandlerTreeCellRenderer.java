@@ -10,7 +10,7 @@ import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,8 +46,8 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 
 	private boolean isDropCell;
 	
-	private ImageIcon eyesVisible;
-	private ImageIcon eyesInvisible;
+	private Icon eyesVisible;
+	private Icon eyesInvisible;
 	
 	public ResourceHandlerTreeCellRenderer(JTree tree) {
 		this.tree = tree;
