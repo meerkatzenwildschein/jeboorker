@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
 import org.apache.commons.io.IOUtils;
@@ -32,8 +31,8 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 		super(resourceHandler);
 		String name = Bundle.getString("SetCoverFromClipboardAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("paste_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("paste_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("paste_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("paste_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 

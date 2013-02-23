@@ -5,7 +5,6 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -29,7 +28,7 @@ class SaveMetadataAction extends AbstractAction {
 	
 	private SaveMetadataAction() {
 		String name = Bundle.getString("SaveMetadataAction.name");
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("save_16.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("save_16.png"));
 //		putValue(Action.LARGE_ICON_KEY, new ImageIcon(Bundle.getResource("save_22.png")));
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
 //		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading

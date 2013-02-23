@@ -8,7 +8,6 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -42,8 +41,8 @@ class AddBasePathAction extends AbstractAction {
 				path = text;
 			}
 		}
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("add_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("add_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("add_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("add_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 	

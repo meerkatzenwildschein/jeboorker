@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
@@ -25,8 +24,8 @@ class RefreshEntryAction extends AbstractAction {
 		this.handler = handler;
 		String name = Bundle.getString("RefreshEntryAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("refresh_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("refresh_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("refresh_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("refresh_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 

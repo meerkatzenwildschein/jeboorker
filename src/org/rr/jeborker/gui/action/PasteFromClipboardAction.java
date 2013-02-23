@@ -18,7 +18,6 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -41,8 +40,8 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		this.source = text;
 		String name = Bundle.getString("PasteFromClipboardAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("paste_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("paste_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("paste_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("paste_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 	

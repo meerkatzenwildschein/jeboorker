@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
@@ -31,8 +30,8 @@ public class SaveCoverToFileAction extends AbstractAction {
 		this.ebook = text;
 		String name = Bundle.getString("SaveCoverToFileAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("file_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("file_22.png")));		
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("file_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("file_22.png"));		
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 	

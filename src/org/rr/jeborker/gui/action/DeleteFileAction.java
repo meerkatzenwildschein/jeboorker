@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.rr.common.swing.SwingUtils;
@@ -33,8 +32,8 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 		this.fileToDelete = resourceLoader;
 		String name = Bundle.getString("DeleteFileAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("delete_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("delete_22.png")));	
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("delete_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("delete_22.png"));	
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 

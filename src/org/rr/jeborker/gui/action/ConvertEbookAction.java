@@ -30,8 +30,8 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 		this.book = text;
 //		String name = Bundle.getString("OpenFileAction.name");
 //		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("convert_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("convert_16.png")));		
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));		
 //		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 	

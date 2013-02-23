@@ -3,7 +3,6 @@ package org.rr.jeborker.gui.action;
 import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
@@ -29,8 +28,8 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 		
 		String name = Bundle.getFormattedString("EditPlainMetadataAction.name", additionalName);
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("edit_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("edit_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("edit_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("edit_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 

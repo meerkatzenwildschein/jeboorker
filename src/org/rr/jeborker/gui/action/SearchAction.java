@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
@@ -24,7 +23,7 @@ class SearchAction extends AbstractAction {
 	private static final String QUERY_IDENTIFER = SearchAction.class.getName();
 
 	SearchAction() {
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("play_16.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("play_16.png"));
 	}
 	
 	public void actionPerformed(ActionEvent e) {
