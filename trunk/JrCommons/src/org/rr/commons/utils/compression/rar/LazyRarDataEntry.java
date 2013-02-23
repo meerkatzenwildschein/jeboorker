@@ -31,7 +31,7 @@ class LazyRarDataEntry extends CompressedDataEntry {
 		
 		cl.addArgument("-n\"" + StringUtils.replace(path, "/", File.separator) + "\"", false);
 		cl.addArgument("-o+"); //overwrite existing
-		cl.addArgument(rarFileHandler.toFile().getPath());
+		cl.addArgument("\"" + rarFileHandler.toFile().getPath() + "\"", false);
 		
 		File out;
 		try {
