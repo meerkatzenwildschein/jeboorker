@@ -102,7 +102,7 @@ public class RarUtils {
 		final CommandLine cl = new CommandLine(getUnRarExecutable());
 		
 		cl.addArgument("vb");
-		cl.addArgument(rarFileHandler.toFile().getPath());
+		cl.addArgument("\"" + rarFileHandler.toFile().getPath() + "\"", false);
 		
 		try {
 			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
