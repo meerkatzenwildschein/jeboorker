@@ -3,11 +3,13 @@ package org.rr.jeborker.gui.resources;
 import java.net.URL;
 import java.util.WeakHashMap;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
+
+import org.rr.common.swing.icon.LazyIcon;
 
 public class ImageResourceBundle {
 
-	private static WeakHashMap<String, ImageIcon> imageIconCache = new WeakHashMap<String, ImageIcon>();
+	private static WeakHashMap<String, Icon> imageIconCache = new WeakHashMap<String, Icon>();
 	
     /**
      * Retrieves an object from the localized resource bundle. In most cases
@@ -23,10 +25,10 @@ public class ImageResourceBundle {
      * Load the ImageIcon with the given name. For example "file_16.png".
      * @return The image icon or <code>null</code> if an icon with the given name did not exists.
      */
-    public static ImageIcon getResourceAsImageIcon(String name) {
-    	ImageIcon icon = imageIconCache.get(name);
+    public static Icon getResourceAsImageIcon(String name) {
+    	Icon icon = imageIconCache.get(name);
     	if(icon == null) {
-    		icon = new ImageIcon(ImageResourceBundle.getResourceURL(name));
+    		icon = new LazyIcon(ImageResourceBundle.getResourceURL(name));
     		imageIconCache.put(name, icon);
     	}
     	return icon;
