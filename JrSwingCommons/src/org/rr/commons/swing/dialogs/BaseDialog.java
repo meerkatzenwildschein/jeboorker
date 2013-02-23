@@ -42,8 +42,9 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.rr.common.swing.SwingUtils;
-import org.rr.commons.swing.layout.ButtonAreaLayout;
 import org.rr.commons.swing.layout.PercentLayout;
+
+import com.l2fprod.common.swing.ButtonAreaLayout;
 
 /**
  * An extension of the <code>JDialog</code> with built-in support for
