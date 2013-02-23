@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
 import org.rr.commons.log.LoggerFactory;
@@ -40,8 +39,8 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	SetCoverFrom(IResourceHandler resourceHandler) {
 		this.resourceHandler = resourceHandler;
 		putValue(Action.NAME, Bundle.getString("SetCoverFromFileAction.name"));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("image_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("image_22.png"));
 	}
 	
 	@Override

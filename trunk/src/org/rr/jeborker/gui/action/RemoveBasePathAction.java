@@ -37,8 +37,8 @@ class RemoveBasePathAction extends AbstractAction {
 		} else {
 			putValue(Action.NAME, text);
 		}
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("remove_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("remove_22.png")));		
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("remove_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("remove_22.png"));		
 	}
 	
 	@Override

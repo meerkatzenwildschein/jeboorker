@@ -3,7 +3,6 @@ package org.rr.jeborker.gui.action;
 import java.io.File;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
@@ -25,8 +24,8 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 		super(resourceHandler);
 		String name = Bundle.getString("SetCoverFromFileAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("image_16.png")));
-		putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("image_22.png")));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("image_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("image_22.png"));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}

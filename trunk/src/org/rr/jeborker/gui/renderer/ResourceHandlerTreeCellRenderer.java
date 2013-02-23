@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -28,7 +27,6 @@ import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
-import org.rr.pm.image.ImageUtils;
 
 public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellRenderer {
 
@@ -56,8 +54,8 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
 		selectedFgColor = SwingUtils.getSelectionForegroundColor();
 		setOpaque(false);
-		eyesVisible = new ImageIcon(ImageResourceBundle.getResource("eyes_blue_16.png"));
-		eyesInvisible = new ImageIcon(ImageResourceBundle.getResource("eyes_gray_16.png"));
+		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
+		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 20, 0};

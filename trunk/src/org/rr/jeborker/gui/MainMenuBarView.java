@@ -33,8 +33,8 @@ class MainMenuBarView extends JMenuBar {
 	private static ImageIcon eyesInvisible;
 	
 	static {
-		eyesVisible = new ImageIcon(ImageResourceBundle.getResource("eyes_blue_16.png"));
-		eyesInvisible = new ImageIcon(ImageResourceBundle.getResource("eyes_gray_16.png"));		
+		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
+		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 	}
 	
 	JMenu fileMenuBar;
@@ -293,7 +293,7 @@ class MainMenuBarView extends JMenuBar {
 				String name = Bundle.getString("EborkerMainView.cover");
 				JMenu coverSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 				coverSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
-				coverSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("image_16.png")));
+				coverSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("image_16.png"));
 				MainMenuBarController.addCoverMenuItems(coverSubMenu, selectedItems, selectedEbookPropertyItemRows);
 				editMenuBar.add(coverSubMenu);		
 				
@@ -308,7 +308,7 @@ class MainMenuBarView extends JMenuBar {
 				String name = Bundle.getString("EborkerMainView.convert");
 				JMenu convertSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 				convertSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
-				convertSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("convert_16.png")));
+				convertSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));
 				convertSubMenu.setEnabled(false);
 				
 				if(!selectedItems.isEmpty() && sameType(selectedItems)) {

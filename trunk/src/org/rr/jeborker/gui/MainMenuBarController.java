@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -221,7 +220,7 @@ public class MainMenuBarController {
 	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
 		String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
 		JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
-		copyToSubMenu.setIcon(new ImageIcon(ImageResourceBundle.getResource("copy_16.png")));
+		copyToSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("copy_16.png"));
 		copyToSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 		
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
@@ -231,8 +230,8 @@ public class MainMenuBarController {
 		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceHandler(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
-		action.putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("home_16.png")));
-		action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("home_22.png")));					
+		action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("home_16.png"));
+		action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("home_22.png"));					
 		copyToSubMenu.add(action);
 		
 		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
@@ -240,8 +239,8 @@ public class MainMenuBarController {
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
 			action.putValue(Action.NAME, externalResource.toString());
 			action.putValue("TARGET", externalResource);
-			action.putValue(Action.SMALL_ICON, new ImageIcon(ImageResourceBundle.getResource("removable_drive_16.png")));
-			action.putValue(Action.LARGE_ICON_KEY, new ImageIcon(ImageResourceBundle.getResource("removable_drive_22.png")));					
+			action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("removable_drive_16.png"));
+			action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("removable_drive_22.png"));					
 			
 			copyToSubMenu.add(action);
 		}
