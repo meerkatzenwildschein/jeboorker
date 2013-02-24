@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.PreferenceItem;
+import org.rr.jeborker.gui.MainMenuBarController;
 
 public class JeboorkerPreferences {
 	
@@ -72,6 +73,14 @@ public class JeboorkerPreferences {
 			String[] split = basePath.split(File.pathSeparator);
 			return Arrays.asList(split);
 		}
+	}
+
+	/**
+	 * Tests if the given path is visible. 
+	 */
+	public static boolean isBasePathVisible(String path) {
+		boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
+		return isShow;
 	}
 	
 	/**

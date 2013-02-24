@@ -25,7 +25,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
+import org.rr.common.swing.tree.TreeUtil;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -38,6 +41,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
+import org.rr.jeborker.gui.model.BasePathTreeModel.PathNode;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
@@ -162,7 +166,24 @@ public class MainController {
 
 		public void mouseReleased(MouseEvent event) {
 			if (event.getButton() == MouseEvent.BUTTON3) {
-				MainMenuBarController.getController().showCoverPopupMenu(event.getPoint(), mainWindow.imageViewer);
+				mainWindow.showCoverPopupMenu(event.getPoint(), mainWindow.imageViewer);
+			}
+		}
+	}	
+	
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
+	private class TreePopupMouseListener extends MouseAdapter {
+		
+		public void mouseReleased(MouseEvent event) {
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				Point location = event.getPoint();
+				int row = mainWindow.tree.getRowForLocation((int)location.getX(), (int)location.getY());
+				if(row >= 0) {
+					mainWindow.tree.setSelectionRow(row);
+					mainWindow.showTreePopupMenu(event.getPoint(), mainWindow.tree);
+				}
 			}
 		}
 	}	
@@ -210,6 +231,7 @@ public class MainController {
 		mainWindow.table.addMouseListener(new MainTablePopupMouseListener());
 		
 		mainWindow.imageViewer.addMouseListener(new CoverPopupMouseListener());
+		mainWindow.tree.addMouseListener(new TreePopupMouseListener());
 		
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
 			
@@ -255,19 +277,22 @@ public class MainController {
 		}
 			
 		mainWindow.table.tableChanged(new TableModelEvent(model));
-		if(refreshMetadataSheet) {
-			//TODO stop edit cause that a refresh of the property sheet is no longer needed. Test this.
-			refreshSheetProperties();
-		}
 		mainWindow.mainTableScrollPane.getVerticalScrollBar().setValue(0);
 	}
 	
+	/**
+	 * Refresh the Tree for the base path's.
+	 */
 	public void refreshBasePathTree() {
 		TreeModel oldModel = mainWindow.tree.getModel();
 		if(oldModel instanceof BasePathTreeModel) {
 			((BasePathTreeModel)oldModel).dispose();
 		}
+		TreeSelectionModel selectionModel = mainWindow.tree.getSelectionModel();
+		List<String> expansionStates = TreeUtil.getExpansionStates(mainWindow.tree);
 		mainWindow.tree.setModel(new BasePathTreeModel());
+		TreeUtil.restoreExpanstionState(mainWindow.tree, expansionStates);
+		mainWindow.tree.setSelectionModel(selectionModel);
 	}
 	
 	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
@@ -465,11 +490,13 @@ public class MainController {
 	 * @param item The item to be added.
 	 */
 	public void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
-		TableModel model = getTableModel();
-		if (model instanceof EbookPropertyDBTableModel) {
-			clearSelection();
-			((EbookPropertyDBTableModel) model).addRow(item, row);
-			mainWindow.table.stopEdit();
+		if(JeboorkerPreferences.isBasePathVisible(item.getBasePath())) {
+			TableModel model = getTableModel();
+			if (model instanceof EbookPropertyDBTableModel) {
+				clearSelection();
+				((EbookPropertyDBTableModel) model).addRow(item, row);
+				mainWindow.table.stopEdit();
+			}
 		}
 	}
 	
@@ -486,6 +513,18 @@ public class MainController {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Get the selected BasePath from the Tree.
+	 */
+	public IResourceHandler getSelectedBasePathTreeItems() {
+		TreePath selectionPath = mainWindow.tree.getSelectionPath();
+		if(selectionPath != null) {
+			BasePathTreeModel.PathNode targetResource = (PathNode) selectionPath.getLastPathComponent();
+			return targetResource.getPathResource();
+		}
+		return null;
 	}
 	
 	/**

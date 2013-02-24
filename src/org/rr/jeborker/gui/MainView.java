@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -31,10 +33,13 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -52,6 +57,7 @@ import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.common.swing.table.JRTable;
+import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
@@ -116,8 +122,10 @@ public class MainView extends JFrame{
 	JToggleButton sortOrderAscButton;
 	JToggleButton sortOrderDescButton;
 	JSplitPane treeMainTableSplitPane;
-	JTree tree;
+	JRTree tree;
 	JScrollPane mainTableScrollPane;
+
+	private JTabbedPane leftTabbedPane;
 	
 	/**
 	 * Create the application.
@@ -352,7 +360,7 @@ public class MainView extends JFrame{
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 				mainTableScrollPane.setViewportView(table);
 				
-				JTabbedPane leftTabbedPane = new JTabbedPane();
+				leftTabbedPane = new JTabbedPane();
 				
 				JScrollPane treeScroller = createBasePathTree();
 				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), treeScroller);
@@ -469,7 +477,7 @@ public class MainView extends JFrame{
 	}
 
 	private JScrollPane createBasePathTree() {
-		tree = new JTree();
+		tree = new JRTree();
 		JScrollPane treeScroller = new JScrollPane(tree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
@@ -543,7 +551,93 @@ public class MainView extends JFrame{
 		gbc_tree.gridy = 0;
 		return treeScroller;
 	}
+	
+	/**
+	 * Shows the cover popup menu for the selected entries.
+	 * @param location The locaten where the popup should appears.
+	 * @param invoker The invoker for the popup menu.
+	 */	
+	void showCoverPopupMenu(Point location, Component invoker) {
+		List<EbookPropertyItem> selectedItems = MainController.getController().getSelectedEbookPropertyItems();
+		JPopupMenu menu = createCoverPopupMenu(selectedItems);
+		
+		//setup and show popup
+		if(menu.getComponentCount() > 0) {
+			menu.setLocation(location);
+			menu.show(invoker, location.x, location.y);
+		}		
+	}
+	
+	/**
+	 * Shows the cover popup menu for the selected entries.
+	 * @param location The locaten where the popup should appears.
+	 * @param invoker The invoker for the popup menu.
+	 */	
+	void showTreePopupMenu(Point location, Component invoker) {
+		final JPopupMenu menu = new JPopupMenu();
+		
+        //int selRow = tree.getRowForLocation((int)location.getX(), (int)location.getY());
+        TreePath selPath = tree.getPathForLocation((int)location.getX(), (int)location.getY());
+        
+		if(leftTabbedPane.getSelectedIndex() == 0) {
+			addBasePathTreeMenuItems(menu, selPath);
+		}
+			
+		//setup and show popup
+		if(menu.getComponentCount() > 0) {
+			menu.setLocation(location);
+			menu.show(invoker, location.x, location.y);
+		}		
+	}	
+	
+	void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
+		Action action;
+		
+		BasePathTreeModel.PathNode pathNode = (BasePathTreeModel.PathNode) selPath.getLastPathComponent();
+		
+		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getPathResource().toString());
+		menu.add(new JMenuItem(action));	
+	}	
+	
+	/**
+	 * Create the popup menu containing the cover actions.  
+	 * @param items The items to be tested if they're matching against the menu entries.
+	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
+	 */
+	private static JPopupMenu createCoverPopupMenu(List<EbookPropertyItem> items) {
+		//create and fill popup menu
+		final MainController controller = MainController.getController();
+		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+		final JPopupMenu menu = new JPopupMenu();
+		
+		addCoverMenuItems(menu, items, selectedEbookPropertyItemRows);
+		return menu;
+	}
+	
+	static void addCoverMenuItems(JComponent menu, List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
+		Action action;
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));	
 
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));	
+		
+		menu.add(new JSeparator());
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_EBOOK_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));		
+		
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
+		menu.add(new JMenuItem(action));
+	}	
+	
 	/**
 	 * Shows a dialog to the user.
 	 * @param message The message of the dialog

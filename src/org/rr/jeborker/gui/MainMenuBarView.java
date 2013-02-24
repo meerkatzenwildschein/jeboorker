@@ -15,6 +15,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import org.rr.common.swing.SwingUtils;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.converter.ConverterFactory;
@@ -289,7 +290,13 @@ class MainMenuBarView extends JMenuBar {
 				copyClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
 				editMenuBar.add(copyClipboard);	
 				
-				JMenuItem pasteClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
+				IResourceHandler selectedBasePathTreeItems = MainController.getController().getSelectedBasePathTreeItems();
+				JMenuItem pasteClipboard = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedBasePathTreeItems != null ? selectedBasePathTreeItems.toString() : null));
+				if(selectedBasePathTreeItems == null) {
+					pasteClipboard.setEnabled(false);
+				} else {
+					pasteClipboard.setEnabled(true);
+				}
 				pasteClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
 				editMenuBar.add(pasteClipboard);						
 							
@@ -305,7 +312,7 @@ class MainMenuBarView extends JMenuBar {
 				JMenu coverSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 				coverSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 				coverSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("image_16.png"));
-				MainMenuBarController.addCoverMenuItems(coverSubMenu, selectedItems, selectedEbookPropertyItemRows);
+				MainView.addCoverMenuItems(coverSubMenu, selectedItems, selectedEbookPropertyItemRows);
 				editMenuBar.add(coverSubMenu);		
 				
 				Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, selectedItems, selectedEbookPropertyItemRows);

@@ -352,7 +352,10 @@ public class ActionFactory {
 				action = new CopyToClipboardAction(null);
 				break;
 			case PASTE_FROM_CLIPBOARD_ACTION:
-				action = new PasteFromClipboardAction(null);
+				action = new PasteFromClipboardAction(text);
+				if(!PasteFromClipboardAction.hasValidClipboardContent()) {
+					action.setEnabled(false);
+				}
 				break;				
 		}
 		
