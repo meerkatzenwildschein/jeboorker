@@ -4,8 +4,7 @@ import java.net.URL;
 import java.util.WeakHashMap;
 
 import javax.swing.Icon;
-
-import org.rr.common.swing.icon.LazyIcon;
+import javax.swing.ImageIcon;
 
 public class ImageResourceBundle {
 
@@ -28,7 +27,7 @@ public class ImageResourceBundle {
     public static Icon getResourceAsImageIcon(String name) {
     	Icon icon = imageIconCache.get(name);
     	if(icon == null) {
-    		icon = new LazyIcon(ImageResourceBundle.getResourceURL(name));
+    		icon = new ImageIcon(ImageResourceBundle.getResourceURL(name));
     		imageIconCache.put(name, icon);
     	}
     	return icon;

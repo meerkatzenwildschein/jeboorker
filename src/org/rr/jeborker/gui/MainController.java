@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
+import javax.swing.tree.TreeModel;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -54,7 +55,7 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 
 public class MainController {
 
-	private MainView mainWindow;
+	MainView mainWindow;
 	
 	/**
 	 * The controller singleton.
@@ -195,6 +196,7 @@ public class MainController {
 		MainControllerUtils.restoreApplicationProperties(mainWindow);
 		MainMenuBarController.getController().restoreProperties();
 		mainWindow.setVisible(true);
+		mainWindow.table.requestFocus();
 	}
 
 	private void initSubController() {
@@ -261,6 +263,10 @@ public class MainController {
 	}
 	
 	public void refreshBasePathTree() {
+		TreeModel oldModel = mainWindow.tree.getModel();
+		if(oldModel instanceof BasePathTreeModel) {
+			((BasePathTreeModel)oldModel).dispose();
+		}
 		mainWindow.tree.setModel(new BasePathTreeModel());
 	}
 	
@@ -656,6 +662,9 @@ public class MainController {
 						items.add(getTableModel().getEbookPropertyItemAt(modelRowsIndex[i]));
 					}
 				}
+				
+				PropertySheetTableModel oldModel = mainWindow.propertySheet.getModel();
+				oldModel.dispose();
 				
 				if(items.size() > 1) {
 					//multiple selection 

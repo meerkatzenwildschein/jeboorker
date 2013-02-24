@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.JTable;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.converter.ConverterFactory;
@@ -18,7 +19,12 @@ import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
+import skt.swing.search.FindAction;
+import skt.swing.search.TableFindAction;
+
 public class ActionFactory {
+	
+	private static FindAction tableFindAction;
 	
 	private static interface ActionType {
 		/**
@@ -410,6 +416,16 @@ public class ActionFactory {
 			result.add(ApplicationAction.getInstance(addMetadataAction));
 		}
 		return result;
+	}
+	
+	/**
+	 * Get the Action that is used for the find action in the main table.
+	 */
+	public static FindAction getTableFindAction(JTable table) {
+		if(tableFindAction == null) {
+			tableFindAction = new TableFindAction(table);	
+		}
+		return tableFindAction;
 	}
 	
 }

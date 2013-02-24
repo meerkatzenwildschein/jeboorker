@@ -43,7 +43,6 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
-import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
@@ -56,6 +55,7 @@ import org.rr.common.swing.table.JRTable;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -77,6 +77,8 @@ import org.rr.jeborker.gui.renderer.ResourceHandlerTreeCellEditor;
 import org.rr.jeborker.gui.renderer.ResourceHandlerTreeCellRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyRenderer;
+
+import skt.swing.StringConvertor;
 
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
@@ -135,7 +137,11 @@ public class MainView extends JFrame{
 		
 		KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK);
 		inputMap.put(saveKeyStroke, "SAVE");
-		actionMap.put("SAVE", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));		
+		actionMap.put("SAVE", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));	
+		
+		KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
+		inputMap.put(find, "FIND");
+		actionMap.put("FIND", ActionFactory.getTableFindAction(table));
 	}
 	
 	/**
@@ -176,6 +182,7 @@ public class MainView extends JFrame{
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
+		
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
 		
 		JPanel propertyContentPanel = new JPanel();
@@ -264,7 +271,18 @@ public class MainView extends JFrame{
 				table.setDragEnabled(true);
 				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
 				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
-				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);		
+				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
+				table.putClientProperty(StringConvertor.class, new StringConvertor() {
+					
+					@Override
+					public String toString(Object obj) {
+						if(obj instanceof EbookPropertyItem) {
+							return ((EbookPropertyItem)obj).getResourceHandler().getName();
+						}
+						return StringUtils.toString(obj);
+					}
+				});
+				
 				table.setTransferHandler(new TransferHandler() {
 
 					private static final long serialVersionUID = -371360766111031218L;
