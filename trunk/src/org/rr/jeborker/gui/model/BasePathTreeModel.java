@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -34,6 +35,13 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);
 			PathNode basePathNode = new PathNode(resourceHandler, null);
 			root.add(basePathNode);
+		}
+	}
+	
+	public void dispose() {
+		TreeModelListener[] treeModelListeners = getTreeModelListeners();
+		for(TreeModelListener treeModelListener : treeModelListeners) {
+			removeTreeModelListener(treeModelListener);
 		}
 	}
 	

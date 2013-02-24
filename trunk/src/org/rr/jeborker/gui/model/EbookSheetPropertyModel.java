@@ -414,6 +414,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	}
 	
 	public void dispose() {
+		super.dispose();
 		if(this.reader != null) {
 			this.reader = null;
 		}

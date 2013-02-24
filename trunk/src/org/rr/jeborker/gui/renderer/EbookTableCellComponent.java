@@ -330,7 +330,10 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 			}
 			
 			try {
-				final Object fieldValueObject = ReflectionUtils.getFieldValue(item, field.getName(), true);
+				Object fieldValueObject = ReflectionUtils.getFieldValue(item, field.getName(), true);		
+				if(field.getName().equals("file")) {
+					fieldValueObject = item.getResourceHandler().getName();
+				}
 				final String fieldValueString = StringUtils.toString(fieldValueObject);
 			
 				if(StringUtils.isNotEmpty(fieldValueString)) {
@@ -372,7 +375,7 @@ public class EbookTableCellComponent extends JPanel implements Serializable  {
 				result.insert(0, b);
 			} else {
 				result.insert(0, "<"+Bundle.getString("EbookTableCellComponent.noAuthor")+">");
-			}
+			}			
 		} else {
 			result.insert(0, "<"+Bundle.getString("EbookTableCellComponent.noAuthor")+">");
 		}
