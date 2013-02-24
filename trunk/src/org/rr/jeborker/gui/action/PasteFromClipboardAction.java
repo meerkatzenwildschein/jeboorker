@@ -25,6 +25,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
@@ -34,10 +35,10 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 public class PasteFromClipboardAction extends AbstractAction implements ClipboardOwner {
 	    
 	//source file to copy
-	String source;
+	String target;
 
 	PasteFromClipboardAction(String text) {
-		this.source = text;
+		this.target = text;
 		String name = Bundle.getString("PasteFromClipboardAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("paste_16.png"));
@@ -54,10 +55,22 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 			if (hasTransferableText) {
 				try {
 					final MainController controller = MainController.getController();
-					final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-					
-					if(selectedEbookPropertyItemRows.length > 0) {
-						importEbookFromClipboard(contents, selectedEbookPropertyItemRows[0]);
+					if(target == null) {
+						final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+						
+						if(selectedEbookPropertyItemRows.length > 0) {
+							importEbookFromClipboard(contents, selectedEbookPropertyItemRows[0]);
+						}
+					} else {
+						IResourceHandler targetRecourceDirectory = ResourceHandlerFactory.getResourceHandler(target);
+						List<String> basePaths = JeboorkerPreferences.getBasePath();
+						for(String basePath : basePaths) {
+							if(target.startsWith(basePath)) {
+								importEbookFromClipboard(contents, Integer.MIN_VALUE, basePath, targetRecourceDirectory);
+								break;
+							}
+						}
+												
 					}
 				} catch (Exception ex) {
 					LoggerFactory.log(Level.WARNING, this, "Failed to import file from Clipboard", ex);
@@ -70,21 +83,16 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
 	}
 	
-	public static boolean hasValidClipboardContent() {
-		final boolean mainTableFocused = MainController.getController().isMainTableFocused();
-		if(!mainTableFocused) {
-			return false;
-		}
-		
+	public static boolean hasValidClipboardContent() {	
 		final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		final Transferable contents = clipboard.getContents(null);
 		if(contents.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-			return MainController.getController().isMainTableFocused();
+			return true;
 		} else if(contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				String data = (String) contents.getTransferData(DataFlavor.stringFlavor);
 				List<File> fileList = getFileList(data);
-				return !fileList.isEmpty() && MainController.getController().isMainTableFocused();
+				return !fileList.isEmpty();
 			} catch (Exception e) {
 				return false;
 			} 

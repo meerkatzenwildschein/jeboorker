@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.model;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -309,7 +310,15 @@ public class EbookPropertyDBTableModel implements TableModel {
      */
     public void addRow(EbookPropertyItem item, int row) {
     	if(row < 0) {
-    		if(this.allItems.add(item)) {
+    		boolean isInsert = false;
+    		try {
+    			isInsert = this.allItems.add(item);
+    		} catch (java.lang.UnsupportedOperationException e) {
+    			//not allowed to add
+    			this.allItems = new CompoundList<EbookPropertyItem>(this.allItems, new ArrayList<EbookPropertyItem>(Arrays.asList(item)));
+    			isInsert = true;
+    		}
+    		if(isInsert) {
         		final int ins = this.allItems.size() - 1;
     	    	fireTableRowsInserted(ins, ins);    			
     		}

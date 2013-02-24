@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,6 +15,7 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -21,6 +23,7 @@ import javax.swing.tree.TreePath;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainMenuBarController;
@@ -119,20 +122,25 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 	
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+		final List<String> basePaths = JeboorkerPreferences.getBasePath();
+		IResourceHandler pathResource;
 		if (value instanceof IResourceHandler) {
-			String resourceName = ((IResourceHandler) value).getName();
+			pathResource = (IResourceHandler) value;
+			String resourceName = pathResource.getName();
 			label.setText(resourceName);
-			setCheckboxCheck(((IResourceHandler) value));
+			setCheckboxCheck(pathResource, basePaths);
 			this.value = value;
 		} else if(value instanceof BasePathTreeModel.PathNode){
-			IResourceHandler pathResource = ((BasePathTreeModel.PathNode)value).getPathResource();
+			pathResource = ((BasePathTreeModel.PathNode)value).getPathResource();
 			label.setText(pathResource.getName());
-			setCheckboxCheck(pathResource);
+			setCheckboxCheck(pathResource, basePaths);
 			this.value = pathResource;
 		} else {
+			pathResource = ResourceHandlerFactory.getResourceHandler(StringUtils.toString(value));
 			label.setText(StringUtils.toString(value));
 			checkbox.setVisible(false);
 		}
+
 		try {
 			JTree.DropLocation dropLocation = tree.getDropLocation();
 	        if (dropLocation != null
@@ -154,6 +162,11 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 				label.setForeground(SwingUtils.getForegroundColor());
 				isDropCell = false;
 			}
+	        
+	        JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(tree);
+	        if(label.getPreferredSize().width < surroundingScrollPane.getWidth()) {
+	        	label.setPreferredSize(new Dimension(surroundingScrollPane.getWidth(), label.getPreferredSize().height));
+	        }
 		} catch (Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to render Jtree row", e);
 		}
@@ -161,9 +174,8 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 		return this;
 	}
 
-	private void setCheckboxCheck(IResourceHandler pathResourceHandler) {
+	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final List<String> basePaths) {
 		final String pathResourceString = pathResourceHandler.toString();
-		final List<String> basePaths = JeboorkerPreferences.getBasePath();
 		checkbox.removeItemListener(getCheckboxItemListener());
 		try {
 			if(basePaths.contains(pathResourceString)) {

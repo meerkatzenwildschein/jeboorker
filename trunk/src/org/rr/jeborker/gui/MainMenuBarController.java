@@ -11,12 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
@@ -140,37 +138,6 @@ public class MainMenuBarController {
 	}
 	
 	/**
-	 * Shows the cover popup menu for the selected entries.
-	 * @param location The locaten where the popup should appears.
-	 * @param invoker The invoker for the popup menu.
-	 */	
-	void showCoverPopupMenu(Point location, Component invoker) {
-		List<EbookPropertyItem> selectedItems = MainController.getController().getSelectedEbookPropertyItems();
-		JPopupMenu menu = createCoverPopupMenu(selectedItems);
-		
-		//setup and show popup
-		if(menu.getComponentCount() > 0) {
-			menu.setLocation(location);
-			menu.show(invoker, location.x, location.y);
-		}		
-	}
-	
-	/**
-	 * Create the popup menu containing the cover actions.  
-	 * @param items The items to be tested if they're matching against the menu entries.
-	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
-	 */
-	private static JPopupMenu createCoverPopupMenu(List<EbookPropertyItem> items) {
-		//create and fill popup menu
-		final MainController controller = MainController.getController();
-		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-		final JPopupMenu menu = new JPopupMenu();
-		
-		addCoverMenuItems(menu, items, selectedEbookPropertyItemRows);
-		return menu;
-	}
-	
-	/**
 	 * Creates the popup menu for the main table having only these entries inside
 	 * that can be processed with the given {@link EbookPropertyItem} list.
 	 * @param items The items to be tested if they're matching against the menu entries.
@@ -245,30 +212,6 @@ public class MainMenuBarController {
 			copyToSubMenu.add(action);
 		}
 		return copyToSubMenu;
-	}	
-	
-	static void addCoverMenuItems(JComponent menu, List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
-		Action action;
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
-		menu.add(new JMenuItem(action));	
-
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
-		menu.add(new JMenuItem(action));	
-		
-		menu.add(new JSeparator());
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, rowsToRefreshAfter);
-		menu.add(new JMenuItem(action));
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
-		menu.add(new JMenuItem(action));
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_EBOOK_ACTION, items, rowsToRefreshAfter);
-		menu.add(new JMenuItem(action));		
-		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
-		menu.add(new JMenuItem(action));
 	}	
 	
 	/**
