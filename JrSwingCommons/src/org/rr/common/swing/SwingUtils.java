@@ -10,6 +10,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.rr.commons.utils.MathUtils;
@@ -214,5 +215,21 @@ public class SwingUtils {
 	 */
 	public static String removeMnemonicMarker(String text) {
 		return StringUtils.replace(text, "&", "", 0, 1, UtilConstants.COMPARE_BINARY);
+	}
+	
+	/**
+	 * Get the {@link JScrollPane} that surrounds the given component. 
+	 * @return The desired {@link JScrollPane} or <code>null</code> if no {@link JScrollPane} could be found.
+	 */
+	public static JScrollPane getSurroundingScrollPane(Component comp) {
+    	JScrollPane fScrollPane = null;
+    	while(comp != null) {
+    		comp = comp.getParent();
+    		if(comp instanceof JScrollPane) {
+    			fScrollPane = (JScrollPane) comp;
+    			break;
+    		}
+    	}
+		return fScrollPane;
 	}
 }
