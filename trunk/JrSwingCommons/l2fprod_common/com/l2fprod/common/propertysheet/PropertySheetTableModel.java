@@ -634,5 +634,9 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   }
 
 	public void dispose() {
+		PropertyChangeListener[] propertyChangeListener = getPropertyChangeListener();
+		for(PropertyChangeListener listener : propertyChangeListener) {
+			removePropertyChangeListener(listener);
+		}
 	}
 }
