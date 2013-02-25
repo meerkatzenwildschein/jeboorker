@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
+import org.rr.common.swing.tree.TreeUtil;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
@@ -38,6 +39,7 @@ class MainControllerUtils {
 		JeboorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
+		JeboorkerPreferences.addEntryString("basePathTreeSelection", ListUtils.join(TreeUtil.getExpansionStates(mainWindow.basePathTree), "\n"));
 	}
 	
 	/**
@@ -88,6 +90,12 @@ class MainControllerUtils {
 		final Number propertySheetImageSplitPaneDividerLocation = JeboorkerPreferences.getEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
 		if (propertySheetImageSplitPaneDividerLocation != null) {
 			mainWindow.propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
+		}
+		
+		final String basePathTreeSelection = JeboorkerPreferences.getEntryString("basePathTreeSelection");
+		if(basePathTreeSelection != null) {
+			List<String> expansionStates = ListUtils.split(basePathTreeSelection, "\n");
+			TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
 		}
 	}
 	

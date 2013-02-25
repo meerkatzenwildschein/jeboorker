@@ -19,11 +19,11 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.JeboorkerPreferences;
 
-public class BasePathTreeModel extends DefaultTreeModel {
+public class FileSystemTreeModel extends DefaultTreeModel {
 
 	private DefaultMutableTreeNode root;
 	
-	public BasePathTreeModel() {
+	public FileSystemTreeModel() {
 		super(new DefaultMutableTreeNode("root"));
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.init();
@@ -33,7 +33,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		List<String> basePath = JeboorkerPreferences.getBasePath();
 		for(String path : basePath) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);
-			BasePathNode basePathNode = new BasePathNode(resourceHandler, null);
+			FileSystemPathNode basePathNode = new FileSystemPathNode(resourceHandler, null);
 			root.add(basePathNode);
 		}
 	}
@@ -45,24 +45,24 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		}
 	}
 	
-	public static class BasePathNode implements MutableTreeNode {
+	public static class FileSystemPathNode implements MutableTreeNode {
 
 		private IResourceHandler pathResource;
 		
 		private List<IResourceHandler> childs;
 		
-		private List<BasePathNode> childNodes;
+		private List<FileSystemPathNode> childNodes;
 		
 		private TreeNode parent;
 		
-		BasePathNode(IResourceHandler pathResource, TreeNode parent) {
+		FileSystemPathNode(IResourceHandler pathResource, TreeNode parent) {
 			this.pathResource = pathResource;
 			this.parent = parent;
 		}
 		
 		@Override
 		public TreeNode getChildAt(int childIndex) {
-			final List<BasePathNode> childResources = createChildren();
+			final List<FileSystemPathNode> childResources = createChildren();
 			return childResources.get(childIndex);
 		}
 
@@ -82,7 +82,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			final List<IResourceHandler> childResources = getChildResources();
 			for(int i = 0; i < childResources.size(); i++) {
 				IResourceHandler resource = childResources.get(i);
-				if(((BasePathNode)node).pathResource.equals(resource)) {
+				if(((FileSystemPathNode)node).pathResource.equals(resource)) {
 					return i;
 				}
 			}
@@ -99,13 +99,13 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			return false;
 		}
 
-		private List<BasePathNode> createChildren() {
+		private List<FileSystemPathNode> createChildren() {
 			if(childNodes == null) {
 				final List<IResourceHandler> childResources = getChildResources();
-				childNodes = new ArrayList<BasePathTreeModel.BasePathNode>(childResources.size());
+				childNodes = new ArrayList<FileSystemTreeModel.FileSystemPathNode>(childResources.size());
 				for(int i = 0; i < childResources.size(); i++) {
 					IResourceHandler resource = childResources.get(i);
-					childNodes.add(new BasePathNode(resource, this));
+					childNodes.add(new FileSystemPathNode(resource, this));
 				}
 			}
 			return childNodes;
@@ -114,8 +114,8 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public Enumeration children() {
-			final List<BasePathNode> childResources = createChildren();
-			final Iterator<BasePathNode> childResourcesIterator = childResources.iterator();
+			final List<FileSystemPathNode> childResources = createChildren();
+			final Iterator<FileSystemPathNode> childResourcesIterator = childResources.iterator();
 			return new Enumeration() {
 
 				@Override
@@ -146,7 +146,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		@Override
 		public void insert(MutableTreeNode child, int index) {
 			final List<IResourceHandler> childResources = getChildResources();
-			childResources.add(index, ((BasePathNode)child).pathResource);
+			childResources.add(index, ((FileSystemPathNode)child).pathResource);
 		}
 
 		@Override
