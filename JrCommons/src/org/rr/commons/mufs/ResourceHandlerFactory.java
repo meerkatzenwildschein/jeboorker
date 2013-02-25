@@ -1,15 +1,25 @@
 package org.rr.commons.mufs;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.rr.commons.collection.VolatileHashMap;
-
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 
 public class ResourceHandlerFactory {
 	
@@ -200,6 +210,51 @@ public class ResourceHandlerFactory {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<IResourceHandler> getResourceHandler(final Transferable t) throws IOException {
+		List<File> transferedFiles = Collections.emptyList();
+		if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			String data;
+			try {
+				data = (String) t.getTransferData(DataFlavor.stringFlavor);
+				transferedFiles = getFileList(data);
+			} catch (UnsupportedFlavorException e) {
+			}
+		} else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+			try {
+				transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+			} catch (UnsupportedFlavorException e) {
+			}                		
+		}		
+		
+		ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(transferedFiles.size());
+		for(File file : transferedFiles) {
+			result.add(getResourceHandler(file));
+		}
+		return result;
+	}
+	
+	/**
+	 * Tests if there is someting in the given {@link Transferable} that could be
+	 * fetched as {@link IResourceHandler}.
+	 * @return <code>true</code> if there is something that could be handled by an {@link IResourceHandler} instance
+	 * and <code>false</code> otherwise.
+	 */
+	public static boolean hasResourceHandler(final Transferable contents) {
+		if(contents.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+			return true;
+		} else if(contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			try {
+				String data = (String) contents.getTransferData(DataFlavor.stringFlavor);
+				List<File> fileList = getFileList(data);
+				return !fileList.isEmpty();
+			} catch (Exception e) {
+				return false;
+			} 
+		}	
+		return false;
+	}
+	
 	/**
 	 * Gets a resource loader for the given resource.
 	 * 
@@ -259,5 +314,35 @@ public class ResourceHandlerFactory {
 		}
 		return userHome;
 	}
+	
+	/**
+	 * Splits the given Data string into a list of files. 
+	 * @param data The data to be splitted into a file list.
+	 * @return The list of files. Never returns <code>null</code>.
+	 */
+	private static List<File> getFileList(String data) {
+		ArrayList<File> result = new ArrayList<File>();
+		data = data.replace("\r", "");
+		List<String> splitData = ListUtils.split(data, '\n');
+		for (String splitDataItem : splitData) {
+			if (!StringUtils.toString(splitDataItem).trim().isEmpty()) {
+				try {
+					File file;
+					if(splitDataItem.indexOf(":") != -1) {
+						file = new File(new URI(splitDataItem));
+					} else {
+						file = new File(splitDataItem);
+					}
+					
+					if (file.isFile()) {
+						result.add(file);
+					}
+				} catch (URISyntaxException e) {
+					LoggerFactory.getLogger().log(Level.INFO, "No valid file " + splitDataItem);
+				}
+			}
+		}
+		return result;
+	}		
 	
 }
