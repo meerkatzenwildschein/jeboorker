@@ -40,6 +40,7 @@ class MainControllerUtils {
 		JeboorkerPreferences.addEntryNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryString("basePathTreeSelection", ListUtils.join(TreeUtil.getExpansionStates(mainWindow.basePathTree), "\n"));
+		JeboorkerPreferences.addEntryString("fileSystemTreeSelection", ListUtils.join(TreeUtil.getExpansionStates(mainWindow.fileSystemTree), "\n"));
 	}
 	
 	/**
@@ -96,6 +97,12 @@ class MainControllerUtils {
 		if(basePathTreeSelection != null) {
 			List<String> expansionStates = ListUtils.split(basePathTreeSelection, "\n");
 			TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
+		}
+		
+		final String fileSystemTreeSelection = JeboorkerPreferences.getEntryString("fileSystemTreeSelection");
+		if(fileSystemTreeSelection != null) {
+			List<String> expansionStates = ListUtils.split(fileSystemTreeSelection, "\n");
+			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, expansionStates);
 		}
 	}
 	

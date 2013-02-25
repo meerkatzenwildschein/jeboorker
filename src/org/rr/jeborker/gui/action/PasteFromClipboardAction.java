@@ -7,12 +7,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -23,8 +18,6 @@ import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -85,52 +78,10 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 	
 	public static boolean hasValidClipboardContent() {	
 		final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		final Transferable contents = clipboard.getContents(null);
-		if(contents.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-			return true;
-		} else if(contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-			try {
-				String data = (String) contents.getTransferData(DataFlavor.stringFlavor);
-				List<File> fileList = getFileList(data);
-				return !fileList.isEmpty();
-			} catch (Exception e) {
-				return false;
-			} 
-		}
-
-		return false;
+		boolean hasResourceHandler = ResourceHandlerFactory.hasResourceHandler(clipboard.getContents(null));
+		return hasResourceHandler;
 	}
 
-	/**
-	 * Splits the given Data string into a list of files. 
-	 * @param data The data to be splitted into a file list.
-	 * @return The list of files. Never returns <code>null</code>.
-	 */
-	public static List<File> getFileList(String data) {
-		ArrayList<File> result = new ArrayList<File>();
-		data = data.replace("\r", "");
-		List<String> splitData = ListUtils.split(data, '\n');
-		for (String splitDataItem : splitData) {
-			if (!StringUtils.toString(splitDataItem).trim().isEmpty()) {
-				try {
-					File file;
-					if(splitDataItem.indexOf(":") != -1) {
-						file = new File(new URI(splitDataItem));
-					} else {
-						file = new File(splitDataItem);
-					}
-					
-					if (file.isFile()) {
-						result.add(file);
-					}
-				} catch (URISyntaxException e) {
-					LoggerFactory.getLogger().log(Level.INFO, "No valid file " + splitDataItem);
-				}
-			}
-		}
-		return result;
-	}	
-	
 	/**
 	 * Imports the file behind the given Transferable into JEboorker.
 	 * @param t The transferable containing the data for the file import.
@@ -152,18 +103,11 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void importEbookFromClipboard(Transferable t, int dropRow, String basePath, IResourceHandler targetRecourceDirectory)
+	public static void importEbookFromClipboard(Transferable transferable, int dropRow, String basePath, IResourceHandler targetRecourceDirectory)
 			throws UnsupportedFlavorException, IOException {
-		List<File> transferedFiles = Collections.emptyList();
-		if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-			String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-			transferedFiles = PasteFromClipboardAction.getFileList(data);
-		} else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-			transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);                		
-		}
-		for(File splitDataItem : transferedFiles) {
-			IResourceHandler sourceResource = ResourceHandlerFactory.getResourceHandler(splitDataItem);
+		final List<IResourceHandler> transferedFiles = ResourceHandlerFactory.getResourceHandler(transferable);
+
+		for(IResourceHandler sourceResource : transferedFiles) {
 			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
 			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
 				sourceResource.copyTo(targetResource, false);
@@ -171,9 +115,9 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 				ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
 			} else {
 				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem + ". It's not a supported ebook format.");
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + sourceResource + ". It's not a supported ebook format.");
 				} else {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + splitDataItem);	                				
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + sourceResource);	                				
 				}
 			}
 		}

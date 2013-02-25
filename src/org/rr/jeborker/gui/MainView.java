@@ -48,11 +48,14 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.button.JMenuButton;
+import org.rr.common.swing.dnd.DragAndDropUtils;
 import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
@@ -60,6 +63,7 @@ import org.rr.common.swing.table.JRTable;
 import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
@@ -80,6 +84,8 @@ import org.rr.jeborker.gui.renderer.DefaultPropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DefaultPropertyRenderer;
 import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
+import org.rr.jeborker.gui.renderer.FileSystemTreeCellEditor;
+import org.rr.jeborker.gui.renderer.FileSystemTreeCellRenderer;
 import org.rr.jeborker.gui.renderer.MultiListPropertyEditor;
 import org.rr.jeborker.gui.renderer.MultiListPropertyRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
@@ -499,8 +505,9 @@ public class MainView extends JFrame{
 		fileSystemTree.setRootVisible(false);
 		fileSystemTree.setModel(new FileSystemTreeModel());
 		fileSystemTree.setEditable(true);
-		fileSystemTree.setCellRenderer(new BasePathTreeCellRenderer(fileSystemTree));
-		fileSystemTree.setCellEditor(new BasePathTreeCellEditor(fileSystemTree));
+		FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
+		fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
+		fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
 		fileSystemTree.setRowHeight(25);
 		
 		fileSystemTree.setTransferHandler(new TransferHandler() {
@@ -508,17 +515,7 @@ public class MainView extends JFrame{
 			private static final long serialVersionUID = -371360766111031218L;
 
 			public boolean canImport(TransferHandler.TransferSupport info) {
-                //only import Strings
-                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
-                    return false;
-                }
-
-                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
-                if (dl.getPath() != null && dl.getPath().getPathCount() <= 1) {
-                    return false;
-                }
-                
-                return true;
+                return DragAndDropUtils.isFileImportRequest(info);
             }
 
             public boolean importData(TransferHandler.TransferSupport info) {
@@ -535,12 +532,21 @@ public class MainView extends JFrame{
                 JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
                 TreePath dropRow = dl.getPath();
                 Object lastPath = dropRow.getLastPathComponent();
-                Object firstPath = dropRow.getPath()[1]; //is the base path
-                IResourceHandler firstPathResource = ((FileSystemTreeModel.FileSystemPathNode) firstPath).getPathResource();
-                IResourceHandler lastPathPathResource = ((FileSystemTreeModel.FileSystemPathNode) lastPath).getPathResource();
                 try {
-					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
-					fileSystemTree.startEditingAtPath(dropRow);
+                	IResourceHandler targetPathResource = ResourceHandlerFactory.getResourceHandler(((FileSystemTreeModel.IFolderNode) lastPath).getFile());
+                	Transferable transferable = info.getTransferable();
+                	List<IResourceHandler> sourceResourceHandlers = ResourceHandlerFactory.getResourceHandler(transferable);
+                	for(IResourceHandler sourceResourceHandler : sourceResourceHandlers) {
+                		String basePathFor = JeboorkerPreferences.getBasePathFor(targetPathResource);
+                		if(basePathFor != null) {
+                			//drop to a folder that is managed by jeboorker.
+                			PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
+                		} else {
+                			//do a simple copy
+                			sourceResourceHandler.copyTo(targetPathResource, false);
+                		}
+                		((DefaultTreeModel)fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
+                	}
 				} catch (Exception e) {
 					return false;
 				} 
@@ -585,18 +591,8 @@ public class MainView extends JFrame{
 			private static final long serialVersionUID = -371360766111031218L;
 
 			public boolean canImport(TransferHandler.TransferSupport info) {
-                //only import Strings
-                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
-                    return false;
-                }
-
-                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
-                if (dl.getPath() != null && dl.getPath().getPathCount() <= 1) {
-                    return false;
-                }
-                
-                return true;
-            }
+				return DragAndDropUtils.isFileImportRequest(info);
+			}
 
             public boolean importData(TransferHandler.TransferSupport info) {
                 if (!info.isDrop()) {
@@ -727,7 +723,7 @@ public class MainView extends JFrame{
 		
 		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
 		menu.add(new JMenuItem(action));
-	}	
+	}
 	
 	/**
 	 * Shows a dialog to the user.
