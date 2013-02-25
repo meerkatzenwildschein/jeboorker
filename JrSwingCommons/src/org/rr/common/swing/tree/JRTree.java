@@ -20,7 +20,10 @@ public class JRTree extends JTree {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				Point point = e.getPoint();
-				int row = JRTree.this.getRowForLocation(20, point.y);
+				int row = JRTree.this.getRowForLocation(0, point.y);
+				for(int i = 0; row < 0 && i < JRTree.this.getWidth(); i += 10) {
+					row = JRTree.this.getRowForLocation(i, point.y);
+				}
 				if(getSelectionModel().getSelectionMode() == TreeSelectionModel.SINGLE_TREE_SELECTION
 						|| !(e.isAltDown() || e.isControlDown() || e.isShiftDown())) {
 					int[] selectedRows = JRTree.this.getSelectionRows();
@@ -30,7 +33,6 @@ public class JRTree extends JTree {
 					
 				}
 			}
-			
 		});
 	}
 
