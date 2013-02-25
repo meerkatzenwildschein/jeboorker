@@ -12,19 +12,19 @@ import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.MainController;
 
-public class ResourceHandlerTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
-	private static final String QUERY_IDENTIFER = ResourceHandlerTreeCellEditor.class.getName();
+	private static final String QUERY_IDENTIFER = BasePathTreeCellEditor.class.getName();
 
-	private ResourceHandlerTreeCellRenderer renderer;
+	private BasePathTreeCellRenderer renderer;
 	
 	private JTree tree;
 	
 	private Object previousEditorValue;
 	
-	public ResourceHandlerTreeCellEditor(JTree tree) {
+	public BasePathTreeCellEditor(JTree tree) {
 		this.tree = tree;
-		renderer = new ResourceHandlerTreeCellRenderer(tree);
+		renderer = new BasePathTreeCellRenderer(tree);
 	
 	}
 

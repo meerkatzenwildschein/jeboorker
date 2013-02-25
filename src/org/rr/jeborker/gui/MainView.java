@@ -71,6 +71,9 @@ import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.FileSystemTreeModel;
+import org.rr.jeborker.gui.renderer.BasePathTreeCellEditor;
+import org.rr.jeborker.gui.renderer.BasePathTreeCellRenderer;
 import org.rr.jeborker.gui.renderer.DatePropertyCellEditor;
 import org.rr.jeborker.gui.renderer.DatePropertyCellRenderer;
 import org.rr.jeborker.gui.renderer.DefaultPropertyCellEditor;
@@ -79,8 +82,6 @@ import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
 import org.rr.jeborker.gui.renderer.MultiListPropertyEditor;
 import org.rr.jeborker.gui.renderer.MultiListPropertyRenderer;
-import org.rr.jeborker.gui.renderer.ResourceHandlerTreeCellEditor;
-import org.rr.jeborker.gui.renderer.ResourceHandlerTreeCellRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyRenderer;
 
@@ -116,17 +117,27 @@ public class MainView extends JFrame{
 	JButton saveMetadataButton;
 	
 	JPanel rootPanel;
+	
 	private JPanel sortPanel;
+	
 	private JLabel sortLabel;
+	
 	CheckComboBox<Field> sortColumnComboBox;
+	
 	JToggleButton sortOrderAscButton;
+	
 	JToggleButton sortOrderDescButton;
+	
 	JSplitPane treeMainTableSplitPane;
-	JRTree tree;
+	
+	JRTree basePathTree;
+	
+	JRTree fileSystemTree;
+	
 	JScrollPane mainTableScrollPane;
 
 	private JTabbedPane leftTabbedPane;
-	
+
 	/**
 	 * Create the application.
 	 */
@@ -362,8 +373,11 @@ public class MainView extends JFrame{
 				
 				leftTabbedPane = new JTabbedPane();
 				
-				JScrollPane treeScroller = createBasePathTree();
-				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), treeScroller);
+				JScrollPane basePathTreeScroller = createBasePathTree();
+				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeScroller);
+				
+				JScrollPane fileSystemTreeScroller = createFileSystemTree();
+				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeScroller);
 				
 				treeMainTableSplitPane.setLeftComponent(leftTabbedPane);
 				treeMainTableSplitPane.setOneTouchExpandable(true);
@@ -476,20 +490,20 @@ public class MainView extends JFrame{
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
-	private JScrollPane createBasePathTree() {
-		tree = new JRTree();
-		JScrollPane treeScroller = new JScrollPane(tree);
+	private JScrollPane createFileSystemTree() {
+		fileSystemTree = new JRTree();
+		JScrollPane treeScroller = new JScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
 		
-		tree.setRootVisible(false);
-		tree.setModel(new BasePathTreeModel());
-		tree.setEditable(true);
-		tree.setCellRenderer(new ResourceHandlerTreeCellRenderer(tree));
-		tree.setCellEditor(new ResourceHandlerTreeCellEditor(tree));
-		tree.setRowHeight(25);
+		fileSystemTree.setRootVisible(false);
+		fileSystemTree.setModel(new FileSystemTreeModel());
+		fileSystemTree.setEditable(true);
+		fileSystemTree.setCellRenderer(new BasePathTreeCellRenderer(fileSystemTree));
+		fileSystemTree.setCellEditor(new BasePathTreeCellEditor(fileSystemTree));
+		fileSystemTree.setRowHeight(25);
 		
-		tree.setTransferHandler(new TransferHandler() {
+		fileSystemTree.setTransferHandler(new TransferHandler() {
 
 			private static final long serialVersionUID = -371360766111031218L;
 
@@ -522,11 +536,88 @@ public class MainView extends JFrame{
                 TreePath dropRow = dl.getPath();
                 Object lastPath = dropRow.getLastPathComponent();
                 Object firstPath = dropRow.getPath()[1]; //is the base path
-                IResourceHandler firstPathResource = ((BasePathTreeModel.PathNode) firstPath).getPathResource();
-                IResourceHandler lastPathPathResource = ((BasePathTreeModel.PathNode) lastPath).getPathResource();
+                IResourceHandler firstPathResource = ((FileSystemTreeModel.FileSystemPathNode) firstPath).getPathResource();
+                IResourceHandler lastPathPathResource = ((FileSystemTreeModel.FileSystemPathNode) lastPath).getPathResource();
                 try {
 					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
-					tree.startEditingAtPath(dropRow);
+					fileSystemTree.startEditingAtPath(dropRow);
+				} catch (Exception e) {
+					return false;
+				} 
+                return true;
+            }
+            
+            public int getSourceActions(JComponent c) {
+                return COPY;
+            }
+            
+            /**
+             * Create a new Transferable that is used to drag files from jeboorker to a native application.
+             */
+            protected Transferable createTransferable(JComponent c) {
+            	return null;
+            }
+        });
+		
+		GridBagConstraints gbc_tree = new GridBagConstraints();
+		gbc_tree.fill = GridBagConstraints.BOTH;
+		gbc_tree.gridx = 0;
+		gbc_tree.gridy = 0;
+		return treeScroller;		
+	}
+	
+	private JScrollPane createBasePathTree() {
+		basePathTree = new JRTree();
+		basePathTree.setName("BasePathTree");
+		JScrollPane treeScroller = new JScrollPane(basePathTree);
+		treeScroller.setOpaque(false);
+		treeScroller.getViewport().setOpaque(false);
+		
+		basePathTree.setRootVisible(false);
+		basePathTree.setModel(new BasePathTreeModel());
+		basePathTree.setEditable(true);
+		basePathTree.setCellRenderer(new BasePathTreeCellRenderer(basePathTree));
+		basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
+		basePathTree.setRowHeight(25);
+		
+		basePathTree.setTransferHandler(new TransferHandler() {
+
+			private static final long serialVersionUID = -371360766111031218L;
+
+			public boolean canImport(TransferHandler.TransferSupport info) {
+                //only import Strings
+                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+                    return false;
+                }
+
+                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
+                if (dl.getPath() != null && dl.getPath().getPathCount() <= 1) {
+                    return false;
+                }
+                
+                return true;
+            }
+
+            public boolean importData(TransferHandler.TransferSupport info) {
+                if (!info.isDrop()) {
+                    return false;
+                }
+                
+                // Check for String flavor
+                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
+                    return false;
+                }
+
+                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
+                TreePath dropRow = dl.getPath();
+                Object lastPath = dropRow.getLastPathComponent();
+                Object firstPath = dropRow.getPath()[1]; //is the base path
+                IResourceHandler firstPathResource = ((BasePathTreeModel.BasePathNode) firstPath).getPathResource();
+                IResourceHandler lastPathPathResource = ((BasePathTreeModel.BasePathNode) lastPath).getPathResource();
+                try {
+					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
+					basePathTree.startEditingAtPath(dropRow);
 				} catch (Exception e) {
 					return false;
 				} 
@@ -577,7 +668,7 @@ public class MainView extends JFrame{
 		final JPopupMenu menu = new JPopupMenu();
 		
         //int selRow = tree.getRowForLocation((int)location.getX(), (int)location.getY());
-        TreePath selPath = tree.getPathForLocation((int)location.getX(), (int)location.getY());
+        TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
         
 		if(leftTabbedPane.getSelectedIndex() == 0) {
 			addBasePathTreeMenuItems(menu, selPath);
@@ -593,7 +684,7 @@ public class MainView extends JFrame{
 	void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
 		Action action;
 		
-		BasePathTreeModel.PathNode pathNode = (BasePathTreeModel.PathNode) selPath.getLastPathComponent();
+		BasePathTreeModel.BasePathNode pathNode = (BasePathTreeModel.BasePathNode) selPath.getLastPathComponent();
 		
 		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getPathResource().toString());
 		menu.add(new JMenuItem(action));	

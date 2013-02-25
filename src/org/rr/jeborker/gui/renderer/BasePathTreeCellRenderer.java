@@ -2,7 +2,6 @@ package org.rr.jeborker.gui.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,12 +14,14 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.rr.common.swing.SwingUtils;
+import org.rr.common.swing.tree.TreeUtil;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -31,7 +32,7 @@ import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellRenderer {
+public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer {
 
 	private Color selectedBgColor;
 	
@@ -52,7 +53,7 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 	private Icon eyesVisible;
 	private Icon eyesInvisible;
 	
-	public ResourceHandlerTreeCellRenderer(JTree tree) {
+	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
 		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
 		selectedFgColor = SwingUtils.getSelectionForegroundColor();
@@ -106,14 +107,15 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 					String resourceName = null;
 					if (lastPathComponent instanceof IResourceHandler) {
 						resourceName = ((IResourceHandler) lastPathComponent).toString();
-					} else if(lastPathComponent instanceof BasePathTreeModel.PathNode){
-						resourceName = ((BasePathTreeModel.PathNode)lastPathComponent).getPathResource().toString();
+					} else if(lastPathComponent instanceof BasePathTreeModel.BasePathNode){
+						resourceName = ((BasePathTreeModel.BasePathNode)lastPathComponent).getPathResource().toString();
 					}		
 					
 					if(resourceName != null) {
 						ActionUtils.toggleBasePathVisibility(resourceName);
 					}
 					
+					((DefaultTreeModel)tree.getModel()).reload((TreeNode) selectionPath.getLastPathComponent());
 				}
 			};
 		}
@@ -130,8 +132,8 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 			label.setText(resourceName);
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = value;
-		} else if(value instanceof BasePathTreeModel.PathNode){
-			pathResource = ((BasePathTreeModel.PathNode)value).getPathResource();
+		} else if(value instanceof BasePathTreeModel.BasePathNode){
+			pathResource = ((BasePathTreeModel.BasePathNode)value).getPathResource();
 			label.setText(pathResource.getName());
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = pathResource;
@@ -139,6 +141,19 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 			pathResource = ResourceHandlerFactory.getResourceHandler(StringUtils.toString(value));
 			label.setText(StringUtils.toString(value));
 			checkbox.setVisible(false);
+		}
+		
+		if(pathResource != null) {
+			String pathresourceString = pathResource.toString();
+			label.setEnabled(true);
+			for(String basePath : basePaths) {
+				if(pathresourceString.startsWith(basePath)) {
+					boolean basePathVisible = JeboorkerPreferences.isBasePathVisible(basePath);
+					if(!basePathVisible) {
+						label.setEnabled(false);
+					}
+				}
+			}
 		}
 
 		try {
@@ -162,11 +177,6 @@ public class ResourceHandlerTreeCellRenderer extends JPanel implements TreeCellR
 				label.setForeground(SwingUtils.getForegroundColor());
 				isDropCell = false;
 			}
-	        
-	        JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(tree);
-	        if(label.getPreferredSize().width < surroundingScrollPane.getWidth()) {
-	        	label.setPreferredSize(new Dimension(surroundingScrollPane.getWidth(), label.getPreferredSize().height));
-	        }
 		} catch (Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to render Jtree row", e);
 		}

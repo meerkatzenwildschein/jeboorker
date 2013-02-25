@@ -149,7 +149,6 @@ public class ActionUtils {
 			LoggerFactory.log(Level.WARNING, ActionUtils.class, "Path " + path, ex);
 		} finally {
 			controller.refreshTable(true);
-			MainController.getController().refreshBasePathTree();
 		}
 	}
 	

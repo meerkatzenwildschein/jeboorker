@@ -41,7 +41,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
-import org.rr.jeborker.gui.model.BasePathTreeModel.PathNode;
+import org.rr.jeborker.gui.model.BasePathTreeModel.BasePathNode;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
@@ -179,10 +179,10 @@ public class MainController {
 		public void mouseReleased(MouseEvent event) {
 			if (event.getButton() == MouseEvent.BUTTON3) {
 				Point location = event.getPoint();
-				int row = mainWindow.tree.getRowForLocation((int)location.getX(), (int)location.getY());
+				int row = mainWindow.basePathTree.getRowForLocation((int)location.getX(), (int)location.getY());
 				if(row >= 0) {
-					mainWindow.tree.setSelectionRow(row);
-					mainWindow.showTreePopupMenu(event.getPoint(), mainWindow.tree);
+					mainWindow.basePathTree.setSelectionRow(row);
+					mainWindow.showTreePopupMenu(event.getPoint(), mainWindow.basePathTree);
 				}
 			}
 		}
@@ -231,7 +231,7 @@ public class MainController {
 		mainWindow.table.addMouseListener(new MainTablePopupMouseListener());
 		
 		mainWindow.imageViewer.addMouseListener(new CoverPopupMouseListener());
-		mainWindow.tree.addMouseListener(new TreePopupMouseListener());
+		mainWindow.basePathTree.addMouseListener(new TreePopupMouseListener());
 		
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
 			
@@ -284,15 +284,16 @@ public class MainController {
 	 * Refresh the Tree for the base path's.
 	 */
 	public void refreshBasePathTree() {
-		TreeModel oldModel = mainWindow.tree.getModel();
+		TreeModel oldModel = mainWindow.basePathTree.getModel();
 		if(oldModel instanceof BasePathTreeModel) {
 			((BasePathTreeModel)oldModel).dispose();
 		}
-		TreeSelectionModel selectionModel = mainWindow.tree.getSelectionModel();
-		List<String> expansionStates = TreeUtil.getExpansionStates(mainWindow.tree);
-		mainWindow.tree.setModel(new BasePathTreeModel());
-		TreeUtil.restoreExpanstionState(mainWindow.tree, expansionStates);
-		mainWindow.tree.setSelectionModel(selectionModel);
+		TreeSelectionModel selectionModel = mainWindow.basePathTree.getSelectionModel();
+		List<String> expansionStates = TreeUtil.getExpansionStates(mainWindow.basePathTree);
+		BasePathTreeModel newBasePathTreeModel = new BasePathTreeModel();
+		mainWindow.basePathTree.setModel(newBasePathTreeModel);
+		TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
+		mainWindow.basePathTree.setSelectionModel(selectionModel);
 	}
 	
 	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
@@ -519,9 +520,9 @@ public class MainController {
 	 * Get the selected BasePath from the Tree.
 	 */
 	public IResourceHandler getSelectedBasePathTreeItems() {
-		TreePath selectionPath = mainWindow.tree.getSelectionPath();
+		TreePath selectionPath = mainWindow.basePathTree.getSelectionPath();
 		if(selectionPath != null) {
-			BasePathTreeModel.PathNode targetResource = (PathNode) selectionPath.getLastPathComponent();
+			BasePathTreeModel.BasePathNode targetResource = (BasePathNode) selectionPath.getLastPathComponent();
 			return targetResource.getPathResource();
 		}
 		return null;
