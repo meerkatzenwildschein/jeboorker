@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.PreferenceItem;
@@ -81,6 +82,22 @@ public class JeboorkerPreferences {
 	public static boolean isBasePathVisible(String path) {
 		boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 		return isShow;
+	}
+	
+	/**
+	 * Get the 
+	 * @param resource
+	 * @return
+	 */
+	public static String getBasePathFor(IResourceHandler resource) {
+		String resourceString = resource.toString();
+		List<String> basePaths = getBasePath();
+		for(String basePath : basePaths) {
+			if(resourceString.startsWith(basePath)) {
+				return basePath;
+			}
+		}
+		return null;
 	}
 	
 	/**
