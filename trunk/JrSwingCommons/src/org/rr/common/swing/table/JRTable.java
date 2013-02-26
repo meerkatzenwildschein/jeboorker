@@ -26,4 +26,6 @@ public class JRTable extends JTable {
             LoggerFactory.getLogger(this).log(Level.INFO, "stopEdit has failed.", ex);
         }
     } 	
+    
+    
 }

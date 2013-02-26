@@ -12,6 +12,21 @@ import org.rr.commons.utils.StringUtils;
 
 public class URIListTransferable implements Transferable {
 	
+	public static DataFlavor uriListDataFlavor = null;
+	
+	public static DataFlavor gnomeCopiedFilesDataFlavor = null;
+	
+	private static DataFlavor[] allSupportedDataFlavors = null;
+	
+	static {
+		try {
+			uriListDataFlavor = new DataFlavor("text/uri-list");
+			gnomeCopiedFilesDataFlavor = new DataFlavor("x-special/gnome-copied-files");
+			allSupportedDataFlavors = new DataFlavor[] { uriListDataFlavor, gnomeCopiedFilesDataFlavor };
+		} catch (ClassNotFoundException e) {
+		}
+	}
+	
 	private List<URI> uris;
 	
 	private String action;
@@ -24,12 +39,7 @@ public class URIListTransferable implements Transferable {
 	}
 
     public DataFlavor[] getTransferDataFlavors() {
-        try {
-			return new DataFlavor[] { new DataFlavor("text/uri-list"), new DataFlavor("x-special/gnome-copied-files") };
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-        return new DataFlavor[0];
+		return allSupportedDataFlavors;
     }
 
     public boolean isDataFlavorSupported(DataFlavor flavor) {
