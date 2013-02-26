@@ -127,8 +127,7 @@ public class MainMenuBarController {
 	 * @param invoker The invoker for the popup menu.
 	 */
 	void showMainPopupMenu(Point location, Component invoker) {
-		List<EbookPropertyItem> selectedItems = MainController.getController().getSelectedEbookPropertyItems();
-		JPopupMenu menu = createMainTablePopupMenu(selectedItems);
+		JPopupMenu menu = createMainTablePopupMenu();
 		
 		//setup and show popup
 		if(menu.getComponentCount() > 0) {
@@ -138,15 +137,54 @@ public class MainMenuBarController {
 	}
 	
 	/**
+	 * Shows the popup menu for the selected entries.
+	 * @param location The locaten where the popup should appears.
+	 * @param invoker The invoker for the popup menu.
+	 */
+	void showFileSystemTreePopupMenu(Point location, Component invoker) {
+		JPopupMenu menu = createFileSystemTreePopupMenu();
+		
+		//setup and show popup
+		if(menu.getComponentCount() > 0) {
+			menu.setLocation(location);
+			menu.show(invoker, location.x, location.y);
+		}
+	}
+	
+	private static JPopupMenu createFileSystemTreePopupMenu() {
+		final MainController controller = MainController.getController();
+		final List<IResourceHandler> items = controller.getSelectedTreeItems();
+		final JPopupMenu menu = new JPopupMenu();
+		
+		Action action;
+		if(items.size() == 1) {
+			//only visible to single selections
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).toString());
+			menu.add(action);			
+			
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).toString());
+			menu.add(action);
+		}	
+		
+		JMenu copyToSubMenu = createCopyToMenu();
+		menu.add(copyToSubMenu);		
+		
+		action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items);
+		menu.add(action);		
+		
+		return menu;
+	}
+	
+	/**
 	 * Creates the popup menu for the main table having only these entries inside
 	 * that can be processed with the given {@link EbookPropertyItem} list.
 	 * @param items The items to be tested if they're matching against the menu entries.
 	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
 	 */
-	private static JPopupMenu createMainTablePopupMenu(List<EbookPropertyItem> items) {
-		//create and fill popup menu
+	private static JPopupMenu createMainTablePopupMenu() {
 		final MainController controller = MainController.getController();
-		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
+		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 		final JPopupMenu menu = new JPopupMenu();
 		
 		{
@@ -172,7 +210,7 @@ public class MainMenuBarController {
 			menu.add(action);
 		}
 
-		JMenu copyToSubMenu = createCopyToMenu(items, selectedEbookPropertyItemRows);
+		JMenu copyToSubMenu = createCopyToMenu();
 		menu.add(copyToSubMenu);
 
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
@@ -184,16 +222,30 @@ public class MainMenuBarController {
 	/**
 	 * Creates the <code>copy to</code> submenu.
 	 */
-	static JMenu createCopyToMenu(List<EbookPropertyItem> items, int[] selectedEbookPropertyItemRows) {
-		String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
-		JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
+	static JMenu createCopyToMenu() {
+		final MainController controller = MainController.getController();
+		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
+		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+		final List<IResourceHandler> selectedTreeItems = controller.getSelectedTreeItems();
+		final String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
+		final JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
+		
 		copyToSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("copy_16.png"));
 		copyToSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
+		Action action;
 		
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
+		if(!items.isEmpty()) {
+			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
+		} else {
+			action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, selectedTreeItems);
+		}
 		copyToSubMenu.add(action);
 		
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+		if(!items.isEmpty()) {
+			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+		} else {
+			action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
+		}
 		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceHandler(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
@@ -203,7 +255,11 @@ public class MainMenuBarController {
 		
 		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
 		for(IResourceHandler externalResource : externalDriveResources) {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+			if(!items.isEmpty()) {
+				action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+			} else {
+				action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
+			}
 			action.putValue(Action.NAME, externalResource.toString());
 			action.putValue("TARGET", externalResource);
 			action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("removable_drive_16.png"));

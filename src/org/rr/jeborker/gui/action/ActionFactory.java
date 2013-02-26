@@ -13,6 +13,7 @@ import javax.swing.Action;
 import javax.swing.JTable;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
@@ -257,7 +258,7 @@ public class ActionFactory {
 			
 			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
-				return false;
+				return resourceHandler.isFileResource();
 			}				
 			
 			@Override
@@ -279,7 +280,7 @@ public class ActionFactory {
 			
 			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
-				return false;
+				return resourceHandler.isFileResource();
 			}				
 			
 			@Override
@@ -301,7 +302,7 @@ public class ActionFactory {
 			
 			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
-				return false;
+				return resourceHandler.isFileResource();
 			}				
 			
 			@Override
@@ -413,6 +414,10 @@ public class ActionFactory {
 				break;
 			case OPEN_FILE_ACTION:
 				action = new OpenFileAction(text);
+				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(text);
+				if(resourceHandler != null && !resourceHandler.isFileResource()) {
+					action.setEnabled(false);
+				}				
 				break;
 			case DELETE_FILE_ACTION:
 				action = new DeleteFileAction(text);			
@@ -421,7 +426,7 @@ public class ActionFactory {
 				action = new ShowLogAction(text);
 				break;
 			case COPY_TO_CLIPBOARD_ACTION:
-				action = new CopyToClipboardAction(null);
+				action = new CopyToClipboardAction();
 				break;
 			case PASTE_FROM_CLIPBOARD_ACTION:
 				action = new PasteFromClipboardAction(text);
