@@ -35,7 +35,7 @@ class MainControllerUtils {
 		JeboorkerPreferences.addEntryNumber("mainWindowLocationX", mainWindow.getLocation().x);
 		JeboorkerPreferences.addEntryNumber("mainWindowLocationY", mainWindow.getLocation().y);
 		JeboorkerPreferences.addEntryNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
-		JeboorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.table.getRowCount()));
+		JeboorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.mainTable.getRowCount()));
 		JeboorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));

@@ -9,11 +9,14 @@ import java.util.StringTokenizer;
 
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
+import javax.swing.JTree;
+import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
@@ -25,9 +28,12 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 
 	private static final FileSystemView fileSystemViewInstance = FileSystemView.getFileSystemView();
 
-	public FileSystemTreeModel() {
+	private JTree tree;
+	
+	public FileSystemTreeModel(JTree tree) {
 		/** create an instance with a TreeNode which handles the root. */
 		super(new FileSystemRootNode());
+		this.tree = tree;
 	}
 
 	public List<IFolderNode> getPath(File path) {
@@ -106,6 +112,35 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		aNode.renameTo(newPath);
 		nodeChanged(aNode);
 	}
+	
+	@Override
+	public void reload(TreeNode node) {
+		if(node instanceof FolderNode) {
+			((FolderNode)node).childFolderNodes = null;
+			((FolderNode)node).subFiles = null;
+			((FolderNode)node).subFolders = null;
+		}
+		super.reload(node);
+	}	
+
+	/**
+	 * Reloads these node which represents the given {@link IResourceHandler} instance.
+	 * If the node is not opened it will not be refreshed.
+	 */
+	public void reload(IResourceHandler resourceToRefresh) {
+		int rowCount = tree.getRowCount();
+		for(int i = 0; i < rowCount; i++) {
+			TreePath pathForRow = tree.getPathForRow(i);
+			if(pathForRow.getLastPathComponent() instanceof IFolderNode) {
+				File file = ((IFolderNode)pathForRow.getLastPathComponent()).getFile();
+				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(file);
+				if(resourceHandler.equals(resourceToRefresh)) {
+					reload((TreeNode) pathForRow.getLastPathComponent());
+					break;
+				}
+			}
+		}
+	}
 
 	public interface IFolderNode extends TreeNode, Comparable<IFolderNode> {
 		/**
@@ -130,9 +165,6 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		/**
 		 * Test if the given name is matching to the node name. The match should also include some impreciseness, so c: matches also to the node "c:\" or "c:\
 		 * Datenträger"
-		 * 
-		 * @param name
-		 * @return
 		 */
 		public boolean matchName(String name);
 
@@ -493,5 +525,12 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 			return s;
 		}
 
+	}
+	
+	public void dispose() {
+		TreeModelListener[] treeModelListeners = getTreeModelListeners();
+		for(TreeModelListener treeModelListener : treeModelListeners) {
+			removeTreeModelListener(treeModelListener);
+		}
 	}
 }

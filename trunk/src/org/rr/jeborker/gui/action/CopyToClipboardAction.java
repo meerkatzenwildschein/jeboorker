@@ -17,6 +17,7 @@ import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -37,34 +38,32 @@ public class CopyToClipboardAction extends AbstractAction implements ClipboardOw
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(hasValidCopySelection()) {
-			final MainController controller = MainController.getController();
-			final List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
-			final ArrayList<String> files = new ArrayList<String>();
-			final ArrayList<URI> uriList = new ArrayList<URI>();
-			
-	        for (EbookPropertyItem item : selectedEbookPropertyItems) {
-	    		uriList.add(new File(item.getFile()).toURI());
-	    		files.add(new File(item.getFile()).getPath());
-	        }    
-	        
-	        Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
-	        Transferable trans;
-	        if(CommonUtils.isLinux()) {
-	        	trans = new URIListTransferable(uriList, "copy");
-	        } else {
-	        	trans = new FileTransferable(files);
-	        }		
-	        c.setContents( trans, this );
-		}
+		final MainController controller = MainController.getController();
+		final List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
+		final ArrayList<String> files = new ArrayList<String>();
+		final ArrayList<URI> uriList = new ArrayList<URI>();
+		
+        for (EbookPropertyItem item : selectedEbookPropertyItems) {
+    		uriList.add(new File(item.getFile()).toURI());
+    		files.add(new File(item.getFile()).getPath());
+        }    
+        
+        Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable trans;
+        if(CommonUtils.isLinux()) {
+        	if(ReflectionUtils.javaVersion() == 16) {
+        		trans = new URIListTransferable(uriList, "copy");
+        	} else {
+        		trans = new FileTransferable(files);
+        	}
+        } else {
+        	trans = new FileTransferable(files);
+        }		
+        c.setContents( trans, this );
 	}
 
 	@Override
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
-	}
-	
-	public static boolean hasValidCopySelection() {
-		return MainController.getController().isMainTableFocused();
 	}
 
 }

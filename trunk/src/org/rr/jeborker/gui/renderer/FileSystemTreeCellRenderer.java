@@ -18,7 +18,6 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 		if(value instanceof IFolderNode) {
 			Icon icon =  ((IFolderNode)value).getSystemIcon();
 			setIcon(icon);
-
 		}
 		return this;
 	}
