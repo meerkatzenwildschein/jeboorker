@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
@@ -211,8 +212,9 @@ public class ResourceHandlerFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<IResourceHandler> getResourceHandler(final Transferable t) throws IOException {
-		List<File> transferedFiles = Collections.emptyList();
+	public static List<IResourceHandler> getResourceHandler(final Transferable t) throws IOException, ClassNotFoundException {
+		List<Object> transferedFiles = Collections.emptyList();
+		
 		if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			String data;
 			try {
@@ -222,14 +224,32 @@ public class ResourceHandlerFactory {
 			}
 		} else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 			try {
-				transferedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+				transferedFiles = (List<Object>) t.getTransferData(DataFlavor.javaFileListFlavor);
+			} catch (UnsupportedFlavorException e) {
+			}                		
+		} else if(t.isDataFlavorSupported(new DataFlavor("text/uri-list"))) {
+			try {
+				ByteArrayInputStream in = (ByteArrayInputStream) t.getTransferData(new DataFlavor("text/uri-list"));
+				String data = IOUtils.toString(in);
+				String[] uriList = data.split("\n");
+				transferedFiles = new ArrayList<Object>(uriList.length - 1);
+				for(int i = 0; i < uriList.length; i++) {
+					if(uriList[i].equals("copy") || uriList[i].equals("move")) {
+						continue;
+					}
+					transferedFiles.add(uriList[i]);
+				}
 			} catch (UnsupportedFlavorException e) {
 			}                		
 		}		
+		ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
 		
-		ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(transferedFiles.size());
-		for(File file : transferedFiles) {
-			result.add(getResourceHandler(file));
+		for(Object file : transferedFiles) {
+			if(file instanceof File) {
+				result.add(getResourceHandler((File) file));
+			} else if(file instanceof String) {
+				result.add(getResourceHandler((String) file));
+			}
 		}
 		return result;
 	}
@@ -246,12 +266,18 @@ public class ResourceHandlerFactory {
 		} else if(contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				String data = (String) contents.getTransferData(DataFlavor.stringFlavor);
-				List<File> fileList = getFileList(data);
+				List<Object> fileList = getFileList(data);
 				return !fileList.isEmpty();
 			} catch (Exception e) {
 				return false;
 			} 
-		}	
+		} else
+			try {
+				if(contents.isDataFlavorSupported(new DataFlavor("text/uri-list"))) {
+					return true;
+				}
+			} catch (Exception e) {
+			}
 		return false;
 	}
 	
@@ -320,8 +346,8 @@ public class ResourceHandlerFactory {
 	 * @param data The data to be splitted into a file list.
 	 * @return The list of files. Never returns <code>null</code>.
 	 */
-	private static List<File> getFileList(String data) {
-		ArrayList<File> result = new ArrayList<File>();
+	private static List<Object> getFileList(String data) {
+		ArrayList<Object> result = new ArrayList<Object>();
 		data = data.replace("\r", "");
 		List<String> splitData = ListUtils.split(data, '\n');
 		for (String splitDataItem : splitData) {
