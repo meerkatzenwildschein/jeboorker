@@ -303,7 +303,7 @@ public class MainController {
 	public void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh) {
 		TreeModel oldModel = mainWindow.fileSystemTree.getModel();
 		if(oldModel instanceof FileSystemTreeModel) {
-			if(resourceToRefresh.isFileResource()) {
+			if(!resourceToRefresh.exists() || resourceToRefresh.isFileResource()) {
 				resourceToRefresh = resourceToRefresh.getParentResource();
 			}
 			((FileSystemTreeModel)oldModel).reload(resourceToRefresh);

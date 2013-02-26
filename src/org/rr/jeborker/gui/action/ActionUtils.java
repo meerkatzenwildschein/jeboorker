@@ -69,17 +69,20 @@ public class ActionUtils {
 	 * @param item The item to be refreshed
 	 * @param resourceLoader The IResourceHandler for the given item. Can be <code>null</code>.
 	 */
-	static void refreshEbookPropertyItem(final EbookPropertyItem item, IResourceHandler resourceLoader) {
-		if(resourceLoader == null) {
-			resourceLoader = ResourceHandlerFactory.getResourceHandler(item.getFile());
+	static void refreshEbookPropertyItem(final EbookPropertyItem item, final IResourceHandler resourceHandler) {
+		final IResourceHandler refreshResourceHandler;
+		if(resourceHandler == null) {
+			refreshResourceHandler = ResourceHandlerFactory.getResourceHandler(item.getFile());
+		} else {
+			refreshResourceHandler = resourceHandler;
 		}
 		
 		//remove the entry from db and view.
-		if(!resourceLoader.exists()) {
+		if(!refreshResourceHandler.exists()) {
 			ActionUtils.removeEbookPropertyItem(item);
 			return;
 		} else {
-			EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceLoader, true);
+			EbookPropertyItemUtils.refreshEbookPropertyItem(item, refreshResourceHandler, true);
 			DefaultDBManager.getInstance().updateObject(item);
 		
 			if(isSelectedItem(item)) {
@@ -88,6 +91,7 @@ public class ActionUtils {
 					@Override
 					public void run() {
 						MainController.getController().refreshTableSelectedItem(true);
+						MainController.getController().refreshFileSystemTreeEntry(refreshResourceHandler);
 					}
 				});
 			} else {
@@ -97,10 +101,10 @@ public class ActionUtils {
 					public void run() {
 						int row = MainController.getController().getTableModel().searchRow(item);
 						MainController.getController().refreshTableItem(new int[] {row}, false);
+						MainController.getController().refreshFileSystemTreeEntry(refreshResourceHandler);
 					}
 				});				
 			}
-			
 		}
 	}
 	
@@ -193,6 +197,7 @@ public class ActionUtils {
 			@Override
 			public void run() {
 				boolean removed = controller.removeEbookPropertyItem(item);
+				controller.refreshFileSystemTreeEntry(item.getResourceHandler());
 				if(!removed) {
 					DefaultDBManager.getInstance().deleteObject(item);
 				}

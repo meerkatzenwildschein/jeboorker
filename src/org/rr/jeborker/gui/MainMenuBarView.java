@@ -213,11 +213,17 @@ class MainMenuBarView extends JMenuBar {
 				}
 				
 				if(selectedItems.size() >= 1) {
-					deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, selectedItems.get(0).getFile()));
+					deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedItems, selectedEbookPropertyItemRows));
 					deleteFileMenuEntry.setEnabled(true);	
 				} else {
-					deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, ""));
-					deleteFileMenuEntry.setEnabled(false);				
+					List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+					if(selectedTreeItems.size() > 0) {
+						deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedTreeItems));
+						deleteFileMenuEntry.setEnabled(true);
+					} else {
+						deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, ""));
+						deleteFileMenuEntry.setEnabled(false);
+					}
 				}
 				
 				JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu(selectedItems, selectedEbookPropertyItemRows);
