@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="bounce"/>
 	<classpathentry kind="src" path="jempbox"/>
 	<classpathentry kind="src" path="epublib"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_34"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_09"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.5.jar"/>
