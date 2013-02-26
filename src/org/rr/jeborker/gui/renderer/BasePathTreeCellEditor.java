@@ -25,7 +25,6 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 	public BasePathTreeCellEditor(JTree tree) {
 		this.tree = tree;
 		renderer = new BasePathTreeCellRenderer(tree);
-	
 	}
 
 	  public boolean isCellEditable(EventObject event) {

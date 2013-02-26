@@ -10,6 +10,8 @@ import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -65,6 +67,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
@@ -102,7 +105,7 @@ public class MainView extends JFrame{
 	
 	private static final long serialVersionUID = 6837919427429399376L;
 	
-	JRTable table;
+	JRTable mainTable;
 	
 	JProgressBar progressBar;
 	
@@ -142,7 +145,7 @@ public class MainView extends JFrame{
 	
 	JScrollPane mainTableScrollPane;
 
-	private JTabbedPane leftTabbedPane;
+	JTabbedPane treeTabbedPane;
 
 	/**
 	 * Create the application.
@@ -166,7 +169,7 @@ public class MainView extends JFrame{
 		
 		KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
 		inputMap.put(find, "FIND");
-		actionMap.put("FIND", ActionFactory.getTableFindAction(table));
+		actionMap.put("FIND", ActionFactory.getTableFindAction(mainTable));
 	}
 	
 	/**
@@ -285,107 +288,21 @@ public class MainView extends JFrame{
 				gbc_treeMainTableSplitPane.gridy = 1;
 				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
 				
-				table = new JRTable();
-				table.setName("MainTable");
-				table.setRowHeight(74);
-				table.setModel(new EbookPropertyDBTableModel());
-				table.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
-				table.setDefaultEditor(Object.class, new EbookTableCellEditor());
-				table.setTableHeader(null);
-				table.setSelectionModel(new EbookPropertyDBTableSelectionModel());
-				table.setDragEnabled(true);
-				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
-				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
-				table.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
-				table.putClientProperty(StringConvertor.class, new StringConvertor() {
-					
-					@Override
-					public String toString(Object obj) {
-						if(obj instanceof EbookPropertyItem) {
-							return ((EbookPropertyItem)obj).getResourceHandler().getName();
-						}
-						return StringUtils.toString(obj);
-					}
-				});
-				
-				table.setTransferHandler(new TransferHandler() {
-
-					private static final long serialVersionUID = -371360766111031218L;
-
-					public boolean canImport(TransferHandler.TransferSupport info) {
-		                //only import Strings
-		                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
-		                    return false;
-		                }
-		
-		                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-		                if (dl.getRow() == -1) {
-		                    return false;
-		                }
-		                
-		                return true;
-		            }
-		
-		            public boolean importData(TransferHandler.TransferSupport info) {
-		                if (!info.isDrop()) {
-		                    return false;
-		                }
-		                
-		                // Check for String flavor
-		                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
-		                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
-		                    return false;
-		                }
-		
-		                JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
-		                int dropRow = dl.getRow();
-		                return PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), dropRow);
-		            }
-		            
-		            public int getSourceActions(JComponent c) {
-		                return COPY;
-		            }
-		            
-		            /**
-		             * Create a new Transferable that is used to drag files from jeboorker to a native application.
-		             */
-		            protected Transferable createTransferable(JComponent c) {
-		                final JTable list = (JTable) c;
-		                final int[] selectedRows = list.getSelectedRows();
-		                final List<URI> uriList = new ArrayList<URI>();
-		                final List<String> files = new ArrayList<String>();
-		                
-		                for (int i = 0; i < selectedRows.length; i++) {
-		                	EbookPropertyItem val = (EbookPropertyItem) table.getModel().getValueAt(selectedRows[i], 0);
-		                	try {
-		                		uriList.add(new File(val.getFile()).toURI());
-		                		files.add(new File(val.getFile()).getPath());
-									} catch (Exception e) {
-										LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
-									}
-		                }    
-		                
-		                if(CommonUtils.isLinux()) {
-		                	return new URIListTransferable(uriList, null);
-		                } else {
-		                	return new FileTransferable(files);
-		                }
-		            }
-		        });
+				createMainTable(copy, paste, delete);
 				
 				mainTableScrollPane = new JScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
-				mainTableScrollPane.setViewportView(table);
+				mainTableScrollPane.setViewportView(mainTable);
 				
-				leftTabbedPane = new JTabbedPane();
+				treeTabbedPane = new JTabbedPane();
 				
 				JScrollPane basePathTreeScroller = createBasePathTree();
-				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeScroller);
+				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeScroller);
 				
 				JScrollPane fileSystemTreeScroller = createFileSystemTree();
-				leftTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeScroller);
+				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeScroller);
 				
-				treeMainTableSplitPane.setLeftComponent(leftTabbedPane);
+				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
 				treeMainTableSplitPane.setOneTouchExpandable(true);
 				
 				JPanel sheetPanel = new JPanel();
@@ -496,20 +413,133 @@ public class MainView extends JFrame{
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
+	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete) {
+		mainTable = new JRTable();
+		mainTable.setName("MainTable");
+		mainTable.setRowHeight(74);
+		mainTable.setModel(new EbookPropertyDBTableModel());
+		mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+		mainTable.setDefaultEditor(Object.class, new EbookTableCellEditor(new EbookTableCellEditor.EditListener() {
+			
+			@Override
+			public void editingStoped() {
+			}
+			
+			@Override
+			public void editingStarted() {
+				fileSystemTree.stopEditing();
+				fileSystemTree.clearSelection();
+				
+				basePathTree.stopEditing();
+				basePathTree.clearSelection();				
+			}
+			
+			@Override
+			public void editingCanceled() {
+			}
+		}));
+		mainTable.setTableHeader(null);
+		mainTable.setSelectionModel(new EbookPropertyDBTableSelectionModel());
+		mainTable.setDragEnabled(true);
+		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
+		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
+		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
+		mainTable.putClientProperty(StringConvertor.class, new StringConvertor() {
+			
+			@Override
+			public String toString(Object obj) {
+				if(obj instanceof EbookPropertyItem) {
+					return ((EbookPropertyItem)obj).getResourceHandler().getName();
+				}
+				return StringUtils.toString(obj);
+			}
+		});
+		
+		mainTable.setTransferHandler(new TransferHandler() {
+
+			private static final long serialVersionUID = -371360766111031218L;
+
+			public boolean canImport(TransferHandler.TransferSupport info) {
+		        //only import Strings
+		        if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+		            return false;
+		        }
+
+		        JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+		        if (dl.getRow() == -1) {
+		            return false;
+		        }
+		        
+		        return true;
+		    }
+
+		    public boolean importData(TransferHandler.TransferSupport info) {
+		        if (!info.isDrop()) {
+		            return false;
+		        }
+		        
+		        // Check for String flavor
+		        if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+		        	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
+		            return false;
+		        }
+
+		        JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
+		        int dropRow = dl.getRow();
+		        return PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), dropRow);
+		    }
+		    
+		    public int getSourceActions(JComponent c) {
+		        return COPY;
+		    }
+		    
+		    /**
+		     * Create a new Transferable that is used to drag files from jeboorker to a native application.
+		     */
+		    protected Transferable createTransferable(JComponent c) {
+		        final JTable list = (JTable) c;
+		        final int[] selectedRows = list.getSelectedRows();
+		        final List<URI> uriList = new ArrayList<URI>();
+		        final List<String> files = new ArrayList<String>();
+		        
+		        for (int i = 0; i < selectedRows.length; i++) {
+		        	EbookPropertyItem val = (EbookPropertyItem) mainTable.getModel().getValueAt(selectedRows[i], 0);
+		        	try {
+		        		uriList.add(new File(val.getFile()).toURI());
+		        		files.add(new File(val.getFile()).getPath());
+							} catch (Exception e) {
+								LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
+							}
+		        }    
+		        
+		        if(CommonUtils.isLinux()) {
+		        	if(ReflectionUtils.javaVersion() == 16) {
+		        		return new URIListTransferable(uriList, null);
+		        	} else {
+		        		return new FileTransferable(files);
+		        	}
+		        } else {
+		        	return new FileTransferable(files);
+		        }
+		    }
+		});
+	}
+
 	private JScrollPane createFileSystemTree() {
 		fileSystemTree = new JRTree();
+		fileSystemTree.setName("FileSystemTree");
 		JScrollPane treeScroller = new JScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
 		
 		fileSystemTree.setRootVisible(false);
-		fileSystemTree.setModel(new FileSystemTreeModel());
+		fileSystemTree.setModel(new FileSystemTreeModel(fileSystemTree));
 		fileSystemTree.setEditable(true);
 		FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
 		fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
 		fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
 		fileSystemTree.setRowHeight(25);
-		
+		fileSystemTree.setDragEnabled(true);
 		fileSystemTree.setTransferHandler(new TransferHandler() {
 
 			private static final long serialVersionUID = -371360766111031218L;
@@ -523,8 +553,7 @@ public class MainView extends JFrame{
                     return false;
                 }
                 
-                // Check for String flavor
-                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+                if (!DragAndDropUtils.isFileImportRequest(info)) {
                 	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
                     return false;
                 }
@@ -543,7 +572,9 @@ public class MainView extends JFrame{
                 			PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
                 		} else {
                 			//do a simple copy
-                			sourceResourceHandler.copyTo(targetPathResource, false);
+                			IResourceHandler targetPathResourceFile = targetPathResource.addPathStatement(sourceResourceHandler.getName());
+                			IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile, targetPathResourceFile.getFileExtension());
+                			sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
                 		}
                 		((DefaultTreeModel)fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
                 	}
@@ -561,9 +592,42 @@ public class MainView extends JFrame{
              * Create a new Transferable that is used to drag files from jeboorker to a native application.
              */
             protected Transferable createTransferable(JComponent c) {
-            	return null;
-            }
+            	List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+		        final List<URI> uriList = new ArrayList<URI>(selectedTreeItems.size());
+		        final List<String> files = new ArrayList<String>(selectedTreeItems.size());
+		        
+				for (int i = 0; i < selectedTreeItems.size(); i++) {
+					IResourceHandler selectedTreeItem = selectedTreeItems.get(i);
+					try {
+
+						uriList.add(selectedTreeItem.toFile().toURI());
+						files.add(selectedTreeItem.toFile().getPath());
+					} catch (Exception e) {
+						LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + selectedTreeItem.toString(), e);
+					}
+				}
+		        
+		        if(CommonUtils.isLinux()) {
+		        	if(ReflectionUtils.javaVersion() == 16) {
+		        		return new URIListTransferable(uriList, null);
+		        	} else {
+		        		return new FileTransferable(files);
+		        	}
+		        } else {
+		        	return new FileTransferable(files);
+		        }
+	        }
         });
+		
+		fileSystemTree.addFocusListener(new FocusAdapter() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainTable.stopEdit();
+				mainTable.getSelectionModel().clearSelection();
+			}
+			
+		});
 		
 		GridBagConstraints gbc_tree = new GridBagConstraints();
 		gbc_tree.fill = GridBagConstraints.BOTH;
@@ -600,7 +664,7 @@ public class MainView extends JFrame{
                 }
                 
                 // Check for String flavor
-                if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
+                if (!DragAndDropUtils.isFileImportRequest(info)) {
                 	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
                     return false;
                 }
@@ -631,6 +695,19 @@ public class MainView extends JFrame{
             	return null;
             }
         });
+		
+		basePathTree.addFocusListener(new FocusAdapter() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainTable.stopEdit();
+				mainTable.getSelectionModel().clearSelection();
+
+				fileSystemTree.stopEditing();
+				fileSystemTree.clearSelection();
+			}
+			
+		});		
 		
 		GridBagConstraints gbc_tree = new GridBagConstraints();
 		gbc_tree.fill = GridBagConstraints.BOTH;
@@ -666,7 +743,7 @@ public class MainView extends JFrame{
         //int selRow = tree.getRowForLocation((int)location.getX(), (int)location.getY());
         TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
         
-		if(leftTabbedPane.getSelectedIndex() == 0) {
+		if(treeTabbedPane.getSelectedIndex() == 0) {
 			addBasePathTreeMenuItems(menu, selPath);
 		}
 			

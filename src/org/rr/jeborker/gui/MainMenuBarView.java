@@ -286,20 +286,22 @@ class MainMenuBarView extends JMenuBar {
 			}
 			
 			private void createDynamicEditMenu(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
+				List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+				
 				JMenuItem copyClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
+				if(!copyClipboard.isEnabled()) {
+					copyClipboard = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, selectedTreeItems));
+				}
 				copyClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
 				editMenuBar.add(copyClipboard);	
 				
-				IResourceHandler selectedBasePathTreeItems = MainController.getController().getSelectedBasePathTreeItems();
-				JMenuItem pasteClipboard = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedBasePathTreeItems != null ? selectedBasePathTreeItems.toString() : null));
-				if(selectedBasePathTreeItems == null) {
-					pasteClipboard.setEnabled(false);
-				} else {
-					pasteClipboard.setEnabled(true);
+				
+				JMenuItem pasteClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
+				if(!pasteClipboard.isEnabled()) {
+					pasteClipboard = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedTreeItems));
 				}
 				pasteClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
-				editMenuBar.add(pasteClipboard);						
-							
+				editMenuBar.add(pasteClipboard);	
 			}
 			
 			/**
