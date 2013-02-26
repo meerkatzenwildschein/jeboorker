@@ -90,6 +90,7 @@ class MainMenuBarView extends JMenuBar {
 			private void createDynamicFileMenu() {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
+				final List<IResourceHandler> selectedResources = controller.getSelectedTreeItems();
 				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
 
 				fileMenuBar.removeAll();
@@ -205,11 +206,19 @@ class MainMenuBarView extends JMenuBar {
 					openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedItems.get(0).getFile()));
 					openFileMenuEntry.setEnabled(true);
 				} else {
-					openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
-					openFolderMenuEntry.setEnabled(false);
-					
-					openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
-					openFileMenuEntry.setEnabled(false);							
+					if(selectedResources.size() == 1) {
+						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedResources.get(0).toString()));
+						openFolderMenuEntry.setEnabled(true);
+						
+						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedResources.get(0).toString()));
+						openFileMenuEntry.setEnabled(true);						
+					} else {					
+						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
+						openFolderMenuEntry.setEnabled(false);
+						
+						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
+						openFileMenuEntry.setEnabled(false);
+					}
 				}
 				
 				if(selectedItems.size() >= 1) {
@@ -226,11 +235,15 @@ class MainMenuBarView extends JMenuBar {
 					}
 				}
 				
-				JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu(selectedItems, selectedEbookPropertyItemRows);
+				JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu();
 				if(selectedItems.size() >= 1) {
 					copyToSubMenu.setEnabled(true);
 				}  else {
-					copyToSubMenu.setEnabled(false);
+					if(controller.getSelectedTreeItems().size() > 0) {
+						copyToSubMenu.setEnabled(true);	
+					} else {
+						copyToSubMenu.setEnabled(false);
+					}
 				}
 				
 				fileMenuBar.add(openFileMenuEntry);
@@ -322,6 +335,9 @@ class MainMenuBarView extends JMenuBar {
 				coverSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("image_16.png"));
 				MainView.addCoverMenuItems(coverSubMenu, selectedItems, selectedEbookPropertyItemRows);
 				editMenuBar.add(coverSubMenu);		
+				if(coverSubMenu.getMenuComponentCount() == 0) {
+					coverSubMenu.setEnabled(false);
+				}
 				
 				Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, selectedItems, selectedEbookPropertyItemRows);
 				editMenuBar.add(new JMenuItem(action));		

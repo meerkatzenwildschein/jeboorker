@@ -164,6 +164,26 @@ public class MainController {
 	/**
 	 * Mouse listener which handles the right click / popup menu on the main table.
 	 */
+	private class FileSystemTreePopupMouseListener extends MouseAdapter {
+		
+		public void mouseReleased(MouseEvent event) {
+			
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				final TreePath rowAtPoint = mainWindow.fileSystemTree.getPathForLocation(event.getX(), event.getY());
+				
+				//set selection for the right click
+				if(mainWindow.fileSystemTree.getSelectionCount() <= 1 ) {
+					mainWindow.fileSystemTree.setSelectionPath(rowAtPoint);
+				}
+				
+				MainMenuBarController.getController().showFileSystemTreePopupMenu(event.getPoint(), mainWindow.fileSystemTree);
+			}
+		}
+	}
+	
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
 	private class CoverPopupMouseListener extends MouseAdapter {
 
 		public void mouseReleased(MouseEvent event) {
@@ -233,7 +253,7 @@ public class MainController {
 		
 		mainWindow.imageViewer.addMouseListener(new CoverPopupMouseListener());
 		mainWindow.basePathTree.addMouseListener(new TreePopupMouseListener());
-		
+		mainWindow.fileSystemTree.addMouseListener(new FileSystemTreePopupMouseListener());
 		mainWindow.propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
 			
 			@Override
@@ -555,7 +575,7 @@ public class MainController {
 				return result;
 			}
 		}
-		return null;
+		return Collections.emptyList();
 	}
 	
 	/**

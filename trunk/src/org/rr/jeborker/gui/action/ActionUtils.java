@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.action;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -222,5 +223,38 @@ public class ActionUtils {
 			}
 		}
 		return false;
-	}		
+	}
+	
+	/**
+	 * Helper to fetch the resources in a default order. Tries to extract the resource
+	 * from the given text, than gets the selected resources from the application.
+	 */
+	static List<IResourceHandler> getResources(String text) {
+		ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+		if(text != null && !text.isEmpty()) {
+			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(text);
+			if(resourceHandler != null) {
+				result.add(ResourceHandlerFactory.getResourceHandler(text));
+			}
+			return result;
+		}
+		
+		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+		if(!selectedEbookPropertyItems.isEmpty()) {
+			for(EbookPropertyItem selectedEbookPropertyItem : selectedEbookPropertyItems) {
+				result.add(selectedEbookPropertyItem.getResourceHandler());
+			}
+			return result;
+		}
+		
+		List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+		if(!selectedTreeItems.isEmpty()) {
+			for(IResourceHandler selectedTreeItem : selectedTreeItems) {
+				result.add(selectedTreeItem);
+			}
+			return result;
+		}		
+		
+		return result;
+	}
 }
