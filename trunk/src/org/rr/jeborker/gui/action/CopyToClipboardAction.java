@@ -16,6 +16,7 @@ import javax.swing.Action;
 import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -23,12 +24,8 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class CopyToClipboardAction extends AbstractAction implements ClipboardOwner {
-	    
-	//source file to copy
-	String source;
 
-	CopyToClipboardAction(String text) {
-		this.source = text;
+	CopyToClipboardAction() {
 		String name = Bundle.getString("CopyToClipboardAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("copy_16.png"));
@@ -39,14 +36,22 @@ public class CopyToClipboardAction extends AbstractAction implements ClipboardOw
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
 		final ArrayList<String> files = new ArrayList<String>();
 		final ArrayList<URI> uriList = new ArrayList<URI>();
-		
-        for (EbookPropertyItem item : selectedEbookPropertyItems) {
-    		uriList.add(new File(item.getFile()).toURI());
-    		files.add(new File(item.getFile()).getPath());
-        }    
+
+		List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
+		if(!selectedEbookPropertyItems.isEmpty()) {
+	        for (EbookPropertyItem item : selectedEbookPropertyItems) {
+	    		uriList.add(new File(item.getFile()).toURI());
+	    		files.add(new File(item.getFile()).getPath());
+	        }
+		} else {
+			List<IResourceHandler> selectedTreeItems = controller.getSelectedTreeItems();
+			for(IResourceHandler selectedTreeItem : selectedTreeItems) {
+	    		uriList.add(selectedTreeItem.toFile().toURI());
+	    		files.add(selectedTreeItem.toFile().getPath());				
+			}
+		}
         
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable trans;
