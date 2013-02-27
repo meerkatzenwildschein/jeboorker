@@ -2,64 +2,101 @@ package org.rr.common.swing.tree;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
+import org.rr.commons.utils.ListUtils;
+
 public class TreeUtil {
-
-	// is path1 descendant of path2
-	public static boolean isDescendant(TreePath path1, TreePath path2) {
-		int count1 = path1.getPathCount();
-		int count2 = path2.getPathCount();
-		if (count1 <= count2)
-			return false;
-		while (count1 != count2) {
-			path1 = path1.getParentPath();
-			count1--;
+	
+	/**
+	 * Cleans the separator chars from the given node name.
+	 */
+	private static String cleanNodeName(String nodeName) {
+		if(nodeName != null) {
+			nodeName = nodeName.replaceAll("[\t\n]", "_");
 		}
-		return path1.equals(path2);
+		return nodeName;
 	}
 
-	public static String getExpansionState(JTree tree, int row) {
-		TreePath rowPath = tree.getPathForRow(row);
-		StringBuffer buf = new StringBuffer();
+	private static List<TreePath> getExpandedNodeNames(JTree tree) {
+		List<TreePath> result = new ArrayList<TreePath>();
 		int rowCount = tree.getRowCount();
-		for (int i = row; i < rowCount; i++) {
-			TreePath path = tree.getPathForRow(i);
-			if (i == row || isDescendant(path, rowPath)) {
-				if (tree.isExpanded(path))
-					buf.append("\t" + String.valueOf(i - row));
-			} else
-				break;
-		}
-		return buf.toString();
-	}
-
-	public static void restoreExpanstionState(JTree tree, int row, String expansionState) {
-		StringTokenizer stok = new StringTokenizer(expansionState, "\t");
-		while (stok.hasMoreTokens()) {
-			int token = row + Integer.parseInt(stok.nextToken());
-			tree.expandRow(token);
-		}
-	}
-
-	public static List<String> getExpansionStates(JTree tree) {
-		final int rowCount = tree.getRowCount();
-		final ArrayList<String> expansionStates = new ArrayList<String>(rowCount);
 		for (int i = 0; i < rowCount; i++) {
-			String expansionState = getExpansionState(tree, i);
-			expansionStates.add(expansionState);
+			TreePath rowPath = tree.getPathForRow(i);
+			if(tree.isExpanded(rowPath)) {
+				result.add(rowPath);
+			}
 		}
-
-		return expansionStates;
+		return result;
+	}
+	
+	/**
+	 * Get the tree path names in a separated string
+	 */
+	private static String getTreePathName(TreePath path, String separator) {
+		Object[] pathArray = path.getPath();
+		StringBuilder result = new StringBuilder();
+		for(Object p : pathArray) {
+			if(p instanceof NamedNode) {
+				String name = cleanNodeName(((NamedNode)p).getName());
+				if(name != null) {
+					if(result.length() > 0) {
+						result.append(separator);
+					}
+					result.append(name);
+				}
+			}
+		}
+		return result.toString();
+	}
+	
+	private static void restoreTreePathByName(JTree tree, String pathString, String separator) {
+		List<String> split = ListUtils.split(pathString, separator);
+		int row = 0;
+		for(String s : split) {
+			s = cleanNodeName(s);
+			int rowCount = tree.getRowCount();
+			for (; row < rowCount; row++) {
+				TreePath rowPath = tree.getPathForRow(row);
+				Object pathComponent = rowPath.getLastPathComponent();
+				String cleanedNodeName = cleanNodeName(((NamedNode) pathComponent).getName());
+				if(pathComponent instanceof NamedNode && cleanedNodeName.equals(s)) {
+					tree.expandRow(row);
+					break;
+				}
+			}			
+		}
 	}
 
-	public static void restoreExpanstionState(JTree tree, List<String> expansionStates) {
-		for (int i = 0; i < expansionStates.size(); i++) {
-			String expansionState = expansionStates.get(i);
-			restoreExpanstionState(tree, i, expansionState);
+	/**
+	 * Get the expansion states for the expanded nodes of the given {@link JTree} as string. 
+	 * Only those nodes gets collected that implements the {@link NamedNode} interface.
+	 * @see #restoreExpanstionState(JRTree, String)
+	 */
+	public static String getExpansionStates(JRTree tree) {
+		List<TreePath> expandedNodeNames = getExpandedNodeNames(tree);
+		StringBuilder result = new StringBuilder();
+		for(TreePath path : expandedNodeNames) {
+			String treePathName = getTreePathName(path, "\t");
+			if(result.length() > 0) {
+				result.append("\n");
+			}			
+			result.append(treePathName);
+		}
+		return result.toString();
+	}
+
+	/**
+	 * Restores the expansion states from the given String. 
+	 * @see TreeUtil#getExpansionStates(JRTree)
+	 */
+	public static void restoreExpanstionState(JRTree tree, String expansionStates) {
+		List<String> expansionStatesList = ListUtils.split(expansionStates, "\n");
+		for(String expansionState : expansionStatesList) {
+			restoreTreePathByName(tree, expansionState, "\t");
 		}
 	}
+
 }
