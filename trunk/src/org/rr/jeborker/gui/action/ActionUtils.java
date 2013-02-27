@@ -56,14 +56,21 @@ public class ActionUtils {
 	 * Refreshes the entries for the given handler.
 	 * @param resourceLoader The handler of the entry to be refreshed.
 	 */
-	static void refreshEntry(IResourceHandler resourceLoader) {	
+	static void refreshEntry(final IResourceHandler resourceLoader) {	
 		final List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceLoader);
 		Iterator<EbookPropertyItem> iterator = items.iterator();
 		if(iterator.hasNext()) {
 			EbookPropertyItem item = iterator.next();
 			refreshEbookPropertyItem(item, resourceLoader);
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					MainController.getController().refreshFileSystemTreeEntry(resourceLoader);
+				}
+			});
 		}
-		MainController.getController().refreshFileSystemTreeEntry(resourceLoader);
 	}
 	
 	/**
