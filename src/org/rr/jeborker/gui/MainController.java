@@ -321,12 +321,16 @@ public class MainController {
 	 * Refresh the Tree for the file system. Only the node for the given {@link IResourceHandler} will be refreshed.
 	 */
 	public void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh) {
-		TreeModel oldModel = mainWindow.fileSystemTree.getModel();
-		if(oldModel instanceof FileSystemTreeModel) {
+		final TreeModel model = mainWindow.fileSystemTree.getModel();
+		mainWindow.fileSystemTree.stopEditing();
+		mainWindow.fileSystemTree.clearSelection();
+		if(model instanceof FileSystemTreeModel) {
 			if(!resourceToRefresh.exists() || resourceToRefresh.isFileResource()) {
 				resourceToRefresh = resourceToRefresh.getParentResource();
 			}
-			((FileSystemTreeModel)oldModel).reload(resourceToRefresh);
+			String expansionStates = TreeUtil.getExpansionStates(mainWindow.fileSystemTree);
+			((FileSystemTreeModel) model).reload(resourceToRefresh);
+			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, expansionStates);
 		}
 	}
 	

@@ -123,9 +123,11 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 				MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
 			} else {
 				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + sourceResource + ". It's not a supported ebook format.");
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
+				} else if(sourceResource.exists()){
+					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");	                				
 				} else {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop " + sourceResource);	                				
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");	                				
 				}
 			}
 		}

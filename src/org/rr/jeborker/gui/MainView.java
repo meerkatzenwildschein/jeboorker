@@ -583,6 +583,11 @@ public class MainView extends JFrame{
                 Object lastPath = dropRow.getLastPathComponent();
                 try {
                 	IResourceHandler targetPathResource = ResourceHandlerFactory.getResourceHandler(((FileSystemTreeModel.IFolderNode) lastPath).getFile());
+                	boolean reloadParent = false;
+                	if(targetPathResource.isFileResource()) {
+                		targetPathResource = targetPathResource.getParentResource();
+                		reloadParent = true;
+                	}
                 	Transferable transferable = info.getTransferable();
                 	List<IResourceHandler> sourceResourceHandlers = ResourceHandlerFactory.getResourceHandler(transferable);
                 	for(IResourceHandler sourceResourceHandler : sourceResourceHandlers) {
@@ -596,9 +601,20 @@ public class MainView extends JFrame{
                 			IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile, targetPathResourceFile.getFileExtension());
                 			sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
                 		}
-                		((DefaultTreeModel)fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
+                		if(reloadParent) {
+                			TreeNode node = (TreeNode) dropRow.getLastPathComponent();
+                			TreeNode parentNode = node.getParent();
+                			if(parentNode != null) {
+                				((DefaultTreeModel) fileSystemTree.getModel()).reload(parentNode);
+                			} else {
+                				((DefaultTreeModel) fileSystemTree.getModel()).reload(node);
+                			}
+                		} else {
+                			((DefaultTreeModel) fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
+                		}
                 	}
 				} catch (Exception e) {
+					e.printStackTrace();
 					return false;
 				} 
                 return true;
