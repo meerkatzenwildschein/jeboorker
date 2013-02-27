@@ -310,7 +310,7 @@ public class MainController {
 			((BasePathTreeModel)oldModel).dispose();
 		}
 		TreeSelectionModel selectionModel = mainWindow.basePathTree.getSelectionModel();
-		List<String> expansionStates = TreeUtil.getExpansionStates(mainWindow.basePathTree);
+		String expansionStates = TreeUtil.getExpansionStates(mainWindow.basePathTree);
 		BasePathTreeModel newBasePathTreeModel = new BasePathTreeModel();
 		mainWindow.basePathTree.setModel(newBasePathTreeModel);
 		TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);

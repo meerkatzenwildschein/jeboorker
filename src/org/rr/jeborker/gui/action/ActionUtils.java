@@ -62,7 +62,8 @@ public class ActionUtils {
 		if(iterator.hasNext()) {
 			EbookPropertyItem item = iterator.next();
 			refreshEbookPropertyItem(item, resourceLoader);
-		}		
+		}
+		MainController.getController().refreshFileSystemTreeEntry(resourceLoader);
 	}
 	
 	/**

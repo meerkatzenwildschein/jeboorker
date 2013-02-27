@@ -9,6 +9,10 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -295,6 +299,22 @@ public class MainView extends JFrame{
 				mainTableScrollPane.setViewportView(mainTable);
 				
 				treeTabbedPane = new JTabbedPane();
+				treeTabbedPane.setDropTarget(new DropTarget(treeTabbedPane, new DropTargetAdapter() {
+					
+					@Override
+					public void dragOver(DropTargetDragEvent dtde) {
+						Point location = dtde.getLocation();
+						int indexAtLocation = treeTabbedPane.indexAtLocation(location.x, location.y);
+						if(indexAtLocation >= 0) {
+							treeTabbedPane.setSelectedIndex(indexAtLocation);
+						}
+					}
+
+					@Override
+					public void drop(DropTargetDropEvent dtde) {
+					}
+				
+				}));
 				
 				JScrollPane basePathTreeScroller = createBasePathTree();
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeScroller);
