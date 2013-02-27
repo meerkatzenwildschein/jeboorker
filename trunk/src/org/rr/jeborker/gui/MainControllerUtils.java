@@ -39,8 +39,8 @@ class MainControllerUtils {
 		JeboorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
 		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
-		JeboorkerPreferences.addEntryString("basePathTreeSelection", ListUtils.join(TreeUtil.getExpansionStates(mainWindow.basePathTree), "\n"));
-		JeboorkerPreferences.addEntryString("fileSystemTreeSelection", ListUtils.join(TreeUtil.getExpansionStates(mainWindow.fileSystemTree), "\n"));
+		JeboorkerPreferences.addEntryString("basePathTreeSelection", TreeUtil.getExpansionStates(mainWindow.basePathTree));
+		JeboorkerPreferences.addEntryString("fileSystemTreeSelection", TreeUtil.getExpansionStates(mainWindow.fileSystemTree));
 	}
 	
 	/**
@@ -84,7 +84,7 @@ class MainControllerUtils {
 		
 		//restore the divider location in the property sheet 
 		final Number descriptionDividerLocation = JeboorkerPreferences.getEntryAsNumber("descriptionDividerLocation");
-		if(descriptionDividerLocation!=null) {
+		if(descriptionDividerLocation != null) {
 			mainWindow.propertySheet.setDescriptionDividerLocation(descriptionDividerLocation.intValue());
 		}
 		
@@ -95,14 +95,12 @@ class MainControllerUtils {
 		
 		final String basePathTreeSelection = JeboorkerPreferences.getEntryString("basePathTreeSelection");
 		if(basePathTreeSelection != null) {
-			List<String> expansionStates = ListUtils.split(basePathTreeSelection, "\n");
-			TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
+			TreeUtil.restoreExpanstionState(mainWindow.basePathTree, basePathTreeSelection);
 		}
 		
 		final String fileSystemTreeSelection = JeboorkerPreferences.getEntryString("fileSystemTreeSelection");
 		if(fileSystemTreeSelection != null) {
-			List<String> expansionStates = ListUtils.split(fileSystemTreeSelection, "\n");
-			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, expansionStates);
+			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, fileSystemTreeSelection);
 		}
 	}
 	

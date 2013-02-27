@@ -16,6 +16,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.rr.common.swing.tree.NamedNode;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
@@ -142,7 +143,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		}
 	}
 
-	public interface IFolderNode extends TreeNode, Comparable<IFolderNode> {
+	public interface IFolderNode extends TreeNode, Comparable<IFolderNode>, NamedNode {
 		/**
 		 * Icon for a file, directory, or folder as it would be displayed in a system file browser. Example from Windows: the "M:\" directory displays a CD-ROM
 		 * icon.
@@ -209,6 +210,11 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 			((IFolderNode) this.getChildAt(0)).getChildCount();
 			return true;
 		}
+		
+		@Override
+		public String getName() {
+			return null;
+		}		
 	}
 
 	/**
@@ -438,6 +444,11 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 				return 99;
 			}
 			return getFile().compareTo(o.getFile());
+		}
+
+		@Override
+		public String getName() {
+			return getFile().toString();
 		}
 
 	}

@@ -14,6 +14,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import org.rr.common.swing.tree.NamedNode;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -45,7 +46,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		}
 	}
 	
-	public static class BasePathNode implements MutableTreeNode {
+	public static class BasePathNode implements MutableTreeNode, NamedNode {
 
 		private IResourceHandler pathResource;
 		
@@ -182,6 +183,11 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		
 		public IResourceHandler getPathResource() {
 			return this.pathResource;
+		}
+
+		@Override
+		public String getName() {
+			return pathResource.toString();
 		}
 	}
 
