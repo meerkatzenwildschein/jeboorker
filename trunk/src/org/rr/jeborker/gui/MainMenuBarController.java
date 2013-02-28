@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -159,6 +160,20 @@ public class MainMenuBarController {
 		Action action;
 		if(items.size() == 1) {
 			//only visible to single selections
+			if(items.get(0).isDirectoryResource()) {
+				action = new AbstractAction(SwingUtils.removeMnemonicMarker(Bundle.getString("MainMenuBarController.refresh"))) {{
+						putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("refresh_16.png"));
+						putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(Bundle.getString("MainMenuBarController.refresh")));
+					}
+				
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						MainController.getController().refreshFileSystemTreeEntry(items.get(0));
+					}
+				};
+				menu.add(action);
+			}
+			
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).toString());
 			menu.add(action);			
 			
