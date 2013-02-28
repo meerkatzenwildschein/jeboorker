@@ -180,10 +180,17 @@ public class PackageDocumentReader extends PackageDocumentBase {
 			if (StringUtil.isBlank(resourceHref)) {
 				continue;
 			}
-			Resource resource = resources.getByHref(StringUtil.substringBefore(resourceHref, Constants.FRAGMENT_SEPARATOR_CHAR));
+			String guideHref = StringUtil.substringBefore(resourceHref, Constants.FRAGMENT_SEPARATOR_CHAR);
+			Resource resource = resources.getByHref(guideHref);
 			if (resource == null) {
-				log.warning("Guide is referencing resource with href " + resourceHref + " which could not be found");
-				continue;
+				resource = findHrefResource(guideHref, resources);
+				if(resource != null) {
+					resource.setHref(guideHref);
+				} else {
+					log.warning("Guide is referencing resource with href " + resourceHref + " which could not be found");
+					continue;
+				}
+
 			}
 			String type = DOMUtil.getAttribute(referenceElement, NAMESPACE_OPF, OPFAttributes.type);
 			if (StringUtil.isBlank(type)) {
