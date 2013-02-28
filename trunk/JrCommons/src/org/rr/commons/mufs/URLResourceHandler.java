@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
+import org.rr.commons.io.HttpInputStream;
 
 public class URLResourceHandler extends AResourceHandler {
 	
@@ -52,16 +53,20 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public ResourceHandlerInputStream getContentInputStream() throws IOException {
-		URLConnection connection = this.url.openConnection();
-		if(connection instanceof HttpURLConnection) {
-			((HttpURLConnection) connection).setConnectTimeout(10 * 1000); //10 sec timeout
-			((HttpURLConnection) connection).setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
+		if(this.url.getProtocol().equals("http")) {
+			return new ResourceHandlerInputStream(this, new HttpInputStream(this.url));
+		} else {
+			URLConnection connection = this.url.openConnection();
+			if(connection instanceof HttpURLConnection) {
+				((HttpURLConnection) connection).setConnectTimeout(10 * 1000); //10 sec timeout
+				((HttpURLConnection) connection).setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
+			}
+			connection.connect();
+			InputStream inputStream = connection.getInputStream();
+			ResourceHandlerInputStream in = new ResourceHandlerInputStream(this, inputStream);
+			inStream.add(inputStream);
+			return in;
 		}
-		connection.connect();
-		InputStream inputStream = connection.getInputStream();
-		ResourceHandlerInputStream in = new ResourceHandlerInputStream(this, inputStream);
-		inStream.add(inputStream);
-		return in;
 	}
 
 	@Override
