@@ -276,7 +276,14 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public void delete() throws IOException {
-		boolean success = this.file.delete();
+		boolean success;
+		if(this.isFileResource()) {
+			success = this.file.delete();
+		} else {
+			FileUtils.deleteDirectory(this.file);
+			success = !this.exists();
+		}
+		
 		if(!success) {
 			throw new IOException("could not delete resource " + String.valueOf(this.file));
 		} else {
