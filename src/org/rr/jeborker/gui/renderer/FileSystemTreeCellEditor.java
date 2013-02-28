@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.renderer;
 
 import java.awt.Component;
+import java.io.File;
 import java.util.EventObject;
 
 import javax.swing.JTree;
@@ -13,6 +14,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.FileSystemTreeModel.IFolderNode;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 
@@ -39,6 +41,18 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 		Component result = super.getTreeCellEditorComponent(tree, value, isSelected, expanded, leaf, row);
 		editingIcon = ((IFolderNode) value).getSystemIcon(); // setup the icon to be used while editing
+		File file = ((IFolderNode) value).getFile();
+		if(file.isDirectory()) {
+			if(file.toString().equals(System.getProperty("user.home"))) {
+				editingIcon = ImageResourceBundle.getResourceAsImageIcon("folder_home_16.png");
+			} else if(tree.isExpanded(row)) {
+				editingIcon = ImageResourceBundle.FOLDER_OPEN_16_ICON;
+			} else {
+				editingIcon = ImageResourceBundle.FOLDER_CLOSE_16_ICON;
+			}
+		} else {
+			editingIcon = ImageResourceBundle.FILE_16_ICON;
+		}
 		editingNode = (IFolderNode) value;
 		return result;
 	}

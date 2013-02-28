@@ -22,8 +22,8 @@ class OpenFolderAction extends AbstractAction {
 		this.folder = text;
 		String name = Bundle.getString("OpenFolderAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
-		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("folder_16.png"));
-		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("folder_22.png"));
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("folder_open_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("folder_open_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 	

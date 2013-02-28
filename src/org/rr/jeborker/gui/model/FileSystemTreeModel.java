@@ -133,7 +133,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		for(int i = 0; i < rowCount; i++) {
 			TreePath pathForRow = tree.getPathForRow(i);
 			if(pathForRow.getLastPathComponent() instanceof IFolderNode) {
-				File file = ((IFolderNode)pathForRow.getLastPathComponent()).getFile();
+				File file = ((IFolderNode) pathForRow.getLastPathComponent()).getFile();
 				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(file);
 				if(resourceHandler.equals(resourceToRefresh)) {
 					reload((TreeNode) pathForRow.getLastPathComponent());

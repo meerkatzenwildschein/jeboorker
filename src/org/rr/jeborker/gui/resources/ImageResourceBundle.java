@@ -10,6 +10,13 @@ public class ImageResourceBundle {
 
 	private static WeakHashMap<String, Icon> imageIconCache = new WeakHashMap<String, Icon>();
 	
+	public static final Icon FOLDER_OPEN_16_ICON = ImageResourceBundle.getResourceAsImageIcon("folder_open_16.png");
+	
+	public static final Icon FOLDER_CLOSE_16_ICON = ImageResourceBundle.getResourceAsImageIcon("folder_closed_16.png");
+	
+	public static final Icon FILE_16_ICON = ImageResourceBundle.getResourceAsImageIcon("file_16.png");
+	
+	
     /**
      * Retrieves an object from the localized resource bundle. In most cases
      * this is an image.

@@ -253,12 +253,12 @@ public class ActionFactory {
 			
 			@Override
 			public boolean canHandle(EbookPropertyItem item) {
-				return item.getResourceHandler().isFileResource();
+				return item.getResourceHandler().exists();
 			}
 			
 			@Override
 			public boolean canHandle(IResourceHandler resourceHandler) {
-				return resourceHandler.isFileResource();
+				return resourceHandler.exists();
 			}				
 			
 			@Override
