@@ -9,7 +9,6 @@ import javax.swing.Action;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.gui.Bundle;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -18,8 +17,10 @@ public class FileSystemTreeRefreshAction extends AbstractAction {
 	private String path;
 	
 	FileSystemTreeRefreshAction(String path) {
+		String name = Bundle.getString("FileSystemTreeRefreshAction.name");
+		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
+		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("refresh_16.png"));
-		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(Bundle.getString("MainMenuBarController.refresh")));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
 	
