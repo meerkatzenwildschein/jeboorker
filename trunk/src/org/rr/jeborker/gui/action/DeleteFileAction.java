@@ -44,9 +44,16 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 				if(fileToDelete == null) {
 					//delete selected files if no ones are specified
 					List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
-					for(EbookPropertyItem item : selectedEbookPropertyItems) {
-						IResourceHandler resourceHandler = item.getResourceHandler();
-						doDelete(resourceHandler);
+					if(!selectedEbookPropertyItems.isEmpty()) {
+						for(EbookPropertyItem item : selectedEbookPropertyItems) {
+							IResourceHandler resourceHandler = item.getResourceHandler();
+							doDelete(resourceHandler);
+						}
+					} else {
+						List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+						for(IResourceHandler resourceHandler : selectedTreeItems) {
+							doDelete(resourceHandler);
+						}
 					}
 				} else {
 					doDelete(fileToDelete);

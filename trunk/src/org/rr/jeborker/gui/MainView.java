@@ -214,7 +214,6 @@ public class MainView extends JFrame{
 		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
-		
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
 		
 		JPanel propertyContentPanel = new JPanel();
@@ -319,7 +318,7 @@ public class MainView extends JFrame{
 				JScrollPane basePathTreeScroller = createBasePathTree();
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeScroller);
 				
-				JScrollPane fileSystemTreeScroller = createFileSystemTree();
+				JScrollPane fileSystemTreeScroller = createFileSystemTree(copy, paste, delete);
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeScroller);
 				
 				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
@@ -545,7 +544,7 @@ public class MainView extends JFrame{
 		});
 	}
 
-	private JScrollPane createFileSystemTree() {
+	private JScrollPane createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete) {
 		fileSystemTree = new JRTree();
 		fileSystemTree.setName("FileSystemTree");
 		JScrollPane treeScroller = new JScrollPane(fileSystemTree);
@@ -559,6 +558,11 @@ public class MainView extends JFrame{
 		fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
 		fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
 		fileSystemTree.setRowHeight(25);
+		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
+		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
+		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
+		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, null), "Refresh", KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false), JComponent.WHEN_FOCUSED);
+		
 		fileSystemTree.setDragEnabled(true);
 		fileSystemTree.setTransferHandler(new TransferHandler() {
 
