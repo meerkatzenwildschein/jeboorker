@@ -8,6 +8,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 
 import javax.swing.Action;
@@ -19,6 +20,8 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.pm.image.IImageProvider;
+import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> implements ClipboardOwner {
@@ -46,14 +49,50 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 			Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 			Transferable contents = c.getContents(this);
 			try {
-				Object transferData = contents.getTransferData(DataFlavor.imageFlavor);
-				if(transferData instanceof BufferedImage) {
-					byte[] encodeJpeg = ImageUtils.getImageBytes((BufferedImage) transferData, "image/jpeg");
-					image = new ByteArrayInputStream(encodeJpeg);
-					setDialogOption(JFileChooser.APPROVE_OPTION);
-					setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg));
-				} else {
-					LoggerFactory.getLogger().log(Level.INFO, "No image data in Clipboard");
+				IOException ex = null;
+				DataFlavor[] transferDataFlavors = contents.getTransferDataFlavors();
+				for(DataFlavor transferDataFlavor : transferDataFlavors) {
+					try {
+						if(!transferDataFlavor.getMimeType().startsWith("image/")) {
+							continue;
+						}
+						Object transferData = contents.getTransferData(transferDataFlavor);
+						if(transferData instanceof BufferedImage) {
+							byte[] encodeJpeg = ImageUtils.getImageBytes((BufferedImage) transferData, "image/jpeg");
+							image = new ByteArrayInputStream(encodeJpeg);
+							setDialogOption(JFileChooser.APPROVE_OPTION);
+							setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg));
+						} else if(transferData instanceof InputStream) {
+							byte[] encodeJpeg = IOUtils.toByteArray((InputStream) transferData);
+							image = new ByteArrayInputStream(encodeJpeg);
+							IResourceHandler imageDataResourceHandler = ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg);
+							if(imageDataResourceHandler.getMimeType().equals("image/jpeg")) {
+								setDialogOption(JFileChooser.APPROVE_OPTION);
+								setDialogResult(imageDataResourceHandler);		
+								ex = null;
+								break;
+							} else {
+								IImageProvider imageProvider = ImageProviderFactory.getImageProvider(imageDataResourceHandler);
+								BufferedImage bufferedImage = imageProvider.getImage();
+								byte[] imageBytes = ImageUtils.getImageBytes(bufferedImage, "image/jpeg");
+								image = new ByteArrayInputStream(imageBytes);
+								
+								setDialogOption(JFileChooser.APPROVE_OPTION);
+								setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", imageBytes));
+								ex = null;
+								break;
+							}
+						} else {
+							continue;
+						}
+					} catch(IOException e) {
+						ex = e;
+						continue;
+					}
+				}
+				
+				if(ex != null) {
+					throw ex;
 				}
 			} catch (Exception e1) {
 				LoggerFactory.getLogger().log(Level.INFO, "Failed accessing Clipboard", e1);
