@@ -2,7 +2,6 @@ package org.rr.commons.utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -731,13 +730,13 @@ public final class ListUtils implements Serializable {
 	 * 	with the <code>values</code> parameter which contains all values between 
 	 * 	<code>start</code> and <code>end</code>.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T>List<T> extract(final List<T> values, int start, int end) {
 		//create the resized array 
-		T[] target = (T[]) java.lang.reflect.Array.newInstance(
-				values.getClass().getComponentType(), values.size());
-		
-		return Arrays.asList(ArrayUtils.extract(values.toArray(target), start, end));
+		List<T> result = new ArrayList<T>(end);
+		for(int i = start; i < values.size() && i < end; i++) {
+			result.add(values.get(i));
+		}
+		return result;
 	}
 	
 	/**

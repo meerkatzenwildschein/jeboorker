@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -368,5 +369,11 @@ public interface IResourceHandler {
 	 * Gets a local file for the given ResourceHandler.
 	 */
 	public File toFile();
+	
+	/**
+	 * Get all path segments including the file name as the last segment.
+	 * @return The path segments. If no path segmentation is supported an empty list is returned. 
+	 */
+	public List<String> getPathSegments();
 
 }

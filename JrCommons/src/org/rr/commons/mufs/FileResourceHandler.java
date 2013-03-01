@@ -12,7 +12,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -21,6 +23,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.ListUtils;
 
 
 /**
@@ -678,6 +681,19 @@ class FileResourceHandler extends AResourceHandler {
 	@Override
 	public File toFile() {
 		return getFile();
+	}
+
+	@Override
+	public List<String> getPathSegments() {
+		final File file = getFile();
+		List<String> result = Collections.emptyList();
+		if(file != null) {
+			result = ListUtils.split(file.toString(), File.separator);
+			if(!result.isEmpty() && result.get(0).isEmpty()) {
+				result.set(0, "/");
+			}
+		}
+		return result;
 	}
 	
 }
