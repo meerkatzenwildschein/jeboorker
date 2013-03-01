@@ -547,6 +547,8 @@ public class MainView extends JFrame{
 
 	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete) {
 		JPanel fileSystemTreePanel = new JPanel();
+		fileSystemTreePanel.setBackground(SwingUtils.getBackgroundColor());
+		
 		GridBagLayout gbl_fileSystemTreePanel = new GridBagLayout();
 		gbl_fileSystemTreePanel.columnWidths = new int[]{76, 0};
 		gbl_fileSystemTreePanel.rowHeights = new int[]{25, 0, 0};
@@ -555,8 +557,9 @@ public class MainView extends JFrame{
 		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
 		
 		buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		gbc_buttonPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
 		gbc_buttonPanel.gridx = 0;
 		gbc_buttonPanel.gridy = 0;
@@ -716,6 +719,7 @@ public class MainView extends JFrame{
 	
 	private JComponent createBasePathTree() {
 		JPanel basePathTreePanel = new JPanel();
+		basePathTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		GridBagLayout gbl_basePathTreePanel = new GridBagLayout();
 		gbl_basePathTreePanel.columnWidths = new int[]{76, 0};
 		gbl_basePathTreePanel.rowHeights = new int[]{25, 0, 0};
@@ -724,8 +728,9 @@ public class MainView extends JFrame{
 		basePathTreePanel.setLayout(gbl_basePathTreePanel);
 		
 		buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		gbc_buttonPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
 		gbc_buttonPanel.gridx = 0;
 		gbc_buttonPanel.gridy = 0;
