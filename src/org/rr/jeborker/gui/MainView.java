@@ -2,6 +2,7 @@ package org.rr.jeborker.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -60,6 +61,7 @@ import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
+import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.button.JMenuButton;
 import org.rr.common.swing.dnd.DragAndDropUtils;
 import org.rr.common.swing.dnd.FileTransferable;
@@ -149,7 +151,8 @@ public class MainView extends JFrame{
 	JScrollPane mainTableScrollPane;
 
 	JTabbedPane treeTabbedPane;
-	private JPanel panel;
+	private JPanel buttonPanel;
+	private JButton syncButton;
 
 	/**
 	 * Create the application.
@@ -241,6 +244,7 @@ public class MainView extends JFrame{
 				
 				sortLabel = new JLabel("Sortieren nach:");
 				GridBagConstraints gbc_sortLabel = new GridBagConstraints();
+				gbc_sortLabel.fill = GridBagConstraints.VERTICAL;
 				gbc_sortLabel.anchor = GridBagConstraints.WEST;
 				gbc_sortLabel.insets = new Insets(0, 0, 0, 5);
 				gbc_sortLabel.gridx = 0;
@@ -250,8 +254,7 @@ public class MainView extends JFrame{
 				sortColumnComboBox = new CheckComboBox<Field>();
 				sortColumnComboBox.setPreferredSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
-				gbc_sortColumnComboBox.fill = GridBagConstraints.HORIZONTAL;
-				gbc_sortColumnComboBox.anchor = GridBagConstraints.NORTH;
+				gbc_sortColumnComboBox.fill = GridBagConstraints.BOTH;
 				gbc_sortColumnComboBox.gridx = 3;
 				gbc_sortColumnComboBox.gridy = 0;
 				sortPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
@@ -264,8 +267,7 @@ public class MainView extends JFrame{
 				sortOrderAscButton.setPreferredSize(new Dimension(0, 25));
 				sortOrderAscButton.setMinimumSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortOrderAscButton = new GridBagConstraints();
-				gbc_sortOrderAscButton.fill = GridBagConstraints.HORIZONTAL;
-				gbc_sortOrderAscButton.anchor = GridBagConstraints.NORTH;
+				gbc_sortOrderAscButton.fill = GridBagConstraints.BOTH;
 				gbc_sortOrderAscButton.insets = new Insets(0, 0, 0, 5);
 				gbc_sortOrderAscButton.gridx = 1;
 				gbc_sortOrderAscButton.gridy = 0;
@@ -276,9 +278,8 @@ public class MainView extends JFrame{
 				sortOrderDescButton.setPreferredSize(new Dimension(0, 25));
 				sortOrderDescButton.setMinimumSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortOrderDescButton = new GridBagConstraints();
-				gbc_sortOrderDescButton.fill = GridBagConstraints.HORIZONTAL;
+				gbc_sortOrderDescButton.fill = GridBagConstraints.BOTH;
 				gbc_sortOrderDescButton.insets = new Insets(0, 0, 0, 5);
-				gbc_sortOrderDescButton.anchor = GridBagConstraints.NORTH;
 				gbc_sortOrderDescButton.gridx = 2;
 				gbc_sortOrderDescButton.gridy = 0;
 				sortPanel.add(sortOrderDescButton, gbc_sortOrderDescButton);
@@ -552,6 +553,30 @@ public class MainView extends JFrame{
 		gbl_fileSystemTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_fileSystemTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
+		
+		buttonPanel = new JPanel();
+		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
+		gbc_buttonPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
+		gbc_buttonPanel.gridx = 0;
+		gbc_buttonPanel.gridy = 0;
+		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
+		GridBagLayout gbl_buttonPanel = new GridBagLayout();
+		gbl_buttonPanel.columnWidths = new int[]{0, 28, 0};
+		gbl_buttonPanel.rowHeights = new int[]{10, 0};
+		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		buttonPanel.setLayout(gbl_buttonPanel);
+		
+		syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
+		syncButton.setPreferredSize(new Dimension(0, 28));
+		syncButton.setMinimumSize(new Dimension(0, 28));
+		GridBagConstraints gbc_syncButton = new GridBagConstraints();
+		gbc_syncButton.fill = GridBagConstraints.BOTH;
+		gbc_syncButton.gridx = 1;
+		gbc_syncButton.gridy = 0;
+		buttonPanel.add(syncButton, gbc_syncButton);
+		
 		fileSystemTree = new JTree();
 		fileSystemTree.setName("FileSystemTree");
 		
@@ -572,15 +597,6 @@ public class MainView extends JFrame{
 		gbc_treeScroller.gridx = 0;
 		gbc_treeScroller.gridy = 1;
 		fileSystemTreePanel.add(treeScroller, gbc_treeScroller);
-		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setOpaque(false);
-		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
-		gbc_buttonPanel.anchor = GridBagConstraints.NORTHWEST;
-		gbc_buttonPanel.gridx = 0;
-		gbc_buttonPanel.gridy = 0;
-		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
 		
 		fileSystemTree.setRootVisible(false);
 		fileSystemTree.setRowHeight(25);
@@ -706,6 +722,30 @@ public class MainView extends JFrame{
 		gbl_basePathTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_basePathTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		basePathTreePanel.setLayout(gbl_basePathTreePanel);
+		
+		buttonPanel = new JPanel();
+		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
+		gbc_buttonPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
+		gbc_buttonPanel.gridx = 0;
+		gbc_buttonPanel.gridy = 0;
+		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
+		GridBagLayout gbl_buttonPanel = new GridBagLayout();
+		gbl_buttonPanel.columnWidths = new int[]{0, 28, 0};
+		gbl_buttonPanel.rowHeights = new int[]{10, 0};
+		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		buttonPanel.setLayout(gbl_buttonPanel);
+		
+		syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
+		syncButton.setPreferredSize(new Dimension(0, 28));
+		syncButton.setMinimumSize(new Dimension(0, 28));
+		GridBagConstraints gbc_syncButton = new GridBagConstraints();
+		gbc_syncButton.fill = GridBagConstraints.BOTH;
+		gbc_syncButton.gridx = 1;
+		gbc_syncButton.gridy = 0;
+		buttonPanel.add(syncButton, gbc_syncButton);
+		
 		basePathTree = new JTree();
 		basePathTree.setName("BasePathTree");
 		if(Jeboorker.isRuntime) {
@@ -772,14 +812,6 @@ public class MainView extends JFrame{
             	return null;
             }
         });
-		
-		panel = new JPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
-		basePathTreePanel.add(panel, gbc_panel);
 		
 		basePathTree.addFocusListener(new FocusAdapter() {
 
@@ -922,5 +954,10 @@ public class MainView extends JFrame{
 		} else {
 			return showAgain.intValue();
 		}
+	}
+
+	public JTree getSelectedTreePathComponent() {
+		JTree selectedComponent = (JTree) SwingUtils.getAllComponents(JTree.class, (Container) treeTabbedPane.getSelectedComponent())[0];
+		return selectedComponent;
 	}
 }
