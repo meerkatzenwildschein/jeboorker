@@ -55,6 +55,9 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -156,7 +159,6 @@ public class MainView extends JFrame{
 
 	JTabbedPane treeTabbedPane;
 	private JPanel buttonPanel;
-	private JButton syncButton;
 
 	/**
 	 * Create the application.
@@ -580,7 +582,7 @@ public class MainView extends JFrame{
 		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		buttonPanel.setLayout(gbl_buttonPanel);
 		
-		syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
+		JButton syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
 		syncButton.setPreferredSize(new Dimension(0, 28));
 		syncButton.setMinimumSize(new Dimension(0, 28));
 		GridBagConstraints gbc_syncButton = new GridBagConstraints();
@@ -593,11 +595,29 @@ public class MainView extends JFrame{
 		fileSystemTree.setName("FileSystemTree");
 		
 		if(Jeboorker.isRuntime) {
-			fileSystemTree.setModel(new FileSystemTreeModel(fileSystemTree));
+			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
+			fileSystemTree.setModel(fileSystemTreeModel);
 			fileSystemTree.setEditable(true);
 			FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
 			fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
 			fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
+			if(((DefaultMutableTreeNode) fileSystemTreeModel.getRoot()).getChildCount() == 1) {
+				fileSystemTree.addTreeExpansionListener(new TreeExpansionListener() {
+					
+					@Override
+					public void treeExpanded(TreeExpansionEvent event) {
+					}
+					
+					@Override
+					public void treeCollapsed(TreeExpansionEvent event) {
+						TreePath path = event.getPath();
+						if(path.getPathCount() == 2) {
+							fileSystemTree.expandPath(event.getPath());
+						}
+					}
+				});
+				fileSystemTree.expandRow(0);
+			}
 		}
 
 		JScrollPane treeScroller = new JScrollPane(fileSystemTree);
@@ -751,7 +771,7 @@ public class MainView extends JFrame{
 		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		buttonPanel.setLayout(gbl_buttonPanel);
 		
-		syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
+		JButton syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
 		syncButton.setPreferredSize(new Dimension(0, 28));
 		syncButton.setMinimumSize(new Dimension(0, 28));
 		GridBagConstraints gbc_syncButton = new GridBagConstraints();
@@ -759,6 +779,15 @@ public class MainView extends JFrame{
 		gbc_syncButton.gridx = 1;
 		gbc_syncButton.gridy = 0;
 		buttonPanel.add(syncButton, gbc_syncButton);
+		
+		JButton addButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
+		addButton.setPreferredSize(new Dimension(0, 28));
+		addButton.setMinimumSize(new Dimension(0, 28));
+		GridBagConstraints gbc_addButton = new GridBagConstraints();
+		gbc_addButton.fill = GridBagConstraints.BOTH;
+		gbc_addButton.gridx = 2;
+		gbc_addButton.gridy = 0;
+		buttonPanel.add(addButton, gbc_addButton);
 		
 		basePathTree = new JRTree();
 		basePathTree.setName("BasePathTree");
