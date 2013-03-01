@@ -8,8 +8,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
@@ -20,8 +18,6 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 public class SyncFolderAction extends AbstractAction {
 
 	private static SyncFolderAction basePathFolderSyncAction;
-	
-	private String path;
 	
 	SyncFolderAction() {
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("sync_16.png"));

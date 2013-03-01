@@ -585,30 +585,42 @@ public class MainController {
 		JTree selectedComponent = mainWindow.getSelectedTreePathComponent();
 		for(IResourceHandler resourceHandler : resourceHandlers) {
 			TreeModel model = ((JTree) selectedComponent).getModel();
-			if(model instanceof FileSystemTreeModel) {
-				List<String> pathSegments = resourceHandler.getPathSegments();
-				List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
-				for(int i = 0; i < pathSegments.size(); i++) {
-					if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
-						if(i > 0) {
-							List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
-							String join = ListUtils.join(extract, File.separator);
-							fullPathSegments.add(File.separator + join);
-						}
-					} else {
-						List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);	
+			
+			
+			List<String> pathSegments = resourceHandler.getPathSegments();
+			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
+			for(int i = 0; i < pathSegments.size(); i++) {
+				if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+					if(i > 0) {
+						List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
 						String join = ListUtils.join(extract, File.separator);
-						fullPathSegments.add(join);
+						fullPathSegments.add(File.separator + join);
 					}
+				} else {
+					List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);	
+					String join = ListUtils.join(extract, File.separator);
+					fullPathSegments.add(join);
 				}
-				
+			}	
+			
+			TreePath lastExpandedRow = null;
+			if(model instanceof FileSystemTreeModel) {
 				String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);	
-				TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
-				//TODO select and scroll to
+				lastExpandedRow = TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
 			} else if(model instanceof BasePathTreeModel) {
 				String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
-				TreeUtil.restoreExpanstionState((JTree) selectedComponent, basePathFor);
-				//TODO deep
+				int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size() - 2;
+				List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
+				String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);	
+				lastExpandedRow = TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
+			}
+			
+			if(lastExpandedRow != null) {
+				((JTree) selectedComponent).scrollPathToVisible(lastExpandedRow);
+				((JTree) selectedComponent).setSelectionPath(lastExpandedRow);
+			}
+			if(getSelectedEbookPropertyItemRows().length > 0) {
+				mainWindow.mainTable.clearSelection();
 			}
 		}
 	}
