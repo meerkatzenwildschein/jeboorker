@@ -54,9 +54,10 @@ public class TreeUtil {
 		return result.toString();
 	}
 	
-	private static void restoreTreePathByName(JTree tree, String pathString, String separator) {
+	private static TreePath restoreTreePathByName(JTree tree, String pathString, String separator) {
 		List<String> split = ListUtils.split(pathString, separator);
 		int row = 0;
+		TreePath lastRowPath = null;
 		for(String s : split) {
 			s = cleanNodeName(s);
 			int rowCount = tree.getRowCount();
@@ -66,10 +67,12 @@ public class TreeUtil {
 				String cleanedNodeName = cleanNodeName(((NamedNode) pathComponent).getName());
 				if(pathComponent instanceof NamedNode && cleanedNodeName.equals(s)) {
 					tree.expandRow(row);
+					lastRowPath = rowPath;
 					break;
 				}
 			}			
 		}
+		return lastRowPath;
 	}
 
 	/**
@@ -94,11 +97,13 @@ public class TreeUtil {
 	 * Restores the expansion states from the given String. 
 	 * @see TreeUtil#getExpansionStates(JRTree)
 	 */
-	public static void restoreExpanstionState(JTree tree, String expansionStates) {
+	public static TreePath restoreExpanstionState(JTree tree, String expansionStates) {
 		List<String> expansionStatesList = ListUtils.split(expansionStates, "\n");
+		TreePath lastExpandedRow = null;
 		for(String expansionState : expansionStatesList) {
-			restoreTreePathByName(tree, expansionState, PATH_SEPARATOR);
+			lastExpandedRow = restoreTreePathByName(tree, expansionState, PATH_SEPARATOR);
 		}
+		return lastExpandedRow;
 	}
 
 }
