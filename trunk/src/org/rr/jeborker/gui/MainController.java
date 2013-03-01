@@ -588,7 +588,6 @@ public class MainController {
 			
 			List<String> pathSegments = resourceHandler.getPathSegments();
 			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
-			boolean hasSingleRoot = false;
 			for(int i = 0; i < pathSegments.size(); i++) {
 				if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
 					List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);
@@ -598,10 +597,9 @@ public class MainController {
 					String join = ListUtils.join(extract, File.separator);
 					fullPathSegments.add(join);
 				} else {
-					hasSingleRoot = true;
-						List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
-						String join = ListUtils.join(extract, File.separator);
-						fullPathSegments.add(File.separator + join);
+					List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
+					String join = ListUtils.join(extract, File.separator);
+					fullPathSegments.add(File.separator + join);
 				}
 			}	
 			
@@ -609,7 +607,7 @@ public class MainController {
 			if(model instanceof FileSystemTreeModel) {
 				lastExpandedRow = ((FileSystemTreeModel) model).restoreExpansionState((JTree) selectedComponent, fullPathSegments);
 			} else if(model instanceof BasePathTreeModel) {
-				lastExpandedRow = ((BasePathTreeModel) model).restoreExpanstionState((JTree) selectedComponent, resourceHandler, fullPathSegments, hasSingleRoot);
+				lastExpandedRow = ((BasePathTreeModel) model).restoreExpanstionState((JTree) selectedComponent, resourceHandler, fullPathSegments);
 			}
 			
 			if(lastExpandedRow != null) {
