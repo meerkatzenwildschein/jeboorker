@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JTree;
@@ -12,9 +13,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.rr.common.swing.tree.TreeUtil;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
 
 public class FileSystemTreeModel extends DefaultTreeModel {
 
@@ -94,5 +97,11 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		for(TreeModelListener treeModelListener : treeModelListeners) {
 			removeTreeModelListener(treeModelListener);
 		}
+	}
+	
+	public TreePath restoreExpansionState(JTree tree, List<String> fullPathSegments) {
+		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);	
+		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
+		return lastExpandedRow;
 	}
 }

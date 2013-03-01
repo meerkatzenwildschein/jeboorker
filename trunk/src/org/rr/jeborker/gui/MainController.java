@@ -607,14 +607,9 @@ public class MainController {
 			
 			TreePath lastExpandedRow = null;
 			if(model instanceof FileSystemTreeModel) {
-				String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);	
-				lastExpandedRow = TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
+				lastExpandedRow = ((FileSystemTreeModel) model).restoreExpansionState((JTree) selectedComponent, fullPathSegments);
 			} else if(model instanceof BasePathTreeModel) {
-				String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
-				int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size() - (hasSingleRoot ? 2 : 1);
-				List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
-				String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);	
-				lastExpandedRow = TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
+				lastExpandedRow = ((BasePathTreeModel) model).restoreExpanstionState((JTree) selectedComponent, resourceHandler, fullPathSegments, hasSingleRoot);
 			}
 			
 			if(lastExpandedRow != null) {
