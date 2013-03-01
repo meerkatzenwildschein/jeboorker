@@ -45,7 +45,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		}
 	}
 	
-	public TreePath restoreExpanstionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments, boolean hasSingleRoot) {
+	public TreePath restoreExpanstionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments) {
 		String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
 		int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size()  - 1;
 		List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
