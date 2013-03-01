@@ -35,8 +35,7 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 	  public Component getTreeCellEditorComponent(JTree tree, Object value,
 	      boolean selected, boolean expanded, boolean leaf, int row) {
 
-	    Component editor = renderer.getTreeCellRendererComponent(tree, value,
-	        true, expanded, leaf, row, true);
+	    Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
 	    
 	    editingStarted();
 	    return editor;

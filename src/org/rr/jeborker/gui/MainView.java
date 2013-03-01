@@ -84,6 +84,7 @@ import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.model.FileSystemTreeModel;
 import org.rr.jeborker.gui.renderer.BasePathTreeCellEditor;
 import org.rr.jeborker.gui.renderer.BasePathTreeCellRenderer;
@@ -632,7 +633,7 @@ public class MainView extends JFrame{
                 TreePath dropRow = dl.getPath();
                 Object lastPath = dropRow.getLastPathComponent();
                 try {
-                	IResourceHandler targetPathResource = ResourceHandlerFactory.getResourceHandler(((FileSystemTreeModel.IFolderNode) lastPath).getFile());
+                	IResourceHandler targetPathResource = ((FileSystemNode) lastPath).getResource();
                 	boolean reloadParent = false;
                 	if(targetPathResource.isFileResource()) {
                 		targetPathResource = targetPathResource.getParentResource();
@@ -757,8 +758,11 @@ public class MainView extends JFrame{
 		if(Jeboorker.isRuntime) {
 			basePathTree.setModel(new BasePathTreeModel());
 			basePathTree.setEditable(true);
-			basePathTree.setCellRenderer(new BasePathTreeCellRenderer(basePathTree));
+			BasePathTreeCellRenderer basePathTreeCellRenderer = new BasePathTreeCellRenderer(basePathTree);
+			basePathTree.setCellRenderer(basePathTreeCellRenderer);
 			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
+			basePathTree.setToggleExpandOnDoubleClick(true);
+			basePathTree.setEditable(true);
 		}
 		JScrollPane basePathTreeScroller = new JScrollPane(basePathTree);
 		basePathTreeScroller.setOpaque(false);
@@ -796,8 +800,8 @@ public class MainView extends JFrame{
                 TreePath dropRow = dl.getPath();
                 Object lastPath = dropRow.getLastPathComponent();
                 Object firstPath = dropRow.getPath()[1]; //is the base path
-                IResourceHandler firstPathResource = ((BasePathTreeModel.BasePathNode) firstPath).getPathResource();
-                IResourceHandler lastPathPathResource = ((BasePathTreeModel.BasePathNode) lastPath).getPathResource();
+                IResourceHandler firstPathResource = ((FileSystemNode) firstPath).getResource();
+                IResourceHandler lastPathPathResource = ((FileSystemNode) lastPath).getResource();
                 try {
 					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
 					basePathTree.startEditingAtPath(dropRow);
@@ -880,9 +884,9 @@ public class MainView extends JFrame{
 	void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
 		Action action;
 		
-		BasePathTreeModel.BasePathNode pathNode = (BasePathTreeModel.BasePathNode) selPath.getLastPathComponent();
+		FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
 		
-		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getPathResource().toString());
+		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
 		menu.add(new JMenuItem(action));	
 	}	
 	

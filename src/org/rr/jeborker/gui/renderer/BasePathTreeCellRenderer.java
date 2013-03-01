@@ -28,7 +28,7 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
-import org.rr.jeborker.gui.model.BasePathTreeModel;
+import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer {
@@ -56,7 +56,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		this.tree = tree;
 		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
 		selectedFgColor = SwingUtils.getSelectionForegroundColor();
-		setOpaque(false);
+		setOpaque(true);
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 		
@@ -83,7 +83,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		
 		checkbox.setDisabledIcon(eyesInvisible);
 		checkbox.setDisabledSelectedIcon(eyesInvisible);
-		
+		checkbox.setOpaque(false);
 //		checkbox.setRolloverSelectedIcon(eyesInvisible); //rollover selected
 		
 		label = new JLabel();
@@ -106,8 +106,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 					String resourceName = null;
 					if (lastPathComponent instanceof IResourceHandler) {
 						resourceName = ((IResourceHandler) lastPathComponent).toString();
-					} else if(lastPathComponent instanceof BasePathTreeModel.BasePathNode){
-						resourceName = ((BasePathTreeModel.BasePathNode)lastPathComponent).getPathResource().toString();
+					} else if(lastPathComponent instanceof FileSystemNode){
+						resourceName = ((FileSystemNode)lastPathComponent).getResource().toString();
 					}		
 					
 					if(resourceName != null) {
@@ -131,8 +131,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 			label.setText(resourceName);
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = value;
-		} else if(value instanceof BasePathTreeModel.BasePathNode){
-			pathResource = ((BasePathTreeModel.BasePathNode)value).getPathResource();
+		} else if(value instanceof FileSystemNode){
+			pathResource = ((FileSystemNode)value).getResource();
 			label.setText(pathResource.getName());
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = pathResource;
