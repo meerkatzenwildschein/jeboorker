@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -29,7 +28,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.tree.JRTree;
 import org.rr.common.swing.tree.TreeUtil;
 import org.rr.commons.log.LoggerFactory;
@@ -50,6 +48,7 @@ import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
 import org.rr.jeborker.gui.model.EmptyListModel;
+import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.model.FileSystemTreeModel;
 import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -231,7 +230,7 @@ public class MainController {
 	 * @return <code>true</code> if the {@link MainController} is initialized and <code>false</code> otherwise.
 	 */
 	public static boolean isInitialized() {
-		return controller!=null;
+		return controller != null;
 	}
 	
 	private void initialize() {
@@ -568,10 +567,8 @@ public class MainController {
 			if(selectionPaths != null) {
 				for(TreePath selectionPath : selectionPaths) {
 					TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
-					if(targetResource instanceof BasePathTreeModel.BasePathNode) {
-						result.add( ((BasePathTreeModel.BasePathNode)targetResource).getPathResource() );
-					} else if(targetResource instanceof FileSystemTreeModel.IFolderNode) {
-						result.add( ResourceHandlerFactory.getResourceHandler(((FileSystemTreeModel.IFolderNode)targetResource).getFile()) );
+					if(targetResource instanceof FileSystemNode) {
+						result.add( ((FileSystemNode)targetResource).getResource() );
 					}
 				}
 			}
@@ -592,17 +589,22 @@ public class MainController {
 			
 			List<String> pathSegments = resourceHandler.getPathSegments();
 			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
+			boolean hasSingleRoot = false;
 			for(int i = 0; i < pathSegments.size(); i++) {
-				if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+				if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
+					List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);
+					if(i == 0) {
+						extract.set(0, extract.get(0) + File.separator);
+					}
+					String join = ListUtils.join(extract, File.separator);
+					fullPathSegments.add(join);
+				} else {
+					hasSingleRoot = true;
 					if(i > 0) {
 						List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
 						String join = ListUtils.join(extract, File.separator);
 						fullPathSegments.add(File.separator + join);
-					}
-				} else {
-					List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);	
-					String join = ListUtils.join(extract, File.separator);
-					fullPathSegments.add(join);
+					}					
 				}
 			}	
 			
@@ -612,7 +614,7 @@ public class MainController {
 				lastExpandedRow = TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
 			} else if(model instanceof BasePathTreeModel) {
 				String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
-				int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size() - 2;
+				int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size() - (hasSingleRoot ? 2 : 1);
 				List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
 				String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);	
 				lastExpandedRow = TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);

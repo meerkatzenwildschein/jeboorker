@@ -1,13 +1,12 @@
 package org.rr.jeborker.gui.renderer;
 
 import java.awt.Component;
-import java.io.File;
 
-import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.rr.jeborker.gui.model.FileSystemTreeModel.IFolderNode;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 
@@ -17,12 +16,9 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 	
 	public Component getTreeCellRendererComponent(final JTree tree, final Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-		if(value instanceof IFolderNode) {
-			Icon icon =  ((IFolderNode)value).getSystemIcon();
-			setIcon(icon);
-			
-			File file = ((IFolderNode) value).getFile();
-			if(file != null && file.isDirectory()) {
+		if(value instanceof FileSystemNode) {
+			IResourceHandler file = ((FileSystemNode) value).getResource();
+			if(file != null && file.isDirectoryResource()) {
 				if(file.toString().equals(System.getProperty("user.home"))) {
 					setIcon(ImageResourceBundle.getResourceAsImageIcon("folder_home_16.png"));
 				} else if(tree.isExpanded(row)) {
