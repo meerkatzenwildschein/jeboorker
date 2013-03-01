@@ -111,6 +111,8 @@ import com.l2fprod.common.propertysheet.PropertySheetPanel;
 public class MainView extends JFrame{
 	
 	private static final long serialVersionUID = 6837919427429399376L;
+
+	protected static final Object EbookPropertyItem = null;
 	
 	JRTable mainTable;
 	
@@ -471,7 +473,12 @@ public class MainView extends JFrame{
 			@Override
 			public String toString(Object obj) {
 				if(obj instanceof EbookPropertyItem) {
-					return ((EbookPropertyItem)obj).getResourceHandler().getName();
+					EbookPropertyItem item = (EbookPropertyItem) obj;
+					return new StringBuilder().append(item.getResourceHandler().getName())
+							.append(" ").append(item.getAuthor())
+							.append(" ").append(item.getTitle())
+							.append(" ").append(item.getSeriesName())
+							.toString();
 				}
 				return StringUtils.toString(obj);
 			}
