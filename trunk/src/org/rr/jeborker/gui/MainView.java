@@ -66,7 +66,6 @@ import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.common.swing.table.JRTable;
-import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -143,13 +142,14 @@ public class MainView extends JFrame{
 	
 	JSplitPane treeMainTableSplitPane;
 	
-	JRTree basePathTree;
+	JTree basePathTree;
 	
-	JRTree fileSystemTree;
+	JTree fileSystemTree;
 	
 	JScrollPane mainTableScrollPane;
 
 	JTabbedPane treeTabbedPane;
+	private JPanel panel;
 
 	/**
 	 * Create the application.
@@ -315,11 +315,11 @@ public class MainView extends JFrame{
 				
 				}));
 				
-				JScrollPane basePathTreeScroller = createBasePathTree();
-				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeScroller);
+				JComponent basePathTreeComp = createBasePathTree();
+				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
 				
-				JScrollPane fileSystemTreeScroller = createFileSystemTree(copy, paste, delete);
-				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeScroller);
+				JComponent fileSystemTreeComp = createFileSystemTree(copy, paste, delete);
+				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
 				
 				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
 				treeMainTableSplitPane.setOneTouchExpandable(true);
@@ -544,19 +544,45 @@ public class MainView extends JFrame{
 		});
 	}
 
-	private JScrollPane createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete) {
-		fileSystemTree = new JRTree();
+	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete) {
+		JPanel fileSystemTreePanel = new JPanel();
+		GridBagLayout gbl_fileSystemTreePanel = new GridBagLayout();
+		gbl_fileSystemTreePanel.columnWidths = new int[]{76, 0};
+		gbl_fileSystemTreePanel.rowHeights = new int[]{25, 0, 0};
+		gbl_fileSystemTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_fileSystemTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
+		fileSystemTree = new JTree();
 		fileSystemTree.setName("FileSystemTree");
+		
+		if(Jeboorker.isRuntime) {
+			fileSystemTree.setModel(new FileSystemTreeModel(fileSystemTree));
+			fileSystemTree.setEditable(true);
+			FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
+			fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
+			fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
+		}
+
 		JScrollPane treeScroller = new JScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
+		GridBagConstraints gbc_treeScroller = new GridBagConstraints();
+		gbc_treeScroller.fill = GridBagConstraints.BOTH;
+		gbc_treeScroller.anchor = GridBagConstraints.NORTHWEST;
+		gbc_treeScroller.gridx = 0;
+		gbc_treeScroller.gridy = 1;
+		fileSystemTreePanel.add(treeScroller, gbc_treeScroller);
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
+		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
+		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
+		gbc_buttonPanel.anchor = GridBagConstraints.NORTHWEST;
+		gbc_buttonPanel.gridx = 0;
+		gbc_buttonPanel.gridy = 0;
+		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
 		
 		fileSystemTree.setRootVisible(false);
-		fileSystemTree.setModel(new FileSystemTreeModel(fileSystemTree));
-		fileSystemTree.setEditable(true);
-		FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
-		fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
-		fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
 		fileSystemTree.setRowHeight(25);
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
@@ -669,25 +695,36 @@ public class MainView extends JFrame{
 			
 		});
 		
-		GridBagConstraints gbc_tree = new GridBagConstraints();
-		gbc_tree.fill = GridBagConstraints.BOTH;
-		gbc_tree.gridx = 0;
-		gbc_tree.gridy = 0;
-		return treeScroller;		
+		return fileSystemTreePanel;		
 	}
 	
-	private JScrollPane createBasePathTree() {
-		basePathTree = new JRTree();
+	private JComponent createBasePathTree() {
+		JPanel basePathTreePanel = new JPanel();
+		GridBagLayout gbl_basePathTreePanel = new GridBagLayout();
+		gbl_basePathTreePanel.columnWidths = new int[]{76, 0};
+		gbl_basePathTreePanel.rowHeights = new int[]{25, 0, 0};
+		gbl_basePathTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_basePathTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		basePathTreePanel.setLayout(gbl_basePathTreePanel);
+		basePathTree = new JTree();
 		basePathTree.setName("BasePathTree");
-		JScrollPane treeScroller = new JScrollPane(basePathTree);
-		treeScroller.setOpaque(false);
-		treeScroller.getViewport().setOpaque(false);
+		if(Jeboorker.isRuntime) {
+			basePathTree.setModel(new BasePathTreeModel());
+			basePathTree.setEditable(true);
+			basePathTree.setCellRenderer(new BasePathTreeCellRenderer(basePathTree));
+			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
+		}
+		JScrollPane basePathTreeScroller = new JScrollPane(basePathTree);
+		basePathTreeScroller.setOpaque(false);
+		basePathTreeScroller.getViewport().setOpaque(false);
+		GridBagConstraints gbc_basePathTreeScroller = new GridBagConstraints();
+		gbc_basePathTreeScroller.fill = GridBagConstraints.BOTH;
+		gbc_basePathTreeScroller.anchor = GridBagConstraints.WEST;
+		gbc_basePathTreeScroller.gridx = 0;
+		gbc_basePathTreeScroller.gridy = 1;
+		basePathTreePanel.add(basePathTreeScroller, gbc_basePathTreeScroller);
 		
 		basePathTree.setRootVisible(false);
-		basePathTree.setModel(new BasePathTreeModel());
-		basePathTree.setEditable(true);
-		basePathTree.setCellRenderer(new BasePathTreeCellRenderer(basePathTree));
-		basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
 		basePathTree.setRowHeight(25);
 		
 		basePathTree.setTransferHandler(new TransferHandler() {
@@ -736,6 +773,14 @@ public class MainView extends JFrame{
             }
         });
 		
+		panel = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 0;
+		gbc_panel.gridy = 0;
+		basePathTreePanel.add(panel, gbc_panel);
+		
 		basePathTree.addFocusListener(new FocusAdapter() {
 
 			@Override
@@ -753,7 +798,7 @@ public class MainView extends JFrame{
 		gbc_tree.fill = GridBagConstraints.BOTH;
 		gbc_tree.gridx = 0;
 		gbc_tree.gridy = 0;
-		return treeScroller;
+		return basePathTreePanel;
 	}
 	
 	/**

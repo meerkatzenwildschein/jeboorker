@@ -37,6 +37,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -287,7 +288,7 @@ public class MainController {
 	/**
 	 * Refresh the whole table.
 	 */
-	public void refreshTable(final boolean refreshMetadataSheet) {
+	public void refreshTable() {
 		final EbookPropertyDBTableModel model = getTableModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			((EbookPropertyDBTableModel)model).setDirty();
@@ -413,7 +414,7 @@ public class MainController {
 	 * Gets the {@link BufferedImage} for the image which is displayed in the image viewer.
 	 * @return The desired {@link BufferedImage} or <code>null</code>.
 	 */
-	public BufferedImage getImage() {
+	public BufferedImage getImageViewerImage() {
 		return mainWindow.imageViewer.getImage();
 	}	
 	
@@ -580,6 +581,31 @@ public class MainController {
 			}
 		}
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * Expands the nodes for the given {@link IResourceHandler} instances in this
+	 * tree that is currently be shown to the user. 
+	 */
+	public void addExpandedTreeItems(final List<IResourceHandler> resourceHandlers) {
+		Component selectedComponent = mainWindow.treeTabbedPane.getSelectedComponent();
+		if(selectedComponent instanceof JScrollPane) {
+			selectedComponent = ((JScrollPane)selectedComponent).getViewport().getView();
+		}
+		if(selectedComponent instanceof JTree) {
+			for(IResourceHandler resourceHandler : resourceHandlers) {
+				TreeModel model = ((JTree) selectedComponent).getModel();
+				if(model instanceof FileSystemTreeModel) {
+					List<String> pathSegments = resourceHandler.getPathSegments();
+					String treeExpansionPathString = ListUtils.join(pathSegments, TreeUtil.PATH_SEPARATOR);
+					TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
+				} else if(model instanceof BasePathTreeModel) {
+					String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
+					TreeUtil.restoreExpanstionState((JTree) selectedComponent, basePathFor);
+					//TODO deep
+				}
+			}
+		}
 	}
 	
 	/**

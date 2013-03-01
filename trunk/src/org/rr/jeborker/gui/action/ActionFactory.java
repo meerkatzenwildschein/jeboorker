@@ -188,7 +188,7 @@ public class ActionFactory {
 
 			@Override
 			public boolean canHandle(EbookPropertyItem item) {
-				return MainController.getController().getImage() != null;
+				return MainController.getController().getImageViewerImage() != null;
 			}
 			
 			@Override

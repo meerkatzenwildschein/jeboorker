@@ -85,16 +85,18 @@ public class JeboorkerPreferences {
 	}
 	
 	/**
-	 * Get the 
-	 * @param resource
-	 * @return
+	 * Get the base path for the given {@link IResourceHandler}.
+	 * @return the desired {@link IResourceHandler} or <code>null</code> if no base path exists
+	 * for the given {@link IResourceHandler}.
 	 */
 	public static String getBasePathFor(IResourceHandler resource) {
-		String resourceString = resource.toString();
-		List<String> basePaths = getBasePath();
-		for(String basePath : basePaths) {
-			if(resourceString.startsWith(basePath)) {
-				return basePath;
+		if(resource != null) {
+			String resourceString = resource.toString();
+			List<String> basePaths = getBasePath();
+			for(String basePath : basePaths) {
+				if(resourceString.startsWith(basePath)) {
+					return basePath;
+				}
 			}
 		}
 		return null;

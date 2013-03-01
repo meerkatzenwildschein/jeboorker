@@ -53,11 +53,11 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 			List<String> basePath = JeboorkerPreferences.getBasePath();
 			if(!basePath.contains(cellEditorValue.toString())) {
 				setPathFilter(cellEditorValue.toString());
-				MainController.getController().refreshTable(true);
+				MainController.getController().refreshTable();
 			} else {
 				boolean remove = removePathFilter();
 				if(remove) {
-					MainController.getController().refreshTable(true);
+					MainController.getController().refreshTable();
 				}				
 			}
 		}

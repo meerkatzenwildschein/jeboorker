@@ -60,7 +60,7 @@ class SearchAction extends AbstractAction {
 					}
 				}
 			}
-			controller.refreshTable(true);
+			controller.refreshTable();
 			filterPanelController.addFilterFieldSearch(filterText);
 		} finally {
 			SwingUtilities.invokeLater(new Runnable() {
