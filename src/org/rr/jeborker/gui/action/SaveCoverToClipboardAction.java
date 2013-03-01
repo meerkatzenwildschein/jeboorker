@@ -28,7 +28,7 @@ public class SaveCoverToClipboardAction extends AbstractAction implements Clipbo
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final BufferedImage imageViewerResource = controller.getImage();
+		final BufferedImage imageViewerResource = controller.getImageViewerImage();
 		
 		ImageTransferable trans = new ImageTransferable(imageViewerResource);
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();

@@ -21,6 +21,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.gui.action.ActionUtils;
 
 public class FileSystemTreeModel extends DefaultTreeModel {
@@ -247,41 +248,45 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		 * @return An array with null values. The nodes are created on demand.
 		 */
 		private List<IFolderNode> getChildren() {
-			if (this.childFolderNodes == null) {
-				this.childFolderNodes = new ArrayList<FileSystemTreeModel.IFolderNode>();
-				File[] subFiles = fileSystemViewInstance.getFiles(this.folder, true);
-				ArrayList<File> processedSubFolders = new ArrayList<File>();
-				for (int i = 0; i < subFiles.length; i++) {
-					if (subFiles[i].isDirectory()) {
-						this.childFolderNodes.add(new FolderNode(subFiles[i], this));
-						processedSubFolders.add(subFiles[i]);
+			if(Jeboorker.isRuntime) {
+				if (this.childFolderNodes == null) {
+					this.childFolderNodes = new ArrayList<FileSystemTreeModel.IFolderNode>();
+					File[] subFiles = fileSystemViewInstance.getFiles(this.folder, true);
+					ArrayList<File> processedSubFolders = new ArrayList<File>();
+					for (int i = 0; i < subFiles.length; i++) {
+						if (subFiles[i].isDirectory()) {
+							this.childFolderNodes.add(new FolderNode(subFiles[i], this));
+							processedSubFolders.add(subFiles[i]);
+						}
 					}
-				}
-				this.subFolders = processedSubFolders;
-				Collections.sort(this.subFolders);
-
-				subFiles = fileSystemViewInstance.getFiles(this.folder, true);
-				ArrayList<File> processedSubFiles = new ArrayList<File>();
-				for (int i = 0; i < subFiles.length; i++) {
-					if (subFiles[i].isFile() && ActionUtils.isSupportedEbookFormat(ResourceHandlerFactory.getResourceHandler(subFiles[i]))) {
-						this.childFolderNodes.add(new FileNode(subFiles[i], this));
-						processedSubFiles.add(subFiles[i]);
+					this.subFolders = processedSubFolders;
+					Collections.sort(this.subFolders);
+	
+					subFiles = fileSystemViewInstance.getFiles(this.folder, true);
+					ArrayList<File> processedSubFiles = new ArrayList<File>();
+					for (int i = 0; i < subFiles.length; i++) {
+						if (subFiles[i].isFile() && ActionUtils.isSupportedEbookFormat(ResourceHandlerFactory.getResourceHandler(subFiles[i]))) {
+							this.childFolderNodes.add(new FileNode(subFiles[i], this));
+							processedSubFiles.add(subFiles[i]);
+						}
 					}
+					this.subFiles = processedSubFiles;
+					Collections.sort(this.subFiles);
+	
+					if (this.subFolders == null) {
+						this.subFolders = Collections.emptyList();
+					}
+					if (this.subFiles == null) {
+						this.subFiles = Collections.emptyList();
+					}
+	
+					Collections.sort(this.childFolderNodes);
 				}
-				this.subFiles = processedSubFiles;
-				Collections.sort(this.subFiles);
-
-				if (this.subFolders == null) {
-					this.subFolders = Collections.emptyList();
-				}
-				if (this.subFiles == null) {
-					this.subFiles = Collections.emptyList();
-				}
-
-				Collections.sort(this.childFolderNodes);
+	
+				return this.childFolderNodes;
+			} else {
+				return Collections.emptyList();
 			}
-
-			return this.childFolderNodes;
 		}
 
 		/**

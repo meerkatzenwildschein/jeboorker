@@ -84,7 +84,7 @@ class AddBasePathAction extends AbstractAction {
 			} 
 			controller.getProgressMonitor().monitorProgressStop(messageFinished);
 			
-			controller.refreshTable(false);
+			controller.refreshTable();
 			controller.refreshBasePathTree();
 		}
 	}
