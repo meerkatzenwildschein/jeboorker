@@ -10,12 +10,14 @@ import org.rr.commons.utils.ListUtils;
 
 public class TreeUtil {
 	
+	public static final String PATH_SEPARATOR = "\t";
+	
 	/**
 	 * Cleans the separator chars from the given node name.
 	 */
 	private static String cleanNodeName(String nodeName) {
 		if(nodeName != null) {
-			nodeName = nodeName.replaceAll("[\t\n]", "_");
+			nodeName = nodeName.replaceAll("[\\t\\\n]", "_");
 		}
 		return nodeName;
 	}
@@ -75,11 +77,11 @@ public class TreeUtil {
 	 * Only those nodes gets collected that implements the {@link NamedNode} interface.
 	 * @see #restoreExpanstionState(JRTree, String)
 	 */
-	public static String getExpansionStates(JRTree tree) {
+	public static String getExpansionStates(JTree tree) {
 		List<TreePath> expandedNodeNames = getExpandedNodeNames(tree);
 		StringBuilder result = new StringBuilder();
 		for(TreePath path : expandedNodeNames) {
-			String treePathName = getTreePathName(path, "\t");
+			String treePathName = getTreePathName(path, PATH_SEPARATOR);
 			if(result.length() > 0) {
 				result.append("\n");
 			}			
@@ -92,10 +94,10 @@ public class TreeUtil {
 	 * Restores the expansion states from the given String. 
 	 * @see TreeUtil#getExpansionStates(JRTree)
 	 */
-	public static void restoreExpanstionState(JRTree tree, String expansionStates) {
+	public static void restoreExpanstionState(JTree tree, String expansionStates) {
 		List<String> expansionStatesList = ListUtils.split(expansionStates, "\n");
 		for(String expansionState : expansionStatesList) {
-			restoreTreePathByName(tree, expansionState, "\t");
+			restoreTreePathByName(tree, expansionState, PATH_SEPARATOR);
 		}
 	}
 
