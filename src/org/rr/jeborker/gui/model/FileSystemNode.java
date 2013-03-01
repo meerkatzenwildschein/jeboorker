@@ -38,52 +38,6 @@ public class FileSystemNode implements MutableTreeNode, NamedNode {
 		this.showFiles = showFiles;
 	}
 	
-//	/**
-//	 * Invoking this method will cause that the subfolders are read.
-//	 * 
-//	 * @return An array with null values. The nodes are created on demand.
-//	 */
-//	private List<FileSystemNode> getChildren() {
-//		try {
-//			if (this.childFolderNodes == null) {
-//				this.childFolderNodes = new ArrayList<FileSystemNode>();
-//				IResourceHandler[] subFiles = this.pathResource.listDirectoryResources();
-//				ArrayList<IResourceHandler> processedSubFolders = new ArrayList<IResourceHandler>();
-//				for (int i = 0; i < subFiles.length; i++) {
-//					if (subFiles[i].isDirectoryResource()) {
-//						this.childFolderNodes.add(new FileSystemNode(subFiles[i], this));
-//						processedSubFolders.add(subFiles[i]);
-//					}
-//				}
-//				this.subFolders = processedSubFolders;
-//				
-//				Collections.sort(this.subFolders);
-//
-//				subFiles = this.pathResource.listFileResources();
-//				ArrayList<IResourceHandler> processedSubFiles = new ArrayList<IResourceHandler>();
-//				for (int i = 0; i < subFiles.length; i++) {
-//					if (subFiles[i].isFileResource() && ActionUtils.isSupportedEbookFormat(subFiles[i])) {
-//						this.childFolderNodes.add(new FileSystemNode(subFiles[i], this));
-//						processedSubFiles.add(subFiles[i]);
-//					}
-//				}
-//				this.subFiles = processedSubFiles;
-//				Collections.sort(this.subFiles);
-//
-//				if (this.subFolders == null) {
-//					this.subFolders = Collections.emptyList();
-//				}
-//				if (this.subFiles == null) {
-//					this.subFiles = Collections.emptyList();
-//				}
-//			}
-//
-//			return this.childFolderNodes;
-//		} catch(Exception e) {
-//			LoggerFactory.getLogger().log(Level.WARNING, "Failed to list files", e);
-//		}
-//	}	
-	
 	@Override
 	public TreeNode getChildAt(int childIndex) {
 		final List<FileSystemNode> childResources = createChildren();
@@ -120,7 +74,7 @@ public class FileSystemNode implements MutableTreeNode, NamedNode {
 
 	@Override
 	public boolean isLeaf() {
-		return false;
+		return this.pathResource.isFileResource();
 	}
 
 	private List<FileSystemNode> createChildren() {

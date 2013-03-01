@@ -765,7 +765,7 @@ public class MainView extends JFrame{
 		gbc_buttonPanel.gridy = 0;
 		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 28, 0};
+		gbl_buttonPanel.columnWidths = new int[]{0, 28, 28, 0};
 		gbl_buttonPanel.rowHeights = new int[]{10, 0};
 		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
@@ -776,16 +776,17 @@ public class MainView extends JFrame{
 		syncButton.setMinimumSize(new Dimension(0, 28));
 		GridBagConstraints gbc_syncButton = new GridBagConstraints();
 		gbc_syncButton.fill = GridBagConstraints.BOTH;
-		gbc_syncButton.gridx = 1;
+		gbc_syncButton.gridx = 2;
 		gbc_syncButton.gridy = 0;
 		buttonPanel.add(syncButton, gbc_syncButton);
 		
 		JButton addButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
+		addButton.setText("");
 		addButton.setPreferredSize(new Dimension(0, 28));
 		addButton.setMinimumSize(new Dimension(0, 28));
 		GridBagConstraints gbc_addButton = new GridBagConstraints();
 		gbc_addButton.fill = GridBagConstraints.BOTH;
-		gbc_addButton.gridx = 2;
+		gbc_addButton.gridx = 1;
 		gbc_addButton.gridy = 0;
 		buttonPanel.add(addButton, gbc_addButton);
 		
