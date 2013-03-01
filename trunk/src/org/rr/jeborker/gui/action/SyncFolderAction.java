@@ -23,6 +23,7 @@ public class SyncFolderAction extends AbstractAction {
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("sync_16.png"));
 		putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE); //Singleton instance!!
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
+		putValue(SHORT_DESCRIPTION, Bundle.getString("SyncFolderAction.tooltip")); //tooltip
 		setEnabled(false);
 		initListener();
 	}

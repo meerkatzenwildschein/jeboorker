@@ -586,7 +586,6 @@ public class MainController {
 		for(IResourceHandler resourceHandler : resourceHandlers) {
 			TreeModel model = ((JTree) selectedComponent).getModel();
 			
-			
 			List<String> pathSegments = resourceHandler.getPathSegments();
 			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
 			boolean hasSingleRoot = false;
@@ -600,11 +599,9 @@ public class MainController {
 					fullPathSegments.add(join);
 				} else {
 					hasSingleRoot = true;
-					if(i > 0) {
 						List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
 						String join = ListUtils.join(extract, File.separator);
 						fullPathSegments.add(File.separator + join);
-					}					
 				}
 			}	
 			
