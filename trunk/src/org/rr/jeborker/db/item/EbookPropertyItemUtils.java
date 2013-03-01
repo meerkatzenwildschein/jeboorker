@@ -15,7 +15,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.jeborker.JeboorkerUtils;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
@@ -26,7 +26,7 @@ import org.rr.pm.image.ImageUtils;
 
 public class EbookPropertyItemUtils {
 	
-	private static final String thumbnailFolder = JeboorkerUtils.getConfigDirectory() + "thumbs/";
+	private static final String thumbnailFolder = JeboorkerPreferences.getConfigDirectory() + "thumbs/";
 	static {
 		IResourceHandler thumbnailFolderResource = ResourceHandlerFactory.getResourceHandler(thumbnailFolder);
 		if(!thumbnailFolderResource.exists()) {

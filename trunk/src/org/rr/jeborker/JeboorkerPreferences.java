@@ -243,4 +243,18 @@ public class JeboorkerPreferences {
 		return true;
 	}
 	
+	/**
+	 * Gets the default configuration directory. The path have a trailing / 
+	 * 
+	 * @return The config file directory.
+	 */
+	public static String getConfigDirectory() {
+		String result = System.getProperties().getProperty("user.home");
+		String suffix = System.getProperties().getProperty("application.suffix");
+		
+		result += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : "") + File.separator;
+		
+		return result;
+	}	
+	
 }

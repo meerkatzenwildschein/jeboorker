@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -18,7 +17,6 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -38,6 +36,7 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -559,26 +558,21 @@ public class MainController {
 	 * Get the selected Tree items from that tree that is currently visible to the user
 	 */
 	public List<IResourceHandler> getSelectedTreeItems() {
-		Component selectedComponent = mainWindow.treeTabbedPane.getSelectedComponent();
-		if(selectedComponent instanceof JScrollPane) {
-			selectedComponent = ((JScrollPane)selectedComponent).getViewport().getView();
-		}
-		if(selectedComponent instanceof JTree) {
-			TreePath[] selectionPaths = ((JTree)selectedComponent).getSelectionPaths();
+		JTree selectedTreeComponent = mainWindow.getSelectedTreePathComponent();
+		TreePath[] selectionPaths = ((JTree)selectedTreeComponent).getSelectionPaths();
+		if(selectionPaths != null) {
+			ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(selectionPaths.length);
 			if(selectionPaths != null) {
-				ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(selectionPaths.length);
-				if(selectionPaths != null) {
-					for(TreePath selectionPath : selectionPaths) {
-						TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
-						if(targetResource instanceof BasePathTreeModel.BasePathNode) {
-							result.add( ((BasePathTreeModel.BasePathNode)targetResource).getPathResource() );
-						} else if(targetResource instanceof FileSystemTreeModel.IFolderNode) {
-							result.add( ResourceHandlerFactory.getResourceHandler(((FileSystemTreeModel.IFolderNode)targetResource).getFile()) );
-						}
+				for(TreePath selectionPath : selectionPaths) {
+					TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
+					if(targetResource instanceof BasePathTreeModel.BasePathNode) {
+						result.add( ((BasePathTreeModel.BasePathNode)targetResource).getPathResource() );
+					} else if(targetResource instanceof FileSystemTreeModel.IFolderNode) {
+						result.add( ResourceHandlerFactory.getResourceHandler(((FileSystemTreeModel.IFolderNode)targetResource).getFile()) );
 					}
 				}
-				return result;
 			}
+			return result;
 		}
 		return Collections.emptyList();
 	}
@@ -588,22 +582,33 @@ public class MainController {
 	 * tree that is currently be shown to the user. 
 	 */
 	public void addExpandedTreeItems(final List<IResourceHandler> resourceHandlers) {
-		Component selectedComponent = mainWindow.treeTabbedPane.getSelectedComponent();
-		if(selectedComponent instanceof JScrollPane) {
-			selectedComponent = ((JScrollPane)selectedComponent).getViewport().getView();
-		}
-		if(selectedComponent instanceof JTree) {
-			for(IResourceHandler resourceHandler : resourceHandlers) {
-				TreeModel model = ((JTree) selectedComponent).getModel();
-				if(model instanceof FileSystemTreeModel) {
-					List<String> pathSegments = resourceHandler.getPathSegments();
-					String treeExpansionPathString = ListUtils.join(pathSegments, TreeUtil.PATH_SEPARATOR);
-					TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
-				} else if(model instanceof BasePathTreeModel) {
-					String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
-					TreeUtil.restoreExpanstionState((JTree) selectedComponent, basePathFor);
-					//TODO deep
+		JTree selectedComponent = mainWindow.getSelectedTreePathComponent();
+		for(IResourceHandler resourceHandler : resourceHandlers) {
+			TreeModel model = ((JTree) selectedComponent).getModel();
+			if(model instanceof FileSystemTreeModel) {
+				List<String> pathSegments = resourceHandler.getPathSegments();
+				List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
+				for(int i = 0; i < pathSegments.size(); i++) {
+					if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+						if(i > 0) {
+							List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
+							String join = ListUtils.join(extract, File.separator);
+							fullPathSegments.add(File.separator + join);
+						}
+					} else {
+						List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);	
+						String join = ListUtils.join(extract, File.separator);
+						fullPathSegments.add(join);
+					}
 				}
+				
+				String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);	
+				TreeUtil.restoreExpanstionState((JTree) selectedComponent, treeExpansionPathString);
+				//TODO select and scroll to
+			} else if(model instanceof BasePathTreeModel) {
+				String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
+				TreeUtil.restoreExpanstionState((JTree) selectedComponent, basePathFor);
+				//TODO deep
 			}
 		}
 	}
