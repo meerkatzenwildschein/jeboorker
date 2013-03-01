@@ -13,6 +13,8 @@ import org.rr.common.swing.SwingUtils;
 
 public class JRTree extends JTree {
 
+	private boolean toggleExpandOnDoubleClick = false;
+	
 	public JRTree() {
 		super();
 
@@ -32,8 +34,25 @@ public class JRTree extends JTree {
 					int[] selectedRows = JRTree.this.getSelectionRows();
 					if (selectedRows != null && selectedRows.length > 0 && row != selectedRows[0]) {
 						JRTree.this.setSelectionRow(row);
+						if(JRTree.this.isEditable()) {
+							TreePath path = JRTree.this.getPathForRow(row);
+							JRTree.this.startEditingAtPath(path);
+						}
 					}
-
+				}
+				
+				if(e.getClickCount() == 2) {
+					this.expand(row);
+				}
+			}
+			
+			private void expand(int row) {
+				if(toggleExpandOnDoubleClick) {
+					if(JRTree.this.isExpanded(row)) {
+						JRTree.this.collapseRow(row);
+					} else {
+						JRTree.this.expandRow(row);						
+					}
 				}
 			}
 		});
@@ -57,6 +76,14 @@ public class JRTree extends JTree {
 				setSelectionPath(path);
 			}
 		}
+	}
+	
+	public boolean isToggleExpandOnDoubleClick() {
+		return toggleExpandOnDoubleClick;
+	}
+
+	public void setToggleExpandOnDoubleClick(boolean expandOnDoubleClick) {
+		this.toggleExpandOnDoubleClick = expandOnDoubleClick;
 	}
 	
 

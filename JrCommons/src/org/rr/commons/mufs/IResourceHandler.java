@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.filechooser.FileSystemView;
 
 
-public interface IResourceHandler {
+public interface IResourceHandler extends Comparable<IResourceHandler> {
 	
 	/**
 	 * An interface which allows to add a method to the {@link RESOURCE_HANDLER_USER_TYPES} enum.
