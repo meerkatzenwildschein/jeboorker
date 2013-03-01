@@ -68,6 +68,7 @@ import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.common.swing.image.SimpleImageViewer;
 import org.rr.common.swing.table.JRTable;
+import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -144,9 +145,9 @@ public class MainView extends JFrame{
 	
 	JSplitPane treeMainTableSplitPane;
 	
-	JTree basePathTree;
+	JRTree basePathTree;
 	
-	JTree fileSystemTree;
+	JRTree fileSystemTree;
 	
 	JScrollPane mainTableScrollPane;
 
@@ -580,7 +581,7 @@ public class MainView extends JFrame{
 		gbc_syncButton.gridy = 0;
 		buttonPanel.add(syncButton, gbc_syncButton);
 		
-		fileSystemTree = new JTree();
+		fileSystemTree = new JRTree();
 		fileSystemTree.setName("FileSystemTree");
 		
 		if(Jeboorker.isRuntime) {
@@ -751,7 +752,7 @@ public class MainView extends JFrame{
 		gbc_syncButton.gridy = 0;
 		buttonPanel.add(syncButton, gbc_syncButton);
 		
-		basePathTree = new JTree();
+		basePathTree = new JRTree();
 		basePathTree.setName("BasePathTree");
 		if(Jeboorker.isRuntime) {
 			basePathTree.setModel(new BasePathTreeModel());
