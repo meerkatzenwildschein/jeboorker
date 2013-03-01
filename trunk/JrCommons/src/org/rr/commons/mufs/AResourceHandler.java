@@ -11,6 +11,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -436,5 +437,11 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public List<String> getPathSegments() {
+		List<String> emptyList = Collections.emptyList();
+		return emptyList;
 	}	
 }
