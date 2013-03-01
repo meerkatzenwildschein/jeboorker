@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -28,6 +29,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.rr.common.swing.SwingUtils;
+import org.rr.common.swing.tree.JRTree;
 import org.rr.common.swing.tree.TreeUtil;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -616,8 +619,7 @@ public class MainController {
 			}
 			
 			if(lastExpandedRow != null) {
-				((JTree) selectedComponent).scrollPathToVisible(lastExpandedRow);
-				((JTree) selectedComponent).setSelectionPath(lastExpandedRow);
+				((JRTree) selectedComponent).scrollPathToVisibleVertical(lastExpandedRow, true);
 			}
 			if(getSelectedEbookPropertyItemRows().length > 0) {
 				mainWindow.mainTable.clearSelection();
