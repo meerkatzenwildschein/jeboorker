@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -16,13 +15,10 @@ import javax.swing.tree.TreePath;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.ReflectionUtils;
 
 public class FileSystemTreeModel extends DefaultTreeModel {
 
 	private static final long serialVersionUID = -456216843620742653L;
-
-	private static final FileSystemView fileSystemViewInstance = FileSystemView.getFileSystemView();
 
 	private JTree tree;
 	
@@ -91,26 +87,6 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Operating system dependent returns a toLowercased string or not.
-	 * 
-	 * @param s
-	 *            The string to be changed.
-	 * @return The changed string
-	 */
-	private static String toOSCompareString(String s) {
-		if (s == null) {
-			return null;
-		}
-
-		if (ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-			return s.toLowerCase();
-		} else {
-			return s;
-		}
-
 	}
 	
 	public void dispose() {
