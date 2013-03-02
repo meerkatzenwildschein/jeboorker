@@ -311,6 +311,23 @@ class FileResourceHandler extends AResourceHandler {
 	public String toString() {
 		return this.getResourceString();
 	}
+	
+	public IResourceHandler[] listDirectoryResources(final boolean showHidden) throws IOException {
+		return listDirectoryResources(new ResourceNameFilter() {
+			
+			@Override
+			public boolean accept(IResourceHandler loader) {
+				if(!showHidden) {
+					if(loader.getName().startsWith(".")) {
+						return false;
+					} else if(((FileResourceHandler)loader).file.isHidden()) {
+						return false;
+					} 
+				} 
+				return true;
+			}
+		});
+	}
 
 	/**
 	 * Lists all files and folders which are children of this {@link IResourceHandler} instance.
@@ -416,11 +433,13 @@ class FileResourceHandler extends AResourceHandler {
 		}
 		synchronized(fileSystemViewInstance) {
 			File[] files = fileSystemViewInstance.getFiles(this.file, !showHidden);
-			IResourceHandler[] resultResources = new IResourceHandler[files.length];
-			for (int i = 0; i < resultResources.length; i++) {
-				resultResources[i] = ResourceHandlerFactory.getResourceHandler(files[i]);
+			List<IResourceHandler> resultResources = new ArrayList<IResourceHandler>(files.length);
+			for (int i = 0; i < files.length; i++) {
+				if(files[i].isFile()) {
+					resultResources.add(ResourceHandlerFactory.getResourceHandler(files[i]));
+				}
 			}		
-			return resultResources;
+			return resultResources.toArray(new IResourceHandler[resultResources.size()]);
 		}
 	}	
 
@@ -694,6 +713,11 @@ class FileResourceHandler extends AResourceHandler {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public boolean isHidden() {
+		return this.file.isHidden() || this.file.getName().startsWith(".");
 	}
 	
 }

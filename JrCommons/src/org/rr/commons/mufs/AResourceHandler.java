@@ -361,12 +361,34 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	 * This default implementation uses the {@link FilenameFilter} to filter
 	 * these files starting with a '.'.
 	 */
-	public IResourceHandler[] listFileResources(boolean showHidden) throws IOException {
+	public IResourceHandler[] listFileResources(final boolean showHidden) throws IOException {
 		IResourceHandler[] listResources = this.listResources(new ResourceNameFilter() {
 		
 			@Override
 			public boolean accept(IResourceHandler loader) {
-				if(loader.getName().startsWith(".")) {
+				if(!loader.isFileResource()) {
+					return false;
+				}
+				if(!showHidden && loader.getName().startsWith(".")) {
+					return false;
+				} 
+				return true;
+			}
+		});
+		return listResources;
+	}
+	
+	/**
+	 * This default implementation uses the {@link FilenameFilter} to filter
+	 * these files starting with a '.'.
+	 */
+	@Override
+	public IResourceHandler[] listDirectoryResources(final boolean showHidden) throws IOException {
+		IResourceHandler[] listResources = this.listDirectoryResources(new ResourceNameFilter() {
+			
+			@Override
+			public boolean accept(IResourceHandler loader) {
+				if(!showHidden && loader.getName().startsWith(".")) {
 					return false;
 				} 
 				return true;
@@ -443,5 +465,10 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public List<String> getPathSegments() {
 		List<String> emptyList = Collections.emptyList();
 		return emptyList;
+	}
+	
+	@Override
+	public boolean isHidden() {
+		return false;
 	}	
 }
