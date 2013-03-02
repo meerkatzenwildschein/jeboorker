@@ -187,6 +187,8 @@ public interface IResourceHandler extends Comparable<IResourceHandler> {
 	 * @return All these {@link IResourceHandler} which have this {@link IResourceHandler} as parent.
 	 */
 	public IResourceHandler[] listDirectoryResources() throws IOException;	
+
+	public IResourceHandler[] listDirectoryResources(boolean hidden) throws IOException;	
 	
 	/**
 	 * Lists all resources which could have child resources.
@@ -375,5 +377,10 @@ public interface IResourceHandler extends Comparable<IResourceHandler> {
 	 * @return The path segments. If no path segmentation is supported an empty list is returned. 
 	 */
 	public List<String> getPathSegments();
+
+	/**
+	 * Tells if this {@link IResourceHandler} instance is a hidden file
+	 */
+	public boolean isHidden();
 
 }
