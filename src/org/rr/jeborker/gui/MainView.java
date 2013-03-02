@@ -765,7 +765,7 @@ public class MainView extends JFrame{
 		gbc_buttonPanel.gridy = 0;
 		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 28, 28, 0};
+		gbl_buttonPanel.columnWidths = new int[]{0, 28, 28};
 		gbl_buttonPanel.rowHeights = new int[]{10, 0};
 		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};

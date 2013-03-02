@@ -14,6 +14,8 @@ import javax.swing.tree.TreeNode;
 import org.rr.common.swing.tree.NamedNode;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceNameFilter;
+import org.rr.jeborker.gui.action.ActionUtils;
 
 public class FileSystemNode implements MutableTreeNode, NamedNode {
 
@@ -116,11 +118,20 @@ public class FileSystemNode implements MutableTreeNode, NamedNode {
 	private List<IResourceHandler> getChildResources() {
 		if(subFolders == null) {
 			try {
-				IResourceHandler[] listDirectoryResources = pathResource.listDirectoryResources();
+				IResourceHandler[] listDirectoryResources = pathResource.listDirectoryResources(false);
 				subFolders = new ArrayList<IResourceHandler>(Arrays.asList(listDirectoryResources));
 				
 				if(showFiles) {
-					IResourceHandler[] listFileResources = pathResource.listFileResources();
+					IResourceHandler[] listFileResources = pathResource.listResources(new ResourceNameFilter() {
+						
+						@Override
+						public boolean accept(IResourceHandler resource) {
+							if(ActionUtils.isSupportedEbookFormat(resource) && !resource.isHidden()) {
+								return true;
+							}
+							return false;
+						}
+					});
 					subFolders.addAll(Arrays.asList(listFileResources));
 				}
 			} catch (IOException e) {
