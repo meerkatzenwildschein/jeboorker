@@ -18,6 +18,11 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 
 public class SwingUtils {
+	private static Color selectionForegroundColor;
+	private static Color selectionBackgroundColor;
+	private static Color foregroundColor;
+	private static Color backgroundColor;
+
 	/**
 	 * Fetch all components from a specified type out of a Window. <BR>
 	 * 
@@ -70,7 +75,7 @@ public class SwingUtils {
 	 * a JRootPane for example.
 	 * 
 	 * @param container
-	 *            Container that sould be searched for The Component
+	 *            Container that should be searched for The Component
 	 * @param recursive
 	 *            An empty ArrayList which will be filled up or null if a new
 	 *            ArrayList should be returned.
@@ -117,39 +122,45 @@ public class SwingUtils {
 		}
 		return recursive;
 	}
-
+	
 	/**
 	 * Get the background color for the current UI.
 	 * @return The desired background color.
 	 */
 	public static Color getSelectionBackgroundColor() {
-		Color color = UIManager.getColor("Table.selectionBackground");
-		if(color == null) {
-			color = new JList().getSelectionBackground(); 
+		if(selectionBackgroundColor != null) {
+			return selectionBackgroundColor;
+		}
+		
+		selectionBackgroundColor = UIManager.getColor("Table.selectionBackground");
+		if(selectionBackgroundColor == null) {
+			selectionBackgroundColor = new JList().getSelectionForeground();
 		}
 		
 		//sometimes the UIManager color won't work 
-		return new Color(color.getRed(), color.getGreen(), color.getBlue());
-	}
+		return selectionBackgroundColor = new Color(selectionBackgroundColor.getRed(), selectionBackgroundColor.getGreen(), selectionBackgroundColor.getBlue());
+	}	
 	
 	/**
 	 * Get the foreground color for the current UI.
 	 * @return The desired foreground color.
 	 */
 	public static Color getSelectionForegroundColor() {
-		//for windows
-		Color win = (Color) Toolkit.getDefaultToolkit().getDesktopProperty("win.item.highlightTextColor");
-		if(win != null) {
-			return win;
+		if(selectionForegroundColor != null) {
+			return selectionForegroundColor;
 		}
 		
-		Color color = UIManager.getColor("Table.selectionForeground");
-		if(color == null) {
-			color = new JList().getSelectionForeground();
+		//for windows
+		selectionForegroundColor = (Color) Toolkit.getDefaultToolkit().getDesktopProperty("win.item.highlightTextColor");
+		if(selectionForegroundColor == null) {
+			selectionForegroundColor = UIManager.getColor("Table.selectionForeground");
+			if(selectionForegroundColor == null) {
+				selectionForegroundColor = new JList().getSelectionForeground();
+			}
 		}
 		
 		//sometimes the UIManager color won't work 
-		return new Color(color.getRed(), color.getGreen(), color.getBlue());
+		return selectionForegroundColor = new Color(selectionForegroundColor.getRed(), selectionForegroundColor.getGreen(), selectionForegroundColor.getBlue());
 	}	
 	
 	/**
@@ -164,23 +175,31 @@ public class SwingUtils {
 	}
 	
 	public static Color getForegroundColor() {
-		Color color = UIManager.getColor("Table.foreground");
-		if(color == null) {
-			color = new JList().getForeground();
+		if(foregroundColor != null) {
+			return foregroundColor;
+		}
+		
+		foregroundColor = UIManager.getColor("Table.foreground");
+		if(foregroundColor == null) {
+			foregroundColor = new JList().getForeground();
 		}
 		
 		//sometimes the UIManager color won't work 
-		return new Color(color.getRed(), color.getGreen(), color.getBlue());
+		return foregroundColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue());
 	}
 	
 	public static Color getBackgroundColor() {
-		Color color = UIManager.getColor("Table.background");
-		if(color == null) {
-			color = new JList().getBackground();
+		if(backgroundColor != null) {
+			return backgroundColor;
+		}
+		
+		backgroundColor = UIManager.getColor("Table.background");
+		if(backgroundColor == null) {
+			backgroundColor = new JList().getBackground();
 		}
 		
 		//sometimes the UIManager color won't work
-		return new Color(color.getRed(), color.getGreen(), color.getBlue());
+		return new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue());
 	}	
 	
 	public static void centerOnScreen(Window window) {
