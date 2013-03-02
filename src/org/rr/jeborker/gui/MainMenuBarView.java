@@ -90,7 +90,7 @@ class MainMenuBarView extends JMenuBar {
 			private void createDynamicFileMenu() {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
-				final List<IResourceHandler> selectedResources = controller.getSelectedTreeItems();
+				final List<IResourceHandler> selectedResources = controller.getMainTreeController().getSelectedTreeItems();
 				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
 
 				fileMenuBar.removeAll();
@@ -225,7 +225,7 @@ class MainMenuBarView extends JMenuBar {
 					deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedItems, selectedEbookPropertyItemRows));
 					deleteFileMenuEntry.setEnabled(true);	
 				} else {
-					List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+					List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 					if(selectedTreeItems.size() > 0) {
 						deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedTreeItems));
 						deleteFileMenuEntry.setEnabled(true);
@@ -239,7 +239,7 @@ class MainMenuBarView extends JMenuBar {
 				if(selectedItems.size() >= 1) {
 					copyToSubMenu.setEnabled(true);
 				}  else {
-					if(controller.getSelectedTreeItems().size() > 0) {
+					if(controller.getMainTreeController().getSelectedTreeItems().size() > 0) {
 						copyToSubMenu.setEnabled(true);	
 					} else {
 						copyToSubMenu.setEnabled(false);
@@ -305,7 +305,7 @@ class MainMenuBarView extends JMenuBar {
 			}
 			
 			private void createDynamicEditMenu(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
-				List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+				List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 				
 				JMenuItem copyClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
 				if(!copyClipboard.isEnabled()) {

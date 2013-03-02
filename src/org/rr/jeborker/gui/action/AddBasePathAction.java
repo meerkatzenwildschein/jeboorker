@@ -42,7 +42,7 @@ class AddBasePathAction extends AbstractAction {
 			}
 		}
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("add_16.png"));
-		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("add_22.png"));
+//		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("add_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 		putValue(SHORT_DESCRIPTION, Bundle.getString("AddBasePathAction.tooltip")); //tooltip
 	}

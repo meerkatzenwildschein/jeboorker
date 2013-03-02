@@ -71,6 +71,11 @@ public class MainController {
 	private static MainController controller;
 	
 	/**
+	 * Controller for the filesystem and base path tree.
+	 */
+	private static MainTreeController treeController;
+	
+	/**
 	 * The controller for the SortColumn combobox.
 	 */
 	private static SortColumnComponentController sortColumnComponentController;
@@ -109,40 +114,6 @@ public class MainController {
 		}
 		
 	}
-	
-	/**
-	 * Saves/Writes the metadata properties if something has changed. 
-	 */
-	public void saveProperties(int minSelectionIndex, int maxSelectionIndex) {
-		final EbookSheetPropertyModel sheetModel = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
-		final List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
-		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
-		if(getEbookSheetPropertyModel().isChanged()) {
-			//write properties
-			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
-			EbookPropertyDBTableModel tableModel = getTableModel();
-			int rowCount = tableModel.getRowCount();
-
-			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
-				tableModel.reloadEbookPropertyItemAt(minSelectionIndex);
-			}
-			
-			if(maxSelectionIndex >= 0 && maxSelectionIndex != minSelectionIndex && maxSelectionIndex < rowCount) {
-				tableModel.reloadEbookPropertyItemAt(maxSelectionIndex);
-			}
-			
-			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
-				int[] selectedRows = mainWindow.mainTable.getSelectedRows();
-				for (int selectedRow : selectedRows) {
-					tableModel.reloadEbookPropertyItemAt(selectedRow);
-				}
-			}
-			refreshTableSelectedItem(false);
-			
-			//a repaint does a refresh to all visible table rows.
-			mainWindow.mainTable.repaint();
-		}
-	}	
 	
 	/**
 	 * Mouse listener which handles the right click / popup menu on the main table.
@@ -225,6 +196,38 @@ public class MainController {
 		return controller;
 	}
 	
+
+	/**
+	 * Gets the controller for the sort column Combobox. Thats these combobox where the column
+	 * could be selected which should be used for the ebook item order. 
+	 */
+	public SortColumnComponentController getSortColumnComponentController() {
+		return sortColumnComponentController;
+	}
+	
+	/**
+	 * Gets the controller for the sort column Combobox. Thats these combobox where the order
+	 * could be selected which should be used for the ebook items. 
+	 */
+	public SortOrderComponentController getSortOrderComponentController() {
+		return sortOrderComponentController;
+	}	
+
+	/**
+	 * Gets the controller which handles the filter panel functions.
+	 */
+	public FilterPanelController getFilterPanelController() {
+		return filterPanelController;
+	}
+	
+	/**
+	 * Gets the controller which handles the base path and file system tree.
+	 */
+	public MainTreeController getMainTreeController() {
+		return treeController;
+	}
+		
+	
 	/**
 	 * Tells if the {@link MainController} is already initialized.
 	 * @return <code>true</code> if the {@link MainController} is initialized and <code>false</code> otherwise.
@@ -247,6 +250,7 @@ public class MainController {
 		sortColumnComponentController = new SortColumnComponentController(mainWindow.sortColumnComboBox);
 		sortOrderComponentController = new SortOrderComponentController(mainWindow.sortOrderAscButton, mainWindow.sortOrderDescButton);
 		filterPanelController = new FilterPanelController();
+		treeController = new MainTreeController(mainWindow.basePathTree, mainWindow.fileSystemTree);
 	}
 	
 	private void initListeners() {
@@ -286,6 +290,41 @@ public class MainController {
 		});				
 	}
 	
+	/**
+	 * Saves/Writes the metadata properties if something has changed. 
+	 */
+	public void saveProperties(int minSelectionIndex, int maxSelectionIndex) {
+		final EbookSheetPropertyModel sheetModel = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
+		final List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
+		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
+		if(getEbookSheetPropertyModel().isChanged()) {
+			//write properties
+			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
+			EbookPropertyDBTableModel tableModel = getTableModel();
+			int rowCount = tableModel.getRowCount();
+	
+			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
+				tableModel.reloadEbookPropertyItemAt(minSelectionIndex);
+			}
+			
+			if(maxSelectionIndex >= 0 && maxSelectionIndex != minSelectionIndex && maxSelectionIndex < rowCount) {
+				tableModel.reloadEbookPropertyItemAt(maxSelectionIndex);
+			}
+			
+			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
+				int[] selectedRows = mainWindow.mainTable.getSelectedRows();
+				for (int selectedRow : selectedRows) {
+					tableModel.reloadEbookPropertyItemAt(selectedRow);
+				}
+			}
+			refreshTableSelectedItem(false);
+			
+			//a repaint does a refresh to all visible table rows.
+			mainWindow.mainTable.repaint();
+		}
+	}
+
+
 	/**
 	 * Refresh the whole table.
 	 */
@@ -556,68 +595,7 @@ public class MainController {
 		return result;
 	}
 	
-	/**
-	 * Get the selected Tree items from that tree that is currently visible to the user
-	 */
-	public List<IResourceHandler> getSelectedTreeItems() {
-		JTree selectedTreeComponent = mainWindow.getSelectedTreePathComponent();
-		TreePath[] selectionPaths = ((JTree)selectedTreeComponent).getSelectionPaths();
-		if(selectionPaths != null) {
-			ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(selectionPaths.length);
-			if(selectionPaths != null) {
-				for(TreePath selectionPath : selectionPaths) {
-					TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
-					if(targetResource instanceof FileSystemNode) {
-						result.add( ((FileSystemNode)targetResource).getResource() );
-					}
-				}
-			}
-			return result;
-		}
-		return Collections.emptyList();
-	}
-	
-	/**
-	 * Expands the nodes for the given {@link IResourceHandler} instances in this
-	 * tree that is currently be shown to the user. 
-	 */
-	public void addExpandedTreeItems(final List<IResourceHandler> resourceHandlers) {
-		JTree selectedComponent = mainWindow.getSelectedTreePathComponent();
-		for(IResourceHandler resourceHandler : resourceHandlers) {
-			TreeModel model = ((JTree) selectedComponent).getModel();
-			
-			List<String> pathSegments = resourceHandler.getPathSegments();
-			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
-			for(int i = 0; i < pathSegments.size(); i++) {
-				if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-					List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);
-					if(i == 0) {
-						extract.set(0, extract.get(0) + File.separator);
-					}
-					String join = ListUtils.join(extract, File.separator);
-					fullPathSegments.add(join);
-				} else {
-					List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
-					String join = ListUtils.join(extract, File.separator);
-					fullPathSegments.add(File.separator + join);
-				}
-			}	
-			
-			TreePath lastExpandedRow = null;
-			if(model instanceof FileSystemTreeModel) {
-				lastExpandedRow = ((FileSystemTreeModel) model).restoreExpansionState((JTree) selectedComponent, fullPathSegments);
-			} else if(model instanceof BasePathTreeModel) {
-				lastExpandedRow = ((BasePathTreeModel) model).restoreExpanstionState((JTree) selectedComponent, resourceHandler, fullPathSegments);
-			}
-			
-			if(lastExpandedRow != null) {
-				((JRTree) selectedComponent).scrollPathToVisibleVertical(lastExpandedRow, true);
-			}
-			if(getSelectedEbookPropertyItemRows().length > 0) {
-				mainWindow.mainTable.clearSelection();
-			}
-		}
-	}
+
 	
 	/**
 	 * Gets all selected rows from the main table.
@@ -742,29 +720,6 @@ public class MainController {
 		MainMenuBarController.getController().dispose();
 	}
 
-	/**
-	 * Gets the controller for the sort column Combobox. Thats these combobox where the column
-	 * could be selected which should be used for the ebook item order. 
-	 */
-	public SortColumnComponentController getSortColumnComponentController() {
-		return sortColumnComponentController;
-	}
-	
-	/**
-	 * Gets the controller for the sort column Combobox. Thats these combobox where the order
-	 * could be selected which should be used for the ebook items. 
-	 */
-	public SortOrderComponentController getSortOrderComponentController() {
-		return sortOrderComponentController;
-	}	
-
-	/**
-	 * Gets the controller which handles the filter panel functions.
-	 */
-	public FilterPanelController getFilterPanelController() {
-		return filterPanelController;
-	}
-	
 	/**
 	 * Gets the application main window. Needed for having modal dialogs.
 	 * @return The main window instance. 

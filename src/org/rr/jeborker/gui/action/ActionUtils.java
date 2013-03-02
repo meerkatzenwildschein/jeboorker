@@ -255,7 +255,7 @@ public class ActionUtils {
 			return result;
 		}
 		
-		List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+		List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 		if(!selectedTreeItems.isEmpty()) {
 			for(IResourceHandler selectedTreeItem : selectedTreeItems) {
 				result.add(selectedTreeItem);

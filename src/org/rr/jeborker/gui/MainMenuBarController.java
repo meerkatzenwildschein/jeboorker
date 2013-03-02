@@ -153,7 +153,7 @@ public class MainMenuBarController {
 	
 	private static JPopupMenu createFileSystemTreePopupMenu() {
 		final MainController controller = MainController.getController();
-		final List<IResourceHandler> items = controller.getSelectedTreeItems();
+		final List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
 		final JPopupMenu menu = new JPopupMenu();
 		
 		Action action;
@@ -231,7 +231,7 @@ public class MainMenuBarController {
 		final MainController controller = MainController.getController();
 		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
 		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-		final List<IResourceHandler> selectedTreeItems = controller.getSelectedTreeItems();
+		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
 		final String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
 		final JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 		
