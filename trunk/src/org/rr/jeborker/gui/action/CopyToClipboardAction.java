@@ -46,7 +46,7 @@ public class CopyToClipboardAction extends AbstractAction implements ClipboardOw
 	    		files.add(new File(item.getFile()).getPath());
 	        }
 		} else {
-			List<IResourceHandler> selectedTreeItems = controller.getSelectedTreeItems();
+			List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
 			for(IResourceHandler selectedTreeItem : selectedTreeItems) {
 	    		uriList.add(selectedTreeItem.toFile().toURI());
 	    		files.add(selectedTreeItem.toFile().getPath());				

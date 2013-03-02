@@ -31,7 +31,7 @@ public class FileSystemTreeRefreshAction extends AbstractAction {
 			IResourceHandler resourceToRefresh = ResourceHandlerFactory.getResourceHandler(path);
 			controller.refreshFileSystemTreeEntry(resourceToRefresh);
 		} else {
-			List<IResourceHandler> selectedTreeItems = controller.getSelectedTreeItems();
+			List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
 			for(IResourceHandler selectedTreeItem : selectedTreeItems) {
 				controller.refreshFileSystemTreeEntry(selectedTreeItem);
 			}

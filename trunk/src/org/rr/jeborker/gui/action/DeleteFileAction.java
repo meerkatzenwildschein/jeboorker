@@ -50,7 +50,7 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 							doDelete(resourceHandler);
 						}
 					} else {
-						List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+						List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 						for(IResourceHandler resourceHandler : selectedTreeItems) {
 							doDelete(resourceHandler);
 						}

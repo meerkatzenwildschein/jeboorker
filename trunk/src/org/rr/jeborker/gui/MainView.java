@@ -557,6 +557,8 @@ public class MainView extends JFrame{
 	}
 
 	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete) {
+		final String fileSystemTreeName = "FileSystemTree";
+		
 		JPanel fileSystemTreePanel = new JPanel();
 		fileSystemTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		
@@ -576,7 +578,7 @@ public class MainView extends JFrame{
 		gbc_buttonPanel.gridy = 0;
 		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 28, 0};
+		gbl_buttonPanel.columnWidths = new int[]{0, 31, 31};
 		gbl_buttonPanel.rowHeights = new int[]{10, 0};
 		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
@@ -587,13 +589,22 @@ public class MainView extends JFrame{
 		syncButton.setMinimumSize(new Dimension(0, 28));
 		GridBagConstraints gbc_syncButton = new GridBagConstraints();
 		gbc_syncButton.fill = GridBagConstraints.BOTH;
-		gbc_syncButton.gridx = 1;
+		gbc_syncButton.gridx = 2;
 		gbc_syncButton.gridy = 0;
 		buttonPanel.add(syncButton, gbc_syncButton);
 		
-		fileSystemTree = new JRTree();
-		fileSystemTree.setName("FileSystemTree");
+		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, fileSystemTreeName));
+		collapseButton.setPreferredSize(new Dimension(0, 30));
+		collapseButton.setMinimumSize(new Dimension(0, 30));
+		GridBagConstraints gbc_collapseButton = new GridBagConstraints();
+		gbc_collapseButton.fill = GridBagConstraints.BOTH;
+		gbc_collapseButton.insets = new Insets(0, 0, 0, 3);
+		gbc_collapseButton.gridx = 1;
+		gbc_collapseButton.gridy = 0;
+		buttonPanel.add(collapseButton, gbc_collapseButton);		
 		
+		fileSystemTree = new JRTree();
+		fileSystemTree.setName(fileSystemTreeName);
 		if(Jeboorker.isRuntime) {
 			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
 			fileSystemTree.setModel(fileSystemTreeModel);
@@ -706,7 +717,7 @@ public class MainView extends JFrame{
              * Create a new Transferable that is used to drag files from jeboorker to a native application.
              */
             protected Transferable createTransferable(JComponent c) {
-            	List<IResourceHandler> selectedTreeItems = MainController.getController().getSelectedTreeItems();
+            	List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 		        final List<URI> uriList = new ArrayList<URI>(selectedTreeItems.size());
 		        final List<String> files = new ArrayList<String>(selectedTreeItems.size());
 		        
@@ -747,6 +758,8 @@ public class MainView extends JFrame{
 	}
 	
 	private JComponent createBasePathTree() {
+		final String basePathTreeName = "BasePathTree";
+		
 		JPanel basePathTreePanel = new JPanel();
 		basePathTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		GridBagLayout gbl_basePathTreePanel = new GridBagLayout();
@@ -765,7 +778,7 @@ public class MainView extends JFrame{
 		gbc_buttonPanel.gridy = 0;
 		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
 		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 31, 31};
+		gbl_buttonPanel.columnWidths = new int[]{0, 31, 31, 31};
 		gbl_buttonPanel.rowHeights = new int[]{10, 0};
 		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
@@ -777,8 +790,7 @@ public class MainView extends JFrame{
 		GridBagConstraints gbc_syncButton = new GridBagConstraints();
 		gbc_syncButton.insets = new Insets(0, 0, 0, 3);
 		gbc_syncButton.fill = GridBagConstraints.BOTH;
-		gbc_syncButton.gridx = 2;
-		
+		gbc_syncButton.gridx = 3;
 		gbc_syncButton.gridy = 0;
 		buttonPanel.add(syncButton, gbc_syncButton);
 		
@@ -789,12 +801,22 @@ public class MainView extends JFrame{
 		GridBagConstraints gbc_addButton = new GridBagConstraints();
 		gbc_addButton.fill = GridBagConstraints.BOTH;
 		gbc_addButton.insets = new Insets(0, 0, 0, 3);
-		gbc_addButton.gridx = 1;
+		gbc_addButton.gridx = 2;
 		gbc_addButton.gridy = 0;
 		buttonPanel.add(addButton, gbc_addButton);
 		
+		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, basePathTreeName));
+		collapseButton.setPreferredSize(new Dimension(0, 30));
+		collapseButton.setMinimumSize(new Dimension(0, 30));
+		GridBagConstraints gbc_collapseButton = new GridBagConstraints();
+		gbc_collapseButton.fill = GridBagConstraints.BOTH;
+		gbc_collapseButton.insets = new Insets(0, 0, 0, 3);
+		gbc_collapseButton.gridx = 1;
+		gbc_collapseButton.gridy = 0;
+		buttonPanel.add(collapseButton, gbc_collapseButton);
+		
 		basePathTree = new JRTree();
-		basePathTree.setName("BasePathTree");
+		basePathTree.setName(basePathTreeName);
 		if(Jeboorker.isRuntime) {
 			basePathTree.setModel(new BasePathTreeModel());
 			basePathTree.setEditable(true);
