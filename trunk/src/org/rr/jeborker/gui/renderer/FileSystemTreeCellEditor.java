@@ -54,5 +54,5 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 		editingNode = (FileSystemNode) value;
 		return result;
 	}
-
+	
 }
