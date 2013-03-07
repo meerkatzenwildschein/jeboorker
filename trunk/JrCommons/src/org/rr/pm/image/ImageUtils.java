@@ -79,23 +79,26 @@ public class ImageUtils {
         	}
         }		
 		
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		MemoryCacheImageOutputStream mem = new MemoryCacheImageOutputStream(output);
-		writer.setOutput(mem);
-		try {
-			writer.write(image);
-		} catch (IOException e) {
-			//OpenJDK is not able to encode Jpeg. This is just a fallback for this case.
-			if(mime.equals("image/jpeg") || mime.equals("image/jpg")) {
-				return encodeJpeg(image, 75);
+        if(writer != null) {
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			MemoryCacheImageOutputStream mem = new MemoryCacheImageOutputStream(output);
+			writer.setOutput(mem);
+			try {
+				writer.write(image);
+			} catch (IOException e) {
+				//OpenJDK is not able to encode Jpeg. This is just a fallback for this case.
+				if(mime.equals("image/jpeg") || mime.equals("image/jpg")) {
+					return encodeJpeg(image, 75);
+				}
+				
+				LoggerFactory.logInfo(ImageUtils.class, "could not create thumbnail", e);
+			} finally {
+				try {mem.flush();} catch (Exception e) {}
+				try {mem.close();} catch (Exception e) {}
 			}
-			
-			LoggerFactory.logInfo(ImageUtils.class, "could not create thumbnail", e);
-		} finally {
-			try {mem.flush();} catch (Exception e) {}
-			try {mem.close();} catch (Exception e) {}
-		}
-		return output.toByteArray();
+			return output.toByteArray();
+        }
+        return null;
 	}
 
 	/**
