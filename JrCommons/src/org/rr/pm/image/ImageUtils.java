@@ -68,28 +68,34 @@ public class ImageUtils {
 			mime = "image/jpeg";
 		}
 		
-		Iterator<ImageWriter> imageWritersByFormatName = ImageIO.getImageWritersByMIMEType(mime);
-		if(imageWritersByFormatName.hasNext()) {
-			ImageWriter writer = imageWritersByFormatName.next();
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			MemoryCacheImageOutputStream mem = new MemoryCacheImageOutputStream(output);
-			writer.setOutput(mem);
-			try {
-				writer.write(image);
-			} catch (IOException e) {
-				//OpenJDK is not able to encode Jpeg. This is just a fallback for this case.
-				if(mime.equals("image/jpeg") || mime.equals("image/jpg")) {
-					return encodeJpeg(image, 75);
-				}
-				
-				LoggerFactory.logInfo(ImageUtils.class, "could not create thumbnail", e);
-			} finally {
-				try {mem.flush();} catch (Exception e) {}
-				try {mem.close();} catch (Exception e) {}
+        Iterator<ImageWriter> imageWritersByFormatName = ImageIO.getImageWritersByMIMEType(mime);
+        ImageWriter writer = null;
+        while(imageWritersByFormatName.hasNext()) {
+        	ImageWriter next = imageWritersByFormatName.next();
+        	if(writer == null && next.getClass().getName().equals("com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriter")) {
+        		writer = next;
+        	} else {
+        		writer = next;
+        	}
+        }		
+		
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		MemoryCacheImageOutputStream mem = new MemoryCacheImageOutputStream(output);
+		writer.setOutput(mem);
+		try {
+			writer.write(image);
+		} catch (IOException e) {
+			//OpenJDK is not able to encode Jpeg. This is just a fallback for this case.
+			if(mime.equals("image/jpeg") || mime.equals("image/jpg")) {
+				return encodeJpeg(image, 75);
 			}
-			return output.toByteArray();
+			
+			LoggerFactory.logInfo(ImageUtils.class, "could not create thumbnail", e);
+		} finally {
+			try {mem.flush();} catch (Exception e) {}
+			try {mem.close();} catch (Exception e) {}
 		}
-		return null;
+		return output.toByteArray();
 	}
 
 	/**
