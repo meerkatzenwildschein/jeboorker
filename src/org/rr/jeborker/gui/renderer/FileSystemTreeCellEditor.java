@@ -1,12 +1,14 @@
 package org.rr.jeborker.gui.renderer;
 
 import java.awt.Component;
+import java.util.EventObject;
 
 import javax.swing.JTree;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeNode;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.gui.MainController;
@@ -53,6 +55,15 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 		}
 		editingNode = (FileSystemNode) value;
 		return result;
+	}
+
+	@Override
+	public boolean isCellEditable(EventObject event) {
+		TreeNode node = (TreeNode) tree.getSelectionPath().getLastPathComponent();
+		if(node.isLeaf()) {
+			return true;
+		}
+		return false;
 	}
 	
 }

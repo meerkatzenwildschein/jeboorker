@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.action;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -265,4 +266,29 @@ public class ActionUtils {
 		
 		return result;
 	}
+	
+	/**
+	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
+	 * The files will be copied and the {@link EbookPropertyItem}s will be created. 
+	 */
+	public static void importEbookResources(int dropRow, String basePath, IResourceHandler targetRecourceDirectory,
+			final List<IResourceHandler> transferedFiles) throws IOException {
+		for(IResourceHandler sourceResource : transferedFiles) {
+			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
+			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
+				sourceResource.copyTo(targetResource, false);
+				EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
+				ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
+				MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
+			} else {
+				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
+				} else if(sourceResource.exists()){
+					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");	                				
+				} else {
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");	                				
+				}
+			}
+		}
+	}		
 }

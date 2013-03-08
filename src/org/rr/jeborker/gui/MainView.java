@@ -608,6 +608,7 @@ public class MainView extends JFrame{
 		if(Jeboorker.isRuntime) {
 			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
 			fileSystemTree.setModel(fileSystemTreeModel);
+			fileSystemTree.setAutoMoveHorizontalSliders(true);
 			fileSystemTree.setEditable(true);
 			FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
 			fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
@@ -627,6 +628,7 @@ public class MainView extends JFrame{
 						}
 					}
 				});
+				//row 0 should always be expanded.
 				fileSystemTree.expandRow(0);
 			}
 		}
@@ -824,6 +826,7 @@ public class MainView extends JFrame{
 			basePathTree.setCellRenderer(basePathTreeCellRenderer);
 			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
 			basePathTree.setToggleExpandOnDoubleClick(true);
+			basePathTree.setAutoMoveHorizontalSliders(true);
 			basePathTree.setEditable(true);
 		}
 		JScrollPane basePathTreeScroller = new JScrollPane(basePathTree);

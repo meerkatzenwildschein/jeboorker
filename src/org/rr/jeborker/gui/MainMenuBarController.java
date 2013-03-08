@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -169,7 +170,24 @@ public class MainMenuBarController {
 			
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).toString());
 			menu.add(action);
-		}	
+		} 
+		if(items.size() >= 1) {
+			final List<String> basePath = JeboorkerPreferences.getBasePath();
+			String name = Bundle.getString("MainMenuBarController.import");
+			JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
+			mnImport.setIcon(ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
+			mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
+			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
+				String path = iterator.next();
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_IMPORT_ACTION, path));
+				mnImport.add(pathItem);
+			}
+			menu.add(mnImport);
+			if(!ResourceHandlerUtils.containFilesOnly(items)) {
+				mnImport.setEnabled(false);
+			}
+		}
 		
 		JMenu copyToSubMenu = createCopyToMenu();
 		menu.add(copyToSubMenu);		
