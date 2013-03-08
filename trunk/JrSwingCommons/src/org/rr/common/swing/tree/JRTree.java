@@ -26,7 +26,7 @@ public class JRTree extends JTree {
 		super();
 
 		this.addMouseListener(new MouseAdapter() {
-			// fixes that the renderer did not fill the tree horizonally and
+			// fixes that the renderer did not fill the tree horizontally and
 			// on clicks behind the renderer the selection did not change.
 
 			@Override
@@ -115,7 +115,6 @@ public class JRTree extends JTree {
 	private class AutoMoveHorizontalMouseListener extends MouseAdapter {
 
 		private int latestX;
-		private int latestY;
 		private int latestRow;
 		
 		@Override
@@ -161,7 +160,6 @@ public class JRTree extends JTree {
 							surroundingScrollPane.getHorizontalScrollBar().setValue(value);
 						}
 						latestX = e.getX();
-						latestY = e.getY();
 						latestRow = row;
 					}
 				}
