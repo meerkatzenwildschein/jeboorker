@@ -26,6 +26,7 @@ import org.rr.jeborker.db.OrderDirection;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.gui.MainController;
 
 public class EbookPropertyDBTableModel implements TableModel {
 
@@ -43,6 +44,8 @@ public class EbookPropertyDBTableModel implements TableModel {
     private QueryCondition queryConditions;
     
     private boolean dirty = false;
+    
+    private boolean pending = false;
     
     private int oldSize = 0;
     
@@ -285,21 +288,50 @@ public class EbookPropertyDBTableModel implements TableModel {
     private List<EbookPropertyItem> getEbookItems(boolean clearQueryConditions) {
     	//NO BREAKPOINT HERE!
     	if(Jeboorker.isRuntime) {
-	    	if(isDirty() || dbItems == null) {
+	    	if(!pending && (isDirty() || dbItems == null)) {	 
 	    		this.dirty = false;
-	    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());
-	    		
-	    		this.dbItems = new IteratorList<EbookPropertyItem>(items);
-	    		if(this.dbItems == null) {
-	    			this.dbItems = Collections.emptyList();
+	    		if(this.allItems == null) {
+	    			firstStartupListInit();
+	    		} else {
+		    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());
+		    		
+		    		this.dbItems = new IteratorList<EbookPropertyItem>(items);
+		    		if(this.dbItems == null) {
+		    			this.dbItems = Collections.emptyList();
+		    		}
+		    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
+		    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
 	    		}
-	    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
-	    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
 	    	}
 	    	return this.allItems;
     	} else {
     		return null;
     	}
+    }
+    
+    private void firstStartupListInit() {
+    	//move the load of the model to a later 
+		pending = true;
+		allItems = Collections.emptyList();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+				}
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						MainController.getController().refreshTable();
+						pending = false;
+					}
+				});
+			}
+		}).start();
+
     }
     
     /**

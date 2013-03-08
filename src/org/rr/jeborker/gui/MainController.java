@@ -34,6 +34,7 @@ import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
@@ -238,6 +239,7 @@ public class MainController {
 		MainControllerUtils.restoreApplicationProperties(mainWindow);
 		MainMenuBarController.getController().restoreProperties();
 		mainWindow.setVisible(true);
+		LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
 	}
 
 	private void initSubController() {
