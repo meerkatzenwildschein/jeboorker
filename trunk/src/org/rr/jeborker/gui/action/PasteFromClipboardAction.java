@@ -19,7 +19,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -113,24 +112,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 	public static void importEbookFromClipboard(Transferable transferable, int dropRow, String basePath, IResourceHandler targetRecourceDirectory)
 			throws UnsupportedFlavorException, IOException, ClassNotFoundException {
 		final List<IResourceHandler> transferedFiles = ResourceHandlerFactory.getResourceHandler(transferable);
-
-		for(IResourceHandler sourceResource : transferedFiles) {
-			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
-			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
-				sourceResource.copyTo(targetResource, false);
-				EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
-				ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-				MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
-			} else {
-				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
-				} else if(sourceResource.exists()){
-					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");	                				
-				} else {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");	                				
-				}
-			}
-		}
-	}	
+		ActionUtils.importEbookResources(dropRow, basePath, targetRecourceDirectory, transferedFiles);
+	}
 
 }
