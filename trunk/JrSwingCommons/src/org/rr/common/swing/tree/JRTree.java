@@ -14,6 +14,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.rr.common.swing.SwingUtils;
+import org.rr.commons.utils.MathUtils;
 
 public class JRTree extends JTree {
 
@@ -113,6 +114,10 @@ public class JRTree extends JTree {
 	
 	private class AutoMoveHorizontalMouseListener extends MouseAdapter {
 
+		private int latestX;
+		private int latestY;
+		private int latestRow;
+		
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			if(isAutoMoveHorizontalSliders()) {
@@ -132,65 +137,77 @@ public class JRTree extends JTree {
 		}		
 		
 		private void move(MouseEvent e) {
-			Point point = e.getPoint();
-			int row = JRTree.this.getRowForLocation(0, point.y);			
+			int row = JRTree.this.getRowForLocation(0, e.getX());
 			for (int paddingLeft = 0; row < 0 && paddingLeft < JRTree.this.getWidth(); paddingLeft += 10) {
-				row = JRTree.this.getRowForLocation(paddingLeft, point.y);
+				row = JRTree.this.getRowForLocation(paddingLeft, e.getY());
 				if(row >= 0) {
-					final TreePath pathForLocation = JRTree.this.getPathForLocation(paddingLeft, point.y);
-					final TreeNode node = (TreeNode) pathForLocation.getLastPathComponent();
-					final boolean isLeaf = node.isLeaf();
-					final Component treeCellRendererComponent = JRTree.this.getCellRenderer().getTreeCellRendererComponent(JRTree.this, pathForLocation.getLastPathComponent(), false, isExpanded(row), isLeaf, row, false);
-					final int rendererWidth = treeCellRendererComponent.getPreferredSize().width;
-					final JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(JRTree.this);
-					
-					if(surroundingScrollPane != null) {
-						final int visibleComponentWidth = surroundingScrollPane.getBounds().width ;
-						final int scrollBarWidth = surroundingScrollPane.getVerticalScrollBar().getPreferredSize().width;
-
-						final int leafPadding = (isLeaf ? 15 : 25);				
-						final int visibleWidth = visibleComponentWidth - paddingLeft - rendererWidth - scrollBarWidth; // a minus value for the hidden width
-						if(visibleWidth < -10) { //scroll to hidden
-							int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
-							int rendererEnd = (paddingLeft - rendererWidth) * -1; //end of the renderer location
-							int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
-							
-							if(horizontalScrollbarLocation < rendererEnd) {
-								if(e.getLocationOnScreen().x + 50 > (surroundingScrollPane.getLocationOnScreen().x + visibleComponentWidth - scrollBarWidth)) {
-									int value = rendererBegin + (rendererWidth + leafPadding - visibleComponentWidth + scrollBarWidth + 15);
-									if(surroundingScrollPane.getHorizontalScrollBar().getValue() < value) {
-										//scroll to the end of the renderer component
-										surroundingScrollPane.getHorizontalScrollBar().setValue(value);
-									}
-								} else { 
-									//scroll to the beginning of the renderer component
-									surroundingScrollPane.getHorizontalScrollBar().setValue(rendererBegin);
-								}								
-							} 
-							
-						} else if(visibleWidth > 10) {
-							int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
-							int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
-							if(rendererBegin < horizontalScrollbarLocation -10) {
-								surroundingScrollPane.getHorizontalScrollBar().setValue(rendererBegin);
-							}
+					int movement = latestX - e.getX();
+					if(latestRow != row || !MathUtils.between(movement, -8, +8)) {
+						//row change or a min move by 8 pix in one direction.
+						final JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(JRTree.this);
+						int value = calculateScrollBarLocation(e.getLocationOnScreen().x, surroundingScrollPane, paddingLeft, row);
+						int aboveValue = value;
+						int underValue = value;
+						if(row > 0) {
+							aboveValue = calculateScrollBarLocation(e.getLocationOnScreen().x, surroundingScrollPane, paddingLeft, row - 1);
 						}
+						if(row < JRTree.this.getRowCount()) {
+							underValue = calculateScrollBarLocation(e.getLocationOnScreen().x, surroundingScrollPane, paddingLeft, row + 1);
+						}
+						
+						if(value >= 0) {
+							value = Math.max(value, aboveValue);
+							value = Math.max(value, underValue);							
+							surroundingScrollPane.getHorizontalScrollBar().setValue(value);
+						}
+						latestX = e.getX();
+						latestY = e.getY();
+						latestRow = row;
 					}
 				}
-			}	
+			}
 		}
-		
-		private Config getConfigForRow(int row) {
-			Config config = new Config();
-			return config;
-		}
-		
-		
-		private class Config {
+
+		private int calculateScrollBarLocation(int locationOnScreenX, JScrollPane surroundingScrollPane, int paddingLeft, final int row) {
+			final TreePath pathForLocation = JRTree.this.getPathForRow(row);
+			final TreeNode node = (TreeNode) pathForLocation.getLastPathComponent();
+			final boolean isLeaf = node.isLeaf();
+			final Component treeCellRendererComponent = JRTree.this.getCellRenderer().getTreeCellRendererComponent(JRTree.this, pathForLocation.getLastPathComponent(), false, isExpanded(row), isLeaf, row, false);
+			final int rendererWidth = treeCellRendererComponent.getPreferredSize().width;
 			
-			int rendererWidth;
-			
-			boolean isLeaf;
+			if(surroundingScrollPane != null) {
+				final int visibleComponentWidth = surroundingScrollPane.getBounds().width ;
+				final int scrollBarWidth = surroundingScrollPane.getVerticalScrollBar().getPreferredSize().width;
+
+				final int leafPadding = (isLeaf ? 15 : 25);				
+				final int visibleWidth = visibleComponentWidth - paddingLeft - rendererWidth - scrollBarWidth; // a minus value for the hidden width
+				if(visibleWidth < -10) { //scroll to hidden
+					int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
+					int rendererEnd = (paddingLeft - rendererWidth) * -1; //end of the renderer location
+					int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
+					
+					if(horizontalScrollbarLocation < rendererEnd) {
+						if(locationOnScreenX + 50 > (surroundingScrollPane.getLocationOnScreen().x + visibleComponentWidth - scrollBarWidth)) {
+							int value = rendererBegin + (rendererWidth + leafPadding - visibleComponentWidth + scrollBarWidth + 15);
+							if(surroundingScrollPane.getHorizontalScrollBar().getValue() < value) {
+								//scroll to the end of the renderer component
+								return value;
+							}
+						} else { 
+							//scroll to the beginning of the renderer component
+							return rendererBegin;
+						}								
+					} 
+					
+				} else if(visibleWidth > 10) {
+					int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
+					int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
+					if(rendererBegin < horizontalScrollbarLocation -10) {
+						return rendererBegin;
+					}
+				}
+			}
+			return -1;
 		}
 	}
 
