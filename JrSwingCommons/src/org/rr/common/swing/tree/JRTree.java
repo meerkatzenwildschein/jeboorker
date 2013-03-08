@@ -1,11 +1,15 @@
 package org.rr.common.swing.tree;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -15,11 +19,13 @@ public class JRTree extends JTree {
 
 	private boolean toggleExpandOnDoubleClick = false;
 	
+	private boolean autoMoveHorizontalSliders = false;
+	
 	public JRTree() {
 		super();
 
 		this.addMouseListener(new MouseAdapter() {
-			// fixes that the renderer did not fille the tree horizonally and
+			// fixes that the renderer did not fill the tree horizonally and
 			// on clicks behind the renderer the selection did not change.
 
 			@Override
@@ -56,6 +62,17 @@ public class JRTree extends JTree {
 				}
 			}
 		});
+		
+		final AutoMoveHorizontalMouseListener autoMoveHorizontalMouseListener = new AutoMoveHorizontalMouseListener();
+		this.addMouseMotionListener(autoMoveHorizontalMouseListener);
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(JRTree.this);
+				surroundingScrollPane.addMouseWheelListener(autoMoveHorizontalMouseListener);
+			}
+		});
 
 	}
 
@@ -85,6 +102,96 @@ public class JRTree extends JTree {
 	public void setToggleExpandOnDoubleClick(boolean expandOnDoubleClick) {
 		this.toggleExpandOnDoubleClick = expandOnDoubleClick;
 	}
+
+	public boolean isAutoMoveHorizontalSliders() {
+		return autoMoveHorizontalSliders;
+	}
+
+	public void setAutoMoveHorizontalSliders(boolean autoMoveHorizontalSliders) {
+		this.autoMoveHorizontalSliders = autoMoveHorizontalSliders;
+	}
 	
+	private class AutoMoveHorizontalMouseListener extends MouseAdapter {
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			if(isAutoMoveHorizontalSliders()) {
+				move(e);
+			}
+		}
+
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			if(isAutoMoveHorizontalSliders()) {
+				if(e.getSource() instanceof JScrollPane) {
+					int value = ((JScrollPane)e.getSource()).getVerticalScrollBar().getValue();
+					e = new MouseWheelEvent((Component) e.getSource(), e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY() + value, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e.getWheelRotation());
+				}
+				move(e);
+			}
+		}		
+		
+		private void move(MouseEvent e) {
+			Point point = e.getPoint();
+			int row = JRTree.this.getRowForLocation(0, point.y);			
+			for (int paddingLeft = 0; row < 0 && paddingLeft < JRTree.this.getWidth(); paddingLeft += 10) {
+				row = JRTree.this.getRowForLocation(paddingLeft, point.y);
+				if(row >= 0) {
+					final TreePath pathForLocation = JRTree.this.getPathForLocation(paddingLeft, point.y);
+					final TreeNode node = (TreeNode) pathForLocation.getLastPathComponent();
+					final boolean isLeaf = node.isLeaf();
+					final Component treeCellRendererComponent = JRTree.this.getCellRenderer().getTreeCellRendererComponent(JRTree.this, pathForLocation.getLastPathComponent(), false, isExpanded(row), isLeaf, row, false);
+					final int rendererWidth = treeCellRendererComponent.getPreferredSize().width;
+					final JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(JRTree.this);
+					
+					if(surroundingScrollPane != null) {
+						final int visibleComponentWidth = surroundingScrollPane.getBounds().width ;
+						final int scrollBarWidth = surroundingScrollPane.getVerticalScrollBar().getPreferredSize().width;
+
+						final int leafPadding = (isLeaf ? 15 : 25);				
+						final int visibleWidth = visibleComponentWidth - paddingLeft - rendererWidth - scrollBarWidth; // a minus value for the hidden width
+						if(visibleWidth < -10) { //scroll to hidden
+							int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
+							int rendererEnd = (paddingLeft - rendererWidth) * -1; //end of the renderer location
+							int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
+							
+							if(horizontalScrollbarLocation < rendererEnd) {
+								if(e.getLocationOnScreen().x + 50 > (surroundingScrollPane.getLocationOnScreen().x + visibleComponentWidth - scrollBarWidth)) {
+									int value = rendererBegin + (rendererWidth + leafPadding - visibleComponentWidth + scrollBarWidth + 15);
+									if(surroundingScrollPane.getHorizontalScrollBar().getValue() < value) {
+										//scroll to the end of the renderer component
+										surroundingScrollPane.getHorizontalScrollBar().setValue(value);
+									}
+								} else { 
+									//scroll to the beginning of the renderer component
+									surroundingScrollPane.getHorizontalScrollBar().setValue(rendererBegin);
+								}								
+							} 
+							
+						} else if(visibleWidth > 10) {
+							int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
+							int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
+							if(rendererBegin < horizontalScrollbarLocation -10) {
+								surroundingScrollPane.getHorizontalScrollBar().setValue(rendererBegin);
+							}
+						}
+					}
+				}
+			}	
+		}
+		
+		private Config getConfigForRow(int row) {
+			Config config = new Config();
+			return config;
+		}
+		
+		
+		private class Config {
+			
+			int rendererWidth;
+			
+			boolean isLeaf;
+		}
+	}
 
 }
