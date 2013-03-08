@@ -156,8 +156,12 @@ public class JRTree extends JTree {
 						
 						if(value >= 0) {
 							value = Math.max(value, aboveValue);
-							value = Math.max(value, underValue);							
-							surroundingScrollPane.getHorizontalScrollBar().setValue(value);
+							value = Math.max(value, underValue);		
+							int oldValueDiff = surroundingScrollPane.getHorizontalScrollBar().getValue() - value;
+							
+							if(!MathUtils.between(oldValueDiff, 11, -11)) {
+								surroundingScrollPane.getHorizontalScrollBar().setValue(value);
+							}
 						}
 						latestX = e.getX();
 						latestRow = row;
