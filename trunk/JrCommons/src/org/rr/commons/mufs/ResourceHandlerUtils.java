@@ -646,4 +646,18 @@ public class ResourceHandlerUtils {
 
 		return result;
 	}
+	
+	/**
+	 * Test all given {@link IResourceHandler} instances if they're files. 
+	 * @return <code>true</code> if all given {@link IResourceHandler} are files and <code>false</code> otherwise.
+	 */
+	public static boolean containFilesOnly(List<IResourceHandler> resourceHandlers) {
+		for(int i = 0; i < resourceHandlers.size(); i++) {
+			IResourceHandler resourceHandler = resourceHandlers.get(i);
+			if(resourceHandler != null && !resourceHandler.isFileResource()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
