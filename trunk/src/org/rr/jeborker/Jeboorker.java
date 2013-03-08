@@ -38,6 +38,8 @@ public class Jeboorker {
 
 	private static MainController mainController = null; 
 	
+	public static long startupTime = System.currentTimeMillis();
+	
 	/**
 	 * Launch the application.
 	 */
