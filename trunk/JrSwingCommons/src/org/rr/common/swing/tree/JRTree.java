@@ -170,6 +170,9 @@ public class JRTree extends JTree {
 
 		private int calculateScrollBarLocation(int locationOnScreenX, JScrollPane surroundingScrollPane, int paddingLeft, final int row) {
 			final TreePath pathForLocation = JRTree.this.getPathForRow(row);
+			if(pathForLocation == null) {
+				return -1;
+			}
 			final TreeNode node = (TreeNode) pathForLocation.getLastPathComponent();
 			final boolean isLeaf = node.isLeaf();
 			final Component treeCellRendererComponent = JRTree.this.getCellRenderer().getTreeCellRendererComponent(JRTree.this, pathForLocation.getLastPathComponent(), false, isExpanded(row), isLeaf, row, false);
