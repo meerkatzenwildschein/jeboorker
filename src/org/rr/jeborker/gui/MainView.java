@@ -252,7 +252,7 @@ public class MainView extends JFrame{
 				GridBagConstraints gbc_sortLabel = new GridBagConstraints();
 				gbc_sortLabel.fill = GridBagConstraints.VERTICAL;
 				gbc_sortLabel.anchor = GridBagConstraints.WEST;
-				gbc_sortLabel.insets = new Insets(0, 0, 0, 5);
+				gbc_sortLabel.insets = new Insets(0, 5, 0, 5);
 				gbc_sortLabel.gridx = 0;
 				gbc_sortLabel.gridy = 0;
 				sortPanel.add(sortLabel, gbc_sortLabel);
