@@ -68,7 +68,7 @@ public class MainMenuBarController {
 	 * @return The menu view.
 	 */
 	MainMenuBarView getView() {
-		if(view==null) {
+		if(view == null) {
 			view = new MainMenuBarView();
 		}
 		return view;
@@ -112,13 +112,13 @@ public class MainMenuBarController {
 		{
 			JMenuItem pathItem = new JMenuItem();
 			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
-			view.mnVerzeichnisEntfernen.add(pathItem);
+			getView().mnVerzeichnisEntfernen.add(pathItem);
 		}
 		
 		{
 			JMenuItem pathItem = new JMenuItem();
 			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
-			view.mnVerzeichnisRefresh.add(pathItem);
+			getView().mnVerzeichnisRefresh.add(pathItem);
 		}
 	}
 	
