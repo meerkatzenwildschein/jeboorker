@@ -7,12 +7,10 @@ After the read process has been done, all books from all folders you've specifie
 http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg
 
 = Folder handling =
-Always you've changed something within your ebook collection, you should perform a _File->Refresh folder_ for a rescan, so jeboorker can recognize these changes.
+Always you've copied some new ebooks to your collection, just perfrom a _File->Refresh folder_ for a rescan, so jeboorker can recognize these.
 
 The folders you've added can be toggled in it's visibility state by _File->Show/hide folder_.
 
-If you do not need a folder, you can remove it by _File->Remove folder_. This folder is only be removed from jeboorker and did not get touched in any other way!
-
 = Adding new books using Drag and Drop =
-You can copy Books simply by Dragging it in the jeboorker list. The book is copied to the same folder as the drop target book is
-located. You can also drag a book from jeboorker to you favourite file manager.
+You can copy Books simply by Dragging it in the Jeboorker list. The book is copied to the same folder as the drop target book is
+located. You can also drag a book from Jeboorker to you favourite file manager.
