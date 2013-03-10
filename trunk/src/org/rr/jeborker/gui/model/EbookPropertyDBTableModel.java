@@ -310,7 +310,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     }
     
     private void firstStartupListInit() {
-    	//move the load of the model to a later 
+    	//move the load of the model to a later point.
 		pending = true;
 		allItems = Collections.emptyList();
 		new Thread(new Runnable() {

@@ -248,7 +248,7 @@ public class MainView extends JFrame{
 				gbl_sortPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 				sortPanel.setLayout(gbl_sortPanel);
 				
-				sortLabel = new JLabel("Sortieren nach:");
+				sortLabel = new JLabel(Bundle.getString("EborkerMainView.sortby"));
 				GridBagConstraints gbc_sortLabel = new GridBagConstraints();
 				gbc_sortLabel.fill = GridBagConstraints.VERTICAL;
 				gbc_sortLabel.anchor = GridBagConstraints.WEST;
