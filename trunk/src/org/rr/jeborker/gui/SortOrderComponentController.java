@@ -63,7 +63,7 @@ public class SortOrderComponentController {
 	
 	private void storeProperties() {
 		String value = ascButton.isSelected() ? "asc" : "desc";
-		JeboorkerPreferences.addEntryString("sortColumnOrder", value);
+		JeboorkerPreferences.addGenericEntryAsString("sortColumnOrder", value);
 	}
 	
 	
@@ -71,7 +71,7 @@ public class SortOrderComponentController {
 	 * Restores the order fields and put them to view and model.
 	 */
 	private void restoreProperties() {
-		String sortColumnOrder = JeboorkerPreferences.getEntryString("sortColumnOrder");
+		String sortColumnOrder = JeboorkerPreferences.getGenericEntryAsString("sortColumnOrder");
 		if(sortColumnOrder != null) {
 		if(sortColumnOrder.equalsIgnoreCase("asc")) {
 			ActionEvent e = new ActionEvent(ascButton, ActionEvent.ACTION_PERFORMED, null);

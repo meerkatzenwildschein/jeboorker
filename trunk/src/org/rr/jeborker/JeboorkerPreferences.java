@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
+import org.rr.commons.collection.ListenerList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.db.DefaultDBManager;
@@ -18,6 +19,8 @@ import org.rr.jeborker.db.item.PreferenceItem;
 import org.rr.jeborker.gui.MainMenuBarController;
 
 public class JeboorkerPreferences {
+	
+	private static final ListenerList<JeboorkerPreferenceListener> preferenceChangeListener = new ListenerList<JeboorkerPreferenceListener>();
 	
 	private static final String BASE_PATH = "basePath";
 	
@@ -28,14 +31,14 @@ public class JeboorkerPreferences {
 	}
 
 	public static void addBasePath(final String path) {
-		String basePath = getEntryString(BASE_PATH);
+		String basePath = getGenericEntryAsString(BASE_PATH);
 		if (basePath.length() == 0) {
 			basePath = path;
 		} else {
 			basePath += (File.pathSeparator + path);
 		}
 		
-		addEntryString(BASE_PATH, basePath);
+		addGenericEntryAsString(BASE_PATH, basePath);
 	}
 	
 	/**
@@ -57,7 +60,7 @@ public class JeboorkerPreferences {
 			newBasePath.deleteCharAt(newBasePath.length()-1);
 		}
 		
-		addEntryString(BASE_PATH, newBasePath.toString());
+		addGenericEntryAsString(BASE_PATH, newBasePath.toString());
 	}	
 	
 	/**
@@ -65,7 +68,7 @@ public class JeboorkerPreferences {
 	 * @return The stored base path entries. never returns <code>null</code>.
 	 */
 	public static List<String> getBasePath() {
-		String basePath = getEntryString(BASE_PATH);
+		String basePath = getGenericEntryAsString(BASE_PATH);
 		if(basePath.length() == 0) {
 			return Collections.emptyList();
 		} else if (basePath.indexOf(File.pathSeparator) == -1) {
@@ -107,7 +110,7 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the given value.
 	 * @param value The value which can be accessed with the given key.
 	 */
-	public static void addEntryString(final String key, final String value) {
+	public static void addGenericEntryAsString(final String key, final String value) {
 		addEntryToDB(key, value);
 	}
 	
@@ -116,7 +119,7 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public static String getEntryString(final String key) {
+	public static String getGenericEntryAsString(final String key) {
 		if(key != null) {
 			String result;
 			if((result = getEntryFromDB(key)) != null) {
@@ -132,7 +135,7 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the given value.
 	 * @param value The value which can be accessed with the given key.
 	 */
-	public static void addEntryNumber(final String key, final Number value) {
+	public static void addGenericEntryAsNumber(final String key, final Number value) {
 		addEntryToDB(key, String.valueOf(value.doubleValue()));
 	}
 	
@@ -141,7 +144,7 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public static Number getEntryAsNumber(final String key) {
+	public static Number getGenericEntryAsNumber(final String key) {
 		String result;
 		if((result = getEntryFromDB(key)) != null) {
 		} else {
@@ -155,16 +158,22 @@ public class JeboorkerPreferences {
 		}
 	}	
 	
-	public static void addEntryBoolean(final String key, final Boolean b) {
-		addEntryNumber(key, b.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0));
+	public static void addGenericEntryBoolean(final String key, final Boolean b) {
+		addGenericEntryAsNumber(key, b.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0));
 	}
 	
-	public static Boolean getEntryAsBoolean(final String key) {
-		Number entryAsNumber = getEntryAsNumber(key);
+	public static Boolean getGenericEntryAsBoolean(final String key) {
+		return getEntryAsBoolean(key, Boolean.FALSE);
+	}
+	
+	public static Boolean getEntryAsBoolean(final String key, Boolean defaultValue) {
+		Number entryAsNumber = getGenericEntryAsNumber(key);
 		if(entryAsNumber != null && entryAsNumber.intValue() == 1) {
 			return Boolean.TRUE;
+		} else if(entryAsNumber != null && entryAsNumber.intValue() == 0) {
+			return Boolean.FALSE;
 		}
-		return Boolean.FALSE;
+		return defaultValue;
 	}
 	
 	/**
@@ -210,9 +219,9 @@ public class JeboorkerPreferences {
 	 * @return The point where the window should be shown or <code>null</code> if 
 	 * there is no previously stored location point or if the window is not located at the screen.
 	 */
-	public static Point getEntryAsScreenLocation(final String xKey, final String yKey) {
-		String widthValue = APP_NODE.get(xKey, "");
-		String heightValue = APP_NODE.get(yKey, "");
+	public static Point getGenericEntryAsScreenLocation(final String xKey, final String yKey) {
+		String widthValue = getGenericEntryAsString(xKey);
+		String heightValue = getGenericEntryAsString(yKey);
 		Point location = new Point();
 		
 		if(widthValue!=null && widthValue.length()>0) {
@@ -255,6 +264,38 @@ public class JeboorkerPreferences {
 		result += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : "") + File.separator;
 		
 		return result;
+	}
+	
+	/**
+	 * Adds a preference change listener that is always invoked if a preference is changed.
+	 */
+	public static void addPreferenceChangeListener(final JeboorkerPreferenceListener listener) {
+		preferenceChangeListener.addListener(listener);
+	}
+	
+	/**
+	 * Removes the given {@link JeboorkerPreferenceListener} from the listener list.
+	 */
+	public static void removePreferenceChangeListener(final JeboorkerPreferenceListener listener) {
+		preferenceChangeListener.removeListener(listener);
+	}
+
+	/**
+	 * Tells if the auto scrolling the the trees is enabled.
+	 */
+	public static boolean isTreeAutoScrollingEnabled() {
+		Boolean result = getEntryAsBoolean("TreeAutoScrollingEnabled", Boolean.TRUE);
+		return result;
+	}	
+	
+	/**
+	 * Sets the value for enable / disable the auto scrolling the the trees
+	 */
+	public static void setTreeAutoScrollingEnabled(final boolean value) {
+		addGenericEntryBoolean("TreeAutoScrollingEnabled", Boolean.valueOf(value));
+		for(JeboorkerPreferenceListener listener : preferenceChangeListener) {
+			listener.treeAutoScrollingChanged(value);
+		}
 	}	
 	
 }

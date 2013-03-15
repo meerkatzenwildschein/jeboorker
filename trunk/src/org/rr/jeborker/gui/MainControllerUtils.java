@@ -30,17 +30,17 @@ class MainControllerUtils {
 	 * Writes the application properties to the preference file
 	 */
 	static void storeApplicationProperties(MainView mainWindow) {
-		JeboorkerPreferences.addEntryNumber("mainWindowSizeWidth", mainWindow.getSize().width);
-		JeboorkerPreferences.addEntryNumber("mainWindowSizeHeight", mainWindow.getSize().height);
-		JeboorkerPreferences.addEntryNumber("mainWindowLocationX", mainWindow.getLocation().x);
-		JeboorkerPreferences.addEntryNumber("mainWindowLocationY", mainWindow.getLocation().y);
-		JeboorkerPreferences.addEntryNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
-		JeboorkerPreferences.addEntryNumber("lastRowCount", Integer.valueOf(mainWindow.mainTable.getRowCount()));
-		JeboorkerPreferences.addEntryNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
-		JeboorkerPreferences.addEntryNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
-		JeboorkerPreferences.addEntryNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
-		JeboorkerPreferences.addEntryString("basePathTreeSelection", TreeUtil.getExpansionStates(mainWindow.basePathTree));
-		JeboorkerPreferences.addEntryString("fileSystemTreeSelection", TreeUtil.getExpansionStates(mainWindow.fileSystemTree));
+		JeboorkerPreferences.addGenericEntryAsNumber("mainWindowSizeWidth", mainWindow.getSize().width);
+		JeboorkerPreferences.addGenericEntryAsNumber("mainWindowSizeHeight", mainWindow.getSize().height);
+		JeboorkerPreferences.addGenericEntryAsNumber("mainWindowLocationX", mainWindow.getLocation().x);
+		JeboorkerPreferences.addGenericEntryAsNumber("mainWindowLocationY", mainWindow.getLocation().y);
+		JeboorkerPreferences.addGenericEntryAsNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
+		JeboorkerPreferences.addGenericEntryAsNumber("lastRowCount", Integer.valueOf(mainWindow.mainTable.getRowCount()));
+		JeboorkerPreferences.addGenericEntryAsNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
+		JeboorkerPreferences.addGenericEntryAsNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
+		JeboorkerPreferences.addGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
+		JeboorkerPreferences.addGenericEntryAsString("basePathTreeSelection", TreeUtil.getExpansionStates(mainWindow.basePathTree));
+		JeboorkerPreferences.addGenericEntryAsString("fileSystemTreeSelection", TreeUtil.getExpansionStates(mainWindow.fileSystemTree));
 	}
 	
 	/**
@@ -48,20 +48,20 @@ class MainControllerUtils {
 	 */
 	static void restoreApplicationProperties(MainView mainWindow) {
 		//restore the window size from the preferences.
-		Number mainWindowSizeWidth = JeboorkerPreferences.getEntryAsNumber("mainWindowSizeWidth");
-		Number mainWindowSizeHeight = JeboorkerPreferences.getEntryAsNumber("mainWindowSizeHeight");
+		Number mainWindowSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("mainWindowSizeWidth");
+		Number mainWindowSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("mainWindowSizeHeight");
 		if(mainWindowSizeWidth!=null && mainWindowSizeHeight!=null) {
 			mainWindow.setSize(mainWindowSizeWidth.intValue(), mainWindowSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
+		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
 		if(entryAsScreenLocation != null) {
 			mainWindow.setLocation(entryAsScreenLocation);
 		}
 		
 		//restore the divider location at the main window
-		final Number mainWindowDividerLocation = JeboorkerPreferences.getEntryAsNumber("mainWindowDividerLocation");
+		final Number mainWindowDividerLocation = JeboorkerPreferences.getGenericEntryAsNumber("mainWindowDividerLocation");
 		if(mainWindowDividerLocation != null) {
 			int add = 0;
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
@@ -72,7 +72,7 @@ class MainControllerUtils {
 		}
 		
 		//restore the divider location at the main window
-		final Number treeMainTableDividerLocation = JeboorkerPreferences.getEntryAsNumber("treeMainTableDividerLocation");
+		final Number treeMainTableDividerLocation = JeboorkerPreferences.getGenericEntryAsNumber("treeMainTableDividerLocation");
 		if(treeMainTableDividerLocation != null) {
 			int add = 0;
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
@@ -83,22 +83,22 @@ class MainControllerUtils {
 		}
 		
 		//restore the divider location in the property sheet 
-		final Number descriptionDividerLocation = JeboorkerPreferences.getEntryAsNumber("descriptionDividerLocation");
+		final Number descriptionDividerLocation = JeboorkerPreferences.getGenericEntryAsNumber("descriptionDividerLocation");
 		if(descriptionDividerLocation != null) {
 			mainWindow.propertySheet.setDescriptionDividerLocation(descriptionDividerLocation.intValue());
 		}
 		
-		final Number propertySheetImageSplitPaneDividerLocation = JeboorkerPreferences.getEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
+		final Number propertySheetImageSplitPaneDividerLocation = JeboorkerPreferences.getGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
 		if (propertySheetImageSplitPaneDividerLocation != null) {
 			mainWindow.propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
 		}
 		
-		final String basePathTreeSelection = JeboorkerPreferences.getEntryString("basePathTreeSelection");
+		final String basePathTreeSelection = JeboorkerPreferences.getGenericEntryAsString("basePathTreeSelection");
 		if(basePathTreeSelection != null) {
 			TreeUtil.restoreExpanstionState(mainWindow.basePathTree, basePathTreeSelection);
 		}
 		
-		final String fileSystemTreeSelection = JeboorkerPreferences.getEntryString("fileSystemTreeSelection");
+		final String fileSystemTreeSelection = JeboorkerPreferences.getGenericEntryAsString("fileSystemTreeSelection");
 		if(fileSystemTreeSelection != null) {
 			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, fileSystemTreeSelection);
 		}

@@ -42,7 +42,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 		final String fileExtension = ResourceHandlerUtils.getFileExtension(imageViewerResource);
 		
 		String filename = "cover" + (fileExtension != null ? fileExtension : "");
-		String dir = JeboorkerPreferences.getEntryString(PATH_PREF_KEY);
+		String dir = JeboorkerPreferences.getGenericEntryAsString(PATH_PREF_KEY);
 		IFileChooser c = ChooserDialogFactory.getFileChooser();
 		if(dir != null) {
 			c.setCurrentDirectory(new File(dir));
@@ -58,7 +58,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 		if (rVal == IFileChooser.RETURN_OPTION.APPROVE) {
 			filename = c.getSelectedFile().getName();
 			dir = c.getCurrentDirectory().toString();
-			JeboorkerPreferences.addEntryString(PATH_PREF_KEY, dir);
+			JeboorkerPreferences.addGenericEntryAsString(PATH_PREF_KEY, dir);
 			
 			String targetString = dir + File.separator + filename;
 			IResourceHandler targetRecource = ResourceHandlerFactory.getResourceHandler(targetString);

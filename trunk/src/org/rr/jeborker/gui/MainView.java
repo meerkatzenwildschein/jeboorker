@@ -79,6 +79,7 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.JeboorkerPreferenceListener;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
@@ -166,6 +167,7 @@ public class MainView extends JFrame{
 	public MainView() {
 		initialize();
 		initializeGlobalKeystrokes();
+		JeboorkerPreferences.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
 
 	private void initializeGlobalKeystrokes() {
@@ -608,7 +610,7 @@ public class MainView extends JFrame{
 		if(Jeboorker.isRuntime) {
 			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
 			fileSystemTree.setModel(fileSystemTreeModel);
-			fileSystemTree.setAutoMoveHorizontalSliders(true);
+			fileSystemTree.setAutoMoveHorizontalSliders(JeboorkerPreferences.isTreeAutoScrollingEnabled());
 			fileSystemTree.setEditable(true);
 			FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
 			fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
@@ -826,7 +828,7 @@ public class MainView extends JFrame{
 			basePathTree.setCellRenderer(basePathTreeCellRenderer);
 			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
 			basePathTree.setToggleExpandOnDoubleClick(true);
-			basePathTree.setAutoMoveHorizontalSliders(true);
+			basePathTree.setAutoMoveHorizontalSliders(JeboorkerPreferences.isTreeAutoScrollingEnabled());
 			basePathTree.setEditable(true);
 		}
 		JScrollPane basePathTreeScroller = new JScrollPane(basePathTree);
@@ -1004,7 +1006,7 @@ public class MainView extends JFrame{
 	 * @return 0: yes/ok, 1: no, 2:cancel, -1 none
 	 */
 	int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
-		Number showAgain = JeboorkerPreferences.getEntryAsNumber(showAgainKey);
+		Number showAgain = JeboorkerPreferences.getGenericEntryAsNumber(showAgainKey);
 		if(showAgain == null) {
 		    int n;
 		    boolean dontShowAgain;
@@ -1020,9 +1022,9 @@ public class MainView extends JFrame{
 		    
 		    if(dontShowAgain) {
 		    	if(defaultValue >= 0) {
-		    		JeboorkerPreferences.addEntryNumber(showAgainKey, defaultValue);
+		    		JeboorkerPreferences.addGenericEntryAsNumber(showAgainKey, defaultValue);
 		    	} else {
-		    		JeboorkerPreferences.addEntryNumber(showAgainKey, n);
+		    		JeboorkerPreferences.addGenericEntryAsNumber(showAgainKey, n);
 		    	}
 		    }
 			return n;
@@ -1034,5 +1036,17 @@ public class MainView extends JFrame{
 	public JTree getSelectedTreePathComponent() {
 		JTree selectedComponent = (JTree) SwingUtils.getAllComponents(JTree.class, (Container) treeTabbedPane.getSelectedComponent())[0];
 		return selectedComponent;
+	}
+	
+	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
+
+		@Override
+		public void treeAutoScrollingChanged(boolean value) {
+			Component[] allComponents = SwingUtils.getAllComponents(JRTree.class, MainView.this.getRootPane());
+			for(Component c : allComponents) {
+				((JRTree)c).setAutoMoveHorizontalSliders(value);
+			}
+		}
+		
 	}
 }

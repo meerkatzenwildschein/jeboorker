@@ -66,7 +66,7 @@ public class MainController {
 	private static MainController controller;
 	
 	/**
-	 * Controller for the filesystem and base path tree.
+	 * Controller for the file system and base path tree.
 	 */
 	private static MainTreeController treeController;
 	
@@ -221,7 +221,20 @@ public class MainController {
 	public MainTreeController getMainTreeController() {
 		return treeController;
 	}
-		
+	
+	/**
+	 * Gets the controller which handles the preference dialog.
+	 */	
+	public PreferenceController getPreferenceController() {
+		return PreferenceController.getInstance();
+	}
+	
+	/**
+	 * Gets the controller which handles the preference dialog.
+	 */	
+	public LogMonitorController getLogMonitorController() {
+		return LogMonitorController.getInstance();
+	}
 	
 	/**
 	 * Tells if the {@link MainController} is already initialized.
@@ -655,7 +668,7 @@ public class MainController {
 	 * @return The selected folder or <code>null</code>.
 	 */
 	public List<File> getDirectorySelection() {
-		String lastEbookFolder = JeboorkerPreferences.getEntryString("lastEbookFolder");
+		String lastEbookFolder = JeboorkerPreferences.getGenericEntryAsString("lastEbookFolder");
 		IResourceHandler lastEbookFolderResourceLoader = ResourceHandlerFactory.getResourceHandler(lastEbookFolder);
 		if(lastEbookFolderResourceLoader == null || !lastEbookFolderResourceLoader.isDirectoryResource()) {
 			lastEbookFolder = null;
@@ -664,14 +677,14 @@ public class MainController {
 		final JDirectoryChooser chooser = new JDirectoryChooser(true);
 		
 		//restore directory chooser location
-		String location = JeboorkerPreferences.getEntryString("JDirectoryChooserLocation");
+		String location = JeboorkerPreferences.getGenericEntryAsString("JDirectoryChooserLocation");
 		if(location != null && location.indexOf(";") != -1) {
 			String[] split = location.split(";");
 			chooser.setDialogLocation(new Point(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
 		}
 		
 		//restore directory chooser size
-		String size = JeboorkerPreferences.getEntryString("JDirectoryChooserSize");
+		String size = JeboorkerPreferences.getGenericEntryAsString("JDirectoryChooserSize");
 		if(size != null && size.indexOf(";") != -1) {
 			String[] split = size.split(";");
 			chooser.setDialogSize(new Dimension(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
@@ -679,12 +692,12 @@ public class MainController {
 		
 		List<File> selectedDirectory = chooser.getDirectorySelections(lastEbookFolder, mainWindow);
 		if(selectedDirectory!=null && !selectedDirectory.isEmpty()) {
-			JeboorkerPreferences.addEntryString("lastEbookFolder", selectedDirectory.get(selectedDirectory.size() - 1).toString());
+			JeboorkerPreferences.addGenericEntryAsString("lastEbookFolder", selectedDirectory.get(selectedDirectory.size() - 1).toString());
 		}
 		
 		//store directory chooser size and location
-		JeboorkerPreferences.addEntryString("JDirectoryChooserLocation", chooser.getDialogLocation().x + ";" + chooser.getDialogLocation().y);
-		JeboorkerPreferences.addEntryString("JDirectoryChooserSize", chooser.getDialogSize().width + ";" + chooser.getDialogSize().height);
+		JeboorkerPreferences.addGenericEntryAsString("JDirectoryChooserLocation", chooser.getDialogLocation().x + ";" + chooser.getDialogLocation().y);
+		JeboorkerPreferences.addGenericEntryAsString("JDirectoryChooserSize", chooser.getDialogSize().width + ";" + chooser.getDialogSize().height);
 		return selectedDirectory;
 	}
 	

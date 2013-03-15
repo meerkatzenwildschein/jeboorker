@@ -19,7 +19,7 @@ public class FilterPanelView extends JPanel {
 
 	private static final long serialVersionUID = -6508749893667788695L;
 
-	JComboBox filterField;
+	JComboBox<String> filterField;
 	
 	CheckComboBox<Field> filterFieldSelection;
 
@@ -53,8 +53,8 @@ public class FilterPanelView extends JPanel {
 		gbc_comboBox.gridy = 0;
 		add(filterFieldSelection, gbc_comboBox);
 
-		filterField = new JComboBox();
-		filterField.setModel(new DefaultComboBoxModel());
+		filterField = new JComboBox<String>();
+		filterField.setModel(new DefaultComboBoxModel<String>());
 		filterField.setEditable(true);
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.insets = new Insets(0, 0, 0, 5);
