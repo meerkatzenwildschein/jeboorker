@@ -181,7 +181,7 @@ public class SortColumnComponentController {
 	 */
 	private void readOrderColumnsFromPreferences() {
 		//preferences to table model
-		final String entryString = JeboorkerPreferences.getEntryString("sortColumnFields");
+		final String entryString = JeboorkerPreferences.getGenericEntryAsString("sortColumnFields");
 		if(entryString!=null && entryString.length() > 0) {
 			final List<String> splitted = ListUtils.split(entryString, ",", -1);
 			final ListCheckModel<Field> model = comboBox.getModel();
@@ -223,7 +223,7 @@ public class SortColumnComponentController {
 			}
 			value.append(field.getName());
 		}
-		JeboorkerPreferences.addEntryString("sortColumnFields", value.toString());
+		JeboorkerPreferences.addGenericEntryAsString("sortColumnFields", value.toString());
 	}
 	
 	/**

@@ -207,22 +207,22 @@ public class PlainMetadataEditorController {
 	}
 	
 	private void storeProperties() {
-		JeboorkerPreferences.addEntryNumber("metadataDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addEntryNumber("metadataDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addEntryNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
-		JeboorkerPreferences.addEntryNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
+		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogSizeWidth", getView().getSize().width);
+		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogSizeHeight", getView().getSize().height);
+		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
+		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
 	}
 	
 	private void restorePropeties() {
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getEntryAsNumber("metadataDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getEntryAsNumber("metadataDialogSizeHeight");
+		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("metadataDialogSizeWidth");
+		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("metadataDialogSizeHeight");
 		if(metadataDialogSizeWidth!=null && metadataDialogSizeHeight!=null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
+		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		

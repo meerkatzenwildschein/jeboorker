@@ -83,7 +83,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
         @SuppressWarnings("unused") Entry newEntry;
         
         try {
-	        if(JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY) != null && !JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY).isEmpty()) {
+	        if(JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_KEY) != null && !JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_KEY).isEmpty()) {
 	        	// re-auth specific stuff
 	        	try {
 	        		reauthToDropbox();
@@ -109,8 +109,8 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 * @throws DropboxUnlinkedException if the auth has failed.
 	 */
 	private void reauthToDropbox() throws DropboxUnlinkedException {
-		String key = JeboorkerPreferences.getEntryString(DROPBOX_AUTH_KEY);
-		String secret = JeboorkerPreferences.getEntryString(DROPBOX_AUTH_SECRET);
+		String key = JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_KEY);
+		String secret = JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_SECRET);
 		AccessTokenPair reAuthTokens = new AccessTokenPair(key, secret);
 		mDBApi.getSession().setAccessTokenPair(reAuthTokens);
 	}
@@ -128,8 +128,8 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 		AccessTokenPair tokens = session.getAccessTokenPair();
 		
 		// Use this token pair in future so you don't have to re-authenticate each time:
-		JeboorkerPreferences.addEntryString(DROPBOX_AUTH_KEY, tokens.key);
-		JeboorkerPreferences.addEntryString(DROPBOX_AUTH_SECRET, tokens.secret);
+		JeboorkerPreferences.addGenericEntryAsString(DROPBOX_AUTH_KEY, tokens.key);
+		JeboorkerPreferences.addGenericEntryAsString(DROPBOX_AUTH_SECRET, tokens.secret);
 	}	
 	  
 }

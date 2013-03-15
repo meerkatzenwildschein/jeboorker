@@ -16,13 +16,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;
-import javax.swing.JScrollPane;
-import javax.swing.JPanel;
-import org.rr.commons.swing.layout.EqualsLayout;
 
 public class LogMonitorView extends JDialog implements ClipboardOwner {
 	
@@ -30,15 +30,23 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 
 	private static final int MAX_LOG_DISPLAY = 10000;
 	
+	private LogMonitorController logMonitorController;
+	
 	private JButton btnCopy;
 	private JTextArea textArea;
 	private JButton btnClose;
 	private JScrollPane scrollPane;
-	private JPanel panel;
+	private JPanel bottomPanel;
 	
-	public LogMonitorView(JFrame invoker, StringBuilder logContent) {
-		super(invoker);
+	public LogMonitorView(JFrame mainWindow, LogMonitorController logMonitorController, StringBuilder logContent) {
+		super(mainWindow);
+		this.logMonitorController = logMonitorController;
 		initialize();
+		setModal(true);
+
+		setLocation(mainWindow.getLocation().x, mainWindow.getLocation().y);
+		setSize(800, 600);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
 	}
 	
 	private void initialize() {
@@ -62,25 +70,25 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
 		
-		panel = new JPanel();
+		bottomPanel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.insets = new Insets(5, 0, 5, 5);
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 1;
-		getContentPane().add(panel, gbc_panel);
-		panel.setLayout(new EqualsLayout(3));
+		getContentPane().add(bottomPanel, gbc_panel);
+		bottomPanel.setLayout(new EqualsLayout(3));
 		
 		btnCopy = new JButton(Bundle.getString("LogMonitorView.copy"));
-		panel.add(btnCopy);
+		bottomPanel.add(btnCopy);
 		
 		btnClose = new JButton(Bundle.getString("LogMonitorView.close"));
-		panel.add(btnClose);
+		bottomPanel.add(btnClose);
 		btnClose.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LogMonitorController.getInstance().close();
+				logMonitorController.close();
 			}
 		});
 		btnCopy.addActionListener(new ActionListener()  {
@@ -116,6 +124,11 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 					text = "..." + text;
 				}
 				textArea.setText(text);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				MainController.getController().getLogMonitorController().close();
 			}
 			
 		});

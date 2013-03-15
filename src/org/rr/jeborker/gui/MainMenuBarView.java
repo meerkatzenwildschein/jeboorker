@@ -281,6 +281,13 @@ class MainMenuBarView extends JMenuBar {
 				editMenuBar.removeAll();
 				createDynamicEditMenu(selectedItems, selectedEbookPropertyItemRows);
 				
+				JMenuItem find = new JMenuItem(ActionFactory.getTableFindAction(null));
+				find.setText(SwingUtils.removeMnemonicMarker(Bundle.getString("MainMenuBarView.find")));
+				find.setMnemonic(SwingUtils.getMnemonicKeyCode(Bundle.getString("MainMenuBarView.find")));
+				find.setIcon(ImageResourceBundle.getResourceAsImageIcon("find_16.png"));
+				find.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
+				editMenuBar.add(find);						
+				
 				editMenuBar.add(new JSeparator());
 				
 				createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
@@ -288,12 +295,9 @@ class MainMenuBarView extends JMenuBar {
 				
 				editMenuBar.add(new JSeparator());
 				
-				JMenuItem find = new JMenuItem(ActionFactory.getTableFindAction(null));
-				find.setText(SwingUtils.removeMnemonicMarker(Bundle.getString("MainMenuBarView.find")));
-				find.setMnemonic(SwingUtils.getMnemonicKeyCode(Bundle.getString("MainMenuBarView.find")));
-				find.setIcon(ImageResourceBundle.getResourceAsImageIcon("find_16.png"));
-				find.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
-				editMenuBar.add(find);					
+				JMenuItem editPreferencesItem = new JMenuItem();
+				editPreferencesItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_PREFERENCE_DIALOG_ACTION, null));
+				editMenuBar.add(editPreferencesItem);				
 			}
 			
 			@Override

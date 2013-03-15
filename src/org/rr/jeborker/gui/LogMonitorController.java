@@ -2,7 +2,6 @@ package org.rr.jeborker.gui;
 
 import java.awt.Point;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.rr.jeborker.JeboorkerLogger;
@@ -12,7 +11,7 @@ public class LogMonitorController {
 	
 	private static LogMonitorView logMonitorView = null;
 	
-	public static LogMonitorController getInstance() {
+	static LogMonitorController getInstance() {
 		LogMonitorController controller = new LogMonitorController();
 		return controller;
 	}	
@@ -25,17 +24,13 @@ public class LogMonitorController {
 	private LogMonitorView getView() {
 		if(logMonitorView == null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
-			logMonitorView = new LogMonitorView(mainWindow, JeboorkerLogger.log);
+			logMonitorView = new LogMonitorView(mainWindow, this, JeboorkerLogger.log);
 			this.initialize();
 		}
 		return logMonitorView;
 	}
 	
 	private void initialize() {
-		JFrame mainWindow = MainController.getController().getMainWindow();
-		logMonitorView.setLocation(mainWindow.getLocation().x, mainWindow.getLocation().y);
-		logMonitorView.setSize(800, 600);
-		logMonitorView.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		restorePropeties();
 	}	
 	
@@ -47,26 +42,24 @@ public class LogMonitorController {
 	}	
 	
 	private void storeProperties() {
-		JeboorkerPreferences.addEntryNumber("logDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addEntryNumber("logDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addEntryNumber("logDialogLocationX", getView().getLocation().x);
-		JeboorkerPreferences.addEntryNumber("logDialogLocationY", getView().getLocation().y);
+		JeboorkerPreferences.addGenericEntryAsNumber("logDialogSizeWidth", getView().getSize().width);
+		JeboorkerPreferences.addGenericEntryAsNumber("logDialogSizeHeight", getView().getSize().height);
+		JeboorkerPreferences.addGenericEntryAsNumber("logDialogLocationX", getView().getLocation().x);
+		JeboorkerPreferences.addGenericEntryAsNumber("logDialogLocationY", getView().getLocation().y);
 	}	
 
 	private void restorePropeties() {
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getEntryAsNumber("logDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getEntryAsNumber("logDialogSizeHeight");
+		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("logDialogSizeWidth");
+		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("logDialogSizeHeight");
 		if(metadataDialogSizeWidth!=null && metadataDialogSizeHeight!=null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getEntryAsScreenLocation("logDialogLocationX", "logDialogLocationY");
+		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("logDialogLocationX", "logDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		
 	}
-	
-	
 }

@@ -61,7 +61,7 @@ public class FilterPanelController {
 	
 	void initialize() {
 		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
-		final String latestSearch = JeboorkerPreferences.getEntryString("FilterPanelControllerCurrentFilter");
+		final String latestSearch = JeboorkerPreferences.getGenericEntryAsString("FilterPanelControllerCurrentFilter");
 		
 		this.initFieldSelectionRenderer();
 		this.initFilterSelectionClosedViewValue();
@@ -169,7 +169,7 @@ public class FilterPanelController {
 	 */
 	public void addFilterFieldSearch(final String searchExpression) {
 		if(searchExpression!=null && searchExpression.length() > 0) {
-			MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
+			MutableComboBoxModel<String> model = (MutableComboBoxModel<String>)view.filterField.getModel();
 			model.insertElementAt(searchExpression, 0);
 			if(model.getSize() > 10) {
 				model.removeElementAt(model.getSize()-1);
@@ -184,7 +184,7 @@ public class FilterPanelController {
 	 * @param selectedExpression The currently selected filter expression.
 	 */
 	private void removeDuplicateElementsFromFilterModel(final String selectedExpression) {
-		MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
+		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>)view.filterField.getModel();
 		HashSet<String> entries = new HashSet<String>(model.getSize());
 		for (int i = 0; i < model.getSize(); i++) {
 			String elementAt = (String) model.getElementAt(i);
@@ -206,7 +206,7 @@ public class FilterPanelController {
 	 * @see #restoreFilterHistory()
 	 */
 	private void storeFilterHistory() {
-		final MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
+		final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>)view.filterField.getModel();
 		final StringBuilder modelEntries = new StringBuilder();
 		for (int i = 0; i < model.getSize(); i++) {
 			String elementAt = StringUtils.replace(StringUtils.toString(model.getElementAt(i)), ",", "");
@@ -215,9 +215,9 @@ public class FilterPanelController {
 			}
 			modelEntries.append(elementAt);
 		}
-		JeboorkerPreferences.addEntryString("FilterPanelControllerEntries", modelEntries.toString());		
-		JeboorkerPreferences.addEntryString("FilterPanelControllerCurrentFilter", getFilterText());
-		JeboorkerPreferences.addEntryString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
+		JeboorkerPreferences.addGenericEntryAsString("FilterPanelControllerEntries", modelEntries.toString());		
+		JeboorkerPreferences.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
+		JeboorkerPreferences.addGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
 	}
 	
 	/**
@@ -226,8 +226,8 @@ public class FilterPanelController {
 	 */
 	private void restoreFilterHistory() {
 		{
-			final MutableComboBoxModel model = (MutableComboBoxModel)view.filterField.getModel();
-			String filterEntries = JeboorkerPreferences.getEntryString("FilterPanelControllerEntries");
+			final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>)view.filterField.getModel();
+			String filterEntries = JeboorkerPreferences.getGenericEntryAsString("FilterPanelControllerEntries");
 			if(filterEntries!=null && filterEntries.length() > 0) {
 				List<String> split = ListUtils.split(filterEntries, ",");
 				for (String string : split) {
@@ -239,7 +239,7 @@ public class FilterPanelController {
 		
 		
 		{ //restore the filter field selection
-			String filterFieldSelectionEntries = JeboorkerPreferences.getEntryString("FilterPanelControllerCurrentFilterFieldSelection");
+			String filterFieldSelectionEntries = JeboorkerPreferences.getGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection");
 			List<String> splitted = ListUtils.split(filterFieldSelectionEntries, ",");
 			final ListCheckModel<Field> model = view.filterFieldSelection.getModel();
 			final int modelSize = model.getSize();

@@ -333,15 +333,15 @@ public class MainMenuBarController {
 	private void storeProperties() {
 		List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
 		if(hiddenBasePathEntries.isEmpty()) {
-			JeboorkerPreferences.addEntryString("mainMenuBasePathHide", "");
+			JeboorkerPreferences.addGenericEntryAsString("mainMenuBasePathHide", "");
 		} else {
-			JeboorkerPreferences.addEntryString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
+			JeboorkerPreferences.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
 		}		
 	}
 	
 	void restoreProperties() {
 		List<String> path = JeboorkerPreferences.getBasePath();
-		String basePathPropString = JeboorkerPreferences.getEntryString("mainMenuBasePathHide");
+		String basePathPropString = JeboorkerPreferences.getGenericEntryAsString("mainMenuBasePathHide");
 		if(basePathPropString!=null && !basePathPropString.isEmpty()) {
 			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
 			for(String basePath : split) {	
@@ -350,7 +350,7 @@ public class MainMenuBarController {
 					ArrayList<String> s = new ArrayList<String>(split);
 					boolean remove = s.remove(basePath);
 					if(remove) {
-						JeboorkerPreferences.addEntryString("mainMenuBasePathHide", ListUtils.join(s, String.valueOf(File.pathSeparatorChar)));
+						JeboorkerPreferences.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(s, String.valueOf(File.pathSeparatorChar)));
 					}
 				} else {
 					ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));
