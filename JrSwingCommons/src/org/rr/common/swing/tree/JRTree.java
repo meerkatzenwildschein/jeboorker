@@ -153,7 +153,7 @@ public class JRTree extends JTree {
 						if(row < JRTree.this.getRowCount()) {
 							underValue = calculateScrollBarLocation(e.getLocationOnScreen().x, surroundingScrollPane, paddingLeft, row + 1);
 						}
-						
+								
 						if(value >= 0) {
 							value = Math.max(value, aboveValue);
 							value = Math.max(value, underValue);		
@@ -188,10 +188,9 @@ public class JRTree extends JTree {
 				final int visibleWidth = visibleComponentWidth - paddingLeft - rendererWidth - scrollBarWidth; // a minus value for the hidden width
 				if(visibleWidth < -10) { //scroll to hidden
 					int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
-					int rendererEnd = (paddingLeft - rendererWidth) * -1; //end of the renderer location
-					int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
-					
-					if(horizontalScrollbarLocation < rendererEnd) {
+//					int rendererEnd = (paddingLeft - rendererWidth) * -1; //end of the renderer location
+//					int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
+//					if(horizontalScrollbarLocation < rendererEnd) {
 						if(locationOnScreenX + 50 > (surroundingScrollPane.getLocationOnScreen().x + visibleComponentWidth - scrollBarWidth)) {
 							int value = rendererBegin + (rendererWidth + leafPadding - visibleComponentWidth + scrollBarWidth + 15);
 							if(surroundingScrollPane.getHorizontalScrollBar().getValue() < value) {
@@ -202,8 +201,7 @@ public class JRTree extends JTree {
 							//scroll to the beginning of the renderer component
 							return rendererBegin;
 						}								
-					} 
-					
+//					} 
 				} else if(visibleWidth > 10) {
 					int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
 					int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
