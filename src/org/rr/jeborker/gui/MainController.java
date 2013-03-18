@@ -253,6 +253,16 @@ public class MainController {
 		MainMenuBarController.getController().restoreProperties();
 		mainWindow.setVisible(true);
 		LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				EbookPropertyDBTableModel ebookPropertyDBTableModel = new EbookPropertyDBTableModel(false);
+				ebookPropertyDBTableModel.getRowCount();
+				mainWindow.mainTable.setModel(ebookPropertyDBTableModel);
+				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms until model is loaded");
+			}
+		}).start();
 	}
 
 	private void initSubController() {

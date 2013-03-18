@@ -446,7 +446,7 @@ public class MainView extends JFrame{
 		mainTable = new JRTable();
 		mainTable.setName("MainTable");
 		mainTable.setRowHeight(74);
-		mainTable.setModel(new EbookPropertyDBTableModel());
+		mainTable.setModel(new EbookPropertyDBTableModel(true));
 		mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
 		mainTable.setDefaultEditor(Object.class, new EbookTableCellEditor(new EbookTableCellEditor.EditListener() {
 			
