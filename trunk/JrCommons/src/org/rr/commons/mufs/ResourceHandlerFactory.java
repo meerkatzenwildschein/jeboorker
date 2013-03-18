@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.collection.VolatileHashMap;
-import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 
@@ -364,7 +362,7 @@ public class ResourceHandlerFactory {
 						result.add(file);
 					}
 				} catch (URISyntaxException e) {
-					LoggerFactory.getLogger().log(Level.INFO, "No valid file " + splitDataItem);
+//					LoggerFactory.getLogger().log(Level.INFO, "No valid file " + splitDataItem);
 				}
 			}
 		}
