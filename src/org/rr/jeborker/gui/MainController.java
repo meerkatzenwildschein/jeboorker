@@ -17,7 +17,7 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -187,7 +187,11 @@ public class MainController {
 	public static MainController getController() {
 		if(controller == null) {
 			controller = new MainController();
-			controller.initialize();
+			try {
+				controller.initialize();
+			} catch (Exception e) {
+				LoggerFactory.getLogger(MainController.class).log(Level.SEVERE, "Startup failed.", e);
+			} 
 		}
 		return controller;
 	}
@@ -245,7 +249,7 @@ public class MainController {
 		return controller != null;
 	}
 	
-	private void initialize() {
+	private void initialize() throws Exception {
 		mainWindow = new MainView();
 		initListeners();
 		initSubController();
@@ -254,28 +258,33 @@ public class MainController {
 		MainMenuBarController.getController().restoreProperties();
 		mainWindow.setVisible(true);
 		LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
+		
+		//mode loading and setup
 		MainController.getController().getMainWindow().getGlassPane().setVisible(true);
 		getProgressMonitor().setEnabled(false);
-		new Thread(new Runnable() {
+		
+		new SwingWorker<Void, Void>() {
+			
+			EbookPropertyDBTableModel ebookPropertyDBTableModel;
 			
 			@Override
-			public void run() {
-				final EbookPropertyDBTableModel ebookPropertyDBTableModel = new EbookPropertyDBTableModel(false);
+			protected Void doInBackground() throws Exception {
+				ebookPropertyDBTableModel = new EbookPropertyDBTableModel(false);
 				ebookPropertyDBTableModel.getRowCount();
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						try {
-							mainWindow.mainTable.setModel(ebookPropertyDBTableModel);
-						} finally {
-							getMainWindow().getGlassPane().setVisible(false);
-							getProgressMonitor().setEnabled(true);
-						}
-					}
-				});
+				return null;
 			}
-		}).start();
+
+			@Override
+			protected void done() {
+				try {
+					mainWindow.mainTable.setModel(ebookPropertyDBTableModel);
+				} finally {
+					getMainWindow().getGlassPane().setVisible(false);
+					LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms until data model loaded");
+					getProgressMonitor().setEnabled(true);
+				}
+			}
+		}.execute();
 	}
 
 	private void initSubController() {
