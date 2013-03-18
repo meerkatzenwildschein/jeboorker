@@ -71,6 +71,8 @@ import org.rr.pm.image.ImageUtils;
 
 public class ImageDownloadDialog extends JDialog {
 	
+	private static int previousImageFetcherComboboxEntry = 0;
+	
 	private IResourceHandler selectedImage;
 	
 	private JTextField searchTextField;
@@ -170,6 +172,7 @@ public class ImageDownloadDialog extends JDialog {
 			gbc_searchProviderComboBox.gridy = 0;
 			borderPanel.add(searchProviderComboBox, gbc_searchProviderComboBox);
 			searchProviderComboBox.setModel(new DefaultComboBoxModel(factory.getFetcherNames().toArray()));
+			searchProviderComboBox.setSelectedIndex(previousImageFetcherComboboxEntry);
 			
 			searchTextField = new JTextField();
 			GridBagConstraints gbc_searchTextField = new GridBagConstraints();
@@ -312,6 +315,7 @@ public class ImageDownloadDialog extends JDialog {
 			protected SearchResultPanel doInBackground() throws Exception {
 				String searchText = searchTextField != null ? searchTextField.getText() : null;
 				String selectedItem = searchProviderComboBox != null ? searchProviderComboBox.getSelectedItem().toString() : null;
+				previousImageFetcherComboboxEntry = searchProviderComboBox != null ? searchProviderComboBox.getSelectedIndex() : 0;
 				SearchResultPanel searchResultPanel = new SearchResultPanel(searchText, selectedItem);
 				return searchResultPanel;
 			}
