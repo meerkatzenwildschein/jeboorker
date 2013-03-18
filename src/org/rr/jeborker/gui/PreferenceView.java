@@ -37,12 +37,12 @@ class PreferenceView extends JDialog {
 	}
 
 	private void initialize() {
-		setTitle("Preferences");
+		setTitle(Bundle.getString("PreferenceView.title"));
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel generalPanel = new JPanel();
-		tabbedPane.addTab("General", null, generalPanel, null);
+		tabbedPane.addTab(Bundle.getString("PreferenceView.tab.general"), null, generalPanel, null);
 		GridBagLayout gbl_generalPanel = new GridBagLayout();
 		gbl_generalPanel.columnWidths = new int[]{0, 0, 0, 0};
 		gbl_generalPanel.rowHeights = new int[]{0, 0};
@@ -50,7 +50,7 @@ class PreferenceView extends JDialog {
 		gbl_generalPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		generalPanel.setLayout(gbl_generalPanel);
 		
-		JLabel lblTreeAutoscrolling = new JLabel("Tree Autoscrolling");
+		JLabel lblTreeAutoscrolling = new JLabel(Bundle.getString("PreferenceView.pref.autoscroll"));
 		GridBagConstraints gbc_lblTreeAutoscrolling = new GridBagConstraints();
 		gbc_lblTreeAutoscrolling.insets = new Insets(0, 3, 0, 5);
 		gbc_lblTreeAutoscrolling.gridx = 0;
