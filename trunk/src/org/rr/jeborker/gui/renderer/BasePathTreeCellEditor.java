@@ -71,7 +71,7 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 	 * Removes a previously set filter condition. Invoke <code>MainController.getController().refreshTable(true);</code> for
 	 * pushing the change into the view.
 	 * 
-	 * @return <code>true</code> if removing was sucessfully and <code>false</code> if nothing was found to remove.
+	 * @return <code>true</code> if removing was successfully and <code>false</code> if nothing was found to remove.
 	 */
 	private boolean removePathFilter() {
 		final QueryCondition rootCondition = MainController.getController().getTableModel().getQueryCondition();
