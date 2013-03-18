@@ -18,28 +18,23 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 
 	private BasePathTreeCellRenderer renderer;
 	
-	private JTree tree;
-	
 	private Object previousEditorValue;
 	
 	public BasePathTreeCellEditor(JTree tree) {
-		this.tree = tree;
 		renderer = new BasePathTreeCellRenderer(tree);
 	}
 
-	  public boolean isCellEditable(EventObject event) {
-	    boolean returnValue = true;
-	    return returnValue;
-	  }
+	public boolean isCellEditable(EventObject event) {
+		boolean returnValue = true;
+		return returnValue;
+	}
 
-	  public Component getTreeCellEditorComponent(JTree tree, Object value,
-	      boolean selected, boolean expanded, boolean leaf, int row) {
+	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row) {
+		Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
 
-	    Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
-	    
-	    editingStarted();
-	    return editor;
-	  }
+		editingStarted();
+		return editor;
+	}
 
 	@Override
 	public Object getCellEditorValue() {

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
