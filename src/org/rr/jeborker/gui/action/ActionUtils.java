@@ -148,7 +148,7 @@ public class ActionUtils {
 	 * @param path path which visibility should be set. 
 	 * @param show <code>true</code> if the base path should be shown and <code>false</code> for hide it.
 	 */
-	static void setBasePathVisibility(String path, boolean show) {
+	public static void setBasePathVisibility(String path, boolean show) {
 		final String queryIdentifier = ShowHideBasePathAction.class.getName() + "_" + path;
 		final MainController controller = MainController.getController();
 		try {

@@ -67,15 +67,16 @@ public class JeboorkerPreferences {
 	 * Get all base path entries from the preference store.
 	 * @return The stored base path entries. never returns <code>null</code>.
 	 */
-	public static List<String> getBasePath() {
+	public static BasePathList getBasePath() {
 		String basePath = getGenericEntryAsString(BASE_PATH);
 		if(basePath.length() == 0) {
-			return Collections.emptyList();
+			List<String> emptyList = Collections.emptyList();
+			return new BasePathList(emptyList);
 		} else if (basePath.indexOf(File.pathSeparator) == -1) {
-			return Collections.singletonList(basePath);
+			return new BasePathList(Collections.singletonList(basePath));
 		} else {
 			String[] split = basePath.split(File.pathSeparator);
-			return Arrays.asList(split);
+			return new BasePathList(Arrays.asList(split));
 		}
 	}
 

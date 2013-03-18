@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -21,10 +22,12 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.rr.common.swing.SwingUtils;
+import org.rr.common.swing.components.JRCheckBox;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.BasePathList;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
@@ -41,7 +44,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	private JTree tree;
 	
-	protected JCheckBox checkbox;
+	private JRCheckBox checkbox;
 	
 	private Object value;
 	
@@ -51,6 +54,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	private Icon eyesVisible;
 	private Icon eyesInvisible;
+	private Icon eyesTreeState;
 	
 	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
@@ -59,6 +63,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		setOpaque(true);
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
+		eyesTreeState = ImageResourceBundle.getResourceAsImageIcon("eyes_between_16.png");
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 20, 0};
@@ -67,7 +72,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
-		checkbox = new JCheckBox();
+		checkbox = new JRCheckBox();
 		GridBagConstraints gbc_chckbxCheck = new GridBagConstraints();
 		gbc_chckbxCheck.insets = new Insets(0, 0, 0, 5);
 		gbc_chckbxCheck.gridx = 0;
@@ -76,6 +81,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		checkbox.addItemListener(getCheckboxItemListener());
 		
 		checkbox.setRolloverEnabled(false);
+		checkbox.setTriStateIcon(eyesTreeState);
 		checkbox.setIcon(eyesInvisible); //unselected icon
 		checkbox.setSelectedIcon(eyesVisible); //selected icon
 		
@@ -112,6 +118,12 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 					
 					if(resourceName != null) {
 						ActionUtils.toggleBasePathVisibility(resourceName);
+					} else {
+						final BasePathList basePaths = JeboorkerPreferences.getBasePath();
+						final boolean isVisible = basePaths.isAllPathElementsVisible();
+						for(String basePath : basePaths) {
+							ActionUtils.setBasePathVisibility(basePath, !isVisible);
+						}
 					}
 					
 					((DefaultTreeModel)tree.getModel()).reload((TreeNode) selectionPath.getLastPathComponent());
@@ -123,7 +135,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-		final List<String> basePaths = JeboorkerPreferences.getBasePath();
+		final BasePathList basePaths = JeboorkerPreferences.getBasePath();
 		IResourceHandler pathResource;
 		if (value instanceof IResourceHandler) {
 			pathResource = (IResourceHandler) value;
@@ -139,7 +151,9 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		} else {
 			pathResource = ResourceHandlerFactory.getResourceHandler(StringUtils.toString(value));
 			label.setText(StringUtils.toString(value));
-			checkbox.setVisible(false);
+			checkbox.setVisible(true);
+			setCheckboxCheck(pathResource, basePaths);
+			this.value = null;
 		}
 		
 		if(pathResource != null) {
@@ -183,10 +197,11 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		return this;
 	}
 
-	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final List<String> basePaths) {
-		final String pathResourceString = pathResourceHandler.toString();
+	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final BasePathList basePaths) {
+		final String pathResourceString = StringUtils.toString(pathResourceHandler);
 		checkbox.removeItemListener(getCheckboxItemListener());
 		try {
+			checkbox.setShowTriStateIcon(false);
 			if(basePaths.contains(pathResourceString)) {
 				final List<String> basePath = MainMenuBarController.getController().getHiddenBasePathEntries();
 				if(basePath.contains(pathResourceString)) {
@@ -197,10 +212,23 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 					checkbox.setSelected(true);
 				}
 				checkbox.setVisible(true);
-			} else {
-				//not a base path
+			} else if(pathResourceString.indexOf(File.separatorChar) != -1) {
+				//a path but not a base path
 				checkbox.setSelected(false);
 				checkbox.setVisible(false);
+			} else {
+				//Some other item that have an eye icon.
+				boolean allPathElementsVisible = basePaths.isAllPathElementsVisible();
+				boolean noPathElementsVisible = basePaths.isNoPathElementsVisible();
+				if(!allPathElementsVisible && !noPathElementsVisible) {
+					checkbox.setShowTriStateIcon(true);
+					checkbox.setSelected(false);
+				} else if(allPathElementsVisible) {
+					checkbox.setSelected(true);					
+				} else {
+					checkbox.setSelected(false);
+				}
+				checkbox.setVisible(true);
 			}
 		} finally {
 			checkbox.addItemListener(getCheckboxItemListener());

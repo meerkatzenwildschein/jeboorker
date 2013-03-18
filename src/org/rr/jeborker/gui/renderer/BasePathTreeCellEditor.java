@@ -1,14 +1,14 @@
 package org.rr.jeborker.gui.renderer;
 
 import java.awt.Component;
+import java.io.File;
 import java.util.EventObject;
-import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellEditor;
 
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.MainController;
 
@@ -49,8 +49,8 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 	private void editingStarted() {
 		Object cellEditorValue = getCellEditorValue();
 		if(cellEditorValue == null || !cellEditorValue.equals(previousEditorValue)) {
-			List<String> basePath = JeboorkerPreferences.getBasePath();
-			if(!basePath.contains(cellEditorValue.toString())) {
+			String cellEditorValueString = StringUtils.toString(cellEditorValue);
+			if(cellEditorValueString.indexOf(File.separatorChar) != -1) {
 				setPathFilter(cellEditorValue.toString());
 				MainController.getController().refreshTable();
 			} else {
