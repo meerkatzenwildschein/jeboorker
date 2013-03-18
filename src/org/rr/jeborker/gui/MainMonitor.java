@@ -9,21 +9,34 @@ public class MainMonitor {
 	
 	private int started = 0;
 	
-	MainMonitor(JProgressBar progressbar) {
+	private boolean isEnabled;
+	
+	private static MainMonitor instance;
+	
+	private MainMonitor(JProgressBar progressbar) {
 		this.progressbar = progressbar;
 	}
 	
+	static MainMonitor getInstance(JProgressBar progressbar) {
+		if(instance == null) {
+			instance = new MainMonitor(progressbar);
+		}
+		return instance;
+	}
+	
 	public void monitorProgressStart(final String message) {
-		started++;
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				progressbar.setIndeterminate(true);
-				setMessage(message);
-				MainController.getController().getMainWindow().getGlassPane().setVisible(true);
-			}
-		});
+		if(isEnabled) {
+			started++;
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					progressbar.setIndeterminate(true);
+					setMessage(message);
+					MainController.getController().getMainWindow().getGlassPane().setVisible(true);
+				}
+			});
+		}
 	}
 	
 	public void monitorProgressStop() {
@@ -31,48 +44,61 @@ public class MainMonitor {
 	}
 	
 	public void monitorProgressStop(final String message) {
-		started--;
-		if(started <= 0) {
-			started = 0;
-						
+		if(isEnabled) {
+			started--;
+			if(started <= 0) {
+				started = 0;
+							
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						progressbar.setIndeterminate(false);
+						progressbar.setValue(0);
+						if(message != null) {
+							setMessage(message);
+						}
+						MainController.getController().getMainWindow().getGlassPane().setVisible(false);
+					}
+				});			
+			}
+		}
+	}	
+	
+	public void setMessage(final String message) {
+		if(isEnabled) {
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					progressbar.setString(message != null ? message : "");
+					progressbar.setStringPainted(true);
+					progressbar.setToolTipText(message != null ? message : "");
+				}
+			});			
+		}
+	}
+	
+	public void setProgress(final int progress, final int max) {
+		if(isEnabled) {
 			SwingUtilities.invokeLater(new Runnable() {
 				
 				@Override
 				public void run() {
 					progressbar.setIndeterminate(false);
-					progressbar.setValue(0);
-					if(message != null) {
-						setMessage(message);
-					}
-					MainController.getController().getMainWindow().getGlassPane().setVisible(false);
+					progressbar.setMinimum(0);
+					progressbar.setMaximum(max);
+					progressbar.setValue(progress);
 				}
-			});			
+			});
 		}
-	}	
-	
-	public void setMessage(final String message) {
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				progressbar.setString(message != null ? message : "");
-				progressbar.setStringPainted(true);
-				progressbar.setToolTipText(message != null ? message : "");
-			}
-		});			
-
 	}
-	
-	public void setProgress(final int progress, final int max) {
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				progressbar.setIndeterminate(false);
-				progressbar.setMinimum(0);
-				progressbar.setMaximum(max);
-				progressbar.setValue(progress);
-			}
-		});			
+
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		isEnabled = enabled;
 	}
 }

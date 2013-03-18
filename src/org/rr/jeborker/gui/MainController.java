@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -253,14 +254,26 @@ public class MainController {
 		MainMenuBarController.getController().restoreProperties();
 		mainWindow.setVisible(true);
 		LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
+		MainController.getController().getMainWindow().getGlassPane().setVisible(true);
+		getProgressMonitor().setEnabled(false);
 		new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				EbookPropertyDBTableModel ebookPropertyDBTableModel = new EbookPropertyDBTableModel(false);
+				final EbookPropertyDBTableModel ebookPropertyDBTableModel = new EbookPropertyDBTableModel(false);
 				ebookPropertyDBTableModel.getRowCount();
-				mainWindow.mainTable.setModel(ebookPropertyDBTableModel);
-				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms until model is loaded");
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							mainWindow.mainTable.setModel(ebookPropertyDBTableModel);
+						} finally {
+							getMainWindow().getGlassPane().setVisible(false);
+							getProgressMonitor().setEnabled(true);
+						}
+					}
+				});
 			}
 		}).start();
 	}
@@ -666,8 +679,8 @@ public class MainController {
 	 * @return The desired monitor instance of <code>null</code> if the monitor is not ready to use.
 	 */
 	public MainMonitor getProgressMonitor() {
-		if(mainWindow!=null && mainWindow.progressBar!=null) {
-			return new MainMonitor(mainWindow.progressBar);
+		if(mainWindow != null && mainWindow.progressBar != null) {
+			return MainMonitor.getInstance(mainWindow.progressBar);
 		}
 		return null;
 	}
