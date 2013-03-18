@@ -3,6 +3,7 @@ package org.rr.jeborker.gui;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
@@ -162,7 +164,9 @@ public class MainMenuBarController {
 			//only visible to single selections
 			if(items.get(0).isDirectoryResource()) {
 				action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, items.get(0).toString());
-				menu.add(action);	
+				JMenuItem item = new JMenuItem(action);
+				item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false));
+				menu.add(item);	
 			}
 			
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).toString());
@@ -193,7 +197,9 @@ public class MainMenuBarController {
 		menu.add(copyToSubMenu);		
 		
 		action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items);
-		menu.add(action);		
+		JMenuItem item = new JMenuItem(action);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false));
+		menu.add(item);		
 		
 		return menu;
 	}
@@ -219,8 +225,10 @@ public class MainMenuBarController {
 		
 		{
 			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows);
+			JMenuItem item = new JMenuItem(action);
+			item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false));
 			if(action.isEnabled()) {
-				menu.add(action);
+				menu.add(item);
 			}
 		}	
 		
@@ -237,7 +245,9 @@ public class MainMenuBarController {
 		menu.add(copyToSubMenu);
 
 		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
-		menu.add(action);
+		JMenuItem item = new JMenuItem(action);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false));
+		menu.add(item);
 		
 		return menu;
 	}	

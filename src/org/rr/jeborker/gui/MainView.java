@@ -226,6 +226,7 @@ public class MainView extends JFrame{
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
+		KeyStroke refresh = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
 		
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
@@ -300,7 +301,7 @@ public class MainView extends JFrame{
 				gbc_treeMainTableSplitPane.gridy = 1;
 				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
 				
-				createMainTable(copy, paste, delete);
+				createMainTable(copy, paste, delete, refresh);
 				
 				mainTableScrollPane = new JScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
@@ -327,7 +328,7 @@ public class MainView extends JFrame{
 				JComponent basePathTreeComp = createBasePathTree();
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
 				
-				JComponent fileSystemTreeComp = createFileSystemTree(copy, paste, delete);
+				JComponent fileSystemTreeComp = createFileSystemTree(copy, paste, delete, refresh);
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
 				
 				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
@@ -441,7 +442,7 @@ public class MainView extends JFrame{
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
-	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete) {
+	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete, KeyStroke refresh) {
 		mainTable = new JRTable();
 		mainTable.setName("MainTable");
 		mainTable.setRowHeight(74);
@@ -472,6 +473,7 @@ public class MainView extends JFrame{
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
+		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, null), "RefreshEntry", refresh, JComponent.WHEN_FOCUSED);
 		mainTable.putClientProperty(StringConvertor.class, new StringConvertor() {
 			
 			@Override
@@ -558,7 +560,7 @@ public class MainView extends JFrame{
 		});
 	}
 
-	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete) {
+	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete, final KeyStroke refresh) {
 		final String fileSystemTreeName = "FileSystemTree";
 		
 		JPanel fileSystemTreePanel = new JPanel();
@@ -650,7 +652,7 @@ public class MainView extends JFrame{
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
-		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, null), "Refresh", KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false), JComponent.WHEN_FOCUSED);
+		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, null), "Refresh", refresh, JComponent.WHEN_FOCUSED);
 		
 		fileSystemTree.setDragEnabled(true);
 		fileSystemTree.setTransferHandler(new TransferHandler() {
