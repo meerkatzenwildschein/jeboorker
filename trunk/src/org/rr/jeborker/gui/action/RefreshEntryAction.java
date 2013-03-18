@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -8,6 +9,8 @@ import javax.swing.Action;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class RefreshEntryAction extends AbstractAction {
@@ -31,6 +34,17 @@ class RefreshEntryAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		ActionUtils.refreshEntry(handler);
+		if(this.handler == null) {
+			List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+			for(int i = 0; i < selectedEbookPropertyItems.size(); i++) {
+				EbookPropertyItem ebookPropertyItem = selectedEbookPropertyItems.get(i);
+				IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
+				if(resourceHandler != null) {
+					ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, resourceHandler);
+				}
+			}
+		} else {
+			ActionUtils.refreshEntry(handler);
+		}
 	}
 }
