@@ -202,7 +202,6 @@ public class MainView extends JFrame{
 		});
 		
 		this.setGlassPane(new ShadowPanel());	
-		getGlassPane().setVisible(false);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
