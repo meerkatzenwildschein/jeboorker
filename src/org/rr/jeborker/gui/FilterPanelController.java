@@ -128,7 +128,7 @@ public class FilterPanelController {
 			}
 
 			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 				Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				return c;
 			}
