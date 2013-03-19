@@ -7,7 +7,7 @@ import javax.swing.Action;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.swing.dialogs.chooser.ChooserDialogFactory;
+import org.rr.commons.swing.dialogs.chooser.FileChooserDialogFactory;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -33,7 +33,7 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 	@Override
 	public synchronized IFileChooser doOnce() {
 		if(fileChooser == null) {
-			fileChooser = ChooserDialogFactory.getFileChooser();
+			fileChooser = FileChooserDialogFactory.getFileChooser();
 			if(previousSelectedFile != null) {
 				fileChooser.setSelectedFile(previousSelectedFile);
 			}

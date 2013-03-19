@@ -45,13 +45,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
@@ -66,6 +66,7 @@ import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.button.JMenuButton;
+import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.dnd.DragAndDropUtils;
 import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
@@ -156,7 +157,7 @@ public class MainView extends JFrame{
 	
 	JRTree fileSystemTree;
 	
-	JScrollPane mainTableScrollPane;
+	JRScrollPane mainTableScrollPane;
 
 	JTabbedPane treeTabbedPane;
 	private JPanel buttonPanel;
@@ -302,7 +303,7 @@ public class MainView extends JFrame{
 				
 				createMainTable(copy, paste, delete, refresh);
 				
-				mainTableScrollPane = new JScrollPane();
+				mainTableScrollPane = new JRScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 				mainTableScrollPane.setViewportView(mainTable);
 				
@@ -636,9 +637,10 @@ public class MainView extends JFrame{
 			}
 		}
 
-		JScrollPane treeScroller = new JScrollPane(fileSystemTree);
+		JRScrollPane treeScroller = new JRScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
+		treeScroller.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 		GridBagConstraints gbc_treeScroller = new GridBagConstraints();
 		gbc_treeScroller.fill = GridBagConstraints.BOTH;
 		gbc_treeScroller.anchor = GridBagConstraints.NORTHWEST;
@@ -832,7 +834,7 @@ public class MainView extends JFrame{
 			basePathTree.setAutoMoveHorizontalSliders(JeboorkerPreferences.isTreeAutoScrollingEnabled());
 			basePathTree.setEditable(true);
 		}
-		JScrollPane basePathTreeScroller = new JScrollPane(basePathTree);
+		JRScrollPane basePathTreeScroller = new JRScrollPane(basePathTree);
 		basePathTreeScroller.setOpaque(false);
 		basePathTreeScroller.getViewport().setOpaque(false);
 		GridBagConstraints gbc_basePathTreeScroller = new GridBagConstraints();

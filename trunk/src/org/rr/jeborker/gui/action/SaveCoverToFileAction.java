@@ -13,7 +13,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
-import org.rr.commons.swing.dialogs.chooser.ChooserDialogFactory;
+import org.rr.commons.swing.dialogs.chooser.FileChooserDialogFactory;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser.RETURN_OPTION;
 import org.rr.jeborker.JeboorkerPreferences;
@@ -43,7 +43,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 		
 		String filename = "cover" + (fileExtension != null ? fileExtension : "");
 		String dir = JeboorkerPreferences.getGenericEntryAsString(PATH_PREF_KEY);
-		IFileChooser c = ChooserDialogFactory.getFileChooser();
+		IFileChooser c = FileChooserDialogFactory.getFileChooser();
 		if(dir != null) {
 			c.setCurrentDirectory(new File(dir));
 		}

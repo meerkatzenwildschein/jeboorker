@@ -259,8 +259,14 @@ public class MainController {
 		mainWindow.setVisible(true);
 		LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
 		
-		//mode loading and setup
 		MainController.getController().getMainWindow().getGlassPane().setVisible(true);
+		initMainModel();
+	}
+
+	/**
+	 * Model loading and setup
+	 */
+	private void initMainModel() {
 		getProgressMonitor().setEnabled(false);
 		
 		new SwingWorker<Void, Void>() {
@@ -287,6 +293,9 @@ public class MainController {
 		}.execute();
 	}
 
+	/**
+	 * Initialize the controllers for the different parts uf the application window.
+	 */
 	private void initSubController() {
 		sortColumnComponentController = new SortColumnComponentController(mainWindow.sortColumnComboBox);
 		sortOrderComponentController = new SortOrderComponentController(mainWindow.sortOrderAscButton, mainWindow.sortOrderDescButton);
@@ -294,6 +303,9 @@ public class MainController {
 		treeController = new MainTreeController(mainWindow.basePathTree, mainWindow.fileSystemTree);
 	}
 	
+	/**
+	 * Attach all needed listeners to the view
+	 */
 	private void initListeners() {
 		mainWindow.mainTable.getSelectionModel().addListSelectionListener(new PropertySheetListSelectionListener());
 		mainWindow.mainTable.addMouseListener(new MainTablePopupMouseListener());
