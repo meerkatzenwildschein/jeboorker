@@ -235,13 +235,13 @@ public class ImageDownloadDialog extends JDialog {
 		borderPanel.add(scrollPane, gbc_scrollPane);
 		
 		JPanel panel = new JPanel();
+		panel.setLayout(new EqualsLayout(3));
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.gridwidth = 3;
 		gbc_panel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 2;
 		borderPanel.add(panel, gbc_panel);
-		panel.setLayout(new EqualsLayout(3));
 		
 		JButton abortButton = new JButton(Bundle.getString("ImageDownloadDialog.Action.Cancel"));
 		abortButton.setMargin(new Insets(2, 8, 2, 8));
