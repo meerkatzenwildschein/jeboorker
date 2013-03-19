@@ -7,24 +7,24 @@ import javax.swing.JFrame;
 import org.rr.jeborker.JeboorkerLogger;
 import org.rr.jeborker.JeboorkerPreferences;
 
-public class LogMonitorController {
+public class LoggerController {
 	
-	private static LogMonitorView logMonitorView = null;
+	private static LoggerView logMonitorView = null;
 	
-	static LogMonitorController getInstance() {
-		LogMonitorController controller = new LogMonitorController();
+	static LoggerController getInstance() {
+		LoggerController controller = new LoggerController();
 		return controller;
 	}	
 	
 	public void showLogMonitorDialog() {
-		LogMonitorView view = getView();
+		LoggerView view = getView();
 		view.setVisible(true);
 	}	
 	
-	private LogMonitorView getView() {
+	private LoggerView getView() {
 		if(logMonitorView == null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
-			logMonitorView = new LogMonitorView(mainWindow, this, JeboorkerLogger.log);
+			logMonitorView = new LoggerView(mainWindow, this, JeboorkerLogger.log);
 			this.initialize();
 		}
 		return logMonitorView;

@@ -27,7 +27,7 @@ import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;
 
-public class LogMonitorView extends JDialog implements ClipboardOwner {
+public class LoggerView extends JDialog implements ClipboardOwner {
 	
 	private static final long serialVersionUID = -8486417277805201337L;
 
@@ -47,11 +47,11 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 		public void actionPerformed(ActionEvent e) {
 			StringSelection stringSelection = new StringSelection( textArea.getText() );
 		    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		    clipboard.setContents(stringSelection, LogMonitorView.this );				
+		    clipboard.setContents(stringSelection, LoggerView.this );				
 		}
 	};
 	
-	private LogMonitorController logMonitorController;
+	private LoggerController logMonitorController;
 	
 	private JButton btnCopy;
 	private JTextArea textArea;
@@ -59,7 +59,7 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 	private JScrollPane scrollPane;
 	private JPanel bottomPanel;
 	
-	public LogMonitorView(JFrame mainWindow, LogMonitorController logMonitorController, StringBuilder logContent) {
+	public LoggerView(JFrame mainWindow, LoggerController logMonitorController, StringBuilder logContent) {
 		super(mainWindow);
 		this.logMonitorController = logMonitorController;
 		initialize();
