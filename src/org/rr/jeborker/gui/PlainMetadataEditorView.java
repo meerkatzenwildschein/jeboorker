@@ -25,7 +25,7 @@ import org.bounce.text.xml.XMLFoldingMargin;
 import org.rr.commons.swing.layout.EqualsLayout;
 
 
-public class PlainMetadataEditorView extends JDialog {
+class PlainMetadataEditorView extends JDialog {
 
 	private static final long serialVersionUID = -5833977607733981288L;
 

@@ -7,19 +7,21 @@ import javax.swing.JFrame;
 import org.rr.commons.swing.dialogs.PreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 
-public class PreferenceController {
+public class ConverterPreferenceController {
 	
-	private PreferenceView preferenceView;
+	private ConverterPreferenceView preferenceView;
 
-	private PreferenceController() {}
+	private ConverterPreferenceController() {
+		
+	}
 	
-	static PreferenceController getInstance() {
-		PreferenceController controller = new PreferenceController();
+	static ConverterPreferenceController getInstance() {
+		ConverterPreferenceController controller = new ConverterPreferenceController();
 		return controller;
 	}		
 
 	public void showPreferenceDialog() {
-		PreferenceView view = getView();
+		ConverterPreferenceView view = getView();
 		view.setVisible(true);
 		
 		int actionResult = view.getActionResult();
@@ -28,15 +30,15 @@ public class PreferenceController {
 		}
 	}
 	
-	private void setPreferenceViewValues(PreferenceView view) {
+	private void setPreferenceViewValues(ConverterPreferenceView view) {
 		boolean isTreeAutoscrollEnabled = view.getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_PREFERENCE_NAME);
 		JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
 	}
 	
-	private PreferenceView getView() {
+	private ConverterPreferenceView getView() {
 		if(preferenceView == null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
-			this.preferenceView = new PreferenceView(mainWindow, this);
+			this.preferenceView = new ConverterPreferenceView(this, mainWindow);
 			this.initialize();
 		}
 		return preferenceView;
@@ -48,8 +50,6 @@ public class PreferenceController {
 	
 	public void close() {
 		storeProperties();
-		
-//		preferenceView.setVisible(false);
 		preferenceView.dispose();
 	}		
 
@@ -73,5 +73,36 @@ public class PreferenceController {
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		
+	}	
+	
+	
+	/**
+	 * Tells if the split mode for landscape pages is set. 
+	 */
+	public boolean isLandscapePageSplit() {
+		String landscapeFormatValue = preferenceView.getStringValue(ConverterPreferenceView.LANDSCAPE_FORMAT_PREFERENCE_NAME);
+		if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.split"))) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Tells if the rotate mode for landscape pages is set. 
+	 */
+	public boolean isLandscapePageRotate() {
+		String landscapeFormatValue = preferenceView.getStringValue(ConverterPreferenceView.LANDSCAPE_FORMAT_PREFERENCE_NAME);
+		if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.rotate"))) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Tells if the manga mode for landscape pages is set. 
+	 */
+	public boolean isMangaMode() {
+		boolean isManga = preferenceView.getBooleanValue(ConverterPreferenceView.IS_MANGA_PREFERENCE_NAME);
+		return isManga;
 	}	
 }

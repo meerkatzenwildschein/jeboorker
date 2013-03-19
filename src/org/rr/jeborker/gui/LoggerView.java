@@ -27,7 +27,7 @@ import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;
 
-public class LoggerView extends JDialog implements ClipboardOwner {
+class LoggerView extends JDialog implements ClipboardOwner {
 	
 	private static final long serialVersionUID = -8486417277805201337L;
 
@@ -137,7 +137,7 @@ public class LoggerView extends JDialog implements ClipboardOwner {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				MainController.getController().getLogMonitorController().close();
+				MainController.getController().getLoggerController().close();
 			}
 			
 		});

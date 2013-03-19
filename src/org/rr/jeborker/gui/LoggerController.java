@@ -9,7 +9,7 @@ import org.rr.jeborker.JeboorkerPreferences;
 
 public class LoggerController {
 	
-	private static LoggerView logMonitorView = null;
+	private static LoggerView loggerView = null;
 	
 	private JFrame mainWindow;
 	
@@ -22,17 +22,17 @@ public class LoggerController {
 		return controller;
 	}	
 	
-	public void showLogMonitorDialog() {
+	public void showLoggerDialog() {
 		LoggerView view = getView();
 		view.setVisible(true);
 	}	
 	
 	private LoggerView getView() {
-		if(logMonitorView == null) {
-			logMonitorView = new LoggerView(mainWindow, this, JeboorkerLogger.log);
+		if(loggerView == null) {
+			loggerView = new LoggerView(mainWindow, this, JeboorkerLogger.log);
 			this.initialize();
 		}
-		return logMonitorView;
+		return loggerView;
 	}
 	
 	private void initialize() {
@@ -42,8 +42,8 @@ public class LoggerController {
 	public void close() {
 		storeProperties();
 		
-		logMonitorView.setVisible(false);
-		logMonitorView.dispose();
+		loggerView.setVisible(false);
+		loggerView.dispose();
 	}	
 	
 	private void storeProperties() {

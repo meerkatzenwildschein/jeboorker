@@ -11,6 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.gui.ConverterPreferenceController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 
@@ -32,6 +34,8 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
+		final ConverterPreferenceController converterPreferenceDialog = openConverterPreferenceDialog();
+		if(true) return null;
 		final List<String> compressedImageEntries = listEntries(this.comicBookResource);
 		if(compressedImageEntries == null || compressedImageEntries.isEmpty()) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "The Comic book archive " + comicBookResource.getName() + " is empty.");
@@ -46,7 +50,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 			contentOutputStream = targetPdfResource.getContentOutputStream(false);
 			pdfWriter = this.createPdfWriter(document, contentOutputStream);
 			attachImagesToPdf(compressedImageEntries, document, pdfWriter);
-		} catch(Exception e) { 
+		} catch(Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Could not convert " + comicBookResource.getName() + " to Pdf." , e);
 		} finally {
 			if(pdfWriter != null) {
@@ -103,6 +107,15 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
     	IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceHandler(compressionEntryStream));
     	BufferedImage bufferedImage = imageProvider.getImage();
     	return bufferedImage;
+    }
+    
+    /**
+     * Create a {@link ConverterPreferenceController} instance and show it to the user.  
+     */
+    private ConverterPreferenceController openConverterPreferenceDialog() {
+    	ConverterPreferenceController converterPreferenceController = MainController.getController().getConverterPreferenceController();
+    	converterPreferenceController.showPreferenceDialog();
+    	return converterPreferenceController;
     }
 
 	protected abstract InputStream getCompressionEntryStream(IResourceHandler resourceHandler, String entry);

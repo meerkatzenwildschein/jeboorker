@@ -237,8 +237,16 @@ public class MainController {
 	/**
 	 * Gets the controller which handles the preference dialog.
 	 */	
-	public LoggerController getLogMonitorController() {
+	public LoggerController getLoggerController() {
 		return LoggerController.getInstance(mainWindow);
+	}
+	
+	/**
+	 * Gets the controller which is used by the converter classes to
+	 * ask the user for some options.
+	 */	
+	public ConverterPreferenceController getConverterPreferenceController() {
+		return ConverterPreferenceController.getInstance();
 	}
 	
 	/**

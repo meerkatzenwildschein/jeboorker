@@ -9,17 +9,24 @@ import org.rr.jeborker.JeboorkerPreferences;
 
 class PreferenceView extends PreferenceDialog {
 	
-	static final String AUTO_SCOLL_ITEM_NAME = "autoScollItem";
+	static final String AUTO_SCOLL_ITEM_PREFERENCE_NAME = "autoScollItem";
 	
 	private boolean isInitialized = false;
+	
+	private PreferenceController preferenceController;
 
 	public PreferenceView(JFrame mainWindow, PreferenceController preferenceController) {
 		super(mainWindow);
+		this.preferenceController = preferenceController;
+		setTitle(Bundle.getString("PreferenceView.title"));
 	}
 	
 	public void setVisible(boolean visible) {
 		this.initialize();
 		super.setVisible(visible);
+		if(!visible) {
+			preferenceController.close();
+		}
 	}	
 
 	private void initialize() {
@@ -31,7 +38,7 @@ class PreferenceView extends PreferenceDialog {
 				String label = Bundle.getString("PreferenceView.pref.autoscroll");
 				JCheckBox generalCategoryCheckBox = new JRCheckBox();
 				generalCategoryCheckBox.setSelected(JeboorkerPreferences.isTreeAutoScrollingEnabled());
-				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_NAME, label, generalCategoryCheckBox, generalCategory);
+				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_PREFERENCE_NAME, label, generalCategoryCheckBox, generalCategory);
 				addPreferenceEntry(autoScollItem);
 			}
 		}
