@@ -5,6 +5,7 @@ import java.awt.Point;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.rr.commons.swing.dialogs.PreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 
 public class PreferenceController {
@@ -21,6 +22,16 @@ public class PreferenceController {
 	public void showPreferenceDialog() {
 		PreferenceView view = getView();
 		view.setVisible(true);
+		
+		int actionResult = view.getActionResult();
+		if(actionResult == PreferenceDialog.ACTION_RESULT_OK) {
+			this.setPreferenceViewValues(view);
+		}
+	}
+	
+	private void setPreferenceViewValues(PreferenceView view) {
+		boolean isTreeAutoscrollEnabled = view.getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_NAME);
+		JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
 	}
 	
 	private PreferenceView getView() {
