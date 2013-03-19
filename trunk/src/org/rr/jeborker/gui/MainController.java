@@ -237,8 +237,8 @@ public class MainController {
 	/**
 	 * Gets the controller which handles the preference dialog.
 	 */	
-	public LogMonitorController getLogMonitorController() {
-		return LogMonitorController.getInstance();
+	public LoggerController getLogMonitorController() {
+		return LoggerController.getInstance();
 	}
 	
 	/**

@@ -6,7 +6,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.common.swing.SwingUtils;
-import org.rr.jeborker.gui.LogMonitorController;
+import org.rr.jeborker.gui.LoggerController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
