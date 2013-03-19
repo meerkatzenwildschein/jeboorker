@@ -758,7 +758,7 @@ public class MainController {
 		}
 		String localized = StringUtils.replace(name.toLowerCase(), new String[] {"/", " ", ":"}, "");
 		localized = Bundle.getString(localized);
-		if(localized!=null && localized.length() > 0) {
+		if(localized != null && localized.length() > 0) {
 			return StringUtils.capitalize(localized);
 		} else {
 			return StringUtils.capitalize(name);
@@ -849,6 +849,10 @@ public class MainController {
 		}
 	}
 	
+	/**
+	 * Shows the image given with the <code>cover</code> parameter in the simple image viewer.
+	 * The image viewer is set to black if the given <code>cover</code> is <code>null</code>. 
+	 */
 	private void setImage(final byte[] cover, final EbookPropertyItem ebookPropertyItem) {
 		if (cover != null && ebookPropertyItem != null) {
 			//remove file extension by removing the separation dot because an image file name is expected.  
