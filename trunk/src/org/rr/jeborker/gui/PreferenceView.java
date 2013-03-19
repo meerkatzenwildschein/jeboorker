@@ -1,98 +1,46 @@
 package org.rr.jeborker.gui;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 
-import org.rr.commons.swing.layout.EqualsLayout;
+import org.rr.common.swing.components.JRCheckBox;
+import org.rr.commons.swing.dialogs.PreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 
-class PreferenceView extends JDialog {
+class PreferenceView extends PreferenceDialog {
 	
-	private PreferenceController preferenceController;
+	static final String AUTO_SCOLL_ITEM_NAME = "autoScollItem";
 	
-	private JCheckBox checkBoxAutoScrolling;
-	
-	private final ActionListener closeAction = new ActionListener() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			preferenceController.close();
-		}
-	};	
+	private boolean isInitialized = false;
 
 	public PreferenceView(JFrame mainWindow, PreferenceController preferenceController) {
 		super(mainWindow);
-		this.preferenceController = preferenceController;
-		initialize();
 		setModal(true);
 		setLocation(mainWindow.getLocation().x, mainWindow.getLocation().y);
 		setSize(600, 350);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);				
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
+		setTitle(Bundle.getString("PreferenceView.title"));
 	}
+	
+	public void setVisible(boolean visible) {
+		this.initialize();
+		super.setVisible(visible);
+	}	
 
 	private void initialize() {
-		setTitle(Bundle.getString("PreferenceView.title"));
-		((JComponent)getContentPane()).registerKeyboardAction(closeAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		
-		JPanel generalPanel = new JPanel();
-		tabbedPane.addTab(Bundle.getString("PreferenceView.tab.general"), null, generalPanel, null);
-		GridBagLayout gbl_generalPanel = new GridBagLayout();
-		gbl_generalPanel.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_generalPanel.rowHeights = new int[]{0, 0};
-		gbl_generalPanel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_generalPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		generalPanel.setLayout(gbl_generalPanel);
-		
-		JLabel lblTreeAutoscrolling = new JLabel(Bundle.getString("PreferenceView.pref.autoscroll"));
-		GridBagConstraints gbc_lblTreeAutoscrolling = new GridBagConstraints();
-		gbc_lblTreeAutoscrolling.insets = new Insets(0, 3, 0, 5);
-		gbc_lblTreeAutoscrolling.gridx = 0;
-		gbc_lblTreeAutoscrolling.gridy = 0;
-		generalPanel.add(lblTreeAutoscrolling, gbc_lblTreeAutoscrolling);
-		
-		this.checkBoxAutoScrolling = new JCheckBox("");
-		boolean isTreeAutoScrollingEnabled = JeboorkerPreferences.isTreeAutoScrollingEnabled();
-		checkBoxAutoScrolling.setSelected(isTreeAutoScrollingEnabled);
-
-		checkBoxAutoScrolling.addItemListener(new ItemListener() {
+		if(!isInitialized) {
+			isInitialized = true;
+			final String generalCategory = Bundle.getString("PreferenceView.tab.general");
 			
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				JeboorkerPreferences.setTreeAutoScrollingEnabled(checkBoxAutoScrolling.isSelected());
+			{
+				String label = Bundle.getString("PreferenceView.pref.autoscroll");
+				JCheckBox generalCategoryCheckBox = new JRCheckBox();
+				generalCategoryCheckBox.setSelected(JeboorkerPreferences.isTreeAutoScrollingEnabled());
+				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_NAME, label, generalCategoryCheckBox, generalCategory);
+				addPreferenceEntry(autoScollItem);
 			}
-		});
-		GridBagConstraints gbc_checkBoxAutoScrolling = new GridBagConstraints();
-		gbc_checkBoxAutoScrolling.gridx = 2;
-		gbc_checkBoxAutoScrolling.gridy = 0;
-		generalPanel.add(checkBoxAutoScrolling, gbc_checkBoxAutoScrolling);		
-		
-		JPanel bottomPanel = new JPanel();
-		bottomPanel.setLayout(new EqualsLayout(1));
-		getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-		
-		JButton btnClose = new JButton(Bundle.getString("PreferenceView.close"));
-		bottomPanel.add(btnClose);
-		btnClose.addActionListener(closeAction);
+		}
 	}
 	
 }
