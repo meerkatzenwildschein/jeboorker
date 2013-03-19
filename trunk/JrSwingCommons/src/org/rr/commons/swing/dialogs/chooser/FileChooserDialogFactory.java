@@ -1,6 +1,6 @@
 package org.rr.commons.swing.dialogs.chooser;
 
-public class ChooserDialogFactory {
+public class FileChooserDialogFactory {
 	
 	public static IFileChooser getFileChooser() {
 		if(ZenityFileChooser.isSupported()) {

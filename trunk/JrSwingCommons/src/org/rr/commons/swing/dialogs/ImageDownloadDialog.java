@@ -12,8 +12,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -38,13 +36,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -57,6 +56,7 @@ import javax.swing.table.TableColumn;
 
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.SwingUtils;
+import org.rr.common.swing.components.JRScrollPane;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -68,6 +68,7 @@ import org.rr.commons.utils.ThreadUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
+import org.rr.commons.swing.layout.EqualsLayout;
 
 public class ImageDownloadDialog extends JDialog {
 	
@@ -79,7 +80,7 @@ public class ImageDownloadDialog extends JDialog {
 	
 	private JComboBox searchProviderComboBox;
 	
-	private JScrollPane scrollPane;
+	private JRScrollPane scrollPane;
 	
 	private JButton okButton;
 	
@@ -99,6 +100,22 @@ public class ImageDownloadDialog extends JDialog {
 	private Color bgColor;
 
 	private Color fgColor;
+	
+	private final ActionListener cancelAction = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			closeDialog(null);
+		}
+	};
+	
+	private final ActionListener okAction = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			storeSelectionAndCloseDialog();
+		}
+	};
 
 	public ImageDownloadDialog(JFrame owner, IImageFetcherFactory factory) {
 		super(owner);
@@ -106,6 +123,9 @@ public class ImageDownloadDialog extends JDialog {
 		init(owner, factory);
 	}
 	
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public ImageDownloadDialog(IImageFetcherFactory factory) {
 		super();
 		this.factory = factory;
@@ -126,6 +146,8 @@ public class ImageDownloadDialog extends JDialog {
 		this.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		this.setGlassPane(new ShadowPanel());	
 		getGlassPane().setVisible(false);
+		
+	    ((JComponent)getContentPane()).registerKeyboardAction(cancelAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);		
 		
 		//workaround for a swing bug. The first time, the editor is used, the 
 		//ui color instance draws the wrong color but have the right rgb values.
@@ -201,7 +223,7 @@ public class ImageDownloadDialog extends JDialog {
 			gbc_searchButton.gridy = 0;
 			borderPanel.add(searchButton, gbc_searchButton);
 		}
-		scrollPane = new JScrollPane();
+		scrollPane = new JRScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -211,16 +233,6 @@ public class ImageDownloadDialog extends JDialog {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		borderPanel.add(scrollPane, gbc_scrollPane);
-		scrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-			
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				if(!e.getValueIsAdjusting()) {
-					scrollPane.repaint();
-				}
-			}
-		});
-
 		
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -229,42 +241,16 @@ public class ImageDownloadDialog extends JDialog {
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 2;
 		borderPanel.add(panel, gbc_panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{287, 69, 0, 0};
-		gbl_panel.rowHeights = new int[]{25, 0};
-		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		panel.setLayout(gbl_panel);
+		panel.setLayout(new EqualsLayout(3));
 		
 		JButton abortButton = new JButton(Bundle.getString("ImageDownloadDialog.Action.Cancel"));
 		abortButton.setMargin(new Insets(2, 8, 2, 8));
-		GridBagConstraints gbc_abortButton = new GridBagConstraints();
-		gbc_abortButton.anchor = GridBagConstraints.NORTHEAST;
-		gbc_abortButton.insets = new Insets(0, 0, 0, 5);
-		gbc_abortButton.gridx = 1;
-		gbc_abortButton.gridy = 0;
-		panel.add(abortButton, gbc_abortButton);
-		abortButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				closeDialog(null);
-			}
-		});
+		panel.add(abortButton);
+		abortButton.addActionListener(cancelAction);
 		
 		okButton = new JButton(Bundle.getString("ImageDownloadDialog.Action.OK"));
-		GridBagConstraints gbc_okButton = new GridBagConstraints();
-		gbc_okButton.anchor = GridBagConstraints.EAST;
-		gbc_okButton.gridx = 2;
-		gbc_okButton.gridy = 0;
-		panel.add(okButton, gbc_okButton);
-		okButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				storeSelectionAndCloseDialog();
-			}
-		});
+		panel.add(okButton);
+		okButton.addActionListener(okAction);
 	}
 	
 	/**
@@ -554,7 +540,7 @@ public class ImageDownloadDialog extends JDialog {
 	public void setResultCount(int resultCount) {
 		this.resultCount = resultCount;
 	}
-
+	
 	public static void main(String[] args) {
 		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog(ImageWebSearchFetcherFactory.getInstance());
 		imageDownloadDialog.setVisible(true);
