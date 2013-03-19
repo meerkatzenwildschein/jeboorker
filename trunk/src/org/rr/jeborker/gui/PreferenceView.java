@@ -8,14 +8,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.JeboorkerPreferences;
@@ -25,6 +28,14 @@ class PreferenceView extends JDialog {
 	private PreferenceController preferenceController;
 	
 	private JCheckBox checkBoxAutoScrolling;
+	
+	private final ActionListener closeAction = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			preferenceController.close();
+		}
+	};	
 
 	public PreferenceView(JFrame mainWindow, PreferenceController preferenceController) {
 		super(mainWindow);
@@ -38,6 +49,8 @@ class PreferenceView extends JDialog {
 
 	private void initialize() {
 		setTitle(Bundle.getString("PreferenceView.title"));
+		((JComponent)getContentPane()).registerKeyboardAction(closeAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
@@ -79,13 +92,7 @@ class PreferenceView extends JDialog {
 		
 		JButton btnClose = new JButton(Bundle.getString("PreferenceView.close"));
 		bottomPanel.add(btnClose);
-		btnClose.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				preferenceController.close();
-			}
-		});
+		btnClose.addActionListener(closeAction);
 	}
 	
 }
