@@ -30,7 +30,7 @@ class ShowLogDialogAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MainController.getController().getLogMonitorController().showLogMonitorDialog();
+		MainController.getController().getLoggerController().showLoggerDialog();
 	}
 	
 

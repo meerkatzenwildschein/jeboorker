@@ -113,7 +113,7 @@ import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
 
-public class MainView extends JFrame{
+class MainView extends JFrame {
 	
 	private static final long serialVersionUID = 6837919427429399376L;
 

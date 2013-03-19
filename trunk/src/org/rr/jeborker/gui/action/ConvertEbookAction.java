@@ -56,9 +56,10 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 				}
 			}
 			
-			this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceLoader, ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath()));
+			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath());
+			this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceLoader, resourceHandler);
 		} catch (Exception ex) {
-			LoggerFactory.logWarning((Object) this, "", ex);
+			LoggerFactory.logWarning((Object) this, "Converting " + resource + " has failed.", ex);
 		} finally {
 			controller.getProgressMonitor().monitorProgressStop();
 		}

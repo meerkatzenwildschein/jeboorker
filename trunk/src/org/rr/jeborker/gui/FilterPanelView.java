@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import org.japura.gui.CheckComboBox;
 import org.rr.jeborker.gui.action.ActionFactory;
 
-public class FilterPanelView extends JPanel {
+class FilterPanelView extends JPanel {
 
 	private static final long serialVersionUID = -6508749893667788695L;
 
