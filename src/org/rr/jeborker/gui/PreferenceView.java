@@ -1,7 +1,6 @@
 package org.rr.jeborker.gui;
 
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.rr.common.swing.components.JRCheckBox;
@@ -16,11 +15,6 @@ class PreferenceView extends PreferenceDialog {
 
 	public PreferenceView(JFrame mainWindow, PreferenceController preferenceController) {
 		super(mainWindow);
-		setModal(true);
-		setLocation(mainWindow.getLocation().x, mainWindow.getLocation().y);
-		setSize(600, 350);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
-		setTitle(Bundle.getString("PreferenceView.title"));
 	}
 	
 	public void setVisible(boolean visible) {
