@@ -10,15 +10,18 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
@@ -29,6 +32,24 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 	private static final long serialVersionUID = -8486417277805201337L;
 
 	private static final int MAX_LOG_DISPLAY = 10000;
+	
+	private final ActionListener closeAction = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			logMonitorController.close();
+		}
+	};
+	
+	private final ActionListener copyClipboardAction = new ActionListener()  {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			StringSelection stringSelection = new StringSelection( textArea.getText() );
+		    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		    clipboard.setContents(stringSelection, LogMonitorView.this );				
+		}
+	};
 	
 	private LogMonitorController logMonitorController;
 	
@@ -51,6 +72,8 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 	
 	private void initialize() {
 		setTitle(Jeboorker.app + " " + " Logfile");
+		((JComponent)getContentPane()).registerKeyboardAction(closeAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
@@ -84,22 +107,8 @@ public class LogMonitorView extends JDialog implements ClipboardOwner {
 		
 		btnClose = new JButton(Bundle.getString("LogMonitorView.close"));
 		bottomPanel.add(btnClose);
-		btnClose.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				logMonitorController.close();
-			}
-		});
-		btnCopy.addActionListener(new ActionListener()  {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				StringSelection stringSelection = new StringSelection( textArea.getText() );
-			    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-			    clipboard.setContents(stringSelection, LogMonitorView.this );				
-			}
-		});
+		btnClose.addActionListener(closeAction);
+		btnCopy.addActionListener(copyClipboardAction);
 		
 		this.addWindowListener(new WindowAdapter() {
 			
