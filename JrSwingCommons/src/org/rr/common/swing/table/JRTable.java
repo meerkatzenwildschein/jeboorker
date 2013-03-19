@@ -4,6 +4,8 @@ import java.util.logging.Level;
 
 import javax.swing.CellEditor;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.TableModel;
 
 import org.rr.commons.log.LoggerFactory;
 
@@ -25,7 +27,23 @@ public class JRTable extends JTable {
         } catch (Exception ex) {
             LoggerFactory.getLogger(this).log(Level.INFO, "stopEdit has failed.", ex);
         }
-    } 	
+    }
+
+	@Override
+	public void setModel(TableModel dataModel) {
+		super.setModel(dataModel);
+		
+		//after setting the model sometimes the first renderer is rendered with the 
+		// wrong background color. A repaint fix these problem.
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				repaint();
+			}
+		});
+	} 	
+    
     
     
 }
