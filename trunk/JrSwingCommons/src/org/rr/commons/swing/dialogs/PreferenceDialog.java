@@ -24,6 +24,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
+import org.rr.common.swing.SwingUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
@@ -62,8 +63,21 @@ public class PreferenceDialog extends JDialog {
 	
 	public PreferenceDialog(JFrame owner) {
 		super(owner);
+		
+		setModal(true);
+		SwingUtils.centerOnScreen(this);
+		setSize(400, 250);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
+		setTitle(Bundle.getString("PreferenceView.title"));		
 	}
 	
+	/**
+	 * Adds a {@link PreferenceEntry} to this {@link PreferenceDialog} instance. 
+	 * The order of the {@link PreferenceEntry} are taken under account for 
+	 * the order of the components shown to the user.
+	 * 
+	 * @param entry The {@link PreferenceEntry} to be added.
+	 */
 	public void addPreferenceEntry(PreferenceEntry entry) {
 		preferenceEntries.put(entry.getName(), entry);
 	}
