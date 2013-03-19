@@ -275,7 +275,8 @@ public class MainController {
 			
 			@Override
 			protected Void doInBackground() throws Exception {
-				ebookPropertyDBTableModel = new EbookPropertyDBTableModel(false);
+				EbookPropertyDBTableModel tableModel = getTableModel();
+				ebookPropertyDBTableModel = new EbookPropertyDBTableModel(tableModel, false);
 				ebookPropertyDBTableModel.getRowCount();
 				return null;
 			}

@@ -53,6 +53,14 @@ public class EbookPropertyDBTableModel implements TableModel {
     	this.emptyModel = emptyModel;
     }
     
+    public EbookPropertyDBTableModel(EbookPropertyDBTableModel copy, boolean emptyModel) {
+    	super();
+    	this.emptyModel = emptyModel;
+    	this.setOrderByColumns(copy.getOrderByColumns());
+    	this.setOrderDirection(copy.getOrderDirection());
+    	this.queryConditions = copy.getQueryCondition();
+    }
+    
     /**
      * Adds a listener to the list that's notified each time a change
      * to the data model occurs.
