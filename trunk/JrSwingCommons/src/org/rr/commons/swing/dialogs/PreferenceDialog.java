@@ -18,27 +18,44 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
-import org.rr.common.swing.components.JRCheckBox;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 
 public class PreferenceDialog extends JDialog {
 
+	public static final int ACTION_RESULT_OK = 0;
+	
+	public static final int ACTION_RESULT_ABORT = 1;
+	
 	private final LinkedHashMap<String, PreferenceEntry> preferenceEntries = new LinkedHashMap<String, PreferenceEntry>();
 
-	private final ActionListener closeAction = new ActionListener() {
+	private final ActionListener okAction = new ActionListener() {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			actionResult = ACTION_RESULT_OK;
 			setVisible(false);
 			dispose();
 		}
 	};	
+	
+	private final ActionListener abortAction = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			actionResult = ACTION_RESULT_ABORT;
+			setVisible(false);
+			dispose();
+		}
+	};	
+	
+	private int actionResult = -1;
+	
+	private boolean isInitialized = false;
 	
 	public PreferenceDialog(JFrame owner) {
 		super(owner);
@@ -49,11 +66,19 @@ public class PreferenceDialog extends JDialog {
 	}
 	
 	/**
+	 * Gets the action result of this {@link PreferenceDialog} instance.
+	 * @return The action result. This is ACTION_RESULT_OK or ACTION_RESULT_ABORT.
+	 */
+	public int getActionResult() {
+		return this.actionResult;
+	}
+	
+	/**
 	 * Get the result value for the {@link PreferenceEntry} with the given name. 
 	 */
 	public boolean getBooleanValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
-		final Component component = preferenceEntry.getComponent();
+		final Component component = preferenceEntry.getCustomComponent();
 		
 		if(component instanceof JCheckBox) {
 			return ((JCheckBox)component).isSelected();
@@ -70,7 +95,7 @@ public class PreferenceDialog extends JDialog {
 	 */
 	public String getStringValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
-		final Component component = preferenceEntry.getComponent();
+		final Component component = preferenceEntry.getCustomComponent();
 		
 		if(component instanceof JCheckBox) {
 			return Boolean.valueOf(((JCheckBox)component).isSelected()).toString();
@@ -87,68 +112,90 @@ public class PreferenceDialog extends JDialog {
 	}
 	
 	private void initialize() {
-		final List<String> categories = getPreferenceCategories();
-		final ArrayList<JPanel> generalPanels = new ArrayList<JPanel>(categories.size());
-		for(final String category : categories) {
-			final JPanel generalPanel = new JPanel();
+		if(!isInitialized) {
+			isInitialized = true;
 			
-			GridBagLayout gbl_generalPanel = new GridBagLayout();
-			gbl_generalPanel.columnWidths = new int[]{0, 0, 0, 0};
-			gbl_generalPanel.rowHeights = new int[]{0, 0};
-			gbl_generalPanel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-			gbl_generalPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			generalPanel.setLayout(gbl_generalPanel);
-			generalPanel.setName(category);
-			generalPanels.add(generalPanel);
+			final List<String> categories = getPreferenceCategories();
+			final ArrayList<JPanel> generalPanels = new ArrayList<JPanel>(categories.size());
+			getContentPane().setLayout(new BorderLayout());
 			
-			List<PreferenceEntry> preferenceEntriesByCategory = getPreferenceEntriesByCategory(category);
-			for(int i = 0; i < preferenceEntriesByCategory.size(); i++) {
-				final PreferenceEntry preferenceEntry = preferenceEntriesByCategory.get(i);
+			for(final String category : categories) {
+				final JPanel generalPanel = new JPanel();
 				
-				JLabel lblTreeAutoscrolling = new JLabel(preferenceEntry.getLabel());
-				GridBagConstraints gbc_lblTreeAutoscrolling = new GridBagConstraints();
-				gbc_lblTreeAutoscrolling.insets = new Insets(0, 3, 0, 5);
-				gbc_lblTreeAutoscrolling.gridx = 0;
-				gbc_lblTreeAutoscrolling.gridy = i;
-				generalPanel.add(lblTreeAutoscrolling, gbc_lblTreeAutoscrolling);
+				GridBagLayout gbl_generalPanel = new GridBagLayout();
+				gbl_generalPanel.columnWidths = new int[]{0, 0, 0, 0};
+				gbl_generalPanel.rowHeights = new int[]{0, 0};
+				gbl_generalPanel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+				gbl_generalPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+				generalPanel.setLayout(gbl_generalPanel);
+				generalPanel.setName(category);
+				generalPanels.add(generalPanel);
 				
-				Component c = preferenceEntry.getComponent();
-				GridBagConstraints gbc_checkBoxAutoScrolling = new GridBagConstraints();
-				gbc_checkBoxAutoScrolling.gridx = 2;
-				gbc_checkBoxAutoScrolling.gridy = i;
-				generalPanel.add(c, gbc_checkBoxAutoScrolling);				
+				List<PreferenceEntry> preferenceEntriesByCategory = getPreferenceEntriesByCategory(category);
+				int preferenceEntriesSize = preferenceEntriesByCategory.size();
+				for(int i = 0; i < preferenceEntriesSize; i++) {
+					final PreferenceEntry preferenceEntry = preferenceEntriesByCategory.get(i);
+					
+					JLabel label = new JLabel(preferenceEntry.getLabel());
+					GridBagConstraints gbc_label = new GridBagConstraints();
+					gbc_label.insets = new Insets(0, 3, 0, 5);
+					gbc_label.gridx = 0;
+					gbc_label.gridy = i;
+					generalPanel.add(label, gbc_label);
+					
+					Component c = preferenceEntry.getCustomComponent();
+					GridBagConstraints gbc_component = new GridBagConstraints();
+					gbc_component.gridx = 2;
+					gbc_component.gridy = i;
+					generalPanel.add(c, gbc_component);				
+				}
+				
+				//add a panel at the end which fills the rest of the space so the
+				//other components are located at the top of the dialog panel.
+				Component fillPanel = new JPanel();
+				GridBagConstraints gbc_fillPanel = new GridBagConstraints();
+				gbc_fillPanel.gridx = 2;
+				gbc_fillPanel.gridwidth = 3;
+				gbc_fillPanel.gridy = preferenceEntriesSize;
+				gbc_fillPanel.fill = GridBagConstraints.BOTH;
+				gbc_fillPanel.weighty = 1f;
+				generalPanel.add(fillPanel, gbc_fillPanel);						
+				
 			}
+			
+			//add the category panels to the dialog root pane.
+			if(generalPanels.size() > 1) {
+				JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+				getContentPane().add(tabbedPane, BorderLayout.CENTER);
+				
+				for(JPanel generalPanel : generalPanels) {
+					tabbedPane.addTab(generalPanel.getName(), null, generalPanel, null);
+				}
+			} else if(!generalPanels.isEmpty()) {
+				JPanel panel = new JPanel(new BorderLayout());
+				getContentPane().add(panel, BorderLayout.CENTER);
+				
+				JPanel generalPanel = generalPanels.get(0);
+				panel.add(generalPanel, BorderLayout.CENTER);
+				
+				if(!generalPanel.getName().isEmpty()) {
+					TitledBorder border = new TitledBorder(generalPanel.getName());
+					generalPanel.setBorder(border);
+				}
+			}
+			
+			JPanel bottomPanel = new JPanel();
+			bottomPanel.setLayout(new EqualsLayout(1));
+			getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+			
+			JButton btnAbort = new JButton(Bundle.getString("PreferenceDialog.Action.Cancel"));
+			bottomPanel.add(btnAbort);
+			btnAbort.addActionListener(abortAction);	
+			
+			JButton btnOK = new JButton(Bundle.getString("PreferenceDialog.Action.OK"));
+			bottomPanel.add(btnOK);
+			btnOK.addActionListener(okAction);		
 		}
-		
-		//add the category panels to the dialog root pane.
-		if(generalPanels.size() > 1) {
-			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			getContentPane().add(tabbedPane, BorderLayout.CENTER);
-			
-			for(JPanel generalPanel : generalPanels) {
-				tabbedPane.addTab(generalPanel.getName(), null, generalPanel, null);
-			}
-		} else if(!generalPanels.isEmpty()) {
-			JPanel panel = new JPanel();
-			getContentPane().add(panel, BorderLayout.CENTER);
-			
-			JPanel generalPanel = generalPanels.get(0);
-			panel.add(generalPanel);
-			
-			if(!generalPanel.getName().isEmpty()) {
-				TitledBorder border = new TitledBorder(generalPanel.getName());
-				generalPanel.setBorder(border);
-			}
-		}
-		
-		JPanel bottomPanel = new JPanel();
-		bottomPanel.setLayout(new EqualsLayout(1));
-		getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-		
-		JButton btnClose = new JButton(Bundle.getString("PreferenceView.close"));
-		bottomPanel.add(btnClose);
-		btnClose.addActionListener(closeAction);		
-		
 	}
 	
 	/**
@@ -181,26 +228,27 @@ public class PreferenceDialog extends JDialog {
 	
 	public static class PreferenceEntry {
 		
-		public static final int BOOLEAN_TYPE = 0;
-		
-		public static final int TEXT_TYPE = 1;
-		
-		public static final int CUSTOM_TYPE = 2;
-		
 		private String category;
 		
 		private String name;
 		
 		private String label;
 		
-		private int type;
-		
 		private Component customComponent;
 		
-		public PreferenceEntry(String name, String label, int type) {
+		private Object value;
+		
+		public PreferenceEntry(String name, String label, Component customComponent) {
 			this.name = name;
-			this.type = type;
 			this.label = label;
+			this.customComponent = customComponent;
+		}
+		
+		public PreferenceEntry(String name, String label, Component customComponent, String category) {
+			this.name = name;
+			this.label = label;
+			this.category = category;
+			this.customComponent = customComponent;
 		}
 
 		public String getName() {
@@ -218,18 +266,6 @@ public class PreferenceDialog extends JDialog {
 		public void setLabel(String label) {
 			this.label = label;
 		}
-
-		public Component getComponent() {
-			switch(type) {
-			case BOOLEAN_TYPE:
-				return new JRCheckBox();
-			case TEXT_TYPE:
-				return new JTextField();
-			case CUSTOM_TYPE:
-			default:
-				return customComponent;
-			}
-		}
 		
 		public Component getCustomComponent() {
 			return customComponent;
@@ -239,20 +275,16 @@ public class PreferenceDialog extends JDialog {
 			this.customComponent = customComponent;
 		}
 
-		public int getType() {
-			return type;
-		}
-
-		public void setType(int type) {
-			this.type = type;
-		}
-
 		public String getCategory() {
 			return category;
 		}
 
 		public void setCategory(String category) {
 			this.category = category;
+		}
+
+		public Object getValue() {
+			return value;
 		}
 		
 	}
