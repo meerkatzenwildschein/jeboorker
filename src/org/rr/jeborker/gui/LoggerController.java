@@ -11,8 +11,14 @@ public class LoggerController {
 	
 	private static LoggerView logMonitorView = null;
 	
-	static LoggerController getInstance() {
-		LoggerController controller = new LoggerController();
+	private JFrame mainWindow;
+	
+	public LoggerController(JFrame mainWindow) {
+		this.mainWindow = mainWindow;
+	}
+
+	static LoggerController getInstance(JFrame mainWindow) {
+		LoggerController controller = new LoggerController(mainWindow);
 		return controller;
 	}	
 	
@@ -23,7 +29,6 @@ public class LoggerController {
 	
 	private LoggerView getView() {
 		if(logMonitorView == null) {
-			JFrame mainWindow = MainController.getController().getMainWindow();
 			logMonitorView = new LoggerView(mainWindow, this, JeboorkerLogger.log);
 			this.initialize();
 		}
