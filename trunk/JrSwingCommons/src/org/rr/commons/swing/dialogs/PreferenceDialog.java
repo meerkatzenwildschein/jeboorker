@@ -2,6 +2,7 @@ package org.rr.commons.swing.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -30,6 +32,8 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 
 public class PreferenceDialog extends JDialog {
+	
+	private static final Dimension DEFAULT_SIZE = new Dimension(400,250);
 
 	public static final int ACTION_RESULT_OK = 0;
 	
@@ -66,7 +70,7 @@ public class PreferenceDialog extends JDialog {
 		
 		setModal(true);
 		SwingUtils.centerOnScreen(this);
-		setSize(400, 250);
+		setSize(DEFAULT_SIZE);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
 		setTitle(Bundle.getString("PreferenceView.title"));		
 	}
@@ -103,6 +107,10 @@ public class PreferenceDialog extends JDialog {
 			String text = ((JTextComponent)component).getText();
 			Boolean booleanValue = CommonUtils.toBoolean(text);
 			return booleanValue.booleanValue();
+		} else if(component instanceof JComboBox) {
+			String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
+			Boolean booleanValue = CommonUtils.toBoolean(text);
+			return booleanValue.booleanValue();
 		}
 		return false;
 	}
@@ -119,6 +127,9 @@ public class PreferenceDialog extends JDialog {
 		} else if(component instanceof JTextComponent) {
 			String text = ((JTextComponent)component).getText();
 			return text;
+		} else if(component instanceof JComboBox) {
+			String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
+			return text;
 		}
 		return "";
 	}
@@ -131,7 +142,6 @@ public class PreferenceDialog extends JDialog {
 	private void initialize() {
 		if(!isInitialized) {
 			isInitialized = true;
-			
 			final List<String> categories = getPreferenceCategories();
 			final ArrayList<JPanel> generalPanels = new ArrayList<JPanel>(categories.size());
 			getContentPane().setLayout(new BorderLayout());
@@ -159,12 +169,14 @@ public class PreferenceDialog extends JDialog {
 					gbc_label.insets = new Insets(0, 3, 0, 5);
 					gbc_label.gridx = 0;
 					gbc_label.gridy = i;
+					gbc_label.anchor = GridBagConstraints.WEST;
 					generalPanel.add(label, gbc_label);
 					
 					Component c = preferenceEntry.getCustomComponent();
 					GridBagConstraints gbc_component = new GridBagConstraints();
 					gbc_component.gridx = 2;
 					gbc_component.gridy = i;
+					gbc_component.anchor = GridBagConstraints.WEST;
 					generalPanel.add(c, gbc_component);				
 				}
 				
@@ -177,8 +189,13 @@ public class PreferenceDialog extends JDialog {
 				gbc_fillPanel.gridy = preferenceEntriesSize;
 				gbc_fillPanel.fill = GridBagConstraints.BOTH;
 				gbc_fillPanel.weighty = 1f;
-				generalPanel.add(fillPanel, gbc_fillPanel);						
+				generalPanel.add(fillPanel, gbc_fillPanel);		
 				
+				int minHeight = (preferenceEntriesSize * 30) + 80;
+				if(getSize().width == DEFAULT_SIZE.width && getSize().height == DEFAULT_SIZE.height) {
+					setSize(DEFAULT_SIZE.width, minHeight);
+				}
+				setMinimumSize(new Dimension(DEFAULT_SIZE.width, minHeight));
 			}
 			
 			//add the category panels to the dialog root pane.
