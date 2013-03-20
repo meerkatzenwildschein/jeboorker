@@ -1,8 +1,10 @@
 package org.rr.jeborker.metadata;
 
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,12 +19,14 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.pm.image.ImageUtils;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.io.FileChannelRandomAccessSource;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 abstract class PDFCommonDocument {
 
@@ -102,23 +106,18 @@ abstract class PDFCommonDocument {
 	public abstract void write() throws IOException;
 	
 	/**
-	 * Dispose this {@link PDFCommonDocument} instance. It could no longer be used
-	 * after invoking dispose.
-	 */
-	public abstract void dispose();
-	
-	/**
 	 * Renders a page of the given pdf data. 
 	 * @param pdfdata The pdf bytes.
 	 * @param pageNumber The page number to be rendered starting with 1.
 	 * @return The rendered pdf data or <code>null</code> if the pdf could not be rendered.
 	 * @throws IOException
 	 */
-	byte[] renderPage(byte[] pdfdata, int pageNumber) throws Exception {
+	byte[] renderPage(IResourceHandler pdfdataResource, int pageNumber) throws Exception {
 		com.jmupdf.pdf.PdfDocument doc = null;
 		com.jmupdf.page.PagePixels pp = null;
 		com.jmupdf.page.Page page = null;
 		try {
+			byte[] pdfdata = pdfdataResource.getContent();
 			doc = new com.jmupdf.pdf.PdfDocument(pdfdata);
 
 			page = doc.getPage(pageNumber);
@@ -130,39 +129,41 @@ abstract class PDFCommonDocument {
 			byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
 			return imageBytes;
 		} finally {
-			if (pp != null)
+			if (pp != null) {
 				pp.dispose();
-			if (doc != null)
+			}
+			if (doc != null) {
 				doc.dispose();
+			}
 		}
 	}	
 	
 	
 	private static class ItextPDFDocument extends PDFCommonDocument {
 
-		private PdfReader pdfReader;
+		private IResourceHandler pdfFile;
 		
-		byte[] pdfdata = null;
+		private PdfReader pdfReaderI;
+		
+		private FileInputStream fileInputStreamI;
+		
+		private FileChannel fileChannelI;
 		
 		ItextPDFDocument(IResourceHandler pdfFile) {
-			try {
-				pdfdata = pdfFile.getContent();
-				
-				//use byte[] instead of InputStream because itext read the stream
-				//into a ByteArrayOutputStream and than does a toByteArray() which 
-				//does another copy of the bytes.
-				this.pdfReader = new PdfReader(pdfdata);
-			} catch(Throwable e) {
-				throw new RuntimeException(e.getMessage() + " at '" + pdfFile.getName() + "'", e);
-			} 
+			this.pdfFile = pdfFile;
 		}
 		
 		@Override
 		public byte[] getXMPMetadata() throws IOException {
 			if(this.xmpMetadata == null) {
-				final byte[] xmpMetadataBytes = pdfReader.getMetadata();
-				if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
-					this.xmpMetadata = xmpMetadataBytes;
+				final PdfReader reader = getReader();
+				try {
+					final byte[] xmpMetadataBytes = reader.getMetadata();
+					if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
+						this.xmpMetadata = xmpMetadataBytes;
+					}
+				} finally {
+					dispose();
 				}
 			}
 			return this.xmpMetadata;
@@ -171,8 +172,13 @@ abstract class PDFCommonDocument {
 		@Override
 		public Map<String, String> getInfo() throws IOException {
 			if(moreInfo == null) {
-				moreInfo = pdfReader.getInfo();
-				return moreInfo;
+				final PdfReader reader = getReader();
+				try {
+					moreInfo = reader.getInfo();
+					return moreInfo;
+				} finally {
+					dispose();
+				}
 			}
 			return moreInfo;
 		}
@@ -184,15 +190,16 @@ abstract class PDFCommonDocument {
 			PdfStamper stamper = null;
 			OutputStream ebookResourceOutputStream = null;
 			
+			final PdfReader reader = this.getReader();
 			try {
 				ebookResourceOutputStream = tmpEbookResourceLoader.getContentOutputStream(false);
-				stamper = new PdfStamper(pdfReader, ebookResourceOutputStream);
+				stamper = new PdfStamper(reader, ebookResourceOutputStream);
 				byte[] xmp = this.xmpMetadata != null ? this.xmpMetadata : getXMPMetadata();
 				stamper.setXmpMetadata(XMPUtils.handleMissingXMPRootTag(xmp));
 				Map<String, String> info = this.moreInfo != null ? this.moreInfo : getInfo();
 				if(this.moreInfo != null) {
 					//to delete old entries, itext need to null them.
-					HashMap<String, String> oldInfo = pdfReader.getInfo();
+					HashMap<String, String> oldInfo = reader.getInfo();
 					HashMap<String, String> newInfo = new HashMap<String, String>(oldInfo.size() + this.moreInfo.size());
 					for (Iterator<String> it = oldInfo.keySet().iterator(); it.hasNext();) {
 						newInfo.put(it.next(), null); 
@@ -226,67 +233,102 @@ abstract class PDFCommonDocument {
 				} else {
 					tmpEbookResourceLoader.delete();
 				}
+				dispose();
 			}			
-		}
-
-		@Override
-		public void dispose() {
-			if(this.pdfReader != null) {
-				this.pdfReader.close();
-			}
 		}
 		
 		public byte[] fetchCoverFromPDFContent() throws IOException {
 			try {
-				return renderPage(pdfdata, 1);
-			} catch (Exception e) {
+				return renderPage(pdfFile, 1);
+			} catch (Throwable e) {
 				LoggerFactory.log(Level.WARNING, this, "could not render PDF " + getResourceHandler());
 			}
 			
-			int xrefSize = pdfReader.getXrefSize();
-			for (int i = 0; i < xrefSize; i++) { //process the first ten xrefs.
-				PdfObject pdfobj = pdfReader.getPdfObject(i);
-				if(pdfobj != null) {
-					if (pdfobj.isStream()) {
-						PdfStream stream = (PdfStream) pdfobj;
-						
-						PdfObject pdfsubtype = stream.get(PdfName.SUBTYPE);
-						if (pdfsubtype == null || !pdfsubtype.toString().equals(PdfName.IMAGE.toString())) {
-							continue;
-						}
-		
-						// now you have a PDF stream object with an image
-						byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);
-						if(img.length > 1000) {
-							int width = 0;
-							int height = 0;
-							try {
-								width = Integer.parseInt(stream.get(PdfName.WIDTH).toString());
-								height = Integer.parseInt(stream.get(PdfName.HEIGHT).toString());
-								
-								if(width <= 0 || height <= 0) {
-									continue;
-								}
-								
-								PdfObject bitspercomponent = stream.get(PdfName.BITSPERCOMPONENT);
-								if(bitspercomponent!=null) {
-									Number bitspercomponentNum = CommonUtils.toNumber(bitspercomponent.toString());
-									if(bitspercomponentNum!=null && bitspercomponentNum.intValue()==1) {
-										//no b/w images
+			final PdfReader reader = getReader();
+			try {
+				int xrefSize = reader.getXrefSize();
+				for (int i = 0; i < xrefSize; i++) { //process the first ten xrefs.
+					PdfObject pdfobj = reader.getPdfObject(i);
+					if(pdfobj != null) {
+						if (pdfobj.isStream()) {
+							PdfStream stream = (PdfStream) pdfobj;
+							
+							PdfObject pdfsubtype = stream.get(PdfName.SUBTYPE);
+							if (pdfsubtype == null || !pdfsubtype.toString().equals(PdfName.IMAGE.toString())) {
+								continue;
+							}
+			
+							// now you have a PDF stream object with an image
+							byte[] img = PdfReader.getStreamBytesRaw((PRStream) stream);
+							if(img.length > 1000) {
+								int width = 0;
+								int height = 0;
+								try {
+									width = Integer.parseInt(stream.get(PdfName.WIDTH).toString());
+									height = Integer.parseInt(stream.get(PdfName.HEIGHT).toString());
+									
+									if(width <= 0 || height <= 0) {
 										continue;
 									}
-								}							
-							} catch(Exception e) {}
-							
-							double aspectRatio = ((double)height) / ((double)width);
-							if(width > 150 && aspectRatio > MIN_IMAGE_COVER_WIDTH && aspectRatio < MAX_IMAGE_COVER_WIDTH) {
-								return img;
+									
+									PdfObject bitspercomponent = stream.get(PdfName.BITSPERCOMPONENT);
+									if(bitspercomponent!=null) {
+										Number bitspercomponentNum = CommonUtils.toNumber(bitspercomponent.toString());
+										if(bitspercomponentNum!=null && bitspercomponentNum.intValue()==1) {
+											//no b/w images
+											continue;
+										}
+									}							
+								} catch(Exception e) {}
+								
+								double aspectRatio = ((double)height) / ((double)width);
+								if(width > 150 && aspectRatio > MIN_IMAGE_COVER_WIDTH && aspectRatio < MAX_IMAGE_COVER_WIDTH) {
+									return img;
+								}
 							}
 						}
 					}
 				}
+			} finally {
+				dispose();
 			}
 			return null;
+		}
+
+		private void initReader() {
+			try {
+				fileInputStreamI = new FileInputStream(pdfFile.toFile());
+				fileChannelI = fileInputStreamI.getChannel();
+				FileChannelRandomAccessSource fileChannelRandomAccessSource = new FileChannelRandomAccessSource(fileChannelI);
+				RandomAccessFileOrArray rafPdfIn = new RandomAccessFileOrArray(fileChannelRandomAccessSource); 
+				this.pdfReaderI = new PdfReader(rafPdfIn, null);
+			} catch(Throwable e) {
+				throw new RuntimeException(e.getMessage() + " at '" + pdfFile.getName() + "'", e);
+			}
+		}
+
+		private PdfReader getReader() {
+			if(this.pdfReaderI == null) {
+				initReader();
+			}
+			return this.pdfReaderI;
+		}		
+
+		private void dispose() {
+			if(this.pdfReaderI != null) {
+				this.pdfReaderI.close();
+				this.pdfReaderI = null;
+			}
+			if(fileInputStreamI != null) {
+				IOUtils.closeQuietly(fileInputStreamI);
+				this.fileInputStreamI = null;
+			}
+			if(fileChannelI != null) {
+				try {
+					fileChannelI.close();
+					this.fileChannelI = null;
+				} catch (IOException e) {}
+			}
 		}
 		
 	}	
