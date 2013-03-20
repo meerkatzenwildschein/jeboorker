@@ -10,9 +10,9 @@ import org.rr.jeborker.JeboorkerConstants;
 import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
 
 /**
- * A converter for comic cbr files to epub 
+ * A converter for comic cbr files to pdf 
  */
-class CbrToPdfConverter extends ACompressedImageToEpubConverter {
+class CbrToPdfConverter extends ACompressedImageToPdfConverter {
 
 	public CbrToPdfConverter(IResourceHandler comicBookResource) {
 		super(comicBookResource);
@@ -23,8 +23,8 @@ class CbrToPdfConverter extends ACompressedImageToEpubConverter {
 	}
 	
 	protected List<String> listEntries(IResourceHandler cbrResource) {
-		final List<String> cbzEntries = RarUtils.list(this.comicBookResource);
-		return cbzEntries;
+		final List<String> cbrEntries = RarUtils.list(this.comicBookResource);
+		return cbrEntries;
 	}
 
 	@Override
