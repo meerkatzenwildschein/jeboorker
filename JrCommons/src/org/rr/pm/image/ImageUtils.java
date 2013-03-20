@@ -3,11 +3,13 @@ package org.rr.pm.image;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -20,7 +22,10 @@ import java.awt.image.ShortLookupTable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
@@ -243,24 +248,6 @@ public class ImageUtils {
 	}	
 	
 	/**
-	 * Scales the image handled by this {@link IImageProvider} instance so it shall match into the given frame
-	 * dimension.
-	 * 
-	 * @param frame The dimension for the target image
-	 * @param image The image to be resized. 
-	 * 
-	 * @return a new {@link BufferedImage} instance with the scaled image data.
-	 */
-	public static BufferedImage cutToMatch(BufferedImage image, Dimension frame) {
-		BufferedImage cuttedImage = new BufferedImage(frame.width, frame.height, image.getType() != 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
-		Graphics graphics = cuttedImage.getGraphics();
-		graphics.drawImage(image, 0, 0, cuttedImage.getWidth(), cuttedImage.getHeight(), 0, 0, cuttedImage.getWidth(), cuttedImage.getHeight(), null);
-		graphics.dispose();
-		
-		return cuttedImage;
-	}	
-	
-	/**
 	 * Shrinks or enlarges the current JpgImage object by the given scale
 	 * factor, with a scale of 1 being 100% (or no change).<p>
 	 * For example, if you need to reduce the image to 75% of the current size, 
@@ -281,6 +268,44 @@ public class ImageUtils {
 		return image;
 	}
 	
+	/**
+	 * Scales the image so it shall match into the given frame dimension.
+	 * 
+	 * @param frame The dimension for the target image
+	 * @param image The image to be resized. 
+	 * 
+	 * @return a new {@link BufferedImage} instance with the scaled image data.
+	 */
+	public static BufferedImage cut(BufferedImage image, Rectangle frame) {
+	    BufferedImage dest = image.getSubimage(frame.x, frame.y, frame.width, frame.height);
+	    return dest;
+//		
+//		BufferedImage cuttedImage = new BufferedImage(frame.width, frame.height, image.getType() != 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
+//		Graphics graphics = cuttedImage.getGraphics();
+//		graphics.drawImage(image, 0, 0, cuttedImage.getWidth(), cuttedImage.getHeight(), frame.x, frame.y, frame.x + cuttedImage.getWidth(), frame.y + cuttedImage.getHeight(), null);
+//		graphics.dispose();
+//		
+//		return cuttedImage;
+	}
+
+	/**
+	 * Splits the given image into the given amount of parts.
+	 */
+	public static List<BufferedImage> splitHorizontal(BufferedImage image, int parts) {
+		if(parts > 1) {
+			ArrayList<BufferedImage> result = new ArrayList<BufferedImage>(parts);
+			int width = image.getWidth();
+			int height = image.getHeight();
+			int each = width / parts;
+			for(int i = 0; i < parts; i++) {
+				BufferedImage cut = cut(image, new Rectangle(i * each, 0, each, height));
+				result.add(cut);
+			}
+			return result;
+		}
+		return Collections.singletonList(image);
+	}
+
 	/**
 	 * Crops the frame having the given crop color around the given image.  
 	 * 
@@ -556,6 +581,29 @@ public class ImageUtils {
             }
         }
         return dest;
+    }
+    
+    /**
+     * Rotates the given image by the given degree and returns the transformed image.
+     * If the degree value is 0 the given image is returned. 
+     */
+    public static BufferedImage rotate90Degree(BufferedImage image, boolean clockwise) {
+		    int w = image.getWidth();
+		    int h = image.getHeight();
+		    double theta = Math.toRadians(clockwise ? 90 : -90);
+		    
+		    BufferedImage rotatedImage = new BufferedImage(h, w, image.getType() > 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
+		    Graphics2D g2d = (Graphics2D) rotatedImage.getGraphics();
+		    
+            double x = (h - w) / 2.0;
+            double y = (w - h) / 2.0;
+            
+            AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+            at.rotate(theta, w / 2.0, h / 2.0);
+            g2d.drawImage(image, at, null);            
+		    
+            g2d.dispose();
+	    	return rotatedImage;
     }
 	
 }
