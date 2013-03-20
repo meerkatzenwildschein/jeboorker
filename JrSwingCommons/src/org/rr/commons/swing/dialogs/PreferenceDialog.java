@@ -100,18 +100,20 @@ public class PreferenceDialog extends JDialog {
 	 */
 	public boolean getBooleanValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
-		final Component component = preferenceEntry.getCustomComponent();
-		
-		if(component instanceof JCheckBox) {
-			return ((JCheckBox)component).isSelected();
-		} else if(component instanceof JTextComponent) {
-			String text = ((JTextComponent)component).getText();
-			Boolean booleanValue = CommonUtils.toBoolean(text);
-			return booleanValue.booleanValue();
-		} else if(component instanceof JComboBox) {
-			String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
-			Boolean booleanValue = CommonUtils.toBoolean(text);
-			return booleanValue.booleanValue();
+		if(preferenceEntry != null) {
+			final Component component = preferenceEntry.getCustomComponent();
+			
+			if(component instanceof JCheckBox) {
+				return ((JCheckBox)component).isSelected();
+			} else if(component instanceof JTextComponent) {
+				String text = ((JTextComponent)component).getText();
+				Boolean booleanValue = CommonUtils.toBoolean(text);
+				return booleanValue.booleanValue();
+			} else if(component instanceof JComboBox) {
+				String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
+				Boolean booleanValue = CommonUtils.toBoolean(text);
+				return booleanValue.booleanValue();
+			}
 		}
 		return false;
 	}
@@ -121,19 +123,21 @@ public class PreferenceDialog extends JDialog {
 	 */
 	public String getStringValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
-		final Component component = preferenceEntry.getCustomComponent();
-		
-		if(component instanceof JCheckBox) {
-			return Boolean.valueOf(((JCheckBox)component).isSelected()).toString();
-		} else if(component instanceof JTextComponent) {
-			String text = ((JTextComponent)component).getText();
-			return text;
-		} else if(component instanceof JComboBox) {
-			String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
-			return text;
-		} else if(component instanceof JSlider) {
-			String text = StringUtils.toString( ((JSlider)component).getValue() );
-			return text;			
+		if(preferenceEntry != null) {
+			final Component component = preferenceEntry.getCustomComponent();
+			
+			if(component instanceof JCheckBox) {
+				return Boolean.valueOf(((JCheckBox)component).isSelected()).toString();
+			} else if(component instanceof JTextComponent) {
+				String text = ((JTextComponent)component).getText();
+				return text;
+			} else if(component instanceof JComboBox) {
+				String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
+				return text;
+			} else if(component instanceof JSlider) {
+				String text = StringUtils.toString( ((JSlider)component).getValue() );
+				return text;			
+			}
 		}
 		return "";
 	}
@@ -143,17 +147,19 @@ public class PreferenceDialog extends JDialog {
 	 */
 	public Number getNumericValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
-		final Component component = preferenceEntry.getCustomComponent();
-		
-		if(component instanceof JCheckBox) {
-			return ((JCheckBox)component).isSelected() ? Integer.valueOf(1) : Integer.valueOf(0);
-		} else if(component instanceof JTextComponent) {
-			String text = ((JTextComponent)component).getText();
-			return CommonUtils.toNumber(text);
-		} else if(component instanceof JComboBox) {
-			return CommonUtils.toNumber( ((JComboBox)component).getSelectedItem() );
-		} else if(component instanceof JSlider) {
-			return Integer.valueOf( ((JSlider)component).getValue() );
+		if(preferenceEntry != null) {
+			final Component component = preferenceEntry.getCustomComponent();
+			
+			if(component instanceof JCheckBox) {
+				return ((JCheckBox)component).isSelected() ? Integer.valueOf(1) : Integer.valueOf(0);
+			} else if(component instanceof JTextComponent) {
+				String text = ((JTextComponent)component).getText();
+				return CommonUtils.toNumber(text);
+			} else if(component instanceof JComboBox) {
+				return CommonUtils.toNumber( ((JComboBox)component).getSelectedItem() );
+			} else if(component instanceof JSlider) {
+				return Integer.valueOf( ((JSlider)component).getValue() );
+			}
 		}
 		return null;
 	}
