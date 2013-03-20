@@ -21,6 +21,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
@@ -130,8 +131,31 @@ public class PreferenceDialog extends JDialog {
 		} else if(component instanceof JComboBox) {
 			String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
 			return text;
+		} else if(component instanceof JSlider) {
+			String text = StringUtils.toString( ((JSlider)component).getValue() );
+			return text;			
 		}
 		return "";
+	}
+	
+	/**
+	 * Get the result value for the {@link PreferenceEntry} with the given name. 
+	 */
+	public Number getNumericValue(final String name) {
+		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
+		final Component component = preferenceEntry.getCustomComponent();
+		
+		if(component instanceof JCheckBox) {
+			return ((JCheckBox)component).isSelected() ? Integer.valueOf(1) : Integer.valueOf(0);
+		} else if(component instanceof JTextComponent) {
+			String text = ((JTextComponent)component).getText();
+			return CommonUtils.toNumber(text);
+		} else if(component instanceof JComboBox) {
+			return CommonUtils.toNumber( ((JComboBox)component).getSelectedItem() );
+		} else if(component instanceof JSlider) {
+			return Integer.valueOf( ((JSlider)component).getValue() );
+		}
+		return null;
 	}
 	
 	public void setVisible(boolean visible) {
