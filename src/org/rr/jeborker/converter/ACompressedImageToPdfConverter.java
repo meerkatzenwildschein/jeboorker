@@ -78,7 +78,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 		PdfWriter writer = PdfWriter.getInstance(document, targetPdfOutputStream);
 		
 		// add the image now and not later when itext think it's good to do that.
-		writer.setStrictImageSequence(true);	
+		writer.setStrictImageSequence(true);
 		
 		return writer;
 	}
@@ -109,6 +109,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 	            
 	            cb.addImage(pdfImage);
         	}
+    		pdfWriter.flush();
         }
     }
     

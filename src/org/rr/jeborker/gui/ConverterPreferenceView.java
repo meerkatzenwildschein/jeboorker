@@ -1,11 +1,13 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JSlider;
 
 import org.rr.common.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.PreferenceDialog;
@@ -15,10 +17,14 @@ class ConverterPreferenceView extends PreferenceDialog {
 	static final String LANDSCAPE_FORMAT_PREFERENCE_NAME = "landscape";
 	
 	static final String IS_MANGA_PREFERENCE_NAME = "manga";
+
+	static final String REDUCE_IMAGE_SIZE_PREFERENCE_NAME = "reduceImageQuality";
 	
 	private boolean isInitialized = false;
 	
 	private boolean showLandscapePageEntries = true;
+	
+	private boolean showReduceImageQulity = true;
 	
 	private ConverterPreferenceController controller;
 
@@ -41,6 +47,18 @@ class ConverterPreferenceView extends PreferenceDialog {
 			isInitialized = true;
 			final String generalCategory = Bundle.getString("ConverterPreferenceView.tab.general");
 			createLandscapePageEntries(generalCategory);
+			createReduceImageSize(generalCategory);
+		}
+	}
+	
+	private void createReduceImageSize(final String generalCategory) {
+		if(isShowReduceImageQulityEntry()) {
+			final JSlider reduceValue = new JSlider(10, 100);
+			reduceValue.setValue(100);
+			reduceValue.setMinimumSize(new Dimension(220, 40));
+			String reduceImageQualityLabel = Bundle.getString("ConverterPreferenceView.pref.reduceImageQuality");
+			PreferenceEntry reduceImageQualityItem = new PreferenceEntry(REDUCE_IMAGE_SIZE_PREFERENCE_NAME, reduceImageQualityLabel, reduceValue, generalCategory);
+			addPreferenceEntry(reduceImageQualityItem);			
 		}
 	}
 
@@ -71,8 +89,8 @@ class ConverterPreferenceView extends PreferenceDialog {
 			PreferenceEntry landscapeFormatItem = new PreferenceEntry(LANDSCAPE_FORMAT_PREFERENCE_NAME, landscapeFormatLabel, landscapeFormatCombobox, generalCategory);
 			addPreferenceEntry(landscapeFormatItem);
 			
-			String isManga = Bundle.getString("ConverterPreferenceView.pref.isManga");
-			PreferenceEntry isMangaItem = new PreferenceEntry(IS_MANGA_PREFERENCE_NAME, isManga, isMangaCheckBox, generalCategory);
+			String isMangaLabel = Bundle.getString("ConverterPreferenceView.pref.isManga");
+			PreferenceEntry isMangaItem = new PreferenceEntry(IS_MANGA_PREFERENCE_NAME, isMangaLabel, isMangaCheckBox, generalCategory);
 			addPreferenceEntry(isMangaItem);
 		}
 	}
@@ -83,6 +101,17 @@ class ConverterPreferenceView extends PreferenceDialog {
 
 	public void setShowLandscapePageEntries(boolean showLandscapePageEntries) {
 		this.showLandscapePageEntries = showLandscapePageEntries;
+	}
+
+	/**
+	 * Tells if the slider for reducing the image quality should be shown.
+	 */
+	public boolean isShowReduceImageQulityEntry() {
+		return showReduceImageQulity;
+	}
+
+	public void setShowReduceImageQulityEntry(boolean showReduceImageQulity) {
+		this.showReduceImageQulity = showReduceImageQulity;
 	}
 	
 }
