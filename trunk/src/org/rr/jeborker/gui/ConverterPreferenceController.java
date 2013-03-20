@@ -10,6 +10,8 @@ import org.rr.jeborker.JeboorkerPreferences;
 public class ConverterPreferenceController {
 	
 	private ConverterPreferenceView preferenceView;
+	
+	private int actionResult = -1;
 
 	private ConverterPreferenceController() {
 		
@@ -23,18 +25,9 @@ public class ConverterPreferenceController {
 	public void showPreferenceDialog() {
 		ConverterPreferenceView view = getView();
 		view.setVisible(true);
-		
-		int actionResult = view.getActionResult();
-		if(actionResult == PreferenceDialog.ACTION_RESULT_OK) {
-			this.setPreferenceViewValues(view);
-		}
+		actionResult = view.getActionResult();
 	}
-	
-	private void setPreferenceViewValues(ConverterPreferenceView view) {
-		boolean isTreeAutoscrollEnabled = view.getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_PREFERENCE_NAME);
-		JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
-	}
-	
+
 	private ConverterPreferenceView getView() {
 		if(preferenceView == null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
@@ -54,27 +47,35 @@ public class ConverterPreferenceController {
 	}		
 
 	private void storeProperties() {
-		JeboorkerPreferences.addGenericEntryAsNumber("prefDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addGenericEntryAsNumber("prefDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addGenericEntryAsNumber("prefDialogLocationX", getView().getLocation().x);
-		JeboorkerPreferences.addGenericEntryAsNumber("prefDialogLocationY", getView().getLocation().y);
+		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogSizeWidth", getView().getSize().width);
+		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogSizeHeight", getView().getSize().height);
+		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogLocationX", getView().getLocation().x);
+		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogLocationY", getView().getLocation().y);
 	}
 
 	private void restorePropeties() {
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("prefDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("prefDialogSizeHeight");
+		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("prefConverterDialogSizeWidth");
+		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("prefConverterDialogSizeHeight");
 		if(metadataDialogSizeWidth != null && metadataDialogSizeHeight != null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("prefDialogLocationX", "prefDialogLocationY");
+		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("prefConverterDialogLocationX", "prefConverterDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		
 	}	
 	
+	/**
+	 * Tells if the user has confirmed the preference dialog.
+	 * @return <code>true</code> if the user has confirmed the dialog and <code>false</code> if 
+	 * he hits abort or just closed the dialog.
+	 */
+	public boolean isConfirmed() {
+		return this.actionResult == PreferenceDialog.ACTION_RESULT_OK;
+	}
 	
 	/**
 	 * Tells if the split mode for landscape pages is set. 
@@ -92,9 +93,24 @@ public class ConverterPreferenceController {
 	 */
 	public boolean isLandscapePageRotate() {
 		String landscapeFormatValue = preferenceView.getStringValue(ConverterPreferenceView.LANDSCAPE_FORMAT_PREFERENCE_NAME);
-		if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.rotate"))) {
+		if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.rotate_clockwise"))) {
+			return true;
+		} else if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.rotate_counterclockwise"))) {
 			return true;
 		}
+
+		return false;
+	}
+	
+	/**
+	 * Tells if the rotation mode is clockwise. Use {@link #isLandscapePageRotate()} first
+	 * for a reasonable usage.
+	 */
+	public boolean isRotateClockwise() {
+		String landscapeFormatValue = preferenceView.getStringValue(ConverterPreferenceView.LANDSCAPE_FORMAT_PREFERENCE_NAME);
+		if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.rotate_clockwise"))) {
+			return true;
+		} 
 		return false;
 	}
 	
@@ -104,5 +120,19 @@ public class ConverterPreferenceController {
 	public boolean isMangaMode() {
 		boolean isManga = preferenceView.getBooleanValue(ConverterPreferenceView.IS_MANGA_PREFERENCE_NAME);
 		return isManga;
+	}	
+	
+	/**
+	 * Tells if the landscape page format options are enabled to show or not.
+	 */
+	public boolean isShowLandscapePageEntries() {
+		return preferenceView.isShowLandscapePageEntries();
+	}
+
+	/**
+	 * Set the landscape page format options to be shown in the dialog.
+	 */
+	public void setShowLandscapePageEntries(boolean showLandscapePageEntries) {
+		preferenceView.setShowLandscapePageEntries(showLandscapePageEntries);
 	}	
 }

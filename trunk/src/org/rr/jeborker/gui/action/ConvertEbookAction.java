@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -46,18 +47,22 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", resource.getName()));
 			
 			IResourceHandler targetResourceLoader = converter.convert();
-			EbookPropertyItem sourceItem = null;
-			for(int rowIndex : selectedRowsToRefresh) {
-				EbookPropertyItem ebookPropertyItemAt = controller.getTableModel().getEbookPropertyItemAt(rowIndex);
-				if(ebookPropertyItemAt.getResourceHandler().equals(resource)) {
-					sourceItem = ebookPropertyItemAt;
-					row = rowIndex;
-					break;
+			if(targetResourceLoader != null) {
+				EbookPropertyItem sourceItem = null;
+				for(int rowIndex : selectedRowsToRefresh) {
+					EbookPropertyItem ebookPropertyItemAt = controller.getTableModel().getEbookPropertyItemAt(rowIndex);
+					if(ebookPropertyItemAt.getResourceHandler().equals(resource)) {
+						sourceItem = ebookPropertyItemAt;
+						row = rowIndex;
+						break;
+					}
 				}
+				
+				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath());
+				this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceLoader, resourceHandler);
+			} else {
+				LoggerFactory.getLogger(this).log(Level.INFO, "Converting " + resource + " aborted.");
 			}
-			
-			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath());
-			this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceLoader, resourceHandler);
 		} catch (Exception ex) {
 			LoggerFactory.logWarning((Object) this, "Converting " + resource + " has failed.", ex);
 		} finally {

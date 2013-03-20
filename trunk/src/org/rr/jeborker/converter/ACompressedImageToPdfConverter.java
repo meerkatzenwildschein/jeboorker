@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -28,14 +27,19 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 
 	protected IResourceHandler comicBookResource;
 	
+	private ConverterPreferenceController converterPreferenceController = null;
+	
 	public ACompressedImageToPdfConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
 	}	
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
-		final ConverterPreferenceController converterPreferenceDialog = openConverterPreferenceDialog();
-		if(true) return null;
+		final ConverterPreferenceController converterPreferenceController = getConverterPreferenceDialog();
+		if(!converterPreferenceController.isConfirmed()) {
+			return null;
+		}
+		
 		final List<String> compressedImageEntries = listEntries(this.comicBookResource);
 		if(compressedImageEntries == null || compressedImageEntries.isEmpty()) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "The Comic book archive " + comicBookResource.getName() + " is empty.");
@@ -55,12 +59,14 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 		} finally {
 			if(pdfWriter != null) {
 				pdfWriter.flush();
-				try { pdfWriter.close(); } catch(Exception e) {}
+				try { 
+					pdfWriter.close(); 
+				} catch(Exception e) {}
 			}
-			if(contentOutputStream != null) {
+			try {
 				contentOutputStream.flush();
-				IOUtils.closeQuietly(contentOutputStream);
-			}
+				contentOutputStream.close();
+			} catch(Exception e) {}
 		}
 		
 		ConverterUtils.transferMetadata(this.comicBookResource, targetPdfResource);
@@ -78,27 +84,31 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 	}
 
     private void attachImagesToPdf(final List<String> compressedImageEntries, final Document document, final PdfWriter pdfWriter) throws IOException, DocumentException {
+    	boolean documentOpen = false;
         for(int i= 0; i < compressedImageEntries.size(); i++) {
         	String imageEntry = compressedImageEntries.get(i);
-        	BufferedImage bufferedImage = getBufferedImageFromArchive(imageEntry);
-        	
-        	float pageWidth = ((float)bufferedImage.getWidth());
-        	float pageHeight = ((float)bufferedImage.getHeight());
-        	document.setPageSize(new Rectangle(pageWidth, pageHeight));
-
-        	if(i == 0) {
-        		document.open();
-        	} else {
-        		document.newPage();
+        	BufferedImage image = getBufferedImageFromArchive(imageEntry);
+        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceDialog());
+        	for(BufferedImage bufferedImage : processImageModifications) {
+	        	float pageWidth = ((float)bufferedImage.getWidth());
+	        	float pageHeight = ((float)bufferedImage.getHeight());
+	        	document.setPageSize(new Rectangle(pageWidth, pageHeight));
+	
+	        	if(!documentOpen) {
+	        		documentOpen = true;
+	        		document.open();
+	        	} else {
+	        		document.newPage();
+	        	}
+	        	
+	            PdfContentByte cb = pdfWriter.getDirectContent();
+	            Image pdfImage = Image.getInstance(cb, bufferedImage, 1);
+	
+	            pdfImage.setAlignment(Element.ALIGN_CENTER);
+	            pdfImage.setAbsolutePosition(0, 0);
+	            
+	            cb.addImage(pdfImage);
         	}
-        	
-            PdfContentByte cb = pdfWriter.getDirectContent();
-            Image pdfImage = Image.getInstance(cb, bufferedImage, 1);
-
-            pdfImage.setAlignment(Element.ALIGN_CENTER);
-            pdfImage.setAbsolutePosition(0, 0);
-            
-            cb.addImage(pdfImage);
         }
     }
     
@@ -112,9 +122,11 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
     /**
      * Create a {@link ConverterPreferenceController} instance and show it to the user.  
      */
-    private ConverterPreferenceController openConverterPreferenceDialog() {
-    	ConverterPreferenceController converterPreferenceController = MainController.getController().getConverterPreferenceController();
-    	converterPreferenceController.showPreferenceDialog();
+    private ConverterPreferenceController getConverterPreferenceDialog() {
+    	if(converterPreferenceController == null) {
+    		converterPreferenceController = MainController.getController().getConverterPreferenceController();
+	    	converterPreferenceController.showPreferenceDialog();
+    	}
     	return converterPreferenceController;
     }
 

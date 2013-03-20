@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -11,11 +13,14 @@ import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.JeboorkerConstants;
 import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.gui.ConverterPreferenceController;
+import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.ImageUtils;
 
 public class PdfToCBZConverter implements IEBookConverter {
 
 	private IResourceHandler pdfResource;
+	private ConverterPreferenceController converterPreferenceController;
 	
 	public PdfToCBZConverter(IResourceHandler pdfResource) {
 		this.pdfResource = pdfResource;
@@ -28,7 +33,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 	 * @return The rendered pdf data or <code>null</code> if the pdf could not be rendered.
 	 * @throws IOException
 	 */
-	private byte[] renderPage(com.jmupdf.pdf.PdfDocument doc, int pageNumber) throws Exception {
+	private List<byte[]> renderPage(com.jmupdf.pdf.PdfDocument doc, int pageNumber) throws Exception {
 		com.jmupdf.page.PagePixels pp = null;
 		com.jmupdf.page.Page page = null;
 		try {
@@ -39,8 +44,13 @@ public class PdfToCBZConverter implements IEBookConverter {
 			pp.setZoom(1.5f);
 			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
 			BufferedImage image = pp.getImage();
-			byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
-			return imageBytes;
+			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceDialog());
+			List<byte[]> result = new ArrayList<byte[]>(processImageModifications.size());
+			for(BufferedImage processedImage : processImageModifications) {
+				byte[] imageBytes = ImageUtils.getImageBytes(processedImage, "image/jpeg");
+				result.add(imageBytes);
+			}
+			return result;
 		} finally {
 			if (pp != null) {
 				pp.dispose();
@@ -56,9 +66,15 @@ public class PdfToCBZConverter implements IEBookConverter {
 		try {
 			doc = new com.jmupdf.pdf.PdfDocument(pdfResource.getContent());
 			int pageCount = doc.getPageCount();
-			for(int pageNumber = 0; pageNumber < pageCount; pageNumber++) {
-				byte[] renderPage = renderPage(doc, pageNumber + 1);
-				TrueZipUtils.add(targetCbzResource, getFileName(pageNumber, pageCount), new ByteArrayInputStream(renderPage));
+			for(int pageNumber = 0, additional = 0; pageNumber < pageCount; pageNumber++) {
+				List<byte[]> renderedPages = renderPage(doc, pageNumber + 1);
+				for(int i = 0; i < renderedPages.size(); i++) {
+					if(i > 0) {
+						additional++;
+					}
+					byte[] renderedPage = renderedPages.get(i);
+					TrueZipUtils.add(targetCbzResource, getFileName(pageNumber + additional, pageCount), new ByteArrayInputStream(renderedPage));
+				}
 			}
 		} catch(Exception e) { 
 			if(e instanceof IOException) {
@@ -105,4 +121,15 @@ public class PdfToCBZConverter implements IEBookConverter {
 		
 		return formattedPageNumber + "_" + name + ".jpg";
 	}
+	
+    /**
+     * Create a {@link ConverterPreferenceController} instance and show it to the user.  
+     */
+    private ConverterPreferenceController getConverterPreferenceDialog() {
+    	if(converterPreferenceController == null) {
+    		converterPreferenceController = MainController.getController().getConverterPreferenceController();
+	    	converterPreferenceController.showPreferenceDialog();
+    	}
+    	return converterPreferenceController;
+    }	
 }
