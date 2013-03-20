@@ -123,16 +123,10 @@ public class ConverterPreferenceController {
 	}	
 	
 	/**
-	 * Tells if the landscape page format options are enabled to show or not.
+	 * Get the quality for the image conversion.
 	 */
-	public boolean isShowLandscapePageEntries() {
-		return preferenceView.isShowLandscapePageEntries();
-	}
-
-	/**
-	 * Set the landscape page format options to be shown in the dialog.
-	 */
-	public void setShowLandscapePageEntries(boolean showLandscapePageEntries) {
-		preferenceView.setShowLandscapePageEntries(showLandscapePageEntries);
+	public Number getImageSize() {
+		return preferenceView.getNumericValue(ConverterPreferenceView.REDUCE_IMAGE_SIZE_PREFERENCE_NAME);
 	}	
+
 }

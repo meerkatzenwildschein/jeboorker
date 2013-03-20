@@ -282,6 +282,10 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 * @return The thumbnail image to be displayed in the renderer.
 	 */
 	private ImageIcon getImageIconCover(final JTable table, final EbookPropertyItem item) {
+		if(item == null) {
+			return null;
+		}
+		
 		byte[] coverThumbnail = EbookPropertyItemUtils.getCoverThumbnailBytes(item.getResourceHandler());
 		if(item != null && coverThumbnail != null && coverThumbnail.length > 0) {
 			final String coverThumbnailCRC32 = String.valueOf(CommonUtils.calculateCrc(coverThumbnail));

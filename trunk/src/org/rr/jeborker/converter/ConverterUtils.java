@@ -43,6 +43,11 @@ class ConverterUtils {
 	}	
 	
     public static List<BufferedImage> processImageModifications(BufferedImage bufferedImage, ConverterPreferenceController converterPreferenceController) {
+    	Number imageSize = converterPreferenceController.getImageSize();
+    	if(imageSize != null && imageSize.intValue() < 99) {
+    		bufferedImage = ImageUtils.scalePercent(bufferedImage, (double)imageSize.intValue() / 100);
+    	}
+    	
     	final float imageWidth = ((float)bufferedImage.getWidth());
     	final float imageHeight = ((float)bufferedImage.getHeight());
 
