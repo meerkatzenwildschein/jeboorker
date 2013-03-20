@@ -18,13 +18,13 @@ class ConverterPreferenceView extends PreferenceDialog {
 	
 	static final String IS_MANGA_PREFERENCE_NAME = "manga";
 
-	static final String REDUCE_IMAGE_SIZE_PREFERENCE_NAME = "reduceImageQuality";
+	static final String REDUCE_IMAGE_SIZE_PREFERENCE_NAME = "reduceImageSize";
 	
 	private boolean isInitialized = false;
 	
 	private boolean showLandscapePageEntries = true;
 	
-	private boolean showReduceImageQulity = true;
+	private boolean showImageSizeEntry = true;
 	
 	private ConverterPreferenceController controller;
 
@@ -47,12 +47,12 @@ class ConverterPreferenceView extends PreferenceDialog {
 			isInitialized = true;
 			final String generalCategory = Bundle.getString("ConverterPreferenceView.tab.general");
 			createLandscapePageEntries(generalCategory);
-			createReduceImageSize(generalCategory);
+			createImageSizeEntries(generalCategory);
 		}
 	}
 	
-	private void createReduceImageSize(final String generalCategory) {
-		if(isShowReduceImageQulityEntry()) {
+	private void createImageSizeEntries(final String generalCategory) {
+		if(isShowImageSizeEntry()) {
 			final JSlider reduceValue = new JSlider(10, 100);
 			reduceValue.setValue(100);
 			reduceValue.setMinimumSize(new Dimension(220, 40));
@@ -106,12 +106,12 @@ class ConverterPreferenceView extends PreferenceDialog {
 	/**
 	 * Tells if the slider for reducing the image quality should be shown.
 	 */
-	public boolean isShowReduceImageQulityEntry() {
-		return showReduceImageQulity;
+	public boolean isShowImageSizeEntry() {
+		return showImageSizeEntry;
 	}
 
-	public void setShowReduceImageQulityEntry(boolean showReduceImageQulity) {
-		this.showReduceImageQulity = showReduceImageQulity;
+	public void setShowImageSizeEntry(boolean showImageSizeEntry) {
+		this.showImageSizeEntry = showImageSizeEntry;
 	}
 	
 }
