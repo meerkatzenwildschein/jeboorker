@@ -53,7 +53,8 @@ class ConverterPreferenceView extends PreferenceDialog {
 			String landscapeFormatLabel = Bundle.getString("ConverterPreferenceView.pref.landscape");
 			landscapeFormatCombobox.setModel(new DefaultComboBoxModel<String>(new String[] {
 					Bundle.getString("ConverterPreferenceView.pref.landscape.keep"),
-					Bundle.getString("ConverterPreferenceView.pref.landscape.rotate"),
+					Bundle.getString("ConverterPreferenceView.pref.landscape.rotate_clockwise"),
+					Bundle.getString("ConverterPreferenceView.pref.landscape.rotate_counterclockwise"),
 					Bundle.getString("ConverterPreferenceView.pref.landscape.split")
 			}));
 			landscapeFormatCombobox.addItemListener(new ItemListener() {
