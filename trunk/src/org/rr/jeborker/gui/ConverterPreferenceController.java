@@ -107,7 +107,7 @@ public class ConverterPreferenceController {
 	 * for a reasonable usage.
 	 */
 	public boolean isRotateClockwise() {
-		String landscapeFormatValue = preferenceView.getStringValue(ConverterPreferenceView.LANDSCAPE_FORMAT_PREFERENCE_NAME);
+		String landscapeFormatValue = getView().getStringValue(ConverterPreferenceView.LANDSCAPE_FORMAT_PREFERENCE_NAME);
 		if(landscapeFormatValue.equals(Bundle.getString("ConverterPreferenceView.pref.landscape.rotate_clockwise"))) {
 			return true;
 		} 
@@ -118,15 +118,18 @@ public class ConverterPreferenceController {
 	 * Tells if the manga mode for landscape pages is set. 
 	 */
 	public boolean isMangaMode() {
-		boolean isManga = preferenceView.getBooleanValue(ConverterPreferenceView.IS_MANGA_PREFERENCE_NAME);
-		return isManga;
+		return getView().getBooleanValue(ConverterPreferenceView.IS_MANGA_PREFERENCE_NAME);
 	}	
 	
 	/**
 	 * Get the quality for the image conversion.
 	 */
 	public Number getImageSize() {
-		return preferenceView.getNumericValue(ConverterPreferenceView.REDUCE_IMAGE_SIZE_PREFERENCE_NAME);
+		return getView().getNumericValue(ConverterPreferenceView.REDUCE_IMAGE_SIZE_PREFERENCE_NAME);
+	}	
+	
+	public void setShowImageSizeEntry(boolean showImageSizeEntry) {
+		getView().setShowImageSizeEntry(showImageSizeEntry);
 	}	
 
 }

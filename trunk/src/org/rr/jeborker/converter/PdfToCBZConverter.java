@@ -33,7 +33,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 	 * @return The rendered pdf data or <code>null</code> if the pdf could not be rendered.
 	 * @throws IOException
 	 */
-	private List<byte[]> renderPage(com.jmupdf.pdf.PdfDocument doc, int pageNumber) throws Exception {
+	private List<byte[]> renderPage(ConverterPreferenceController converterPreferenceDialog, com.jmupdf.pdf.PdfDocument doc, int pageNumber) throws Exception {
 		com.jmupdf.page.PagePixels pp = null;
 		com.jmupdf.page.Page page = null;
 		try {
@@ -44,7 +44,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 			pp.setZoom(1.5f);
 			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
 			BufferedImage image = pp.getImage();
-			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceDialog());
+			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, converterPreferenceDialog);
 			List<byte[]> result = new ArrayList<byte[]>(processImageModifications.size());
 			for(BufferedImage processedImage : processImageModifications) {
 				byte[] imageBytes = ImageUtils.getImageBytes(processedImage, "image/jpeg");
@@ -60,36 +60,40 @@ public class PdfToCBZConverter implements IEBookConverter {
 
 	@Override
 	public IResourceHandler convert() throws IOException {
-		IResourceHandler targetCbzResource = ResourceHandlerFactory.getUniqueResourceHandler(pdfResource, "cbz");
-		
-		com.jmupdf.pdf.PdfDocument doc = null;
-		try {
-			doc = new com.jmupdf.pdf.PdfDocument(pdfResource.getContent());
-			int pageCount = doc.getPageCount();
-			for(int pageNumber = 0, additional = 0; pageNumber < pageCount; pageNumber++) {
-				List<byte[]> renderedPages = renderPage(doc, pageNumber + 1);
-				for(int i = 0; i < renderedPages.size(); i++) {
-					if(i > 0) {
-						additional++;
+		ConverterPreferenceController converterPreferenceDialog = getConverterPreferenceDialog();
+		if(converterPreferenceDialog.isConfirmed()) {
+			IResourceHandler targetCbzResource = ResourceHandlerFactory.getUniqueResourceHandler(pdfResource, "cbz");
+			
+			com.jmupdf.pdf.PdfDocument doc = null;
+			try {
+				doc = new com.jmupdf.pdf.PdfDocument(pdfResource.getContent());
+				int pageCount = doc.getPageCount();
+				for(int pageNumber = 0, additional = 0; pageNumber < pageCount; pageNumber++) {
+					List<byte[]> renderedPages = renderPage(converterPreferenceDialog, doc, pageNumber + 1);
+					for(int i = 0; i < renderedPages.size(); i++) {
+						if(i > 0) {
+							additional++;
+						}
+						byte[] renderedPage = renderedPages.get(i);
+						TrueZipUtils.add(targetCbzResource, getFileName(pageNumber + additional, pageCount), new ByteArrayInputStream(renderedPage));
 					}
-					byte[] renderedPage = renderedPages.get(i);
-					TrueZipUtils.add(targetCbzResource, getFileName(pageNumber + additional, pageCount), new ByteArrayInputStream(renderedPage));
 				}
-			}
-		} catch(Exception e) { 
-			if(e instanceof IOException) {
-				throw (IOException) e;
-			}
-			throw new IOException("Failed to convert PDF " + pdfResource.getName(), e);
-		} finally {
-			if (doc != null) {
-				doc.dispose();
-				doc = null;
-			}
-		}	
-		
-		ConverterUtils.transferMetadata(pdfResource, targetCbzResource);
-		return targetCbzResource;		
+			} catch(Exception e) { 
+				if(e instanceof IOException) {
+					throw (IOException) e;
+				}
+				throw new IOException("Failed to convert PDF " + pdfResource.getName(), e);
+			} finally {
+				if (doc != null) {
+					doc.dispose();
+					doc = null;
+				}
+			}	
+			
+			ConverterUtils.transferMetadata(pdfResource, targetCbzResource);
+			return targetCbzResource;	
+		}
+		return null;
 	}
 
 	@Override
@@ -128,6 +132,7 @@ public class PdfToCBZConverter implements IEBookConverter {
     private ConverterPreferenceController getConverterPreferenceDialog() {
     	if(converterPreferenceController == null) {
     		converterPreferenceController = MainController.getController().getConverterPreferenceController();
+    		converterPreferenceController.setShowImageSizeEntry(false);
 	    	converterPreferenceController.showPreferenceDialog();
     	}
     	return converterPreferenceController;
