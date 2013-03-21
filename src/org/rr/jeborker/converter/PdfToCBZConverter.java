@@ -132,7 +132,6 @@ public class PdfToCBZConverter implements IEBookConverter {
     private ConverterPreferenceController getConverterPreferenceDialog() {
     	if(converterPreferenceController == null) {
     		converterPreferenceController = MainController.getController().getConverterPreferenceController();
-    		converterPreferenceController.setShowImageSizeEntry(false);
 	    	converterPreferenceController.showPreferenceDialog();
     	}
     	return converterPreferenceController;
