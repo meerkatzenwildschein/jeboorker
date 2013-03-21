@@ -1,5 +1,6 @@
 package org.rr.jeborker;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.rr.commons.collection.WrapperList;
@@ -8,6 +9,7 @@ public class BasePathList extends WrapperList<String> {
 	
 	BasePathList(List<String> basePaths) {
 		super(basePaths);
+		Collections.sort(basePaths);
 	}
 	
 	/**
