@@ -1,7 +1,6 @@
 package org.rr.jeborker.gui.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -34,7 +33,6 @@ public class BasePathTreeModel extends DefaultTreeModel {
 
 	public void init() {
 		List<String> basePath = new ArrayList<String>(JeboorkerPreferences.getBasePath());
-		Collections.sort(basePath);
 		for(String path : basePath) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, false);
