@@ -126,17 +126,29 @@ public class PdfToCBZConverter implements IEBookConverter {
 		return formattedPageNumber + "_" + name + ".jpg";
 	}
 	
+	/**
+	 * Gets the {@link ConverterPreferenceController} for this instance. Creates a new
+	 * {@link ConverterPreferenceController} if no one is created previously.
+	 * @see #createConverterPreferenceController()
+	 */
+	private ConverterPreferenceController getConverterPreferenceController() {
+		if(this.converterPreferenceController == null) {
+			this.converterPreferenceController = this.createConverterPreferenceController();
+		}
+		
+    	if(this.converterPreferenceController.hasShown()) {
+    		this.converterPreferenceController.showPreferenceDialog();
+    	}
+    	
+		return this.converterPreferenceController;
+	}
+	
     /**
-     * Create a {@link ConverterPreferenceController} instance and show it to the user.  
+     * Create a new {@link ConverterPreferenceController} instance.
      */
-    public ConverterPreferenceController getConverterPreferenceController() {
-    	if(converterPreferenceController == null) {
-    		converterPreferenceController = MainController.getController().getConverterPreferenceController();
-    	}
-    	if(converterPreferenceController.hasShown()) {
-    		converterPreferenceController.showPreferenceDialog();
-    	}
-    	return converterPreferenceController;
+    public ConverterPreferenceController createConverterPreferenceController() {
+		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
+		return controller;
     }
     
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {

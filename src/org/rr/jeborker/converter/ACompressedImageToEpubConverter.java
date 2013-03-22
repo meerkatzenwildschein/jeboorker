@@ -1,10 +1,12 @@
 package org.rr.jeborker.converter;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -18,6 +20,10 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
+import org.rr.jeborker.gui.MainController;
+import org.rr.pm.image.IImageProvider;
+import org.rr.pm.image.ImageProviderFactory;
+import org.rr.pm.image.ImageUtils;
 
 /**
  * A converter for image archives to epub 
@@ -25,7 +31,8 @@ import org.rr.jeborker.gui.ConverterPreferenceController;
 abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 	protected IResourceHandler comicBookResource;
-	private ConverterPreferenceController controller;
+	
+	private ConverterPreferenceController converterPreferenceController;
 	
 	public ACompressedImageToEpubConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
@@ -33,6 +40,11 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
+		final ConverterPreferenceController converterPreferenceController = getConverterPreferenceController();
+		if(!converterPreferenceController.isConfirmed()) {
+			return null;
+		}
+		
 		final List<String> compressedImageEntries = listEntries(this.comicBookResource);
 		if(compressedImageEntries == null || compressedImageEntries.isEmpty()) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "The Comic book archive " + comicBookResource.getName() + " is empty.");
@@ -63,17 +75,22 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		for(int i = 0; i < cbzEntries.size(); i++) {
 			final String cbzEntry = cbzEntries.get(i);
 			if(isImage(cbzEntry)) {
-				final String cbzHrefEntry = createHrefEntry(cbzEntry, epub);
-				final Resource imageResource = new Resource(getCompressionEntryStream(this.comicBookResource, cbzEntry), cbzHrefEntry);
-				
-				resources.add(imageResource);	
-				epub.addResource(imageResource);
-				
-				this.attachSpineEntry(epub, spine, imageResource);
-				
-				//the first image from the cbz is the cover image.
-				if(i == 0) {
-					epub.setCoverImage(imageResource);
+				final InputStream imageInputStream = getCompressionEntryStream(this.comicBookResource, cbzEntry);
+				final List<InputStream> convertedImageInputStream = getConvertedImageInputStream(imageInputStream, cbzEntry);
+				for(int j = 0; j < convertedImageInputStream.size(); j++) {
+					final InputStream imageIn = convertedImageInputStream.get(j);
+					final String cbzHrefEntry = createHrefEntry(cbzEntry, epub, j);
+					final Resource imageResource = new Resource(imageIn, cbzHrefEntry);
+					
+					resources.add(imageResource);	
+					epub.addResource(imageResource);
+					
+					this.attachSpineEntry(epub, spine, imageResource);
+					
+					//the first image from the cbz is the cover image.
+					if(i == 0) {
+						epub.setCoverImage(imageResource);
+					}
 				}
 			}
 		}
@@ -111,7 +128,42 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		return false;
 	}
 	
-	private String createHrefEntry(final String cbzEntry, final Book epub) {
+	private List<InputStream> getConvertedImageInputStream(InputStream imageIn, String imageName) throws IOException {
+		if(isImageConversion()) {
+			ArrayList<InputStream> result = new ArrayList<InputStream>();
+			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceHandler(imageIn));
+			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(imageProvider.getImage(), getConverterPreferenceController());
+			for(BufferedImage image : processImageModifications) {
+				String mime = imageName.indexOf('.') != -1 ? "image/" + imageName.substring(imageName.lastIndexOf('.') + 1) : "image/jpeg";
+				byte[] imageBytes = ImageUtils.getImageBytes(image, mime);
+				IResourceHandler temporaryResource = ResourceHandlerFactory.getTemporaryResource(mime.substring(mime.indexOf('/') + 1));
+				temporaryResource.setContent(imageBytes);
+				result.add(temporaryResource.getContentInputStream());
+			}
+			return result;
+		} else {
+			return Collections.singletonList(imageIn);
+		}
+	}
+	
+	/**
+	 * Tells if some image conversion is needed. 
+	 */
+	private boolean isImageConversion() {
+		ConverterPreferenceController controller = getConverterPreferenceController();
+		return 	controller.isLandscapePageRotate() || 
+				controller.isLandscapePageSplit() || 
+				(controller.getImageSize() != null && controller.getImageSize().intValue() < 99);
+	}
+	
+	/**
+	 * Creates a href entry for the given archive entry.
+	 * @param cbzEntry The archive entry name
+	 * @param epub The {@link Book} instance to be created.
+	 * @param index The index of the href with the same name 
+	 * @return The desired href entry.
+	 */
+	private String createHrefEntry(final String cbzEntry, final Book epub, final int index) {
 		try {
 			StringBuilder result = new StringBuilder();
 			for(int i = 0; i < cbzEntry.length(); i++) {
@@ -129,7 +181,10 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			String href = result.toString();
 			while(epub.getResources().getByHref(href) != null) {
 				if(href.lastIndexOf('.') != -1) {
-					href = href.substring(0, href.lastIndexOf('.')) + "_" + href.substring(href.lastIndexOf('.'));
+					String ext = href.substring(href.lastIndexOf('.'));
+					href = href.substring(0, href.lastIndexOf('.')) +  "_" + index + ext;
+				} else {
+					href = href + index + "_";
 				}
 			}
 			
@@ -138,18 +193,38 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			return cbzEntry;
 		}
 	}
-	
-	public ConverterPreferenceController getConverterPreferenceController() {
-		//no preference controller for this converter type at the moment.
-		return this.controller;
-	}
-	
-	public void setConverterPreferenceController(ConverterPreferenceController controller) {
-		//no preference controller for this converter type at the moment.
-		this.controller = controller;
-	}
+
 
 	protected abstract InputStream getCompressionEntryStream(IResourceHandler resourceHandler, String entry);
 	
 	protected abstract List<String> listEntries(IResourceHandler cbzResource);
+
+	/**
+	 * Gets the {@link ConverterPreferenceController} for this instance. Creates a new
+	 * {@link ConverterPreferenceController} if no one is created previously.
+	 * @see #createConverterPreferenceController()
+	 */
+	private ConverterPreferenceController getConverterPreferenceController() {
+		if(this.converterPreferenceController == null) {
+			this.converterPreferenceController = this.createConverterPreferenceController();
+		}
+		
+		if(!this.converterPreferenceController.hasShown()) {
+			this.converterPreferenceController.showPreferenceDialog();
+		}
+		
+		return this.converterPreferenceController;
+	}
+
+	/**
+	 * Create a new {@link ConverterPreferenceController} instance.
+	 */
+	public ConverterPreferenceController createConverterPreferenceController() {
+		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
+		return controller;
+	}
+
+	public void setConverterPreferenceController(ConverterPreferenceController controller) {
+		this.converterPreferenceController = controller;
+	}
 }

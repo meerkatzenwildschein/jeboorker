@@ -49,6 +49,9 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 		final int[] selectedRowsToRefresh = (int[]) getValue(MultiActionWrapper.SELECTED_ROWS_TO_REFRESH_KEY);
 		
 		try {
+			if(!this.converterPreferenceController.isConfirmed()) {
+				return;
+			}
 			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", bookResourceHandler.getName()));
 			
 			converter.setConverterPreferenceController(this.converterPreferenceController);
@@ -87,7 +90,11 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 	public ConverterPreferenceController doOnce() {
 		final Class<?> converterClass = (Class<?>) getValue("converterClass");
 		final IEBookConverter converter = ConverterFactory.getConverterbyClass(converterClass, bookResourceHandler);
-		return this.converterPreferenceController = converter.getConverterPreferenceController();
+		this.converterPreferenceController = converter.createConverterPreferenceController();
+		if(converterPreferenceController != null && !this.converterPreferenceController.hasShown()) {
+			this.converterPreferenceController.showPreferenceDialog();
+		}
+		return this.converterPreferenceController;
 	}
 
 	@Override
