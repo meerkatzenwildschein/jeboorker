@@ -35,7 +35,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
-		final ConverterPreferenceController converterPreferenceController = getConverterPreferenceDialog();
+		final ConverterPreferenceController converterPreferenceController = getConverterPreferenceController();
 		if(!converterPreferenceController.isConfirmed()) {
 			return null;
 		}
@@ -88,7 +88,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
         for(int i= 0; i < compressedImageEntries.size(); i++) {
         	String imageEntry = compressedImageEntries.get(i);
         	BufferedImage image = getBufferedImageFromArchive(imageEntry);
-        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceDialog());
+        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceController());
         	for(BufferedImage bufferedImage : processImageModifications) {
 	        	float pageWidth = ((float)bufferedImage.getWidth());
 	        	float pageHeight = ((float)bufferedImage.getHeight());
@@ -121,16 +121,23 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
     }
     
     /**
-     * Create a {@link ConverterPreferenceController} instance and show it to the user.  
+     * Get/create a {@link ConverterPreferenceController} instance and show it to the user if
+     * it was not already shown.  
      */
-    private ConverterPreferenceController getConverterPreferenceDialog() {
+    public ConverterPreferenceController getConverterPreferenceController() {
     	if(converterPreferenceController == null) {
     		converterPreferenceController = MainController.getController().getConverterPreferenceController();
-	    	converterPreferenceController.showPreferenceDialog();
+    	}
+    	if(!converterPreferenceController.hasShown()) {
+    		converterPreferenceController.showPreferenceDialog();
     	}
     	return converterPreferenceController;
     }
-
+    
+	public void setConverterPreferenceController(ConverterPreferenceController controller) {
+		this.converterPreferenceController = controller;
+	}    
+    
 	protected abstract InputStream getCompressionEntryStream(IResourceHandler resourceHandler, String entry);
 	
 	protected abstract List<String> listEntries(IResourceHandler cbzResource);    

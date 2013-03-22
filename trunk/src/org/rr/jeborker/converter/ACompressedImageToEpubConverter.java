@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.gui.ConverterPreferenceController;
 
 /**
  * A converter for image archives to epub 
@@ -24,6 +25,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 	protected IResourceHandler comicBookResource;
+	private ConverterPreferenceController controller;
 	
 	public ACompressedImageToEpubConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
@@ -135,6 +137,16 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		} catch(Exception e) {
 			return cbzEntry;
 		}
+	}
+	
+	public ConverterPreferenceController getConverterPreferenceController() {
+		//no preference controller for this converter type at the moment.
+		return this.controller;
+	}
+	
+	public void setConverterPreferenceController(ConverterPreferenceController controller) {
+		//no preference controller for this converter type at the moment.
+		this.controller = controller;
 	}
 
 	protected abstract InputStream getCompressionEntryStream(IResourceHandler resourceHandler, String entry);

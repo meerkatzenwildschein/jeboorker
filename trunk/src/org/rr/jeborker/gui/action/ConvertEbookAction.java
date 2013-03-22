@@ -13,21 +13,27 @@ import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.converter.IEBookConverter;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
+class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoOnlyOnceAction<ConverterPreferenceController> {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
 	private String book;
 	
+	private IResourceHandler bookResourceHandler;
+	
 	private EbookPropertyItem newEbookPropertyItem;
 	
 	private int row = 0;
+	
+	private ConverterPreferenceController converterPreferenceController;
 
 	ConvertEbookAction(String text) {
 		this.book = text;
+		this.bookResourceHandler = ResourceHandlerFactory.getResourceHandler(book);
 //		String name = Bundle.getString("OpenFileAction.name");
 //		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));
@@ -38,20 +44,20 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final IResourceHandler resource = ResourceHandlerFactory.getResourceHandler(book);
 		final Class<?> converterClass = (Class<?>) getValue("converterClass");
-		final IEBookConverter converter = ConverterFactory.getConverterbyClass(converterClass, resource);
+		final IEBookConverter converter = ConverterFactory.getConverterbyClass(converterClass, bookResourceHandler);
 		final int[] selectedRowsToRefresh = (int[]) getValue(MultiActionWrapper.SELECTED_ROWS_TO_REFRESH_KEY);
 		
 		try {
-			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", resource.getName()));
+			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", bookResourceHandler.getName()));
 			
-			IResourceHandler targetResourceLoader = converter.convert();
-			if(targetResourceLoader != null) {
+			converter.setConverterPreferenceController(this.converterPreferenceController);
+			IResourceHandler targetResourceHandler = converter.convert();
+			if(targetResourceHandler != null) {
 				EbookPropertyItem sourceItem = null;
 				for(int rowIndex : selectedRowsToRefresh) {
 					EbookPropertyItem ebookPropertyItemAt = controller.getTableModel().getEbookPropertyItemAt(rowIndex);
-					if(ebookPropertyItemAt.getResourceHandler().equals(resource)) {
+					if(ebookPropertyItemAt.getResourceHandler().equals(bookResourceHandler)) {
 						sourceItem = ebookPropertyItemAt;
 						row = rowIndex;
 						break;
@@ -59,12 +65,12 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 				}
 				
 				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath());
-				this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceLoader, resourceHandler);
+				this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceHandler, resourceHandler);
 			} else {
-				LoggerFactory.getLogger(this).log(Level.INFO, "Converting " + resource + " aborted.");
+				LoggerFactory.getLogger(this).log(Level.INFO, "Converting " + bookResourceHandler + " aborted.");
 			}
 		} catch (Exception ex) {
-			LoggerFactory.logWarning((Object) this, "Converting " + resource + " has failed.", ex);
+			LoggerFactory.logWarning((Object) this, "Converting " + bookResourceHandler + " has failed.", ex);
 		} finally {
 			controller.getProgressMonitor().monitorProgressStop();
 		}
@@ -75,6 +81,22 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction {
 		if(newEbookPropertyItem != null) {
 			ActionUtils.addEbookPropertyItem(newEbookPropertyItem, row + 1 + count);
 		}
+	}
+
+	@Override
+	public ConverterPreferenceController doOnce() {
+		final Class<?> converterClass = (Class<?>) getValue("converterClass");
+		final IEBookConverter converter = ConverterFactory.getConverterbyClass(converterClass, bookResourceHandler);
+		return this.converterPreferenceController = converter.getConverterPreferenceController();
+	}
+
+	@Override
+	public void setDoOnceResult(ConverterPreferenceController controller) {
+		this.converterPreferenceController = controller;
+	}
+
+	@Override
+	public void prepareFor(int index, int size) {
 	}
 
 }
