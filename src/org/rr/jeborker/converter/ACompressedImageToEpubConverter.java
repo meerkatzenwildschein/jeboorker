@@ -131,6 +131,10 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		return false;
 	}
 	
+	/**
+	 * Takes the given InputStream with image data and does the desired image conversion if necessary. 
+	 * @return The converted image(s). If no conversion is necessary, the original input stream is returned.
+	 */
 	private List<InputStream> getConvertedImageInputStream(InputStream imageIn, String imageName) throws IOException {
 		if(isImageConversion()) {
 			ArrayList<InputStream> result = new ArrayList<InputStream>();
@@ -139,6 +143,8 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			for(BufferedImage image : processImageModifications) {
 				String mime = imageName.indexOf('.') != -1 ? "image/" + imageName.substring(imageName.lastIndexOf('.') + 1) : "image/jpeg";
 				byte[] imageBytes = ImageUtils.getImageBytes(image, mime);
+				
+				//copy the converted data to HD because we possibly have not enough memory for the whole boo.
 				IResourceHandler temporaryResource = ResourceHandlerFactory.getTemporaryResource(mime.substring(mime.indexOf('/') + 1));
 				tempFiles.add(temporaryResource);
 				temporaryResource.setContent(imageBytes);
