@@ -125,7 +125,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 			result.add(defaultDirectory);
 		}
 		File homeDirectory = fileSystemView.getHomeDirectory();
-		if(homeDirectory != null) {
+		if(homeDirectory != null && !homeDirectory.equals(defaultDirectory)) {
 			result.add(homeDirectory);
 		}
 		return result;
