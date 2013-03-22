@@ -227,13 +227,15 @@ abstract class PDFCommonDocument {
 					}
 					IOUtils.closeQuietly(ebookResourceOutputStream);
 				}
+				dispose(); //unlock the target pdf before moving it.
+				
 				if(tmpEbookResourceLoader.size() > 0) {
 					//new temp pdf looks good. Move the new temp one over the old one. 
 					tmpEbookResourceLoader.moveTo(ebookResource, true);
 				} else {
 					tmpEbookResourceLoader.delete();
 				}
-				dispose();
+				
 			}			
 		}
 		

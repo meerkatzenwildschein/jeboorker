@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -70,10 +69,9 @@ public class JeboorkerPreferences {
 	public static BasePathList getBasePath() {
 		String basePath = getGenericEntryAsString(BASE_PATH);
 		if(basePath.length() == 0) {
-			List<String> emptyList = Collections.emptyList();
-			return new BasePathList(emptyList);
+			return new BasePathList();
 		} else if (basePath.indexOf(File.pathSeparator) == -1) {
-			return new BasePathList(Collections.singletonList(basePath));
+			return new BasePathList(basePath);
 		} else {
 			String[] split = basePath.split(File.pathSeparator);
 			return new BasePathList(Arrays.asList(split));

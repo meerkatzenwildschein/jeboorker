@@ -2,12 +2,14 @@ package org.rr.jeborker.gui.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -35,9 +37,15 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 	}
 	
 	public void init() {
-		File[] listRoots = File.listRoots();
-		Arrays.sort(listRoots);
+		List<File> specialFolders = getSpecialFolders();
+		for(File specialFolder : specialFolders) {
+			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(specialFolder);
+			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null);
+			this.root.add(basePathNode);
+		}
 		
+		File[] listRoots = File.listRoots();
+		Arrays.sort(listRoots);		
 		for(File root : listRoots) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(root);
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null);
@@ -103,5 +111,23 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);	
 		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
 		return lastExpandedRow;
+	}
+	
+	/**
+	 * Get some special folder to be shown at the root file levels.
+	 */
+	private List<File> getSpecialFolders() {
+		final ArrayList<File> result = new ArrayList<File>();
+		final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+		
+		File defaultDirectory = fileSystemView.getDefaultDirectory();
+		if(defaultDirectory != null) {
+			result.add(defaultDirectory);
+		}
+		File homeDirectory = fileSystemView.getHomeDirectory();
+		if(homeDirectory != null) {
+			result.add(homeDirectory);
+		}
+		return result;
 	}
 }

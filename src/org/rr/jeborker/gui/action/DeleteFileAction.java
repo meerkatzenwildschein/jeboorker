@@ -16,7 +16,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer> {
+class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer>, IFinalizeAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
@@ -96,6 +96,10 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	@Override
 	public void prepareFor(int index, int size) {
 		//Not needed
+	}
+
+	@Override
+	public void finalizeAction(int count) {
 	}
 	
 

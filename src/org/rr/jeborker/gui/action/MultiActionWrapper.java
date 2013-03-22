@@ -78,10 +78,11 @@ class MultiActionWrapper extends AbstractAction {
 			Action action = createInstance(firstActionInstance.getClass(), handler, selectedRowsToRefresh);
 			
 			if(action != null) {
-				if(doOnce!=null && action instanceof IDoOnlyOnceAction<?>) {
+				if(doOnce != null && action instanceof IDoOnlyOnceAction<?>) {
 					((IDoOnlyOnceAction)action).setDoOnceResult(doOnce);
 				}				
-				actions.add(this.doActionAt(action, e, i, size));			
+				actions.add(this.doActionAt(action, e, i, size));	
+				((IDoOnlyOnceAction)action).setDoOnceResult(null);
 			} else {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
 			}

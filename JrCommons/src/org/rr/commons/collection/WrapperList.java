@@ -1,5 +1,6 @@
 package org.rr.commons.collection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.ListIterator;
 public abstract class WrapperList<T> implements List<T> {
 
 	protected List<T> toWrap;
+	
+	public WrapperList() {
+		this.toWrap = new ArrayList<T>();
+	}
 	
 	public WrapperList(List<T> basePaths) {
 		this.toWrap = basePaths;

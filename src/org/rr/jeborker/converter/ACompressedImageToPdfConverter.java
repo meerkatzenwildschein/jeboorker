@@ -87,29 +87,31 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
     	boolean documentOpen = false;
         for(int i= 0; i < compressedImageEntries.size(); i++) {
         	String imageEntry = compressedImageEntries.get(i);
-        	BufferedImage image = getBufferedImageFromArchive(imageEntry);
-        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceController());
-        	for(BufferedImage bufferedImage : processImageModifications) {
-	        	float pageWidth = ((float)bufferedImage.getWidth());
-	        	float pageHeight = ((float)bufferedImage.getHeight());
-	        	document.setPageSize(new Rectangle(pageWidth, pageHeight));
-	
-	        	if(!documentOpen) {
-	        		documentOpen = true;
-	        		document.open();
-	        	} else {
-	        		document.newPage();
+        	if(ConverterUtils.isImageFileName(imageEntry)) {
+	        	BufferedImage image = getBufferedImageFromArchive(imageEntry);
+	        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceController());
+	        	for(BufferedImage bufferedImage : processImageModifications) {
+		        	float pageWidth = ((float)bufferedImage.getWidth());
+		        	float pageHeight = ((float)bufferedImage.getHeight());
+		        	document.setPageSize(new Rectangle(pageWidth, pageHeight));
+		
+		        	if(!documentOpen) {
+		        		documentOpen = true;
+		        		document.open();
+		        	} else {
+		        		document.newPage();
+		        	}
+		        	
+		            PdfContentByte cb = pdfWriter.getDirectContent();
+		            Image pdfImage = Image.getInstance(cb, bufferedImage, 1);
+		
+		            pdfImage.setAlignment(Element.ALIGN_CENTER);
+		            pdfImage.setAbsolutePosition(0, 0);
+		            
+		            cb.addImage(pdfImage);
 	        	}
-	        	
-	            PdfContentByte cb = pdfWriter.getDirectContent();
-	            Image pdfImage = Image.getInstance(cb, bufferedImage, 1);
-	
-	            pdfImage.setAlignment(Element.ALIGN_CENTER);
-	            pdfImage.setAbsolutePosition(0, 0);
-	            
-	            cb.addImage(pdfImage);
+	    		pdfWriter.flush();
         	}
-    		pdfWriter.flush();
         }
     }
     
