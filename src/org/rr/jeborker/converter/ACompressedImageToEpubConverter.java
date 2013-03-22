@@ -34,6 +34,8 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 	
 	private ConverterPreferenceController converterPreferenceController;
 	
+	private ArrayList<IResourceHandler> tempFiles = new ArrayList<IResourceHandler>();
+	
 	public ACompressedImageToEpubConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
 	}
@@ -62,6 +64,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			contentOutputStream.close();
 		}
 		
+		deleteTemporaryFiles();
 		ConverterUtils.transferMetadata(this.comicBookResource, targetEpubResource);
 		
 		return targetEpubResource;
@@ -137,6 +140,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 				String mime = imageName.indexOf('.') != -1 ? "image/" + imageName.substring(imageName.lastIndexOf('.') + 1) : "image/jpeg";
 				byte[] imageBytes = ImageUtils.getImageBytes(image, mime);
 				IResourceHandler temporaryResource = ResourceHandlerFactory.getTemporaryResource(mime.substring(mime.indexOf('/') + 1));
+				tempFiles.add(temporaryResource);
 				temporaryResource.setContent(imageBytes);
 				result.add(temporaryResource.getContentInputStream());
 			}
@@ -191,6 +195,16 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			return href;
 		} catch(Exception e) {
 			return cbzEntry;
+		}
+	}
+	
+	private void deleteTemporaryFiles() {
+		for(IResourceHandler tempFile : tempFiles) {
+			try {
+				tempFile.delete();
+			} catch (IOException e) {
+				LoggerFactory.getLogger().log(Level.WARNING, "Could not delete temporary file " + tempFile.toString(), e);
+			}
 		}
 	}
 
