@@ -13,6 +13,8 @@ public class ConverterPreferenceController {
 	
 	private int actionResult = -1;
 
+	private boolean hasShown = false;
+	
 	private ConverterPreferenceController() {
 		
 	}
@@ -26,6 +28,14 @@ public class ConverterPreferenceController {
 		ConverterPreferenceView view = getView();
 		view.setVisible(true);
 		actionResult = view.getActionResult();
+		hasShown = true;
+	}
+	
+	/**
+	 * Tells if the dialog has already been shown to the user.
+	 */
+	public boolean hasShown() {
+		return this.hasShown;
 	}
 
 	private ConverterPreferenceView getView() {
@@ -131,5 +141,5 @@ public class ConverterPreferenceController {
 	public void setShowImageSizeEntry(boolean showImageSizeEntry) {
 		getView().setShowImageSizeEntry(showImageSizeEntry);
 	}	
-
+	
 }

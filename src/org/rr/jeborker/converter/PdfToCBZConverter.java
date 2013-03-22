@@ -60,7 +60,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 
 	@Override
 	public IResourceHandler convert() throws IOException {
-		ConverterPreferenceController converterPreferenceDialog = getConverterPreferenceDialog();
+		ConverterPreferenceController converterPreferenceDialog = getConverterPreferenceController();
 		if(converterPreferenceDialog.isConfirmed()) {
 			IResourceHandler targetCbzResource = ResourceHandlerFactory.getUniqueResourceHandler(pdfResource, "cbz");
 			
@@ -129,11 +129,18 @@ public class PdfToCBZConverter implements IEBookConverter {
     /**
      * Create a {@link ConverterPreferenceController} instance and show it to the user.  
      */
-    private ConverterPreferenceController getConverterPreferenceDialog() {
+    public ConverterPreferenceController getConverterPreferenceController() {
     	if(converterPreferenceController == null) {
     		converterPreferenceController = MainController.getController().getConverterPreferenceController();
-	    	converterPreferenceController.showPreferenceDialog();
+    	}
+    	if(converterPreferenceController.hasShown()) {
+    		converterPreferenceController.showPreferenceDialog();
     	}
     	return converterPreferenceController;
-    }	
+    }
+    
+	public void setConverterPreferenceController(ConverterPreferenceController controller) {
+		this.converterPreferenceController = controller;
+	}       
+
 }
