@@ -42,7 +42,7 @@ class ConverterUtils {
 		writer.writeMetadata(targetMetaData);
 	}	
 	
-    public static List<BufferedImage> processImageModifications(BufferedImage bufferedImage, ConverterPreferenceController converterPreferenceController) {
+    static List<BufferedImage> processImageModifications(BufferedImage bufferedImage, ConverterPreferenceController converterPreferenceController) {
     	Number imageSize = converterPreferenceController.getImageSize();
     	if(imageSize != null && imageSize.intValue() < 99) {
     		bufferedImage = ImageUtils.scalePercent(bufferedImage, (double)imageSize.intValue() / 100);
@@ -73,5 +73,15 @@ class ConverterUtils {
 	    	}
     	}
     	return Collections.singletonList(bufferedImage);
-    }	
+    }
+    
+	/**
+	 * Test if the given name have an image file extension.
+	 */
+	static boolean isImageFileName(String imageName) {
+		if(imageName.endsWith(".jpg") || imageName.endsWith(".jpeg") || imageName.endsWith(".png") || imageName.endsWith(".gif")) {
+			return true;
+		}
+		return false;
+	}    
 }

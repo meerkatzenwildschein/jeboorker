@@ -136,7 +136,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 			this.converterPreferenceController = this.createConverterPreferenceController();
 		}
 		
-    	if(this.converterPreferenceController.hasShown()) {
+    	if(!this.converterPreferenceController.hasShown()) {
     		this.converterPreferenceController.showPreferenceDialog();
     	}
     	

@@ -7,6 +7,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.FileRefreshBackgroundThread;
 
 /**
@@ -83,6 +84,7 @@ public class ApplicationAction extends AbstractAction {
 				}
 			} finally {
 				FileRefreshBackgroundThread.setDisabled(false);
+				TrueZipUtils.unmout();
 			}
 		} else {
 			ActionEventQueue.addActionEvent(this, e);
@@ -98,6 +100,7 @@ public class ApplicationAction extends AbstractAction {
 			}
 		} finally {
 			FileRefreshBackgroundThread.setDisabled(false);
+			TrueZipUtils.unmout();
 		}		
 	}
 
@@ -108,6 +111,7 @@ public class ApplicationAction extends AbstractAction {
 			this.invokeAction(e);
 		} finally {
 			FileRefreshBackgroundThread.setDisabled(false);
+			TrueZipUtils.unmout();
 		}
 	}	
 	

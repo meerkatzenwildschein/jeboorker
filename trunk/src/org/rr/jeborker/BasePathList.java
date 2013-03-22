@@ -9,7 +9,17 @@ public class BasePathList extends WrapperList<String> {
 	
 	BasePathList(List<String> basePaths) {
 		super(basePaths);
-		Collections.sort(basePaths);
+		Collections.sort(this);
+	}
+	
+	BasePathList(String basePath) {
+		super();
+		this.add(basePath);
+		Collections.sort(this);
+	}
+	
+	BasePathList() {
+		super();
 	}
 	
 	/**

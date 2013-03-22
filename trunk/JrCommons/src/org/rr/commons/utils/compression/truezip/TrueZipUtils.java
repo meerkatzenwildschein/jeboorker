@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.CompressionUtils;
@@ -22,6 +24,7 @@ import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileOutputStream;
 import de.schlichtherle.truezip.file.TVFS;
 import de.schlichtherle.truezip.fs.FsOutputOption;
+import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
 
@@ -84,6 +87,7 @@ public class TrueZipUtils {
 			}
 		}
 		Collections.sort(result);
+		unmout();
 		return result;
 	}	
 
@@ -92,6 +96,7 @@ public class TrueZipUtils {
 	 */
 	public static boolean add(IResourceHandler zipFileHandler, String name, InputStream data) {
 		File zipFile = zipFileHandler.toFile();
+		boolean isDeleted;
 		
 		// First, push a new current configuration on the inheritable thread local
 		// stack.
@@ -112,21 +117,32 @@ public class TrueZipUtils {
 		    // file even if it's already present.
 		    TFileOutputStream zipOut = new TFileOutputStream(file);
 		    try {
-		        // Do some output here.
 		    	IOUtils.copy(data, zipOut);
 		    } finally {
 		    	zipOut.flush();
 		    	IOUtils.closeQuietly(zipOut);
-		    	
-		    	TVFS.umount(); //commit changes
 		    }
+		    isDeleted = true;
 		} catch(Exception e) {
-			return false;
+			isDeleted = false;
 		} finally {
 		    // Pop the current configuration off the inheritable thread local stack.
 		    config.close();
+		    unmout();
 		}
-		return true;
+		return isDeleted;
+	}
+	
+	/**
+	 * Threading problem makes it indispensable to invoke unmount manually 
+	 * from the parent thread.
+	 */
+	public static void unmout() {
+		try {
+			TVFS.umount();//commit changes
+		} catch (FsSyncException e) {
+			LoggerFactory.getLogger().log(Level.SEVERE, "Unmount failed", e);
+		} 
 	}
 	
 	public static ZipOutputStream createZipOutputStream(OutputStream out) {

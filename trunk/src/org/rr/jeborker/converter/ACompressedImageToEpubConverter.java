@@ -77,7 +77,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		List<Resource> resources = new ArrayList<Resource>(cbzEntries.size());
 		for(int i = 0; i < cbzEntries.size(); i++) {
 			final String cbzEntry = cbzEntries.get(i);
-			if(isImage(cbzEntry)) {
+			if(ConverterUtils.isImageFileName(cbzEntry)) {
 				final InputStream imageInputStream = getCompressionEntryStream(this.comicBookResource, cbzEntry);
 				final List<InputStream> convertedImageInputStream = getConvertedImageInputStream(imageInputStream, cbzEntry);
 				for(int j = 0; j < convertedImageInputStream.size(); j++) {
@@ -107,7 +107,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 	 */
 	private void attachSpineEntry(final Book epub, final Spine spine, final Resource imageResource) throws IOException {
 		String imageName = imageResource.getHref();
-		if(isImage(imageName)) {
+		if(ConverterUtils.isImageFileName(imageName)) {
 			if(imageName.lastIndexOf('.') != -1) {
 				imageName = imageName.substring(0, imageName.lastIndexOf('.'));
 			}
@@ -119,16 +119,6 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			spine.addResource(spineResource);
 			epub.addResource(spineResource);
 		}
-	}
-	
-	/**
-	 * Test if the given name have an image file extension.
-	 */
-	private boolean isImage(String imageName) {
-		if(imageName.endsWith(".jpg") || imageName.endsWith(".jpeg") || imageName.endsWith(".png") || imageName.endsWith(".gif")) {
-			return true;
-		}
-		return false;
 	}
 	
 	/**
