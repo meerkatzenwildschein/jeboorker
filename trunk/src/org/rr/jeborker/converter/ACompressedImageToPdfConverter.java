@@ -120,23 +120,34 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
     	return bufferedImage;
     }
     
+	/**
+	 * Gets the {@link ConverterPreferenceController} for this instance. Creates a new
+	 * {@link ConverterPreferenceController} if no one is created previously.
+	 * @see #createConverterPreferenceController()
+	 */
+	private ConverterPreferenceController getConverterPreferenceController() {
+		if(this.converterPreferenceController == null) {
+			this.converterPreferenceController = this.createConverterPreferenceController();
+		}
+		
+    	if(!this.converterPreferenceController.hasShown()) {
+    		this.converterPreferenceController.showPreferenceDialog();
+    	}
+    	
+		return this.converterPreferenceController;
+	}
+	
     /**
-     * Get/create a {@link ConverterPreferenceController} instance and show it to the user if
-     * it was not already shown.  
+     * Create a new {@link ConverterPreferenceController} instance.
      */
-    public ConverterPreferenceController getConverterPreferenceController() {
-    	if(converterPreferenceController == null) {
-    		converterPreferenceController = MainController.getController().getConverterPreferenceController();
-    	}
-    	if(!converterPreferenceController.hasShown()) {
-    		converterPreferenceController.showPreferenceDialog();
-    	}
-    	return converterPreferenceController;
+    public ConverterPreferenceController createConverterPreferenceController() {
+		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
+		return controller;
     }
     
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {
 		this.converterPreferenceController = controller;
-	}    
+	}     
     
 	protected abstract InputStream getCompressionEntryStream(IResourceHandler resourceHandler, String entry);
 	

@@ -11,10 +11,10 @@ public interface IEBookConverter {
 	public IResourceHandler convert() throws IOException;
 	
 	/**
-	 * Get the {@link ConverterPreferenceController} instance that was used/set for this {@link IEBookConverter}
+	 * Creates the {@link ConverterPreferenceController} instance that was used/set for this {@link IEBookConverter}
 	 * instance.
 	 */
-	public ConverterPreferenceController getConverterPreferenceController();
+	public ConverterPreferenceController createConverterPreferenceController();
 	
 	/**
 	 * Sets the {@link ConverterPreferenceController} that should be used for this {@link IEBookConverter}
