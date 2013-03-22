@@ -82,7 +82,6 @@ class MultiActionWrapper extends AbstractAction {
 					((IDoOnlyOnceAction)action).setDoOnceResult(doOnce);
 				}				
 				actions.add(this.doActionAt(action, e, i, size));	
-				((IDoOnlyOnceAction)action).setDoOnceResult(null);
 			} else {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
 			}
@@ -91,8 +90,16 @@ class MultiActionWrapper extends AbstractAction {
 		//do the finalize for all actions
 		if(firstActionInstance instanceof IFinalizeAction) {
 			for(int i = 0; i < actions.size() ; i++) {
-				Action a = actions.get(i);
-				((IFinalizeAction)a).finalizeAction(i);
+				Action action = actions.get(i);
+				((IFinalizeAction) action).finalizeAction(i);
+			}
+		}
+		
+		//clean the results for all action instances
+		if(firstActionInstance instanceof IDoOnlyOnceAction) {
+			for(int i = 0; i < actions.size() ; i++) {
+				Action action = actions.get(i);
+				((IDoOnlyOnceAction) action).setDoOnceResult(null);
 			}
 		}
 	}
