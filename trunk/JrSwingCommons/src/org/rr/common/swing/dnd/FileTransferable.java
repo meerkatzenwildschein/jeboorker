@@ -3,6 +3,7 @@ package org.rr.common.swing.dnd;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FileTransferable implements Transferable
@@ -10,13 +11,13 @@ public class FileTransferable implements Transferable
 	   private List<String> fileList ;
 
 	   public FileTransferable(List<String> files) {
-	      fileList = files;
+	      fileList = new LinkedList<String>(files);
 	   }
 
 	   // Returns an object which represents the data to be transferred.
 	   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
 	      if( flavor.equals(DataFlavor.javaFileListFlavor) )
-	         return fileList ;
+	         return fileList;
 
 	      throw new UnsupportedFlavorException(flavor);
 	   }
@@ -31,5 +32,6 @@ public class FileTransferable implements Transferable
 	   public boolean isDataFlavorSupported(DataFlavor flavor) {
 	      return flavor.equals(DataFlavor.javaFileListFlavor) ;
 	   }
+
 	}	
 	
