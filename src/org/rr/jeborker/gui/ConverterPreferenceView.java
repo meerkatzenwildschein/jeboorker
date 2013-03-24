@@ -11,6 +11,7 @@ import javax.swing.JSlider;
 
 import org.rr.common.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.PreferenceDialog;
+import org.rr.commons.utils.ReflectionUtils;
 
 class ConverterPreferenceView extends PreferenceDialog {
 	
@@ -56,9 +57,11 @@ class ConverterPreferenceView extends PreferenceDialog {
 			final JSlider reduceValue = new JSlider(10, 100);
 			reduceValue.setMajorTickSpacing(10);
 			reduceValue.setMinorTickSpacing(5);
-			reduceValue.setPaintTicks(true);
-			reduceValue.setPaintLabels(true);
-			reduceValue.setSnapToTicks(true);
+			if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
+				reduceValue.setPaintTicks(true);
+				reduceValue.setPaintLabels(true);
+				reduceValue.setSnapToTicks(true);				
+			} 
 			reduceValue.setValue(100);
 			reduceValue.setMinimumSize(new Dimension(220, 45));
 			String reduceImageQualityLabel = Bundle.getString("ConverterPreferenceView.pref.reduceImageQuality");
