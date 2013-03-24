@@ -52,6 +52,9 @@ class ConverterPreferenceView extends PreferenceDialog {
 		}
 	}
 	
+	/**
+	 * Create and add the image resize slider. 
+	 */
 	private void createImageSizeEntries(final String generalCategory) {
 		if(isShowImageSizeEntry()) {
 			final JSlider reduceValue = new JSlider(10, 100);
@@ -70,6 +73,11 @@ class ConverterPreferenceView extends PreferenceDialog {
 		}
 	}
 
+	/**
+	 * Create and add the combobox which provides the components for landscape format images. 
+	 * The combobox provides options like rotate or split. The manga checkbox for the 
+	 * split option is also added here. 
+	 */
 	private void createLandscapePageEntries(final String generalCategory) {
 		if(isShowLandscapePageEntries()) {
 			final JComboBox<String> landscapeFormatCombobox = new JComboBox<String>();
