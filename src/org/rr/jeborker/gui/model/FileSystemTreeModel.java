@@ -69,7 +69,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		try {
 			aNode.renameTo(ResourceHandlerFactory.getResourceHandler(newPathName));
 		} catch (IOException e) {
-			LoggerFactory.getLogger().log(Level.WARNING, "Rename " + oldPathName +" to" + newPathName + " has failed.");
+			LoggerFactory.getLogger().log(Level.WARNING, "Rename " + oldPathName +" to" + newPathName + " has failed.", e);
 		}
 		nodeChanged(aNode);
 	}
