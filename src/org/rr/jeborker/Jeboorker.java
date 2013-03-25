@@ -32,7 +32,7 @@ public class Jeboorker {
 
 	public static boolean isRuntime = false;
 
-	public static String version = "0.2.7";
+	public static String version = "0.2.8";
 	
 	public static String app = "Jeboorker";
 
