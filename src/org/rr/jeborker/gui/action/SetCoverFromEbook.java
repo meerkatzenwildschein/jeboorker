@@ -71,7 +71,7 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 	@Override
 	public void setDoOnceResult(ImageDownloadDialog result) {
 		this.imageDownloadDialog = result;
-		if(result != null) {
+		if(this.imageDownloadDialog != null) {
 			IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();
 			if(selectedImage != null) {
 				setDialogOption(JFileChooser.APPROVE_OPTION);
