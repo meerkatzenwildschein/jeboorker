@@ -107,7 +107,9 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 	public void setDoOnceResult(ByteArrayInputStream image) {
 		this.image = image;
 		try {
-			setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", IOUtils.toByteArray(image)));
+			if(image != null) {
+				setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", IOUtils.toByteArray(image)));
+			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Failed to copy data", e);
 		}

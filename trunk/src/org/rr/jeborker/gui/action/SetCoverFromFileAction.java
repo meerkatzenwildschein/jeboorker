@@ -54,9 +54,11 @@ class SetCoverFromFileAction extends SetCoverFrom<IFileChooser> implements IDoOn
 	@Override
 	public void setDoOnceResult(IFileChooser result) {
 		this.fileChooser = result;
-		setDialogOption(fileChooser.getReturnValue().ordinal());
-		if(fileChooser.getSelectedFile() != null) {
-			setDialogResult(ResourceHandlerFactory.getResourceHandler(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
-		}		
+		if(this.fileChooser != null) {
+			setDialogOption(fileChooser.getReturnValue().ordinal());
+			if(fileChooser.getSelectedFile() != null) {
+				setDialogResult(ResourceHandlerFactory.getResourceHandler(fileChooser.getCurrentDirectory() + File.separator + fileChooser.getSelectedFile()));
+			}		
+		}
 	}
 }
