@@ -7,7 +7,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.StringUtils;
 
 public class URIListTransferable implements Transferable {
@@ -20,10 +22,11 @@ public class URIListTransferable implements Transferable {
 	
 	static {
 		try {
-			uriListDataFlavor = new DataFlavor("text/uri-list");
-			gnomeCopiedFilesDataFlavor = new DataFlavor("x-special/gnome-copied-files");
+			uriListDataFlavor = new DataFlavor("text/uri-list;class=java.io.InputStream");
+			gnomeCopiedFilesDataFlavor = new DataFlavor("x-special/gnome-copied-files;class=java.io.InputStream");
 			allSupportedDataFlavors = new DataFlavor[] { uriListDataFlavor, gnomeCopiedFilesDataFlavor };
 		} catch (ClassNotFoundException e) {
+			LoggerFactory.getLogger().log(Level.WARNING, "Failed initialize clipboard clafor types.", e);
 		}
 	}
 	
@@ -52,6 +55,7 @@ public class URIListTransferable implements Transferable {
         if (!isDataFlavorSupported(flavor)) {
             throw new UnsupportedFlavorException(flavor);
         }
+  
         StringBuilder buffer = new StringBuilder();
         for(URI uri : uris) {
         	String uriString = uri.toString();
