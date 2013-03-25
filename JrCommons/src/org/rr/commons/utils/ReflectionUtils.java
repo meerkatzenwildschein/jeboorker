@@ -1132,6 +1132,13 @@ public class ReflectionUtils implements Serializable {
     	return os = OS_UNKNOWN;
     }
     
+    /**
+     * Tells if the current operating system is linux.
+     */
+    public static boolean isLinux() {
+    	return getOS() == OS_LINUX;
+    }
+    
 	/**
 	 * is64Bit()
 	 *
