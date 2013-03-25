@@ -24,6 +24,7 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
+import org.rr.jeborker.metadata.pdf.PDFCommonDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -38,7 +39,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 
 	PDFCommonMetadataReader(final IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
-		this.pdfDoc = PDFCommonDocument.getInstance(PDFCommonDocument.ITEXT, ebookResource);
+		this.pdfDoc = PDFCommonDocument.getPDFCommonDocumentInstance(PDFCommonDocument.ITEXT, ebookResource);
 	}
 	
 	@Override
