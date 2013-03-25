@@ -18,7 +18,6 @@ import org.rr.common.swing.dnd.FileTransferable;
 import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -56,11 +55,7 @@ public class CopyToClipboardAction extends AbstractAction implements ClipboardOw
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable trans;
         if(CommonUtils.isLinux()) {
-        	if(ReflectionUtils.javaVersion() == 16) {
-        		trans = new URIListTransferable(uriList, "copy");
-        	} else {
-        		trans = new FileTransferable(files);
-        	}
+        	trans = new URIListTransferable(uriList, "copy");
         } else {
         	trans = new FileTransferable(files);
         }		
