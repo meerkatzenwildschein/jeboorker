@@ -1,6 +1,5 @@
-package org.rr.jeborker.metadata;
+package org.rr.jeborker.metadata.pdf;
 
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,7 +15,6 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.pm.image.ImageUtils;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.io.FileChannelRandomAccessSource;
@@ -28,7 +26,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
-abstract class PDFCommonDocument {
+public abstract class PDFCommonDocument {
 
 	public static final int ITEXT = 0;
 	
@@ -39,18 +37,18 @@ abstract class PDFCommonDocument {
 	private IResourceHandler pdfFile;
 	
 	/**
-	 * Store sthe PDF key/value info. If it's null, the Info in the
+	 * Store the PDF key/value info. If it's null, the Info in the
 	 * pdf file didn't get touched.
 	 */
 	protected Map<String, String> moreInfo;
 	
 	protected byte[] xmpMetadata;
 	
-	public static PDFCommonDocument getInstance(int type, IResourceHandler pdfFile) {
+	public static PDFCommonDocument getPDFCommonDocumentInstance(int type, IResourceHandler pdfFile) {
 		PDFCommonDocument result = null;
 		switch(type) {
 		case ITEXT:
-			result = new PDFCommonDocument.ItextPDFDocument(pdfFile);
+			result = new PDFCommonDocument.ItextPDFDocument();
 			break;
 		}
 		result.setResourceHandler(pdfFile);
@@ -105,53 +103,13 @@ abstract class PDFCommonDocument {
 	 */
 	public abstract void write() throws IOException;
 	
-	/**
-	 * Renders a page of the given pdf data. 
-	 * @param pdfdata The pdf bytes.
-	 * @param pageNumber The page number to be rendered starting with 1.
-	 * @return The rendered pdf data or <code>null</code> if the pdf could not be rendered.
-	 * @throws IOException
-	 */
-	byte[] renderPage(IResourceHandler pdfdataResource, int pageNumber) throws Exception {
-		com.jmupdf.pdf.PdfDocument doc = null;
-		com.jmupdf.page.PagePixels pp = null;
-		com.jmupdf.page.Page page = null;
-		try {
-			byte[] pdfdata = pdfdataResource.getContent();
-			doc = new com.jmupdf.pdf.PdfDocument(pdfdata);
-
-			page = doc.getPage(pageNumber);
-
-			pp = new com.jmupdf.page.PagePixels(page);
-			pp.setRotation(com.jmupdf.page.Page.PAGE_ROTATE_NONE);
-			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
-			BufferedImage image = pp.getImage();
-			byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
-			return imageBytes;
-		} finally {
-			if (pp != null) {
-				pp.dispose();
-			}
-			if (doc != null) {
-				doc.dispose();
-			}
-		}
-	}	
-	
-	
 	private static class ItextPDFDocument extends PDFCommonDocument {
 
-		private IResourceHandler pdfFile;
-		
 		private PdfReader pdfReaderI;
 		
 		private FileInputStream fileInputStreamI;
 		
 		private FileChannel fileChannelI;
-		
-		ItextPDFDocument(IResourceHandler pdfFile) {
-			this.pdfFile = pdfFile;
-		}
 		
 		@Override
 		public byte[] getXMPMetadata() throws IOException {
@@ -241,7 +199,8 @@ abstract class PDFCommonDocument {
 		
 		public byte[] fetchCoverFromPDFContent() throws IOException {
 			try {
-				return renderPage(pdfFile, 1);
+				PDFCommonRenderer renderer = PDFCommonRenderer.getPDFRendererInstance(getResourceHandler());				
+				return renderer.renderPagetoJpeg(1);
 			} catch (Throwable e) {
 				LoggerFactory.log(Level.WARNING, this, "could not render PDF " + getResourceHandler());
 			}
@@ -299,13 +258,13 @@ abstract class PDFCommonDocument {
 
 		private void initReader() {
 			try {
-				fileInputStreamI = new FileInputStream(pdfFile.toFile());
+				fileInputStreamI = new FileInputStream(getResourceHandler().toFile());
 				fileChannelI = fileInputStreamI.getChannel();
 				FileChannelRandomAccessSource fileChannelRandomAccessSource = new FileChannelRandomAccessSource(fileChannelI);
 				RandomAccessFileOrArray rafPdfIn = new RandomAccessFileOrArray(fileChannelRandomAccessSource); 
 				this.pdfReaderI = new PdfReader(rafPdfIn, null);
 			} catch(Throwable e) {
-				throw new RuntimeException(e.getMessage() + " at '" + pdfFile.getName() + "'", e);
+				throw new RuntimeException(e.getMessage() + " at '" + getResourceHandler().getName() + "'", e);
 			}
 		}
 
