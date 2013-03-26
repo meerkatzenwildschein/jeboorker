@@ -5,6 +5,8 @@ import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.net.URI;
 
+import org.rr.commons.utils.ReflectionUtils;
+
 import com.sun.jna.Library;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -115,7 +117,8 @@ class PopplerPDFReader {
 	}
 
 	public interface Cairo extends Library {
-		final Cairo INSTANCE = (Cairo) Native.loadLibrary("/usr/lib/x86_64-linux-gnu/libcairo.so.2", Cairo.class);
+		
+		final Cairo INSTANCE = (Cairo) Native.loadLibrary(ReflectionUtils.is64bit() ? "/usr/lib/x86_64-linux-gnu/libcairo.so.2" : "/usr/lib/i386-linux-gnu/libcairo.so.2", Cairo.class);
 
 		void cairo_destroy(Pointer cr);
 
