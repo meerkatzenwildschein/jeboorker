@@ -70,7 +70,7 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
 
-public class ImageDownloadDialog extends JDialog {
+public class JImageDownloadDialog extends JDialog {
 	
 	private static int previousImageFetcherComboboxEntry = 0;
 	
@@ -117,7 +117,7 @@ public class ImageDownloadDialog extends JDialog {
 		}
 	};
 
-	public ImageDownloadDialog(JFrame owner, IImageFetcherFactory factory) {
+	public JImageDownloadDialog(JFrame owner, IImageFetcherFactory factory) {
 		super(owner);
 		this.factory = factory;
 		init(owner, factory);
@@ -126,7 +126,7 @@ public class ImageDownloadDialog extends JDialog {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ImageDownloadDialog(IImageFetcherFactory factory) {
+	public JImageDownloadDialog(IImageFetcherFactory factory) {
 		super();
 		this.factory = factory;
 		init(null, factory);
@@ -255,7 +255,7 @@ public class ImageDownloadDialog extends JDialog {
 	
 	/**
 	 * Stores the selection for providing it for the {@link #getSelectedImage()} method
-	 * and closes this {@link ImageDownloadDialog} instance.
+	 * and closes this {@link JImageDownloadDialog} instance.
 	 * @see #closeDialog(IResourceHandler)
 	 */
 	private void storeSelectionAndCloseDialog() {
@@ -277,7 +277,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 	
 	/**
-	 * Closes and disposes this {@link ImageDownloadDialog} instance. 
+	 * Closes and disposes this {@link JImageDownloadDialog} instance. 
 	 * @param selectedImage The image to be set as result.
 	 */
 	private void closeDialog(IResourceHandler selectedImage) {
@@ -322,7 +322,7 @@ public class ImageDownloadDialog extends JDialog {
 	private class SearchAction extends AbstractAction {
 
 		private SearchAction() {
-			final URL resource = ImageDownloadDialog.class.getResource("resources/play_16.gif");
+			final URL resource = JImageDownloadDialog.class.getResource("resources/play_16.gif");
 			putValue(Action.SMALL_ICON, new ImageIcon(resource));
 		}
 		
@@ -542,7 +542,7 @@ public class ImageDownloadDialog extends JDialog {
 	}
 	
 	public static void main(String[] args) {
-		ImageDownloadDialog imageDownloadDialog = new ImageDownloadDialog(ImageWebSearchFetcherFactory.getInstance());
+		JImageDownloadDialog imageDownloadDialog = new JImageDownloadDialog(ImageWebSearchFetcherFactory.getInstance());
 		imageDownloadDialog.setVisible(true);
 		System.out.println(imageDownloadDialog.getSelectedImage());
 		System.exit(0);

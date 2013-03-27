@@ -15,11 +15,11 @@ import javax.swing.JPanel;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 
-public class ImageFileChooser extends JFileChooser {
+public class JImageFileChooser extends JFileChooser {
 
 	private static final long serialVersionUID = 1456173962722237346L;
 	
-	public ImageFileChooser() {
+	public JImageFileChooser() {
 		super();
 		ImagePreviewPanel imagePreviewPanel = new ImagePreviewPanel();
 		setAccessory(imagePreviewPanel);
