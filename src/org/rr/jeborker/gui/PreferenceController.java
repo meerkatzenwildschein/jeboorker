@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import javax.swing.JFrame;
 
-import org.rr.commons.swing.dialogs.PreferenceDialog;
+import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 
 public class PreferenceController {
@@ -23,7 +23,7 @@ public class PreferenceController {
 		view.setVisible(true);
 		
 		int actionResult = view.getActionResult();
-		if(actionResult == PreferenceDialog.ACTION_RESULT_OK) {
+		if(actionResult == JPreferenceDialog.ACTION_RESULT_OK) {
 			this.setPreferenceViewValues(view);
 		}
 	}
