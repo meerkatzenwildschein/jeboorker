@@ -14,18 +14,18 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageZipFileFetcherFactory;
-import org.rr.commons.swing.dialogs.ImageDownloadDialog;
+import org.rr.commons.swing.dialogs.JImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDoOnlyOnceAction<ImageDownloadDialog> {
+class SetCoverFromEbook extends SetCoverFrom<JImageDownloadDialog> implements IDoOnlyOnceAction<JImageDownloadDialog> {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
-	private ImageDownloadDialog imageDownloadDialog;
+	private JImageDownloadDialog imageDownloadDialog;
 
 	SetCoverFromEbook(IResourceHandler resourceHandler) {
 		super(resourceHandler);
@@ -38,7 +38,7 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 	}
 
 	@Override
-	public ImageDownloadDialog doOnce() {
+	public JImageDownloadDialog doOnce() {
 		if(imageDownloadDialog == null) {
 			final MainController controller = MainController.getController();
 			final EbookPropertyItem item = ListUtils.first(EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler));
@@ -52,7 +52,7 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 					LoggerFactory.log(Level.WARNING, this, "No image fetcher instance for " + item.getResourceHandler());
 					return null;
 				}
-				imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), fetcher);
+				imageDownloadDialog = new JImageDownloadDialog(controller.getMainWindow(), fetcher);
 				imageDownloadDialog.setVisible(true);
 				
 				IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();
@@ -69,7 +69,7 @@ class SetCoverFromEbook extends SetCoverFrom<ImageDownloadDialog> implements IDo
 	}
 
 	@Override
-	public void setDoOnceResult(ImageDownloadDialog result) {
+	public void setDoOnceResult(JImageDownloadDialog result) {
 		this.imageDownloadDialog = result;
 		if(this.imageDownloadDialog != null) {
 			IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();
