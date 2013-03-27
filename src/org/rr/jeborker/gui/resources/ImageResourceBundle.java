@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 
 public class ImageResourceBundle {
 
-	private static WeakHashMap<String, Icon> imageIconCache = new WeakHashMap<String, Icon>();
+	private static WeakHashMap<String, ImageIcon> imageIconCache = new WeakHashMap<String, ImageIcon>();
 	
 	public static final Icon FOLDER_OPEN_16_ICON = ImageResourceBundle.getResourceAsImageIcon("folder_open_16.png");
 	
@@ -31,8 +31,8 @@ public class ImageResourceBundle {
      * Load the ImageIcon with the given name. For example "file_16.png".
      * @return The image icon or <code>null</code> if an icon with the given name did not exists.
      */
-    public static Icon getResourceAsImageIcon(String name) {
-    	Icon icon = imageIconCache.get(name);
+    public static ImageIcon getResourceAsImageIcon(String name) {
+    	ImageIcon icon = imageIconCache.get(name);
     	if(icon == null) {
     		icon = new ImageIcon(ImageResourceBundle.getResourceURL(name));
     		imageIconCache.put(name, icon);

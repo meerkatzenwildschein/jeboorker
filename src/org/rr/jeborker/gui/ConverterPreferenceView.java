@@ -12,6 +12,7 @@ import javax.swing.JSlider;
 import org.rr.common.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class ConverterPreferenceView extends JPreferenceDialog {
 	
@@ -46,6 +47,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	private void initialize() {
 		if(!isInitialized) {
 			isInitialized = true;
+			setIconImage(ImageResourceBundle.getResourceAsImageIcon("preferences_16.png").getImage());
 			final String generalCategory = Bundle.getString("ConverterPreferenceView.tab.general");
 			createLandscapePageEntries(generalCategory);
 			createImageSizeEntries(generalCategory);
