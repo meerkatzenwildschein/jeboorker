@@ -32,7 +32,7 @@ import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 
-public class PreferenceDialog extends JDialog {
+public class JPreferenceDialog extends JDialog {
 	
 	private static final Dimension DEFAULT_SIZE = new Dimension(400,250);
 
@@ -66,7 +66,7 @@ public class PreferenceDialog extends JDialog {
 	
 	private boolean isInitialized = false;
 	
-	public PreferenceDialog(JFrame owner) {
+	public JPreferenceDialog(JFrame owner) {
 		super(owner);
 		
 		setModal(true);
@@ -77,7 +77,7 @@ public class PreferenceDialog extends JDialog {
 	}
 	
 	/**
-	 * Adds a {@link PreferenceEntry} to this {@link PreferenceDialog} instance. 
+	 * Adds a {@link PreferenceEntry} to this {@link JPreferenceDialog} instance. 
 	 * The order of the {@link PreferenceEntry} are taken under account for 
 	 * the order of the components shown to the user.
 	 * 
@@ -88,7 +88,7 @@ public class PreferenceDialog extends JDialog {
 	}
 	
 	/**
-	 * Gets the action result of this {@link PreferenceDialog} instance.
+	 * Gets the action result of this {@link JPreferenceDialog} instance.
 	 * @return The action result. This is ACTION_RESULT_OK or ACTION_RESULT_ABORT.
 	 */
 	public int getActionResult() {
@@ -268,7 +268,7 @@ public class PreferenceDialog extends JDialog {
 	 * @return The desired {@link PreferenceEntry} instances. Never returns <code>null</code>.
 	 */
 	private List<PreferenceEntry> getPreferenceEntriesByCategory(String category) {
-		ArrayList<PreferenceEntry> result = new ArrayList<PreferenceDialog.PreferenceEntry>();
+		ArrayList<PreferenceEntry> result = new ArrayList<JPreferenceDialog.PreferenceEntry>();
 		for(PreferenceEntry preferenceEntry : preferenceEntries.values()) {
 			if(StringUtils.toString(category).equals(StringUtils.toString(preferenceEntry.getCategory()))) {
 				result.add(preferenceEntry);
