@@ -4,10 +4,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 
 import org.rr.common.swing.components.JRCheckBox;
-import org.rr.commons.swing.dialogs.PreferenceDialog;
+import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 
-class PreferenceView extends PreferenceDialog {
+class PreferenceView extends JPreferenceDialog {
 	
 	static final String AUTO_SCOLL_ITEM_PREFERENCE_NAME = "autoScollItem";
 	

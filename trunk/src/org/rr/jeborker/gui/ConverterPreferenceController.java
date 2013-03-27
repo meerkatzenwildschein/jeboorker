@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import javax.swing.JFrame;
 
-import org.rr.commons.swing.dialogs.PreferenceDialog;
+import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 
 public class ConverterPreferenceController {
@@ -84,7 +84,7 @@ public class ConverterPreferenceController {
 	 * he hits abort or just closed the dialog.
 	 */
 	public boolean isConfirmed() {
-		return this.actionResult == PreferenceDialog.ACTION_RESULT_OK;
+		return this.actionResult == JPreferenceDialog.ACTION_RESULT_OK;
 	}
 	
 	/**

@@ -10,10 +10,10 @@ import javax.swing.JFrame;
 import javax.swing.JSlider;
 
 import org.rr.common.swing.components.JRCheckBox;
-import org.rr.commons.swing.dialogs.PreferenceDialog;
+import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.utils.ReflectionUtils;
 
-class ConverterPreferenceView extends PreferenceDialog {
+class ConverterPreferenceView extends JPreferenceDialog {
 	
 	static final String LANDSCAPE_FORMAT_PREFERENCE_NAME = "landscape";
 	
