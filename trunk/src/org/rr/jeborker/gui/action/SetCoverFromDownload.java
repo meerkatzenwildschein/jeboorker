@@ -6,7 +6,7 @@ import javax.swing.JFileChooser;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
-import org.rr.commons.swing.dialogs.ImageDownloadDialog;
+import org.rr.commons.swing.dialogs.JImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.IDBObject;
@@ -15,11 +15,11 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements IDoOnlyOnceAction<ImageDownloadDialog> {
+class SetCoverFromDownload extends SetCoverFrom<JImageDownloadDialog> implements IDoOnlyOnceAction<JImageDownloadDialog> {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
-	private ImageDownloadDialog imageDownloadDialog;
+	private JImageDownloadDialog imageDownloadDialog;
 
 	SetCoverFromDownload(IResourceHandler resourceHandler) {
 		super(resourceHandler);
@@ -32,10 +32,10 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 	}
 
 	@Override
-	public ImageDownloadDialog doOnce() {
+	public JImageDownloadDialog doOnce() {
 		if(imageDownloadDialog == null) {
 			final MainController controller = MainController.getController();
-			imageDownloadDialog = new ImageDownloadDialog(controller.getMainWindow(), ImageWebSearchFetcherFactory.getInstance());
+			imageDownloadDialog = new JImageDownloadDialog(controller.getMainWindow(), ImageWebSearchFetcherFactory.getInstance());
 			
 			//default search phrase
 			String searchPhrase = "";
@@ -77,7 +77,7 @@ class SetCoverFromDownload extends SetCoverFrom<ImageDownloadDialog> implements 
 	}
 
 	@Override
-	public void setDoOnceResult(ImageDownloadDialog result) {
+	public void setDoOnceResult(JImageDownloadDialog result) {
 		this.imageDownloadDialog = result;
 		if(this.imageDownloadDialog != null) {
 			IResourceHandler selectedImage = imageDownloadDialog.getSelectedImage();
