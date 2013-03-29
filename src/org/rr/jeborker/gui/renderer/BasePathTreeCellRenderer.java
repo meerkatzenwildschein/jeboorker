@@ -190,9 +190,14 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 				TreePath filterTreePath = ((BasePathTreeModel)tree.getModel()).getFilterTreePath();
 				if(filterTreePath == null) {
 					//no filter set
-					label.setForeground(SwingUtils.getForegroundColor());			
+					label.setForeground(SwingUtils.getForegroundColor());		
 				} else {
-					label.setForeground(filteredForegroundColor);
+					TreePath rowPath = tree.getPathForRow(row);
+					if(filterTreePath.equals(rowPath)) {
+						label.setForeground(SwingUtils.getForegroundColor());		
+					} else {
+						label.setForeground(filteredForegroundColor);
+					}
 				}				
 				this.setBackground(SwingUtils.getBackgroundColor());
 				this.setForeground(SwingUtils.getForegroundColor());
