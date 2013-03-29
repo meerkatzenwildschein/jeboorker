@@ -832,6 +832,7 @@ class MainView extends JFrame {
 			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
 			basePathTree.setToggleExpandOnDoubleClick(true);
 			basePathTree.setAutoMoveHorizontalSliders(JeboorkerPreferences.isTreeAutoScrollingEnabled());
+			basePathTree.setRepaintAllOnChange(true);
 			basePathTree.setEditable(true);
 		}
 		JRScrollPane basePathTreeScroller = new JRScrollPane(basePathTree);

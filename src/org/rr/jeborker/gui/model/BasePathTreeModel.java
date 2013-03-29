@@ -25,10 +25,20 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	
 	private DefaultMutableTreeNode root;
 	
+	private TreePath filterTreePath;
+	
 	public BasePathTreeModel() {
 		super(new DefaultMutableTreeNode("root"));
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.init();
+	}
+
+	public TreePath getFilterTreePath() {
+		return filterTreePath;
+	}
+
+	public void setFilterTreePath(TreePath filterTreePath) {
+		this.filterTreePath = filterTreePath;
 	}
 
 	public void init() {
@@ -57,6 +67,10 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		return lastExpandedRow;
 	}
 	
+	/**
+	 * This is a special node and did not represents a base path. It's the "All Entries" node
+	 * that allows to toggle the visibility of all base path nodes.  
+	 */
 	class AllEntryNode implements MutableTreeNode, NamedNode {
 
 		private String localizedName;
