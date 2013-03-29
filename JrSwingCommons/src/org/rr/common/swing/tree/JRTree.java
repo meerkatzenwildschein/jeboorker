@@ -9,6 +9,8 @@ import java.awt.event.MouseWheelEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -22,9 +24,13 @@ public class JRTree extends JTree {
 	
 	private boolean autoMoveHorizontalSliders = false;
 	
+	private boolean repaintAllOnChange = false;
+	
 	public JRTree() {
 		super();
 
+		this.addMouseListener(new ToggleExpandOnDoubleClickMouseListener());
+		this.getSelectionModel().addTreeSelectionListener(new RepaintChangeListener());
 		this.addMouseListener(new MouseAdapter() {
 			// fixes that the renderer did not fill the tree horizontally and
 			// on clicks behind the renderer the selection did not change.
@@ -47,21 +53,8 @@ public class JRTree extends JTree {
 						}
 					}
 				}
-				
-				if(e.getClickCount() == 2) {
-					this.expand(row);
-				}
 			}
-			
-			private void expand(int row) {
-				if(toggleExpandOnDoubleClick) {
-					if(JRTree.this.isExpanded(row)) {
-						JRTree.this.collapseRow(row);
-					} else {
-						JRTree.this.expandRow(row);						
-					}
-				}
-			}
+
 		});
 		
 		final AutoMoveHorizontalMouseListener autoMoveHorizontalMouseListener = new AutoMoveHorizontalMouseListener();
@@ -102,6 +95,23 @@ public class JRTree extends JTree {
 
 	public void setToggleExpandOnDoubleClick(boolean expandOnDoubleClick) {
 		this.toggleExpandOnDoubleClick = expandOnDoubleClick;
+	}
+	
+	private class ToggleExpandOnDoubleClickMouseListener extends MouseAdapter {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			Point point = e.getPoint();
+			int row = JRTree.this.getRowForLocation(0, point.y);
+			
+			if(toggleExpandOnDoubleClick && e.getClickCount() == 2) {
+				if(JRTree.this.isExpanded(row)) {
+					JRTree.this.collapseRow(row);
+				} else {
+					JRTree.this.expandRow(row);						
+				}
+			}
+		}
 	}
 
 	public boolean isAutoMoveHorizontalSliders() {
@@ -211,6 +221,32 @@ public class JRTree extends JTree {
 				}
 			}
 			return -1;
+		}
+	}
+
+	/**
+	 * Tells if all tree nodes are repainted after the selection has changed.
+	 * @see #setRepaintAllOnChange
+	 */
+	public boolean isRepaintAllOnChange() {
+		return repaintAllOnChange;
+	}
+
+	/**
+	 * Enables / disables that the all tree nodes are repainted after
+	 * the selection has changed.
+	 */
+	public void setRepaintAllOnChange(boolean repaintAllOnChnage) {
+		this.repaintAllOnChange = repaintAllOnChnage;
+	}
+	
+	private class RepaintChangeListener implements TreeSelectionListener {
+
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			if(isRepaintAllOnChange()) {
+				JRTree.this.repaint();
+			}
 		}
 	}
 
