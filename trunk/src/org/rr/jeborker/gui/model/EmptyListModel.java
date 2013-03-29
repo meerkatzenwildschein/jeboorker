@@ -4,9 +4,9 @@ import javax.swing.AbstractListModel;
 
 /**
  * This list model is always empty. It's not possible to add something to it. 
- * It's useful for init reasons.
+ * It's useful for the initialization process.
  */
-public class EmptyListModel extends AbstractListModel {
+public class EmptyListModel extends AbstractListModel<Object> {
 
 	private static final EmptyListModel sharedInstance = new  EmptyListModel();
 	
