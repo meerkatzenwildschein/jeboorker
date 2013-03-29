@@ -30,6 +30,7 @@ import org.rr.jeborker.BasePathList;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
+import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -38,6 +39,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	private Color selectedBgColor;
 	
 	private Color selectedFgColor;
+	
+	private static final Color filteredForegroundColor = Color.DARK_GRAY.brighter();
 	
 	private JLabel label;
 	
@@ -184,9 +187,16 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 				label.setForeground(selectedFgColor);
 				isDropCell = false;
 			} else {
+				TreePath filterTreePath = ((BasePathTreeModel)tree.getModel()).getFilterTreePath();
+				if(filterTreePath == null) {
+					//no filter set
+					label.setForeground(SwingUtils.getForegroundColor());			
+				} else {
+					label.setForeground(filteredForegroundColor);
+				}				
 				this.setBackground(SwingUtils.getBackgroundColor());
 				this.setForeground(SwingUtils.getForegroundColor());
-				label.setForeground(SwingUtils.getForegroundColor());
+				
 				isDropCell = false;
 			}
 		} catch (Exception e) {

@@ -7,10 +7,12 @@ import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreePath;
 
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.model.BasePathTreeModel;
 
 public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
@@ -32,7 +34,7 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row) {
 		Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
 
-		editingStarted();
+		editingStarted(tree, row);
 		return editor;
 	}
 
@@ -41,15 +43,19 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 		return renderer.getValue();
 	}
 	
-	private void editingStarted() {
-		Object cellEditorValue = getCellEditorValue();
+	private void editingStarted(JTree tree, int row) {
+		final TreePath filterTreePath = tree.getPathForRow(row);
+		final Object cellEditorValue = getCellEditorValue();
+		
 		if(cellEditorValue == null || !cellEditorValue.equals(previousEditorValue)) {
 			String cellEditorValueString = StringUtils.toString(cellEditorValue);
 			if(cellEditorValueString.indexOf(File.separatorChar) != -1) {
 				setPathFilter(cellEditorValue.toString());
+				((BasePathTreeModel)tree.getModel()).setFilterTreePath(filterTreePath);
 				MainController.getController().refreshTable();
 			} else {
 				boolean remove = removePathFilter();
+				((BasePathTreeModel)tree.getModel()).setFilterTreePath(null);
 				if(remove) {
 					MainController.getController().refreshTable();
 				}				
@@ -60,7 +66,7 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 	
 	private void setPathFilter(String fullResourceFilterPath) {
 		final QueryCondition rootCondition = MainController.getController().getTableModel().getQueryCondition();
-		final QueryCondition additionalFilterCondition = new QueryCondition(null,null,null, QUERY_IDENTIFER);
+		final QueryCondition additionalFilterCondition = new QueryCondition(null, null, null, QUERY_IDENTIFER);
 		
 		removePathFilter();
 		additionalFilterCondition.addOrChild(new QueryCondition("file", fullResourceFilterPath + "%", "like", QUERY_IDENTIFER));
