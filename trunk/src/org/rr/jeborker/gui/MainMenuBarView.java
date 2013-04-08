@@ -291,6 +291,14 @@ class MainMenuBarView extends JMenuBar {
 				editMenuBar.add(new JSeparator());
 				
 				createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
+				
+				JMenuItem metadataDownloadItem = new JMenuItem();
+				metadataDownloadItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_METADATA_DOWNLOAD_ACTION, null));
+				editMenuBar.add(metadataDownloadItem);
+				if(selectedItems.isEmpty()) {
+					metadataDownloadItem.setEnabled(false);
+				}				
+				
 				createConvertMenuEntry(selectedItems, selectedEbookPropertyItemRows);
 				
 				editMenuBar.add(new JSeparator());
