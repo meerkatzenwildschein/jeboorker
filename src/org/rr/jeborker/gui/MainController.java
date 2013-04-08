@@ -249,6 +249,10 @@ public class MainController {
 		return ConverterPreferenceController.getInstance();
 	}
 	
+	public MetadataDownloadController getMetadataDownloadController() {
+		return MetadataDownloadController.getInstance(mainWindow);
+	}
+	
 	/**
 	 * Tells if the {@link MainController} is already initialized.
 	 * @return <code>true</code> if the {@link MainController} is initialized and <code>false</code> otherwise.

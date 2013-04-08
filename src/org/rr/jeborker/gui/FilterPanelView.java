@@ -64,13 +64,13 @@ class FilterPanelView extends JPanel {
 		gbc_searchField.gridy = 0;
 		this.add(filterField, gbc_searchField);
 
-		JButton searchButten = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
-		searchButten.setPreferredSize(new Dimension(27, 27));
+		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
+		searchButton.setPreferredSize(new Dimension(27, 27));
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.weightx = 0;
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 3;
 		gbc_textField.gridy = 0;
-		this.add(searchButten, gbc_textField);
+		this.add(searchButton, gbc_textField);
 	}
 }
