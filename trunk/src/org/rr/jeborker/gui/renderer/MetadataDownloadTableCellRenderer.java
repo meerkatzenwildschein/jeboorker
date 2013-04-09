@@ -15,11 +15,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JLayer;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.plaf.LayerUI;
 import javax.swing.table.TableCellRenderer;
 
 import org.rr.common.swing.SwingUtils;
