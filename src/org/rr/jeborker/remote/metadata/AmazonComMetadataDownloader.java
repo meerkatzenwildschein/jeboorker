@@ -6,4 +6,6 @@ class AmazonComMetadataDownloader extends AmazonDeMetadataDownloader {
 	
 	protected String languageMarker = "Language:";
 	
+	protected String authorMarker = "(Author)";
+	
 }

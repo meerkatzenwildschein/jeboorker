@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -21,6 +23,7 @@ import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.table.JRTable;
 import org.rr.commons.swing.layout.EqualsLayout;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.model.MetadataDownloadModel;
 import org.rr.jeborker.gui.renderer.MetadataDownloadTableCellEditor;
@@ -102,6 +105,7 @@ class MetadataDownloadView extends JDialog {
 
 	public MetadataDownloadView(MetadataDownloadController controller, JFrame mainWindow) {
 		super(mainWindow);
+		setModal(true);
 		this.controller = controller;
 		this.initialize();
 	}
@@ -156,10 +160,19 @@ class MetadataDownloadView extends JDialog {
 		gbc_searchTextField.gridy = 0;
 		searchPanel.add(searchTextField, gbc_searchTextField);
 		searchTextField.setColumns(10);
+		searchTextField.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					searchAction.actionPerformed(null);
+				}
+			}
+		});			
 		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		if(!selectedEbookPropertyItems.isEmpty()) {
-			String searchPhrase = selectedEbookPropertyItems.get(0).getAuthor() + " " + selectedEbookPropertyItems.get(0).getTitle();
-			searchTextField.setText(searchPhrase);
+			String searchPhrase = selectedEbookPropertyItems.get(0).getAuthor() + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle());
+			searchTextField.setText(searchPhrase.trim());
 		}
 		
 		searchButton = new JButton(ImageResourceBundle.getResourceAsImageIcon("play_16.png"));

@@ -34,6 +34,8 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	
 	protected String languageMarker = "Sprache:";
 	
+	protected String authorMarker = "(Autor)";
+	
 	@Override
 	public List<MetadataDownloadEntry> search(String searchTerm) {
 		final ArrayList<MetadataDownloadEntry> result = new ArrayList<MetadataDownloadEntry>();
@@ -42,13 +44,16 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			Iterator<Future<Elements>> fetchAmazonSearchPageDivElementsIterator = fetchAmazonSearchPageDivElements.iterator();
 			while(fetchAmazonSearchPageDivElementsIterator.hasNext()) {
 				Future<Elements> futureDivElements = fetchAmazonSearchPageDivElementsIterator.next();
-				Elements divElements = futureDivElements.get();
-				for(Element divElement : divElements) {
+				Elements searchPageDivElements = futureDivElements.get();
+				for(Element divElement : searchPageDivElements) {
+					String id = divElement.id();
 					String title = getTitle(divElement);
 					URL targetPageUrl = getTargetPageUrl(divElement);
 					URL thumbnailImageUrl = getThumbnailImageUrl(divElement);
-					AmazonMetadataDownloadEntry entry = new AmazonMetadataDownloadEntry(title, targetPageUrl, thumbnailImageUrl);
-					result.add(entry);
+					AmazonMetadataDownloadEntry entry = new AmazonMetadataDownloadEntry(title, id, targetPageUrl, thumbnailImageUrl);
+					if(!result.contains(entry)) {
+						result.add(entry);
+					}
 				}
 			}
 		} catch(Throwable e) {
@@ -60,7 +65,6 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	/**
 	 * Fetch the amazon search page entries for the given search term.
 	 * @param searchTerm Value to be searched.
-	 * @throws InterruptedException 
 	 */
 	private List<Future<Elements>> fetchAmazonSearchPageDivElements(final String searchTerm) throws IOException, InterruptedException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
@@ -120,9 +124,9 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	 * Get the headline / title provided by the given div element.
 	 */
 	private String getTitle(Element contentDiv) {
-		Elements elementsByClass = contentDiv.getElementsByClass("lrg bold");
+		Elements elementsByClass = contentDiv.getElementsByClass("lrg");
 		for(Element e : elementsByClass) {
-			if(e.tagName().equals("span")) {
+			if(e.classNames().contains("bold") && e.tagName().equals("span")) {
 				return e.text();
 			}
 		}
@@ -133,8 +137,10 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	 * Loads the amazon search page html bytes for the given page number.
 	 */
 	private byte[] loadAmazonSearchPage(final String encodesSearchPhrase, final int page) throws IOException {
-		//http://www.amazon.de/s/ref=nb_sb_noss_1?field-keywords=die+orks
-		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(amazonURL + "/s/ref=nb_sb_noss_1?ie=UTF8&field-keywords=" + encodesSearchPhrase + "&page=" + page);
+		//http://www.amazon.de/s/ref=nb_sb_noss_1?field-keywords=die+orks&rh=n%3A186606
+		final String urlString = amazonURL + "/s/ref=nb_sb_noss_1?ie=UTF8&field-keywords=" + encodesSearchPhrase + "&page=" + page + "&rh=n%3A186606";
+System.out.println("url: " + urlString);		
+		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(urlString);
 		final byte[] content = resourceLoader.getContent();
 		return content;
 	}
@@ -147,10 +153,13 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		
 		private final String title;
 		
+		private final String id;
+		
 		private Document document;
 
-		AmazonMetadataDownloadEntry(String title, final URL targetPageURL, final URL thumbnailImageURL) {
+		AmazonMetadataDownloadEntry(final String title, final String id, final URL targetPageURL, final URL thumbnailImageURL) {
 			this.title = title;
+			this.id = id;
 			
 			thumbnailBytes = Executors.newSingleThreadScheduledExecutor().submit(new Callable<byte[]>() {
 
@@ -172,7 +181,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 					if(targetPageURL != null) {
 						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetPageURL);
 						byte[] content = resourceHandler.getContent();
-						String html = new String(content, "UTF-8");
+						String html = new String(content, "ISO-8859-15");
 						return Jsoup.parse(html);
 					} else {
 						return null;
@@ -202,9 +211,20 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			try {
 				///s/ref=ntt_athr_dp_sr_1?_encoding=UTF8&field-author=Olivier%20Peru&search-alias=books-de&sort=relevancerank
 				if(getDocument() != null) {
-					Elements authors = getDocument().getElementsByAttributeValueContaining("href", "field-author=");
-					for(Element author : authors) {
-						result.add(author.text());
+					{
+						Elements h1Authors = getDocument().getElementsByClass("parseasinTitle");
+						if(!h1Authors.isEmpty()) {
+							Elements siblingElements = h1Authors.first().siblingElements();
+							for(Element sibling : siblingElements) {
+								if("a".equalsIgnoreCase(sibling.tagName())) {
+									String author = sibling.ownText();
+									Element nextSibling = (Element) sibling.nextSibling().nextSibling();
+									if(nextSibling.text().equalsIgnoreCase(authorMarker)) {
+										result.add(author);
+									}									
+								}
+							}
+						}						
 					}
 				}
 			} catch (Exception e) {
@@ -218,7 +238,9 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			try {
 				if(getDocument() != null) {
 					Element details = getDocument().getElementById("postBodyPS");
-					return details.text();
+					if(details != null) {
+						return details.text();
+					}
 				}
 			} catch (Exception e) {
 				LoggerFactory.getLogger().log(Level.WARNING, "Failed to fetch author for '" + getTitle() + "'", e);
@@ -259,7 +281,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 					for(Element bucketElement : bucketElements) {
 						if(bucketElement.tagName().equals("td") && bucketElement.firstElementSibling() == null) {
 							Elements b;
-							if(!(b = bucketElement.getElementsContainingText(label)).isEmpty()) {
+							if(!(b = bucketElement.getElementsContainingOwnText(label)).isEmpty()) {
 								return b.first().parent().ownText();
 							}
 						}
@@ -276,6 +298,20 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 				document = amazonDetailPageDocument.get();
 			}
 			return document;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if(super.equals(obj)) {
+				return true;
+			} else if(obj == null) {
+				return false;
+			} else if(!(obj instanceof AmazonMetadataDownloadEntry)) {
+				return false;
+			} else if(this.id != null) {
+				return this.id.equals(((AmazonMetadataDownloadEntry)obj).id);
+			}
+			return false;
 		}
 		
 	}

@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.renderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,6 +27,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.layout.VerticalLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -50,7 +52,9 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		setLayout(gridBagLayout);
 		
 		imagelabel = new JLabel();
-		imagelabel.setHorizontalAlignment(JLabel.LEFT);
+		imagelabel.setOpaque(false);
+		imagelabel.setBackground(Color.RED);
+		imagelabel.setHorizontalAlignment(JLabel.CENTER);
 		GridBagConstraints gbc_imagelabel = new GridBagConstraints();
 		gbc_imagelabel.insets = new Insets(0, 0, 0, 5);
 		gbc_imagelabel.fill = GridBagConstraints.BOTH;
@@ -59,7 +63,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		add(imagelabel, gbc_imagelabel);
 		
 		mainPanel = new JPanel();
-		mainPanel.setOpaque(true);
+		mainPanel.setOpaque(false);
 		GridBagConstraints gbc_mainPanel = new GridBagConstraints();
 		gbc_mainPanel.fill = GridBagConstraints.BOTH;
 		gbc_mainPanel.gridx = 1;
@@ -76,11 +80,9 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		
 		//workaround for a swing bug. The first time, the editor is used, the 
 		//ui color instance draws the wrong color but have the right rgb values.
-		color = SwingUtils.getBackgroundColor();
-		bgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+		bgColor = SwingUtils.getBackgroundColor();
 		
-		color = SwingUtils.getForegroundColor();
-		fgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());	
+		fgColor = SwingUtils.getForegroundColor();
 	}
 
 	protected final Color selectedBgColor;
@@ -96,27 +98,34 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		final Component tableCellComponent = this.getTableCellComponent(table, (MetadataDownloadEntry) value, isSelected, hasFocus, row, column);
-		if(isSelected) {
-			this.setBackground(selectedBgColor);	
-			this.setForeground(selectedFgColor);
-		} else {		
-			this.setBackground(SwingUtils.getBackgroundColor());
-			this.setForeground(SwingUtils.getForegroundColor());			
-		}
-		
 		return tableCellComponent;
 	}	
 
 	Component getTableCellComponent(JTable table, MetadataDownloadEntry entry, boolean isSelected, boolean hasFocus, int row, final int column) {
 		final int addEntryLabels = this.addEntryLabels(entry);
 		final int rowHeight = Math.max(80, addEntryLabels * 25);
+		
 		table.setRowHeight(row, rowHeight);
 		ImageIcon imageIconCover = getImageIconCover(table, entry, new Dimension(LEFT_WIDTH, rowHeight));
 		this.imagelabel.setIcon(imageIconCover);
-//		this.imagelabel.setPreferredSize(new Dimension(this.imagelabel.getPreferredSize().width, rowHeight));
 		
-		
-		
+		Component[] allComponents = SwingUtils.getAllComponents(null, (Container) this);
+		for(Component c : allComponents) {
+			if(isSelected) {
+				c.setBackground(selectedBgColor);	
+				c.setForeground(selectedFgColor);
+			} else {		
+				c.setBackground(bgColor);
+				c.setForeground(fgColor);			
+			}			
+		}
+		if(isSelected) {
+			this.setBackground(selectedBgColor);	
+			this.setForeground(selectedFgColor);
+		} else {		
+			this.setBackground(bgColor);
+			this.setForeground(fgColor);			
+		}		
 		return this;
 	}
 	
@@ -129,25 +138,63 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		int result = 0;
 		mainPanel.removeAll();
 
-		JComponent metadataEntryAuthorView = getMetadataEntryView("Authors", ListUtils.join(entry.getAuthors(), ", "));
-		mainPanel.add(metadataEntryAuthorView);
+		for(String author : entry.getAuthors()) {
+			JComponent metadataEntryAuthorView = getMetadataEntryView("Author", author);
+			mainPanel.add(metadataEntryAuthorView);
+			result++;
+		}
+		
+		if(!StringUtils.isEmpty(entry.getTitle())) {
+			JComponent metadataEntryTitleView = getMetadataEntryView("Title", entry.getTitle());
+			mainPanel.add(metadataEntryTitleView);
+			result++;
+		}
+		
+		if(!StringUtils.isEmpty(entry.getAgeSuggestion())) {
+			JComponent metadataEntryAgeSuggestionView = getMetadataEntryView("Age suggestion", entry.getAgeSuggestion());
+			mainPanel.add(metadataEntryAgeSuggestionView);
+			result++;
+		}
+		
+		if(!StringUtils.isEmpty(entry.getIsbn10())) {
+			JComponent metadataEntryISBN10View = getMetadataEntryView("ISBN10", entry.getIsbn10());
+			mainPanel.add(metadataEntryISBN10View);
+			result++;
+		}
+		
+		if(!StringUtils.isEmpty(entry.getIsbn13())) {
+			JComponent metadataEntryISBN13View = getMetadataEntryView("ISBN13", entry.getIsbn13());
+			mainPanel.add(metadataEntryISBN13View);
+			result++;
+		}
+		
+		if(!StringUtils.isEmpty(entry.getLanguage())) {
+			JComponent metadataEntryLanguageView = getMetadataEntryView("Language", entry.getLanguage());
+			mainPanel.add(metadataEntryLanguageView);
+			result++;
+		}
+		
+		if(!StringUtils.isEmpty(entry.getDescription())) {
+			JComponent metadataEntryDescriptionView = getMetadataEntryView("Description", entry.getDescription());
+			mainPanel.add(metadataEntryDescriptionView);
+			result++;
+		}
 		
 		return result;
 	}
 	
 	private JComponent getMetadataEntryView(String labelText, String value) {
 		JPanel panel = new JPanel();
+		panel.setOpaque(true);
 		panel.setLayout(new BorderLayout(3, 0));
 		
-		JLabel lblValue = new JLabel(value);
+		JLabel lblValue = new JLabel("<html><b>" + labelText + "</b>: " + value + "</html>");
+		lblValue.setOpaque(true);
 		panel.add(lblValue, BorderLayout.CENTER);
-		
-		JLabel lblText = new JLabel(labelText + ": ");
-		panel.add(lblText, BorderLayout.WEST);
 		
 		JCheckBox check = new JCheckBox();
 		check.setSelected(true);
-		panel.add(check, BorderLayout.EAST);
+		panel.add(check, BorderLayout.WEST);
 		
 		return panel;
 	}
@@ -179,7 +226,8 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 					final BufferedImage image = imageProvider.getImage();
 					if(image != null) {	
 						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(imageProvider.getImage(), dim, true);
-						ImageIcon imageIcon = new ImageIcon(scaleToMatch);
+						BufferedImage croped = ImageUtils.crop(scaleToMatch);
+						ImageIcon imageIcon = new ImageIcon(croped);
 						thumbnailCache.put(coverThumbnailCRC32, imageIcon);
 						return imageIcon;
 					} else {
