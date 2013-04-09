@@ -13,12 +13,15 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
+import org.apache.commons.io.FilenameUtils;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.table.JRTable;
@@ -114,6 +117,8 @@ class MetadataDownloadView extends JDialog {
 		setTitle(Bundle.getString("MetadataDownloadView.title"));
 		setSize(800, 600);
 		
+		((JComponent)getContentPane()).registerKeyboardAction(abortAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
@@ -171,8 +176,13 @@ class MetadataDownloadView extends JDialog {
 		});			
 		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		if(!selectedEbookPropertyItems.isEmpty()) {
-			String searchPhrase = selectedEbookPropertyItems.get(0).getAuthor() + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle());
-			searchTextField.setText(searchPhrase.trim());
+			String searchPhrase = (StringUtils.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
+			if(!searchPhrase.isEmpty()) {
+				searchTextField.setText(searchPhrase.trim());
+			} else {
+				String fileName = FilenameUtils.removeExtension(selectedEbookPropertyItems.get(0).getFileName());
+				searchTextField.setText(fileName);
+			}
 		}
 		
 		searchButton = new JButton(ImageResourceBundle.getResourceAsImageIcon("play_16.png"));
