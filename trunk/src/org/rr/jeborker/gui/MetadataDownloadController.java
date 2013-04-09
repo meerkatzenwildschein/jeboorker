@@ -3,6 +3,7 @@ package org.rr.jeborker.gui;
 import java.awt.Point;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.rr.jeborker.JeboorkerPreferences;
 
@@ -22,8 +23,15 @@ public class MetadataDownloadController {
 	}		
 
 	public void showDialog() {
-		MetadataDownloadView view = getView();
-		view.setVisible(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				MetadataDownloadView view = getView();
+				view.setVisible(true);
+			}
+		});		
+
 	}
 
 	private MetadataDownloadView getView() {
