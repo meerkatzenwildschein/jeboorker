@@ -15,8 +15,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.plaf.LayerUI;
 import javax.swing.table.TableCellRenderer;
 
 import org.rr.common.swing.SwingUtils;
@@ -26,7 +29,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.layout.VerticalLayout;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
 import org.rr.pm.image.IImageProvider;
@@ -42,6 +44,8 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	private JLabel imagelabel;
 	
 	private JPanel mainPanel;
+	
+	JCheckBox imageCheck = new JCheckBox();
 	
 	public MetadataDownloadTableCellRenderer() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -60,7 +64,18 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		gbc_imagelabel.fill = GridBagConstraints.BOTH;
 		gbc_imagelabel.gridx = 0;
 		gbc_imagelabel.gridy = 0;
-		add(imagelabel, gbc_imagelabel);
+		
+		imagelabel.setBounds(0, 0, LEFT_WIDTH, 200);
+		JLayeredPane layeredPane = new JLayeredPane();
+		layeredPane.add(imagelabel, Integer.valueOf(0));
+		
+		imageCheck = new JCheckBox();
+		imageCheck.setOpaque(false);
+		imageCheck.setSelected(true);
+		imageCheck.setBounds(0, 0, imageCheck.getPreferredSize().width, imageCheck.getPreferredSize().height);
+		layeredPane.add(imageCheck, Integer.valueOf(1));
+		
+		add(layeredPane, gbc_imagelabel);
 		
 		mainPanel = new JPanel();
 		mainPanel.setOpaque(false);
@@ -107,7 +122,13 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		
 		table.setRowHeight(row, rowHeight);
 		ImageIcon imageIconCover = getImageIconCover(table, entry, new Dimension(LEFT_WIDTH, rowHeight));
-		this.imagelabel.setIcon(imageIconCover);
+		imagelabel.setIcon(imageIconCover);
+		if(imageIconCover == null) {
+			imageCheck.setVisible(false);
+		} else {
+			imageCheck.setVisible(true);
+		}
+		imagelabel.setBounds(0, 0, LEFT_WIDTH, rowHeight);
 		
 		Component[] allComponents = SwingUtils.getAllComponents(null, (Container) this);
 		for(Component c : allComponents) {
@@ -224,10 +245,10 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 					final IResourceHandler virtualImageResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("TableCellRendererImageData", coverData);
 					final IImageProvider imageProvider = ImageProviderFactory.getImageProvider(virtualImageResourceLoader);
 					final BufferedImage image = imageProvider.getImage();
-					if(image != null) {	
-						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(imageProvider.getImage(), dim, true);
-						BufferedImage croped = ImageUtils.crop(scaleToMatch);
-						ImageIcon imageIcon = new ImageIcon(croped);
+					if(image != null) {
+						BufferedImage croped = ImageUtils.crop(imageProvider.getImage());
+						BufferedImage scaleToMatch = ImageUtils.scaleToMatch(croped, dim, true);
+						ImageIcon imageIcon = new ImageIcon(scaleToMatch);
 						thumbnailCache.put(coverThumbnailCRC32, imageIcon);
 						return imageIcon;
 					} else {
