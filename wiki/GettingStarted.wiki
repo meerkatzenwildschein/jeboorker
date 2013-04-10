@@ -7,7 +7,7 @@ After the read process has been done, all books from all folders you've specifie
 http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg
 
 = Folder handling =
-Always you've copied some new ebooks to your collection, just perfrom a _File->Refresh folder_ for a rescan, so jeboorker can recognize these.
+Always you copy some new ebooks with your favourite file manager to your collection, just perfrom a _File->Refresh folder_ for a rescan, so jeboorker can recognize these.
 
 The folders you've added can be toggled in it's visibility state by _File->Show/hide folder_.
 
