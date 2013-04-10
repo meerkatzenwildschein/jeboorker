@@ -1,4 +1,4 @@
 = Update from a previous version =
 If you have a previous version installed please uninstall it before installing the new version.
 
-If you get some trouble with the newly installed version please delete the .jeboorker folder in your home folder. This will completely reset your Jeboorker installation.
+If you get some trouble with the newly installed version please delete the .jeboorker folder in your home folder. This will completely reset your Jeboorker installation. You have to add your ebook folders again.
