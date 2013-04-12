@@ -51,6 +51,8 @@ class MetadataDownloadView extends JDialog {
 	private HashMap<METADATA_TYPES, JCheckBox> checkboxValues;
 	
 	private HashMap<METADATA_TYPES, String> textValues;
+	
+	private byte[] coverImage;
 
 	private MetadataDownloadController controller;
 
@@ -78,6 +80,10 @@ class MetadataDownloadView extends JDialog {
 			if(editor != null) {
 				checkboxValues = editor.getEditorCheckboxValue();
 				textValues = editor.getEditorTextValue();
+				if(editor.isCoverImageChecked()) {
+					MetadataDownloadEntry editorMetadataDownloadEntry = editor.getEditorMetadataDownloadEntry();
+					coverImage = editorMetadataDownloadEntry.getCoverImage();
+				}
 			} else {
 				checkboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>();
 				textValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
@@ -284,6 +290,13 @@ class MetadataDownloadView extends JDialog {
 	}
 	
 	/**
+	 * Get the cover image from the downloader.
+	 */
+	public byte[] getCoverImage() {
+		return coverImage;
+	}
+	
+	/**
 	 * get the selected index of the search provider combobox.
 	 */
 	int getSearchProviderIndex() {
@@ -296,4 +309,7 @@ class MetadataDownloadView extends JDialog {
 	void setSearchProviderIndex(int index) {
 		this.searchProviderCombobox.setSelectedIndex(index);
 	}
+
+
+
 }

@@ -29,7 +29,7 @@ public class MetadataDownloadModel extends AbstractTableModel {
 	public void loadSearchResult() {
 		this.searchEntries = this.downloader.search(this.searchPhrase);
 		for(MetadataDownloadEntry searchEntry : this.searchEntries) {
-			searchEntry.getImageBytes(); //lazy loading
+			searchEntry.getThumbnailImageBytes(); //lazy loading
 			searchEntry.getDescription(); //lazy loading
 		}
 	}

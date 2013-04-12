@@ -95,4 +95,11 @@ public class MetadataDownloadController {
 		return getView().getValue(type);
 	}
 	
+	/**
+	 * Get the cover image from the downloader.
+	 */
+	public byte[] getCoverImage() {
+		return getView().getCoverImage();
+	}	
+	
 }

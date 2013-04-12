@@ -18,8 +18,16 @@ public interface MetadataDownloadEntry {
 	
 	public String getAgeSuggestion();
 
-	public byte[] getImageBytes();
+	/**
+	 * Get a thumbnail image which can be used for the preview.
+	 */
+	public byte[] getThumbnailImageBytes();
+
+	public String getBase64EncodedThumbnailImage();
 	
-	public String getBase64EncodedImage();
+	/**
+	 * Get the cover image in the best possible image size.
+	 */
+	public byte[] getCoverImage();
 	
 }

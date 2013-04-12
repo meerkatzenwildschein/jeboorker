@@ -59,6 +59,8 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private HashMap<IMetadataReader.METADATA_TYPES, String> editingTextValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
 	
+	private MetadataDownloadEntry editingEntry;
+	
 	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
 	public MetadataDownloadTableCellRenderer() {
@@ -113,7 +115,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	}	
 
 	Component getTableCellComponent(JTable table, MetadataDownloadEntry entry, boolean isSelected, boolean hasFocus, int row, final int column) {
-		final int addEntryLabels = this.addMetadataComponentEntries(entry);
+		final int addEntryLabels = this.addMetadataComponentEntries(entry, isSelected);
 		final int rowHeight = Math.max(80, addEntryLabels * 25);
 		
 		table.setRowHeight(row, rowHeight);
@@ -151,14 +153,14 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	 * are two of the values to be present and created.
 	 * @return The number of components that was created and added. 
 	 */
-	private int addMetadataComponentEntries(MetadataDownloadEntry entry) {
+	private int addMetadataComponentEntries(MetadataDownloadEntry entry, boolean isEditing) {
 		int result = 0;
 		mainPanel.removeAll();
-		editingCheckboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>(); //create a new one because the old is used as result.
-		editingTextValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
-		
-		editingCheckboxValues.put(IMetadataReader.METADATA_TYPES.COVER, imageCheck);
-		editingTextValues.put(IMetadataReader.METADATA_TYPES.COVER, entry.getBase64EncodedImage());
+		if(isEditing) {
+			editingCheckboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>(); //create a new one because the old is used as result.
+			editingTextValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
+			editingEntry = entry;
+		}
 		
 		for(String author : entry.getAuthors()) {
 			JComponent metadataEntryAuthorView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.author"), author, IMetadataReader.METADATA_TYPES.AUTHOR);
@@ -235,7 +237,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 			return null;
 		}
 		
-		byte[] coverThumbnail = entry.getImageBytes();
+		byte[] coverThumbnail = entry.getThumbnailImageBytes();
 		if(entry != null && coverThumbnail != null && coverThumbnail.length > 0) {
 			final String coverThumbnailCRC32 = String.valueOf(CommonUtils.calculateCrc(coverThumbnail));
 			if(thumbnailCache.containsKey(coverThumbnailCRC32)) {
@@ -268,15 +270,30 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	/**
 	 * Get the values for the editing component.
 	 */
-	public HashMap<IMetadataReader.METADATA_TYPES, JCheckBox> getEditingCheckboxValues() {
+	HashMap<IMetadataReader.METADATA_TYPES, JCheckBox> getEditingCheckboxValues() {
 		return editingCheckboxValues;
 	}
 	
 	/**
 	 * Get the values for the editing component.
 	 */
-	public HashMap<IMetadataReader.METADATA_TYPES, String> getEditingTextValues() {
+	HashMap<IMetadataReader.METADATA_TYPES, String> getEditingTextValues() {
 		return editingTextValues;
+	}
+	
+	/**
+	 * Get the MetadataDownloadEntry for the editing component.
+	 */
+	MetadataDownloadEntry getEditingMetadataDownloadEntry() {
+		return editingEntry;
+	}
+	
+	/**
+	 * Tells if the user has selected the cover image checkbox for set/replace
+	 * the cover of the ebook file with the downloaded one. 
+	 */
+	boolean isCoverImageChecked() {
+		return this.imageCheck.isSelected();
 	}
 	
 }
