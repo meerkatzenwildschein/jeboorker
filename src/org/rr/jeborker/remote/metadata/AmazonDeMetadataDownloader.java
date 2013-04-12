@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
@@ -21,12 +20,16 @@ import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.Base64;
+import org.rr.jeborker.gui.action.ActionEventQueue;
 
 class AmazonDeMetadataDownloader implements MetadataDownloader {
 	
 	private static final int FETCH_PAGES = 2; 
 
 	private static final String AMAZON_CONTENT_ENTRY_DIV = "result_"; //_15, _16...
+	
+	private ExecutorService pool = ActionEventQueue.APPLICATION_THREAD_POOL;
 	
 	protected String amazonURL = "http://www.amazon.de";
 	
@@ -61,14 +64,13 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Fetch the amazon search page entries for the given search term.
 	 * @param searchTerm Value to be searched.
 	 */
 	private List<Future<Elements>> fetchAmazonSearchPageDivElements(final String searchTerm) throws IOException, InterruptedException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
-		final ExecutorService pool = Executors.newFixedThreadPool(FETCH_PAGES);
 		final List<Callable<Elements>> callables = new ArrayList<Callable<Elements>>(FETCH_PAGES);
 		
 		for(int i = 0; i < FETCH_PAGES; i++) {
@@ -151,6 +153,8 @@ System.out.println("url: " + urlString);
 		
 		private final Future<byte[]> thumbnailBytes;
 		
+		private String base64EncodedThumbnail;
+		
 		private final String title;
 		
 		private final String id;
@@ -160,38 +164,42 @@ System.out.println("url: " + urlString);
 		AmazonMetadataDownloadEntry(final String title, final String id, final URL targetPageURL, final URL thumbnailImageURL) {
 			this.title = title;
 			this.id = id;
-			
-			thumbnailBytes = Executors.newSingleThreadScheduledExecutor().submit(new Callable<byte[]>() {
+			thumbnailBytes = pool.submit(new Callable<byte[]>() {
 
 				@Override
 				public byte[] call() throws Exception {
 					if(thumbnailImageURL != null) {
-						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(thumbnailImageURL);
-						return resourceHandler.getContent();
-					} else {
-						return null;
-					}
+						try {
+							IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(thumbnailImageURL);
+							return resourceHandler.getContent();
+						} catch(Exception e) {
+							LoggerFactory.getLogger().log(Level.WARNING, "Failed to load image " + thumbnailImageURL, e);
+						}
+					} 
+					return null;
 				}
 			});
-			
-			amazonDetailPageDocument = Executors.newSingleThreadScheduledExecutor().submit(new Callable<Document>() {
+			amazonDetailPageDocument = pool.submit(new Callable<Document>() {
 				
 				@Override
 				public Document call() throws Exception {
 					if(targetPageURL != null) {
-						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetPageURL);
-						byte[] content = resourceHandler.getContent();
-						String html = new String(content, "ISO-8859-15");
-						return Jsoup.parse(html);
-					} else {
-						return null;
+						try {
+							IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetPageURL);
+							byte[] content = resourceHandler.getContent();
+							String html = new String(content, "ISO-8859-15");
+							return Jsoup.parse(html);
+						} catch(Exception e) {
+							LoggerFactory.getLogger().log(Level.WARNING, "Failed to load url " + thumbnailImageURL, e);
+						}
 					}
+					return null;
 				}
 			});
 		}
 
 		@Override
-		public byte[] getImage() {
+		public byte[] getImageBytes() {
 			try {
 				return thumbnailBytes.get();
 			} catch (Exception e) {
@@ -199,6 +207,14 @@ System.out.println("url: " + urlString);
 			} 
 			return null;
 		}
+		
+		@Override
+		public String getBase64EncodedImage() {
+			if(base64EncodedThumbnail == null) {
+				base64EncodedThumbnail = Base64.encodeToString(getImageBytes(), false);
+			}
+			return base64EncodedThumbnail;
+		}		
 
 		@Override
 		public String getTitle() {
@@ -313,7 +329,7 @@ System.out.println("url: " + urlString);
 			}
 			return false;
 		}
-		
+
 	}
 
 }

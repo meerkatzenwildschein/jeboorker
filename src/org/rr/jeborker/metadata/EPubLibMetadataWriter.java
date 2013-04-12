@@ -25,6 +25,7 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
@@ -116,7 +117,13 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 			} else if(EPUB_METADATA_TYPES.COVER.getName().equals(meta.getName())) {
 				boolean isCover = false;
 				if(meta.getValues() != null && !meta.getValues().isEmpty()) {
-					byte[] cover = (byte[]) meta.getValues().get(0);
+					Object coverObjectValue = meta.getValues().get(0);
+					byte[] cover = null;
+					if(coverObjectValue instanceof byte[]) {
+						cover = (byte[]) meta.getValues().get(0);
+					} else if(coverObjectValue instanceof String) {
+						cover = Base64.decode((String) coverObjectValue);
+					}
 					if(cover != null) {
 						this.setCover(epub, meta, cover);
 						isCover = true;

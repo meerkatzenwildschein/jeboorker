@@ -26,7 +26,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {
+	public List<MetadataProperty> readMetaData() {	
 		//read and collect metadata from the ebook resources
 		final HashMap<METADATA_TYPES, List<MetadataProperty>> metadata = new HashMap<IMetadataReader.METADATA_TYPES, List<MetadataProperty>>();
 		for (int i = 0; i < ebookResourceHandler.size(); i++) {
@@ -104,12 +104,33 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 			}
 		}
 		
-		if(create && result.isEmpty()) {
+		if(create && result.isEmpty() && isSupportedMultiMetadata(type)) {
 			MultiMetadataProperty multiMetadataProperty = new MultiMetadataProperty(type.getName(), new ArrayList<Object>(Collections.singleton(null)));
 			result.add(multiMetadataProperty);
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Tells if the given {@link METADATA_TYPES} is available as 
+	 * multi metadata property. Not all metadata are commonly supported
+	 * by each metadata writer instance.  
+	 * 
+	 * @return <code>true</code> for support and <code>false</code> otherwise.
+	 */
+	private boolean isSupportedMultiMetadata(final METADATA_TYPES type) {
+		switch(type) {
+			case AUTHOR:
+			case TITLE:
+			case RATING:
+			case GENRE:
+			case SERIES_NAME:
+			case COVER:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	@Override

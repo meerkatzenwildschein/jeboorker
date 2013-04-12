@@ -24,6 +24,10 @@ public interface IMetadataReader {
 		public List<String> getValue(EbookPropertyItem item);
 	}	
 	
+	/**
+	 * List of common metadata types that can be used with {@link IMetadataReader#getMetadataByType(boolean, List, METADATA_TYPES)}
+	 * to get some {@link MetadataProperty} from the reader instance.
+	 */
 	public static enum METADATA_TYPES implements MetadataEntryType {
 		AUTHOR {
 			public String getName() {
@@ -124,12 +128,84 @@ public interface IMetadataReader {
 			@Override
 			public List<String> getValue(EbookPropertyItem item) {
 				if(item != null && item.getRating() != null) {
-					return new ArrayList<String>(Collections.singleton( Integer.valueOf(item.getRating()).toString()));
+					return new ArrayList<String>(Collections.singleton( Integer.valueOf(item.getRating()).toString() ));
 				} else {
 					return Collections.emptyList();
 				}
 			}				
-		},	
+		},
+		ISBN {
+			public String getName() {
+				return "isbn";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setIsbn(metadataProperty.getValueAsString());
+			}
+			
+			@Override
+			public List<String> getValue(EbookPropertyItem item) {
+				if(item != null && item.getIsbn() != null) {
+					return new ArrayList<String>(Collections.singleton( item.getIsbn() ));
+				} else {
+					return Collections.emptyList();
+				}
+			}				
+		},
+		AGE_SUGGESTION {
+			public String getName() {
+				return "ageSuggestion";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setAgeSuggestion(metadataProperty.getValueAsString());
+			}
+			
+			@Override
+			public List<String> getValue(EbookPropertyItem item) {
+				if(item != null && item.getAgeSuggestion() != null) {
+					return new ArrayList<String>(Collections.singleton( item.getAgeSuggestion() ));
+				} else {
+					return Collections.emptyList();
+				}
+			}				
+		},
+		LANGUAGE {
+			public String getName() {
+				return "language";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setLanguage(metadataProperty.getValueAsString());
+			}
+			
+			@Override
+			public List<String> getValue(EbookPropertyItem item) {
+				if(item != null && item.getLanguage() != null) {
+					return new ArrayList<String>(Collections.singleton( item.getLanguage() ));
+				} else {
+					return Collections.emptyList();
+				}
+			}				
+		},
+		DESCRIPTION {
+			public String getName() {
+				return "description";
+			}
+
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setDescription(metadataProperty.getValueAsString());
+			}
+			
+			@Override
+			public List<String> getValue(EbookPropertyItem item) {
+				if(item != null && item.getDescription() != null) {
+					return new ArrayList<String>(Collections.singleton( item.getDescription() ));
+				} else {
+					return Collections.emptyList();
+				}
+			}				
+		},
 		COVER {
 			public String getName() {
 				return "cover";
@@ -192,7 +268,8 @@ public interface IMetadataReader {
 	 * @param create If no metadata entries with the desired type exists, create a new, empty one. 
 	 * @param props Extract the desired metadata type entry from the given metadata properties. If this
 	 * 		parameter is <code>null</code>, the properties will be read from the file.
-	 * @return A list of genre entries. Never returns <code>null</code>
+	 * @return A list of genre entries. Never returns <code>null</code> but the result list could also
+	 * 		be empty if the create parameter is <code>true</code>. 
 	 */
 	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type);
 	

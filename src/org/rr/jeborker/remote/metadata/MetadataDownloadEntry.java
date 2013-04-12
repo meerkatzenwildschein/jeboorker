@@ -18,6 +18,8 @@ public interface MetadataDownloadEntry {
 	
 	public String getAgeSuggestion();
 
-	public byte[] getImage();
+	public byte[] getImageBytes();
+	
+	public String getBase64EncodedImage();
 	
 }

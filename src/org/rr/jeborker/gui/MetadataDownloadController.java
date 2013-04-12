@@ -3,9 +3,9 @@ package org.rr.jeborker.gui;
 import java.awt.Point;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.metadata.IMetadataReader;
 
 public class MetadataDownloadController {
 	
@@ -22,16 +22,12 @@ public class MetadataDownloadController {
 		return controller;
 	}		
 
+	/**
+	 * Shows the dialog to the user and wait until the user has confirm or aborted the dialog.
+	 */
 	public void showDialog() {
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				MetadataDownloadView view = getView();
-				view.setVisible(true);
-			}
-		});		
-
+		MetadataDownloadView view = getView();
+		view.setVisible(true);
 	}
 
 	private MetadataDownloadView getView() {
@@ -88,6 +84,15 @@ public class MetadataDownloadController {
 	 */
 	public boolean isConfirmed() {
 		return getView().getActionResult() == MetadataDownloadView.ACTION_RESULT_OK;
+	}
+	
+	/**
+	 * Get the downloaded metadata string value for the given type.
+	 * @return The downloaded value or <code>null</code> if there is no value
+	 *     for the given type.
+	 */
+	public String getValue(IMetadataReader.METADATA_TYPES type) {
+		return getView().getValue(type);
 	}
 	
 }
