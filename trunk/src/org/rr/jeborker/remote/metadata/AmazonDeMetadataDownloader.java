@@ -199,7 +199,7 @@ System.out.println("url: " + urlString);
 		}
 
 		@Override
-		public byte[] getImageBytes() {
+		public byte[] getThumbnailImageBytes() {
 			try {
 				return thumbnailBytes.get();
 			} catch (Exception e) {
@@ -209,9 +209,9 @@ System.out.println("url: " + urlString);
 		}
 		
 		@Override
-		public String getBase64EncodedImage() {
+		public String getBase64EncodedThumbnailImage() {
 			if(base64EncodedThumbnail == null) {
-				base64EncodedThumbnail = Base64.encodeToString(getImageBytes(), false);
+				base64EncodedThumbnail = Base64.encodeToString(getThumbnailImageBytes(), false);
 			}
 			return base64EncodedThumbnail;
 		}		
@@ -285,6 +285,34 @@ System.out.println("url: " + urlString);
 			return getProductInformationValue(languageMarker);
 		}
 		
+		@Override
+		public byte[] getCoverImage() {
+			try {
+				if(getDocument() != null) {
+					Element img = getDocument().getElementById("main-image");
+					if(img == null) {
+						img = getDocument().getElementById("original-main-image");
+					}
+					if(img != null) {
+						String src = img.attr("src");
+						String coverURL;
+						if(src.indexOf(',') != -1 && src.indexOf('.') != -1) {
+							coverURL = src.substring(0, src.indexOf(',')) + src.substring(src.lastIndexOf('.'));
+						} else {
+							coverURL = src;
+						}
+						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(coverURL);
+						return resourceHandler.getContent();
+					} else {
+						LoggerFactory.getLogger().log(Level.WARNING, "Could not find cover image for '" + getTitle() + "'");
+					}
+				}
+			} catch (Exception e) {
+				LoggerFactory.getLogger().log(Level.WARNING, "Failed to fetch cover for '" + getTitle() + "'", e);
+			}
+			return null;
+		}
+
 		/**
 		 * Get a value from the product info box at the amazon page.
 		 * @param label The label for the value.  

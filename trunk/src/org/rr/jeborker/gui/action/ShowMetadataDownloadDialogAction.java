@@ -2,12 +2,14 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MetadataDownloadController;
@@ -80,11 +82,34 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 				}
 			}
 			
-			if(change) {
+			byte[] coverImage = transferCoverImageMetadata(metadataDownloadController, reader, readMetaData);
+			
+			if(change || coverImage != null) {
 				writer.writeMetadata(readMetaData);
 				ActionUtils.refreshEbookPropertyItem(ebookItem, resourceHandler);
+				
+				IResourceHandler virtualImageResourceHandler = ResourceHandlerFactory.getVirtualResourceHandler(UUID.randomUUID().toString(), coverImage);
+				MainController.getController().setImageViewerResource(virtualImageResourceHandler);
 			}
 		}
+	}
+
+	/**
+	 * Transfers the cover from the metadata downloader to the metadata of the ebook. 
+	 * @return the cover image bytes if there is a cover to download and set or <code>null</code> if
+	 *     there is no cover or the cover checkbox in the gui wasn't checked.
+	 */
+	private byte[] transferCoverImageMetadata(final MetadataDownloadController metadataDownloadController, final IMetadataReader reader,
+			final List<MetadataProperty> readMetaData) {
+		byte[] coverImage = metadataDownloadController.getCoverImage();
+		if(coverImage != null) {
+			List<MetadataProperty> coverMetadataList = reader.getMetadataByType(true, readMetaData, IMetadataReader.METADATA_TYPES.COVER);
+			if(!coverMetadataList.isEmpty()) {
+				MetadataProperty metadataProperty = coverMetadataList.get(0);
+				metadataProperty.setValue(coverImage, 0);
+			}
+		}
+		return coverImage;
 	}
 	
 

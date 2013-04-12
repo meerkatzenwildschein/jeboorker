@@ -20,6 +20,8 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	private HashMap<METADATA_TYPES, JCheckBox> editingCheckboxValues;
 	
 	private HashMap<METADATA_TYPES, String> editingTextValues;
+
+	private MetadataDownloadEntry editingEntry;
 	
 	public MetadataDownloadTableCellEditor(MetadataDownloadTableCellRenderer renderer) {
 		super();
@@ -44,6 +46,13 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	public HashMap<METADATA_TYPES, String> getEditorTextValue() {
 		return editingTextValues;
 	}
+	
+	/**
+	 * Get the MetadataDownloadEntry for the editing component.
+	 */
+	public MetadataDownloadEntry getEditorMetadataDownloadEntry() {
+		return editingEntry;
+	}	
 
 	@Override
 	public boolean isCellEditable(EventObject anEvent) {
@@ -59,6 +68,7 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	public boolean stopCellEditing() {
 		this.editingCheckboxValues = renderer.getEditingCheckboxValues();
 		this.editingTextValues = renderer.getEditingTextValues();
+		this.editingEntry = renderer.getEditingMetadataDownloadEntry();
 		return true;
 	}
 
@@ -79,5 +89,13 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 		final Component tableCellComponent = renderer.getTableCellComponent(table, (MetadataDownloadEntry) value, true, true, row, column);
 		return tableCellComponent;
 	}
+	
+	/**
+	 * Tells if the user has selected the cover image checkbox for set/replace
+	 * the cover of the ebook file with the downloaded one. 
+	 */
+	public boolean isCoverImageChecked() {
+		return renderer.isCoverImageChecked();
+	}	
 
 }
