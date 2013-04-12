@@ -572,4 +572,8 @@ public class Base64
 
 		return dArr;
 	}
+
+	public static String encode(byte[] date) {
+		return encodeToString(date, true);
+	}
 }
