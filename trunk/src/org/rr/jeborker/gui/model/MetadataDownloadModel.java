@@ -22,11 +22,16 @@ public class MetadataDownloadModel extends AbstractTableModel {
 
 	/**
 	 * Invokes the {@link MetadataDownloader} and provide it's entries with this {@link MetadataDownloadModel}
-	 * instance. This Method isn't be invoked automatically by the {@link MetadataDownloadModel}
-	 * instance.
+	 * instance. This method blocks as long as all data for the model is loaded. 
+	 * 
+	 * This Method isn't be invoked automatically by the {@link MetadataDownloadModel} instance.
 	 */
 	public void loadSearchResult() {
 		this.searchEntries = this.downloader.search(this.searchPhrase);
+		for(MetadataDownloadEntry searchEntry : this.searchEntries) {
+			searchEntry.getImageBytes(); //lazy loading
+			searchEntry.getDescription(); //lazy loading
+		}
 	}
 	
 	@Override

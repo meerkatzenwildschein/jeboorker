@@ -88,7 +88,8 @@ public class MetadataProperty implements Cloneable {
 	public String getValueAsString() {
 		final List<Object> values = getValues();
 		if(values.size() > 0) {
-			return StringUtils.toString(values.get(0));
+			Object object = values.get(0);
+			return StringUtils.toString(object);
 		}
 		return "";
 	}

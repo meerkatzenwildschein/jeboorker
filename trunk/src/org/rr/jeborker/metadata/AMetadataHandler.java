@@ -46,7 +46,7 @@ abstract class AMetadataHandler {
 	
 	/**
 	 * gets the children Element from the given Element e.
-	 * @param e The Element where the chidls should be fetched from.
+	 * @param e The Element where the childs should be fetched from.
 	 * @return The desired children. Never returns <code>null</code>
 	 */
 	protected List<Element> getChildren(Element e) {

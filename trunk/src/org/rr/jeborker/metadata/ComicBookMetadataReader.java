@@ -123,6 +123,18 @@ class ComicBookMetadataReader implements IMetadataReader {
 		case RATING:
 			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.RATING.getName(), "");
 			break;	
+		case AGE_SUGGESTION:
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.AGE_SUGGESTION.getName(), "");
+			break;	
+		case DESCRIPTION:
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.SUMMARY.getName(), "");
+			break;	
+		case ISBN:
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.ISBN.getName(), "");
+			break;	
+		case LANGUAGE:
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.LANGUAGE.getName(), "");
+			break;	
 		case COVER:
 			newProperty = new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), null);
 			break;					
@@ -790,6 +802,30 @@ class ComicBookMetadataReader implements IMetadataReader {
 			public Class<?> getPropertyRendererClass() {
 				return null;
 			}			
+		},LANGUAGE {
+			public String getName() {
+				return "Language";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setLanguage(metadataProperty.getValueAsString());
+			}
+			
+			public List<String> getValidValues() {
+				return null;
+			}
+			
+			public Class<?> getPropertyClass() {
+				return String.class;
+			}	
+			
+			public Class<?> getPropertyEditorClass() {
+				return null;
+			}
+	
+			public Class<?> getPropertyRendererClass() {
+				return null;
+			}			
 		},FORMAT {
 			public String getName() {
 				return "Format";
@@ -872,7 +908,6 @@ class ComicBookMetadataReader implements IMetadataReader {
 			}
 			
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				//no EbookPropertyItem
 				Number number = CommonUtils.toNumber(metadataProperty.getValueAsString());
 				item.setRating(number != null ? number.intValue() : null);
 			}
@@ -891,6 +926,54 @@ class ComicBookMetadataReader implements IMetadataReader {
 	
 			public Class<?> getPropertyRendererClass() {
 				return StarRatingPropertyRenderer.class;
+			}			
+		},AGE_SUGGESTION {
+			public String getName() {
+				return "AgeSuggestion";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setAgeSuggestion(metadataProperty.getValueAsString());
+			}
+			
+			public List<String> getValidValues() {
+				return null;
+			}	
+			
+			public Class<?> getPropertyClass() {
+				return String.class;
+			}	
+			
+			public Class<?> getPropertyEditorClass() {
+				return null;
+			}
+	
+			public Class<?> getPropertyRendererClass() {
+				return null;
+			}			
+		},ISBN {
+			public String getName() {
+				return "ISBN";
+			}
+			
+			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
+				item.setIsbn(metadataProperty.getValueAsString());
+			}
+			
+			public List<String> getValidValues() {
+				return null;
+			}	
+			
+			public Class<?> getPropertyClass() {
+				return String.class;
+			}	
+			
+			public Class<?> getPropertyEditorClass() {
+				return null;
+			}
+	
+			public Class<?> getPropertyRendererClass() {
+				return null;
 			}			
 		}
 	}

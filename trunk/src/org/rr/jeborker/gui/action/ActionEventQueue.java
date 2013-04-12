@@ -1,62 +1,56 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.swing.SwingWorker;
-
-import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 
-
-
 public class ActionEventQueue {
-	
-	private static SwingWorker<Void, Void> worker = null;
-	
-	private static final List<QueueableActionHolder> queue = Collections.synchronizedList(new ArrayList<QueueableActionHolder>());
-	
+
+	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
+            60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
+
 	static synchronized void addActionEvent(final ApplicationAction action, final ActionEvent event) {
-		final QueueableActionHolder holder = new QueueableActionHolder(action, event);
-		queue.add(holder);
+		APPLICATION_THREAD_POOL.submit(new Runnable() {
+			@Override
+			public void run() {
+				DefaultDBManager.setDefaultDBThreadInstance();
+				action.invokeRealAction(event);
+			}
+		});
+	}
+
+	private static class ApplicationThreadFactory implements ThreadFactory {
 		
-		if(worker == null) {
-			// Construct a new SwingWorker
-			worker = new SwingWorker<Void, Void>() {
-	
-				@Override
-				protected Void doInBackground() {
-					DefaultDBManager.setDefaultDBThreadInstance();
-					while(queue.size() > 0) {
-						try {
-							QueueableActionHolder removed = queue.remove(0);
-							removed.action.invokeRealAction(removed.event);
-						} catch(Throwable e) {
-							LoggerFactory.getLogger().log(Level.SEVERE, "Action has failed" , e);
-						}
-					}
-					
-					return null;
-				}
-	
-				@Override
-				protected void done() {
-					worker = null;
-				}
-			};
-			worker.execute();
+		private static final AtomicInteger poolNumber = new AtomicInteger(1);
+		
+		private final ThreadGroup group;
+		
+		private final AtomicInteger threadNumber = new AtomicInteger(1);
+		
+		private final String namePrefix;
+
+		ApplicationThreadFactory() {
+			SecurityManager s = System.getSecurityManager();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "pool-" + poolNumber.getAndIncrement() + "-thread-";
+		}
+
+		public Thread newThread(final Runnable r) {
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+			if (t.isDaemon()) {
+				t.setDaemon(false);
+			}
+			if (t.getPriority() != Thread.NORM_PRIORITY) {
+				t.setPriority(Thread.NORM_PRIORITY);
+			}
+			return t;
 		}
 	}
-	
-	private static class QueueableActionHolder {
-		final ApplicationAction action;
-		final ActionEvent event;
-		QueueableActionHolder(final ApplicationAction action, final ActionEvent event) {
-			this.action = action;
-			this.event = event;
-		}
-	}
+
 }

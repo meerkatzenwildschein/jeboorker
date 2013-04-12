@@ -8,10 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -20,6 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FilenameUtils;
 import org.rr.common.swing.ShadowPanel;
@@ -32,6 +36,8 @@ import org.rr.jeborker.gui.model.MetadataDownloadModel;
 import org.rr.jeborker.gui.renderer.MetadataDownloadTableCellEditor;
 import org.rr.jeborker.gui.renderer.MetadataDownloadTableCellRenderer;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.jeborker.metadata.IMetadataReader;
+import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
 import org.rr.jeborker.remote.metadata.MetadataDownloadProviderFactory;
 import org.rr.jeborker.remote.metadata.MetadataDownloader;
@@ -41,6 +47,10 @@ class MetadataDownloadView extends JDialog {
 	public static final int ACTION_RESULT_OK = 0;
 	
 	private int actionResult = -1;
+	
+	private HashMap<METADATA_TYPES, JCheckBox> checkboxValues;
+	
+	private HashMap<METADATA_TYPES, String> textValues;
 
 	private MetadataDownloadController controller;
 
@@ -62,7 +72,17 @@ class MetadataDownloadView extends JDialog {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			MetadataDownloadTableCellEditor editor = (MetadataDownloadTableCellEditor) table.stopEdit();
+			
 			actionResult = ACTION_RESULT_OK;
+			if(editor != null) {
+				checkboxValues = editor.getEditorCheckboxValue();
+				textValues = editor.getEditorTextValue();
+			} else {
+				checkboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>();
+				textValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
+			}
+			
 			controller.close();
 		}
 	};
@@ -84,6 +104,12 @@ class MetadataDownloadView extends JDialog {
 					try {
 						shadowPanel.setVisible(true);
 						model.loadSearchResult();
+						
+						//new renderer and editor instances for releasing cached resources and avoid get cached values
+						//from the old search.
+						table.setDefaultRenderer(MetadataDownloadEntry.class, new MetadataDownloadTableCellRenderer());
+						table.setDefaultEditor(MetadataDownloadEntry.class, new MetadataDownloadTableCellEditor(new MetadataDownloadTableCellRenderer()));
+
 						table.setModel(model);
 					} finally {
 						shadowPanel.setVisible(false);
@@ -96,10 +122,15 @@ class MetadataDownloadView extends JDialog {
 	private JRScrollPane scrollPane;
 
 	private JRTable table;	
+	
 	private JPanel searchPanel;
+	
 	private JTextField searchTextField;
+	
 	private JButton searchButton;
+	
 	private JLabel lblSearch;
+	
 	private JComboBox<String> searchProviderCombobox;
 	
 	public MetadataDownloadView() {
@@ -173,7 +204,16 @@ class MetadataDownloadView extends JDialog {
 					searchAction.actionPerformed(null);
 				}
 			}
-		});			
+		});		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				searchTextField.selectAll();
+				searchTextField.requestFocus();
+			}
+		});
+		
 		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		if(!selectedEbookPropertyItems.isEmpty()) {
 			String searchPhrase = (StringUtils.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
@@ -204,8 +244,8 @@ class MetadataDownloadView extends JDialog {
 		
 		table = new JRTable();
 		table.setTableHeader(null);
-		table.setDefaultRenderer(MetadataDownloadEntry.class, new MetadataDownloadTableCellRenderer());
-		table.setDefaultEditor(MetadataDownloadEntry.class, new MetadataDownloadTableCellEditor());
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setStopEditOnSelectionChange(true);
 		scrollPane.setViewportView(table);
 		
 		bottomPanel = new JPanel();
@@ -228,6 +268,19 @@ class MetadataDownloadView extends JDialog {
 
 	public int getActionResult() {
 		return this.actionResult;
+	}
+	
+	/**
+	 * Get the downloaded metadata string value for the given type.
+	 * @return The downloaded value or <code>null</code> if there is no value
+	 *     for the given type.
+	 */
+	public String getValue(IMetadataReader.METADATA_TYPES type) {
+		JCheckBox jCheckBox = checkboxValues.get(type);
+		if(jCheckBox != null && jCheckBox.isSelected()) {
+			return textValues.get(type);
+		}
+		return null;
 	}
 	
 	/**

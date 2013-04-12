@@ -40,7 +40,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	private Color selectedFgColor;
 	
-	private static final Color filteredForegroundColor = Color.DARK_GRAY.brighter();
+	private static final Color filteredForegroundColor = Color.DARK_GRAY.brighter().brighter();
 	
 	private JLabel label;
 	

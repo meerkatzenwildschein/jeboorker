@@ -470,6 +470,7 @@ class MainView extends JFrame {
 		mainTable.setTableHeader(null);
 		mainTable.setSelectionModel(new EbookPropertyDBTableSelectionModel());
 		mainTable.setDragEnabled(true);
+		mainTable.setStopEditOnSelectionChange(true);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);

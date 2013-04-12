@@ -10,10 +10,10 @@ import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
-import org.bouncycastle.util.encoders.Base64;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
@@ -76,6 +76,9 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 					} else {
 						if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
 							fetchXMPThumbnail = (byte[]) firstValue;
+							xmpMetadataSet = true;
+						} else if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof String) {
+							fetchXMPThumbnail = Base64.decode((String) firstValue);
 							xmpMetadataSet = true;
 						} else {
 							info.put(name, StringUtils.toString(firstValue));

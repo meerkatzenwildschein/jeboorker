@@ -326,6 +326,22 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			Meta ratingName = new Meta(EPUB_METADATA_TYPES.CALIBRE_RATING.getName(), "");
 			newProperty = new EpubLibMetadataProperty<Meta>(ratingName.getName(), "", ratingName);
 			break;	
+		case AGE_SUGGESTION:
+			Meta ageSuggestionName = new Meta(EPUB_METADATA_TYPES.JB_AGE_SUGGESTION.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Meta>(ageSuggestionName.getName(), "", ageSuggestionName);
+			break;	
+		case DESCRIPTION:
+			Meta descriptionName = new Meta(EPUB_METADATA_TYPES.DESCRIPTION.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Meta>(descriptionName.getName(), "", descriptionName);
+			break;	
+		case ISBN:
+			Meta isbnName = new Meta(EPUB_METADATA_TYPES.ISBN.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Meta>(isbnName.getName(), "", isbnName);
+			break;		
+		case LANGUAGE:
+			Meta languageName = new Meta(EPUB_METADATA_TYPES.LANGUAGE.getName(), "");
+			newProperty = new EpubLibMetadataProperty<Meta>(languageName.getName(), "", languageName);
+			break;					
 		case COVER:
 			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), null, null);
 			break;

@@ -292,6 +292,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		result.add(new MetadataProperty("Rating", ""));
 		result.add(new MetadataProperty("SeriesIndex", ""));
 		result.add(new MetadataProperty("SeriesName", ""));
+		result.add(new MetadataProperty("Description", ""));
 		result.add(new MetadataProperty("ModDate", "", Date.class));
 		result.add(new MetadataProperty("CreationDate", "", Date.class));
 		result.add(new MetadataProperty("SourceModified", "", Date.class));		
@@ -352,6 +353,22 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				break;					
 			case AUTHOR:
 				return this.getAuthorMetaData(create, props);
+			case AGE_SUGGESTION:
+				search = "agesuggestion";
+				name = "AgeSuggestion";
+				break;
+			case DESCRIPTION:
+				search = "description";
+				name = "Description";
+				break;
+			case ISBN:
+				search = "isbn";
+				name = "Isbn";
+				break;
+			case LANGUAGE:
+				search = "language";
+				name = "Language";
+				break;
 			case COVER:
 				search = "cover";
 				name = "Cover";
