@@ -97,7 +97,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 					metadata.addDate(new nl.siegmann.epublib.domain.Date(meta.getValueAsString(), ((nl.siegmann.epublib.domain.Date)meta.getType()).getEvent()));
 				}
 			} else if(EPUB_METADATA_TYPES.IDENTIFIER.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.UUID.getName().equals(meta.getName()) || EPUB_METADATA_TYPES.ISBN.getName().equals(meta.getName())) {
-				Identifier identifier = new Identifier(((Identifier)meta.getType()).getScheme(), meta.getValueAsString());
+				Identifier identifier = new Identifier(((Identifier) meta.getType()).getScheme(), meta.getValueAsString());
 				metadata.addIdentifier(identifier);
 			} else if(meta.getType() instanceof QName) {
 				Object type = meta.getType();

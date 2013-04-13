@@ -1,6 +1,8 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ import javax.swing.Action;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MetadataDownloadController;
@@ -60,38 +63,60 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 		for(EbookPropertyItem ebookItem : ebookPropertyItems) {
 			IResourceHandler resourceHandler = ebookItem.getResourceHandler();
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			final List<MetadataProperty> readMetaData = reader.readMetaData();
+			final List<MetadataProperty> allMetaData = reader.readMetaData();
+			final List<MetadataProperty> newMetadata = new ArrayList<MetadataProperty>();
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			
 			boolean change = false;
 			for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
-				List<MetadataProperty> metadata = reader.getMetadataByType(true, readMetaData, type);
-				if(!metadata.isEmpty()) {
-					String value = metadataDownloadController.getValue(type);
-					if(value != null) {
-						for(MetadataProperty meta : metadata) {
-							if(!meta.getValueAsString().equals(value)) {
-								meta.setValue(value, 0);
-								if(!readMetaData.contains(metadata)) {
-									readMetaData.add(meta);
-								}
-								change = true;
-							}
-						}
-					}
+				List<MetadataProperty> metadata = reader.getMetadataByType(true, allMetaData, type);
+				List<String> values = metadataDownloadController.getFileteredValues(type);
+				for(int i = 0; i < values.size(); i++) {
+					String value = values.get(i);
+					change = setMetadataValue(value, metadata, allMetaData, newMetadata, reader, type, i);
 				}
 			}
+			newMetadata.addAll(allMetaData);
 			
-			byte[] coverImage = transferCoverImageMetadata(metadataDownloadController, reader, readMetaData);
+			byte[] coverImage = transferCoverImageMetadata(metadataDownloadController, reader, newMetadata);
 			
 			if(change || coverImage != null) {
-				writer.writeMetadata(readMetaData);
+				writer.writeMetadata(newMetadata);
 				ActionUtils.refreshEbookPropertyItem(ebookItem, resourceHandler);
 				
 				IResourceHandler virtualImageResourceHandler = ResourceHandlerFactory.getVirtualResourceHandler(UUID.randomUUID().toString(), coverImage);
 				MainController.getController().setImageViewerResource(virtualImageResourceHandler);
 			}
 		}
+	}
+	
+	private boolean setMetadataValue(String value, List<MetadataProperty> metadata, final List<MetadataProperty> allMetaData, final List<MetadataProperty> newMetadata, final IMetadataReader reader, IMetadataReader.METADATA_TYPES type, int num) {
+		MetadataProperty metadataProperty = ListUtils.get(metadata, num);
+		boolean result = false;
+		if(metadataProperty != null) {
+			String metadataPropertyValueAsString = metadataProperty.getValueAsString();
+			
+			//search for entries with the same value to be set to the new value
+			for(int i = num; i < metadata.size(); i++) {
+				if(metadata.get(i) != null && metadata.get(i).getValueAsString().equals(metadataPropertyValueAsString)) {
+					metadata.get(i).setValue(value, 0);
+					newMetadata.add(metadataProperty);
+					allMetaData.remove(metadata.get(i));
+					result = true;
+				}
+			}
+		} else {
+			//create a new one
+			metadata = reader.getMetadataByType(true, Collections.<MetadataProperty>emptyList(), type);
+			if(!metadata.isEmpty()) {
+				metadataProperty = metadata.get(0);
+				metadataProperty.setValue(value, 0);
+				newMetadata.add(metadataProperty);
+				result = true;		
+			}
+		}
+		
+		return result;
 	}
 
 	/**
