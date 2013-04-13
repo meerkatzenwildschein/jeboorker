@@ -8,8 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -29,6 +32,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.table.JRTable;
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -48,9 +52,7 @@ class MetadataDownloadView extends JDialog {
 	
 	private int actionResult = -1;
 	
-	private HashMap<METADATA_TYPES, JCheckBox> checkboxValues;
-	
-	private HashMap<METADATA_TYPES, String> textValues;
+	private HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
 	
 	private byte[] coverImage;
 
@@ -78,15 +80,13 @@ class MetadataDownloadView extends JDialog {
 			
 			actionResult = ACTION_RESULT_OK;
 			if(editor != null) {
-				checkboxValues = editor.getEditorCheckboxValue();
-				textValues = editor.getEditorTextValue();
+				textValues = editor.getEditingValues();
 				if(editor.isCoverImageChecked()) {
 					MetadataDownloadEntry editorMetadataDownloadEntry = editor.getEditorMetadataDownloadEntry();
 					coverImage = editorMetadataDownloadEntry.getCoverImage();
 				}
 			} else {
-				checkboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>();
-				textValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
+				textValues = new HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>>();
 			}
 			
 			controller.close();
@@ -278,15 +278,42 @@ class MetadataDownloadView extends JDialog {
 	
 	/**
 	 * Get the downloaded metadata string value for the given type.
-	 * @return The downloaded value or <code>null</code> if there is no value
-	 *     for the given type.
+	 * @return A list with the downloaded values for the given type. Each list entry 
+	 *     is a {@link Entry} with the checkbox boolean value as <code>key</code> and the
+	 *     text with the <code>value</code>.
 	 */
-	public String getValue(IMetadataReader.METADATA_TYPES type) {
-		JCheckBox jCheckBox = checkboxValues.get(type);
-		if(jCheckBox != null && jCheckBox.isSelected()) {
-			return textValues.get(type);
+	public List<Entry<Boolean, String>> getValues(IMetadataReader.METADATA_TYPES type) {
+		List<Entry<JCheckBox, String>> list = textValues.get(type);
+		if(list != null) {
+			return new TransformValueList<Map.Entry<JCheckBox, String>, Map.Entry<Boolean,String>>(list) {
+
+				@Override
+				public Map.Entry<Boolean,String> transform(final Map.Entry<JCheckBox, String> source) {
+					return new Map.Entry<Boolean, String>() {
+
+						@Override
+						public Boolean getKey() {
+							JCheckBox checkbox = source.getKey();
+							if(checkbox == null || !checkbox.isSelected()) {
+								return Boolean.FALSE;
+							}
+							return Boolean.TRUE;
+						}
+
+						@Override
+						public String getValue() {
+							return source.getValue();
+						}
+
+						@Override
+						public String setValue(String value) {
+							return null;
+						}
+					};
+				}
+			};
 		}
-		return null;
+		return Collections.<Entry<Boolean, String>> emptyList();
 	}
 	
 	/**

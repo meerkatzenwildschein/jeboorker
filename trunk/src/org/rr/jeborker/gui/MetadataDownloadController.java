@@ -1,6 +1,9 @@
 package org.rr.jeborker.gui;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 
@@ -87,12 +90,29 @@ public class MetadataDownloadController {
 	}
 	
 	/**
-	 * Get the downloaded metadata string value for the given type.
-	 * @return The downloaded value or <code>null</code> if there is no value
-	 *     for the given type.
+	 * Get the downloaded metadata values for the given type.
+	 * @return A list with the downloaded values for the given type. Each list entry 
+	 *     is a {@link Entry} with the checkbox boolean value as <code>key</code> and the
+	 *     text with the <code>value</code>.
 	 */
-	public String getValue(IMetadataReader.METADATA_TYPES type) {
-		return getView().getValue(type);
+	public List<Entry<Boolean, String>> getValues(IMetadataReader.METADATA_TYPES type) {
+		return getView().getValues(type);
+	}
+	
+	/**
+	 * Get the downloaded metadata string values for the given type. Only these values are returned
+	 * that are selected by the user.
+	 * @return A list with the downloaded string values for the given type.
+	 */
+	public List<String> getFileteredValues(IMetadataReader.METADATA_TYPES type) {
+		List<Entry<Boolean, String>> values = getValues(type);
+		ArrayList<String> result = new ArrayList<String>(values.size());
+		for(Entry<Boolean, String> value : values) {
+			if(value.getKey().booleanValue()) {
+				result.add(value.getValue());
+			}
+		}
+		return result;
 	}
 	
 	/**

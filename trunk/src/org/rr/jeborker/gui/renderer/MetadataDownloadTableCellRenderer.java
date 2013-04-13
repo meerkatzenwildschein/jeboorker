@@ -9,7 +9,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -55,9 +59,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	protected final Color fgColor;
 	
-	private HashMap<IMetadataReader.METADATA_TYPES, JCheckBox> editingCheckboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>();
-	
-	private HashMap<IMetadataReader.METADATA_TYPES, String> editingTextValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
+	private HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 	
 	private MetadataDownloadEntry editingEntry;
 	
@@ -157,8 +159,8 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		int result = 0;
 		mainPanel.removeAll();
 		if(isEditing) {
-			editingCheckboxValues = new HashMap<IMetadataReader.METADATA_TYPES, JCheckBox>(); //create a new one because the old is used as result.
-			editingTextValues = new HashMap<IMetadataReader.METADATA_TYPES, String>();
+			//create a new one because the old is used as result.
+			editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 			editingEntry = entry;
 		}
 		
@@ -206,7 +208,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		return result;
 	}
 	
-	private JComponent getMetadataEntryViewPanel(String labelText, String value, IMetadataReader.METADATA_TYPES type) {
+	private JComponent getMetadataEntryViewPanel(final String labelText, final String value, final IMetadataReader.METADATA_TYPES type) {
 		JPanel panel = new JPanel();
 		panel.setOpaque(true);
 		panel.setLayout(new BorderLayout(3, 0));
@@ -215,12 +217,32 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		lblValue.setOpaque(true);
 		panel.add(lblValue, BorderLayout.CENTER);
 		
-		JCheckBox check = new JCheckBox();
+		final JCheckBox check = new JCheckBox();
 		check.setSelected(true);
 		panel.add(check, BorderLayout.WEST);
 		
-		editingCheckboxValues.put(type, check);
-		editingTextValues.put(type, value);
+		List<Entry<JCheckBox, String>> valuesList = editingValues.get(type);
+		if(valuesList == null) {
+			valuesList = new ArrayList<Map.Entry<JCheckBox,String>>();
+		}
+		valuesList.add(new Map.Entry<JCheckBox, String>() {
+			
+			@Override
+			public String setValue(String value) {
+				return null;
+			}
+			
+			@Override
+			public String getValue() {
+				return value;
+			}
+			
+			@Override
+			public JCheckBox getKey() {
+				return check;
+			}
+		});
+		editingValues.put(type, valuesList);
 		
 		return panel;
 	}
@@ -266,19 +288,12 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		}
 		return null;
 	}
-
-	/**
-	 * Get the values for the editing component.
-	 */
-	HashMap<IMetadataReader.METADATA_TYPES, JCheckBox> getEditingCheckboxValues() {
-		return editingCheckboxValues;
-	}
 	
 	/**
 	 * Get the values for the editing component.
 	 */
-	HashMap<IMetadataReader.METADATA_TYPES, String> getEditingTextValues() {
-		return editingTextValues;
+	HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
+		return editingValues;
 	}
 	
 	/**
