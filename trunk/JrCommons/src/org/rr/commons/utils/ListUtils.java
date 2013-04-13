@@ -788,6 +788,20 @@ public final class ListUtils implements Serializable {
 			set(values, value, idx);
 		}
 	}
+	
+	/**
+	 * Get a value from the given {@link List}.
+	 * @param values The list containing the values where a value should be returned from.
+	 * @param idx The index of the value to be returned in the given list.
+	 * @return The value from the index or <code>null</code> if the list is smaller than the 
+	 * index requires.
+	 */
+	public static <T>T get(final List<T> values, int idx) {
+		if(values.size() > idx) {
+			return values.get(idx);
+		}
+		return null;
+	}
 
 	/**
 	 * gets the first entry from the given list. If the list is <code>null</code> 
