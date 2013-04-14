@@ -12,7 +12,6 @@ import javax.swing.Action;
 import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MetadataDownloadController;
@@ -21,6 +20,7 @@ import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
+import org.rr.jeborker.metadata.MetadataUtils;
 
 
 class ShowMetadataDownloadDialogAction extends AbstractAction {
@@ -69,11 +69,11 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 			
 			boolean change = false;
 			for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
-				List<MetadataProperty> metadata = reader.getMetadataByType(true, allMetaData, type);
-				List<String> values = metadataDownloadController.getFileteredValues(type);
-				for(int i = 0; i < values.size(); i++) {
-					String value = values.get(i);
-					change = setMetadataValue(value, metadata, allMetaData, newMetadata, reader, type, i);
+				List<MetadataProperty> availableMetadata = new ArrayList<MetadataProperty>(reader.getMetadataByType(false, allMetaData, type));
+				List<String> downloadedValues = metadataDownloadController.getFilteredValues(type);
+				for(int i = 0; i < downloadedValues.size(); i++) {
+					String downloadedValue = downloadedValues.get(i);
+					change = setMetadataValue(downloadedValue, availableMetadata, allMetaData, newMetadata, reader, type, i);
 				}
 			}
 			newMetadata.addAll(allMetaData);
@@ -90,26 +90,23 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 		}
 	}
 	
-	private boolean setMetadataValue(String value, List<MetadataProperty> metadata, final List<MetadataProperty> allMetaData, final List<MetadataProperty> newMetadata, final IMetadataReader reader, IMetadataReader.METADATA_TYPES type, int num) {
-		MetadataProperty metadataProperty = ListUtils.get(metadata, num);
+	private boolean setMetadataValue(String value, List<MetadataProperty> availableMetadata, final List<MetadataProperty> allMetaData, final List<MetadataProperty> newMetadata, final IMetadataReader reader, IMetadataReader.METADATA_TYPES type, int num) {
 		boolean result = false;
-		if(metadataProperty != null) {
-			String metadataPropertyValueAsString = metadataProperty.getValueAsString();
-			
-			//search for entries with the same value to be set to the new value
-			for(int i = num; i < metadata.size(); i++) {
-				if(metadata.get(i) != null && metadata.get(i).getValueAsString().equals(metadataPropertyValueAsString)) {
-					metadata.get(i).setValue(value, 0);
-					newMetadata.add(metadataProperty);
-					allMetaData.remove(metadata.get(i));
-					result = true;
-				}
+		if(!availableMetadata.isEmpty()) {
+			//set the value to the existing ones.
+			List<MetadataProperty> sameMetadata = MetadataUtils.getSameProperties(availableMetadata.get(0), availableMetadata);
+			availableMetadata.removeAll(sameMetadata);
+			for(MetadataProperty same : sameMetadata) {
+				same.setValue(value, 0);
+				allMetaData.remove(same);
+				newMetadata.add(same);
+				result = true;
 			}
 		} else {
-			//create a new one
-			metadata = reader.getMetadataByType(true, Collections.<MetadataProperty>emptyList(), type);
-			if(!metadata.isEmpty()) {
-				metadataProperty = metadata.get(0);
+			//create a new metadata
+			availableMetadata = reader.getMetadataByType(true, Collections.<MetadataProperty>emptyList(), type);
+			if(!availableMetadata.isEmpty()) {
+				MetadataProperty metadataProperty = availableMetadata.get(0);
 				metadataProperty.setValue(value, 0);
 				newMetadata.add(metadataProperty);
 				result = true;		

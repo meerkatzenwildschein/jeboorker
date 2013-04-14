@@ -1,40 +1,66 @@
 package org.rr.jeborker.metadata;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class MetadataUtils {
+import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.StringUtils;
 
+public class MetadataUtils {
+	
 	/**
-	 * Merges the given list with all the metadata entries from the first and second list. 
-	 * The second list entries will win if any entry already exists in first. 
-	 * @param first First list with entries to merge
-	 * @param second Second list with entries to merge
-	 * @return The merged list.
+	 * searches for all metadata properties matching to the given one and returns them. 
+	 * @param ref The ref to be searched. This one is in the result list in any case.
+	 * @param allMetaData The metadata list to be searched.
+	 * @return The list with all metadata instances matching with the given one (including the reference one). 
+	 *     Never returns <code>null</code>.
 	 */
-	public static List<MetadataProperty> mergeMetadata(List<MetadataProperty> first, List<MetadataProperty> second) {
-		if(first == null || first.isEmpty()) {
-			if(second!=null) {
-				return second;
-			} 
-			return Collections.emptyList();
-		} else if(second == null || second.isEmpty()) {
-			if(first!=null) {
-				return first;
-			} 
-		}		
-		
-		final ArrayList<MetadataProperty> merged = new ArrayList<MetadataProperty>(first.size() + second.size());
-		merged.addAll(first);
-		for (MetadataProperty secondMetadataProperty : second) {
-			for (MetadataProperty firstMetadataProperty : first) {
-				if(firstMetadataProperty.getName() == secondMetadataProperty.getName()) {
-					merged.remove(firstMetadataProperty);
-				}
+	public static List<MetadataProperty> getSameProperties(MetadataProperty ref, List<MetadataProperty> allMetaData) {
+		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(3);
+		for (MetadataProperty metadataProperty : allMetaData) {
+			if(comparePropertiesForMerge(metadataProperty, ref)) {
+				result.add(metadataProperty);
 			}
 		}
-		merged.addAll(second);
-		return merged;
+		return result;
 	}
+	
+
+
+	/**
+	 * Compares the metadata properties if they could be merged to one property. Properties
+	 * can only be merged if they have the same value and size.
+	 * 
+	 * @param metadataProperty1 The first property to be compared.
+	 * @param metadataProperty2 The second property to be compared.
+	 * @return <code>true</code> for merge and <code>false</code> otherwise.
+	 */
+	private static boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
+		if(metadataProperty1 == metadataProperty2) {
+			return true;
+		}
+		
+		// test for value
+		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
+			&& CommonUtils.compareTo(metadataProperty2.getValues().get(0), metadataProperty1.getValues().get(0)) == 0;
+		
+		final String metadataProperty1Name = metadataProperty1.getName().toLowerCase();
+		final String metadataProperty2Name = metadataProperty2.getName().toLowerCase();		
+
+		if (result && metadataProperty1Name.equals(metadataProperty2Name)) {
+			// name is the same
+			return true;
+		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
+			//merge createdate and creationdate because they have the same sense
+			return true;
+		}  else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "modifydate", "moddate")) {
+			//merge createdate and creationdate because they have the same sense
+			return true;
+		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "calibrerating", "rating")) {
+			return true;
+		} else {
+			return false;
+		}
+	}	
+		
 }

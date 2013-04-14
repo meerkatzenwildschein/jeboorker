@@ -104,7 +104,7 @@ public class MetadataDownloadController {
 	 * that are selected by the user.
 	 * @return A list with the downloaded string values for the given type.
 	 */
-	public List<String> getFileteredValues(IMetadataReader.METADATA_TYPES type) {
+	public List<String> getFilteredValues(IMetadataReader.METADATA_TYPES type) {
 		List<Entry<Boolean, String>> values = getValues(type);
 		ArrayList<String> result = new ArrayList<String>(values.size());
 		for(Entry<Boolean, String> value : values) {
