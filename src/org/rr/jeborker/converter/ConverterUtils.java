@@ -42,6 +42,12 @@ class ConverterUtils {
 		writer.writeMetadata(targetMetaData);
 	}	
 	
+	/**
+	 * Applies the image modifications from the given {@link ConverterPreferenceController}.
+	 * @param bufferedImage The image to be modified
+	 * @param converterPreferenceController The {@link ConverterPreferenceController} instance containing the user selections.
+	 * @return The processed images. Never returns <code>null</code>.
+	 */
     static List<BufferedImage> processImageModifications(BufferedImage bufferedImage, ConverterPreferenceController converterPreferenceController) {
     	Number imageSize = converterPreferenceController.getImageSize();
     	if(imageSize != null && imageSize.intValue() < 99) {
@@ -84,4 +90,5 @@ class ConverterUtils {
 		}
 		return false;
 	}    
+
 }
