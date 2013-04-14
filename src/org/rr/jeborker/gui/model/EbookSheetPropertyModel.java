@@ -7,14 +7,13 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.FileRefreshBackgroundThread;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
+import org.rr.jeborker.metadata.MetadataUtils;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
 import com.l2fprod.common.propertysheet.Property;
@@ -248,7 +247,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			final List<Object> values = metadataProperty.getValues();
 			if(values.size() == 1) {
 				//find properties with the same name and value to merge them in the sheet view.
-				List<MetadataProperty> mergedProperties = getMergedProperties(metadataProperty, allMetaData);
+				List<MetadataProperty> mergedProperties = MetadataUtils.getSameProperties(metadataProperty, allMetaData);
 				if(mergedProperties.size() > 1) {
 					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties, items);
 					result.add(property);					
@@ -290,59 +289,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}		
 		return false;
 	}
-	
-	/**
-	 * searches for all metadata properties matching to the given one and returns them. 
-	 * @param ref The ref to be searched. This one is in the result list in any case.
-	 * @param allMetaData The metadata list to be searched.
-	 * @return The list with all metadata instances matching with the given one. Never returns <code>null</code>.
-	 */
-	protected List<MetadataProperty> getMergedProperties(MetadataProperty ref, List<MetadataProperty> allMetaData) {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(3);
-		for (MetadataProperty metadataProperty : allMetaData) {
-			if(comparePropertiesForMerge(metadataProperty, ref)) {
-				result.add(metadataProperty);
-			}
-		}
-		return result;
-	}
 
-	/**
-	 * Compares the metadata properties if they could be merged to one property. Properties
-	 * can only be merged if they have the same value and size.
-	 * 
-	 * @param metadataProperty1 The first property to be compared.
-	 * @param metadataProperty2 The second property to be compared.
-	 * @return <code>true</code> for merge and <code>false</code> otherwise.
-	 */
-	protected boolean comparePropertiesForMerge(final MetadataProperty metadataProperty1, MetadataProperty metadataProperty2) {
-		if(metadataProperty1 == metadataProperty2) {
-			return true;
-		}
-		
-		// test for value
-		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
-			&& CommonUtils.compareTo(metadataProperty2.getValues().get(0), metadataProperty1.getValues().get(0)) == 0;
-		
-		final String metadataProperty1Name = metadataProperty1.getName().toLowerCase();
-		final String metadataProperty2Name = metadataProperty2.getName().toLowerCase();		
-
-		if (result && metadataProperty1Name.equals(metadataProperty2Name)) {
-			// name is the same
-			return true;
-		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
-			//merge createdate and creationdate because they have the same sense
-			return true;
-		}  else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "modifydate", "moddate")) {
-			//merge createdate and creationdate because they have the same sense
-			return true;
-		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "calibrerating", "rating")) {
-			return true;
-		} else {
-			return false;
-		}
-	}	
-	
 	public static Property createProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, int valueIndex) {
 		return new EbookSheetProperty(metadataProperty, items, valueIndex);
 	}	
