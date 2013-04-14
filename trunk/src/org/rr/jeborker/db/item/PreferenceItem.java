@@ -6,10 +6,10 @@ import org.rr.jeborker.db.IDBObject;
 
 public class PreferenceItem implements IDBObject, Serializable {
 
-	@Index(type= "DICTIONARY")
+	@Index(type= {"DICTIONARY"})
 	private String name;
 	
-	@Index(type= "DICTIONARY")
+	@Index(type= {"DICTIONARY"})
 	private String value;
 
 	public String getName() {

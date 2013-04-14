@@ -198,7 +198,6 @@ public class DefaultDBManager {
 		for (Field field : dbViewFields) {
 			final String fieldName = field.getName();
 			try {
-				final String indexType = ((Index) field.getAnnotation(Index.class)).type();
 				final StringBuilder sql = new StringBuilder();
 
 				// CREATE PROPERTY User.id STRING
@@ -212,12 +211,16 @@ public class DefaultDBManager {
 				}
 
 				// CREATE INDEX <name> [ON <class-name> (prop-names)] <type> [<key-type>]
-				String indexName = getIndexName(itemClass, fieldName);
-				
-				sql.append("CREATE INDEX ").append(indexName).append(" ON ").append(itemClass.getSimpleName())
-						.append("(").append(fieldName).append(") ").append(indexType);
-				db.command(new OCommandSQL(sql.toString())).execute();
-				LoggerFactory.log(Level.INFO, this, "Created index for " + indexName);
+				String[] types = getIndexTypes(itemClass, fieldName);
+				for(String type : types) {
+					String indexName = getIndexName(itemClass, fieldName, type);
+					
+					sql.append("CREATE INDEX ").append(indexName).append(" ON ").append(itemClass.getSimpleName())
+							.append("(").append(fieldName).append(") ").append(type);
+					db.command(new OCommandSQL(sql.toString())).execute();
+					LoggerFactory.log(Level.INFO, this, "Created index for " + indexName);
+					sql.setLength(0);
+				}
 			} catch (Exception e) {
 				LoggerFactory.log(Level.SEVERE, this, "Failed to create index for " + fieldName, e);
 			}
@@ -227,8 +230,7 @@ public class DefaultDBManager {
 	/**
 	 * Creates a of an index for the given parameters.
 	 */
-	private String getIndexName(final Class<?> itemClass, String fieldName) {
-		String type = getIndexType(itemClass, fieldName);
+	private String getIndexName(final Class<?> itemClass, String fieldName, String type) {
 		return "indexFor" + itemClass.getSimpleName() + "_" + fieldName + "_" + type;
 	}
 	
@@ -238,9 +240,9 @@ public class DefaultDBManager {
 	 * @param fieldName The name if the field
 	 * @return The index type name.
 	 */
-	private String getIndexType(final Class<?> itemClass, String fieldName) {
+	private String[] getIndexTypes(final Class<?> itemClass, String fieldName) {
 		Field field = ReflectionUtils.getField(itemClass, fieldName);
-		final String indexType = ((Index) field.getAnnotation(Index.class)).type();
+		final String[] indexType = ((Index) field.getAnnotation(Index.class)).type();
 		return indexType;
 	}
 
@@ -303,6 +305,7 @@ public class DefaultDBManager {
 			// List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
 			// System.out.println(System.currentTimeMillis() - time);
 			// return new ODocumentMapper<T>(listResult, db);
+System.out.println(sql);			
 			return new ODocumentMapper<T>(sql, getDB());
 		} catch (NullPointerException e) {
 			return Collections.emptyList();
@@ -462,19 +465,24 @@ public class DefaultDBManager {
 	 */
 	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
 		//first try to get the desired object using the index.
-		final String indexName = getIndexName(class1, field);
-		final OIndex index = getDB().getMetadata().getIndexManager().getIndex(indexName);
-		if(index != null && index.getType().equals("DICTIONARY")) {
-			Object idxDoc = index.get(value);
-			if(idxDoc instanceof ODocument) {
-				ORID identity = ((ODocument)idxDoc).getIdentity();
-				return Collections.singletonList((T) getDB().load(identity));
-			} else if(idxDoc instanceof ORecordId) {
-				ORID identity = ((ORecordId)idxDoc).getIdentity();
-				return Collections.singletonList((T) getDB().load(identity));
-			} else if(idxDoc == null) {
-				//index exists but has no entry
-//				return Collections.emptyList();
+		final String[] types = getIndexTypes(class1, field);
+		for(String type : types) {
+			if(type.equals("DICTIONARY")) {
+				final String indexName = getIndexName(class1, field, type);
+				final OIndex index = getDB().getMetadata().getIndexManager().getIndex(indexName);
+				if(index != null && index.getType().equals("DICTIONARY")) {
+					Object idxDoc = index.get(value);
+					if(idxDoc instanceof ODocument) {
+						ORID identity = ((ODocument)idxDoc).getIdentity();
+						return Collections.singletonList((T) getDB().load(identity));
+					} else if(idxDoc instanceof ORecordId) {
+						ORID identity = ((ORecordId)idxDoc).getIdentity();
+						return Collections.singletonList((T) getDB().load(identity));
+					} else if(idxDoc == null) {
+						//index exists but has no entry
+		//				return Collections.emptyList();
+					}
+				}
 			}
 		}
 
