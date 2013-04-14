@@ -154,7 +154,7 @@ public abstract class PDFCommonDocument {
 				stamper = new PdfStamper(reader, ebookResourceOutputStream);
 				byte[] xmp = this.xmpMetadata != null ? this.xmpMetadata : getXMPMetadata();
 				stamper.setXmpMetadata(XMPUtils.handleMissingXMPRootTag(xmp));
-				Map<String, String> info = this.moreInfo != null ? this.moreInfo : getInfo();
+				Map<String, String> info = this.moreInfo != null ? this.moreInfo : reader.getInfo();
 				if(this.moreInfo != null) {
 					//to delete old entries, itext need to null them.
 					HashMap<String, String> oldInfo = reader.getInfo();
