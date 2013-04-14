@@ -3,6 +3,7 @@ package org.rr.jeborker.gui;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -11,8 +12,10 @@ import javax.swing.JSlider;
 
 import org.rr.common.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
+import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.jeborker.metadata.MetadataProperty;
 
 class ConverterPreferenceView extends JPreferenceDialog {
 	
@@ -99,6 +102,10 @@ class ConverterPreferenceView extends JPreferenceDialog {
 				public void itemStateChanged(ItemEvent e) {
 					if(e.getItem().equals(Bundle.getString("ConverterPreferenceView.pref.landscape.split"))) {
 						isMangaCheckBox.setEnabled(true);
+						if(isManga()) {
+							//enable the manga checkbox per default if there is any hint the selection is a manga.
+							isMangaCheckBox.setSelected(true);
+						}
 					} else {
 						isMangaCheckBox.setEnabled(false);
 					}
@@ -131,5 +138,22 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	public void setShowImageSizeEntry(boolean showImageSizeEntry) {
 		this.showImageSizeEntry = showImageSizeEntry;
 	}
+	
+	/**
+	 * Fast check at the loaded metadata for a manga mode property. No metadata loading happens here!
+	 * @return <code>true</code> if a manga metadata property could be found and is <code>true</code> and <code>false</code> otherwise.
+	 */
+	private static boolean isManga() {
+		boolean result = false;
+		List<MetadataProperty> allMetaData = MainController.getController().getEbookSheetPropertyModel().getAllMetaData();
+		for(MetadataProperty metadata : allMetaData) {
+			String name = metadata.getName();
+			if(name.toLowerCase().indexOf("manga") != -1) {
+				String mangaValue = metadata.getValueAsString();
+				return CommonUtils.toBoolean(mangaValue);
+			}
+		}
+		return result;
+	}	
 	
 }
