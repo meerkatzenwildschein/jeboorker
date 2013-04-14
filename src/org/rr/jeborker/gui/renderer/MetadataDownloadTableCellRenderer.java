@@ -65,7 +65,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
-	public MetadataDownloadTableCellRenderer() {
+	public MetadataDownloadTableCellRenderer(boolean coverSupport) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{LEFT_WIDTH, 0, 0};
 		gridBagLayout.rowHeights = new int[]{344, 0};
@@ -89,6 +89,9 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		imageCheck = new JCheckBox();
 		imageCheck.setOpaque(false);
 		imageCheck.setSelected(false);
+		if(!coverSupport) {
+			imageCheck.setEnabled(false);
+		}
 		imageCheck.setBounds(0, 0, imageCheck.getPreferredSize().width, imageCheck.getPreferredSize().height);
 		layeredPane.add(imageCheck, Integer.valueOf(1));
 		
