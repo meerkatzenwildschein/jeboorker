@@ -50,13 +50,14 @@ class SearchAction extends AbstractAction {
 					List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
 					if(!selectedFilterFields.isEmpty()) {
 						for (Field field : selectedFilterFields) {
-							rootFilterCondition.addOrChild(new QueryCondition(field.getName(), "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+							//rootFilterCondition.addOrChild(new QueryCondition(field.getName(), "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+							rootFilterCondition.addOrChild(new QueryCondition(field.getName(), filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
 						}
 					} else {
 						//default filter/search fields
-						rootFilterCondition.addOrChild(new QueryCondition("author", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
-						rootFilterCondition.addOrChild(new QueryCondition("title", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
-						rootFilterCondition.addOrChild(new QueryCondition("file", "%" + filterValue + "%", "like", QUERY_IDENTIFER));
+						rootFilterCondition.addOrChild(new QueryCondition("author", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
+						rootFilterCondition.addOrChild(new QueryCondition("title", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
+						rootFilterCondition.addOrChild(new QueryCondition("file", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
 					}
 				}
 			}

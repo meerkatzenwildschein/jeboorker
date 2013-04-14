@@ -15,6 +15,6 @@ public @interface Index {
      * FULLTEXT, by indexing any single word of the text. It's used in query with the operator CONTAINSTEXT
      * DICTIONARY, like UNIQUE but in case the key already exists replace the record with the new one 
 	 */
-	public String type();
+	public String[] type();
 
 }
