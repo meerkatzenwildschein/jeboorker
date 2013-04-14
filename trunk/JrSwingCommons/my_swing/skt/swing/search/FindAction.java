@@ -67,7 +67,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 
 		searchField.registerKeyboardAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { 
-				popup.hide();
+				hidePopup();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
 		
@@ -75,9 +75,14 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				popup.hide();
+				hidePopup();
 			}
 		});
+	}
+	
+	private void hidePopup() {
+		popup.hide();
+		comp.requestFocus();
 	}
 
 
@@ -95,7 +100,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
         if(popup == null) {
 	        popup = PopupFactory.getSharedInstance().getPopup(comp, searchPanel, x, y);
         } else {
-        	popup.hide();
+        	hidePopup();
         	popup = PopupFactory.getSharedInstance().getPopup(comp, searchPanel, x, y);
         }
         popup.show();
@@ -106,7 +111,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == searchField) {
-			popup.hide();
+			hidePopup();
 		} else {
 			if(comp == null) {
 				comp = (JComponent) ae.getSource();
