@@ -33,6 +33,7 @@ import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.table.JRTable;
 import org.rr.commons.collection.TransformValueList;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -42,6 +43,7 @@ import org.rr.jeborker.gui.renderer.MetadataDownloadTableCellRenderer;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
 import org.rr.jeborker.remote.metadata.MetadataDownloadProviderFactory;
 import org.rr.jeborker.remote.metadata.MetadataDownloader;
@@ -51,6 +53,8 @@ class MetadataDownloadView extends JDialog {
 	public static final int ACTION_RESULT_OK = 0;
 	
 	private int actionResult = -1;
+	
+	private boolean hasCoverWriterSupport = true;
 	
 	private HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
 	
@@ -113,8 +117,8 @@ class MetadataDownloadView extends JDialog {
 						
 						//new renderer and editor instances for releasing cached resources and avoid get cached values
 						//from the old search.
-						table.setDefaultRenderer(MetadataDownloadEntry.class, new MetadataDownloadTableCellRenderer());
-						table.setDefaultEditor(MetadataDownloadEntry.class, new MetadataDownloadTableCellEditor(new MetadataDownloadTableCellRenderer()));
+						table.setDefaultRenderer(MetadataDownloadEntry.class, new MetadataDownloadTableCellRenderer(hasCoverWriterSupport));
+						table.setDefaultEditor(MetadataDownloadEntry.class, new MetadataDownloadTableCellEditor(new MetadataDownloadTableCellRenderer(hasCoverWriterSupport)));
 
 						table.setModel(model);
 					} finally {
@@ -151,9 +155,11 @@ class MetadataDownloadView extends JDialog {
 	}
 
 	private void initialize() {
+		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+		this.hasCoverWriterSupport = hasCoverWriterSupport(selectedEbookPropertyItems);
+		
 		setTitle(Bundle.getString("MetadataDownloadView.title"));
 		setSize(800, 600);
-		
 		((JComponent)getContentPane()).registerKeyboardAction(abortAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -220,7 +226,6 @@ class MetadataDownloadView extends JDialog {
 			}
 		});
 		
-		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		if(!selectedEbookPropertyItems.isEmpty()) {
 			String searchPhrase = (StringUtils.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
 			if(!searchPhrase.isEmpty()) {
@@ -274,6 +279,23 @@ class MetadataDownloadView extends JDialog {
 
 	public int getActionResult() {
 		return this.actionResult;
+	}
+	
+	/**
+	 * Test all selected resources for cover writer support.
+	 * @param selectedEbookPropertyItems Selected items to be tested.
+	 * @return <code>true</code> if all selected items have cover writer support or <code>false</code> if one
+	 *     or more have not.
+	 */
+	private boolean hasCoverWriterSupport(final List<EbookPropertyItem> selectedEbookPropertyItems) {
+		for(EbookPropertyItem selectedEbookPropertyItem : selectedEbookPropertyItems) {
+			IResourceHandler resourceHandler = selectedEbookPropertyItem.getResourceHandler();
+			boolean hasCoverWriterSupport = MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
+			if(!hasCoverWriterSupport) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**
