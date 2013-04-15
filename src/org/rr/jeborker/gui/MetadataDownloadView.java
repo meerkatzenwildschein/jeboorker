@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FilenameUtils;
 import org.rr.common.swing.ShadowPanel;
+import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.table.JRTable;
 import org.rr.commons.collection.TransformValueList;
@@ -159,7 +160,8 @@ class MetadataDownloadView extends JDialog {
 		this.hasCoverWriterSupport = hasCoverWriterSupport(selectedEbookPropertyItems);
 		
 		setTitle(Bundle.getString("MetadataDownloadView.title"));
-		setSize(800, 600);
+		setSize(700, 500);
+		SwingUtils.centerOnScreen(this);
 		((JComponent)getContentPane()).registerKeyboardAction(abortAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
