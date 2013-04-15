@@ -10,19 +10,17 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 
+import org.rr.common.swing.SwingUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;
@@ -65,14 +63,14 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		initialize();
 		setModal(true);
 
-		setLocation(mainWindow.getLocation().x, mainWindow.getLocation().y);
-		setSize(800, 600);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
 	}
 	
 	private void initialize() {
 		setTitle(Jeboorker.app + " " + " Logfile");
-		((JComponent)getContentPane()).registerKeyboardAction(closeAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		setSize(800, 600);
+		SwingUtils.centerOnScreen(this);
+		SwingUtils.setEscapeWindowAction(this, closeAction);
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
