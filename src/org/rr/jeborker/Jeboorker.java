@@ -4,7 +4,6 @@ import it.sauronsoftware.junique.AlreadyLockedException;
 import it.sauronsoftware.junique.JUnique;
 import it.sauronsoftware.junique.MessageHandler;
 
-import java.awt.EventQueue;
 import java.awt.Frame;
 import java.io.File;
 import java.io.FileFilter;
@@ -36,7 +35,7 @@ public class Jeboorker {
 	
 	public static String app = "Jeboorker";
 
-	private static MainController mainController = null; 
+	private static MainController mainController; 
 	
 	public static long startupTime = System.currentTimeMillis();
 	
@@ -90,20 +89,14 @@ public class Jeboorker {
 		
 		if(start) {
 			setupLookAndFeel();		
-	
-			//start the application
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						logSystemInfo();
-						
-						mainController = MainController.getController();
-					} catch (Exception e) {
-						LoggerFactory.log(Level.SEVERE, null, "Main failed", e); 
-						System.exit(-1);
-					}
-				}
-			});
+			try {
+				logSystemInfo();
+				
+				mainController = MainController.getController();
+			} catch (Exception e) {
+				LoggerFactory.log(Level.SEVERE, null, "Main failed", e); 
+				System.exit(-1);
+			}
 		} else {
 			// Sends arguments to the already active instance.
 			JUnique.sendMessage(Jeboorker.class.getName(), "");
