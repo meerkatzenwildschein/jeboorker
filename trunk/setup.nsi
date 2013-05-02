@@ -63,6 +63,7 @@ Section -Main SEC0000
     File Jeboorker64.lap
     File Jeboorker.bat
     File Jeboorker.vbs
+    File Jeboorker.exe
     File msvcr71.dll
     File msvcr100.dll
     File Readme.txt
@@ -165,7 +166,7 @@ Section -post SEC0001
 #    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Jeboorker for Java 32bit.lnk" "$INSTDIR\Jeboorker32.exe"
 #    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Jeboorker for Java 64bit.lnk" "$INSTDIR\Jeboorker64.exe"
     SetOutPath $INSTDIR
-    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Jeboorker.lnk" "$INSTDIR\Jeboorker.vbs"
+    CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Jeboorker.lnk" "$INSTDIR\Jeboorker.exe"
 
     SetOutPath $SMPROGRAMS\$StartMenuGroup
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
