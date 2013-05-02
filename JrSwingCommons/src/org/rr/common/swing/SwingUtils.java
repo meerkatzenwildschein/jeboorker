@@ -7,10 +7,15 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.rr.commons.utils.MathUtils;
@@ -206,6 +211,15 @@ public class SwingUtils {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension size = window.getSize();
 		window.setLocation((screenSize.width - size.width) / 2, (screenSize.height - size.height) / 2);
+	}
+
+	/**
+	 * Sets the given action so it's invoked if the user hits the escape key. 
+	 * @param dialog The dialog to attach the escape key.
+	 * @param abortAction The action that is invoked if the escape key is pressed.
+	 */
+	public static void setEscapeWindowAction(JDialog dialog, ActionListener abortAction) {
+		((JComponent)dialog.getContentPane()).registerKeyboardAction(abortAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 	}
 	
 	/**
