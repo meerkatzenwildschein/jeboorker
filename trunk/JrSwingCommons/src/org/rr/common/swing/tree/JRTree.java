@@ -8,7 +8,8 @@ import java.awt.event.MouseWheelEvent;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeNode;
@@ -59,10 +60,19 @@ public class JRTree extends JTree {
 		
 		final AutoMoveHorizontalMouseListener autoMoveHorizontalMouseListener = new AutoMoveHorizontalMouseListener();
 		this.addMouseMotionListener(autoMoveHorizontalMouseListener);
-		SwingUtilities.invokeLater(new Runnable() {
+		
+		this.addAncestorListener(new AncestorListener() {
 			
 			@Override
-			public void run() {
+			public void ancestorRemoved(AncestorEvent event) {
+			}
+			
+			@Override
+			public void ancestorMoved(AncestorEvent event) {
+			}
+			
+			@Override
+			public void ancestorAdded(AncestorEvent event) {
 				JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(JRTree.this);
 				surroundingScrollPane.addMouseWheelListener(autoMoveHorizontalMouseListener);
 			}
