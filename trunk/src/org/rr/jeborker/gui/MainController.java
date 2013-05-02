@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -33,6 +34,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
+import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
@@ -60,6 +62,8 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 public class MainController {
 
 	MainView mainWindow;
+	
+	private JSplashScreen splashScreen;
 	
 	/**
 	 * The controller singleton.
@@ -186,9 +190,16 @@ public class MainController {
 	 */
 	public static MainController getController() {
 		if(controller == null) {
-			controller = new MainController();
 			try {
-				controller.initialize();
+				controller = new MainController();
+				controller.splashScreen = JSplashScreen.getInstance();
+				controller.splashScreen.startProgress(null);
+				try {
+					controller.initialize();
+				} finally {
+					controller.splashScreen.setLoadingValue(100);
+					controller.splashScreen.endProgress();
+				}
 			} catch (Exception e) {
 				LoggerFactory.getLogger(MainController.class).log(Level.SEVERE, "Startup failed.", e);
 			} 
@@ -262,17 +273,35 @@ public class MainController {
 	}
 	
 	private void initialize() throws Exception {
+		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.opendb"));
+		splashScreen.setLoadingValue(40);	
+		
 		mainWindow = new MainView();
+		
+		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.init"));
+		splashScreen.setLoadingValue(60);			
 		initListeners();
+		
 		initSubController();
+
+		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.restore"));
+		splashScreen.setLoadingValue(80);
 		
 		MainControllerUtils.restoreApplicationProperties(mainWindow);
 		MainMenuBarController.getController().restoreProperties();
-		mainWindow.setVisible(true);
-		LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
 		
-		MainController.getController().getMainWindow().getGlassPane().setVisible(true);
-		initMainModel();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				mainWindow.setVisible(true);
+				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
+				
+				MainController.getController().getMainWindow().getGlassPane().setVisible(true);
+				initMainModel();
+			}
+		});
+		
 	}
 
 	/**
