@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.collection.ListenerList;
@@ -23,10 +22,25 @@ public class JeboorkerPreferences {
 	
 	private static final String BASE_PATH = "basePath";
 	
-	private static final Preferences APP_NODE;
-	static {
-		String suffix = System.getProperties().getProperty("application.suffix");
-		APP_NODE = Preferences.userRoot().node("jeboorker" + (suffix != null ? "." + suffix : ""));
+	public static interface PreferenceKey {
+		
+		public String getKey();
+
+		public String getDefaultValue();
+		
+	}	
+	
+	public static enum PREFERENCE_KEYS implements PreferenceKey {
+		DELETE_EBOOK_AFTER_IMPORT {
+			@Override
+			public String getKey() {
+				return "deleteEbookAfterImport";
+			}
+			
+			public String getDefaultValue() {
+				return "false";
+			}
+		}
 	}
 
 	public static void addBasePath(final String path) {
@@ -123,8 +137,6 @@ public class JeboorkerPreferences {
 			String result;
 			if((result = getEntryFromDB(key)) != null) {
 				return result;
-			} else {
-				return APP_NODE.get(key, "");
 			}
 		} return "";
 	}
@@ -144,12 +156,7 @@ public class JeboorkerPreferences {
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static Number getGenericEntryAsNumber(final String key) {
-		String result;
-		if((result = getEntryFromDB(key)) != null) {
-		} else {
-			result = APP_NODE.get(key, "");
-		}
-		
+		String result = getEntryFromDB(key);
 		if(result != null && result.length() > 0) {
 			return Double.valueOf(result);
 		} else {
@@ -157,12 +164,26 @@ public class JeboorkerPreferences {
 		}
 	}	
 	
+	public static void addGenericEntryBoolean(final PREFERENCE_KEYS key, final Boolean b) {
+		addGenericEntryBoolean(key.getKey(), b);
+	}
+	
 	public static void addGenericEntryBoolean(final String key, final Boolean b) {
 		addGenericEntryAsNumber(key, b.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0));
 	}
 	
 	public static Boolean getGenericEntryAsBoolean(final String key) {
 		return getEntryAsBoolean(key, Boolean.FALSE);
+	}
+	
+	/**
+	 * Get the given {@link PREFERENCE_KEYS} as boolean value.  
+	 * @return The desired value. Never returns <code>null</code>.
+	 */
+	public static Boolean getEntryAsBoolean(final PREFERENCE_KEYS key) {
+		final String defaultValueString = key.getDefaultValue();
+		final Boolean defaultValue = CommonUtils.toBoolean(defaultValueString);
+		return getEntryAsBoolean(key.getKey(), defaultValue);
 	}
 	
 	public static Boolean getEntryAsBoolean(final String key, Boolean defaultValue) {
@@ -200,7 +221,6 @@ public class JeboorkerPreferences {
 		
 		deleteEntryFromDB(key);
 		db.storeObject(newPreferenceItem);
-		APP_NODE.remove(key);
 	}
 	
 	private static void deleteEntryFromDB(final String key) {

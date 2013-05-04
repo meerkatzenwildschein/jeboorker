@@ -28,9 +28,15 @@ public class PreferenceController {
 		}
 	}
 	
+	/**
+	 * Push the preference dialog values into the application.
+	 */
 	private void setPreferenceViewValues(PreferenceView view) {
 		boolean isTreeAutoscrollEnabled = view.getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_PREFERENCE_NAME);
 		JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
+		
+		boolean isEbookDeleteAfterImport = view.getBooleanValue(PreferenceView.DELETE_AFTER_IMPORT_PREFERENCE_NAME);
+		JeboorkerPreferences.addGenericEntryBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);
 	}
 	
 	private PreferenceView getView() {
