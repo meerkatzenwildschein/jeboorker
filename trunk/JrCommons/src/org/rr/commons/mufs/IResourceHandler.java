@@ -263,7 +263,7 @@ public interface IResourceHandler extends Comparable<IResourceHandler> {
 	 * @return <code>true</code> if the copy was successfull and <code>false</code> otherwise.
 	 * @throws IOException 
 	 */
-	public void copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException;
+	public boolean copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException;
 	
 	/**
 	 * Frees all resources
