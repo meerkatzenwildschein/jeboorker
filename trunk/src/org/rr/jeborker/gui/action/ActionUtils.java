@@ -285,6 +285,7 @@ public class ActionUtils {
 					ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
 					MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
 					importedResources.add(targetResource);
+					
 					boolean delete = JeboorkerPreferences.getEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
 					if(delete) {
 						sourceResource.delete();
