@@ -40,6 +40,16 @@ public class JeboorkerPreferences {
 			public String getDefaultValue() {
 				return "false";
 			}
+		},
+		TREE_AUTO_SCROLLING_ENABLED {
+			@Override
+			public String getKey() {
+				return "TreeAutoScrollingEnabled";
+			}
+			
+			public String getDefaultValue() {
+				return "false";
+			}
 		}
 	}
 
@@ -303,7 +313,7 @@ public class JeboorkerPreferences {
 	 * Tells if the auto scrolling the the trees is enabled.
 	 */
 	public static boolean isTreeAutoScrollingEnabled() {
-		Boolean result = getEntryAsBoolean("TreeAutoScrollingEnabled", Boolean.TRUE);
+		Boolean result = getEntryAsBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED);
 		return result;
 	}	
 	
@@ -311,7 +321,7 @@ public class JeboorkerPreferences {
 	 * Sets the value for enable / disable the auto scrolling the the trees
 	 */
 	public static void setTreeAutoScrollingEnabled(final boolean value) {
-		addGenericEntryBoolean("TreeAutoScrollingEnabled", Boolean.valueOf(value));
+		addGenericEntryBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED, Boolean.valueOf(value));
 		for(JeboorkerPreferenceListener listener : preferenceChangeListener) {
 			listener.treeAutoScrollingChanged(value);
 		}
