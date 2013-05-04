@@ -173,10 +173,10 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	 * and puts it into the target {@link IResourceHandler}. 
 	 */
 	@Override
-	public void copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
+	public boolean copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
 		//handle overwrite
 		if(!overwrite && targetRecourceLoader.exists()) {
-			return;
+			return false;
 		}
 		
 		//perform a slow stream copy.
@@ -184,6 +184,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		try {
 			contentOutputStream = targetRecourceLoader.getContentOutputStream(false);
 			IOUtils.write(this.getContent(), contentOutputStream);
+			return true;
 		} finally {
 			IOUtils.closeQuietly(contentOutputStream);
 		}

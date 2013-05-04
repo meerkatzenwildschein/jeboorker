@@ -513,17 +513,17 @@ class FileResourceHandler extends AResourceHandler {
 
 
 	@Override
-	public void copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
+	public boolean copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
 		if(targetRecourceLoader instanceof FileResourceHandler) {
 			if(this.isDirectoryResource() && !targetRecourceLoader.exists()) {
 				//copy the source directory to the not existing target directory
 				targetRecourceLoader.mkdirs();
 				FileUtils.copyDirectory(this.file, ((FileResourceHandler)targetRecourceLoader).file);
-				return;
+				return true;
 			} if(this.isDirectoryResource() && targetRecourceLoader.isDirectoryResource()) {
 				//copy the source directory to the target directory
 				FileUtils.copyDirectory(this.file, ((FileResourceHandler)targetRecourceLoader).file);
-				return;
+				return true;
 			} else if(!this.isDirectoryResource()) {
 				//test if the target file already exists.
 				if(!overwrite && targetRecourceLoader.exists() && !targetRecourceLoader.isDirectoryResource()) {
@@ -532,10 +532,11 @@ class FileResourceHandler extends AResourceHandler {
 				
 				//try to copy using fast nio copy.
 				try {
-					this.nioCopyFile(this.file, ((FileResourceHandler)targetRecourceLoader).file, overwrite);
+					return this.nioCopyFile(this.file, ((FileResourceHandler)targetRecourceLoader).file, overwrite);
 				} catch (IOException e) {
 					//copy the file to the target directory resource
 					FileUtils.copyFile(this.file, ((FileResourceHandler)targetRecourceLoader).file);
+					return true;
 				}
 			} else {
 				throw new IOException("could not copy the directory "+this.getResourceString()+" over the file " + targetRecourceLoader.getResourceString());
@@ -546,6 +547,7 @@ class FileResourceHandler extends AResourceHandler {
 			try {
 				contentOutputStream = targetRecourceLoader.getContentOutputStream(false);
 				IOUtils.write(this.getContent(), contentOutputStream);
+				return true;
 			} finally {
 				IOUtils.closeQuietly(contentOutputStream);
 			}
@@ -587,11 +589,11 @@ class FileResourceHandler extends AResourceHandler {
 	 * @param overwrite <code>true</code> if overwriting exiting target.
 	 * @throws IOException
 	 */
-	public void nioCopyFile(File sourceFile, File destFile, boolean overwrite) throws IOException {
+	public boolean nioCopyFile(File sourceFile, File destFile, boolean overwrite) throws IOException {
 		//start position of the file data to copy
 		long position = 0;
 		if(!overwrite && destFile.exists()) {
-			position = destFile.length();
+			return false;
 		} 
 		
 		if (!destFile.exists()) {
@@ -604,6 +606,7 @@ class FileResourceHandler extends AResourceHandler {
 			source = new FileInputStream(sourceFile).getChannel();
 			destination = new FileOutputStream(destFile).getChannel();
 			destination.transferFrom(source, position, source.size());
+			return true;
 		} finally {
 			if (source != null) {
 				source.close();
