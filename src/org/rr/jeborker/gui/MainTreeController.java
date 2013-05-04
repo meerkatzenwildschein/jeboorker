@@ -37,6 +37,17 @@ public class MainTreeController {
 	}
 	
 	/**
+	 * Removes the selected items in the tree if they no longer exists.
+	 */
+	public void removeDeletedTreeItems() {
+		JTree fileSystemTree = mainWindow.getFileSystemTree();
+		TreeModel model = ((JTree) fileSystemTree).getModel();
+		if(model instanceof FileSystemTreeModel) {
+			((FileSystemTreeModel) model).removeDeletedFileNodes();
+		}
+	}
+	
+	/**
 	 * Get the selected Tree items from that tree that is currently visible to the user
 	 */
 	public List<IResourceHandler> getSelectedTreeItems() {

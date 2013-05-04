@@ -14,6 +14,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.JeboorkerConstants;
 import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -270,16 +271,26 @@ public class ActionUtils {
 	/**
 	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
 	 * The files will be copied and the {@link EbookPropertyItem}s will be created. 
+	 * @return A list of all imported (target) file resources.
 	 */
-	public static void importEbookResources(int dropRow, String basePath, IResourceHandler targetRecourceDirectory,
-			final List<IResourceHandler> transferedFiles) throws IOException {
-		for(IResourceHandler sourceResource : transferedFiles) {
+	public static List<IResourceHandler> importEbookResources(int dropRow, String basePath, IResourceHandler targetRecourceDirectory,
+			final List<IResourceHandler> sourceResourcesToTransfer) throws IOException {
+		ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
+		for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
 			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
 			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
-				sourceResource.copyTo(targetResource, false);
-				EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
-				ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-				MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
+				boolean success = sourceResource.copyTo(targetResource, false);
+				if(success) {
+					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
+					ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
+					MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
+					importedResources.add(targetResource);
+					boolean delete = JeboorkerPreferences.getEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
+					if(delete) {
+						sourceResource.delete();
+						MainController.getController().getMainTreeController().removeDeletedTreeItems();
+					}
+				}
 			} else {
 				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
 					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
@@ -290,5 +301,6 @@ public class ActionUtils {
 				}
 			}
 		}
+		return importedResources;
 	}		
 }

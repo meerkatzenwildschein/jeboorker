@@ -11,6 +11,8 @@ class PreferenceView extends JPreferenceDialog {
 	
 	static final String AUTO_SCOLL_ITEM_PREFERENCE_NAME = "autoScollItem";
 	
+	static final String DELETE_AFTER_IMPORT_PREFERENCE_NAME = "deleteEbookAfterImport";
+	
 	private boolean isInitialized = false;
 	
 	private PreferenceController preferenceController;
@@ -36,10 +38,18 @@ class PreferenceView extends JPreferenceDialog {
 			
 			{
 				String label = Bundle.getString("PreferenceView.pref.autoscroll");
-				JCheckBox generalCategoryCheckBox = new JRCheckBox();
-				generalCategoryCheckBox.setSelected(JeboorkerPreferences.isTreeAutoScrollingEnabled());
-				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_PREFERENCE_NAME, label, generalCategoryCheckBox, generalCategory);
+				JCheckBox autoScrollCheckBox = new JRCheckBox();
+				autoScrollCheckBox.setSelected(JeboorkerPreferences.isTreeAutoScrollingEnabled());
+				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_PREFERENCE_NAME, label, autoScrollCheckBox, generalCategory);
 				addPreferenceEntry(autoScollItem);
+			}
+			
+			{
+				String label = Bundle.getString("PreferenceView.pref.deleteAfterImport");
+				JCheckBox deleteAfterImportCheckBox = new JRCheckBox();
+				deleteAfterImportCheckBox.setSelected(JeboorkerPreferences.getEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT));
+				PreferenceEntry deleteEbookAfterImportItem = new PreferenceEntry(DELETE_AFTER_IMPORT_PREFERENCE_NAME, label, deleteAfterImportCheckBox, generalCategory);
+				addPreferenceEntry(deleteEbookAfterImportItem);
 			}
 		}
 	}

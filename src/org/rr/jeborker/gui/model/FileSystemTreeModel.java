@@ -114,6 +114,27 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 	}
 	
 	/**
+	 * Remove all deleted files from the model.
+	 */
+	public void removeDeletedFileNodes() {
+		int rows = tree.getRowCount();
+		ArrayList<FileSystemNode> nodesToRemove = new ArrayList<FileSystemNode>();
+		for(int i = 0; i< rows; i++) {
+			Object aNode = tree.getPathForRow(i).getLastPathComponent();
+			if(aNode instanceof FileSystemNode) {
+				FileSystemNode fsNode = (FileSystemNode) aNode;
+				if(!fsNode.getResource().exists()) {
+					nodesToRemove.add(fsNode);
+				}
+			}
+		}
+		
+		for(FileSystemNode fsNode : nodesToRemove) {
+			removeNodeFromParent(fsNode);
+		}
+	}
+	
+	/**
 	 * Get some special folder to be shown at the root file levels.
 	 */
 	private List<File> getSpecialFolders() {

@@ -160,6 +160,7 @@ class MainView extends JFrame {
 	JRScrollPane mainTableScrollPane;
 
 	JTabbedPane treeTabbedPane;
+	
 	private JPanel buttonPanel;
 
 	/**
@@ -1038,9 +1039,13 @@ class MainView extends JFrame {
 		}
 	}
 
-	public JTree getSelectedTreePathComponent() {
+	JTree getSelectedTreePathComponent() {
 		JTree selectedComponent = (JTree) SwingUtils.getAllComponents(JTree.class, (Container) treeTabbedPane.getSelectedComponent())[0];
 		return selectedComponent;
+	}
+	
+	JTree getFileSystemTree() {
+		return fileSystemTree;
 	}
 	
 	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
