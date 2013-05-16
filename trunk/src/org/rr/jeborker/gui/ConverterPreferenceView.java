@@ -154,6 +154,6 @@ class ConverterPreferenceView extends JPreferenceDialog {
 			}
 		}
 		return result;
-	}	
+	}
 	
 }

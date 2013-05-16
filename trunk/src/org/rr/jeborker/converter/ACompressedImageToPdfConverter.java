@@ -29,7 +29,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 	
 	private ConverterPreferenceController converterPreferenceController = null;
 	
-	public ACompressedImageToPdfConverter(IResourceHandler comicBookResource) {
+	ACompressedImageToPdfConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
 	}	
 	

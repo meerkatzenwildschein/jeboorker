@@ -138,8 +138,18 @@ public class ConverterPreferenceController {
 		return getView().getNumericValue(ConverterPreferenceView.REDUCE_IMAGE_SIZE_PREFERENCE_NAME);
 	}	
 	
+	/**
+	 * Sets the visibility of the page/image size slide.
+	 */
 	public void setShowImageSizeEntry(boolean showImageSizeEntry) {
 		getView().setShowImageSizeEntry(showImageSizeEntry);
 	}	
+	
+	/**
+	 * Sets the visibility of the landscape setup entries. 
+	 */
+	public void setShowLandscapePageEntries(boolean showLandscapePageEntries) {
+		getView().setShowLandscapePageEntries(showLandscapePageEntries);
+	}
 	
 }

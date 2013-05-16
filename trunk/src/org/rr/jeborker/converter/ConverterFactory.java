@@ -24,6 +24,7 @@ public class ConverterFactory {
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime().equals(resource.getMimeType())) {
 			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
 			result.add(new PdfToCBZConverter(resource));
+			result.add(new PdfToPdfConverter(resource));
 			return result;
 		}
 		return Collections.emptyList();
