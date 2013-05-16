@@ -1,9 +1,7 @@
 package org.rr.jeborker.metadata.pdf;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,14 +15,12 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.io.FileChannelRandomAccessSource;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 public abstract class PDFCommonDocument {
 
@@ -106,10 +102,6 @@ public abstract class PDFCommonDocument {
 	private static class ItextPDFDocument extends PDFCommonDocument {
 
 		private PdfReader pdfReaderI;
-		
-		private FileInputStream fileInputStreamI;
-		
-		private FileChannel fileChannelI;
 		
 		@Override
 		public byte[] getXMPMetadata() throws IOException {
@@ -256,21 +248,9 @@ public abstract class PDFCommonDocument {
 			return null;
 		}
 
-		private void initReader() {
-			try {
-				fileInputStreamI = new FileInputStream(getResourceHandler().toFile());
-				fileChannelI = fileInputStreamI.getChannel();
-				FileChannelRandomAccessSource fileChannelRandomAccessSource = new FileChannelRandomAccessSource(fileChannelI);
-				RandomAccessFileOrArray rafPdfIn = new RandomAccessFileOrArray(fileChannelRandomAccessSource); 
-				this.pdfReaderI = new PdfReader(rafPdfIn, null);
-			} catch(Throwable e) {
-				throw new RuntimeException(e.getMessage() + " at '" + getResourceHandler().getName() + "'", e);
-			}
-		}
-
-		private PdfReader getReader() {
+		private PdfReader getReader() throws IOException {
 			if(this.pdfReaderI == null) {
-				initReader();
+				this.pdfReaderI = PDFUtils.getReader(getResourceHandler().toFile());
 			}
 			return this.pdfReaderI;
 		}		
@@ -279,16 +259,6 @@ public abstract class PDFCommonDocument {
 			if(this.pdfReaderI != null) {
 				this.pdfReaderI.close();
 				this.pdfReaderI = null;
-			}
-			if(fileInputStreamI != null) {
-				IOUtils.closeQuietly(fileInputStreamI);
-				this.fileInputStreamI = null;
-			}
-			if(fileChannelI != null) {
-				try {
-					fileChannelI.close();
-					this.fileChannelI = null;
-				} catch (IOException e) {}
 			}
 		}
 		
