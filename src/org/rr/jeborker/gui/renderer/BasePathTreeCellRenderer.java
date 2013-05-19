@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -58,6 +59,10 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	private Icon eyesInvisible;
 	private Icon eyesTreeState;
 	
+	private Font labelNormalFont;
+	
+	private Font labelBoldFont;
+	
 	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
 		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
@@ -95,6 +100,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 //		checkbox.setRolloverSelectedIcon(eyesInvisible); //rollover selected
 		
 		label = new JLabel();
+		this.labelNormalFont = label.getFont();
+		this.labelBoldFont = new Font(this.labelNormalFont.getName(), Font.BOLD, this.labelNormalFont.getSize());
 		label.setOpaque(false);
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.fill = GridBagConstraints.BOTH;
@@ -137,6 +144,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+		final int rowCount = tree.getRowCount();
 		final BasePathList basePaths = JeboorkerPreferences.getBasePath();
 		IResourceHandler pathResource;
 		if (value instanceof IResourceHandler) {
@@ -172,6 +180,10 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		}
 
 		try {
+			if(label.getFont() != labelNormalFont) {
+				//reset font
+				label.setFont(labelNormalFont);
+			}
 			JTree.DropLocation dropLocation = tree.getDropLocation();
 	        if (dropLocation != null
 	                && dropLocation.getChildIndex() == -1
@@ -197,6 +209,10 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 						label.setForeground(SwingUtils.getForegroundColor());		
 					} else {
 						label.setForeground(filteredForegroundColor);
+						if(rowCount == row + 1) {
+							//set the last tree entry bold if there is a click filter.
+							label.setFont(labelBoldFont);
+						}
 					}
 				}				
 				this.setBackground(SwingUtils.getBackgroundColor());
