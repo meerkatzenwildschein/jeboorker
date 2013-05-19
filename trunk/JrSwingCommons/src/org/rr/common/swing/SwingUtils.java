@@ -242,7 +242,7 @@ public class SwingUtils {
 	}
 	
 	/**
-	 * Removes the mnemonic marker from the given string and returnes the result.
+	 * Removes the mnemonic marker from the given string and returns the result.
 	 * @param text The text where the marker should be removed from.
 	 * @return The text where the first mnemonic char is removed.
 	 */
