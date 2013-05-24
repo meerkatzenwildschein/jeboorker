@@ -4,7 +4,6 @@ import java.awt.Point;
 
 import javax.swing.JFrame;
 
-import org.rr.jeborker.JeboorkerLogger;
 import org.rr.jeborker.JeboorkerPreferences;
 
 public class LoggerController {
@@ -29,7 +28,7 @@ public class LoggerController {
 	
 	private LoggerView getView() {
 		if(loggerView == null) {
-			loggerView = new LoggerView(mainWindow, this, JeboorkerLogger.log);
+			loggerView = new LoggerView(mainWindow, this);
 			this.initialize();
 		}
 		return loggerView;
