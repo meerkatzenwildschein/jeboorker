@@ -16,7 +16,7 @@ public class JeboorkerLogger extends Handler {
 	 * List that is limited to n elements and overwrites the
 	 * toString method so each entry is written into one line.
 	 */
-	public static final LruList<String> log = new LruList<String>(500) {
+	public static final LruList<String> log = new LruList<String>(1000) {
 		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
