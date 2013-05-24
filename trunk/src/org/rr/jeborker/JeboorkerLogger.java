@@ -7,11 +7,29 @@ import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+import org.rr.commons.collection.LruList;
 import org.rr.jeborker.gui.MainController;
 
 public class JeboorkerLogger extends Handler {
 	
-	public static final StringBuilder log = new StringBuilder();
+	/**
+	 * List that is limited to n elements and overwrites the
+	 * toString method so each entry is written into one line.
+	 */
+	public static final LruList<String> log = new LruList<String>(500) {
+		@Override
+		public String toString() {
+			StringBuilder result = new StringBuilder();
+			for(String s : map.values()) {
+				if(result.length() != 0) {
+					result.append("\n");
+				}
+				result.append(s);
+			}
+			
+			return result.toString();
+		}
+	};
 	
 	@Override
 	public void close() throws SecurityException {
@@ -57,8 +75,7 @@ public class JeboorkerLogger extends Handler {
 	
 	private static void toAppLog(LogRecord record) {
 		if (record.getMessage() != null) {
-			log.append(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + record.getLevel() + ": " + record.getMessage());
-			log.append("\n");
+			log.add(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + record.getLevel() + ": " + record.getMessage());
 		}
 		
 		if(record.getThrown() != null) {
@@ -67,7 +84,7 @@ public class JeboorkerLogger extends Handler {
 			record.getThrown().printStackTrace(new PrintWriter(stringWriter));
 			printWriter.flush();
 			printWriter.close();
-			log.append(stringWriter.getBuffer());
+			log.add(stringWriter.getBuffer().toString());
 		}
 	}
 }

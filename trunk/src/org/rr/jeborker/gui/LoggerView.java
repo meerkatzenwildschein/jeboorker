@@ -57,7 +57,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 	private JScrollPane scrollPane;
 	private JPanel bottomPanel;
 	
-	public LoggerView(JFrame mainWindow, LoggerController logMonitorController, StringBuilder logContent) {
+	public LoggerView(JFrame mainWindow, LoggerController logMonitorController) {
 		super(mainWindow);
 		this.logMonitorController = logMonitorController;
 		initialize();
@@ -122,16 +122,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 			}
 			
 			private void setLogText() {
-				int end = JeboorkerLogger.log.length();
-				int start = end > MAX_LOG_DISPLAY ? end - MAX_LOG_DISPLAY : 0;
-				int length = end - start;
-				char[] c = new char[length];
-				JeboorkerLogger.log.getChars(start, end, c, 0);
-				String text = new String(c);
-				if(length == MAX_LOG_DISPLAY) {
-					text = "..." + text;
-				}
-				textArea.setText(text);
+				textArea.setText(JeboorkerLogger.log.toString());
 			}
 
 			@Override
