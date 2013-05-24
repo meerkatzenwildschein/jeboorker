@@ -57,15 +57,9 @@ ShowUninstDetails show
 Section -Main SEC0000
     SetOverwrite on
     SetOutPath $INSTDIR
-    File Jeboorker32.exe
-    File Jeboorker64.exe
-    File Jeboorker32.lap
-    File Jeboorker64.lap
     File Jeboorker.bat
     File Jeboorker.vbs
     File Jeboorker.exe
-    File msvcr71.dll
-    File msvcr100.dll
     File Readme.txt
     
     SetOutPath $INSTDIR\doc\license
