@@ -105,6 +105,7 @@ import org.rr.jeborker.gui.renderer.MultiListPropertyEditor;
 import org.rr.jeborker.gui.renderer.MultiListPropertyRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyRenderer;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 import skt.swing.StringConvertor;
 
@@ -194,6 +195,7 @@ class MainView extends JFrame {
 	 */
 	private void initialize() {
 		this.setTitle(Jeboorker.app + " " + Jeboorker.version);
+		this.setIconImage(ImageResourceBundle.getResourceAsImageIcon("jeboorker.png").getImage());
 		this.setBounds(100, 100, 792, 622);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
