@@ -181,7 +181,7 @@ public class DefaultDBManager {
 						}	
 						
 						try {
-							db.command(new OCommandSQL("DROP PROPERTY " + itemClassName + "." + field)).execute();
+							db.command(new OCommandSQL("DROP PROPERTY " + itemClassName + "." + field + " FORCE")).execute();
 						} catch (Exception e) {
 							LoggerFactory.log(Level.SEVERE, this, "could not delete property " + itemClassName + "." + field, e);
 						}

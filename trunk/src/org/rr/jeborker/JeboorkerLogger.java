@@ -3,6 +3,7 @@ package org.rr.jeborker;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -17,18 +18,41 @@ public class JeboorkerLogger extends Handler {
 	 * toString method so each entry is written into one line.
 	 */
 	public static final LruList<String> log = new LruList<String>(1000) {
+		private static final int FIRST = 80;
+		
+		private ArrayList<String> firstRows = new ArrayList<String>(FIRST);
+		
+		@Override
+		public boolean add(String e) {
+			if(firstRows.size() < FIRST) {
+				return firstRows.add(e);
+			} else {
+				return super.add(e);
+			}
+		}
+		
 		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
-			for(String s : map.values()) {
+			for(String s : firstRows) {
 				if(result.length() != 0) {
 					result.append("\n");
 				}
+				result.append(s);				
+			}
+			
+			if(!map.isEmpty()) {
+				result.append("\n\n...\n");
+			}
+			
+			for(String s : map.values()) {
+				result.append("\n");
 				result.append(s);
 			}
 			
 			return result.toString();
 		}
+
 	};
 	
 	@Override
