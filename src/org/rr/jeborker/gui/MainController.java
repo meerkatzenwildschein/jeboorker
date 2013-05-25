@@ -419,7 +419,6 @@ public class MainController {
 		}
 	}
 
-
 	/**
 	 * Refresh the whole table.
 	 */
