@@ -20,6 +20,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.ReflectionUtils;
 
 public class FileSystemTreeModel extends DefaultTreeModel {
 
@@ -47,9 +48,11 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		File[] listRoots = File.listRoots();
 		Arrays.sort(listRoots);		
 		for(File root : listRoots) {
-			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(root);
-			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null);
-			this.root.add(basePathNode);
+			if(!root.toString().equalsIgnoreCase("A:\\")) {
+				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(root);
+				FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null);
+				this.root.add(basePathNode);
+			}
 		}
 	}	
 
