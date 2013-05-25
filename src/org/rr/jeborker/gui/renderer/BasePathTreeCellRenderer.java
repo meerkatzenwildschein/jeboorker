@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -165,6 +166,12 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = null;
 		}
+		
+		//setup label dimensions
+		Dimension textDimension = SwingUtils.getTextDimension(label.getText(), label.getFont());
+		textDimension.width += 5;
+		label.setSize(textDimension);
+		label.setPreferredSize(textDimension);
 		
 		if(pathResource != null) {
 			String pathresourceString = pathResource.toString();
