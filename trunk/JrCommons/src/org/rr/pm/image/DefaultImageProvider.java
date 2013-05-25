@@ -63,5 +63,6 @@ class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	 * @return a BufferedImage representing the current JpgImage
 	 */
 	public BufferedImage getImage() {
-		return ImageUtils.decodeImage(this.resourceLoader, mime);	}
+		return ImageUtils.decodeImage(this.resourceLoader, mime);	
+	}
 }
