@@ -20,7 +20,6 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.ReflectionUtils;
 
 public class FileSystemTreeModel extends DefaultTreeModel {
 
