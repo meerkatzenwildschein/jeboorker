@@ -118,7 +118,9 @@ class PopplerPDFReader {
 
 	public interface Cairo extends Library {
 		
-		final Cairo INSTANCE = (Cairo) Native.loadLibrary(ReflectionUtils.is64bit() ? "/usr/lib/x86_64-linux-gnu/libcairo.so.2" : "/usr/lib/i386-linux-gnu/libcairo.so.2", Cairo.class);
+		final Cairo INSTANCE = (Cairo) Native.loadLibrary(
+				new File("/usr/lib/libcairo.so.2").exists() ? "/usr/lib/libcairo.so.2" : 
+					(ReflectionUtils.is64bit() ? "/usr/lib/x86_64-linux-gnu/libcairo.so.2" : "/usr/lib/i386-linux-gnu/libcairo.so.2"), Cairo.class);
 
 		void cairo_destroy(Pointer cr);
 
