@@ -11,8 +11,8 @@ public abstract class PDFCommonRenderer {
 	private IResourceHandler pdfFile;
 	
 	public static PDFCommonRenderer getPDFRendererInstance(IResourceHandler pdfFile) {
-		PDFCommonRenderer result = new JMuPDFRenderer();
-//		PDFCommonRenderer result = new PopplerPDFRenderer();
+		PDFCommonRenderer result = new JMuPDFRenderer();;
+//		result = new PopplerPDFRenderer();
 		result.setResourceHandler(pdfFile);
 		return result;
 	}
