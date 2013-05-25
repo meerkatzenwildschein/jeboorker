@@ -112,7 +112,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		}
 
 		@Override
-		public Enumeration children() {
+		public Enumeration<?> children() {
 			return null;
 		}
 
