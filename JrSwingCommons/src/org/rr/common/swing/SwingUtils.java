@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionListener;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -23,6 +26,8 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 
 public class SwingUtils {
+	private static JLabel defaultLabel = new JLabel(); 
+	
 	private static Color selectionForegroundColor;
 	private static Color selectionBackgroundColor;
 	private static Color foregroundColor;
@@ -264,5 +269,25 @@ public class SwingUtils {
     		}
     	}
 		return fScrollPane;
+	}
+	
+	public static Dimension getTextDimension(final String text, final Font font) {
+		if(defaultLabel == null) {
+			defaultLabel = new JLabel();
+		}
+		
+		// get metrics from the graphics
+		FontMetrics fontMetrics = defaultLabel.getFontMetrics(font);
+
+		// get the height of a line of text in this
+		// font and render context
+		int hgt = fontMetrics.getHeight();
+		// get the advance of my text in this font
+		// and render context
+		int adv = fontMetrics.stringWidth(text);
+		// calculate the size of a box to hold the text
+		Dimension size = new Dimension(adv, hgt);
+
+		return size;
 	}
 }
