@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -39,8 +38,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ReflectionUtils;
 
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
-
-
 
 /**
  * provides some static methods to deal with images.
@@ -63,7 +60,7 @@ public class ImageUtils {
 	 * @param formatName The format of the returned bytes. For example "jpeg", "png" or "gif".
 	 * @return The converted bytes or <code>null</code> if something went wrong with the conversion.
 	 */
-	public static byte[] getImageBytes(BufferedImage image, String mime) {
+	public static byte[] getImageBytes(final BufferedImage image, String mime) {
 		if (image == null) {
 			return null;
 		}
@@ -73,16 +70,17 @@ public class ImageUtils {
 			mime = "image/jpeg";
 		}
 		
+		ImageWriter writer = null;
         Iterator<ImageWriter> imageWritersByFormatName = ImageIO.getImageWritersByMIMEType(mime);
-        ImageWriter writer = null;
         while(imageWritersByFormatName.hasNext()) {
         	ImageWriter next = imageWritersByFormatName.next();
         	if(writer == null && next.getClass().getName().equals("com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriter")) {
         		writer = next;
+        		break;
         	} else {
         		writer = next;
         	}
-        }		
+        }
 		
         if(writer != null) {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -91,33 +89,16 @@ public class ImageUtils {
 			try {
 				writer.write(image);
 			} catch (IOException e) {
-				//OpenJDK is not able to encode Jpeg. This is just a fallback for this case.
-				if(mime.equals("image/jpeg") || mime.equals("image/jpg")) {
-					return encodeJpeg(image, 75);
-				}
-				
 				LoggerFactory.logInfo(ImageUtils.class, "could not create thumbnail", e);
-			} finally {
+			} finally {				
 				try {mem.flush();} catch (Exception e) {}
 				try {mem.close();} catch (Exception e) {}
+				try {writer.setOutput(null);} catch(Exception e) {}
+				try {writer.dispose();} catch(Exception e) {}
 			}
 			return output.toByteArray();
         }
         return null;
-	}
-
-	/**
-	 * Uses a poor and old jpeg encoder to encode the given image. It's possibly
-	 * the last was if jpeg encoding is not supported with the jre per default.
-	 * @param image The image to be encoded.
-	 * @param quality Encoding quality value.
-	 * @return The encoded image
-	 */
-	public static byte[] encodeJpeg(BufferedImage image, int quality) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JpegEncoder jpegEncoder = new JpegEncoder(image, quality, out);
-		jpegEncoder.Compress();
-		return out.toByteArray();
 	}
 	
 	/**
@@ -125,62 +106,38 @@ public class ImageUtils {
 	 * @param resourceLoader The jpeg resource to be loaded.
 	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
 	 */
-	static BufferedImage decodeJpeg(IResourceHandler resourceLoader) {
+	static BufferedImage decodeImage(IResourceHandler resourceLoader, String mime) {
 		BufferedImage bi = null;
 		InputStream bin = null;
 		try {
-			try {
-				bin = resourceLoader.getContentInputStream();
-				bi = ImageIO.read(bin);
-			} catch (Exception e) {
-			}
-			
-			if(bi == null && bin != null) {
-				try {
-					bin.reset();
-					bi = decodeJpegInternal(bin, resourceLoader);
-				} catch (IOException e) {
-					try {
-						bi = decodeJpegInternal(resourceLoader.getContentInputStream(), resourceLoader);
-					} catch (IOException e1) {
-					}
-				}
-			}
-			
-			if(bi == null && bin != null) {
-				try {
-					if(jpegCodecClass != null) {
-						//something about 200 ms faster than ImageIO.read and jai
-						bin.reset();
-						final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
-						bi = decoder.decodeAsBufferedImage();
-					}
-				} catch(Exception e) {}
-			}			
+			bin = resourceLoader.getContentInputStream();
+			bi = ImageIO.read(bin);
+		} catch (Exception e) {
+			//LoggerFactory.getLogger().log(Level.WARNING, "Could not decode image " + resourceLoader, e);
 		} finally {
 			IOUtils.closeQuietly(bin);
+			bin = null;				
 		}
+		
+		if(bi == null && jpegCodecClass != null && "image/jpeg".equals(mime)) {
+			try {
+				//something about 200 ms faster than ImageIO.read and jai
+				//but won't work very well with any images and the windows jre.
+				bin = resourceLoader.getContentInputStream();
+				final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
+				bi = decoder.decodeAsBufferedImage();
+			} catch(Exception e) {
+			} finally {
+				IOUtils.closeQuietly(bin);
+				bin = null;							
+			}
+		}			
 		return bi;
 	}
 	
 	/**
-	 * Use a simple jpeg decoder as fallback.
-	 * @param resourceLoader The jpeg resource to be loaded.
-	 * @return The {@link BufferedImage} for the given file or <code>null</code> if the image could not be loaded.
-	 */
-	private static BufferedImage decodeJpegInternal(InputStream in, IResourceHandler resourceLoader) {
-		try {
-			JpegDecoder decoder = new JpegDecoder();
-			return toBufferedImage(decoder.decode(resourceLoader.getContentInputStream()));
-		} catch (Exception e1) {
-			LoggerFactory.log(Level.INFO, ImageUtils.class, "Image " + resourceLoader.getResourceString() + " with mime " + resourceLoader.getMimeType() + " could not be loaded", e1);	
-		}
-		return null;
-	}
-	
-	/**
 	 * Scales the given image to the maximum fitting into the given frame
-	 * dimension without loosing the proportionals.
+	 * dimension without loosing the proportions.
 	 * 
 	 * @param frame The dimension for the target image
 	 * @param image The image to be resized. 
@@ -209,7 +166,7 @@ public class ImageUtils {
 	
 	/**
 	 * Scales the given image so it matches to the given width
-	 * without loosing it's proportionals.
+	 * without loosing it's proportions.
 	 * 
 	 * @param width The width where the image should be scaled to.
 	 * @param image The image to be resized. 
@@ -229,7 +186,7 @@ public class ImageUtils {
 	
 	/**
 	 * Scales the given image so it matches to the given height
-	 * without loosing it's proportionals.
+	 * without loosing it's proportions.
 	 * 
 	 * @param width The width where the image should be scaled to.
 	 * @param image The image to be resized. 
@@ -279,13 +236,6 @@ public class ImageUtils {
 	public static BufferedImage cut(BufferedImage image, Rectangle frame) {
 	    BufferedImage dest = image.getSubimage(frame.x, frame.y, frame.width, frame.height);
 	    return dest;
-//		
-//		BufferedImage cuttedImage = new BufferedImage(frame.width, frame.height, image.getType() != 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
-//		Graphics graphics = cuttedImage.getGraphics();
-//		graphics.drawImage(image, 0, 0, cuttedImage.getWidth(), cuttedImage.getHeight(), frame.x, frame.y, frame.x + cuttedImage.getWidth(), frame.y + cuttedImage.getHeight(), null);
-//		graphics.dispose();
-//		
-//		return cuttedImage;
 	}
 
 	/**
@@ -328,7 +278,7 @@ public class ImageUtils {
 		//create a AffineTransform to scale the image so it matches into the given Dimension
 		double heightFactor;
 		double widthFactor;
-		if(rotatenDegree==90d || rotatenDegree==270d) {
+		if(rotatenDegree == 90d || rotatenDegree == 270d) {
 			heightFactor = ((double)frame.height) / ((double)image.getWidth());
 			widthFactor = ((double)frame.width) / ((double)image.getHeight());
 		} else {
@@ -409,9 +359,6 @@ public class ImageUtils {
 				Graphics scaledImageGraphics = scaledImage.getGraphics();
 				scaledImageGraphics.drawImage(image, 0, 0, scaledImage.getWidth(), scaledImage.getHeight(), minCol, minRow, maxCol, maxRow, null);
 				scaledImageGraphics.dispose();
-				
-//				System.out.println(" org rect:  (" + image.getWidth() + " / " + image.getHeight());
-//				System.out.println(" crop rect: (" + minCol + "," + minRow + ") to (" + maxCol + "," + maxRow + ")");
 				
 				return scaledImage;
 			} else {
