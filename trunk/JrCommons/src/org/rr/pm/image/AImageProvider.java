@@ -7,7 +7,7 @@ abstract class AImageProvider implements IImageProvider {
 	protected IResourceHandler resourceLoader = null;
 	
 	/**
-	 * The {@link ImageInfo} instance provding some informations from the image header.
+	 * The {@link ImageInfo} instance providing some informations from the image header.
 	 */
 	protected ImageInfo imageInfo;
 	

@@ -3,14 +3,13 @@ package org.rr.pm.image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
-import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
 import com.sun.image.codec.jpeg.ImageFormatException;
 
 class DefaultImageProvider extends AImageProvider implements IImageProvider {
+	
+	private final String mime;
 	
 	/**
 	 * Creates a JpgImage from a specified file name
@@ -20,8 +19,9 @@ class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	 * @exception  IOException    if the file cannot be opened or read
 	 * @exception  ImageFormatException    if the JPEG file is invalid
 	 */
-	public DefaultImageProvider (IResourceHandler resourceHandler) {
+	public DefaultImageProvider (IResourceHandler resourceHandler, String mime) {
 		super(resourceHandler);
+		this.mime = mime;
 	}
 	
 	/**
@@ -63,15 +63,5 @@ class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	 * @return a BufferedImage representing the current JpgImage
 	 */
 	public BufferedImage getImage() {
-		try {
-			BufferedImage image = ImageIO.read(resourceLoader.getContentInputStream());
-			if(image == null) {
-				LoggerFactory.logWarning(this, "could not read image", new Exception("Dumpstack"));
-			}
-			return image;
-		} catch (IOException e) {
-			LoggerFactory.logWarning(this, "could not read image", e);
-		}
-		return null;
-	}
+		return ImageUtils.decodeImage(this.resourceLoader, mime);	}
 }

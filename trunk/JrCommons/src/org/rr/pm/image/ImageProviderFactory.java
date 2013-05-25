@@ -19,9 +19,9 @@ public class ImageProviderFactory {
 	public static IImageProvider getImageProvider(IResourceHandler resourceHandler) {
 		String mimeType = resourceHandler.getMimeType();
 		if(mimeType != null && (mimeType.endsWith("/jpg") || mimeType.endsWith("/jpeg"))) {
-			return new JpgImageProvider(resourceHandler);
+			return new DefaultImageProvider(resourceHandler, "image/jpeg");
 		} else {
-			return new DefaultImageProvider(resourceHandler);
+			return new DefaultImageProvider(resourceHandler, mimeType);
 		}
 	}
 }
