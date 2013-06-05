@@ -17,7 +17,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceNameFilter;
 import org.rr.jeborker.gui.action.ActionUtils;
 
-public class FileSystemNode implements MutableTreeNode, NamedNode {
+public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<FileSystemNode> {
 
 	private IResourceHandler pathResource;
 	
@@ -191,5 +191,23 @@ public class FileSystemNode implements MutableTreeNode, NamedNode {
 	public void renameTo(IResourceHandler newPathName) throws IOException {
 		this.pathResource.moveTo(newPathName, false);
 		this.pathResource = newPathName;
+	}
+
+	@Override
+	public int compareTo(FileSystemNode o) {
+		return o.pathResource.toString().compareTo(pathResource.toString());
 	}	
+	
+	public boolean equals(Object o) {
+		 if(o instanceof FileSystemNode) {
+			 return this.compareTo((FileSystemNode)o) == 0;
+		 }
+		 return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return pathResource.toString().hashCode();
+	}
+	
 }
