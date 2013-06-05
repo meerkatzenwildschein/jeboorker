@@ -35,16 +35,11 @@ import javax.swing.ImageIcon;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.ReflectionUtils;
-
-import com.sun.image.codec.jpeg.JPEGImageDecoder;
 
 /**
  * provides some static methods to deal with images.
  */
 public class ImageUtils {
-	
-	private static final Class<?> jpegCodecClass = ReflectionUtils.getClassForName("com.sun.image.codec.jpeg.JPEGCodec");
 	
 	private static final short[] invertTable;
 	static {
@@ -119,19 +114,6 @@ public class ImageUtils {
 			bin = null;				
 		}
 		
-		if(bi == null && jpegCodecClass != null && "image/jpeg".equals(mime)) {
-			try {
-				//something about 200 ms faster than ImageIO.read and jai
-				//but won't work very well with any images and the windows jre.
-				bin = resourceLoader.getContentInputStream();
-				final JPEGImageDecoder decoder = (JPEGImageDecoder) ReflectionUtils.invokeMethod(jpegCodecClass, "createJPEGDecoder", bin);
-				bi = decoder.decodeAsBufferedImage();
-			} catch(Exception e) {
-			} finally {
-				IOUtils.closeQuietly(bin);
-				bin = null;							
-			}
-		}			
 		return bi;
 	}
 	
