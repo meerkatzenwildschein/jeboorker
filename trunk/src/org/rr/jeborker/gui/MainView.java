@@ -426,6 +426,15 @@ class MainView extends JFrame {
 		gbl_statusPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		statusPanel.setLayout(gbl_statusPanel);
 		
+		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.insets = new Insets(0, 0, 0, 5);
+		gbc_label.anchor = GridBagConstraints.EAST;
+		gbc_label.fill = GridBagConstraints.HORIZONTAL;
+		gbc_label.gridx = 0;
+		gbc_label.gridy = 0;
+		statusPanel.add(label, gbc_label);
+		
 		progressBar = new JProgressBar();
 		GridBagConstraints gbc_progressBar = new GridBagConstraints();
 		gbc_progressBar.weighty = 1.0;
@@ -435,13 +444,6 @@ class MainView extends JFrame {
 		gbc_progressBar.gridy = 0;
 		statusPanel.add(progressBar, gbc_progressBar);
 		
-		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
-		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.insets = new Insets(0, 0, 0, 5);
-		gbc_label.anchor = GridBagConstraints.EAST;
-		gbc_label.gridx = 0;
-		gbc_label.gridy = 0;
-		statusPanel.add(label, gbc_label);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
 
