@@ -416,26 +416,25 @@ class MainView extends JFrame {
 				
 		JPanel statusPanel = new JPanel();
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
-		gbc_statusPanel.insets = new Insets(3, 3, 3, 3);
+		gbc_statusPanel.insets = new Insets(0, 3, 3, 3);
 		gbc_statusPanel.fill = GridBagConstraints.BOTH;
 		gbc_statusPanel.gridx = 0;
 		gbc_statusPanel.gridy = 2;
 		getContentPane().add(statusPanel, gbc_statusPanel);
 		GridBagLayout gbl_statusPanel = new GridBagLayout();
-		gbl_statusPanel.columnWidths = new int[]{62, 0, 0};
+		gbl_statusPanel.columnWidths = new int[]{0, 0, 0};
 		gbl_statusPanel.rowHeights = new int[]{14, 0};
 		gbl_statusPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		gbl_statusPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		statusPanel.setLayout(gbl_statusPanel);
 		
 		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
-		Dimension labelSize = new Dimension(55, label.getPreferredSize().height);
-		label.setPreferredSize(labelSize);
-		label.setMinimumSize(labelSize);			
+		Dimension statusLabelSize = new Dimension(55, label.getPreferredSize().height);
+		label.setPreferredSize(statusLabelSize);
+		label.setMinimumSize(statusLabelSize);			
 		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.insets = new Insets(0, 0, 0, 5);
-		gbc_label.anchor = GridBagConstraints.EAST;
-		gbc_label.fill = GridBagConstraints.HORIZONTAL;
+		gbc_label.anchor = GridBagConstraints.WEST;
+		gbc_label.fill = GridBagConstraints.NONE;
 		gbc_label.gridx = 0;
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);
