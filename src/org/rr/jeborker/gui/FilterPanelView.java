@@ -59,9 +59,9 @@ class FilterPanelView extends JPanel {
 		this.add(lblSearch, gbc_lblSearch);
 		
 		filterFieldSelection = new CheckComboBox<Field>();
-		filterFieldSelection.setPreferredSize(new Dimension(50, filterFieldSelection.getPreferredSize().height));
+		filterFieldSelection.setPreferredSize(new Dimension(80, filterFieldSelection.getPreferredSize().height));
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.fill = GridBagConstraints.NONE;
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
