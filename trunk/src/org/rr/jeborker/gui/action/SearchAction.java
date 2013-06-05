@@ -47,6 +47,7 @@ class SearchAction extends AbstractAction {
 			rootCondition.addAndChild(rootFilterCondition);
 			for (String filterValue : filterValues) {
 				if(!StringUtils.toString(filterValue).trim().isEmpty()) {
+					filterPanelController.enableFilterColor(true);
 					List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
 					if(!selectedFilterFields.isEmpty()) {
 						for (Field field : selectedFilterFields) {
@@ -59,6 +60,8 @@ class SearchAction extends AbstractAction {
 						rootFilterCondition.addOrChild(new QueryCondition("title", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
 						rootFilterCondition.addOrChild(new QueryCondition("file", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
 					}
+				} else {
+					filterPanelController.enableFilterColor(false);
 				}
 			}
 			controller.refreshTable();

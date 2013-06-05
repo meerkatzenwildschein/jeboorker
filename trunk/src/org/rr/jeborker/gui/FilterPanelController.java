@@ -84,6 +84,13 @@ public class FilterPanelController {
 	}	
 	
 	/**
+	 * Tells the text filter field to display it self in and active filter color. 
+	 */
+	public void enableFilterColor(boolean enable) {
+		view.enableFilterColor(enable);
+	}
+	
+	/**
 	 * get all {@link EbookPropertyItem} fields which should be included by the filter.
 	 * @return The fields to be filtered. Never returns null.
 	 */

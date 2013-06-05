@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,10 +10,14 @@ import java.lang.reflect.Field;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.japura.gui.CheckComboBox;
+import org.rr.common.swing.SwingUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
 
 class FilterPanelView extends JPanel {
@@ -22,10 +27,17 @@ class FilterPanelView extends JPanel {
 	JComboBox<String> filterField;
 	
 	CheckComboBox<Field> filterFieldSelection;
+	
+	BasicComboBoxEditor comboboxEditor;
+	
+	Color selectedBackgroundColor = SwingUtils.getSelectionBackgroundColor();
+	
+	Color selectedForegroundColor = SwingUtils.getSelectionForegroundColor();
+
+	Color foregroundColor = SwingUtils.getForegroundColor();
 
 	FilterPanelView() {
 		this.initialize();
-
 	}
 
 	private void initialize() {
@@ -56,6 +68,8 @@ class FilterPanelView extends JPanel {
 		filterField = new JComboBox<String>();
 		filterField.setModel(new DefaultComboBoxModel<String>());
 		filterField.setEditable(true);
+		filterField.setEditor(comboboxEditor = new BasicComboBoxEditor());
+		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.insets = new Insets(0, 0, 0, 5);
 		gbc_searchField.weightx = 1.0;
@@ -73,4 +87,15 @@ class FilterPanelView extends JPanel {
 		gbc_textField.gridy = 0;
 		this.add(searchButton, gbc_textField);
 	}
+	
+	public void enableFilterColor(boolean enable) {
+		if(enable) {
+			((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
+			((JComponent)comboboxEditor.getEditorComponent()).setBackground(selectedBackgroundColor);
+			((JComponent)comboboxEditor.getEditorComponent()).setForeground(selectedForegroundColor);
+		} else {
+			((JComponent)comboboxEditor.getEditorComponent()).setOpaque(false);
+			((JComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
+		}
+	}	
 }
