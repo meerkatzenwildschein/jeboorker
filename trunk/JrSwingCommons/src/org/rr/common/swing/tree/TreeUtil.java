@@ -105,5 +105,10 @@ public class TreeUtil {
 		}
 		return lastExpandedRow;
 	}
+	
+	public static int getRowForPath(JTree tree, TreePath path) {
+		
+		return -1;
+	}
 
 }
