@@ -40,16 +40,22 @@ public class ShadowPanel extends JPanel implements MouseListener, MouseMotionLis
 
 	// trigger for redispatching (allows external control)
 	boolean needToRedispatch = false;
-
-	public ShadowPanel() {
+	
+	public ShadowPanel(boolean animated) {
 		setOpaque(false);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addFocusListener(this);
 		
-		AnimatedIcon icon = new AnimatedIcon(new ImageIcon(ShadowPanel.class.getResource("button/resources/progress.gif")));
 		this.setLayout(new BorderLayout());
-		this.add(new JLabel(icon), BorderLayout.CENTER);
+		if(animated) {
+			AnimatedIcon icon = new AnimatedIcon(new ImageIcon(ShadowPanel.class.getResource("button/resources/progress.gif")));
+			this.add(new JLabel(icon), BorderLayout.CENTER);
+		}
+	}
+
+	public ShadowPanel() {
+		this(true);
 	}
 
 	protected void paintComponent(Graphics g) {

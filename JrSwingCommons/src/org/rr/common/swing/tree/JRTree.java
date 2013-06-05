@@ -12,6 +12,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.TreeUI;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -259,5 +260,26 @@ public class JRTree extends JTree {
 			}
 		}
 	}
+	
+    /**
+     * Returns the row that displays the node identified by the specified
+     * path.
+     *
+     * @param path  the <code>TreePath</code> identifying a node
+     * @return an integer specifying the display row, where 0 is the first
+     *         row in the display, or -1 if any of the elements in path
+     *         are hidden under a collapsed parent.
+     */
+    public int getRowForPath(TreePath path) {
+        TreeUI tree = getUI();
+
+        if(tree != null) {
+            int row = tree.getRowForPath(this, path);
+            if(row >= 0) {
+            	return row;
+            }
+        }
+        return -1;
+    }	
 
 }
