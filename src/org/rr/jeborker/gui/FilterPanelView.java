@@ -44,7 +44,7 @@ class FilterPanelView extends JPanel {
 
 	private void initialize() {
 		GridBagLayout gbl_searchPanel = new GridBagLayout();
-		gbl_searchPanel.columnWidths = new int[] { 20, 80, 0, 0, 0 };
+		gbl_searchPanel.columnWidths = new int[] { 0, 80, 0, 0, 0 };
 		gbl_searchPanel.rowHeights = new int[] { 0, 0 };
 		gbl_searchPanel.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		gbl_searchPanel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
@@ -55,7 +55,6 @@ class FilterPanelView extends JPanel {
 		lblSearch.setPreferredSize(lblSearchSize);
 		lblSearch.setMinimumSize(lblSearchSize);		
 		GridBagConstraints gbc_lblSearch = new GridBagConstraints();
-		gbc_lblSearch.insets = new Insets(0, 0, 0, 5);
 		gbc_lblSearch.anchor = GridBagConstraints.EAST;
 		gbc_lblSearch.gridx = 0;
 		gbc_lblSearch.gridy = 0;
