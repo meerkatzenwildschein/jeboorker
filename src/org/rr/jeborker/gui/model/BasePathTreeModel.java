@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.model;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
@@ -14,6 +15,7 @@ import javax.swing.tree.TreePath;
 
 import org.rr.common.swing.tree.NamedNode;
 import org.rr.common.swing.tree.TreeUtil;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
@@ -48,8 +50,22 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, false);
 			root.add(basePathNode);
 		}
-		root.add(new AllEntryNode());
+		root.add(new UniqueAllEntryNode());
 	}
+	
+	/**
+	 * Reloads the model. Changes will be taken under account.
+	 */
+	public void reload() {
+		root.removeAllChildren();
+		init();
+		try {
+			super.reload();
+		} catch(Exception e) {
+			//happens for example if the tree is in edit mode.
+			LoggerFactory.getLogger().log(Level.WARNING, "Reloading nodes has failed", e);
+		}
+	}	
 	
 	public void dispose() {
 		TreeModelListener[] treeModelListeners = getTreeModelListeners();
@@ -71,13 +87,13 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	 * This is a special node and did not represents a base path. It's the "All Entries" node
 	 * that allows to toggle the visibility of all base path nodes.  
 	 */
-	class AllEntryNode implements MutableTreeNode, NamedNode {
+	class UniqueAllEntryNode implements MutableTreeNode, NamedNode, Comparable<UniqueAllEntryNode> {
 
 		private String localizedName;
 
 		private TreeNode parent;
 		
-		AllEntryNode() {
+		UniqueAllEntryNode() {
 			localizedName = Bundle.getString("BasePathTreeModel.nodeName.all");			
 		}
 		
@@ -149,6 +165,23 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		public void setParent(MutableTreeNode newParent) {
 			this.parent = newParent;
 		}
+		
+		@Override
+		public int compareTo(UniqueAllEntryNode o) {
+			return 0;
+		}	
+		
+		public boolean equals(Object o) {
+			 if(o instanceof UniqueAllEntryNode) {
+				 return true;
+			 }
+			 return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return getClass().getName().hashCode();
+		}		
 		
 	}
 	

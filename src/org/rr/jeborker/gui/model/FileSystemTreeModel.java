@@ -88,7 +88,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 	 * Reloads these node which represents the given {@link IResourceHandler} instance.
 	 * If the node is not opened it will not be refreshed.
 	 */
-	public void reload(IResourceHandler resourceToRefresh) {
+	public void reload(final IResourceHandler resourceToRefresh) {
 		int rowCount = tree.getRowCount();
 		for(int i = 0; i < rowCount; i++) {
 			TreePath pathForRow = tree.getPathForRow(i);

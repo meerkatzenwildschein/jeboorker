@@ -440,32 +440,44 @@ public class MainController {
 	 * Refresh the Tree for the base path's.
 	 */
 	public void refreshBasePathTree() {
-		TreeModel oldModel = mainWindow.basePathTree.getModel();
-		if(oldModel instanceof BasePathTreeModel) {
-			((BasePathTreeModel)oldModel).dispose();
-		}
-		TreeSelectionModel selectionModel = mainWindow.basePathTree.getSelectionModel();
-		String expansionStates = TreeUtil.getExpansionStates(mainWindow.basePathTree);
-		BasePathTreeModel newBasePathTreeModel = new BasePathTreeModel();
-		mainWindow.basePathTree.setModel(newBasePathTreeModel);
-		TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
-		mainWindow.basePathTree.setSelectionModel(selectionModel);
+		final TreeSelectionModel selectionModel = mainWindow.basePathTree.getSelectionModel();
+		final TreePath selectionPath = mainWindow.basePathTree.getSelectionPath();
+		
+		final String expansionStates = TreeUtil.getExpansionStates(mainWindow.basePathTree);
+		final BasePathTreeModel basePathTreeModel = (BasePathTreeModel) mainWindow.basePathTree.getModel();
+		mainWindow.basePathTree.stopEditing();
+		((BasePathTreeModel)basePathTreeModel).reload();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
+				selectionModel.setSelectionPath(selectionPath);
+			}
+		});
 	}
 	
 	/**
-	 * Refresh the Tree for the file system. Only the node for the given {@link IResourceHandler} will be refreshed.
+	 * Refresh the Tree for the file system. Only the node and it child's for the given {@link IResourceHandler} will be refreshed.
 	 */
 	public void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh) {
 		final TreeModel model = mainWindow.fileSystemTree.getModel();
-		mainWindow.fileSystemTree.stopEditing();
-		mainWindow.fileSystemTree.clearSelection();
 		if(model instanceof FileSystemTreeModel) {
 			if(!resourceToRefresh.exists() || resourceToRefresh.isFileResource()) {
 				resourceToRefresh = resourceToRefresh.getParentResource();
 			}
-			String expansionStates = TreeUtil.getExpansionStates(mainWindow.fileSystemTree);
+			final String expansionStates = TreeUtil.getExpansionStates(mainWindow.fileSystemTree);
+			mainWindow.fileSystemTree.stopEditing();	
 			((FileSystemTreeModel) model).reload(resourceToRefresh);
-			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, expansionStates);
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, expansionStates);
+				}
+			});			
 		}
 	}
 	
