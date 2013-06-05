@@ -117,26 +117,29 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 				
 				@Override
 				public void itemStateChanged(ItemEvent e) {
-					TreePath selectionPath = tree.getSelectionPath();
-					Object lastPathComponent = selectionPath.getLastPathComponent();
-					String resourceName = null;
-					if (lastPathComponent instanceof IResourceHandler) {
-						resourceName = ((IResourceHandler) lastPathComponent).toString();
-					} else if(lastPathComponent instanceof FileSystemNode){
-						resourceName = ((FileSystemNode)lastPathComponent).getResource().toString();
-					}		
+					final TreePath selectionPath = tree.getSelectionPath();
 					
-					if(resourceName != null) {
-						ActionUtils.toggleBasePathVisibility(resourceName);
-					} else {
-						final BasePathList basePaths = JeboorkerPreferences.getBasePath();
-						final boolean isVisible = basePaths.isAllPathElementsVisible();
-						for(String basePath : basePaths) {
-							ActionUtils.setBasePathVisibility(basePath, !isVisible);
+					if(selectionPath != null) {
+						Object lastPathComponent = selectionPath.getLastPathComponent();
+						String resourceName = null;
+						if (lastPathComponent instanceof IResourceHandler) {
+							resourceName = ((IResourceHandler) lastPathComponent).toString();
+						} else if(lastPathComponent instanceof FileSystemNode){
+							resourceName = ((FileSystemNode)lastPathComponent).getResource().toString();
+						}		
+						
+						if(resourceName != null) {
+							ActionUtils.toggleBasePathVisibility(resourceName);
+						} else {
+							final BasePathList basePaths = JeboorkerPreferences.getBasePath();
+							final boolean isVisible = basePaths.isAllPathElementsVisible();
+							for(String basePath : basePaths) {
+								ActionUtils.setBasePathVisibility(basePath, !isVisible);
+							}
 						}
+						
+						((DefaultTreeModel)tree.getModel()).reload((TreeNode) selectionPath.getLastPathComponent());
 					}
-					
-					((DefaultTreeModel)tree.getModel()).reload((TreeNode) selectionPath.getLastPathComponent());
 				}
 			};
 		}
