@@ -51,7 +51,7 @@ class FilterPanelView extends JPanel {
 		this.setLayout(gbl_searchPanel);
 
 		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
-		Dimension lblSearchSize = new Dimension(50, lblSearch.getPreferredSize().height);
+		Dimension lblSearchSize = new Dimension(55, lblSearch.getPreferredSize().height);
 		lblSearch.setPreferredSize(lblSearchSize);
 		lblSearch.setMinimumSize(lblSearchSize);		
 		GridBagConstraints gbc_lblSearch = new GridBagConstraints();

@@ -429,6 +429,9 @@ class MainView extends JFrame {
 		statusPanel.setLayout(gbl_statusPanel);
 		
 		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
+		Dimension labelSize = new Dimension(55, label.getPreferredSize().height);
+		label.setPreferredSize(labelSize);
+		label.setMinimumSize(labelSize);			
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.insets = new Insets(0, 0, 0, 5);
 		gbc_label.anchor = GridBagConstraints.EAST;
