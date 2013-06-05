@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.rr.commons.mufs.IResourceHandler;
 
-import com.sun.image.codec.jpeg.ImageFormatException;
+import sun.awt.image.ImageFormatException;
 
 class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	
