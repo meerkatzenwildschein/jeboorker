@@ -581,6 +581,7 @@ class MainView extends JFrame {
 		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
 		
 		buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
@@ -769,6 +770,7 @@ class MainView extends JFrame {
 		basePathTreePanel.setLayout(gbl_basePathTreePanel);
 		
 		buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
