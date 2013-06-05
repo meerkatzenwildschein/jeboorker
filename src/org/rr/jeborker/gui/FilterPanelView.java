@@ -51,6 +51,9 @@ class FilterPanelView extends JPanel {
 		this.setLayout(gbl_searchPanel);
 
 		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
+		Dimension lblSearchSize = new Dimension(50, lblSearch.getPreferredSize().height);
+		lblSearch.setPreferredSize(lblSearchSize);
+		lblSearch.setMinimumSize(lblSearchSize);		
 		GridBagConstraints gbc_lblSearch = new GridBagConstraints();
 		gbc_lblSearch.insets = new Insets(0, 0, 0, 5);
 		gbc_lblSearch.anchor = GridBagConstraints.EAST;
@@ -59,9 +62,9 @@ class FilterPanelView extends JPanel {
 		this.add(lblSearch, gbc_lblSearch);
 		
 		filterFieldSelection = new CheckComboBox<Field>();
-		Dimension size = new Dimension(80, filterFieldSelection.getPreferredSize().height);
-		filterFieldSelection.setPreferredSize(size);
-		filterFieldSelection.setMinimumSize(size);
+		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
+		filterFieldSelection.setPreferredSize(filterFieldSelectionSize);
+		filterFieldSelection.setMinimumSize(filterFieldSelectionSize);
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.fill = GridBagConstraints.NONE;
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
