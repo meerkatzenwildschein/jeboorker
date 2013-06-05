@@ -76,6 +76,7 @@ import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
@@ -580,38 +581,23 @@ class MainView extends JFrame {
 		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
 		
 		buttonPanel = new JPanel();
-		buttonPanel.setOpaque(false);
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
 		gbc_buttonPanel.gridx = 0;
 		gbc_buttonPanel.gridy = 0;
 		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
-		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 31, 31};
-		gbl_buttonPanel.rowHeights = new int[]{10, 0};
-		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-		buttonPanel.setLayout(gbl_buttonPanel);
+		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3));
+		
+		Dimension buttonDimension = new Dimension(28, 28);
 		
 		JButton syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
-		syncButton.setPreferredSize(new Dimension(0, 28));
-		syncButton.setMinimumSize(new Dimension(0, 28));
-		GridBagConstraints gbc_syncButton = new GridBagConstraints();
-		gbc_syncButton.fill = GridBagConstraints.BOTH;
-		gbc_syncButton.gridx = 2;
-		gbc_syncButton.gridy = 0;
-		buttonPanel.add(syncButton, gbc_syncButton);
+		syncButton.setPreferredSize(buttonDimension);
+		buttonPanel.add(syncButton);
 		
 		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, fileSystemTreeName));
-		collapseButton.setPreferredSize(new Dimension(0, 30));
-		collapseButton.setMinimumSize(new Dimension(0, 30));
-		GridBagConstraints gbc_collapseButton = new GridBagConstraints();
-		gbc_collapseButton.fill = GridBagConstraints.BOTH;
-		gbc_collapseButton.insets = new Insets(0, 0, 0, 3);
-		gbc_collapseButton.gridx = 1;
-		gbc_collapseButton.gridy = 0;
-		buttonPanel.add(collapseButton, gbc_collapseButton);		
+		collapseButton.setPreferredSize(buttonDimension);
+		buttonPanel.add(collapseButton);		
 		
 		fileSystemTree = new JRTree();
 		fileSystemTree.setName(fileSystemTreeName);
@@ -783,50 +769,28 @@ class MainView extends JFrame {
 		basePathTreePanel.setLayout(gbl_basePathTreePanel);
 		
 		buttonPanel = new JPanel();
-		buttonPanel.setOpaque(false);
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
 		gbc_buttonPanel.gridx = 0;
 		gbc_buttonPanel.gridy = 0;
 		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
-		GridBagLayout gbl_buttonPanel = new GridBagLayout();
-		gbl_buttonPanel.columnWidths = new int[]{0, 31, 31, 31};
-		gbl_buttonPanel.rowHeights = new int[]{10, 0};
-		gbl_buttonPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-		gbl_buttonPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-		buttonPanel.setLayout(gbl_buttonPanel);
+		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3));
+		
+		Dimension buttonDimension = new Dimension(28, 28);
 		
 		JButton syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
-		syncButton.setPreferredSize(new Dimension(0, 30));
-		syncButton.setMinimumSize(new Dimension(0, 30));
-		GridBagConstraints gbc_syncButton = new GridBagConstraints();
-		gbc_syncButton.insets = new Insets(0, 0, 0, 3);
-		gbc_syncButton.fill = GridBagConstraints.BOTH;
-		gbc_syncButton.gridx = 3;
-		gbc_syncButton.gridy = 0;
-		buttonPanel.add(syncButton, gbc_syncButton);
+		syncButton.setPreferredSize(buttonDimension);
+		buttonPanel.add(syncButton);
 		
 		JButton addButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
+		addButton.setPreferredSize(buttonDimension);
 		addButton.setText("");
-		addButton.setPreferredSize(new Dimension(0, 30));
-		addButton.setMinimumSize(new Dimension(0, 30));
-		GridBagConstraints gbc_addButton = new GridBagConstraints();
-		gbc_addButton.fill = GridBagConstraints.BOTH;
-		gbc_addButton.insets = new Insets(0, 0, 0, 3);
-		gbc_addButton.gridx = 2;
-		gbc_addButton.gridy = 0;
-		buttonPanel.add(addButton, gbc_addButton);
+		buttonPanel.add(addButton);
 		
 		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, basePathTreeName));
-		collapseButton.setPreferredSize(new Dimension(0, 30));
-		collapseButton.setMinimumSize(new Dimension(0, 30));
-		GridBagConstraints gbc_collapseButton = new GridBagConstraints();
-		gbc_collapseButton.fill = GridBagConstraints.BOTH;
-		gbc_collapseButton.insets = new Insets(0, 0, 0, 3);
-		gbc_collapseButton.gridx = 1;
-		gbc_collapseButton.gridy = 0;
-		buttonPanel.add(collapseButton, gbc_collapseButton);
+		collapseButton.setPreferredSize(buttonDimension);
+		buttonPanel.add(collapseButton);
 		
 		basePathTree = new JRTree();
 		basePathTree.setName(basePathTreeName);
