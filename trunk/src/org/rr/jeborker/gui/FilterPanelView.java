@@ -88,6 +88,9 @@ class FilterPanelView extends JPanel {
 		this.add(searchButton, gbc_textField);
 	}
 	
+	/**
+	 * Tells the text filter field to display it self in and active filter color. 
+	 */
 	public void enableFilterColor(boolean enable) {
 		if(enable) {
 			((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
