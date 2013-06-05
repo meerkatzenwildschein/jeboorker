@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -572,6 +573,7 @@ class MainView extends JFrame {
 		
 		JPanel fileSystemTreePanel = new JPanel();
 		fileSystemTreePanel.setBackground(SwingUtils.getBackgroundColor());
+		fileSystemTreePanel.setOpaque(true);
 		
 		GridBagLayout gbl_fileSystemTreePanel = new GridBagLayout();
 		gbl_fileSystemTreePanel.columnWidths = new int[]{76, 0};
@@ -582,6 +584,7 @@ class MainView extends JFrame {
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
+		
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
@@ -762,6 +765,8 @@ class MainView extends JFrame {
 		
 		JPanel basePathTreePanel = new JPanel();
 		basePathTreePanel.setBackground(SwingUtils.getBackgroundColor());
+		basePathTreePanel.setOpaque(true);
+		
 		GridBagLayout gbl_basePathTreePanel = new GridBagLayout();
 		gbl_basePathTreePanel.columnWidths = new int[]{76, 0};
 		gbl_basePathTreePanel.rowHeights = new int[]{25, 0, 0};
@@ -771,6 +776,7 @@ class MainView extends JFrame {
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
+		
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
