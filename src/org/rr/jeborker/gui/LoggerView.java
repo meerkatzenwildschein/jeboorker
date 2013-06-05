@@ -29,8 +29,6 @@ class LoggerView extends JDialog implements ClipboardOwner {
 	
 	private static final long serialVersionUID = -8486417277805201337L;
 
-	private static final int MAX_LOG_DISPLAY = 10000;
-	
 	private final ActionListener closeAction = new ActionListener() {
 		
 		@Override
