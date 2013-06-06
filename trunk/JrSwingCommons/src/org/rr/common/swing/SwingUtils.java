@@ -145,10 +145,13 @@ public class SwingUtils {
 		selectionBackgroundColor = UIManager.getColor("Table.selectionBackground");
 		if(selectionBackgroundColor == null) {
 			selectionBackgroundColor = new JList().getSelectionForeground();
+			
+			//sometimes the UIManager color won't work 
+			selectionBackgroundColor = new Color(selectionBackgroundColor.getRed(), selectionBackgroundColor.getGreen(), selectionBackgroundColor.getBlue());
 		}
 		
 		//sometimes the UIManager color won't work 
-		return selectionBackgroundColor = new Color(selectionBackgroundColor.getRed(), selectionBackgroundColor.getGreen(), selectionBackgroundColor.getBlue());
+		return selectionBackgroundColor;
 	}	
 	
 	/**
@@ -167,10 +170,12 @@ public class SwingUtils {
 			if(selectionForegroundColor == null) {
 				selectionForegroundColor = new JList().getSelectionForeground();
 			}
+			
+			//sometimes the UIManager color won't work 
+			selectionForegroundColor = new Color(selectionForegroundColor.getRed(), selectionForegroundColor.getGreen(), selectionForegroundColor.getBlue());
 		}
 		
-		//sometimes the UIManager color won't work 
-		return selectionForegroundColor = new Color(selectionForegroundColor.getRed(), selectionForegroundColor.getGreen(), selectionForegroundColor.getBlue());
+		return selectionForegroundColor;
 	}	
 	
 	/**
@@ -192,10 +197,13 @@ public class SwingUtils {
 		foregroundColor = UIManager.getColor("Table.foreground");
 		if(foregroundColor == null) {
 			foregroundColor = new JList().getForeground();
+			
+			//sometimes the UIManager color won't work 
+			foregroundColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue());			
 		}
 		
 		//sometimes the UIManager color won't work 
-		return foregroundColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue());
+		return foregroundColor;
 	}
 	
 	public static Color getBackgroundColor() {
@@ -206,10 +214,12 @@ public class SwingUtils {
 		backgroundColor = UIManager.getColor("Table.background");
 		if(backgroundColor == null) {
 			backgroundColor = new JList().getBackground();
+			
+			//sometimes the UIManager color won't work
+			backgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue());
 		}
 		
-		//sometimes the UIManager color won't work
-		return new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue());
+		return backgroundColor;
 	}	
 	
 	public static void centerOnScreen(Window window) {
