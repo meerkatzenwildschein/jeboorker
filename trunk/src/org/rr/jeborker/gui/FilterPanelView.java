@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
+import javax.swing.text.JTextComponent;
 
 import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.SwingUtils;
@@ -102,11 +103,13 @@ class FilterPanelView extends JPanel {
 	 */
 	public void enableFilterColor(boolean enable) {
 		if(enable) {
-			((JComponent)comboboxEditor.getEditorComponent()).setBackground(selectedBackgroundColor);
-			((JComponent)comboboxEditor.getEditorComponent()).setForeground(selectedForegroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(selectedBackgroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(selectedForegroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(selectedBackgroundColor.brighter());
 		} else {
-			((JComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
-			((JComponent)comboboxEditor.getEditorComponent()).setBackground(backgroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(backgroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(selectedBackgroundColor);
 		}
 	}	
 }
