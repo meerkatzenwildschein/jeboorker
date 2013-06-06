@@ -2,6 +2,7 @@ package org.rr.commons.utils;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteWatchdog;
@@ -23,11 +24,11 @@ public class DesktopUtils {
 				return true;
 			} else {
 				try {
-					Runtime.getRuntime().exec(new String[] { "rundll32.exe", "url.dll,FileProtocolHandler", file.getAbsolutePath() });
-					return true;
-				} catch (Exception e) {
 					Desktop.getDesktop().open(file);
 					return true;
+				} catch (IOException e) {
+					Runtime.getRuntime().exec(new String[] { "rundll32.exe", "url.dll,FileProtocolHandler", file.getAbsolutePath() });
+					return false;
 				}
 			}
 		} catch (Exception e1) {
