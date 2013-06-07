@@ -8,6 +8,8 @@ import java.awt.LayoutManager;
 
 import javax.swing.SwingConstants;
 
+import org.rr.commons.utils.ArrayUtils;
+
 /**
  * LayoutManager that arrange it's components with the same size one after the other.
  * 
@@ -15,17 +17,21 @@ import javax.swing.SwingConstants;
  * @see http://www.jroller.com/santhosh/entry/how_do_you_layout_command
  */
 public class EqualsLayout implements LayoutManager, SwingConstants {
+	
 	private int gap;
+	
 	private int alignment;
+	
+	private boolean reverse = false;
 
-	public EqualsLayout(int alignment, int gap, Insets insets) {
+	public EqualsLayout(int alignment, int gap, boolean reverse) {
 		setGap(gap);
 		setAlignment(alignment);
+		setReverse(reverse);
 	}
 	
 	public EqualsLayout(int alignment, int gap) {
-		setGap(gap);
-		setAlignment(alignment);
+		this(alignment, gap, false);
 	}
 
 	public EqualsLayout(int gap) {
@@ -46,6 +52,14 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
 
 	public void setGap(int gap) {
 		this.gap = gap;
+	}
+
+	public boolean isReverse() {
+		return reverse;
+	}
+
+	public void setReverse(boolean reverse) {
+		this.reverse = reverse;
 	}
 
 	private Dimension[] dimensions(Component children[]) {
@@ -70,7 +84,7 @@ public class EqualsLayout implements LayoutManager, SwingConstants {
 
 	public void layoutContainer(Container container) {
 		Insets insets = container.getInsets();
-		Component[] children = container.getComponents();
+		Component[] children = reverse ? ArrayUtils.reverse(container.getComponents()) : container.getComponents();
 		Dimension dim[] = dimensions(children);
 
 		int maxWidth = dim[0].width;
