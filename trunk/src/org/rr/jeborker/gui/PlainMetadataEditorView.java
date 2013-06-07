@@ -111,7 +111,7 @@ class PlainMetadataEditorView extends JDialog {
 		gbc_leftBottomPanel.gridx = 0;
 		gbc_leftBottomPanel.gridy = 1;
 		getContentPane().add(leftBottomPanel, gbc_leftBottomPanel);
-		leftBottomPanel.setLayout(new EqualsLayout(EqualsLayout.LEFT, 0, new Insets(10,10,10,10)));
+		leftBottomPanel.setLayout(new EqualsLayout(EqualsLayout.LEFT, 0));
 		
 		btnFormat = new JButton(Bundle.getString("PlainMetadataEditorView.format"));
 		leftBottomPanel.add(btnFormat);

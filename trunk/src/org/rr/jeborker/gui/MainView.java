@@ -592,7 +592,7 @@ class MainView extends JFrame {
 		gbc_buttonPanel.gridx = 0;
 		gbc_buttonPanel.gridy = 0;
 		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
-		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3));
+		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3, true));
 		
 		Dimension buttonDimension = new Dimension(28, 28);
 		
@@ -784,7 +784,7 @@ class MainView extends JFrame {
 		gbc_buttonPanel.gridx = 0;
 		gbc_buttonPanel.gridy = 0;
 		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
-		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3));
+		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3, true));
 		
 		Dimension buttonDimension = new Dimension(28, 28);
 		
