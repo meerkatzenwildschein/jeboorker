@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="bounce"/>
 	<classpathentry kind="src" path="jempbox"/>
 	<classpathentry kind="src" path="epublib"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
