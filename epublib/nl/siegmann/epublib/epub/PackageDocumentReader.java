@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,6 +31,7 @@ import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
 import nl.siegmann.epublib.util.StringUtil;
 
+import org.rr.commons.log.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -134,25 +136,49 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		return result;
 	}	
 
-	private static Resource findHrefResource(String href, Resources resources) {
-		//Possibly any charset could be used to store file names in zip files. Try all available ones
-		//to find the referring resource.
-		boolean urlEncoded = href.indexOf('%') != -1;
-		SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
-		for(Charset c : availableCharsets.values()) {
-			String newEncodedHref = new String(href.getBytes(), c);
-			if(resources.containsByHref(newEncodedHref)) {
-				return resources.getByHref(newEncodedHref);
-			} else if(urlEncoded) {
-				try {
-					String urlDecodedHref = URLDecoder.decode(href, c.name());
-					if(resources.containsByHref(urlDecodedHref)) {
-						return resources.getByHref(urlDecodedHref);
+	private static Resource findHrefResource(String href, final Resources resources) {
+		//Possibly any charset could be used to store file names in zip files. 
+		try {
+			final boolean urlEncoded = href.indexOf('%') != -1;
+			final SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
+			final String compareHref = urlEncoded ? URLDecoder.decode(href, "UTF-8") : href;
+			final Collection<Resource> allResources = resources.getAll();
+			
+			//try charset encodings for wrong encoded content.opf 
+			for(Charset c : availableCharsets.values()) {
+				String newEncodedHref = new String(href.getBytes(), c);
+				if(resources.containsByHref(newEncodedHref)) {
+					return resources.getByHref(newEncodedHref);
+				} else if(urlEncoded) {
+					try {
+						String urlDecodedHref = URLDecoder.decode(href, c.name());
+						if(resources.containsByHref(urlDecodedHref)) {
+							return resources.getByHref(urlDecodedHref);
+						}
+					} catch (UnsupportedEncodingException e) {
 					}
-				} catch (UnsupportedEncodingException e) {
 				}
+			}	
+			
+			//try charset encodings for zip file entries.
+			for(Resource resource : allResources) {
+				String oldHref = resource.getHref();
+				for(Charset c : availableCharsets.values()) {
+					byte[] rawHref = resource.getRawHref();
+					if(rawHref != null) {
+						String newEncodedResourceHref = new String(rawHref, c);
+						resource.setHref(newEncodedResourceHref);
+						if(resource.getHref().equals(compareHref)) {
+							return resource;
+						}
+					}
+				}
+				resource.setHref(oldHref);
 			}
-		}	
+		} catch (UnsupportedEncodingException e) {
+			LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode raw for " + href, e);
+		}
+		
 		return null;
 	}
 	

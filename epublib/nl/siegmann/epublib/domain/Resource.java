@@ -33,6 +33,7 @@ public class Resource implements Serializable {
 	private String id;
 	private String title;
 	private String href;
+	private byte[] rawHref;
 	private MediaType mediaType;
 	private String inputEncoding = Constants.ENCODING;
 	private byte[] data;
@@ -84,6 +85,22 @@ public class Resource implements Serializable {
 	}
 	
 	/**
+	 * Creates a resource with the given data at the specified href.
+	 * The MediaType will be determined based on the href extension.
+	 * 
+	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
+	 * 
+	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
+	 * 
+	 * @param data The Resource's contents
+	 * @param href The location of the resource within the epub. Example: "chapter1.html".
+	 */
+	public Resource(byte[] data, byte[] rawHref) {
+		this(null, data, new String(rawHref), MediatypeService.determineMediaType(new String(rawHref)), Constants.ENCODING);
+		this.rawHref = rawHref;
+	}
+	
+	/**
 	 * Creates a resource with the data from the given Reader at the specified href.
 	 * The MediaType will be determined based on the href extension.
 	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
@@ -114,6 +131,28 @@ public class Resource implements Serializable {
 	public Resource(InputStream in, String href) throws IOException {
 		this(null, (byte[]) null, href, MediatypeService.determineMediaType(href));
 		setInputStream(in);
+	}
+	
+	/**
+	 * Creates a resource with the data from the given InputStream at the specified href.
+	 * The MediaType will be determined based on the href extension.
+	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
+	 * 
+	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
+	 * 
+	 * It is recommended to us the
+	 * @see nl.siegmann.epublib.domain.Resource.Resource(Reader, String)
+	 * method for creating textual (html/css/etc) resources to prevent encoding problems.
+	 * Use this method only for binary Resources like images, fonts, etc.
+	 * 
+	 * 
+	 * @param in The Resource's contents
+	 * @param href The location of the resource within the epub. Example: "cover.jpg".
+	 */
+	public Resource(InputStream in, byte[] rawHref) throws IOException {
+		this(null, (byte[]) null, new String(rawHref), MediatypeService.determineMediaType(new String(rawHref)));
+		setInputStream(in);
+		this.rawHref = rawHref;
 	}
 	
 	/**
@@ -439,5 +478,9 @@ public class Resource implements Serializable {
 		}
 		return this.href;
 
+	}
+
+	public byte[] getRawHref() {
+		return this.rawHref;
 	}
 }

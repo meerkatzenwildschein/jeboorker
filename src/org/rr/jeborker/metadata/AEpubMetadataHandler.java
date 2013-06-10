@@ -21,8 +21,8 @@ import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
-import org.rr.commons.utils.compression.truezip.LazyTrueZipEntryStream;
-import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.commons.utils.compression.zip.LazyZipEntryStream;
+import org.rr.commons.utils.compression.zip.ZipUtils;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -285,7 +285,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			final String fullPathString = "full-path=";
 			InputStream contentInputStream = null;
 			try {
-				final CompressedDataEntry containerXml = TrueZipUtils.extract(ebookResource, "META-INF/container.xml");
+				final CompressedDataEntry containerXml = ZipUtils.extract(ebookResource, "META-INF/container.xml");
 				if(containerXml!=null) {
 					final String containerXmlData = new String(containerXml.getBytes());
 					final int fullPathIndex = containerXmlData.indexOf(fullPathString);
@@ -314,7 +314,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			if (opfFile != null) {
 				InputStream contentInputStream = null;
 				try {
-					final CompressedDataEntry containerXml = TrueZipUtils.extract(ebookResource, opfFile);
+					final CompressedDataEntry containerXml = ZipUtils.extract(ebookResource, opfFile);
 					if (containerXml != null) {
 						this.containerOpfData = containerXml.getBytes();
 					} else {
@@ -346,18 +346,25 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			final EpubReader reader = new EpubReader();
 			final Resources resources = new Resources();
 			final EpubZipFileFilter epubZipFileFilter = new EpubZipFileFilter(lazy);
-			final List<CompressedDataEntry> extracted = TrueZipUtils.extract(ebookResourceHandler, epubZipFileFilter);
+			final List<CompressedDataEntry> extracted = ZipUtils.extract(ebookResourceHandler, epubZipFileFilter);
 			final List<String> lazyEntries = epubZipFileFilter.getLazyEntries();
+			final List<byte[]> lazyRawEntries = epubZipFileFilter.getLazyRawEntries();
 			
 			for(CompressedDataEntry entry : extracted) {
-				Resource resource = new Resource(entry.getBytes(), entry.path);
+				Resource resource = new Resource(entry.getBytes(), entry.rawPath);
 				resources.add(resource);
 			}
 			
-			for(String entry : lazyEntries) {
-				Resource resource = new Resource(new LazyTrueZipEntryStream(ebookResourceHandler, entry), entry);
-				resources.add(resource);
-			}			
+			if(lazyEntries.size() == lazyRawEntries.size()) {
+				for(int i = 0; i < lazyEntries.size(); i++) {
+					String entry = lazyEntries.get(i);
+					byte[] rawEntry = lazyRawEntries.get(i);
+					Resource resource = new Resource(new LazyZipEntryStream(ebookResourceHandler, entry), rawEntry);
+					resources.add(resource);
+				}
+			} else {
+				throw new IOException("Zip entries not even");
+			}
 			
 			final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
 			return epub;
@@ -377,11 +384,14 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		
 		List<String> lazyEntries = new ArrayList<String>();
 		
+		List<byte[]> lazyRawEntries = new ArrayList<byte[]>();
+		
 		EpubZipFileFilter(boolean lazy) {
 			this.lazy = lazy;
 		}
+		
 		@Override
-		public boolean accept(String entry) {
+		public boolean accept(String entry, byte[] rawEntry) {
 			boolean accept = true;
 			if(lazy) {
 				String lowerCaseEntry = entry.toLowerCase();
@@ -400,12 +410,17 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			
 			if(!accept) {
 				lazyEntries.add(entry);
+				lazyRawEntries.add(rawEntry);
 			}
 			return accept;
 		}
 		
 		public List<String> getLazyEntries() {
 			return this.lazyEntries;
+		}
+
+		public List<byte[]> getLazyRawEntries() {
+			return this.lazyRawEntries;
 		}
 	}
 }

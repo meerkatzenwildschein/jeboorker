@@ -94,7 +94,7 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
             Dimension rSize = renderer.getPreferredSize();
             return rSize;
         }
-        return null;
+        return editingComponent.getPreferredSize();
     }	
 
 }

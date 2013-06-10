@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.renderer;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -15,14 +16,25 @@ import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.TreeCellEditor;
+
+import org.rr.common.swing.SwingUtils;
+import org.rr.commons.utils.StringUtils;
 
 
 public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implements TreeCellEditor, TableCellEditor {
@@ -35,7 +47,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	/**
 	 * The delegate class which handles all methods sent from the <code>CellEditor</code>.
 	 */
-	protected Delegate listener;
+	protected Delegate editorDelegate;
 	
 	/**
 	 * An integer specifying the number of clicks needed to start editing. Even if <code>clickCountToStart</code> is defined as zero, it will not initiate
@@ -53,21 +65,25 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	 * @param comboBox
 	 *            a <code>JComboBox</code> object
 	 */
-	public FileSystemRenameTreeCellEditor(final JComboBox<String> comboBox) {
+	private FileSystemRenameTreeCellEditor(final JComboBox<String> comboBox) {
 		editorComponent = comboBox;
 		comboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
 		comboBox.setEditable(true);
-		listener = new Delegate() {
+		editorDelegate = new Delegate() {
 			public void setValue(Object value) {
-				comboBox.setSelectedItem(value);
+        		BasicComboBoxEditor be = (BasicComboBoxEditor) comboBox.getEditor();
+        		JTextComponent edc = (JTextComponent) be.getEditorComponent();
+        		edc.setText(StringUtils.toString(value));
 			}
 
 			public Object getCellEditorValue() {
-				return comboBox.getSelectedItem();
+        		BasicComboBoxEditor be = (BasicComboBoxEditor) comboBox.getEditor();
+        		JTextComponent edc = (JTextComponent) be.getEditorComponent();
+        		return edc.getText();				
 			}
 
 		};
-		comboBox.addActionListener(listener);
+		comboBox.addActionListener(editorDelegate);
 	}
 
 	/**
@@ -105,7 +121,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	 * @see Delegate#getCellEditorValue
 	 */
 	public Object getCellEditorValue() {
-		return listener.getCellEditorValue();
+		return editorDelegate.getCellEditorValue();
 	}
 	
 	/**
@@ -168,7 +184,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 		String stringValue = tree.convertValueToText(value, isSelected, expanded, leaf, row, false);
 
-		listener.setValue(stringValue);
+		editorDelegate.setValue(stringValue);
 		return editorComponent;
 	}
 
@@ -176,7 +192,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	 * Implements the <code>TableCellEditor</code> interface. 
 	 */
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		listener.setValue(value);
+		editorDelegate.setValue(value);
 		return editorComponent;
 	}
 
@@ -250,6 +266,48 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 			setModel(new FileComboBoxModel(this));
 			this.editor = editor;
 		}
+		
+	    /**
+	     * Resets the UI property to a value from the current look and feel.
+	     *
+	     * @see JComponent#updateUI
+	     */
+	    public void updateUI() {
+	        setUI(new BasicComboBoxUI() {
+	        	@Override
+	            protected JButton createArrowButton() {
+	            	return new BasicArrowButton(BasicArrowButton.SOUTH,
+                            UIManager.getColor("ComboBox.buttonBackground"),
+                            UIManager.getColor("ComboBox.buttonShadow"),
+                            UIManager.getColor("ComboBox.buttonDarkShadow"),
+                            UIManager.getColor("ComboBox.buttonHighlight")) {
+	            		
+	            		@Override
+	            		public int getWidth() {
+	            			if(FileComboBoxEditorComponent.this.getModel().getSize() > 0) {
+	            				return super.getWidth();
+	            			} else {
+	            				return 0;	            				
+	            			}
+	            		}
+	            	};
+	            }
+	        	
+        		@Override
+        		public void setPopupVisible(JComboBox c, boolean v) {
+        		    // keeps the popup from coming down if there's nothing in the combo box
+        		    if (FileComboBoxEditorComponent.this.getModel().getSize() > 0) {
+        		    	super.setPopupVisible(c, v);
+        		    }
+        		}		        	
+	        	
+	        });
+
+	        ListCellRenderer<? super String> renderer = getRenderer();
+	        if (renderer instanceof Component) {
+	            SwingUtilities.updateComponentTreeUI((Component)renderer);
+	        }
+	    }
 		
         /**
          * Overrides <code>JTextField.getPreferredSize</code> to
