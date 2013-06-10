@@ -67,7 +67,7 @@ public class EpubReader {
 		Book result = new Book(name);
 		Resources resources = readLazyResources(name, encoding, lazyLoadedTypes);
 		handleMimeType(result, resources);
-		String packageResourceHref = getPackageResourceHref(resources);
+		String packageResourceHref = getPackageResourceHref(resources, result);
 		Resource packageResource = processPackageResource(packageResourceHref, result, resources);
 		result.setOpfResource(packageResource);
 		Resource ncxResource = processNcxResource(packageResource, result);
@@ -98,7 +98,7 @@ public class EpubReader {
 	public Book readEpub( Resources resources, String encoding, String name ) throws IOException {
 		Book result = new Book(name);
 		handleMimeType(result, resources);
-		String packageResourceHref = getPackageResourceHref(resources);
+		String packageResourceHref = getPackageResourceHref(resources, result);
 		Resource packageResource = processPackageResource(packageResourceHref, result, resources);
 		result.setOpfResource(packageResource);
 		Resource ncxResource = processNcxResource(packageResource, result);
@@ -148,7 +148,7 @@ public class EpubReader {
 		return packageResource;
 	}
 
-	private String getPackageResourceHref(Resources resources) {
+	private String getPackageResourceHref(Resources resources, Book book) {
 		String defaultResult = "OEBPS/content.opf";
 		String result = defaultResult;
 
@@ -161,7 +161,7 @@ public class EpubReader {
 			Element rootFileElement = (Element) ((Element) document.getDocumentElement().getElementsByTagName("rootfiles").item(0)).getElementsByTagName("rootfile").item(0);
 			result = rootFileElement.getAttribute("full-path");
 		} catch (Exception e) {
-			log.log(Level.WARNING, e.getMessage(), e);
+			log.log(Level.WARNING, e.getMessage() + " META-INF/container.xml for epub " + book.getName(), e);
 		}
 		if(StringUtil.isBlank(result)) {
 			result = defaultResult;

@@ -34,7 +34,7 @@ public class CBRArchiveHandler extends AArchiveHandler {
 		List<CompressedDataEntry> comicInfoXml = RarUtils.extract(resource, new FileEntryFilter() {
 			
 			@Override
-			public boolean accept(String entry) {
+			public boolean accept(String entry, byte[] rawEntry) {
 				if(entry.toLowerCase().endsWith("comicinfo.xml")) {
 					return true;
 				} else {
