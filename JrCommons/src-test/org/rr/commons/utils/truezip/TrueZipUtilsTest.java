@@ -4,11 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
-
-import junit.framework.TestCase;
 
 public class TrueZipUtilsTest extends TestCase{
 
@@ -23,4 +23,5 @@ public class TrueZipUtilsTest extends TestCase{
 
 		file.delete();
 	}
+
 }

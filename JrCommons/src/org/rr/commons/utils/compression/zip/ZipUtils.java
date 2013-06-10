@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerInputStream;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
@@ -26,19 +28,23 @@ public class ZipUtils {
 	}
 	
 	public static List<String> list(InputStream zipData, FileEntryFilter filter) {
+		return list(zipData, filter, Charset.forName("UTF-8")); //IBM437
+	}
+	
+	public static List<String> list(InputStream zipData, FileEntryFilter filter, Charset zipDataFileNameEncoding) {
 		if (zipData == null) {
 			return null;
 		}
 
 		ZipInputStream jar = null;
 		try {
-			jar = new ZipInputStream(zipData);
+			jar = new org.rr.commons.utils.compression.zip.ZipInputStream(zipData, zipDataFileNameEncoding);
 			final ArrayList<String> result = new ArrayList<String>();
 			
 			ZipEntry nextEntry;
 			while ((nextEntry = jar.getNextEntry()) != null) {
 				String name = nextEntry.getName();
-				if(filter == null || filter.accept(name)) {
+				if(filter == null || filter.accept(name, nextEntry.getRawName())) {
 					result.add(name);
 				}
 			}
@@ -74,13 +80,13 @@ public class ZipUtils {
 
 			org.rr.commons.utils.compression.zip.ZipEntry nextEntry;
 			while ((nextEntry = zipIn.getNextEntry()) != null && maxEntries > result.size()) {
-				if( filter == null || (!nextEntry.isDirectory() && filter.accept(nextEntry.getName())) ) {
+				if( filter == null || isFilterAccept(filter, nextEntry) ) {
 					int len = 0;
 					while ((len = zipIn.read(readBuff)) != -1) {
 						bout.write(readBuff, 0, len);
 					}
 					if(!nextEntry.isDirectory()) {
-						result.add(new CompressedDataEntry(nextEntry.getName(), bout.toByteArray()));
+						result.add(new CompressedDataEntry(nextEntry.getName(), nextEntry.getRawName(), bout.toByteArray()));
 					}
 					bout.reset();
 				}
@@ -93,6 +99,10 @@ public class ZipUtils {
 				try {zipIn.close();} catch (IOException e) {}
 			}
 		}
+	}
+
+	private static boolean isFilterAccept(FileEntryFilter filter, org.rr.commons.utils.compression.zip.ZipEntry nextEntry) {
+		return !nextEntry.isDirectory() && filter.accept(nextEntry.getName(), nextEntry.getRawName());
 	}
 	
 	public static List<CompressedDataEntry> extract(InputStream zipData, FileEntryFilter filter, int maxEntries) {
@@ -107,6 +117,24 @@ public class ZipUtils {
 		return extract(new ByteArrayInputStream(zipData), entry);
 	}
 
+	public static CompressedDataEntry extract(IResourceHandler zipData, String entry) throws IOException {
+		ResourceHandlerInputStream contentInputStream = zipData.getContentInputStream();
+		try {
+			return extract(contentInputStream, entry);
+		} finally {
+			IOUtils.closeQuietly(contentInputStream);
+		}		
+	}
+	
+	public static List<CompressedDataEntry> extract(IResourceHandler zipData, FileEntryFilter filter) throws IOException {
+		ResourceHandlerInputStream contentInputStream = zipData.getContentInputStream();
+		try {
+			return extract(contentInputStream, filter, Integer.MAX_VALUE);
+		} finally {
+			IOUtils.closeQuietly(contentInputStream);
+		}
+	}
+
 	/**
 	 * Extracts the entry specified with the entry parameter and returns it.
 	 * @param zipData The zip data containing the file to be extracted.
@@ -117,7 +145,7 @@ public class ZipUtils {
 		List<CompressedDataEntry> extract = extract(zipData, new FileEntryFilter() {
 			
 			@Override
-			public boolean accept(String e) {
+			public boolean accept(String e, byte[] rawName) {
 				return entry.equals(e);
 			}
 		}, Integer.MAX_VALUE);
@@ -188,12 +216,12 @@ public class ZipUtils {
 		    	InputStream read;
 		    	if(zipEntryIn.getName().equals(entry.path)) {
 		    		//replace
-		    		out = new ZipEntry(zipEntryIn.getName());
+		    		out = new ZipEntry(zipEntryIn.getName(), zipEntryIn.getRawName());
 		    		read = entry.data;
 		    		replaceSuccess = true;
 		    	} else {
 		    		//add
-		    		out = new ZipEntry(zipEntryIn.getName());
+		    		out = new ZipEntry(zipEntryIn.getName(), zipEntryIn.getRawName());
 		    		read = zipInputStream;
 		    	}
 		    	byte[] readBytes = IOUtils.toByteArray(read);
@@ -214,7 +242,7 @@ public class ZipUtils {
 		    
 		    if(!replaceSuccess) {
 		    	//new entry must be added
-		    	ZipEntry out = new ZipEntry(entry.path);
+		    	ZipEntry out = new ZipEntry(entry.path, entry.rawPath);
 		    	if(storeOnly) {
 		    		//no need with compression
 		    		byte[] bytes = entry.getBytes();

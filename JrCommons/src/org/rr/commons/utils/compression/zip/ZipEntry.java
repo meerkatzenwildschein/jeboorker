@@ -36,9 +36,9 @@ import org.rr.commons.utils.ReflectionUtils;
  *
  * @author      David Connelly
  */
-public
-class ZipEntry implements ZipConstants, Cloneable {
+public class ZipEntry implements ZipConstants, Cloneable {
     String name;        // entry name
+    byte[] rawName;		// entry name bytes
     long time = -1;     // modification time (in DOS time)
     long crc = -1;      // crc-32 of entry data
     long size = -1;     // uncompressed size of entry data
@@ -66,7 +66,7 @@ class ZipEntry implements ZipConstants, Cloneable {
      * @exception IllegalArgumentException if the entry name is longer than
      *            0xFFFF bytes
      */
-    public ZipEntry(String name) {
+    public ZipEntry(String name, byte[] rawName) {
         if (name == null) {
             throw new NullPointerException();
         }
@@ -74,6 +74,7 @@ class ZipEntry implements ZipConstants, Cloneable {
             throw new IllegalArgumentException("entry name too long");
         }
         this.name = name;
+        this.rawName = rawName;
     }
 
     /**
@@ -104,6 +105,10 @@ class ZipEntry implements ZipConstants, Cloneable {
      */
     public String getName() {
         return name;
+    }
+    
+    public byte[] getRawName() {
+    	return this.rawName;
     }
 
     /**

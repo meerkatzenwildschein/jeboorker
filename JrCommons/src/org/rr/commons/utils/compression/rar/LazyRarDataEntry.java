@@ -20,7 +20,7 @@ class LazyRarDataEntry extends CompressedDataEntry {
 	private IResourceHandler rarFileHandler;
 	
 	LazyRarDataEntry(IResourceHandler rarFileHandler, String name) {
-		super(name, (byte[]) null);
+		super(name, name.getBytes(), (byte[]) null);
 		this.rarFileHandler = rarFileHandler;
 	}
 
