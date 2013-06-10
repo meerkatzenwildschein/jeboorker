@@ -35,7 +35,7 @@ class FileResourceHandler extends AResourceHandler {
 	/**
 	 * The file url identifier.
 	 */
-	private static final String FILE_URL = "file://";
+	private static final String FILE_URL = "file:";
 	
 	/**
 	 * The resource String parsed into a file.

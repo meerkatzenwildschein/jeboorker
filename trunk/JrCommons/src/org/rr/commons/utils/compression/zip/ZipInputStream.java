@@ -309,7 +309,7 @@ class ZipInputStream extends InflaterInputStream implements ZipConstants {
         	this.zc = ZipCoder.get(Charset.forName("ibm437"));
         	name =  zc.toString(b, len);
         }
-        ZipEntry e = createZipEntry(name);
+        ZipEntry e = createZipEntry(name, zc.toBytes(b, len));
         // now get the remaining fields for the entry
         if ((flag & 1) == 1) {
             throw new ZipException("encrypted ZIP entry not supported");
@@ -366,8 +366,8 @@ class ZipInputStream extends InflaterInputStream implements ZipConstants {
      * @param name the ZIP file entry name
      * @return the ZipEntry just created
      */
-    protected ZipEntry createZipEntry(String name) {
-        return new ZipEntry(name);
+    protected ZipEntry createZipEntry(String name, byte[] rawName) {
+        return new ZipEntry(name, rawName);
     }
 
     /*

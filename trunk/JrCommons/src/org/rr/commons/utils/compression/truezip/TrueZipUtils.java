@@ -47,7 +47,7 @@ public class TrueZipUtils {
 		final List<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 		final List<String> entryList = list(zipFileHandler);
 		for(String entry : entryList) {
-			if(filter.accept(entry)) {
+			if(filter.accept(entry, entry.getBytes())) {
 				result.add(extract(zipFileHandler, entry));
 			}
 		}
@@ -82,7 +82,7 @@ public class TrueZipUtils {
 		ArrayList<String> result = new ArrayList<String>();
 		for(File f : listFiles) {
 			String enclEntryName = ((TFile)f).getEnclEntryName();
-			if(zipFileFilter.accept(enclEntryName)) {
+			if(zipFileFilter.accept(enclEntryName, enclEntryName.getBytes())) {
 				result.add(enclEntryName);
 			}
 		}

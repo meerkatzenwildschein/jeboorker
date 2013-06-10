@@ -58,7 +58,7 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 						entries = TrueZipUtils.list(zipFile, new FileEntryFilter() {
 							
 							@Override
-							public boolean accept(String entry) {
+							public boolean accept(String entry, byte[] rawEntry) {
 								entry = entry. toLowerCase();
 								if(entry.endsWith(".jpg") || entry.endsWith(".jpeg") || entry.endsWith(".png") || entry.endsWith(".gif")) {
 									return true;

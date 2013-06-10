@@ -16,7 +16,7 @@ class LazyTrueZipDataEntry extends CompressedDataEntry {
 	private IResourceHandler zipFileHandler;
 	
 	LazyTrueZipDataEntry(IResourceHandler zipFileHandler, String name) {
-		super(name, (byte[]) null);
+		super(name, name.getBytes(), (byte[]) null);
 		this.zipFileHandler = zipFileHandler;
 	}
 

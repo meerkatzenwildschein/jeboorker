@@ -1,5 +1,5 @@
 package org.rr.commons.utils.compression;
 
 public interface FileEntryFilter {
-	public boolean accept(String entry);
+	public boolean accept(String entry, byte[] rawEntry);
 }

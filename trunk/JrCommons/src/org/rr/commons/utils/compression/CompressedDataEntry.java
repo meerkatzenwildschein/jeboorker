@@ -13,6 +13,8 @@ import org.rr.commons.utils.ReflectionUtils;
 public class CompressedDataEntry implements Comparable<CompressedDataEntry> {
 
 	public String path;
+	
+	public byte[] rawPath;
 
 	public InputStream data;
 
@@ -20,13 +22,15 @@ public class CompressedDataEntry implements Comparable<CompressedDataEntry> {
 		path = entry.getName();
 	}
 
-	public CompressedDataEntry(String path, InputStream data) {
+	public CompressedDataEntry(String path, byte[] rawPath, InputStream data) {
 		this.path = path;
+		this.rawPath = rawPath;
 		this.data = data;
 	}
 
-	public CompressedDataEntry(String path, byte[] data) {
+	public CompressedDataEntry(String path, byte[] rawPath, byte[] data) {
 		this.path = path;
+		this.rawPath = rawPath;
 		if(data != null) {
 			this.data = new ByteArrayInputStream(data);
 		} else {

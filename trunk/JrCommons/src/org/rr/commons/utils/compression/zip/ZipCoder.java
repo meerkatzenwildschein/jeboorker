@@ -56,6 +56,12 @@ final class ZipCoder {
             throw new IllegalArgumentException(cr.toString());
         return new String(ca, 0, cb.position());
     }
+    
+    byte[] toBytes(byte[] ba, int length) { 
+    	byte[] result = new byte[length];
+    	System.arraycopy(ba, 0, result, 0, length);
+    	return result;
+    }
 
     String toString(byte[] ba) {
         return toString(ba, ba.length);
