@@ -401,9 +401,11 @@ class FileResourceHandler extends AResourceHandler {
 		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
 
 		synchronized(fileSystemViewInstance) {
+//			File[] files = this.file.listFiles();
+			//did not list files with invalid charset under ubuntu
 			File[] files = FileResourceHandler.fileSystemViewInstance.getFiles(this.file, false);
 			for (int i = 0; i < files.length; i++) {
-				if(files[i].isFile()) {
+				if(!files[i].isDirectory()) {
 					IResourceHandler resourceLoader;
 					resourceLoader = ResourceHandlerFactory.getResourceHandler(files[i].getPath());
 					if(resourceLoader!=null) {
