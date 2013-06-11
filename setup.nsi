@@ -112,11 +112,11 @@ Section -Main SEC0000
     File lib\junique-1.0.4.jar
     File lib\jna-3.4.0.jar
     File lib\platform-3.4.0.jar
-    File lib\truezip-driver-file-7.7.1.jar
-    File lib\truezip-driver-zip-7.7.1.jar
-    File lib\truezip-file-7.7.1.jar
-    File lib\truezip-kernel-7.7.1.jar
-    File lib\truezip-swing-7.7.1.jar
+    File lib\truezip-driver-file-7.7.2.jar
+    File lib\truezip-driver-zip-7.7.2.jar
+    File lib\truezip-file-7.7.2.jar
+    File lib\truezip-kernel-7.7.2.jar
+    File lib\truezip-swing-7.7.2.jar
     
     SetOutPath $INSTDIR\lib\jmupdf
     File lib\jmupdf\jmupdf.jar
