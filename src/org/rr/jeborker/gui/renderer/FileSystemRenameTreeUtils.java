@@ -11,24 +11,6 @@ import org.rr.commons.utils.StringUtils;
 
 class FileSystemRenameTreeUtils {
 	
-	private static final char UTF8_REPLACEMENT_CHARACTER = '\uFFFD';
-
-	/**
-	 * Get some encoding alternatives for the given file name.
-	 */
-	static List<String> getCharsetChangeOffers(final String filename) {
-		List<String> offers = new ArrayList<String>();
-		if(filename.indexOf(UTF8_REPLACEMENT_CHARACTER) != -1) { 
-			byte[] filenameBytes = filename.getBytes();
-			Collection<Charset> charsets = Charset.availableCharsets().values();
-			for(Charset charset : charsets) {
-				offers.add(new String(filenameBytes, charset));
-			}
-			
-		}
-		return offers;
-	}
-	
 	/**
 	 * Get some change offers for the given file name.
 	 */
