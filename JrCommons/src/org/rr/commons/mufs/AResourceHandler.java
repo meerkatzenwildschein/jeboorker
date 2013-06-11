@@ -14,21 +14,35 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 
 /**
- * The {@link AResourceHandler} provides some provider implementation independant methods.
+ * The {@link AResourceHandler} provides some provider implementation independent methods.
  * It's not attendant to extends this class for creating new {@link IResourceHandler} types
  * but the {@link IResourceHandler} interface must be implemented.
  */
 abstract class AResourceHandler implements IResourceHandler, Comparable<IResourceHandler> {
 	
-	private HashMap<String, Object> metaMap;
+	private static final HashMap<String, Pattern> FILE_EXTENSION_PATTERNS = new HashMap<String, Pattern>() {
+		{
+			put("image/jpeg", Pattern.compile("(.jpg|.jpeg)$"));
+			put("image/png", Pattern.compile("(.png)$"));
+			put("image/gif", Pattern.compile("(.gif)$"));
+			put("text/plain", Pattern.compile("(.txt)$"));
+			put("application/epub+zip", Pattern.compile("(.epub)$"));
+			put("application/pdf", Pattern.compile("(.pdf)$"));
+			put("application/x-cbz", Pattern.compile("(.cbz)$"));
+			put("application/x-cbr", Pattern.compile("(.cbr)$"));
+			put("text/html", Pattern.compile("(.htm|.html|.xhtml)$"));
+			put("text/xml", Pattern.compile("(.xml)$"));
+		}
+	};
 	
 	/**
-	 * The file format. This is a cached value, so the format should not be determeined each time.
+	 * The file format. This is a cached value, so the format should not be determined each time.
 	 */
 	private String mime = null;
 	
@@ -47,7 +61,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	@Override
 	public String getMimeType() {
 		if (this.mime != null) {
-			if(this.mime.length() > 0) {
+			if(!this.mime.isEmpty()) {
 				return this.mime;
 			}
 			return null;
@@ -56,47 +70,43 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			return null;
 		}
 		
-		final String resourceString = this.getResourceString();
-		if(resourceString!=null && resourceString.lastIndexOf('.')!=-1) {
-			final String lowerCasedResourceString = resourceString.toLowerCase();
-			if(lowerCasedResourceString.endsWith(".jpg") || lowerCasedResourceString.endsWith(".jpeg")) {
-				return (this.mime = "image/jpeg");
-			} else if (lowerCasedResourceString.endsWith(".png")) {
-				return (this.mime = "image/png");
-			} else if (lowerCasedResourceString.endsWith(".gif")) {
-				return (this.mime = "image/gif");
-			} else if (lowerCasedResourceString.endsWith(".txt")) {
-				return (this.mime = "text/plain");
-			} else if(lowerCasedResourceString.endsWith(".epub")) {
-				return (this.mime = "application/epub+zip");
-			} else if(lowerCasedResourceString.endsWith(".pdf")) {
-				return (this.mime = "application/pdf");
-			} else if(lowerCasedResourceString.endsWith(".cbz")) {
-				return (this.mime = "application/x-cbz");
-			}  else if(lowerCasedResourceString.endsWith(".cbr")) {
-				return (this.mime = "application/x-cbr");
-			} else if(lowerCasedResourceString.endsWith(".html") || lowerCasedResourceString.endsWith(".htm")) {
-				return (this.mime = "text/html");
-			} else if(lowerCasedResourceString.endsWith(".xml")) {
-				return (this.mime = "text/xml");
-			}
+		String mimeFromFileName = extractMimeTypeFromFileName();
+		if(mimeFromFileName != null) {
+			return mimeFromFileName;
 		}
 		
 		try {
 			//this is a simple but pretty good working method which detects jpeg 
 			//data which mime-util not did.
 			final String guessedMime = ResourceHandlerUtils.guessFormat(this);
-			if(guessedMime!=null) {
+			if (guessedMime != null) {
 				return this.mime = guessedMime;
 			}
 		} catch(FileNotFoundException e) { 
 			LoggerFactory.logInfo(this, "File not found " + this, e);
 			return null; //No file, no reason to continue.
 		} catch (IOException e1) {
-//			LoggerFactory.logInfo(this, "Could not guess format for " + this, e1);
 			return null; //IO is not good. No reason to continue.
 		}		
 		
+		return null;
+	}
+
+	/**
+	 * Get the mime type by the file extension.
+	 * @return The desired mime for the file or <code>null</code> if the extension is not known.
+	 */
+	private String extractMimeTypeFromFileName() {
+		final String resourceString = this.getResourceString();
+		if (resourceString != null && resourceString.lastIndexOf('.') != -1) {
+			final String lowerCasedResourceString = resourceString.toLowerCase();
+			for(String mime : FILE_EXTENSION_PATTERNS.keySet()) {
+				Pattern pattern = FILE_EXTENSION_PATTERNS.get(mime);
+				if(pattern.matcher(lowerCasedResourceString).find()) {
+					return mime;
+				}
+			}
+		}
 		return null;
 	}
 	
@@ -130,7 +140,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			//format and the extension did not match, the string behind the dot
 			//belong to the file name.
 			final String mime = this.getMimeType();
-			if(mime !=null && mime.length()>0 && mime.indexOf('/')!=-1) {
+			if (mime != null && mime.length() > 0 && mime.indexOf('/') != -1) {
 				final String mimeFormatPart =  mime.substring(mime.indexOf('/')+1);
 				if(mimeFormatPart.equals("jpg") || mimeFormatPart.equals("jpeg")) {
 					if(!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg")) {
@@ -425,22 +435,6 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
-	}
-
-	@Override
-	public void addMeta(String key, Object value) {
-		if(metaMap == null) {
-			metaMap = new HashMap<String, Object>();
-		}
-		metaMap.put(key, value);
-	}
-
-	@Override
-	public Object getMeta(String key) {
-		if(metaMap == null) {
-			return null;
-		}
-		return metaMap.get(key);
 	}
 	
 	@Override
