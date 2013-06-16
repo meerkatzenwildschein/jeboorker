@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -596,6 +597,33 @@ public class ResourceHandlerUtils {
 			name = name.substring(0, name.length() - fileExtension.length() - 1);
 		}
 		return name;
+	}
+	
+	/**
+	 * Get all child folder of the given {@link IResourceHandler} that matches to the given
+	 * regular expression.
+	 * 
+	 * @throws IOException
+	 */
+	public static List<IResourceHandler> getChildFolderByRegExp(IResourceHandler base, String regExp) {
+		final Pattern pattern = Pattern.compile(regExp);
+		IResourceHandler[] listDirectoryResources;
+		try {
+			listDirectoryResources = base.listDirectoryResources(new ResourceNameFilter() {
+				
+				@Override
+				public boolean accept(IResourceHandler loader) {
+					String name = loader.getName();
+					if(pattern.matcher(name).find()) {
+						return true;
+					}
+					return false;
+				}
+			});
+			return Arrays.asList(listDirectoryResources);
+		} catch (IOException e) {
+			return Collections.emptyList(); 
+		}
 	}
 
 	/**
