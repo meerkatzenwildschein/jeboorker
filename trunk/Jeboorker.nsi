@@ -15,7 +15,7 @@ OutFile Jeboorker.exe
 InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
-Icon "${NSISDIR}\Contrib\Graphics\Icons\classic-install.ico"
+Icon "logo_16.ico"
 SilentInstall silent
 InstallDirRegKey HKLM "${REGKEY}" Path
 
