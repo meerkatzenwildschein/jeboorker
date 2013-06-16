@@ -90,6 +90,7 @@ Section -Main SEC0000
     File doc\license\TrueZip_EPL_license.txt
     File doc\license\Unrar_Freeware_license.txt
     File doc\license\MySwing_LGPL_license.txt
+    File doc\license\Carpelinx-Logo-Icon_GPL_license.txt
     
     SetOutPath $INSTDIR\exec
     File 'exec\Rar.exe'
