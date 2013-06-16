@@ -293,10 +293,12 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	            }
 	        	
         		@Override
-        		public void setPopupVisible(JComboBox c, boolean v) {
+        		public void setPopupVisible(JComboBox c, boolean visible) {
         		    // keeps the popup from coming down if there's nothing in the combo box
-        		    if (FileComboBoxEditorComponent.this.getModel().getSize() > 0) {
-        		    	super.setPopupVisible(c, v);
+        			if(!visible) {
+        				super.setPopupVisible(c, visible);
+        			} else if (FileComboBoxEditorComponent.this.getModel().getSize() > 0) {
+        		    	super.setPopupVisible(c, visible);
         		    }
         		}		        	
 	        	
