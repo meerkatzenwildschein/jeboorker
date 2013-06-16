@@ -138,12 +138,11 @@ Section -Main SEC0000
     File lib\epublib\kxml2-2.2.2.jar
     
     SetOutPath $INSTDIR\lib\orientdb
-    File lib\orientdb\javassist-3.16.1-GA.jar
-    File lib\orientdb\orient-commons-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\orientdb-core-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\orientdb-nativeos-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\orientdb-object-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\persistence-api-1.0.jar
+    File lib\orientdb\javassist.jar
+    File lib\orientdb\orient-commons-1.4.0.jar
+    File lib\orientdb\orientdb-core-1.4.0.jar
+    File lib\orientdb\orientdb-nativeos-1.4.0.jar
+    File lib\orientdb\orientdb-object-1.4.0.jar
     
     SetOutPath $INSTDIR\lib\epubcheck
     File lib\epubcheck\epubcheck-1.2.jar
