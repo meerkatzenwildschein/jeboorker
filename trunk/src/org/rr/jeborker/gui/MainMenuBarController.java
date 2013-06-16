@@ -296,9 +296,25 @@ public class MainMenuBarController {
 			action.putValue(Action.NAME, externalResource.toString());
 			action.putValue("TARGET", externalResource);
 			action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("removable_drive_16.png"));
-			action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("removable_drive_22.png"));					
-			
+			action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("removable_drive_22.png"));		
 			copyToSubMenu.add(action);
+			
+			//add also the ebook folders in the external drive
+			List<IResourceHandler> childFolderByRegExp = ResourceHandlerUtils.getChildFolderByRegExp(externalResource, "[eE]{0,1}-{0,1}[bB][oO][oO][kK]");
+			if(!childFolderByRegExp.isEmpty()) {
+				for(IResourceHandler ebookFolder : childFolderByRegExp) {
+					if(!items.isEmpty()) {
+						action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+					} else {
+						action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
+					}
+					action.putValue(Action.NAME, ebookFolder.toString());
+					action.putValue("TARGET", ebookFolder);
+					action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("removable_drive_16.png"));
+					action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("removable_drive_22.png"));		
+					copyToSubMenu.add(action);					
+				}
+			} 
 		}
 		return copyToSubMenu;
 	}	
