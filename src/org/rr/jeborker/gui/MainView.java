@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -66,6 +67,7 @@ import org.japura.gui.CheckComboBox;
 import org.rr.common.swing.ShadowPanel;
 import org.rr.common.swing.SwingUtils;
 import org.rr.common.swing.button.JMenuButton;
+import org.rr.common.swing.components.JRButton;
 import org.rr.common.swing.components.JRScrollPane;
 import org.rr.common.swing.dnd.DragAndDropUtils;
 import org.rr.common.swing.dnd.FileTransferable;
@@ -139,7 +141,7 @@ class MainView extends JFrame {
 	
 	JButton removeMetadataButton;
 	
-	JButton saveMetadataButton;
+	JRButton saveMetadataButton;
 	
 	JPanel rootPanel;
 	
@@ -358,8 +360,10 @@ class MainView extends JFrame {
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
 				propertySheet.addToolbarComponent(removeMetadataButton);
 				
-				saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
+				saveMetadataButton = new JRButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 				saveMetadataButton.setText("");
+				saveMetadataButton.setEnabledHighlightColor(Color.RED);
+				
 				propertySheet.addToolbarComponent(saveMetadataButton);				
 				
 				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>)null, DefaultPropertyRenderer.class);
