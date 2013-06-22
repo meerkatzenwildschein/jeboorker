@@ -18,7 +18,7 @@ import org.rr.common.swing.icon.AnimatedIcon;
 
 /**
  * The progress button shows a progress indicator icon during the
- * action is perfromed.
+ * action is performed.
  * <BR><BR>
  * Hint: Use {@link #setHorizontalTextPosition(int)} for control the icon / progress icon 
  * icon location.
