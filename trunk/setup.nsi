@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.2.9.0
+VIProductVersion 0.3.4.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -96,6 +96,7 @@ Section -Main SEC0000
     File 'exec\Rar.exe'
     File 'exec\UnRAR.exe'
     
+    RMDir /r $INSTDIR\lib
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
     File lib\bcpkix-jdk15on-147.jar
@@ -119,12 +120,14 @@ Section -Main SEC0000
     File lib\truezip-kernel-7.7.2.jar
     File lib\truezip-swing-7.7.2.jar
     
+    RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
     File lib\jmupdf\jmupdf.jar
     File lib\jmupdf\jmupdf-viewer.jar
     File lib\jmupdf\jmupdf32.dll
     File lib\jmupdf\jmupdf64.dll
     
+    RMDir /r $INSTDIR\lib\dropbox
     SetOutPath $INSTDIR\lib\dropbox
     File lib\dropbox\dropbox-java-sdk-1.5.3.jar
     File lib\dropbox\httpclient-4.0.3.jar
@@ -132,17 +135,19 @@ Section -Main SEC0000
     File lib\dropbox\httpmime-4.0.3.jar
     File lib\dropbox\json_simple-1.1.jar
     
+    RMDir /r $INSTDIR\lib\epublib
     SetOutPath $INSTDIR\lib\epublib
     File lib\epublib\commons-vfs-1.0.jar
     File lib\epublib\htmlcleaner-2.2.jar
     File lib\epublib\kxml2-2.2.2.jar
     
+    RMDir /r $INSTDIR\lib\orientdb
     SetOutPath $INSTDIR\lib\orientdb
     File lib\orientdb\javassist.jar
-    File lib\orientdb\orient-commons-1.4.0.jar
-    File lib\orientdb\orientdb-core-1.4.0.jar
-    File lib\orientdb\orientdb-nativeos-1.4.0.jar
-    File lib\orientdb\orientdb-object-1.4.0.jar
+    File lib\orientdb\orient-commons-1.4.0-SNAPSHOT.jar
+    File lib\orientdb\orientdb-core-1.4.0-SNAPSHOT.jar
+    File lib\orientdb\orientdb-nativeos-1.4.0-SNAPSHOT.jar
+    File lib\orientdb\orientdb-object-1.4.0-SNAPSHOT.jar
     
     SetOutPath $INSTDIR\lib\epubcheck
     File lib\epubcheck\epubcheck-1.2.jar
