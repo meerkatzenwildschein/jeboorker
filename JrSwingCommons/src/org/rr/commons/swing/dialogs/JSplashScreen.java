@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.TitledBorder;
 
-import org.rr.common.swing.SwingUtils;
+import org.rr.commons.swing.SwingUtils;
 
 public class JSplashScreen extends JDialog {
 

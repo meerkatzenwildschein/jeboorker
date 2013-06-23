@@ -54,9 +54,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.rr.common.swing.ShadowPanel;
-import org.rr.common.swing.SwingUtils;
-import org.rr.common.swing.components.JRScrollPane;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -68,6 +65,9 @@ import org.rr.commons.utils.ThreadUtils;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.JRScrollPane;
+import org.rr.commons.swing.components.container.ShadowPanel;
 import org.rr.commons.swing.layout.EqualsLayout;
 
 public class JImageDownloadDialog extends JDialog {

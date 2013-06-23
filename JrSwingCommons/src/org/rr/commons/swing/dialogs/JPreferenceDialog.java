@@ -27,7 +27,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
-import org.rr.common.swing.SwingUtils;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
