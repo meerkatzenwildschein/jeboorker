@@ -67,7 +67,7 @@ import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
 import org.jdesktop.jxlayer.JXLayer;
-import org.jdesktop.jxlayer.plaf.AbstractBufferedLayerUI;
+import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -318,7 +318,7 @@ class MainView extends JFrame {
 				
 				mainTableScrollPane = new JRScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
-				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractBufferedLayerUI<JRTable>() {
+				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
 
 					@Override
 					protected void processMouseEvent(MouseEvent e, JXLayer<? extends JRTable> l) {
