@@ -41,7 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.rr.common.swing.SwingUtils;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.PercentLayout;
 
 import com.l2fprod.common.swing.ButtonAreaLayout;
