@@ -13,10 +13,10 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.common.swing.SwingUtils;
-import org.rr.common.swing.dnd.FileTransferable;
-import org.rr.common.swing.dnd.URIListTransferable;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.dnd.FileTransferable;
+import org.rr.commons.swing.dnd.URIListTransferable;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;

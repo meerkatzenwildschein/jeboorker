@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JSlider;
 
-import org.rr.common.swing.components.JRCheckBox;
+import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;

@@ -18,7 +18,7 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.text.JTextComponent;
 
 import org.japura.gui.CheckComboBox;
-import org.rr.common.swing.SwingUtils;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
 
 class FilterPanelView extends JPanel {

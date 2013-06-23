@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.rr.common.swing.SwingUtils;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;

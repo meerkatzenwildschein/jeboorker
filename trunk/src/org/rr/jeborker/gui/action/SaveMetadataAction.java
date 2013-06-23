@@ -6,8 +6,8 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;

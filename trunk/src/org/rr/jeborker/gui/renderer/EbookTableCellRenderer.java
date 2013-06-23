@@ -28,12 +28,12 @@ import javax.swing.table.TableCellRenderer;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-import org.rr.common.swing.StarRater;
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.StarRater;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.ListUtils;

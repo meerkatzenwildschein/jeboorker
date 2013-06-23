@@ -27,12 +27,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FilenameUtils;
-import org.rr.common.swing.ShadowPanel;
-import org.rr.common.swing.SwingUtils;
-import org.rr.common.swing.components.JRScrollPane;
-import org.rr.common.swing.table.JRTable;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.JRScrollPane;
+import org.rr.commons.swing.components.JRTable;
+import org.rr.commons.swing.components.container.ShadowPanel;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;

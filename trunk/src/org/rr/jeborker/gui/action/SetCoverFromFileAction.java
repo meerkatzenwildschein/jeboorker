@@ -4,9 +4,9 @@ import java.io.File;
 
 import javax.swing.Action;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.chooser.FileChooserDialogFactory;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser;
 import org.rr.jeborker.gui.MainController;
