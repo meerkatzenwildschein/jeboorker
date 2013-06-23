@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -64,6 +65,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
+import org.jdesktop.jxlayer.JXLayer;
+import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -125,6 +128,8 @@ class MainView extends JFrame {
 	protected static final Object EbookPropertyItem = null;
 	
 	JRTable mainTable;
+	
+	JXLayer<JRTable> mainTableLayer;
 	
 	JProgressBar progressBar;
 	
@@ -312,7 +317,19 @@ class MainView extends JFrame {
 				
 				mainTableScrollPane = new JRScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
-				mainTableScrollPane.setViewportView(mainTable);
+				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
+
+					@Override
+					protected void processMouseEvent(MouseEvent e, JXLayer<? extends JRTable> l) {
+						if(e.getID() == MouseEvent.MOUSE_RELEASED && e.getSource() == mainTable && saveMetadataButton.isEnabled()) {
+							if(JeboorkerPreferences.isAutoSaveMetadata()) {
+								saveMetadataButton.getAction().actionPerformed(null);
+							}
+						}
+					}
+					
+				});
+				mainTableScrollPane.setViewportView(mainTableLayer);
 				
 				treeTabbedPane = new JTabbedPane();
 				treeTabbedPane.setDropTarget(new DropTarget(treeTabbedPane, new DropTargetAdapter() {

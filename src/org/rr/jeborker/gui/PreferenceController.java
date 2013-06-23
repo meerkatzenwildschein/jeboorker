@@ -1,10 +1,12 @@
 package org.rr.jeborker.gui;
 
 import java.awt.Point;
+import java.util.List;
 
 import javax.swing.JFrame;
 
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
+import org.rr.commons.swing.dialogs.JPreferenceDialog.PreferenceEntry;
 import org.rr.jeborker.JeboorkerPreferences;
 
 public class PreferenceController {
@@ -32,11 +34,13 @@ public class PreferenceController {
 	 * Push the preference dialog values into the application.
 	 */
 	private void setPreferenceViewValues(PreferenceView view) {
-		boolean isTreeAutoscrollEnabled = view.getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_PREFERENCE_NAME);
-		JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
-		
-		boolean isEbookDeleteAfterImport = view.getBooleanValue(PreferenceView.DELETE_AFTER_IMPORT_PREFERENCE_NAME);
-		JeboorkerPreferences.addGenericEntryBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);
+		List<PreferenceEntry> preferenceEntries = view.getPreferenceEntries();
+		for(PreferenceEntry entry : preferenceEntries) {
+			Runnable okAction = entry.getOkAction();
+			if(okAction != null) {
+				okAction.run();
+			}
+		}
 	}
 	
 	private PreferenceView getView() {

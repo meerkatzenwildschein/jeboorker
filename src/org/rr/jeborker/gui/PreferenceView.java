@@ -11,6 +11,8 @@ class PreferenceView extends JPreferenceDialog {
 	
 	static final String AUTO_SCOLL_ITEM_PREFERENCE_NAME = "autoScollItem";
 	
+	static final String AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME = "autoSaveMetadataItem";
+	
 	static final String DELETE_AFTER_IMPORT_PREFERENCE_NAME = "deleteEbookAfterImport";
 	
 	private boolean isInitialized = false;
@@ -40,15 +42,44 @@ class PreferenceView extends JPreferenceDialog {
 				String label = Bundle.getString("PreferenceView.pref.autoscroll");
 				JCheckBox autoScrollCheckBox = new JRCheckBox();
 				autoScrollCheckBox.setSelected(JeboorkerPreferences.isTreeAutoScrollingEnabled());
-				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_PREFERENCE_NAME, label, autoScrollCheckBox, generalCategory);
+				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_PREFERENCE_NAME, label, autoScrollCheckBox, generalCategory, new Runnable() {
+					
+					@Override
+					public void run() {
+						boolean isTreeAutoscrollEnabled = getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_PREFERENCE_NAME);
+						JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
+					}
+				});
 				addPreferenceEntry(autoScollItem);
+			}
+
+			{
+				String label = Bundle.getString("PreferenceView.pref.autoSaveMetadata");
+				JCheckBox autoSaveMetadataCheckBox = new JRCheckBox();
+				autoSaveMetadataCheckBox.setSelected(JeboorkerPreferences.isAutoSaveMetadata());
+				PreferenceEntry autoSaveMetadataItem = new PreferenceEntry(AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME, label, autoSaveMetadataCheckBox, generalCategory, new Runnable() {
+					
+					@Override
+					public void run() {
+						boolean isAutoSaveMetadata = getBooleanValue(PreferenceView.AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME);
+						JeboorkerPreferences.addGenericEntryBoolean(JeboorkerPreferences.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, isAutoSaveMetadata);							
+					}
+				});
+				addPreferenceEntry(autoSaveMetadataItem);
 			}
 			
 			{
 				String label = Bundle.getString("PreferenceView.pref.deleteAfterImport");
 				JCheckBox deleteAfterImportCheckBox = new JRCheckBox();
 				deleteAfterImportCheckBox.setSelected(JeboorkerPreferences.getEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT));
-				PreferenceEntry deleteEbookAfterImportItem = new PreferenceEntry(DELETE_AFTER_IMPORT_PREFERENCE_NAME, label, deleteAfterImportCheckBox, generalCategory);
+				PreferenceEntry deleteEbookAfterImportItem = new PreferenceEntry(DELETE_AFTER_IMPORT_PREFERENCE_NAME, label, deleteAfterImportCheckBox, generalCategory, new Runnable() {
+					
+					@Override
+					public void run() {
+						boolean isEbookDeleteAfterImport = getBooleanValue(PreferenceView.DELETE_AFTER_IMPORT_PREFERENCE_NAME);
+						JeboorkerPreferences.addGenericEntryBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);						
+					}
+				});
 				addPreferenceEntry(deleteEbookAfterImportItem);
 			}
 		}
