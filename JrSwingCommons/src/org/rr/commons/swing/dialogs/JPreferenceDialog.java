@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -93,6 +94,22 @@ public class JPreferenceDialog extends JDialog {
 	 */
 	public int getActionResult() {
 		return this.actionResult;
+	}
+	
+	/**
+	 * Get all preference entries 
+	 */
+	public List<PreferenceEntry> getPreferenceEntries() {
+		Collection<PreferenceEntry> values = preferenceEntries.values();
+		return new ArrayList<PreferenceEntry>(values);
+	}
+	
+	/**
+	 * Get the preference entry with the given name.
+	 */
+	public PreferenceEntry getPreferenceEntry(final String name) {
+		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
+		return preferenceEntry;
 	}
 	
 	/**
@@ -303,6 +320,8 @@ public class JPreferenceDialog extends JDialog {
 		
 		private Object value;
 		
+		private Runnable okAction;
+		
 		public PreferenceEntry(String name, String label, Component customComponent) {
 			this.name = name;
 			this.label = label;
@@ -310,10 +329,15 @@ public class JPreferenceDialog extends JDialog {
 		}
 		
 		public PreferenceEntry(String name, String label, Component customComponent, String category) {
+			this(name, label, customComponent, category, null);
+		}
+		
+		public PreferenceEntry(String name, String label, Component customComponent, String category, Runnable okAction) {
 			this.name = name;
 			this.label = label;
 			this.category = category;
 			this.customComponent = customComponent;
+			this.okAction = okAction;
 		}
 
 		public String getName() {
@@ -350,6 +374,14 @@ public class JPreferenceDialog extends JDialog {
 
 		public Object getValue() {
 			return value;
+		}
+
+		public Runnable getOkAction() {
+			return okAction;
+		}
+
+		public void setOkAction(Runnable okAction) {
+			this.okAction = okAction;
 		}
 		
 	}
