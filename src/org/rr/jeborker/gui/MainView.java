@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -331,7 +332,7 @@ class MainView extends JFrame {
 					
 					public long getLayerEventMask() {
 						//fix for mouse wheel scrolling @see https://www.java.net//node/696371
-						return 0;
+						return AWTEvent.MOUSE_EVENT_MASK;
 					}
 					
 				});
