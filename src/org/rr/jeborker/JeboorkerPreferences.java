@@ -58,7 +58,7 @@ public class JeboorkerPreferences {
 			}
 			
 			public String getDefaultValue() {
-				return "true";
+				return "false";
 			}
 		}
 	}
