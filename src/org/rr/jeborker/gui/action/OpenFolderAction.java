@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.DesktopUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 

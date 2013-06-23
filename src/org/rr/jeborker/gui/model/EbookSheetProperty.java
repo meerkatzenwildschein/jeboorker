@@ -174,7 +174,7 @@ class EbookSheetProperty extends DefaultProperty {
 	}
 
 	@Override
-	public Class getPropertyRendererClass() {
+	public Class<?> getPropertyRendererClass() {
 		return this.metadataProperty.getPropertyRendererClass();
 	}
 }

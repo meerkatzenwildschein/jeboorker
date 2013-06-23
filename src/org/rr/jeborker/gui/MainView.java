@@ -64,20 +64,21 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.japura.gui.CheckComboBox;
-import org.rr.common.swing.ShadowPanel;
-import org.rr.common.swing.SwingUtils;
-import org.rr.common.swing.button.JMenuButton;
-import org.rr.common.swing.components.JRButton;
-import org.rr.common.swing.components.JRScrollPane;
-import org.rr.common.swing.dnd.DragAndDropUtils;
-import org.rr.common.swing.dnd.FileTransferable;
-import org.rr.common.swing.dnd.URIListTransferable;
-import org.rr.common.swing.image.SimpleImageViewer;
-import org.rr.common.swing.table.JRTable;
-import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.JRButton;
+import org.rr.commons.swing.components.JRScrollPane;
+import org.rr.commons.swing.components.JRTable;
+import org.rr.commons.swing.components.button.JMenuButton;
+import org.rr.commons.swing.components.container.ShadowPanel;
+import org.rr.commons.swing.components.tree.JRTree;
+import org.rr.commons.swing.components.util.EnablePropertyChangeHighlighterSupport;
+import org.rr.commons.swing.dnd.DragAndDropUtils;
+import org.rr.commons.swing.dnd.FileTransferable;
+import org.rr.commons.swing.dnd.URIListTransferable;
+import org.rr.commons.swing.image.SimpleImageViewer;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
@@ -362,7 +363,7 @@ class MainView extends JFrame {
 				
 				saveMetadataButton = new JRButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 				saveMetadataButton.setText("");
-				saveMetadataButton.setEnabledHighlightColor(Color.RED);
+				new EnablePropertyChangeHighlighterSupport(saveMetadataButton, Color.RED, 3);
 				
 				propertySheet.addToolbarComponent(saveMetadataButton);				
 				

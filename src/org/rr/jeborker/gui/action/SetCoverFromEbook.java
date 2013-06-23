@@ -9,11 +9,11 @@ import java.util.logging.Level;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageZipFileFetcherFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.JImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;

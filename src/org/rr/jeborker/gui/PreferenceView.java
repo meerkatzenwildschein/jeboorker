@@ -3,7 +3,7 @@ package org.rr.jeborker.gui;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 
-import org.rr.common.swing.components.JRCheckBox;
+import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.jeborker.JeboorkerPreferences;
 

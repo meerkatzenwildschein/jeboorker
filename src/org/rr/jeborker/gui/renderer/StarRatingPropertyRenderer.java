@@ -9,8 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import org.rr.common.swing.StarRater;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.components.StarRater;
 import org.rr.commons.utils.CommonUtils;
 
 public class StarRatingPropertyRenderer extends JPanel implements TableCellRenderer {

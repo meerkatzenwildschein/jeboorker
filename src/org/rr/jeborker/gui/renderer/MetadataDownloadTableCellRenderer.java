@@ -25,11 +25,11 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.VerticalLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;

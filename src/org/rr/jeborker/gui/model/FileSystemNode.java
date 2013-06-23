@@ -11,10 +11,10 @@ import java.util.logging.Level;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.rr.common.swing.tree.NamedNode;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceNameFilter;
+import org.rr.commons.swing.components.tree.NamedNode;
 import org.rr.jeborker.gui.action.ActionUtils;
 
 public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<FileSystemNode> {

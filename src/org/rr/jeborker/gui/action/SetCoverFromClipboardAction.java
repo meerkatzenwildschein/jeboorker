@@ -15,10 +15,10 @@ import javax.swing.Action;
 import javax.swing.JFileChooser;
 
 import org.apache.commons.io.IOUtils;
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;

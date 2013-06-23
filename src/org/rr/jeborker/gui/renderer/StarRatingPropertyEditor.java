@@ -10,8 +10,8 @@ import java.util.logging.Level;
 
 import javax.swing.JPanel;
 
-import org.rr.common.swing.StarRater;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.components.StarRater;
 import org.rr.commons.utils.CommonUtils;
 
 public class StarRatingPropertyEditor extends JPanel implements PropertyEditor {

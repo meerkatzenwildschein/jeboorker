@@ -10,8 +10,8 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.rr.common.swing.tree.JRTree;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.swing.components.tree.JRTree;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;

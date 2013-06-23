@@ -3,9 +3,9 @@ package org.rr.jeborker.gui.action;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 
-import org.rr.common.swing.SwingUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.JImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;

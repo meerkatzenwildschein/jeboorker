@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.common.swing.SwingUtils;
-import org.rr.common.swing.dnd.ImageTransferable;
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.dnd.ImageTransferable;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
