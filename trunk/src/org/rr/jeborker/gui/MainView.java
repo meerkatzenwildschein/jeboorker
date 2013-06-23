@@ -321,10 +321,11 @@ class MainView extends JFrame {
 
 					@Override
 					protected void processMouseEvent(MouseEvent e, JXLayer<? extends JRTable> l) {
-						if(e.getID() == MouseEvent.MOUSE_RELEASED && e.getSource() == mainTable && saveMetadataButton.isEnabled()) {
-							if(JeboorkerPreferences.isAutoSaveMetadata()) {
+						if(JeboorkerPreferences.isAutoSaveMetadata() && saveMetadataButton.isEnabled()) {
+							if(e.getID() == MouseEvent.MOUSE_RELEASED && e.getSource() == mainTable ) {
 								saveMetadataButton.getAction().actionPerformed(null);
 							}
+							e.consume();
 						}
 					}
 					
