@@ -50,6 +50,16 @@ public class JeboorkerPreferences {
 			public String getDefaultValue() {
 				return "false";
 			}
+		},
+		MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED {
+			@Override
+			public String getKey() {
+				return "MainTableAutoSaveMetadataEnabled";
+			}
+			
+			public String getDefaultValue() {
+				return "true";
+			}
 		}
 	}
 
@@ -313,8 +323,7 @@ public class JeboorkerPreferences {
 	 * Tells if the auto scrolling the the trees is enabled.
 	 */
 	public static boolean isTreeAutoScrollingEnabled() {
-		Boolean result = getEntryAsBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED);
-		return result;
+		return getEntryAsBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED);
 	}	
 	
 	/**
@@ -322,9 +331,23 @@ public class JeboorkerPreferences {
 	 */
 	public static void setTreeAutoScrollingEnabled(final boolean value) {
 		addGenericEntryBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED, Boolean.valueOf(value));
+		
+		//listener for enable the auto scroll function in the tree component.
 		for(JeboorkerPreferenceListener listener : preferenceChangeListener) {
 			listener.treeAutoScrollingChanged(value);
 		}
 	}	
+	
+	public static boolean isAutoSaveMetadata() {
+		return getEntryAsBoolean(PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED);
+	}
+	
+	/**
+	 * Sets the value for enable / disable the auto save function in the main table. 
+	 * The auto save function is always triggered on a click at the main table.
+	 */
+	public static void setAutoSaveMetadata(final boolean value) {
+		addGenericEntryBoolean(PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, Boolean.valueOf(value));
+	}		
 	
 }
