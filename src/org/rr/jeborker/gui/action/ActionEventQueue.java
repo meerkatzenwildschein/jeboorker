@@ -25,7 +25,9 @@ public class ActionEventQueue {
 			public void run() {
 				DefaultDBManager.setDefaultDBThreadInstance();
 				action.invokeRealAction(event);
-				invokeLater.run();
+				if(invokeLater != null) {
+					invokeLater.run();
+				}
 			}
 		});
 	}

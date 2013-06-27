@@ -90,7 +90,10 @@ public class ApplicationAction extends AbstractAction {
 				FileRefreshBackgroundThread.setDisabled(false);
 				TrueZipUtils.unmout();
 			}
-			invokeLater.run();
+			
+			if(invokeLater != null) {
+				invokeLater.run();
+			}
 		} else {
 			ActionEventQueue.addActionEvent(this, e, invokeLater);
 		}		
