@@ -15,12 +15,17 @@ public class ActionEventQueue {
 	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
             60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
 
-	static synchronized void addActionEvent(final ApplicationAction action, final ActionEvent event) {
+    static synchronized void addActionEvent(final ApplicationAction action, final ActionEvent event) {
+    	addActionEvent(action, event, null);
+    }
+    
+	static synchronized void addActionEvent(final ApplicationAction action, final ActionEvent event, final Runnable invokeLater) {
 		APPLICATION_THREAD_POOL.submit(new Runnable() {
 			@Override
 			public void run() {
 				DefaultDBManager.setDefaultDBThreadInstance();
 				action.invokeRealAction(event);
+				invokeLater.run();
 			}
 		});
 	}

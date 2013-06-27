@@ -70,7 +70,11 @@ public class ApplicationAction extends AbstractAction {
 		this.invokeAction(null);
 	}
 	
-	public void invokeAction(ActionEvent e) {
+	public void invokeAction(final ActionEvent e) {
+		this.invokeAction(e, null);
+	}
+	
+	public void invokeAction(final ActionEvent e, final Runnable invokeLater) {
 		final Object noRealActionThreading = realAction.getValue(NON_THREADED_ACTION_KEY);
 		final boolean noRealActionThreadingValue = noRealActionThreading instanceof Boolean && ((Boolean) noRealActionThreading).booleanValue();
 		final Object noAppActionThreading = this.getValue(NON_THREADED_ACTION_KEY);
@@ -86,8 +90,9 @@ public class ApplicationAction extends AbstractAction {
 				FileRefreshBackgroundThread.setDisabled(false);
 				TrueZipUtils.unmout();
 			}
+			invokeLater.run();
 		} else {
-			ActionEventQueue.addActionEvent(this, e);
+			ActionEventQueue.addActionEvent(this, e, invokeLater);
 		}		
 	}
 	

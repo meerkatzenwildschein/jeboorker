@@ -21,6 +21,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -56,6 +57,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
@@ -321,13 +323,49 @@ class MainView extends JFrame {
 				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
 
 					@Override
-					protected void processMouseEvent(MouseEvent e, JXLayer<? extends JRTable> l) {
-						if(JeboorkerPreferences.isAutoSaveMetadata() && saveMetadataButton.isEnabled()) {
-							if(e.getID() == MouseEvent.MOUSE_RELEASED && e.getSource() == mainTable ) {
-								saveMetadataButton.getAction().actionPerformed(null);
+					protected void processMouseEvent(final MouseEvent e, final JXLayer<? extends JRTable> l) {
+						if(JeboorkerPreferences.isAutoSaveMetadata()) {
+							transferFocusOnClick(e, l);
+							
+							//save meta data and dispatch the mouse event to the jtable so it changes the selection
+							if(saveMetadataButton.isEnabled()) {
+								if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getSource() == mainTable ) {
+									SwingUtilities.invokeLater(new Runnable() {
+										public void run() {
+											ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null)
+											.invokeAction(null, new Runnable() {
+												public void run() {
+													SwingUtilities.invokeLater(new Runnable() {
+														
+														@Override
+														public void run() {
+															MouseEvent click = new MouseEvent((Component) e.getSource(), MouseEvent.MOUSE_CLICKED, e.getWhen(), 
+																	e.getModifiers(), e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(), 
+																	e.getClickCount(), e.isPopupTrigger(), e.getButton());
+															for(MouseListener ml: l.getView().getMouseListeners()){
+															    ml.mousePressed(click);
+															    ml.mouseReleased(click);
+															    ml.mouseClicked(click);
+															}
+														}
+													});
+												}
+											});										
+										}
+									});								
+	
+								}
+								e.consume();
 							}
-							e.consume();
 						}
+					}
+					
+					private void transferFocusOnClick(final MouseEvent e, final JXLayer<? extends JRTable> l) {
+						if(e.getID() != MouseEvent.MOUSE_DRAGGED && e.getID() != MouseEvent.MOUSE_MOVED
+								&& e.getID() != MouseEvent.MOUSE_ENTERED && e.getID() != MouseEvent.MOUSE_EXITED) {
+							//transfer the focus cause that the edit mode in the meta data sheet 
+							l.getView().requestFocus();
+						}						
 					}
 					
 					public long getLayerEventMask() {
