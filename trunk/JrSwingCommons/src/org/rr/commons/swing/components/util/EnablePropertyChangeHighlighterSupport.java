@@ -52,33 +52,48 @@ public class EnablePropertyChangeHighlighterSupport {
 	
 	private class HighlightPropertyChangeListener implements PropertyChangeListener  {
 		
+		private boolean isBlinking = false;
+		
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if(evt.getPropertyName().equals("enabled") && target.isEnabled()) {
+			if(!isBlinking && evt.getPropertyName().equals("enabled") && target.isEnabled()) {
+				isBlinking = true;
 				new Thread() {
 					public void run() {
-						final Border oldBorder = target.getBorder();
-						final Insets borderInsets = setupInset(oldBorder.getBorderInsets(target), lineWidth);
-						final Border highlight = new CompoundBorder(new LineBorder(color, lineWidth), new EmptyBorder(borderInsets));
-						
-						for(int i = 0; i < 3; i++) {
-							//set the highlight border
-							SwingUtilities.invokeLater(new Runnable() {
-								public void run() {
-									target.setBorder(highlight);
-								}
-							});
+						try {
+							final Border oldBorder = target.getBorder();
+							final Insets borderInsets = setupInset(oldBorder.getBorderInsets(target), lineWidth);
+							final Border highlight = new CompoundBorder(new LineBorder(color, lineWidth), new EmptyBorder(borderInsets));
 							
-							try {Thread.sleep(200); } catch (InterruptedException e) {}
+							for(int i = 0; i < 3 && target.isEnabled(); i++) {
+								//set the highlight border
+								SwingUtilities.invokeLater(new Runnable() {
+									public void run() {
+										target.setBorder(highlight);
+									}
+								});
+								
+								try {Thread.sleep(200); } catch (InterruptedException e) {}
+								
+								//reset the border
+								SwingUtilities.invokeLater(new Runnable() {
+									public void run() {
+										target.setBorder(oldBorder);
+									}
+								});		
+								
+								try {Thread.sleep(200); } catch (InterruptedException e) {}
+							}
 							
 							//reset the border
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
 									target.setBorder(oldBorder);
 								}
-							});		
-							
+							});	
+						} finally {
 							try {Thread.sleep(200); } catch (InterruptedException e) {}
+							isBlinking = false;
 						}
 					}
 					
