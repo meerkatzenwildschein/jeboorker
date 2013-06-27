@@ -31,26 +31,46 @@
 
 package org.jdesktop.jxlayer;
 
-import org.jdesktop.jxlayer.plaf.LayerUI;
-
-import javax.swing.*;
-import javax.accessibility.AccessibleContext;
-import javax.accessibility.AccessibleRole;
-import javax.accessibility.Accessible;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.im.InputContext;
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ContainerEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Locale;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.accessibility.Accessible;
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleRole;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+import org.jdesktop.jxlayer.plaf.LayerUI;
 
 /**
  * The universal decorator for Swing components
@@ -501,7 +521,7 @@ public final class JXLayer<V extends Component> extends JComponent
      * @see Scrollable
      * @see LayerUI#getScrollableTracksViewportHeight(JXLayer)
      */
-    public boolean getScrollableTracksViewportHeight() {
+    public boolean getScrollableTracksViewportHeight() { 
         if (getUI() != null) {
             return getUI().getScrollableTracksViewportHeight(this);
         }
@@ -675,7 +695,7 @@ public final class JXLayer<V extends Component> extends JComponent
         }
 
         private boolean isEventEnabled(long eventMask, int id) {
-            return (((eventMask & AWTEvent.COMPONENT_EVENT_MASK) != 0 &&
+            boolean enabled = (((eventMask & AWTEvent.COMPONENT_EVENT_MASK) != 0 &&
                     id >= ComponentEvent.COMPONENT_FIRST &&
                     id <= ComponentEvent.COMPONENT_LAST)
                     || ((eventMask & AWTEvent.CONTAINER_EVENT_MASK) != 0 &&
@@ -706,6 +726,7 @@ public final class JXLayer<V extends Component> extends JComponent
                     || ((eventMask & AWTEvent.HIERARCHY_BOUNDS_EVENT_MASK) != 0 &&
                     (id == HierarchyEvent.ANCESTOR_MOVED ||
                             id == HierarchyEvent.ANCESTOR_RESIZED)));
+            return enabled;
         }
     }
     
