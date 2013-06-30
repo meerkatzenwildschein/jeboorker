@@ -35,7 +35,7 @@ import org.rr.commons.utils.StringUtils;
 
 public class JPreferenceDialog extends JDialog {
 	
-	private static final Dimension DEFAULT_SIZE = new Dimension(400,250);
+	private static final Dimension DEFAULT_SIZE = new Dimension(450,250);
 
 	public static final int ACTION_RESULT_OK = 0;
 	
@@ -224,6 +224,10 @@ public class JPreferenceDialog extends JDialog {
 					gbc_component.gridx = 2;
 					gbc_component.gridy = i;
 					gbc_component.anchor = GridBagConstraints.WEST;
+					if(!(c instanceof JCheckBox)) {
+						gbc_component.weightx = 1.0;
+						gbc_component.fill = GridBagConstraints.HORIZONTAL;
+					}
 					generalPanel.add(c, gbc_component);				
 				}
 				

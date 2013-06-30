@@ -65,16 +65,20 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	}
 	
 	private static void doDelete(IResourceHandler fileToDelete) throws IOException {
-		if(!fileToDelete.moveToTrash()) {
-			fileToDelete.delete();
-			if(fileToDelete.exists()) {
-				LoggerFactory.logWarning(DeleteFileAction.class, "could not delete file " + fileToDelete);
+		try {
+			if(!fileToDelete.moveToTrash()) {
+				fileToDelete.delete();
+				if(fileToDelete.exists()) {
+					LoggerFactory.logWarning(DeleteFileAction.class, "could not delete file " + fileToDelete);
+				} else {
+					ActionUtils.refreshEntry(fileToDelete);
+				}
 			} else {
 				ActionUtils.refreshEntry(fileToDelete);
 			}
-		} else {
-			ActionUtils.refreshEntry(fileToDelete);
-		}		
+		} catch(java.io.FileNotFoundException e) {
+			LoggerFactory.logWarning(DeleteFileAction.class, "File is already deleted " + fileToDelete, e);
+		}
 	}
 	
 	@Override

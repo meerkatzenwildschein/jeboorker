@@ -2,47 +2,60 @@ package org.rr.jeborker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.action.ApplicationAction;
 
-public class FileRefreshBackgroundThread extends Thread {
+public class FileRefreshBackground {
 
-	private static FileRefreshBackgroundThread thread;
+	private static FileRefreshBackground singleton;
 
-	private static final List<EbookPropertyItem> items = Collections.synchronizedList(new ArrayList<EbookPropertyItem>());
+	private static final Set<EbookPropertyItem> items = Collections.synchronizedSet(new HashSet<EbookPropertyItem>());
 
 	private static int isDisabled = 0;
 	
-	public FileRefreshBackgroundThread(Worker worker) {
-		super(worker);
+	private FileRefreshBackground() {
 	}
 
-	public static synchronized FileRefreshBackgroundThread getInstance() {
-		if (thread == null) {
-			thread = new FileRefreshBackgroundThread(new Worker());
-			thread.start();
+	public static synchronized FileRefreshBackground getInstance() {
+		if (singleton == null) {
+			singleton = new FileRefreshBackground();
+			Jeboorker.APPLICATION_THREAD_POOL.submit(new Worker());
 		}
-		return thread;
+		return singleton;
 	}
 
 	public void addEbook(EbookPropertyItem item) {
 		if(isDisabled == 0) {
-			items.add(item);
+			synchronized (items) {
+				items.add(item);
+			}
 		}
 	}
 	
+	public void addEbooks(List<EbookPropertyItem> changedResources) {
+		if(isDisabled == 0 && !changedResources.isEmpty()) {
+			synchronized (items) {
+				items.addAll(changedResources);
+			}
+		}
+	}	
+	
 	/**
-	 * Disabled the {@link FileRefreshBackgroundThread}. The {@link #addEbook(EbookPropertyItem)} method
-	 * did no longer add books if the {@link FileRefreshBackgroundThread} is set to disabled.
-	 * @param disabled <code>true</code> for disabling the {@link FileRefreshBackgroundThread} and <code>false</code>
+	 * Disabled the {@link FileRefreshBackground}. The {@link #addEbook(EbookPropertyItem)} method
+	 * did no longer add books if the {@link FileRefreshBackground} is set to disabled.
+	 * @param disabled <code>true</code> for disabling the {@link FileRefreshBackground} and <code>false</code>
 	 *  to enable it.
 	 */
 	public static void setDisabled(boolean disabled) {
@@ -51,6 +64,13 @@ public class FileRefreshBackgroundThread extends Thread {
 		} else {
 			isDisabled --;
 		}
+	}
+	
+	/**
+	 * Tells if the background refresh is currently disabled or not.
+	 */
+	public static boolean isDisabled() {
+		return isDisabled != 0;
 	}
 
 	private static class Worker implements Runnable {
@@ -61,23 +81,28 @@ public class FileRefreshBackgroundThread extends Thread {
 				while (!items.isEmpty() && isDisabled == 0) {
 					EbookPropertyItem ebookPropertyItem = null;
 					try {
-						ebookPropertyItem = items.remove(0);
-						this.processItem(ebookPropertyItem);
+						synchronized (items) {
+							List<EbookPropertyItem> processedItems = new ArrayList<EbookPropertyItem>();
+							Iterator<EbookPropertyItem> itemsIter = items.iterator();
+							while(itemsIter.hasNext()) {
+								ebookPropertyItem = itemsIter.next();
+								this.processItem(ebookPropertyItem);
+								processedItems.add(ebookPropertyItem);
+							}
+							items.removeAll(processedItems);
+						}
 					} catch(Exception e) {
 						LoggerFactory.log(Level.WARNING, this, "Failed to handle " + ebookPropertyItem + " in background process", e);
 					}
 				}
 				
 				// wait a moment before restart
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
+				ReflectionUtils.sleepSilent(1000);
 			}
 		}
 
 		/**
-		 * Handle these items which are added with the {@link FileRefreshBackgroundThread#addEbook(EbookPropertyItem)} method.
+		 * Handle these items which are added with the {@link FileRefreshBackground#addEbook(EbookPropertyItem)} method.
 		 */
 		private void processItem(EbookPropertyItem ebookPropertyItem) {
 			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
@@ -107,4 +132,5 @@ public class FileRefreshBackgroundThread extends Thread {
 			return false;
 		}
 	}
+
 }

@@ -14,6 +14,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtils;
@@ -24,6 +25,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.ApplicationAction;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
 class MainMenuBarView extends JMenuBar {
 
@@ -277,6 +279,13 @@ class MainMenuBarView extends JMenuBar {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
 				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
+				final List<IResourceHandler> selectedItemResources = new TransformValueList<EbookPropertyItem, IResourceHandler>(selectedItems) {
+
+					@Override
+					public IResourceHandler transform(EbookPropertyItem source) {
+						return source.getResourceHandler();
+					}
+				};
 				
 				editMenuBar.removeAll();
 				createDynamicEditMenu(selectedItems, selectedEbookPropertyItemRows);
@@ -295,7 +304,7 @@ class MainMenuBarView extends JMenuBar {
 				JMenuItem metadataDownloadItem = new JMenuItem();
 				metadataDownloadItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_METADATA_DOWNLOAD_ACTION, null));
 				editMenuBar.add(metadataDownloadItem);
-				if(selectedItems.isEmpty()) {
+				if(selectedItems.isEmpty() || !MetadataHandlerFactory.hasWriterSupport(selectedItemResources)) {
 					metadataDownloadItem.setEnabled(false);
 				}				
 				

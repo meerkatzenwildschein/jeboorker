@@ -60,6 +60,16 @@ public class JeboorkerPreferences {
 			public String getDefaultValue() {
 				return "false";
 			}
+		},
+		BASIC_FILE_TYPES {
+			@Override
+			public String getKey() {
+				return "BasicFileTypes";
+			}
+			
+			public String getDefaultValue() {
+				return "doc,docx,html,htm,rtf,fb2,tr2,tr3,djvu,pdb,xeb,ceb,azw,kf8,lit,mobi,prc,opf,txt,pdb,ps,pdg,tebr,xml";
+			}
 		}
 	}
 
@@ -72,6 +82,7 @@ public class JeboorkerPreferences {
 		}
 		
 		addGenericEntryAsString(BASE_PATH, basePath);
+		FileWatchService.addWatchPath(path);
 	}
 	
 	/**
@@ -147,18 +158,31 @@ public class JeboorkerPreferences {
 		addEntryToDB(key, value);
 	}
 	
+	public static void addGenericEntryAsString(final PREFERENCE_KEYS key, final String value) {
+		addGenericEntryAsString(key.getKey(), value);
+	}		
+	
+	/**
+	 * Fetch a previously stored string value with it's key.
+	 * @param key The key to access the value.
+	 * @return The desired value or <code>null</code> if the value wasn't stored.
+	 */
+	public static String getGenericEntryAsString(final String key, String defaultValue) {
+		if(key != null) {
+			String result;
+			if((result = getEntryFromDB(key)) != null) {
+				return result;
+			}
+		} return defaultValue;
+	}
+	
 	/**
 	 * Fetch a previously stored string value with it's key.
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
 	public static String getGenericEntryAsString(final String key) {
-		if(key != null) {
-			String result;
-			if((result = getEntryFromDB(key)) != null) {
-				return result;
-			}
-		} return "";
+		return getGenericEntryAsString(key, "");
 	}
 	
 	/**
@@ -195,6 +219,19 @@ public class JeboorkerPreferences {
 	public static Boolean getGenericEntryAsBoolean(final String key) {
 		return getEntryAsBoolean(key, Boolean.FALSE);
 	}
+	
+	/**
+	 * Get the given {@link PREFERENCE_KEYS} as string value.  
+	 * @return The desired value. Never returns <code>null</code>.
+	 */
+	public static String getEntryAsString(final PREFERENCE_KEYS key) {
+		final String defaultValueString = key.getDefaultValue();
+		final String preferenceEntry = getGenericEntryAsString(key.getKey(), null);
+		if(preferenceEntry != null) {
+			return preferenceEntry;
+		}
+		return defaultValueString;
+	}	
 	
 	/**
 	 * Get the given {@link PREFERENCE_KEYS} as boolean value.  

@@ -21,7 +21,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.Base64;
-import org.rr.jeborker.gui.action.ActionEventQueue;
+import org.rr.jeborker.Jeboorker;
 
 class AmazonDeMetadataDownloader implements MetadataDownloader {
 	
@@ -29,7 +29,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 
 	private static final String AMAZON_CONTENT_ENTRY_DIV = "result_"; //_15, _16...
 	
-	private ExecutorService pool = ActionEventQueue.APPLICATION_THREAD_POOL;
+	private ExecutorService pool = Jeboorker.APPLICATION_THREAD_POOL;
 	
 	protected String amazonURL = "http://www.amazon.de";
 	

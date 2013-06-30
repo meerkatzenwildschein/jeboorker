@@ -16,6 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import javax.swing.UIManager;
@@ -70,11 +76,8 @@ public class Jeboorker {
 						        mainController.getMainWindow().setExtendedState(state);
 						        mainController.getMainWindow().setFocusableWindowState(false);
 						    	mainController.getMainWindow().toFront();	
-						    	try {
-						    		//seems to be needed to work. Don't know why.
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-								}
+					    		//seems to be needed to work. Don't know why.
+					    		ReflectionUtils.sleepSilent(1000);
 						    	mainController.getMainWindow().setFocusableWindowState(true);
 						    }
 						});
@@ -191,5 +194,36 @@ public class Jeboorker {
 			}
 		}
 	}
+
+	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
+	60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
+	
+	public static class ApplicationThreadFactory implements ThreadFactory {
+		
+		private static final AtomicInteger poolNumber = new AtomicInteger(1);
+		
+		private final ThreadGroup group;
+		
+		private final AtomicInteger threadNumber = new AtomicInteger(1);
+		
+		private final String namePrefix;
+
+		ApplicationThreadFactory() {
+			SecurityManager s = System.getSecurityManager();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "pool-" + poolNumber.getAndIncrement() + "-thread-";
+		}
+
+		public Thread newThread(final Runnable r) {
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+			if (t.isDaemon()) {
+				t.setDaemon(false);
+			}
+			if (t.getPriority() != Thread.NORM_PRIORITY) {
+				t.setPriority(Thread.NORM_PRIORITY);
+			}
+			return t;
+		}
+	}	
 
 }

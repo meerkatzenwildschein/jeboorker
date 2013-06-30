@@ -37,6 +37,8 @@ import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.BasePathList;
+import org.rr.jeborker.FileWatchService;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -302,6 +304,10 @@ public class MainController {
 			}
 		});
 		
+		BasePathList basePath = JeboorkerPreferences.getBasePath();
+		for (String path : basePath) {
+			FileWatchService.addWatchPath(path);
+		}
 	}
 
 	/**

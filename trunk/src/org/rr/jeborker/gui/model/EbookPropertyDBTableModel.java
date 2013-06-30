@@ -19,7 +19,7 @@ import org.rr.commons.collection.InsertElementList;
 import org.rr.commons.collection.IteratorList;
 import org.rr.commons.collection.ReplacementElementList;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.FileRefreshBackgroundThread;
+import org.rr.jeborker.FileRefreshBackground;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.OrderDirection;
@@ -133,7 +133,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			return null;
 		}
 		
-		FileRefreshBackgroundThread.getInstance().addEbook(ebookPropertyItem);
+		FileRefreshBackground.getInstance().addEbook(ebookPropertyItem);
 		
 		if(ebookPropertyItem != null) {
 			switch(columnIndex) {

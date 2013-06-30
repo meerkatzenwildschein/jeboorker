@@ -2,6 +2,7 @@ package org.rr.jeborker.gui;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
@@ -14,6 +15,8 @@ class PreferenceView extends JPreferenceDialog {
 	static final String AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME = "autoSaveMetadataItem";
 	
 	static final String DELETE_AFTER_IMPORT_PREFERENCE_NAME = "deleteEbookAfterImport";
+
+	static final String BASIC_FILE_TYPE_SUPPORT_NAME = "baseFileSupport";
 	
 	private boolean isInitialized = false;
 	
@@ -23,10 +26,10 @@ class PreferenceView extends JPreferenceDialog {
 		super(mainWindow);
 		this.preferenceController = preferenceController;
 		setTitle(Bundle.getString("PreferenceView.title"));
+		this.initialize();
 	}
 	
 	public void setVisible(boolean visible) {
-		this.initialize();
 		super.setVisible(visible);
 		if(!visible) {
 			preferenceController.close();
@@ -81,6 +84,21 @@ class PreferenceView extends JPreferenceDialog {
 					}
 				});
 				addPreferenceEntry(deleteEbookAfterImportItem);
+			}
+			
+			{
+				String label = Bundle.getString("PreferenceView.pref.basicFileSupport");
+				JTextField basicFileSupport = new JTextField();
+				basicFileSupport.setText(JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES));
+				PreferenceEntry basicFileSupportItem = new PreferenceEntry(BASIC_FILE_TYPE_SUPPORT_NAME, label, basicFileSupport, generalCategory, new Runnable() {
+					
+					@Override
+					public void run() {
+						String basicSupportedFileTypes = getStringValue(PreferenceView.BASIC_FILE_TYPE_SUPPORT_NAME);
+						JeboorkerPreferences.addGenericEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES, basicSupportedFileTypes);						
+					}
+				});
+				addPreferenceEntry(basicFileSupportItem);
 			}
 		}
 	}
