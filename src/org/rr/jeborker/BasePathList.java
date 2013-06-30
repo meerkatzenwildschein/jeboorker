@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.rr.commons.collection.WrapperList;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 
 public class BasePathList extends WrapperList<String> {
 	
@@ -48,6 +50,21 @@ public class BasePathList extends WrapperList<String> {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Find the best matching base path for the given {@link IResourceHandler}.
+	 * @return The desired base path or <code>null</code> if no base path is matching.
+	 */
+	public IResourceHandler getBasePathForFile(IResourceHandler resource) {
+		String resourceString = resource.toString();
+		for(int i = 0; i < toWrap.size(); i++) {
+			String basePath = toWrap.get(i);
+			if(resourceString.startsWith(basePath)) {
+				return ResourceHandlerFactory.getResourceHandler(basePath);
+			}
+		}
+		return null;
 	}
 
 }

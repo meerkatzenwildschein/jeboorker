@@ -20,8 +20,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.rr.commons.collection.LRUCacheMap;
+import org.rr.commons.log.LoggerFactory;
 
 public class ReflectionUtils implements Serializable {
 	
@@ -280,7 +282,7 @@ public class ReflectionUtils implements Serializable {
 	 * @return
 	 */
 	public static Object getObjectInstance(final Class<?> clazz, Object[] initargs) {
-		if (clazz==null) {
+		if (clazz == null) {
 			return null;
 		}
 		
@@ -1232,6 +1234,18 @@ public class ReflectionUtils implements Serializable {
     	}
     }
     
+    /**
+     * Does a <code>Thread.sleep</code> but without having these nasty
+     * exception handling with the {@link InterruptedException}. The {@link InterruptedException}
+     * gets simple be logged.
+     */
+    public static void sleepSilent(int time) {
+    	try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			LoggerFactory.getLogger().log(Level.WARNING, "Sleep has been interrupted", e);
+		}
+    }
   
 
 }

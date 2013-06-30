@@ -222,6 +222,18 @@ public class ActionUtils {
 	 * @return <code>true</code> if the resource is an image or <code>false</code> otherwise.
 	 */
 	public static boolean isSupportedEbookFormat(IResourceHandler resource) {
+		if(resource.getFileExtension().equals("tmp")) {
+			//no tmp files. tmp files are used to save a changed ebook temporary.
+			return false;
+		}
+		
+		//user file formats with basic/empty reader support
+		final String supportedBasicTypes = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES);
+		final String extension = resource.getFileExtension();
+		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.indexOf("," + extension) != -1)) {
+			return true;
+		}		
+		
 		final String mime = resource.getMimeType();
 		if(mime == null || mime.length() == 0) {
 			return false;

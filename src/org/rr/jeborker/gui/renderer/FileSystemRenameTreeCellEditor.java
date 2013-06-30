@@ -34,6 +34,7 @@ import javax.swing.tree.TreeCellEditor;
 import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.UtilConstants;
 
 
 public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implements TreeCellEditor, TableCellEditor {
@@ -420,7 +421,31 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 				}
 				
 				offers = ListUtils.distinct(offers);
-				offers.remove(filename);
+				List<String> toRemove = new ArrayList<String>();
+				toRemove.add(filename);
+				
+				int nameWhiteSpaces = StringUtils.occurrence(name, " ", UtilConstants.COMPARE_BINARY);
+				for(String offer : offers) {
+					if(StringUtils.occurrence(offer, " ", UtilConstants.COMPARE_BINARY) != nameWhiteSpaces) {
+						toRemove.add(offer);
+					}
+				}
+				offers.removeAll(toRemove);
+				
+				List<String> toAdd = new ArrayList<String>(offers.size());
+				for(int i = 0; i < offers.size(); i++) {
+					String offer = offers.get(i);
+					if(offer.indexOf(" - ") != -1) {
+						List<String> split = ListUtils.split(offer, " - ");
+						if(split.size() == 2) {
+							String sName = FilenameUtils.getBaseName(split.get(1));
+							String sExt = FilenameUtils.getExtension(split.get(1));
+							toAdd.add(sName + " - " + split.get(0) + "." + sExt);	
+						}
+					}
+				}
+				offers.addAll(toAdd);
+				
 				return offers;
 			}			
 

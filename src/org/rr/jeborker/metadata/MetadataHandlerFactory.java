@@ -1,9 +1,9 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
+import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
 import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
 import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +56,7 @@ public class MetadataHandlerFactory {
 				return latestReader = new ComicBookMetadataReader(resource);
 			} 
 		}
-		return null;
+		return latestReader = new EmptyMetadataReader(resource);
 	}
 	
 	/**
@@ -94,13 +94,26 @@ public class MetadataHandlerFactory {
 	}
 	
 	/**
+	 * Tells if there is writer support for at least one of the given {@link IResourceHandler}.
+	 */
+	public static boolean hasWriterSupport(final List<IResourceHandler> resources) {
+		for(int i = 0; i < resources.size(); i++) {
+			IResourceHandler resource = resources.get(i);
+			if(getWriter(resource) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Tells if there is cover writer support for the given resource.
 	 * @param resourceHandler The resource to be tested for support.
 	 * @return <code>true</code> if writer support is available and <code>false</code> otherwise.
 	 */
 	public static boolean hasCoverWriterSupport(final IResourceHandler resourceHandler) {
 		final String mimeType = resourceHandler.getMimeType();
-		if(mimeType!=null) {
+		if(mimeType != null) {
 			if(resourceHandler.getMimeType().equals(MIME_EPUB.getMime())) {
 				return true;
 			} else if(resourceHandler.getMimeType().equals(MIME_PDF.getMime())) {

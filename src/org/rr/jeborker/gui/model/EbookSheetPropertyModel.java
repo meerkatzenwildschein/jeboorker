@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.FileRefreshBackgroundThread;
+import org.rr.jeborker.FileRefreshBackground;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -126,7 +126,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			setProperties(newProperties);
 		} else {
 			setProperties(new Property[0]);
-			FileRefreshBackgroundThread.getInstance().addEbook(item);
+			FileRefreshBackground.getInstance().addEbook(item);
 		}
 	}
 	

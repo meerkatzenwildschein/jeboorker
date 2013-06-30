@@ -8,7 +8,7 @@ import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
-import org.rr.jeborker.FileRefreshBackgroundThread;
+import org.rr.jeborker.FileRefreshBackground;
 
 /**
  * {@link ApplicationAction} is an Action delegate which is delivered if
@@ -80,15 +80,14 @@ public class ApplicationAction extends AbstractAction {
 		final Object noAppActionThreading = this.getValue(NON_THREADED_ACTION_KEY);
 		final boolean noAppActionThreadingValue = noAppActionThreading instanceof Boolean && ((Boolean) noAppActionThreading).booleanValue();
 		if(noRealActionThreadingValue || noAppActionThreadingValue) {
-			FileRefreshBackgroundThread.setDisabled(true);
+			startAction();
 			try {
 				this.realAction.actionPerformed(e);
 				if(this.realAction instanceof IFinalizeAction) {
 					((IFinalizeAction)this.realAction).finalizeAction(0);
 				}
 			} finally {
-				FileRefreshBackgroundThread.setDisabled(false);
-				TrueZipUtils.unmout();
+				endAction();
 			}
 			
 			if(invokeLater != null) {
@@ -100,26 +99,24 @@ public class ApplicationAction extends AbstractAction {
 	}
 	
 	void invokeRealAction(ActionEvent e) {
-		FileRefreshBackgroundThread.setDisabled(true);
+		startAction();
 		try {
 			this.realAction.actionPerformed(e);
 			if(this.realAction instanceof IFinalizeAction) {
-				((IFinalizeAction)this.realAction).finalizeAction(0);
+				((IFinalizeAction) this.realAction).finalizeAction(0);
 			}
 		} finally {
-			FileRefreshBackgroundThread.setDisabled(false);
-			TrueZipUtils.unmout();
+			endAction();
 		}		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		FileRefreshBackgroundThread.setDisabled(true);
+		startAction();
 		try {
 			this.invokeAction(e);
 		} finally {
-			FileRefreshBackgroundThread.setDisabled(false);
-			TrueZipUtils.unmout();
+			endAction();
 		}
 	}	
 	
@@ -138,5 +135,14 @@ public class ApplicationAction extends AbstractAction {
 	public void putValue(String key, Object newValue) {
 		super.putValue(key, newValue);
 		realAction.putValue(key, newValue);
+	}
+	
+	private void startAction() {
+		FileRefreshBackground.setDisabled(true);
+	}
+	
+	private void endAction() {
+		FileRefreshBackground.setDisabled(false);
+		TrueZipUtils.unmout();		
 	}
 }

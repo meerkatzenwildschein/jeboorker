@@ -17,6 +17,7 @@ import org.rr.commons.io.LineReader;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.xml.XMLUtils;
+import org.rr.jeborker.FileRefreshBackground;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -60,7 +61,7 @@ public class PlainMetadataEditorController {
 	 * @param xml The xml which is shown with the view.
 	 */
 	private void toggleFolds(String xml) {
-		if(xml==null || xml.length() == 0) {
+		if(xml == null || xml.length() == 0) {
 			return;
 		}
 		
