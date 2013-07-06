@@ -2,6 +2,7 @@ package org.rr.commons.utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -826,7 +827,7 @@ public final class ListUtils implements Serializable {
 	 * @return The desired String.
 	 * @see #fromIndexString(String, char)
 	 */
-	public static String toIndexedString(final List<String> list, final char separator) {
+	public static String toIndexedString(final Collection<String> list, final char separator) {
 		if(Character.isDigit(separator)) {
 			throw new IllegalArgumentException("The separator must not be a number");
 		}
@@ -879,4 +880,5 @@ public final class ListUtils implements Serializable {
 		
 		return list;
 	}
+
 }
