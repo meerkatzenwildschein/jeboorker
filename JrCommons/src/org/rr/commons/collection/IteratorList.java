@@ -22,6 +22,8 @@ public class IteratorList<E> implements List<E> {
 	
 	private Iterable<E> iterable;
 	
+	private int iteratorSize = -1;
+	
 	private List<E> list = new ArrayList<E>();
 	
 	private Method method;
@@ -176,14 +178,16 @@ public class IteratorList<E> implements List<E> {
 			return list.size();
 		}
 		
-		//some special handling for the orientdb result. It's much faster to get the size via reflection.
-		if(iterator.getClass().getName().equals("com.orientechnologies.orient.core.iterator.OObjectIteratorMultiCluster") || iterator.getClass().getName().equals("com.orientechnologies.orient.object.iterator.OObjectIteratorClass")) {
+		if(iterable instanceof List) {
+			return ((List<?>)iterable).size();
+		} else if(iterator.getClass().getName().equals("com.orientechnologies.orient.core.iterator.OObjectIteratorMultiCluster") || iterator.getClass().getName().equals("com.orientechnologies.orient.object.iterator.OObjectIteratorClass")) {
+			// some special handling for the orientdb result. It's much faster to get the size via reflection.
 			try {
 				//field underlying / com.orientechnologies.orient.core.iterator.ORecordIteratorClass
 				//field browsedRecords / int
 				final Object underlying = ReflectionUtils.getFieldValue(iterator, "underlying", false);
 				final Long records = (Long)ReflectionUtils.getFieldValue(underlying, "totalAvailableRecords", false);
-				if(records!=null) {
+				if (records != null) {
 					return records.intValue();
 				}
 			} catch (ReflectionFailureException e) {
@@ -202,8 +206,8 @@ public class IteratorList<E> implements List<E> {
 				//sometimes happens if the list is empty.
 				try {
 					List<?> l = (List<?>) ReflectionUtils.getFieldValue(iterable, "documents", false);
-					if(l!=null) {
-						return l.size();
+					if (l != null) {
+						return iteratorSize = l.size();
 					}
 				} catch (ReflectionFailureException e1) {
 				}
