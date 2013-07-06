@@ -54,7 +54,42 @@ public class ListUtilsTest extends TestCase {
 		
 		split = ListUtils.split("", ',');
 		assertEquals(1, split.size());
-		System.out.println(split);
 		
 	}
+	
+	public void testIndexedToString() {
+		long currentTimeMillis;
+		ArrayList<String> list = new ArrayList<String>();
+		for(int i = 0; i < 100; i++) {
+			list.add("/home/user/ebooks/test/folder name with spaces/some book with a name.epub" + i);
+		}
+		
+		currentTimeMillis = System.currentTimeMillis();
+		String indexedListString = ListUtils.toIndexedString(list, ';');
+		long indexedToStringTime = System.currentTimeMillis() - currentTimeMillis;
+		System.out.println("index toString: " + indexedToStringTime);
+		
+		currentTimeMillis = System.currentTimeMillis();
+		String oldFashionListString = ListUtils.join(list, ";");
+		long oldToStringTime = System.currentTimeMillis() - currentTimeMillis;
+		System.out.println("old toString: "+oldToStringTime);
+
+		
+		currentTimeMillis = System.currentTimeMillis();
+		List<String> fromIndexString = ListUtils.fromIndexString(indexedListString, ';');
+		long indexedTime = System.currentTimeMillis() - currentTimeMillis;
+		System.out.println("indexed toList: "+indexedTime);
+		
+		currentTimeMillis = System.currentTimeMillis();
+		List<String> split = ListUtils.split(oldFashionListString, ";");
+		long oldFashionTime = System.currentTimeMillis() - currentTimeMillis;
+		System.out.println("old toList: " + oldFashionTime);
+		
+		assertEquals(list.size(), fromIndexString.size());
+		assertEquals(split.size(), fromIndexString.size());
+		
+		//performance
+		assertTrue(indexedTime < oldFashionTime);
+		
+	}	
 }
