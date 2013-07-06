@@ -9,6 +9,9 @@ public class Pair<E,F> {
 	private F f;
 	private E e;
 
+	public Pair() {
+	}
+	
 	public Pair(E e, F f) {
 		this.e = e;
 		this.f = f;
@@ -21,4 +24,14 @@ public class Pair<E,F> {
 	public F getF() {
 		return f;
 	}
+
+	public void setF(F f) {
+		this.f = f;
+	}
+
+	public void setE(E e) {
+		this.e = e;
+	}
+	
+	
 }
