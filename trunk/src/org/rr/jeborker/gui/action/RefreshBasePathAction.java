@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -103,6 +104,7 @@ class RefreshBasePathAction extends AbstractAction {
 	 */
 	static void refreshEbookFiles(final IResourceHandler basePath) {
 		final DefaultDBManager db = DefaultDBManager.getInstance();
+		final HashSet<String> path = new HashSet<String>();
 		ResourceHandlerUtils.readAllFilesFromBasePath(basePath, new ResourceNameFilter() {
 			
 			@Override
@@ -124,7 +126,7 @@ class RefreshBasePathAction extends AbstractAction {
 							final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resourceLoader, basePath);
 							db.storeObject(item);
 						}
-						
+						path.add(resourceLoader.getParentResource().toString());
 						return true;
 					} catch(Throwable e) {
 						LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed adding resource " + resourceLoader, e);
@@ -133,6 +135,7 @@ class RefreshBasePathAction extends AbstractAction {
 				return false;
 			}
 		});
+		EbookPropertyItemUtils.storePathElements(path);
 	}	
 	
 }

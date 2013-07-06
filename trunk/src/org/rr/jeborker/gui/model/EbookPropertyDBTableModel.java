@@ -152,10 +152,12 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 */
 	private void handleDuplicateItem(int rowIndex, List<EbookPropertyItem> ebookItems, final EbookPropertyItem ebookPropertyItem) {
 		if(ebookItems.size() > rowIndex) {
-			EbookPropertyItem dupCheckItem = ebookItems.get(rowIndex + 1); 
-			if(dupCheckItem != null && ebookPropertyItem.getFile().equals(dupCheckItem.getFile())) {
-				if(DefaultDBManager.getInstance().deleteObject(dupCheckItem)) {
-					this.allItems = new BlindElementList<EbookPropertyItem>(this.allItems, rowIndex + 1);
+			if(ebookItems.size() > rowIndex + 1) {
+				EbookPropertyItem dupCheckItem = ebookItems.get(rowIndex + 1); 
+				if(dupCheckItem != null && ebookPropertyItem.getFile().equals(dupCheckItem.getFile())) {
+					if(DefaultDBManager.getInstance().deleteObject(dupCheckItem)) {
+						this.allItems = new BlindElementList<EbookPropertyItem>(this.allItems, rowIndex + 1);
+					}
 				}
 			}
 		}

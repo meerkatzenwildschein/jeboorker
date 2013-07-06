@@ -42,6 +42,7 @@ import org.rr.jeborker.FileWatchService;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
@@ -305,9 +306,8 @@ public class MainController {
 		});
 		
 		BasePathList basePath = JeboorkerPreferences.getBasePath();
-		for (String path : basePath) {
-			FileWatchService.addWatchPath(path);
-		}
+		FileWatchService.addWatchPath(basePath);
+		FileWatchService.addWatchPath(EbookPropertyItemUtils.fetchPathElements());
 	}
 
 	/**

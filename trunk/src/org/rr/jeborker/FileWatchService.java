@@ -7,17 +7,19 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.rr.commons.collection.Pair;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -32,8 +34,10 @@ public class FileWatchService {
 
 	private static WatchService watchService;
 
-	private static final List<Pair<String, WatchKey>> items = Collections.synchronizedList(new ArrayList<Pair<String, WatchKey>>());
+//	private static final List<Pair<String, WatchKey>> items = Collections.synchronizedList(new ArrayList<Pair<String, WatchKey>>());
 
+	private static final HashMap<String, WatchKey> items = new HashMap<String, WatchKey>();
+	
 	static {
 		try {
 			watchService = FileSystems.getDefault().newWatchService();
@@ -47,17 +51,26 @@ public class FileWatchService {
 	}
 	
 	/**
-	 * Adds the given folder to the watched ones.  
+	 * Adds the given folders to the watched ones.  
 	 */
 	public static void addWatchPath(final String path) {
-		try {
-			File pathFile = new File(path);
-			if(!isAlreadyWatched(path) && pathFile.isDirectory()) {
-				WatchKey watchKey = Paths.get(path).register(watchService, new Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE });
-				items.add(new Pair<String, WatchKey>(path, watchKey));
-			}
-		} catch (Exception e) {
-			LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "Failed to add path " + path + "to file watch service", e);
+		addWatchPath(Collections.singletonList(path));
+	}
+	
+	/**
+	 * Adds the given folders to the watched ones.  
+	 */
+	public static void addWatchPath(final Collection<String> p) {
+		for(String path : p) {
+			try {
+				File pathFile = new File(path);
+				if(!isAlreadyWatched(path) && pathFile.isDirectory()) {
+					WatchKey watchKey = Paths.get(path).register(watchService, new Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE });
+					items.put(path, watchKey);
+				}
+			} catch (Exception e) {
+				LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "Failed to add path " + path + "to file watch service", e);
+			}			
 		}
 	}
 	
@@ -65,12 +78,7 @@ public class FileWatchService {
 	 * Tells if the given path is already under watch. 
 	 */
 	private static boolean isAlreadyWatched(final String path) {
-		for(int i = 0; i < items.size(); i++) {
-			if(items.get(i).getE().equals(path)) {
-				return true;
-			}
-		}		
-		return false;
+		return items.containsKey(path);
 	}
 	
 	private static class WatchFolderRunnable implements Runnable {
@@ -84,28 +92,30 @@ public class FileWatchService {
 	        		List<EbookPropertyItem> changedEbooks = new ArrayList<EbookPropertyItem>();
 	        		List<IResourceHandler> addedResources = new ArrayList<IResourceHandler>();
 		            for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
-		            	for(int i = 0; i < items.size() && !FileRefreshBackground.isDisabled(); i++) {
-		            		Pair<String, WatchKey> pair = items.get(i);
-		            		if(pair.getF() == watchKey) {
-		            			String folder = pair.getE();
-		            			String file = watchEvent.context().toString();
-		            			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(folder + File.separatorChar + file);
-		            			List<EbookPropertyItem> ebookPropertyItemByResource = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
-		            			if(ebookPropertyItemByResource.isEmpty() && watchEvent.kind() == ENTRY_CREATE) {
-		            				addedResources.add(resourceHandler);
-		            			} else if(watchEvent.kind() == ENTRY_DELETE || watchEvent.kind() == ENTRY_MODIFY) {
-		            				changedEbooks.addAll(ebookPropertyItemByResource);
-		            			}
-		            		}
-		            	}			            	
+		            	if(!FileRefreshBackground.isDisabled()) {
+			            	Path fullPath = ((Path)watchKey.watchable()).resolve((Path)watchEvent.context());
+			            	IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(fullPath.toFile());
+	            			List<EbookPropertyItem> ebookPropertyItemByResource = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
+	
+	            			if(ebookPropertyItemByResource.isEmpty() && watchEvent.kind() == ENTRY_CREATE) {
+	            				addedResources.add(resourceHandler);
+	            			} else if(watchEvent.kind() == ENTRY_DELETE || watchEvent.kind() == ENTRY_MODIFY) {
+	            				changedEbooks.addAll(ebookPropertyItemByResource);
+	            			}
+		            	}
 		            }
 		            watchKey.reset();
 		            
 					//seems the file may be not ready to read, wait...
 					ReflectionUtils.sleepSilent(500);
 					
-		            transferDeleteAndRefresh(changedEbooks);
-		            transferNewEbookFiles(addedResources);
+        			FileRefreshBackground.setDisabled(true);
+        			try {
+			            transferDeleteAndRefresh(changedEbooks);
+			            transferNewEbookFiles(addedResources);
+        			} finally {
+        				FileRefreshBackground.setDisabled(false);
+        			}
 	        	} catch(Exception e) {
 	        		LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "WatchFolderRunnable", e);	        		
 	        	}

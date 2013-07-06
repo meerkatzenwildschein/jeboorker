@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -120,6 +121,7 @@ class AddBasePathAction extends AbstractAction {
 	 * @param baseFolder The folder where the ebook search should be started.
 	 */
 	static int readEbookFilesToDB(final IResourceHandler baseFolder) {
+		final HashSet<String> path = new HashSet<String>();
 		int count = ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
 			
 			@Override
@@ -128,6 +130,7 @@ class AddBasePathAction extends AbstractAction {
 					try {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
 						ActionUtils.addEbookPropertyItem(item);
+						path.add(resource.getParentResource().toString());
 						return true;
 					} catch(Throwable e) {
 						LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed adding resource " + resource, e);
@@ -136,6 +139,7 @@ class AddBasePathAction extends AbstractAction {
 				return false;
 			}
 		});
+		EbookPropertyItemUtils.storePathElements(path);
 		return count;
 	}
 
