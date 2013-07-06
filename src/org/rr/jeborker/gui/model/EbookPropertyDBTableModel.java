@@ -128,14 +128,14 @@ public class EbookPropertyDBTableModel implements TableModel {
 				ebookItems = this.getEbookItems(false);
 			}
 			ebookPropertyItem = ebookItems.get(rowIndex);
+			
+			handleDuplicateItem(rowIndex, ebookItems, ebookPropertyItem);
 		} catch(IndexOutOfBoundsException ex) {
-//			LoggerFactory.logInfo(this, "", ex);
 			return null;
 		}
 		
-		FileRefreshBackground.getInstance().addEbook(ebookPropertyItem);
-		
 		if(ebookPropertyItem != null) {
+			FileRefreshBackground.getInstance().addEbook(ebookPropertyItem);
 			switch(columnIndex) {
 				case 0:
 					return ebookPropertyItem;
@@ -144,6 +144,22 @@ public class EbookPropertyDBTableModel implements TableModel {
 		return null;
 	}
 
+	/**
+	 * duplicate check. this could sometimes happens if orientdb stores the item twice.
+	 * @param rowIndex index of the row where the next entry should be checked.
+	 * @param ebookItems the currently used item list.
+	 * @param ebookPropertyItem The item at the <code>rowIndex</code> row.
+	 */
+	private void handleDuplicateItem(int rowIndex, List<EbookPropertyItem> ebookItems, final EbookPropertyItem ebookPropertyItem) {
+		if(ebookItems.size() > rowIndex) {
+			EbookPropertyItem dupCheckItem = ebookItems.get(rowIndex + 1); 
+			if(dupCheckItem != null && ebookPropertyItem.getFile().equals(dupCheckItem.getFile())) {
+				if(DefaultDBManager.getInstance().deleteObject(dupCheckItem)) {
+					this.allItems = new BlindElementList<EbookPropertyItem>(this.allItems, rowIndex + 1);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Gets the {@link EbookPropertyItem} displayed in the given row.
