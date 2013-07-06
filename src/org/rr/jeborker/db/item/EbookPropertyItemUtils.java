@@ -1,9 +1,11 @@
 package org.rr.jeborker.db.item;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.apache.jempbox.xmp.Thumbnail;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
@@ -26,6 +29,7 @@ import org.rr.pm.image.ImageUtils;
 
 public class EbookPropertyItemUtils {
 	
+	private static final String ALL_BOOK_PATH_COLLECTION = "allBookPathCollection";
 	private static final String thumbnailFolder = JeboorkerPreferences.getConfigDirectory() + "thumbs/";
 	static {
 		IResourceHandler thumbnailFolderResource = ResourceHandlerFactory.getResourceHandler(thumbnailFolder);
@@ -246,5 +250,26 @@ public class EbookPropertyItemUtils {
 	private static IResourceHandler getCoverThumbnailResourceHandler(final IResourceHandler ebookResource) {
 		final String thumbnail = thumbnailFolder + UUID.nameUUIDFromBytes(ebookResource.toString().getBytes()) + ".jpg";
 		return ResourceHandlerFactory.getResourceHandler(thumbnail);
+	}
+	
+	/**
+	 * Stores the given path collection to the database.
+	 * @param path The path elements to be stored.
+	 */
+	public static void storePathElements(final Collection<String> path) {
+		String indexedString = ListUtils.toIndexedString(path, File.pathSeparatorChar);
+		JeboorkerPreferences.addGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, indexedString);
+	}
+	
+	/**
+	 * Fetches these path elements previously stored with the {@link #storePathElements(Collection)}
+	 * method.
+	 */
+	public static List<String> fetchPathElements() {
+		String indexedListString = JeboorkerPreferences.getGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, null);
+		if(indexedListString == null) {
+			return Collections.emptyList();
+		}
+		return ListUtils.fromIndexString(indexedListString, File.pathSeparatorChar);
 	}
 }
