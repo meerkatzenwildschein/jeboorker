@@ -25,6 +25,7 @@ import org.rr.jeborker.db.item.PreferenceItem;
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.ODatabaseRecord;
+import com.orientechnologies.orient.core.exception.ODatabaseException;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.index.OIndex;
@@ -257,13 +258,7 @@ public class DefaultDBManager {
 		try {
 			return getDB().save(item);
 		} catch (Exception e1) {
-			try {
-			// If storage fails try to delete and store the record.
-			getDB().delete(item);
-			} catch (Exception e2) {
-				getDB().delete(reload(item));
-			}
-			
+			this.deleteObject(item, false);
 			return getDB().save(item);
 		}
 	}
@@ -501,6 +496,10 @@ public class DefaultDBManager {
 		}.execute((Object[]) null);
 		return new ODocumentMapper<T>(result, db);
 	}
+	
+	public boolean deleteObject(IDBObject item) {
+		return deleteObject(item, true);
+	}
 
 	/**
 	 * Deletes the given item and it's binary entries from the database.
@@ -509,12 +508,23 @@ public class DefaultDBManager {
 	 *            The item to be deleted.
 	 * @return
 	 */
-	public boolean deleteObject(IDBObject item) {
+	public boolean deleteObject(IDBObject item, boolean deleteCover) {
 		try {
 			getDB().delete(item);
 			if(item instanceof EbookPropertyItem) {
 				EbookPropertyItemUtils.deleteCoverThumbnail(((EbookPropertyItem)item).getResourceHandler());
 			}
+		} catch (ODatabaseException e) {
+			try {
+				// If deletion fails try to reload and delete
+				getDB().delete(reload(item));
+				if(item instanceof EbookPropertyItem) {
+					EbookPropertyItemUtils.deleteCoverThumbnail(((EbookPropertyItem)item).getResourceHandler());
+				}				
+			} catch (Exception e1) {
+				LoggerFactory.log(Level.WARNING, this, "Deletetion has finally failed for " + item, e1);
+				return false;
+			}				
 		} catch (Exception e) {
 			return false;
 		}

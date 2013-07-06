@@ -2,10 +2,8 @@ package org.rr.jeborker.db;
 
 import java.util.AbstractList;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.rr.commons.collection.CompoundList;
-import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 import com.orientechnologies.orient.core.record.ORecordInternal;
@@ -54,26 +52,8 @@ class ODocumentMapper<T> extends AbstractList<T> {
 	}
 	
 	private List<?> getNextDocuments() {
-		try {
-			List<?> result = db.query(query);
-			return result;
-		} catch(com.orientechnologies.orient.core.sql.OCommandSQLParsingException e) {
-			//Annoying orientdb sql-parser bug in orientdb <= 1.2. Remove the WHERE condition if it occurs.
-			if(sqlSring.indexOf("WHERE") != -1) {
-				String orderByStatement = "";
-				int orderByIdx = -1;
-				if((orderByIdx = sqlSring.indexOf("order by")) != -1) {
-					orderByStatement = sqlSring.substring(orderByIdx);
-				}				
-				String shortenQuery = sqlSring.substring(0, sqlSring.indexOf("WHERE")) + " " + orderByStatement;
-				this.query = new OSQLSynchQuery<T>(shortenQuery);		
-				List<?> result = db.query(query);
-				LoggerFactory.getLogger().log(Level.WARNING, "Failed restoring query " + sqlSring, e);
-				return result;
-			} else {
-				throw e;
-			}
-		}
+		List<?> result = db.query(query);
+		return result;
 	}
 	
 	/**
@@ -99,7 +79,7 @@ class ODocumentMapper<T> extends AbstractList<T> {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public T get(int index) {
+	public T get(final int index) {
 		final Object object = getDocuments().get(index);
 		final T result;
 //		final ORID identity;
