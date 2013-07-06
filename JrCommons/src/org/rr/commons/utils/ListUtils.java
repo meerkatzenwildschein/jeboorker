@@ -815,4 +815,68 @@ public final class ListUtils implements Serializable {
 		}
 		return null;
 	}
+	
+	/**
+	 * Creates a String from the given string list with indices for the split points.
+	 * This list can be converted into a List very fast by using the {@link #fromIndexString(String, char)}
+	 * method.
+	 * 
+	 * @param list The list to be converted into a String.
+	 * @param separator The separator char that must not be contained by the strings in the given list.
+	 * @return The desired String.
+	 * @see #fromIndexString(String, char)
+	 */
+	public static String toIndexedString(final List<String> list, final char separator) {
+		if(Character.isDigit(separator)) {
+			throw new IllegalArgumentException("The separator must not be a number");
+		}
+		final char EOL = '\n'; // end of list marker
+		final StringBuilder indices = new StringBuilder(list.size() * 4);
+		final StringBuilder strings = new StringBuilder(list.size() * 16);
+		
+		int index = 0;
+		for (final String element : list) {
+			int length = element.length();
+			strings.append(element);
+			strings.append(separator);
+			indices.append(index + length);
+			indices.append(separator);
+			index += length + 1;
+		}
+		
+		return indices.append(EOL).append(strings).toString();
+	}
+	
+	/**
+	 * Creates a List from the given string. This String must have the split indices at the front.
+	 * Use {@link #toIndexedString(List, char)} to create those string.
+	 * 
+	 * @param indexString The index string to be parsed. 
+	 * @param separator The separator which separated the entries.
+	 * @return The desired list
+	 * @see #toIndexedString(List, char)
+	 */
+	public static List<String> fromIndexString(final String indexedListString, final char separator) {
+		final ArrayList<String> list = new ArrayList<String>();
+		final char EOL = '\n'; // end of list marker
+		final int length = indexedListString.length();
+		final int indexEnd = indexedListString.indexOf(EOL) + 1; // end of the index area
+		
+		int start = 0;
+		int prevIndex = Integer.valueOf(0);
+		for (int i = 0; i < length; i++) {
+			if(indexedListString.charAt(i) == separator) {
+				int index = Integer.valueOf(indexedListString.substring(start, i)).intValue();
+				int indexModifier = start == 0 ? 0 : 1; // the first entry did not have a separator
+				String entry = indexedListString.substring(prevIndex + indexModifier + indexEnd, index + indexEnd);
+				prevIndex = index;
+				start = i + 1;
+				list.add(entry);
+			} else if(indexedListString.charAt(i) == EOL) {
+				break; // no more entries
+			}
+		}
+		
+		return list;
+	}
 }
