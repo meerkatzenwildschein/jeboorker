@@ -1,0 +1,6 @@
+= v0.3.5 =
+- Better suggestions for file renaming
+- Empty meta data reader for unsupported file formats. Any file format can be added with the preferences dialog.
+- Automatic save now sets the selection to the clicked entry in the ebook list.
+- Added Folders get watched for changes.
+- Sometimes, the underlying database creates duplicates. There is a fix now.
