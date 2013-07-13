@@ -304,6 +304,37 @@ public final class StringUtils implements Serializable {
 		}
 		return text.trim();
 	}
+	
+	/**
+	 * Trims the given <code>text</code> and takes all given <code>trims</code> under account.
+	 * @param text The text to be trimmed.
+	 * @param trims The trim chars.
+	 * @return The desired trimmed string.
+	 */
+	public static final String ltrim(String text, char ... trims) {
+		if (text==null) {
+			return null;
+		}
+		int len = text.length();
+		int start = 0;
+		for(int i = 0; i < len; i++) {
+			int a = start;
+			for(int j = 0; j < trims.length; j++) {
+				if(text.charAt(i) == trims[j]) {
+					start ++;
+					break;
+				}
+			}
+			if(a == start) {
+				break;
+			}			
+		}
+		
+		if(start > 0) {
+			return text.substring(start, len);
+		}
+		return text;
+	}
 
 
 	/**
@@ -1369,5 +1400,59 @@ public final class StringUtils implements Serializable {
     		}
     	} 
     	return true;
-    }    
+    }
+    
+    /**
+     * Searches for the given <code>search</code> string in the given <code>text</code>. 
+     * This implementation is faster than using {@link #inStr(String, String, int, int)}.
+     * @param text The text to be searched.
+     * @param search The search string to find.
+     * @param start The start location for the find process in the <code>text</code>
+	 * @param compare Specifies the string comparison to use. 
+	 * <ul>
+	 * <li>0 = COMPARE_BINARY - Perform a binary comparison (case sensitive)</li>
+	 * <li>1 = COMPARE_TEXT - Perform a textual comparison (case insensitive)</li>
+	 * </ul>
+     * @return The index of the searched string.
+     */
+    public static int find(CharSequence text, String search, int start, int compare) {
+    	if(search == null || search.length() == 0) {
+    		return 0;
+    	}
+    	
+    	if(text == null || text.length() == 0) {
+    		return -1;
+    	}
+    	
+    	if(start < 0) {
+    		start = 0;
+    	}
+
+    	final int length = text.length() - search.length() + 1;
+    	final char firstSearchChar = compare == UtilConstants.COMPARE_BINARY ? search.charAt(0) : Character.toLowerCase(search.charAt(0));
+    	for (int i = start; i < length; i++) {
+    		final char c = text.charAt(i);
+    		if(c == firstSearchChar) {
+    			boolean found = true;
+    			int searchLen = search.length();
+    			for(int j = 0; j < searchLen; j++) {
+    				final char cj = text.charAt(i + j);
+    				final char cs = search.charAt(j);
+    				if(compare == UtilConstants.COMPARE_BINARY && cj != cs) {
+    					found = false;
+    					break;
+    				} else if (compare == UtilConstants.COMPARE_TEXT 
+    						&& Character.toLowerCase(cj) != Character.toLowerCase(cs)) {
+    					found = false;
+    					break;    					
+    				}
+    			}
+    			
+    			if(found) {
+    				return i;
+    			}
+    		}
+    	}
+    	return -1;
+    }
 }
