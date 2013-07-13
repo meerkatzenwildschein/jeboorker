@@ -44,8 +44,8 @@ public class MetadataUtils {
 		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
 			&& CommonUtils.compareTo(metadataProperty2.getValues().get(0), metadataProperty1.getValues().get(0)) == 0;
 		
-		final String metadataProperty1Name = metadataProperty1.getName().toLowerCase();
-		final String metadataProperty2Name = metadataProperty2.getName().toLowerCase();		
+		final String metadataProperty1Name = StringUtils.toString(metadataProperty1.getName()).toLowerCase();
+		final String metadataProperty2Name = StringUtils.toString(metadataProperty2.getName()).toLowerCase();		
 
 		if (result && metadataProperty1Name.equals(metadataProperty2Name)) {
 			// name is the same

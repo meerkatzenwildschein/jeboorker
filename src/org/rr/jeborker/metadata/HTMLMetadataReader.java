@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
@@ -56,8 +57,18 @@ class HTMLMetadataReader implements IMetadataReader {
 			final String body = "<body>";
 			int len;
 			int bodyIndex = -1;
+			String charset = "UTF-8";
 			while((len = contentInputStream.read(buf)) != -1) {
-				final String html = new String(buf, 0, len);
+				String html = new String(buf, 0, len, charset);
+				if(html.indexOf('\ufffd') != -1) {
+					String charsetLocationString = "text/html; charset=";
+					int charsetStart = html.indexOf(charsetLocationString);
+					int charsetEnd = html.indexOf("\"", charsetStart);
+					if(charsetStart != -1 && charsetEnd != -1) {
+						charset = html.substring(charsetStart + charsetLocationString.length(), charsetEnd);
+						html = new String(buf, 0, len, charset);
+					}
+				}
 				content.append(html);
 				
 				if((bodyIndex = StringUtils.find(content, body, content.length() - len - body.length(), UtilConstants.COMPARE_TEXT)) != -1) {
@@ -94,6 +105,14 @@ class HTMLMetadataReader implements IMetadataReader {
 		for (int i = 0; i < metaElements.length; i++) {
 			String metaName = metaElements[i].getAttributeByName("name");
 			String metaContent = metaElements[i].getAttributeByName("content");
+			if(metaName == null) {
+				Map<String, String> attributes = metaElements[i].getAttributes();
+				for(String att : attributes.values()) {
+					if(att != null && !att.equals(metaContent)) {
+						metaName = att;
+					}
+				}
+			}
 			result.add(new MetadataProperty(metaName, metaContent));
 		}
 		
