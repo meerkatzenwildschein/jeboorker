@@ -38,6 +38,16 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			put("application/x-cbr", Pattern.compile("(.cbr)$"));
 			put("text/html", Pattern.compile("(.htm|.html|.xhtml)$"));
 			put("text/xml", Pattern.compile("(.xml)$"));
+			put("application/rtf", Pattern.compile("(.rtf)$"));
+			put("application/x-mobipocket-ebook", Pattern.compile("(.mobi)$"));
+			put("application/vnd.amazon.ebook", Pattern.compile("(.azw)$"));
+			put("application/x-fictionbook+xml", Pattern.compile("(.fb2)$"));
+			put("application/x-ms-reader", Pattern.compile("(.lit)$"));
+			put("application/x-newton-compatible-pkg", Pattern.compile("(.pkg)$"));
+			put("application/x-rocketbook", Pattern.compile("(.rb)$"));
+			put("image/vnd.djvu", Pattern.compile("(.djvu)$"));
+			put("application/msword", Pattern.compile("(.doc)$"));
+			put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", Pattern.compile("(.docx)$"));
 		}
 	};
 	
@@ -358,7 +368,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	
 	/**
 	 * @return the root node for this {@link AResourceHandler} instance.
-	 * If multiple roots supported, this method should be overriden.
+	 * If multiple roots supported, this method should be overridden.
 	 */
 	public IResourceHandler[] getRoots() {
 		IResourceHandler parent = this;
