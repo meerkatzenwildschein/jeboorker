@@ -24,6 +24,8 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 			String handlerMimeType = handler.getMimeType();
 			if(handler != null && handlerMimeType != null && handlerMimeType.equals("application/pdf")) {
 				additionalName = "XMP";
+			} else if(handler != null && handlerMimeType != null && handlerMimeType.equals("text/html")) {
+				additionalName = "HTML";
 			} else {
 				additionalName = "XML";
 			}
