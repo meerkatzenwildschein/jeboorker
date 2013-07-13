@@ -1,21 +1,27 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
 import com.l2fprod.common.propertysheet.DefaultProperty;
+import com.l2fprod.common.propertysheet.Property;
 
 /**
  * Action which saves the current selected metadata entries in the metadata sheet.
@@ -73,12 +79,23 @@ class SaveMetadataAction extends AbstractAction {
 		
 		@Override
 		public void metaDataSheetContentChanged(ApplicationEvent evt) {
-			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
-			boolean isEditable = evt.getMetadataProperty() instanceof DefaultProperty ? ((DefaultProperty)evt.getMetadataProperty()).isEditable() : true;
-			if(!isEditable) {
-				action.setEnabled(false);
-			} else {
-				action.setEnabled(true);
+			final List<IResourceHandler> itemResourceList = new TransformValueList<EbookPropertyItem, IResourceHandler>(evt.getItems()) {
+
+				@Override
+				public IResourceHandler transform(EbookPropertyItem source) {
+					return source.getResourceHandler();
+				}
+			};
+			
+			if(MetadataHandlerFactory.hasWriterSupport(itemResourceList)) {
+				final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
+				final Property metadataProperty = evt.getMetadataProperty();
+				boolean isEditable = metadataProperty instanceof DefaultProperty ? ((DefaultProperty) metadataProperty).isEditable() : true;
+				if(metadataProperty == null || !isEditable) {
+					action.setEnabled(false);
+				} else {
+					action.setEnabled(true);
+				}
 			}
 		}
 

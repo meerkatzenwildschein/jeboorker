@@ -79,7 +79,25 @@ public class JeboorkerConstants {
 				return getMime();
 			}			
 			
-		}			
+		},
+		MIME_HTML {
+
+			@Override
+			public String getName() {
+				return "html";
+			}
+
+			@Override
+			public String getMime() {
+				return "text/html".intern();
+			}
+			
+			@Override
+			public String toString() {
+				return getMime();
+			}			
+			
+		}				
 	};
 	
 }

@@ -454,6 +454,10 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				}
 			}
 		}
+		String mimeType = item.getResourceHandler().getMimeType();
+		if(mimeType != null) {
+			return mimeType;
+		}
 		return "";
 	}
 

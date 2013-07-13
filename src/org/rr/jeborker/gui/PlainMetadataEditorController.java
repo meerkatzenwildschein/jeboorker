@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -17,7 +18,6 @@ import org.rr.commons.io.LineReader;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.xml.XMLUtils;
-import org.rr.jeborker.FileRefreshBackground;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -52,7 +52,9 @@ public class PlainMetadataEditorController {
 		view.editor.setContentType(reader.getPlainMetaDataMime());
 		String plainMetaData = reader.getPlainMetaData();
 		view.editor.setText(plainMetaData);
-		toggleFolds(plainMetaData);
+		if(reader.getPlainMetaDataMime().contains("/xml")) {
+			toggleFolds(plainMetaData);
+		}
 		view.setVisible(true);
 	}
 	
@@ -101,7 +103,7 @@ public class PlainMetadataEditorController {
 		if(xmlMetadataView==null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
 			try {
-				xmlMetadataView = new PlainMetadataEditorView(mainWindow);
+				xmlMetadataView = new PlainMetadataEditorView(mainWindow, reader.getPlainMetaDataMime());
 			} catch (IOException e) {
 				LoggerFactory.logWarning(this, "could not create XML editor component for " + reader.getEbookResource(), e);
 			}
@@ -119,6 +121,10 @@ public class PlainMetadataEditorController {
 		restorePropeties();
 		
 		initListeners();		
+		
+		//do not enable the save button if no writer support is provided.
+		boolean hasWriterSupport = MetadataHandlerFactory.hasWriterSupport(Collections.singletonList(resourceHandler));
+		xmlMetadataView.btnSave.setEnabled(hasWriterSupport);
 	}
 
 	private void initListeners() {

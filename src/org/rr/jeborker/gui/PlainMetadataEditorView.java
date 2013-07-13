@@ -41,7 +41,7 @@ class PlainMetadataEditorView extends JDialog {
 	private JPanel leftBottomPanel;
 	private JPanel rightBottomPanel;
 	
-	PlainMetadataEditorView(JFrame invoker) throws IOException {
+	PlainMetadataEditorView(final JFrame invoker, final String metadataMime) throws IOException {
 		super(invoker);
 		setTitle(Bundle.getString("PlainMetadataEditorView.title"));
 		
@@ -69,32 +69,35 @@ class PlainMetadataEditorView extends JDialog {
 		editor.setOpaque(false);
 		editor.setBackground(Color.WHITE);
 		
-		XMLEditorKit kit = new XMLEditorKit();
-		editor.setEditorKitForContentType("text/xml", kit);
-		
-		// Set the font style.
-		editor.setFont(new Font("Courier", Font.PLAIN, 12));
-		
-		// Set the tab size
-		editor.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(4));
-		// Enable auto indentation.
-		kit.setAutoIndentation(true);
-
-		// Enable error highlighting.
-		editor.getDocument().putProperty(XMLEditorKit.ERROR_HIGHLIGHTING_ATTRIBUTE, new Boolean(true));
-
-		// Enable tag completion.
-		kit.setTagCompletion(true);
-
-		// Set a style
-//		kit.setStyle(XMLStyleConstants.ATTRIBUTE_NAME, new Color(255, 0, 0), Font.BOLD);
-		
-		// Add the number margin and folding margin as a Row Header View
-		JPanel rowHeader = new JPanel(new BorderLayout());
-		xmlFoldingMargin = new XMLFoldingMargin(editor);
-		rowHeader.add(xmlFoldingMargin, BorderLayout.EAST);
-		rowHeader.add(new LineNumberMargin(editor), BorderLayout.WEST);
-		scroller.setRowHeaderView(rowHeader);
+		if(metadataMime.contains("/xml")) {
+			XMLEditorKit xmlKit = new XMLEditorKit();
+			xmlKit.setAutoIndentation(true);
+			xmlKit.setTagCompletion(true);
+//			kit.setStyle(XMLStyleConstants.ATTRIBUTE_NAME, new Color(255, 0, 0), Font.BOLD);			
+			editor.setEditorKitForContentType("text/xml", xmlKit);
+			editor.setFont(new Font("Courier", Font.PLAIN, 12));
+			editor.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(4));
+			editor.getDocument().putProperty(XMLEditorKit.ERROR_HIGHLIGHTING_ATTRIBUTE, new Boolean(true));		
+			
+			// Add the number margin and folding margin as a Row Header View
+			JPanel rowHeader = new JPanel(new BorderLayout());
+			xmlFoldingMargin = new XMLFoldingMargin(editor);
+			rowHeader.add(xmlFoldingMargin, BorderLayout.EAST);
+			rowHeader.add(new LineNumberMargin(editor), BorderLayout.WEST);
+			scroller.setRowHeaderView(rowHeader);			
+		} else if(metadataMime.indexOf("/html") != -1) {
+			XMLEditorKit htmlKit = new XMLEditorKit();
+			editor.setEditorKitForContentType("text/html", htmlKit);
+			editor.setFont(new Font("Courier", Font.PLAIN, 12));
+			editor.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(4));
+			editor.getDocument().putProperty(XMLEditorKit.ERROR_HIGHLIGHTING_ATTRIBUTE, new Boolean(true));				
+		} else {
+			XMLEditorKit htmlKit = new XMLEditorKit();
+			editor.setEditorKitForContentType("text/plain", htmlKit);
+			editor.setFont(new Font("Courier", Font.PLAIN, 12));
+			editor.getDocument().putProperty(PlainDocument.tabSizeAttribute, new Integer(4));
+			editor.getDocument().putProperty(XMLEditorKit.ERROR_HIGHLIGHTING_ATTRIBUTE, new Boolean(true));				
+		}
 		
 		GridBagConstraints gbc_editorPane = new GridBagConstraints();
 		gbc_editorPane.insets = new Insets(0, 0, 5, 0);

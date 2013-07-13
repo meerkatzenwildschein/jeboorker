@@ -68,7 +68,7 @@ public class JeboorkerPreferences {
 			}
 			
 			public String getDefaultValue() {
-				return "doc,docx,html,htm,rtf,fb2,tr2,tr3,djvu,pdb,xeb,ceb,azw,kf8,lit,mobi,prc,opf,txt,pdb,ps,pdg,tebr,xml";
+				return "doc,docx,rtf,fb2,tr2,tr3,djvu,pdb,xeb,ceb,azw,kf8,lit,mobi,prc,opf,txt,pdb,ps,pdg,tebr,rb,xml";
 			}
 		}
 	}

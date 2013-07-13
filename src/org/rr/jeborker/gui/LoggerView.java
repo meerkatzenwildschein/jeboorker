@@ -89,6 +89,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		textArea.setMargin(new Insets(3, 3, 3, 3));
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
+		textArea.setOpaque(false);
 		
 		bottomPanel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
