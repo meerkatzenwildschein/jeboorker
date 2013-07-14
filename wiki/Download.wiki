@@ -1,7 +1,7 @@
-<a href="http://bit.ly/1bcTrRM">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif Jeboorker for Windows</a><br> 
+|| https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/1bcTrRM">Jeboorker for Windows</a>|| 
 
 
-<a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a><br> 
+|| https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a> || 
 
 
-<a href="http://bit.ly/12NMm1X">Jeboorker for Debian / Ubuntu</a>
+|| https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/12NMm1X">Jeboorker for Debian / Ubuntu</a> ||
