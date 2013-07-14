@@ -3,7 +3,7 @@
 <td></td> <td>*download*</td> <td>*summary*</td>
 </tr>
 <tr>
-<td><a href="http://bit.ly/18eL9oN">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/18eL9oN">Jeboorker for Windows</a></td><td>Windows Installer executable for 32 and 64 bit Windows</td>
+<td><a href="https://dl.dropboxusercontent.com/u/143623/jeboorker.exe">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="https://dl.dropboxusercontent.com/u/143623/jeboorker.exe">Jeboorker for Windows</a></td><td>Windows Installer executable for 32 and 64 bit Windows</td>
 </tr>
 <tr>
 <td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a></td> <td>Common Linux archive best to place in {{{/opt}}} or {{{/usr/share}}} </td>
