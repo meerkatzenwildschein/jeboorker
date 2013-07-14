@@ -25,8 +25,8 @@ import java.awt.event.KeyListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
@@ -35,6 +35,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.text.Position;
+
+import org.rr.commons.swing.SwingUtils;
 
 /**
  * @author Santhosh Kumar T
@@ -125,8 +127,9 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 			searchField.getDocument().addDocumentListener(this);
 
 			Point locationOnScreen;
-			if(comp.getParent() instanceof JViewport) {
-				locationOnScreen = comp.getParent().getParent().getLocationOnScreen();
+			JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(comp);
+			if(surroundingScrollPane != null) {
+				locationOnScreen = surroundingScrollPane.getLocationOnScreen();
 			} else {
 				locationOnScreen = comp.getLocationOnScreen();
 			}
