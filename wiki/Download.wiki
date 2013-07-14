@@ -1,4 +1,8 @@
-|| https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/1bcTrRM">Jeboorker for Windows</a>|| 
+<table>
+<tr>
+<td>https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif </td><td> <a href="http://bit.ly/1bcTrRM">Jeboorker for Windows</a></td>
+</tr>
+</table> 
 
 
 || https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a> || 
