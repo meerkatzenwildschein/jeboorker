@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -257,7 +258,15 @@ public class EbookPropertyItemUtils {
 	 * @param path The path elements to be stored.
 	 */
 	public static void storePathElements(final Collection<String> path) {
-		String indexedString = ListUtils.toIndexedString(path, File.pathSeparatorChar);
+		final List<String> fetchPathElements = fetchPathElements();
+		String indexedString;
+		if(fetchPathElements != null && !fetchPathElements.isEmpty()) {
+			HashSet<String> allElements = new HashSet<String>(path);
+			allElements.addAll(fetchPathElements);
+			indexedString = ListUtils.toIndexedString(allElements, File.pathSeparatorChar);
+		} else {
+			indexedString = ListUtils.toIndexedString(path, File.pathSeparatorChar);
+		}
 		JeboorkerPreferences.addGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, indexedString);
 	}
 	

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.SwingUtilities;
+
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -29,6 +31,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.action.ActionUtils;
+import org.rr.jeborker.gui.action.Bundle;
 
 public class FileWatchService {
 
@@ -132,15 +135,37 @@ public class FileWatchService {
 						DefaultDBManager.getInstance().storeObject(item);		
 						ActionUtils.addEbookPropertyItem(item);
 						MainController.getController().refreshFileSystemTreeEntry(basePathForFile);
-System.out.println("add " + resource);						
+						LoggerFactory.getLogger().log(Level.INFO, "add " + resource);
 					}
 				}
 			}
 		}
 		
-		private void transferDeleteAndRefresh(List<EbookPropertyItem> ebooks) {
-			if(!ebooks.isEmpty()) {
-System.out.println("refresh " + ebooks + " " + FileRefreshBackground.isDisabled());				
+		private void transferDeleteAndRefresh(final List<EbookPropertyItem> ebooks) {
+			final MainController controller = MainController.getController();
+			for(final EbookPropertyItem item : ebooks) {
+				final IResourceHandler resourceHandler = item.getResourceHandler();
+				if(!resourceHandler.exists()) {
+					//remove
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							boolean removed = controller.removeEbookPropertyItem(item);
+							controller.refreshFileSystemTreeEntry(item.getResourceHandler());
+							if(!removed) {
+								DefaultDBManager.getInstance().deleteObject(item);
+							}
+							LoggerFactory.getLogger().log(Level.INFO, "remove " + resourceHandler + " " + removed);
+						}
+					});	
+				} else {
+					//refresh
+					EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceHandler, true);
+					DefaultDBManager.getInstance().updateObject(item);			
+					LoggerFactory.getLogger().log(Level.INFO, "refresh " + resourceHandler);
+				}
+				
 				FileRefreshBackground.getInstance().addEbooks(ebooks);
 			}
 		}
