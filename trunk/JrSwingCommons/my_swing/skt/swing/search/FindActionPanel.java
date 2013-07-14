@@ -40,7 +40,7 @@ public class FindActionPanel extends JPanel {
 		add(textField, gbc_textField);
 		textField.setColumns(10);
 		
-		chckbxNewCheckBox = new JCheckBox("Groß- / Kleinschreibung");
+		chckbxNewCheckBox = new JCheckBox(Bundle.getString("FindActionPanel.case"));
 		GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
 		gbc_chckbxNewCheckBox.insets = new Insets(3, 0, 3, 5);
 		gbc_chckbxNewCheckBox.gridx = 1;
