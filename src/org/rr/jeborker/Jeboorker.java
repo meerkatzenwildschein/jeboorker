@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
@@ -73,6 +74,7 @@ public class Jeboorker {
 						    public void run() {
 						        int state = mainController.getMainWindow().getExtendedState();
 						        state &= ~Frame.ICONIFIED;
+						        
 						        mainController.getMainWindow().setExtendedState(state);
 						        mainController.getMainWindow().setFocusableWindowState(false);
 						    	mainController.getMainWindow().toFront();	
@@ -91,11 +93,26 @@ public class Jeboorker {
 		}
 		
 		if(start) {
-			setupLookAndFeel();		
 			try {
+				setupLookAndFeel();		
 				logSystemInfo();
 				
 				mainController = MainController.getController();
+				
+//		    	SwingUtilities.invokeLater(new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//			            try {
+//			                UIManager.setLookAndFeel(WebLookAndFeel.class.getCanonicalName());
+//			                SwingUtilities.updateComponentTreeUI(MainController.getController().getMainWindow());
+//			                MainController.getController().getMainWindow().pack();
+//			                System.out.println("l&fresr");
+//			            } catch (Exception ex) {
+//			                ex.printStackTrace();
+//			            }	
+//					}
+//				});					
 			} catch (Exception e) {
 				LoggerFactory.log(Level.SEVERE, null, "Main failed", e); 
 				System.exit(-1);
@@ -129,15 +146,27 @@ public class Jeboorker {
 
 	private static void setupLookAndFeel() {
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			
+			final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+			for(LookAndFeelInfo laf : installedLookAndFeels) {
+				String name = laf.getName().toLowerCase();
+				if(name.indexOf("gtk+") != -1) {
+					UIManager.setLookAndFeel(laf.getClassName());
+					break;
+				} else if(name.indexOf("windows") != -1) {
+					UIManager.setLookAndFeel(laf.getClassName());
+					break;
+				}
+			}
 		} catch (Exception e) {
 			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
 		}
 	}
 	
 	/**
-	 * Get the application folder. Jeboorker muste be configured that the app folder
+	 * Get the application folder. Jeboorker must be configured that the app folder
 	 * is the current directory. 
 	 */
 	public static String getAppFolder() {

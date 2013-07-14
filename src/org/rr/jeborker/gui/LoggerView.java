@@ -55,7 +55,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 	private JScrollPane scrollPane;
 	private JPanel bottomPanel;
 	
-	public LoggerView(JFrame mainWindow, LoggerController logMonitorController) {
+	LoggerView(JFrame mainWindow, LoggerController logMonitorController) {
 		super(mainWindow);
 		this.logMonitorController = logMonitorController;
 		initialize();
