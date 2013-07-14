@@ -1,14 +1,14 @@
 <table>
 <tr>
-<td></td> <td>*download*</td>
+<td></td> <td>*download*</td> <td>*summary*</td>
 </tr>
 <tr>
-<td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/1bcTrRM">Jeboorker for Windows</a></td>
+<td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/1bcTrRM">Jeboorker for Windows</a></td><td>Windows Installer file for 32 and 64 bit Windows</td>
 </tr>
 <tr>
-<td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a></td> 
+<td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a></td> </td><td>Common Linux archive best to place in {{{/opt}}} or {{{/usr/share}}} </td>
 </tr>
 <tr>
-<td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/12NMm1X">Jeboorker for Debian / Ubuntu</a></td>
+<td><a href="http://bit.ly/12NMm1X">https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif</a></td><td> <a href="http://bit.ly/12NMm1X">Jeboorker for Debian / Ubuntu</a></td><td>Debian / Ubuntu / Mint package for 32 and 64 bit systems</td>
 </tr>
 </table>
