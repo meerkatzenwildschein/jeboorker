@@ -2,10 +2,10 @@
 <tr>
 <td>https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif </td><td> <a href="http://bit.ly/1bcTrRM">Jeboorker for Windows</a></td>
 </tr>
-</table> 
-
-
-|| https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a> || 
-
-
-|| https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif || <a href="http://bit.ly/12NMm1X">Jeboorker for Debian / Ubuntu</a> ||
+<tr>
+<td>https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif </td><td> <a href="http://bit.ly/11NZbOK">Jeboorker for Linux</a></td> 
+</tr>
+<tr>
+<td>https://ssl.gstatic.com/codesite/ph/images/dl_arrow.gif </td><td> <a href="http://bit.ly/12NMm1X">Jeboorker for Debian / Ubuntu</a></td>
+</tr>
+</table>
