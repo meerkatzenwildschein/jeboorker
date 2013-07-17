@@ -52,18 +52,20 @@ public class MainTreeController {
 	 */
 	public List<IResourceHandler> getSelectedTreeItems() {
 		JTree selectedTreeComponent = mainWindow.getSelectedTreePathComponent();
-		TreePath[] selectionPaths = ((JTree)selectedTreeComponent).getSelectionPaths();
-		if(selectionPaths != null) {
-			ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(selectionPaths.length);
+		if(selectedTreeComponent != null) {
+			TreePath[] selectionPaths = ((JTree)selectedTreeComponent).getSelectionPaths();
 			if(selectionPaths != null) {
-				for(TreePath selectionPath : selectionPaths) {
-					TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
-					if(targetResource instanceof FileSystemNode) {
-						result.add( ((FileSystemNode)targetResource).getResource() );
+				ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(selectionPaths.length);
+				if(selectionPaths != null) {
+					for(TreePath selectionPath : selectionPaths) {
+						TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
+						if(targetResource instanceof FileSystemNode) {
+							result.add( ((FileSystemNode)targetResource).getResource() );
+						}
 					}
 				}
+				return result;
 			}
-			return result;
 		}
 		return Collections.emptyList();
 	}

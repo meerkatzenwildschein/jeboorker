@@ -50,12 +50,6 @@ public class MainMenuBarController {
 	 */
 	public static MainMenuBarController getController() {
 		if(controller==null) {
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception e) {
-				LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
-			}
-			
 			controller = new MainMenuBarController();
 		}
 		return controller;

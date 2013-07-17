@@ -17,10 +17,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerLogger;
@@ -52,7 +52,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 	private JButton btnCopy;
 	private JTextArea textArea;
 	private JButton btnClose;
-	private JScrollPane scrollPane;
+	private JRScrollPane scrollPane;
 	private JPanel bottomPanel;
 	
 	LoggerView(JFrame mainWindow, LoggerController logMonitorController) {
@@ -77,7 +77,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
-		scrollPane = new JScrollPane();
+		scrollPane = new JRScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.insets = new Insets(5, 0, 0, 0);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;

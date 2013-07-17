@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JList;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 
 import org.japura.gui.CheckComboBox;
@@ -29,11 +27,12 @@ import org.rr.jeborker.gui.additional.EbookPropertyItemFieldComperator;
 
 public class FilterPanelController {
 	
-	private static FilterPanelView view;
+	private static MainView view;
 	
 	private static EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();
 	
 	FilterPanelController() {
+		view = MainController.getController().mainWindow;
 		initialize();
 	}
 
@@ -48,16 +47,16 @@ public class FilterPanelController {
 		}
 	}
 	
-	/**
-	 * Get the menu view which is a {@link JMenuBar} instance.
-	 * @return The menu view.
-	 */
-	static JPanel getView() {
-		if(view==null) {
-			view = new FilterPanelView();
-		}
-		return view;
-	}
+//	/**
+//	 * Get the menu view which is a {@link JMenuBar} instance.
+//	 * @return The menu view.
+//	 */
+//	static JPanel getView() {
+//		if(view==null) {
+//			view = new FilterPanelView();
+//		}
+//		return view;
+//	}
 	
 	void initialize() {
 		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
