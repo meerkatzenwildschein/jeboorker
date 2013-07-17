@@ -31,7 +31,6 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.action.ActionUtils;
-import org.rr.jeborker.gui.action.Bundle;
 
 public class FileWatchService {
 

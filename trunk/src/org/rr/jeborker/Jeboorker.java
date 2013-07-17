@@ -98,21 +98,6 @@ public class Jeboorker {
 				logSystemInfo();
 				
 				mainController = MainController.getController();
-				
-//		    	SwingUtilities.invokeLater(new Runnable() {
-//					
-//					@Override
-//					public void run() {
-//			            try {
-//			                UIManager.setLookAndFeel(WebLookAndFeel.class.getCanonicalName());
-//			                SwingUtilities.updateComponentTreeUI(MainController.getController().getMainWindow());
-//			                MainController.getController().getMainWindow().pack();
-//			                System.out.println("l&fresr");
-//			            } catch (Exception ex) {
-//			                ex.printStackTrace();
-//			            }	
-//					}
-//				});					
 			} catch (Exception e) {
 				LoggerFactory.log(Level.SEVERE, null, "Main failed", e); 
 				System.exit(-1);

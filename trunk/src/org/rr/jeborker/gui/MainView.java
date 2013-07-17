@@ -35,11 +35,13 @@ import java.util.logging.Level;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -62,6 +64,8 @@ import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
+import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -124,12 +128,19 @@ import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
 
+
 class MainView extends JFrame {
 	
 	private static final long serialVersionUID = 6837919427429399376L;
-
-	protected static final Object EbookPropertyItem = null;
 	
+	private static final Color foregroundColor = SwingUtils.getForegroundColor();
+	
+	private static final Color backgroundColor = SwingUtils.getBackgroundColor();	
+	
+	private static final Color selectedBackgroundColor = SwingUtils.getSelectionBackgroundColor();
+	
+	private static final Color selectedForegroundColor = SwingUtils.getSelectionForegroundColor();	
+
 	JRTable mainTable;
 	
 	JXLayer<JRTable> mainTableLayer;
@@ -175,6 +186,12 @@ class MainView extends JFrame {
 	JTabbedPane treeTabbedPane;
 	
 	private JPanel buttonPanel;
+	
+	JComboBox<String> filterField;
+	
+	CheckComboBox<Field> filterFieldSelection;
+	
+	BasicComboBoxEditor comboboxEditor;	
 
 	/**
 	 * Create the application.
@@ -219,13 +236,15 @@ class MainView extends JFrame {
 		
 		this.setGlassPane(new ShadowPanel());	
 		
+		JPanel contentPane = new JPanel();
+		contentPane.setOpaque(true);
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
 		gridBagLayout.rowHeights = new int[]{350, 25, 30};
 		gridBagLayout.columnWeights = new double[]{1.0};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 4.9E-324};
-		this.getContentPane().setLayout(gridBagLayout);
-		
+		contentPane.setLayout(gridBagLayout);
 		
 		mainSplitPane = new JSplitPane();
 		mainSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -237,7 +256,7 @@ class MainView extends JFrame {
 		gbc_mainSplitPane.fill = GridBagConstraints.BOTH;
 		gbc_mainSplitPane.gridx = 0;
 		gbc_mainSplitPane.gridy = 0;
-		getContentPane().add(mainSplitPane, gbc_mainSplitPane);
+		contentPane.add(mainSplitPane, gbc_mainSplitPane);
 		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
@@ -398,7 +417,7 @@ class MainView extends JFrame {
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
 				
 				JComponent fileSystemTreeComp = createFileSystemTree(copy, paste, delete, refresh);
-				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
+				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);				
 				
 				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
 				treeMainTableSplitPane.setOneTouchExpandable(true);
@@ -471,14 +490,14 @@ class MainView extends JFrame {
 				mainSplitPane.setDividerLocation(getSize().width - 220);
 				
 				
-		JPanel filterPanel = FilterPanelController.getView();
+		JPanel filterPanel = createFilterPanel();
 		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
 		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
 		gbc_searchPanel.anchor = GridBagConstraints.NORTH;
 		gbc_searchPanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_searchPanel.gridx = 0;
 		gbc_searchPanel.gridy = 1;
-		getContentPane().add(filterPanel, gbc_searchPanel);
+		contentPane.add(filterPanel, gbc_searchPanel);
 				
 		JPanel statusPanel = new JPanel();
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
@@ -486,7 +505,7 @@ class MainView extends JFrame {
 		gbc_statusPanel.fill = GridBagConstraints.BOTH;
 		gbc_statusPanel.gridx = 0;
 		gbc_statusPanel.gridy = 2;
-		getContentPane().add(statusPanel, gbc_statusPanel);
+		contentPane.add(statusPanel, gbc_statusPanel);
 		GridBagLayout gbl_statusPanel = new GridBagLayout();
 		gbl_statusPanel.columnWidths = new int[]{0, 0, 0};
 		gbl_statusPanel.rowHeights = new int[]{14, 0};
@@ -514,7 +533,67 @@ class MainView extends JFrame {
 		gbc_progressBar.gridy = 0;
 		statusPanel.add(progressBar, gbc_progressBar);
 		
+		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
+	}
+
+	private JPanel createFilterPanel() {
+		JPanel filterPanel = new JPanel();
+
+		GridBagLayout gbl_searchPanel = new GridBagLayout();
+		gbl_searchPanel.columnWidths = new int[] { 0, 80, 0, 0, 0 };
+		gbl_searchPanel.rowHeights = new int[] { 0, 0 };
+		gbl_searchPanel.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_searchPanel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		filterPanel.setLayout(gbl_searchPanel);
+
+		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
+		Dimension lblSearchSize = new Dimension(55, lblSearch.getPreferredSize().height);
+		lblSearch.setPreferredSize(lblSearchSize);
+		lblSearch.setMinimumSize(lblSearchSize);		
+		GridBagConstraints gbc_lblSearch = new GridBagConstraints();
+		gbc_lblSearch.anchor = GridBagConstraints.EAST;
+		gbc_lblSearch.gridx = 0;
+		gbc_lblSearch.gridy = 0;
+		filterPanel.add(lblSearch, gbc_lblSearch);
+		
+		filterFieldSelection = new CheckComboBox<Field>();
+		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
+		filterFieldSelection.setPreferredSize(filterFieldSelectionSize);
+		filterFieldSelection.setMinimumSize(filterFieldSelectionSize);
+		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+		gbc_comboBox.fill = GridBagConstraints.NONE;
+		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
+		gbc_comboBox.gridx = 1;
+		gbc_comboBox.gridy = 0;
+		filterPanel.add(filterFieldSelection, gbc_comboBox);
+
+		filterField = new JComboBox<String>();
+		filterField.setModel(new DefaultComboBoxModel<String>());
+		filterField.setEditable(true);
+		filterField.setEditor(comboboxEditor = new BasicComboBoxEditor());
+		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
+		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
+		((JComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
+		((JComponent)comboboxEditor.getEditorComponent()).setBackground(backgroundColor);		
+		GridBagConstraints gbc_searchField = new GridBagConstraints();
+		gbc_searchField.insets = new Insets(0, 0, 0, 5);
+		gbc_searchField.weightx = 1.0;
+		gbc_searchField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_searchField.gridx = 2;
+		gbc_searchField.gridy = 0;
+		filterPanel.add(filterField, gbc_searchField);
+
+		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
+		searchButton.setPreferredSize(new Dimension(27, 27));
+		GridBagConstraints gbc_textField = new GridBagConstraints();
+		gbc_textField.weightx = 0;
+		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField.gridx = 3;
+		gbc_textField.gridy = 0;
+		filterPanel.add(searchButton, gbc_textField);
+		
+		return filterPanel;
 	}
 
 	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete, KeyStroke refresh) {
@@ -1084,13 +1163,31 @@ class MainView extends JFrame {
 	}
 
 	JTree getSelectedTreePathComponent() {
-		JTree selectedComponent = (JTree) SwingUtils.getAllComponents(JTree.class, (Container) treeTabbedPane.getSelectedComponent())[0];
-		return selectedComponent;
+		Component[] allComponents = SwingUtils.getAllComponents(JTree.class, (Container) treeTabbedPane.getSelectedComponent());
+		if(allComponents.length >= 1) {
+			return (JTree) allComponents[0];
+		}
+		return null;
 	}
 	
 	JTree getFileSystemTree() {
 		return fileSystemTree;
 	}
+	
+	/**
+	 * Tells the text filter field to display it self in and active filter color. 
+	 */
+	public void enableFilterColor(boolean enable) {
+		if(enable) {
+			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(selectedBackgroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(selectedForegroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(selectedBackgroundColor.brighter());
+		} else {
+			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(backgroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(selectedBackgroundColor);
+		}
+	}	
 	
 	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
 

@@ -188,7 +188,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 				}
 			}
 		}
-
+		
 		try {
 			if(label.getFont() != labelNormalFont) {
 				//reset font

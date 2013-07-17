@@ -16,12 +16,12 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.text.PlainDocument;
 
 import org.bounce.text.LineNumberMargin;
 import org.bounce.text.xml.XMLEditorKit;
 import org.bounce.text.xml.XMLFoldingMargin;
+import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.layout.EqualsLayout;
 
 
@@ -52,7 +52,7 @@ class PlainMetadataEditorView extends JDialog {
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
-		JScrollPane scroller = new JScrollPane();
+		JRScrollPane scroller = new JRScrollPane();
 		
 		editor = new JEditorPane() {
 			private static final long serialVersionUID = 3319037743254259329L;

@@ -297,6 +297,7 @@ public class MainController {
 			
 			@Override
 			public void run() {
+				mainWindow.pack();
 				mainWindow.setVisible(true);
 				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
 				
@@ -706,8 +707,6 @@ public class MainController {
 		
 		return result;
 	}
-	
-
 	
 	/**
 	 * Gets all selected rows from the main table.
