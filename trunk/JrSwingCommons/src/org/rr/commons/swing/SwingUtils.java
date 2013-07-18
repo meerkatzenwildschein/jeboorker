@@ -32,7 +32,7 @@ public class SwingUtils {
 	private static Color selectionBackgroundColor;
 	private static Color foregroundColor;
 	private static Color backgroundColor;
-
+	
 	/**
 	 * Fetch all components from a specified type out of a Window. <BR>
 	 * 
@@ -221,6 +221,18 @@ public class SwingUtils {
 		
 		return backgroundColor;
 	}	
+	
+	/**
+	 * Reset the stored fore- and backgroundcolors for
+	 * {@link #getBackgroundColor()}, {@link #getForegroundColor()} {@link #getSelectionBackgroundColor()}
+	 * and {@link #getSelectionForegroundColor()}.
+	 */
+	public static void resetColors() {
+		backgroundColor = null;
+		foregroundColor = null;
+		selectionBackgroundColor = null;
+		selectionForegroundColor = null;
+	}
 	
 	public static void centerOnScreen(Window window) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

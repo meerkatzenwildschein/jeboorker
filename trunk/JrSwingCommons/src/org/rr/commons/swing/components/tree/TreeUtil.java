@@ -64,11 +64,13 @@ public class TreeUtil {
 			for (; row < rowCount; row++) {
 				TreePath rowPath = tree.getPathForRow(row);
 				Object pathComponent = rowPath.getLastPathComponent();
-				String cleanedNodeName = cleanNodeName(((NamedNode) pathComponent).getName());
-				if(pathComponent instanceof NamedNode && cleanedNodeName.equals(s)) {
-					tree.expandRow(row);
-					lastRowPath = rowPath;
-					break;
+				if(pathComponent instanceof NamedNode) {
+					String cleanedNodeName = cleanNodeName(((NamedNode) pathComponent).getName());
+					if(pathComponent instanceof NamedNode && cleanedNodeName.equals(s)) {
+						tree.expandRow(row);
+						lastRowPath = rowPath;
+						break;
+					}
 				}
 			}			
 		}
