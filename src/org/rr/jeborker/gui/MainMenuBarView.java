@@ -11,6 +11,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -46,7 +48,7 @@ class MainMenuBarView extends JMenuBar {
 
 	JMenu editMenuBar;
 	
-	JMenu helpMenuBar;	
+	JMenu extrasMenuBar;	
 
 	JMenu mnVerzeichnisEntfernen;
 
@@ -62,7 +64,7 @@ class MainMenuBarView extends JMenuBar {
 	private void init() {
 		add(createFileMenu());
 		add(createEditMenu());
-		add(createHelpMenu());
+		add(createExtrasMenu());
 	}
 	
 	/**
@@ -394,16 +396,26 @@ class MainMenuBarView extends JMenuBar {
 		return this.editMenuBar;
 	}
 	
-	private JMenu createHelpMenu() {
-		String helpMenuBarName = Bundle.getString("EborkerMainView.help");
-		this.helpMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
-		this.helpMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
+	private JMenu createExtrasMenu() {
+		String helpMenuBarName = Bundle.getString("EborkerMainView.extras");
+		this.extrasMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
+		this.extrasMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
 
 		JMenuItem logItem = new JMenuItem();
 		logItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_LOG_MONITOR_ACTION, null));
-		helpMenuBar.add(logItem);
+		extrasMenuBar.add(logItem);
 		
-		return this.helpMenuBar;
+		String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
+		JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
+		lookAndFeelMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(lookAndFeelName));
+		final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+		for(LookAndFeelInfo laf : installedLookAndFeels) {
+			ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, laf.getClassName());
+			lookAndFeelMenu.add(action);
+		}
+		extrasMenuBar.add(lookAndFeelMenu);
+		
+		return this.extrasMenuBar;
 	}
 	
 	/**
