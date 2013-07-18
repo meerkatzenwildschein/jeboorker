@@ -20,6 +20,7 @@ import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.converter.IEBookConverter;
@@ -408,9 +409,8 @@ class MainMenuBarView extends JMenuBar {
 		String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
 		JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
 		lookAndFeelMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(lookAndFeelName));
-		final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-		for(LookAndFeelInfo laf : installedLookAndFeels) {
-			ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, laf.getClassName());
+		for(String lafName : Jeboorker.LOOK_AND_FEELS.keySet()) {
+			ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, lafName);
 			lookAndFeelMenu.add(action);
 		}
 		extrasMenuBar.add(lookAndFeelMenu);

@@ -12,8 +12,10 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -35,6 +37,20 @@ import org.rr.commons.utils.compression.rar.RarUtils;
 import org.rr.jeborker.gui.MainController;
 
 public class Jeboorker {
+
+	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
+			60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
+			
+	public static final Map<String, String> LOOK_AND_FEELS = new HashMap<String, String>() {
+		{
+			final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+			for(LookAndFeelInfo laf : installedLookAndFeels) {
+				String className = laf.getClassName();
+				String name = className.substring(className.lastIndexOf('.') + 1);
+				put(name, className);
+			}
+		}
+	};
 
 	public static boolean isRuntime = false;
 
@@ -94,7 +110,6 @@ public class Jeboorker {
 		
 		if(start) {
 			try {
-				setupLookAndFeel();		
 				logSystemInfo();
 				
 				mainController = MainController.getController();
@@ -127,24 +142,6 @@ public class Jeboorker {
 			LoggerFactory.getLogger().info(StringUtils.toString(key) + "=" + StringUtils.toString(value));
 		}
 		
-	}
-
-	private static void setupLookAndFeel() {
-		try {
-			final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-			for(LookAndFeelInfo laf : installedLookAndFeels) {
-				String name = laf.getName().toLowerCase();
-				if(name.indexOf("gtk+") != -1) {
-					UIManager.setLookAndFeel(laf.getClassName());
-					break;
-				} else if(name.indexOf("windows") != -1) {
-					UIManager.setLookAndFeel(laf.getClassName());
-					break;
-				}
-			}
-		} catch (Exception e) {
-			LoggerFactory.logWarning(MainController.class, "Could not set system look and feel");
-		}
 	}
 	
 	/**
@@ -206,10 +203,7 @@ public class Jeboorker {
 		}
 	}
 
-	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
-	60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
-	
-	public static class ApplicationThreadFactory implements ThreadFactory {
+	private static class ApplicationThreadFactory implements ThreadFactory {
 		
 		private static final AtomicInteger poolNumber = new AtomicInteger(1);
 		
