@@ -34,7 +34,7 @@ class ChangeLookAndFeelAction extends AbstractAction {
 			String lafClassName = Jeboorker.LOOK_AND_FEELS.get(laf);
 			if(lafClassName != null) {
 				UIManager.setLookAndFeel(lafClassName);
-				JeboorkerPreferences.addGenericEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL, lafClassName);
+				JeboorkerPreferences.addEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL, lafClassName);
 			} else {
 				LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + laf);
 			}
