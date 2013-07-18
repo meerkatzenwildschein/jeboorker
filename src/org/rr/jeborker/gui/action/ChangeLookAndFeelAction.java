@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.gui.MainController;
@@ -29,11 +30,14 @@ class ChangeLookAndFeelAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JFrame mainWindow = MainController.getController().getMainWindow();
+		final JFrame mainWindow = MainController.getController().getMainWindow();
 		try {
 			String lafClassName = Jeboorker.LOOK_AND_FEELS.get(laf);
 			if(lafClassName != null) {
+				SwingUtils.resetColors();
 				UIManager.setLookAndFeel(lafClassName);
+				SwingUtilities.updateComponentTreeUI(mainWindow);
+				mainWindow.pack();
 				JeboorkerPreferences.addEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL, lafClassName);
 			} else {
 				LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + laf);
