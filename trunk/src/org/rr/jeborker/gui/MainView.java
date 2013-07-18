@@ -133,14 +133,6 @@ class MainView extends JFrame {
 	
 	private static final long serialVersionUID = 6837919427429399376L;
 	
-	private static final Color foregroundColor = SwingUtils.getForegroundColor();
-	
-	private static final Color backgroundColor = SwingUtils.getBackgroundColor();	
-	
-	private static final Color selectedBackgroundColor = SwingUtils.getSelectionBackgroundColor();
-	
-	private static final Color selectedForegroundColor = SwingUtils.getSelectionForegroundColor();	
-
 	JRTable mainTable;
 	
 	JXLayer<JRTable> mainTableLayer;
@@ -574,8 +566,8 @@ class MainView extends JFrame {
 		filterField.setEditor(comboboxEditor = new BasicComboBoxEditor());
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
-		((JComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
-		((JComponent)comboboxEditor.getEditorComponent()).setBackground(backgroundColor);		
+		((JComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
+		((JComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());		
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.insets = new Insets(0, 0, 0, 5);
 		gbc_searchField.weightx = 1.0;
@@ -1179,13 +1171,13 @@ class MainView extends JFrame {
 	 */
 	public void enableFilterColor(boolean enable) {
 		if(enable) {
-			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(selectedBackgroundColor);
-			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(selectedForegroundColor);
-			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(selectedBackgroundColor.brighter());
+			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getSelectionBackgroundColor());
+			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getSelectionForegroundColor());
+			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor().brighter());
 		} else {
-			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(foregroundColor);
-			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(backgroundColor);
-			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(selectedBackgroundColor);
+			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
+			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
+			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
 		}
 	}	
 	

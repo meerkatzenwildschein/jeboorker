@@ -131,9 +131,6 @@ public class Jeboorker {
 
 	private static void setupLookAndFeel() {
 		try {
-//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			
 			final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 			for(LookAndFeelInfo laf : installedLookAndFeels) {
 				String name = laf.getName().toLowerCase();
