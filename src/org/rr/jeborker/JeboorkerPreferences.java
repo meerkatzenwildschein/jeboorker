@@ -185,7 +185,7 @@ public class JeboorkerPreferences {
 		addEntryToDB(key, value);
 	}
 	
-	public static void addGenericEntryAsString(final PREFERENCE_KEYS key, final String value) {
+	public static void addEntryAsString(final PREFERENCE_KEYS key, final String value) {
 		addGenericEntryAsString(key.getKey(), value);
 	}		
 	
@@ -235,7 +235,7 @@ public class JeboorkerPreferences {
 		}
 	}	
 	
-	public static void addGenericEntryBoolean(final PREFERENCE_KEYS key, final Boolean b) {
+	public static void addEntryAsBoolean(final PREFERENCE_KEYS key, final Boolean b) {
 		addGenericEntryBoolean(key.getKey(), b);
 	}
 	
@@ -394,7 +394,7 @@ public class JeboorkerPreferences {
 	 * Sets the value for enable / disable the auto scrolling the the trees
 	 */
 	public static void setTreeAutoScrollingEnabled(final boolean value) {
-		addGenericEntryBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED, Boolean.valueOf(value));
+		addEntryAsBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED, Boolean.valueOf(value));
 		
 		//listener for enable the auto scroll function in the tree component.
 		for(JeboorkerPreferenceListener listener : preferenceChangeListener) {
@@ -411,7 +411,7 @@ public class JeboorkerPreferences {
 	 * The auto save function is always triggered on a click at the main table.
 	 */
 	public static void setAutoSaveMetadata(final boolean value) {
-		addGenericEntryBoolean(PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, Boolean.valueOf(value));
+		addEntryAsBoolean(PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, Boolean.valueOf(value));
 	}		
 	
 }

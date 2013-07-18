@@ -65,7 +65,7 @@ class PreferenceView extends JPreferenceDialog {
 					@Override
 					public void run() {
 						boolean isAutoSaveMetadata = getBooleanValue(PreferenceView.AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME);
-						JeboorkerPreferences.addGenericEntryBoolean(JeboorkerPreferences.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, isAutoSaveMetadata);							
+						JeboorkerPreferences.addEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, isAutoSaveMetadata);							
 					}
 				});
 				addPreferenceEntry(autoSaveMetadataItem);
@@ -80,7 +80,7 @@ class PreferenceView extends JPreferenceDialog {
 					@Override
 					public void run() {
 						boolean isEbookDeleteAfterImport = getBooleanValue(PreferenceView.DELETE_AFTER_IMPORT_PREFERENCE_NAME);
-						JeboorkerPreferences.addGenericEntryBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);						
+						JeboorkerPreferences.addEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);						
 					}
 				});
 				addPreferenceEntry(deleteEbookAfterImportItem);
@@ -95,7 +95,7 @@ class PreferenceView extends JPreferenceDialog {
 					@Override
 					public void run() {
 						String basicSupportedFileTypes = getStringValue(PreferenceView.BASIC_FILE_TYPE_SUPPORT_NAME);
-						JeboorkerPreferences.addGenericEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES, basicSupportedFileTypes);						
+						JeboorkerPreferences.addEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES, basicSupportedFileTypes);						
 					}
 				});
 				addPreferenceEntry(basicFileSupportItem);
