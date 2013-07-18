@@ -19,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -277,7 +278,10 @@ public class MainController {
 	
 	private void initialize() throws Exception {
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.opendb"));
-		splashScreen.setLoadingValue(40);	
+		splashScreen.setLoadingValue(35);	
+		
+		String lookAndFeel = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL);
+		UIManager.setLookAndFeel(lookAndFeel);
 		
 		mainWindow = new MainView();
 		

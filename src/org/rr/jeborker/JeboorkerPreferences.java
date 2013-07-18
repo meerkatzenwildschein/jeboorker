@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.collection.ListenerList;
 import org.rr.commons.mufs.IResourceHandler;
@@ -69,6 +72,30 @@ public class JeboorkerPreferences {
 			
 			public String getDefaultValue() {
 				return "doc,docx,rtf,fb2,tr2,tr3,djvu,pdb,xeb,ceb,azw,kf8,lit,mobi,prc,opf,txt,pdb,ps,pdg,tebr,rb,xml";
+			}
+		},
+		LOOK_AND_FEEL {
+			
+			private String defaulValue = "javax.swing.plaf.metal.MetalLookAndFeel";
+			
+			@Override
+			public String getKey() {
+				return "LookAndFeel";
+			}
+			
+			public String getDefaultValue() {
+				final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+				for(LookAndFeelInfo laf : installedLookAndFeels) {
+					String name = laf.getName().toLowerCase();
+					if(name.indexOf("gtk+") != -1) {
+						defaulValue = laf.getClassName();
+						break;
+					} else if(name.indexOf("windows") != -1) {
+						defaulValue = laf.getClassName();
+						break;
+					}
+				}		
+				return defaulValue;
 			}
 		}
 	}
@@ -225,12 +252,12 @@ public class JeboorkerPreferences {
 	 * @return The desired value. Never returns <code>null</code>.
 	 */
 	public static String getEntryAsString(final PREFERENCE_KEYS key) {
-		final String defaultValueString = key.getDefaultValue();
 		final String preferenceEntry = getGenericEntryAsString(key.getKey(), null);
 		if(preferenceEntry != null) {
 			return preferenceEntry;
+		} else {
+			return key.getDefaultValue();
 		}
-		return defaultValueString;
 	}	
 	
 	/**
