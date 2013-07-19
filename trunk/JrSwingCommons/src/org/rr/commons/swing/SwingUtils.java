@@ -32,6 +32,7 @@ public class SwingUtils {
 	private static Color selectionBackgroundColor;
 	private static Color foregroundColor;
 	private static Color backgroundColor;
+	private static Color stripeBackgroundColor;
 	
 	/**
 	 * Fetch all components from a specified type out of a Window. <BR>
@@ -144,7 +145,10 @@ public class SwingUtils {
 		
 		selectionBackgroundColor = UIManager.getColor("Table.selectionBackground");
 		if(selectionBackgroundColor == null) {
-			selectionBackgroundColor = new JList().getSelectionForeground();
+			selectionBackgroundColor = UIManager.getColor("Table[Enabled+Selected].textBackground");
+			if(selectionBackgroundColor == null) {
+				selectionBackgroundColor = new JList().getSelectionBackground();
+			}
 			
 			//sometimes the UIManager color won't work 
 			selectionBackgroundColor = new Color(selectionBackgroundColor.getRed(), selectionBackgroundColor.getGreen(), selectionBackgroundColor.getBlue());
@@ -168,7 +172,10 @@ public class SwingUtils {
 		if(selectionForegroundColor == null) {
 			selectionForegroundColor = UIManager.getColor("Table.selectionForeground");
 			if(selectionForegroundColor == null) {
-				selectionForegroundColor = new JList().getSelectionForeground();
+				selectionForegroundColor = UIManager.getColor("Table[Enabled+Selected].textForeground");
+				if(selectionForegroundColor == null) {
+					selectionForegroundColor = new JList().getSelectionForeground();
+				}
 			}
 			
 			//sometimes the UIManager color won't work 
@@ -197,10 +204,10 @@ public class SwingUtils {
 		foregroundColor = UIManager.getColor("Table.foreground");
 		if(foregroundColor == null) {
 			foregroundColor = new JList().getForeground();
-			
-			//sometimes the UIManager color won't work 
-			foregroundColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue());			
 		}
+		
+		//sometimes the UIManager color won't work 
+		foregroundColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue());
 		
 		//sometimes the UIManager color won't work 
 		return foregroundColor;
@@ -214,16 +221,28 @@ public class SwingUtils {
 		backgroundColor = UIManager.getColor("Table.background");
 		if(backgroundColor == null) {
 			backgroundColor = new JList().getBackground();
-			
-			//sometimes the UIManager color won't work
-			backgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue());
 		}
+		//sometimes the UIManager color won't work
+		backgroundColor = new Color(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue());
 		
 		return backgroundColor;
 	}	
 	
+	public static Color getStripeBackgroundColor() {
+		if(stripeBackgroundColor != null) {
+			return stripeBackgroundColor;
+		}
+		
+		stripeBackgroundColor = getBackgroundColor();
+		
+		//sometimes the UIManager color won't work
+		int addDarkness = stripeBackgroundColor.getRed() > 128 ? 10 : -1;
+		stripeBackgroundColor = new Color(stripeBackgroundColor.getRed() - addDarkness, stripeBackgroundColor.getGreen() - addDarkness, stripeBackgroundColor.getBlue() - addDarkness);
+		return stripeBackgroundColor;
+	}	
+	
 	/**
-	 * Reset the stored fore- and backgroundcolors for
+	 * Reset the stored fore- and background colors for
 	 * {@link #getBackgroundColor()}, {@link #getForegroundColor()} {@link #getSelectionBackgroundColor()}
 	 * and {@link #getSelectionForegroundColor()}.
 	 */
@@ -232,6 +251,7 @@ public class SwingUtils {
 		foregroundColor = null;
 		selectionBackgroundColor = null;
 		selectionForegroundColor = null;
+		stripeBackgroundColor = null;
 	}
 	
 	public static void centerOnScreen(Window window) {
