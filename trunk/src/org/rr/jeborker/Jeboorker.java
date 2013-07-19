@@ -47,6 +47,9 @@ public class Jeboorker {
 			for(LookAndFeelInfo laf : installedLookAndFeels) {
 				String className = laf.getClassName();
 				String name = className.substring(className.lastIndexOf('.') + 1);
+				if(name.startsWith("Motif")) {
+					continue;
+				}
 				put(name, className);
 			}
 		}

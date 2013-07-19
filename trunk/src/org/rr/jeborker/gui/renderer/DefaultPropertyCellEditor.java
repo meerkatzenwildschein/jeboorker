@@ -35,7 +35,7 @@ public class DefaultPropertyCellEditor extends AbstractPropertyEditor {
 
   public DefaultPropertyCellEditor() {
     editor = new JTextField();
-    ((JTextField)editor).setBorder(LookAndFeelTweaks.EMPTY_BORDER);
+    ((JTextField) editor).setBorder(LookAndFeelTweaks.EMPTY_BORDER);
   }
   
   public Object getValue() {
