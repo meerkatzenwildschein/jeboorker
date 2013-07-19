@@ -11,6 +11,7 @@ import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.gui.MainController;
@@ -61,9 +62,14 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 
 	@Override
 	public boolean isCellEditable(EventObject event) {
-		TreeNode node = (TreeNode) tree.getSelectionPath().getLastPathComponent();
-		if (node.isLeaf()) {
-			return true;
+		if(tree != null) {
+			TreePath selectionPath = tree.getSelectionPath();
+			if(selectionPath != null) {
+				TreeNode node = (TreeNode) selectionPath.getLastPathComponent();
+				if (node != null && node.isLeaf()) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

@@ -55,31 +55,9 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	private static final long serialVersionUID = -4684790158985895647L;
 	
 	public EbookTableCellRenderer() {
-		Color color = SwingUtils.getSelectionBackgroundColor();
-		selectedBgColor = SwingUtils.getBrighterColor(color, 20);		
-		
-//		selectedBgColor = UIManager.getColor("TextField.selectionBackground");	
-		selectedFgColor = SwingUtils.getSelectionForegroundColor();
-		
-		//workaround for a swing bug. The first time, the editor is used, the 
-		//ui color instance draws the wrong color but have the right rgb values.
-		color = SwingUtils.getBackgroundColor();
-		bgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
-		
-		color = SwingUtils.getForegroundColor();
-		fgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());	
-		
 		init();
 	}
 	
-
-	protected final Color selectedBgColor;
-	
-	protected final Color selectedFgColor;
-
-	protected final Color bgColor;
-	
-	protected final Color fgColor;
 
 	JLabel imageLabel;
 	
@@ -187,10 +165,14 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		final Component tableCellComponent = this.getTableCellComponent(table, value, isSelected, hasFocus, row, column);
 		if(isSelected) {
-			this.setBackground(selectedBgColor);	
-			this.setForeground(selectedFgColor);
-		} else {		
-			this.setBackground(SwingUtils.getBackgroundColor());
+			this.setBackground(SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20));	
+			this.setForeground(SwingUtils.getSelectionForegroundColor());
+		} else {	
+			if(row % 2 == 0) {
+				this.setBackground(SwingUtils.getStripeBackgroundColor());
+			} else {
+				this.setBackground(SwingUtils.getBackgroundColor());
+			}
 			this.setForeground(SwingUtils.getForegroundColor());			
 		}
 		
@@ -201,19 +183,23 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		//can happens that one row is rendered several times. Test here if the same row has already been rendered. 
 		//no need to do it twice.
 		final EbookPropertyItem item = (EbookPropertyItem) value;
+		final Color foregroundColor = SwingUtils.getForegroundColor();
+		final Color selectionForegroundColor = SwingUtils.getSelectionForegroundColor();
+		final Color brighterColor = SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20);
+		final Color backgroundColor = SwingUtils.getBackgroundColor();
 		
 		if(isSelected) {
-			firstLineLabel.setForeground(selectedFgColor);
-			secondLineLabel.setForeground(selectedFgColor);
-			thirdLineLabel.setForeground(selectedFgColor);
-			this.setForeground(selectedFgColor);
-			this.setBackground(selectedBgColor);
+			firstLineLabel.setForeground(selectionForegroundColor);
+			secondLineLabel.setForeground(selectionForegroundColor);
+			thirdLineLabel.setForeground(selectionForegroundColor);
+			this.setForeground(selectionForegroundColor);
+			this.setBackground(brighterColor);
 		} else {
-			firstLineLabel.setForeground(fgColor);
-			secondLineLabel.setForeground(fgColor);
-			thirdLineLabel.setForeground(fgColor);
-			this.setForeground(fgColor);
-			this.setBackground(bgColor);
+			firstLineLabel.setForeground(foregroundColor);
+			secondLineLabel.setForeground(foregroundColor);
+			thirdLineLabel.setForeground(foregroundColor);
+			this.setForeground(foregroundColor);
+			this.setBackground(backgroundColor);
 		}
 		
 		switch(column) {

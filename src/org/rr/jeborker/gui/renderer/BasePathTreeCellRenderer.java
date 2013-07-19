@@ -38,10 +38,6 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer {
 
-	private Color selectedBgColor;
-	
-	private Color selectedFgColor;
-	
 	private static final Color filteredForegroundColor = Color.DARK_GRAY.brighter().brighter();
 	
 	private JLabel label;
@@ -66,8 +62,6 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
-		selectedBgColor = SwingUtils.getSelectionBackgroundColor();
-		selectedFgColor = SwingUtils.getSelectionForegroundColor();
 		setOpaque(true);
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
@@ -101,8 +95,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 //		checkbox.setRolloverSelectedIcon(eyesInvisible); //rollover selected
 		
 		label = new JLabel();
-		this.labelNormalFont = label.getFont();
-		this.labelBoldFont = new Font(this.labelNormalFont.getName(), Font.BOLD, this.labelNormalFont.getSize());
+		setupLabelFont();
 		label.setOpaque(false);
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.fill = GridBagConstraints.BOTH;
@@ -151,6 +144,12 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		final int rowCount = tree.getRowCount();
 		final BasePathList basePaths = JeboorkerPreferences.getBasePath();
 		IResourceHandler pathResource;
+		
+		//font change may happens with look and feel change
+		if(!label.getFont().equals(this.labelNormalFont) && !label.getFont().equals(this.labelBoldFont)) {
+			setupLabelFont();
+		}
+		
 		if (value instanceof IResourceHandler) {
 			pathResource = (IResourceHandler) value;
 			String resourceName = pathResource.getName();
@@ -199,14 +198,14 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	                && dropLocation.getChildIndex() == -1
 	                && tree.getRowForPath(dropLocation.getPath()) == row) {
 
-				this.setBackground(selectedBgColor);
-				this.setForeground(selectedFgColor);
-				label.setForeground(selectedFgColor);
+				this.setBackground(SwingUtils.getSelectionBackgroundColor());
+				this.setForeground(SwingUtils.getSelectionForegroundColor());
+				label.setForeground(SwingUtils.getSelectionForegroundColor());
 	            isDropCell = true;
 	        } else if (selected) {
-				this.setBackground(selectedBgColor);
-				this.setForeground(selectedFgColor);
-				label.setForeground(selectedFgColor);
+				this.setBackground(SwingUtils.getSelectionBackgroundColor());
+				this.setForeground(SwingUtils.getSelectionForegroundColor());
+				label.setForeground(SwingUtils.getSelectionForegroundColor());
 				isDropCell = false;
 			} else {
 				TreePath filterTreePath = ((BasePathTreeModel)tree.getModel()).getFilterTreePath();
@@ -224,7 +223,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 							label.setFont(labelBoldFont);
 						}
 					}
-				}				
+				}			
 				this.setBackground(SwingUtils.getBackgroundColor());
 				this.setForeground(SwingUtils.getForegroundColor());
 				
@@ -283,5 +282,9 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		return isDropCell;
 	}
 
+	private void setupLabelFont() {
+		this.labelNormalFont = label.getFont();
+		this.labelBoldFont = new Font(this.labelNormalFont.getName(), Font.BOLD, this.labelNormalFont.getSize());			
+	}
 
 }

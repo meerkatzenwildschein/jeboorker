@@ -14,7 +14,6 @@ public class DefaultPropertyRenderer extends DefaultTableCellRenderer {
 	
 	public DefaultPropertyRenderer() {
 	}
-
 	
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	Component tableCellRendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

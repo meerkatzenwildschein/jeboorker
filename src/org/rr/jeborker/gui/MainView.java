@@ -1190,6 +1190,15 @@ class MainView extends JFrame {
 				((JRTree)c).setAutoMoveHorizontalSliders(value);
 			}
 		}
+	}
+
+	@Override
+	public void pack() {
+		super.pack();
 		
+		// don't know why but otherwise the renderer won't work after changing the look and feel  
+		if(!(mainTable.getDefaultRenderer(Object.class) instanceof EbookTableCellRenderer)) {
+			mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+		}
 	}
 }
