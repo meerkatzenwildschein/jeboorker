@@ -220,12 +220,18 @@ public class DateConversionUtils {
 		W3C_MILLISECOND {
 			//2010-10-13T12:58:49.281000+00:00
 			//2010-09-22 11:15:52.216000+02:00
-			private final Pattern W3C_MILLISECOND_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:\\d{2}\\.\\d{1,6}[+-]\\d{2}:??\\d{2}");
+			private final Pattern W3C_MILLISECOND_DATE_PATTERN_1 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:\\d{2}\\.\\d{1,6}[+-]\\d{2}:??\\d{2}");
+			
+			//2008-03-08T19:21:00.000Z
+			private final Pattern W3C_MILLISECOND_DATE_PATTERN_2 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:\\d{2}\\.\\d{1,6}Z");
 			
 			public Date getDate(String dateString) {
 				try {
-					if(dateString.indexOf(' ')!=-1) {
+					if(dateString.indexOf(' ') != -1) {
 						dateString = StringUtils.replace(dateString, " ", "T");
+					}
+					if(dateString.endsWith("Z")) {
+						dateString = dateString.substring(0, dateString.length() -1) + "+00:00";
 					}
 					return new W3CDateFormat().parse(dateString);
 				} catch (ParseException e) {
@@ -234,7 +240,8 @@ public class DateConversionUtils {
 			}
 			
 			public boolean isMatching(String dateString) {
-				return W3C_MILLISECOND_DATE_PATTERN.matcher(dateString).matches();
+				return W3C_MILLISECOND_DATE_PATTERN_1.matcher(dateString).matches() 
+						|| W3C_MILLISECOND_DATE_PATTERN_2.matcher(dateString).matches();
 			}
 			
 			public String getString(Date date) {
