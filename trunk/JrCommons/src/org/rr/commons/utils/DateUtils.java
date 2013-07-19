@@ -816,5 +816,15 @@ public final class DateUtils implements Serializable {
             calendar.set(Calendar.MINUTE, 0);
             return calendar.getTime();
         }
-    }	
+    }
+
+    /**
+     * Compares the given Dates against each other and tests if they're equal.
+     * @param value First value to be tested
+     * @param editorValue Second value to be tested
+     * @return <code>true</code> if both given values are equal and <code>false</code> otherwiese.
+     */
+	public static boolean equals(Date value, Date editorValue) {
+		return StringUtils.toString(value).equals(StringUtils.toString(editorValue));
+	}	
 }
