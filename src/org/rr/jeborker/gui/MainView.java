@@ -440,8 +440,10 @@ class MainView extends JFrame {
 				
 				propertySheet.addToolbarComponent(saveMetadataButton);				
 				
-				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>)null, DefaultPropertyRenderer.class);
-				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor((Class<?>)null, DefaultPropertyCellEditor.class);
+				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>) null, DefaultPropertyRenderer.class);
+				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor((Class<?>) null, DefaultPropertyCellEditor.class);
+				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(String.class, DefaultPropertyRenderer.class);
+				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(String.class, DefaultPropertyCellEditor.class);
 				
 				DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());
