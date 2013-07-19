@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -406,14 +406,26 @@ class MainMenuBarView extends JMenuBar {
 		logItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_LOG_MONITOR_ACTION, null));
 		extrasMenuBar.add(logItem);
 		
-		String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
-		JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
-		lookAndFeelMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(lookAndFeelName));
-		for(String lafName : Jeboorker.LOOK_AND_FEELS.keySet()) {
-			ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, lafName);
-			lookAndFeelMenu.add(action);
+		{ // look and feel menu
+			String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
+			JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
+			lookAndFeelMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(lookAndFeelName));
+			String currentLaf = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL);
+			ButtonGroup grp = new ButtonGroup();
+			for(String lafName : Jeboorker.LOOK_AND_FEELS.keySet()) {
+				ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, lafName);
+				JRadioButtonMenuItem radioMenuItem = new JRadioButtonMenuItem(action);
+				grp.add(radioMenuItem);
+				
+				if(Jeboorker.LOOK_AND_FEELS.get(lafName).equals(currentLaf)) {
+					radioMenuItem.setSelected(true);
+				} else {
+					radioMenuItem.setSelected(false);
+				}
+				lookAndFeelMenu.add(radioMenuItem);
+			}
+			extrasMenuBar.add(lookAndFeelMenu);
 		}
-		extrasMenuBar.add(lookAndFeelMenu);
 		
 		return this.extrasMenuBar;
 	}
