@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.rr.commons.utils.DateConversionUtils;
+import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -65,12 +66,19 @@ class EbookSheetProperty extends DefaultProperty {
 
 	@Override
 	public void setValue(Object value) {
-		if (value != null && !value.equals(getValue())) {
+		Object editorValue = getValue();
+		if(value instanceof Date && editorValue instanceof Date && DateUtils.equals((Date) value, (Date) editorValue)) {
+			this.setChanged(false);
+			return;	
+		} else if (value != null && !value.equals(editorValue)) {
 			metadataProperty.setValue(value, this.propertyIndex);
 			this.setChanged(true);	
 		} else if(value == null) {
 			metadataProperty.setValue(value, this.propertyIndex);
 			this.setChanged(true);	
+		} else {
+			this.setChanged(false);
+			return;
 		}
 		super.setValue(value);
 	}
