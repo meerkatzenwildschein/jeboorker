@@ -209,6 +209,30 @@ public class ResourceHandlerFactory {
 		return result;
 	}
 	
+	/**
+	 * Get those {@link IResourceHandler} which are previously created with the {@link #getUniqueResourceHandler(IResourceHandler, String)}
+	 * method.
+	 * 
+	 * @param sibling the sibling {@link IResourceHandler}.
+	 * @param extension the extension for the sibling {@link IResourceHandler}.
+	 * @return The {@link IResourceHandler} found. Never returns null.
+	 */
+	public static List<IResourceHandler> getExistingUniqueResourceHandler(IResourceHandler sibling, final String extension) {
+		String siblingString = sibling.toString();
+		if(siblingString.lastIndexOf('.') != -1) {
+			siblingString = siblingString.substring(0, siblingString.lastIndexOf('.'));
+		}
+		
+		int extensionNum = 0;
+		List<IResourceHandler> resultList = new ArrayList<IResourceHandler>();
+		IResourceHandler result = null;
+		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : "") + "." + extension)).exists() ) {
+			resultList.add(result);
+			extensionNum ++;
+		}
+		return resultList;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<IResourceHandler> getResourceHandler(final Transferable t) throws IOException, ClassNotFoundException {
 		List<Object> transferedFiles = Collections.emptyList();
