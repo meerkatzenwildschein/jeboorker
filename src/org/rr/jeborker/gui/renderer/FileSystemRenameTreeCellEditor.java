@@ -435,7 +435,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 				List<String> toAdd = new ArrayList<String>(offers.size());
 				for(int i = 0; i < offers.size(); i++) {
 					String offer = offers.get(i);
-					if(offer.indexOf(" - ") != -1) {
+					if(offer.contains(" - ")) {
 						List<String> split = ListUtils.split(offer, " - ");
 						if(split.size() == 2) {
 							String sName = FilenameUtils.getBaseName(split.get(1));

@@ -784,14 +784,14 @@ public class MainController {
 		
 		//restore directory chooser location
 		String location = JeboorkerPreferences.getGenericEntryAsString("JDirectoryChooserLocation");
-		if(location != null && location.indexOf(";") != -1) {
+		if(location != null && location.indexOf(';') != -1) {
 			String[] split = location.split(";");
 			chooser.setDialogLocation(new Point(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
 		}
 		
 		//restore directory chooser size
 		String size = JeboorkerPreferences.getGenericEntryAsString("JDirectoryChooserSize");
-		if(size != null && size.indexOf(";") != -1) {
+		if(size != null && size.indexOf(';') != -1) {
 			String[] split = size.split(";");
 			chooser.setDialogSize(new Dimension(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
 		}		

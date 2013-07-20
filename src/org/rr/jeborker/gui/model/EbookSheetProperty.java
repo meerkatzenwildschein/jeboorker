@@ -67,9 +67,15 @@ class EbookSheetProperty extends DefaultProperty {
 	@Override
 	public void setValue(Object value) {
 		Object editorValue = getValue();
-		if(value instanceof Date && editorValue instanceof Date && DateUtils.equals((Date) value, (Date) editorValue)) {
-			this.setChanged(false);
-			return;	
+		System.out.println(editorValue + "/" + value);
+		if(value instanceof Date && editorValue instanceof Date) {
+			if(!DateUtils.equals((Date) value, (Date) editorValue)) {
+				metadataProperty.setValue(value, this.propertyIndex);
+				this.setChanged(true);	
+			} else {
+				this.setChanged(false);
+				return;
+			}
 		} else if (value != null && !value.equals(editorValue)) {
 			metadataProperty.setValue(value, this.propertyIndex);
 			this.setChanged(true);	

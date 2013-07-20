@@ -19,6 +19,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.jeborker.BasePathList;
 import org.rr.jeborker.JeboorkerPreferences;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -258,11 +259,17 @@ public class EbookPropertyItemUtils {
 	 * @param path The path elements to be stored.
 	 */
 	public static void storePathElements(final Collection<String> path) {
-		final List<String> fetchPathElements = fetchPathElements();
+		final List<String> oldPathElements = fetchPathElements();
+		final BasePathList basePathList = JeboorkerPreferences.getBasePath();
 		String indexedString;
-		if(fetchPathElements != null && !fetchPathElements.isEmpty()) {
-			HashSet<String> allElements = new HashSet<String>(path);
-			allElements.addAll(fetchPathElements);
+		if(oldPathElements != null && !oldPathElements.isEmpty()) {
+			final HashSet<String> allElements = new HashSet<String>(path.size());
+			for(String oldPathElement : oldPathElements) {
+				if(basePathList.containsBasePathFor(oldPathElement)) {
+					allElements.add(oldPathElement);
+				}
+			}
+			allElements.addAll(path);
 			indexedString = ListUtils.toIndexedString(allElements, File.pathSeparatorChar);
 		} else {
 			indexedString = ListUtils.toIndexedString(path, File.pathSeparatorChar);

@@ -63,7 +63,7 @@ class HTMLMetadataReader implements IMetadataReader {
 				if(html.indexOf('\ufffd') != -1) {
 					String charsetLocationString = "text/html; charset=";
 					int charsetStart = html.indexOf(charsetLocationString);
-					int charsetEnd = html.indexOf("\"", charsetStart);
+					int charsetEnd = html.indexOf('\"', charsetStart);
 					if(charsetStart != -1 && charsetEnd != -1) {
 						charset = html.substring(charsetStart + charsetLocationString.length(), charsetEnd);
 						html = new String(buf, 0, len, charset);

@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
@@ -112,7 +113,22 @@ class PDFMetadataProperty extends MetadataProperty {
 			}
 			return result;
 		} else {
-			return super.getValues();
+			List<Object> values = super.getValues();
+			if(isDate) {
+				return new TransformValueList<Object, Object>(values) {
+
+					@Override
+					public Object transform(Object source) {
+						Date d = DateConversionUtils.toDate(StringUtils.toString(source));
+						if(d != null) {
+							return d;
+						}
+						return source;
+					}
+					
+				};
+			}
+			return values;
 		}
 	}	
 	

@@ -218,7 +218,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	private void changeExistingCover(final Book epub, final EpubLibMetadataProperty<?> meta) {
 		//use existing cover
 		String coverName = (String) meta.getHint(MetadataProperty.HINTS.COVER_FROM_EBOOK_FILE_NAME);
-		if(coverName.indexOf("//") != -1) {
+		if(coverName.contains("//")) {
 			coverName = coverName.substring(coverName.indexOf("//") + 2);
 		}
 		Resources resources = epub.getResources();

@@ -98,7 +98,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public Property getRatingProperty() {
 		List<Property> properties = getProperties();
 		for (Property property : properties) {
-			if(property.getName().toLowerCase().indexOf("rating") != -1) {
+			if(property.getName().toLowerCase().contains("rating")) {
 				return property;
 			}
 		}
@@ -112,7 +112,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public int getRatingIndex() {
 		List<Property> properties = getProperties();
 		for (int i = 0; i < properties.size(); i++) {
-			if(properties.get(i).getName().toLowerCase().indexOf("rating") != -1) {
+			if(properties.get(i).getName().toLowerCase().contains("rating")) {
 				return i;
 			}
 		}
