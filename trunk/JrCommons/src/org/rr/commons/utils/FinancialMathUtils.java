@@ -353,31 +353,6 @@ public final class FinancialMathUtils implements Serializable {
 	}
 
 	/**
-	 * Calculates the interest rate per period
-	 * 
-	 * @param nper
-	 *            The total time of the periods
-	 * @param pmt
-	 *            The payment of one period
-	 * @param pv
-	 *            The actual cash value of the payment in the future
-	 * @param fv
-	 *            The future value that has to be reached after the last payment
-	 * @param type
-	 *            The value which specifies when a payment has to be done
-	 * @param guess
-	 *            A estimated value, how high the interest rate could be
-	 * @return The interest rate per period
-	 */
-	
-	
-    //TODO: Ist noch zu implementieren (rate)
-//	public static double rate(int nper, double pmt, double pv, double fv, int type, double guess) {
-//
-//		return 0;
-//	}
-
-	/**
 	 * Gets the linear depreciation of a economic good for a period
 	 * 
 	 * @param cost
@@ -407,23 +382,7 @@ public final class FinancialMathUtils implements Serializable {
 	 * @return The depreciation of the period
 	 */
 	public static double syd(double cost, double salvage, double life, int period) {
-
 		return ((cost - salvage) * (life - period + 1) * 2) / ((life) * (life + 1));
 	}
 
-	/**
-	 * Gets the internal rate of return
-	 * 
-	 * @param values
-	 *            The cash flow values, of which the irr should be calculated
-	 * @return The internal rate of return of the values
-	 */
-	
-	
-    //TODO: Ist noch zu implementieren (irr)
-//	public static double irr(double values[]/* , double guess */) {
-//
-//		return 0;
-//				
-//	}
 }
