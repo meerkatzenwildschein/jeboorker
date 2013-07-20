@@ -118,63 +118,52 @@ public class XmlEventSerializer implements XMLEventReader {
 
 	@Override
 	public void close() throws XMLStreamException {
-		// TODO Auto-generated method stub
-		
 	}
 
 
 	@Override
 	public String getElementText() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public Object getProperty(String name) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 
 	@Override
 	public XMLEvent nextEvent() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public XMLEvent nextTag() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public XMLEvent peek() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public Object next() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
 	}	
 }

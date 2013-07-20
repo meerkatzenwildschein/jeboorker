@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -180,12 +182,10 @@ public class DocumentInputReader extends Reader {
 
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public int read(char[] ac, int i, int j) throws IOException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	
@@ -217,8 +217,7 @@ public class DocumentInputReader extends Reader {
             try {
 				loadSegment();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "DocumentInputStream failed", e);
 			}
 	    }
 

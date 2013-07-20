@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 
 /**
  * Define XMP properties used PDFA extension schema description schemas.
- * TODO 2 naked so far, implement
  * 
  * @author Karsten Krieg (kkrieg@intarsys.de)
  * @version $Revision: 1.1 $
