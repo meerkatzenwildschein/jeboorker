@@ -305,13 +305,11 @@ public class CursableCollection<E,A> implements Collection<E> {
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		//TODO
 		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		//TODO
 		throw new UnsupportedOperationException("not implemented yet");
 	}
 
