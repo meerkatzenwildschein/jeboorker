@@ -2,6 +2,8 @@ package nl.siegmann.epublib.bookprocessor;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
@@ -33,11 +35,9 @@ public class SectionTitleBookProcessor implements BookProcessor {
 				String title = getTitle(tocReference, book, xpath);
 				tocReference.setTitle(title);
 			} catch (XPathExpressionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "", e);
 			}
 		}
 	}

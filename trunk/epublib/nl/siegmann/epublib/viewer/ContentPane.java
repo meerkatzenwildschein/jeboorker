@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.UnsupportedEncodingException;
@@ -55,19 +55,7 @@ public class ContentPane extends JPanel implements NavigationEventListener,
 	public ContentPane(Navigator navigator) {
 		super(new GridLayout(1, 0));
 		this.scrollPane = (JScrollPane) add(new JScrollPane());
-		this.scrollPane.addKeyListener(new KeyListener() {
-			
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+		this.scrollPane.addKeyListener(new KeyAdapter() {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -210,17 +198,7 @@ public class ContentPane extends JPanel implements NavigationEventListener,
 		// htmlKit.setStyleSheet(myStyleSheet);
 		editorPane.setEditorKit(htmlKit);
 		editorPane.addHyperlinkListener(this);
-		editorPane.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent keyEvent) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-
-			}
+		editorPane.addKeyListener(new KeyAdapter() {
 
 			@Override
 			public void keyPressed(KeyEvent keyEvent) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
@@ -51,8 +52,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 			serializer.endDocument();
 			serializer.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger(PackageDocumentWriter.class.getName()).log(Level.WARNING, "PackageDocumentWriter.write failed", e);
 		}
 	}
 
