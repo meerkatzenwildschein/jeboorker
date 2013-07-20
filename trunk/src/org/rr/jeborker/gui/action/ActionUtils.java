@@ -230,7 +230,7 @@ public class ActionUtils {
 		//user file formats with basic/empty reader support
 		final String supportedBasicTypes = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES);
 		final String extension = resource.getFileExtension();
-		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.indexOf("," + extension) != -1)) {
+		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.contains("," + extension))) {
 			return true;
 		}		
 		

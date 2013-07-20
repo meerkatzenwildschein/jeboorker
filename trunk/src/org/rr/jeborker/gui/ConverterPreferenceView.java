@@ -148,7 +148,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 		List<MetadataProperty> allMetaData = MainController.getController().getEbookSheetPropertyModel().getAllMetaData();
 		for(MetadataProperty metadata : allMetaData) {
 			String name = metadata.getName();
-			if(name.toLowerCase().indexOf("manga") != -1) {
+			if(name.toLowerCase().contains("manga")) {
 				String mangaValue = metadata.getValueAsString();
 				return CommonUtils.toBoolean(mangaValue);
 			}

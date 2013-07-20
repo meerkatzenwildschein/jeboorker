@@ -85,7 +85,7 @@ class PlainMetadataEditorView extends JDialog {
 			rowHeader.add(xmlFoldingMargin, BorderLayout.EAST);
 			rowHeader.add(new LineNumberMargin(editor), BorderLayout.WEST);
 			scroller.setRowHeaderView(rowHeader);			
-		} else if(metadataMime.indexOf("/html") != -1) {
+		} else if(metadataMime.contains("/html")) {
 			XMLEditorKit htmlKit = new XMLEditorKit();
 			editor.setEditorKitForContentType("text/html", htmlKit);
 			editor.setFont(new Font("Courier", Font.PLAIN, 12));

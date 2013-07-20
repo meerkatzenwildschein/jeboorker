@@ -66,5 +66,19 @@ public class BasePathList extends WrapperList<String> {
 		}
 		return null;
 	}
+	
+	/**
+	 * Tests if the given file / path have a valid base path. 
+	 * @return <code>true</code> if a base path could be found for the given path or <code>false</code> otherwise.
+	 */
+	public boolean containsBasePathFor(final String path) {
+		for(int i = 0; i < toWrap.size(); i++) {
+			String basePath = toWrap.get(i);
+			if(path.startsWith(basePath)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

@@ -76,7 +76,9 @@ public class JeboorkerPreferences {
 		},
 		LOOK_AND_FEEL {
 			
-			private String defaulValue = "javax.swing.plaf.metal.MetalLookAndFeel";
+			private final String INIT_DEFAULT_VALUE = "javax.swing.plaf.metal.MetalLookAndFeel";
+			
+			private String defaultValue = null;
 			
 			@Override
 			public String getKey() {
@@ -84,18 +86,21 @@ public class JeboorkerPreferences {
 			}
 			
 			public String getDefaultValue() {
-				final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-				for(LookAndFeelInfo laf : installedLookAndFeels) {
-					String name = laf.getName().toLowerCase();
-					if(name.indexOf("gtk+") != -1) {
-						defaulValue = laf.getClassName();
-						break;
-					} else if(name.indexOf("windows") != -1) {
-						defaulValue = laf.getClassName();
-						break;
-					}
-				}		
-				return defaulValue;
+				if(defaultValue == null) {
+					defaultValue = INIT_DEFAULT_VALUE;
+					final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+					for(LookAndFeelInfo laf : installedLookAndFeels) {
+						String name = laf.getName().toLowerCase();
+						if(name.contains("gtk+")) {
+							defaultValue = laf.getClassName();
+							break;
+						} else if(name.contains("windows")) {
+							defaultValue = laf.getClassName();
+							break;
+						}
+					}		
+				}
+				return defaultValue;
 			}
 		}
 	}

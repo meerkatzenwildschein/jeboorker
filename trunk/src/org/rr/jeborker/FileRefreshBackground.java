@@ -1,7 +1,10 @@
 package org.rr.jeborker;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +13,10 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
@@ -105,7 +111,9 @@ public class FileRefreshBackground {
 		 * Handle these items which are added with the {@link FileRefreshBackground#addEbook(EbookPropertyItem)} method.
 		 */
 		private void processItem(EbookPropertyItem ebookPropertyItem) {
-			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
+			final IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
+			deleteOldTempFile(resourceHandler);
+			
 			if (!resourceHandler.exists()) {
 				// ebook file has been deleted
 				EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
@@ -130,6 +138,30 @@ public class FileRefreshBackground {
 				return true;
 			}
 			return false;
+		}
+		
+		/**
+		 * Test if the given temp file is old and moves it to the trash if it is.
+		 * @param tmpFile The file to be deleted.
+		 */
+		private void deleteOldTempFile(final IResourceHandler ebook) {
+			final List<IResourceHandler> tmpFiles = ResourceHandlerFactory.getExistingUniqueResourceHandler(ebook, "tmp");
+			for(IResourceHandler tmpFile : tmpFiles) {
+				if (tmpFile.exists()) {
+					final Date modifiedAt = tmpFile.getModifiedAt();
+					try {
+						long dateDiff = DateUtils.dateDiff("d", modifiedAt, new Date(), Calendar.MONDAY, UtilConstants.FIRSTJAN1);
+						if(dateDiff > 1) {
+							tmpFile.moveToTrash();
+							LoggerFactory.getLogger().log(Level.INFO, "Moving old temp file " + tmpFile + " to the trash.");
+						}
+					} catch (IOException e) {
+						LoggerFactory.getLogger().log(Level.INFO, "Failed to delete old temp file " + tmpFile, e);
+					} catch (Exception e) {
+						LoggerFactory.getLogger().log(Level.INFO, "Failed to identify old temp file " + tmpFile, e);
+					}
+				}
+			}
 		}
 	}
 
