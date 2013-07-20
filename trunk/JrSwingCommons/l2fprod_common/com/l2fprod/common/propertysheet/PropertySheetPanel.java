@@ -20,6 +20,7 @@ package com.l2fprod.common.propertysheet;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -46,6 +47,8 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
+
+import org.rr.commons.swing.layout.HorizontalFlowLayout;
 
 import com.l2fprod.common.swing.IconPool;
 import com.l2fprod.common.swing.LookAndFeelTweaks;
@@ -522,7 +525,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		LookAndFeelTweaks.setBorderLayout(this);
 		LookAndFeelTweaks.setBorder(this);
 
-		actionPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 2, 0));
+		LayoutManager layout = new HorizontalFlowLayout(FlowLayout.LEADING, 2, 0);
+		actionPanel = new JPanel(layout);
 		actionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
 		actionPanel.setOpaque(false);
 		add("North", actionPanel);
