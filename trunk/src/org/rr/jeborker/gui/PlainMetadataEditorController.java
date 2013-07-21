@@ -18,7 +18,8 @@ import org.rr.commons.io.LineReader;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.xml.XMLUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataWriter;
@@ -214,22 +215,25 @@ public class PlainMetadataEditorController {
 	}
 	
 	private void storeProperties() {
-		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
-		JeboorkerPreferences.addGenericEntryAsNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsNumber("metadataDialogSizeWidth", getView().getSize().width);
+		preferenceStore.addGenericEntryAsNumber("metadataDialogSizeHeight", getView().getSize().height);
+		preferenceStore.addGenericEntryAsNumber("metadataDialogLocationX", getView().getLocation().x - locationOffset);
+		preferenceStore.addGenericEntryAsNumber("metadataDialogLocationY", getView().getLocation().y - locationOffset);
 	}
 	
 	private void restorePropeties() {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("metadataDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("metadataDialogSizeHeight");
+		Number metadataDialogSizeWidth = preferenceStore.getGenericEntryAsNumber("metadataDialogSizeWidth");
+		Number metadataDialogSizeHeight = preferenceStore.getGenericEntryAsNumber("metadataDialogSizeHeight");
 		if(metadataDialogSizeWidth!=null && metadataDialogSizeHeight!=null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
+		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("metadataDialogLocationX", "metadataDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		

@@ -6,7 +6,8 @@ import javax.swing.JTextField;
 
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 class PreferenceView extends JPreferenceDialog {
 	
@@ -39,18 +40,19 @@ class PreferenceView extends JPreferenceDialog {
 	private void initialize() {
 		if(!isInitialized) {
 			isInitialized = true;
+			final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 			final String generalCategory = Bundle.getString("PreferenceView.tab.general");
 			
 			{
 				String label = Bundle.getString("PreferenceView.pref.autoscroll");
 				JCheckBox autoScrollCheckBox = new JRCheckBox();
-				autoScrollCheckBox.setSelected(JeboorkerPreferences.isTreeAutoScrollingEnabled());
+				autoScrollCheckBox.setSelected(preferenceStore.isTreeAutoScrollingEnabled());
 				PreferenceEntry autoScollItem = new PreferenceEntry(AUTO_SCOLL_ITEM_PREFERENCE_NAME, label, autoScrollCheckBox, generalCategory, new Runnable() {
 					
 					@Override
 					public void run() {
 						boolean isTreeAutoscrollEnabled = getBooleanValue(PreferenceView.AUTO_SCOLL_ITEM_PREFERENCE_NAME);
-						JeboorkerPreferences.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
+						preferenceStore.setTreeAutoScrollingEnabled(isTreeAutoscrollEnabled);
 					}
 				});
 				addPreferenceEntry(autoScollItem);
@@ -59,13 +61,13 @@ class PreferenceView extends JPreferenceDialog {
 			{
 				String label = Bundle.getString("PreferenceView.pref.autoSaveMetadata");
 				JCheckBox autoSaveMetadataCheckBox = new JRCheckBox();
-				autoSaveMetadataCheckBox.setSelected(JeboorkerPreferences.isAutoSaveMetadata());
+				autoSaveMetadataCheckBox.setSelected(preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED));
 				PreferenceEntry autoSaveMetadataItem = new PreferenceEntry(AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME, label, autoSaveMetadataCheckBox, generalCategory, new Runnable() {
 					
 					@Override
 					public void run() {
 						boolean isAutoSaveMetadata = getBooleanValue(PreferenceView.AUTO_SAVE_METADATA_ITEM_PREFERENCE_NAME);
-						JeboorkerPreferences.addEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, isAutoSaveMetadata);							
+						preferenceStore.addEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, isAutoSaveMetadata);							
 					}
 				});
 				addPreferenceEntry(autoSaveMetadataItem);
@@ -74,13 +76,13 @@ class PreferenceView extends JPreferenceDialog {
 			{
 				String label = Bundle.getString("PreferenceView.pref.deleteAfterImport");
 				JCheckBox deleteAfterImportCheckBox = new JRCheckBox();
-				deleteAfterImportCheckBox.setSelected(JeboorkerPreferences.getEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT));
+				deleteAfterImportCheckBox.setSelected(preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT));
 				PreferenceEntry deleteEbookAfterImportItem = new PreferenceEntry(DELETE_AFTER_IMPORT_PREFERENCE_NAME, label, deleteAfterImportCheckBox, generalCategory, new Runnable() {
 					
 					@Override
 					public void run() {
 						boolean isEbookDeleteAfterImport = getBooleanValue(PreferenceView.DELETE_AFTER_IMPORT_PREFERENCE_NAME);
-						JeboorkerPreferences.addEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);						
+						preferenceStore.addEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT, isEbookDeleteAfterImport);						
 					}
 				});
 				addPreferenceEntry(deleteEbookAfterImportItem);
@@ -89,13 +91,13 @@ class PreferenceView extends JPreferenceDialog {
 			{
 				String label = Bundle.getString("PreferenceView.pref.basicFileSupport");
 				JTextField basicFileSupport = new JTextField();
-				basicFileSupport.setText(JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES));
+				basicFileSupport.setText(preferenceStore.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.BASIC_FILE_TYPES));
 				PreferenceEntry basicFileSupportItem = new PreferenceEntry(BASIC_FILE_TYPE_SUPPORT_NAME, label, basicFileSupport, generalCategory, new Runnable() {
 					
 					@Override
 					public void run() {
 						String basicSupportedFileTypes = getStringValue(PreferenceView.BASIC_FILE_TYPE_SUPPORT_NAME);
-						JeboorkerPreferences.addEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES, basicSupportedFileTypes);						
+						preferenceStore.addEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.BASIC_FILE_TYPES, basicSupportedFileTypes);						
 					}
 				});
 				addPreferenceEntry(basicFileSupportItem);

@@ -1,4 +1,4 @@
-package org.rr.jeborker;
+package org.rr.jeborker.app;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -26,6 +26,8 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -127,7 +129,7 @@ public class FileWatchService {
 		private void transferNewEbookFiles(final List<IResourceHandler> addedResources) {
 			for (IResourceHandler resource : addedResources) {
 				if(EbookPropertyItemUtils.getEbookPropertyItemByResource(resource).isEmpty()) {
-					IResourceHandler basePathForFile = JeboorkerPreferences.getBasePath().getBasePathForFile(resource);
+					IResourceHandler basePathForFile = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath().getBasePathForFile(resource);
 					if( basePathForFile != null && resource.exists() && ActionUtils.isSupportedEbookFormat(resource) ) {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, basePathForFile);
 						DefaultDBManager.setDefaultDBThreadInstance();

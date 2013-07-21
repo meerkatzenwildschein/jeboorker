@@ -10,7 +10,8 @@ import javax.swing.Action;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -31,7 +32,8 @@ public class FileSystemImportAction extends AbstractAction {
 		final MainController controller = MainController.getController();
 		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
 		final IResourceHandler targetRecourceDirectory = ResourceHandlerFactory.getResourceHandler(targetFolder);
-		final String targetBasePath = JeboorkerPreferences.getBasePathFor(targetRecourceDirectory);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final String targetBasePath = preferenceStore.getBasePathFor(targetRecourceDirectory);
 		
 		try {
 			ActionUtils.importEbookResources(Integer.MIN_VALUE, targetBasePath, targetRecourceDirectory, selectedTreeItems);

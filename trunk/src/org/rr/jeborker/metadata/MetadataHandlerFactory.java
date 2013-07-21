@@ -1,10 +1,10 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_HTML;
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_HTML;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
 
 import java.util.Collections;
 import java.util.List;

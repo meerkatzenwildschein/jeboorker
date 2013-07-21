@@ -1,4 +1,4 @@
-package org.rr.jeborker;
+package org.rr.jeborker.app;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.UtilConstants;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;

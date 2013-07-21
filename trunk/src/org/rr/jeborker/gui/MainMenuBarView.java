@@ -21,7 +21,8 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.converter.ConverterFactory;
 import org.rr.jeborker.converter.IEBookConverter;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -43,19 +44,17 @@ class MainMenuBarView extends JMenuBar {
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 	}
 	
-	JMenu fileMenuBar;
+	private JMenu fileMenuBar;
 	
-	JMenu metadataMenuBar;
-
-	JMenu editMenuBar;
+	private JMenu editMenuBar;
 	
-	JMenu extrasMenuBar;	
+	private JMenu extrasMenuBar;	
 
 	JMenu mnVerzeichnisEntfernen;
 
 	JMenu mnVerzeichnisRefresh;
 	
-	JMenu mnVerzeichnisShowHide;
+	private JMenu mnVerzeichnisShowHide;
 
 	
 	MainMenuBarView() {
@@ -104,7 +103,8 @@ class MainMenuBarView extends JMenuBar {
 				mntmAddEbooks.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
 				fileMenuBar.add(mntmAddEbooks);
 				
-				final List<String> basePath = JeboorkerPreferences.getBasePath();
+				final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+				final List<String> basePath = preferenceStore.getBasePath();
 				{
 					String name = Bundle.getString("EborkerMainView.removeBasePath");
 					mnVerzeichnisEntfernen = new JMenu(SwingUtils.removeMnemonicMarker(name));
@@ -398,9 +398,10 @@ class MainMenuBarView extends JMenuBar {
 	}
 	
 	private JMenu createExtrasMenu() {
-		String helpMenuBarName = Bundle.getString("EborkerMainView.extras");
-		this.extrasMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
-		this.extrasMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
+		final String extrasMenuBarName = Bundle.getString("EborkerMainView.extras");
+		
+		this.extrasMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(extrasMenuBarName));
+		this.extrasMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(extrasMenuBarName));
 
 		JMenuItem logItem = new JMenuItem();
 		logItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_LOG_MONITOR_ACTION, null));
@@ -410,7 +411,8 @@ class MainMenuBarView extends JMenuBar {
 			String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
 			JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
 			lookAndFeelMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(lookAndFeelName));
-			String currentLaf = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL);
+			String currentLaf = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
+					.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL);
 			ButtonGroup grp = new ButtonGroup();
 			for(String lafName : Jeboorker.LOOK_AND_FEELS.keySet()) {
 				ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, lafName);

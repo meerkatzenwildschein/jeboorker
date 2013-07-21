@@ -6,7 +6,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JToggleButton;
 
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.OrderDirection;
 
 public class SortOrderComponentController {
@@ -62,8 +63,9 @@ public class SortOrderComponentController {
 	}
 	
 	private void storeProperties() {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String value = ascButton.isSelected() ? "asc" : "desc";
-		JeboorkerPreferences.addGenericEntryAsString("sortColumnOrder", value);
+		preferenceStore.addGenericEntryAsString("sortColumnOrder", value);
 	}
 	
 	
@@ -71,7 +73,8 @@ public class SortOrderComponentController {
 	 * Restores the order fields and put them to view and model.
 	 */
 	private void restoreProperties() {
-		String sortColumnOrder = JeboorkerPreferences.getGenericEntryAsString("sortColumnOrder");
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		String sortColumnOrder = preferenceStore.getGenericEntryAsString("sortColumnOrder");
 		if(sortColumnOrder != null) {
 		if(sortColumnOrder.equalsIgnoreCase("asc")) {
 			ActionEvent e = new ActionEvent(ascButton, ActionEvent.ACTION_PERFORMED, null);

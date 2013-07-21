@@ -6,8 +6,8 @@ import java.util.List;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.rar.LazyRarEntryStream;
 import org.rr.commons.utils.compression.rar.RarUtils;
-import org.rr.jeborker.JeboorkerConstants;
-import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.app.JeboorkerConstants;
+import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 
 /**
  * A converter for comic cbr files to pdf 

@@ -1,7 +1,6 @@
 package org.rr.jeborker.gui.renderer;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -51,14 +50,6 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private JCheckBox imageCheck = new JCheckBox();
 	
-	protected final Color selectedBgColor;
-	
-	protected final Color selectedFgColor;
-
-	protected final Color bgColor;
-	
-	protected final Color fgColor;
-	
 	private HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 	
 	private MetadataDownloadEntry editingEntry;
@@ -105,12 +96,6 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		gbc_mainPanel.gridy = 0;
 		add(mainPanel, gbc_mainPanel);
 		mainPanel.setLayout(new VerticalLayout(0, VerticalLayout.LEFT));
-		
-		Color color = SwingUtils.getSelectionBackgroundColor();
-		selectedBgColor = SwingUtils.getBrighterColor(color, 20);		
-		selectedFgColor = SwingUtils.getSelectionForegroundColor();
-		bgColor = SwingUtils.getBackgroundColor();
-		fgColor = SwingUtils.getForegroundColor();
 	}
 
 	@Override

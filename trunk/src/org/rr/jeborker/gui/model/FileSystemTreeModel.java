@@ -36,7 +36,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		init();
 	}
 	
-	public void init() {
+	private void init() {
 		List<File> specialFolders = getSpecialFolders();
 		for(File specialFolder : specialFolders) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(specialFolder);

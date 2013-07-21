@@ -7,22 +7,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.Icon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 
-import com.l2fprod.common.model.DefaultObjectRenderer;
-import com.l2fprod.common.model.ObjectRenderer;
-
 public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 	
-    private ObjectRenderer objectRenderer = new DefaultObjectRenderer();
-    
 	private DateFormat dateFormat;
 
     public DatePropertyCellRenderer() {
@@ -69,14 +63,5 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
         RendererUtils.setColor(this, isSelected);
         return this;
     }
-
-    protected String convertToString(Object value) {
-        return objectRenderer.getText(value);
-    }
-
-    protected Icon convertToIcon(Object value) {
-        return null;
-    }
-    
 
 }

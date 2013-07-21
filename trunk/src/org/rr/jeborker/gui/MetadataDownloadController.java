@@ -7,7 +7,8 @@ import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.metadata.IMetadataReader;
 
 public class MetadataDownloadController {
@@ -52,29 +53,32 @@ public class MetadataDownloadController {
 	}		
 
 	private void storeProperties() {
-		JeboorkerPreferences.addGenericEntryAsNumber("matadataDownloadDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addGenericEntryAsNumber("matadataDownloadDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addGenericEntryAsNumber("matadataDownloadDialogLocationX", getView().getLocation().x);
-		JeboorkerPreferences.addGenericEntryAsNumber("matadataDownloadDialogLocationY", getView().getLocation().y);
-		JeboorkerPreferences.addGenericEntryAsNumber("matadataDownloadDialogSearchProviderIndex", getView().getSearchProviderIndex());
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsNumber("matadataDownloadDialogSizeWidth", getView().getSize().width);
+		preferenceStore.addGenericEntryAsNumber("matadataDownloadDialogSizeHeight", getView().getSize().height);
+		preferenceStore.addGenericEntryAsNumber("matadataDownloadDialogLocationX", getView().getLocation().x);
+		preferenceStore.addGenericEntryAsNumber("matadataDownloadDialogLocationY", getView().getLocation().y);
+		preferenceStore.addGenericEntryAsNumber("matadataDownloadDialogSearchProviderIndex", getView().getSearchProviderIndex());
 	}
 
 	private void restorePropeties() {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("matadataDownloadDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("matadataDownloadDialogSizeHeight");
+		Number metadataDialogSizeWidth = preferenceStore.getGenericEntryAsNumber("matadataDownloadDialogSizeWidth");
+		Number metadataDialogSizeHeight = preferenceStore.getGenericEntryAsNumber("matadataDownloadDialogSizeHeight");
 		if(metadataDialogSizeWidth != null && metadataDialogSizeHeight != null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("matadataDownloadDialogLocationX", "matadataDownloadDialogLocationY");
+		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("matadataDownloadDialogLocationX", "matadataDownloadDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		
 		
 		//restore search provider index.
-		Number serachProviderIndex = JeboorkerPreferences.getGenericEntryAsNumber("matadataDownloadDialogSearchProviderIndex");
+		Number serachProviderIndex = preferenceStore.getGenericEntryAsNumber("matadataDownloadDialogSearchProviderIndex");
 		if(serachProviderIndex != null) {
 			getView().setSearchProviderIndex(serachProviderIndex.intValue());
 		}		

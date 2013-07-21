@@ -21,10 +21,6 @@ class EpubLibMetadataProperty<T> extends MetadataProperty {
 		this.epubLibMetadataEntry = epubLibMetadataEntry;
 		this.value = value;
 	}
-
-	void setType(T epubLibMetadataEntry) {
-		this.epubLibMetadataEntry = epubLibMetadataEntry;
-	}
 	
 	T getType() {
 		return this.epubLibMetadataEntry;

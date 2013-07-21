@@ -16,7 +16,7 @@ class OpenFileAction extends AbstractAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
-	String folder;
+	private String folder;
 
 	OpenFileAction(String text) {
 		this.folder = text;

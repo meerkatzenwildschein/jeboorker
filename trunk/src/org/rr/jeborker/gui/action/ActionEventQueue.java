@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.db.DefaultDBManager;
 
-public class ActionEventQueue {
+class ActionEventQueue {
 
 	static synchronized void addActionEvent(final ApplicationAction action, final ActionEvent event) {
     	addActionEvent(action, event, null);

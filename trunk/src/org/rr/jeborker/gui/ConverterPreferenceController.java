@@ -5,7 +5,8 @@ import java.awt.Point;
 import javax.swing.JFrame;
 
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 public class ConverterPreferenceController {
 	
@@ -57,22 +58,24 @@ public class ConverterPreferenceController {
 	}		
 
 	private void storeProperties() {
-		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogLocationX", getView().getLocation().x);
-		JeboorkerPreferences.addGenericEntryAsNumber("prefConverterDialogLocationY", getView().getLocation().y);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsNumber("prefConverterDialogSizeWidth", getView().getSize().width);
+		preferenceStore.addGenericEntryAsNumber("prefConverterDialogSizeHeight", getView().getSize().height);
+		preferenceStore.addGenericEntryAsNumber("prefConverterDialogLocationX", getView().getLocation().x);
+		preferenceStore.addGenericEntryAsNumber("prefConverterDialogLocationY", getView().getLocation().y);
 	}
 
 	private void restorePropeties() {
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("prefConverterDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("prefConverterDialogSizeHeight");
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		Number metadataDialogSizeWidth = preferenceStore.getGenericEntryAsNumber("prefConverterDialogSizeWidth");
+		Number metadataDialogSizeHeight = preferenceStore.getGenericEntryAsNumber("prefConverterDialogSizeHeight");
 		if(metadataDialogSizeWidth != null && metadataDialogSizeHeight != null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("prefConverterDialogLocationX", "prefConverterDialogLocationY");
+		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("prefConverterDialogLocationX", "prefConverterDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		

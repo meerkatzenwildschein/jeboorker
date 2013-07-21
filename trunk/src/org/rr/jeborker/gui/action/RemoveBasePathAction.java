@@ -11,7 +11,8 @@ import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
@@ -42,17 +43,18 @@ class RemoveBasePathAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		if(REMOVE_ALL.equals(path)) {
-			final List<String> basePaths = JeboorkerPreferences.getBasePath();
+			final List<String> basePaths = preferenceStore.getBasePath();
 			for (String basePath : basePaths) {
 				removeBasePathEntries(basePath, true);
-				JeboorkerPreferences.removeBasePath(basePath);
+				preferenceStore.removeBasePath(basePath);
 				MainMenuBarController.getController().removeBasePathMenuEntry(basePath);
 			}			
 		} else {
 			final String name = (String) getValue(Action.NAME);
 			removeBasePathEntries(name, true);
-			JeboorkerPreferences.removeBasePath(name);
+			preferenceStore.removeBasePath(name);
 			MainMenuBarController.getController().removeBasePathMenuEntry(name);
 		}
 	}

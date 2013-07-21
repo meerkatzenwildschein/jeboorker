@@ -10,7 +10,7 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
-public class MetadataAddListModel extends AbstractListModel {
+public class MetadataAddListModel extends AbstractListModel<Action> {
 	
 	private static final long serialVersionUID = 661585601885502869L;
 	
@@ -37,7 +37,7 @@ public class MetadataAddListModel extends AbstractListModel {
 	}
 	
 	@Override
-	public Object getElementAt(int index) {
+	public Action getElementAt(int index) {
 		if(supportedMetaData == null || actionsForMetadataProperties == null) {
 			initialize();
 		}			

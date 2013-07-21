@@ -16,7 +16,8 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.ResourceNameFilter;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
@@ -68,13 +69,14 @@ class AddBasePathAction extends AbstractAction {
 	}
 
 	private void addBasePath(final MainController controller, final IResourceHandler selectedDirectory, String path) {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		if(selectedDirectory!=null) {
 			controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 			String messageFinished = Bundle.getString("AddBasePathAction.finished");
 			try {
 				//only attach the new path if it is not a part of an already configured path.
-				if(!isAlreadyExistingBasePath(JeboorkerPreferences.getBasePath(), path)) {
-					JeboorkerPreferences.addBasePath(path); //add path to preferences
+				if(!isAlreadyExistingBasePath(preferenceStore.getBasePath(), path)) {
+					preferenceStore.addBasePath(path); //add path to preferences
 					MainMenuBarController.getController().addBasePathMenuEntry(path); //add path to ui
 					int count = readEbookFilesToDB(selectedDirectory);
 					messageFinished = Bundle.getFormattedString("AddBasePathAction.finishedCount", String.valueOf(count));

@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.jeborker.JeboorkerConstants;
+import org.rr.jeborker.app.JeboorkerConstants;
 
 public class ConverterFactory {
 

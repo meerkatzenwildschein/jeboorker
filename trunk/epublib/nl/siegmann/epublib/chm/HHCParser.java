@@ -34,8 +34,6 @@ import org.w3c.dom.NodeList;
  */
 public class HHCParser {
 
-	public static final String DEFAULT_HTML_INPUT_ENCODING = "Windows-1251";
-	
 	public static List<TOCReference> parseHhc(InputStream hhcFile, Resources resources) throws IOException, ParserConfigurationException,	XPathExpressionException {
 		HtmlCleaner htmlCleaner = new HtmlCleaner();
 		CleanerProperties props = htmlCleaner.getProperties();

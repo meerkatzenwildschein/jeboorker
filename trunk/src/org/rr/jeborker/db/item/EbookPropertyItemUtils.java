@@ -19,8 +19,8 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.jeborker.BasePathList;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.BasePathList;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
@@ -32,7 +32,7 @@ import org.rr.pm.image.ImageUtils;
 public class EbookPropertyItemUtils {
 	
 	private static final String ALL_BOOK_PATH_COLLECTION = "allBookPathCollection";
-	private static final String thumbnailFolder = JeboorkerPreferences.getConfigDirectory() + "thumbs/";
+	private static final String thumbnailFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getConfigDirectory() + "thumbs/";
 	static {
 		IResourceHandler thumbnailFolderResource = ResourceHandlerFactory.getResourceHandler(thumbnailFolder);
 		if(!thumbnailFolderResource.exists()) {
@@ -260,7 +260,7 @@ public class EbookPropertyItemUtils {
 	 */
 	public static void storePathElements(final Collection<String> path) {
 		final List<String> oldPathElements = fetchPathElements();
-		final BasePathList basePathList = JeboorkerPreferences.getBasePath();
+		final BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
 		String indexedString;
 		if(oldPathElements != null && !oldPathElements.isEmpty()) {
 			final HashSet<String> allElements = new HashSet<String>(path.size());
@@ -274,7 +274,7 @@ public class EbookPropertyItemUtils {
 		} else {
 			indexedString = ListUtils.toIndexedString(path, File.pathSeparatorChar);
 		}
-		JeboorkerPreferences.addGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, indexedString);
+		PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).addGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, indexedString);
 	}
 	
 	/**
@@ -282,7 +282,7 @@ public class EbookPropertyItemUtils {
 	 * method.
 	 */
 	public static List<String> fetchPathElements() {
-		String indexedListString = JeboorkerPreferences.getGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, null);
+		String indexedListString = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, null);
 		if(indexedListString == null) {
 			return Collections.emptyList();
 		}

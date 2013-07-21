@@ -19,7 +19,8 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.components.tree.NamedNode;
 import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.utils.ListUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 public class BasePathTreeModel extends DefaultTreeModel {
 
@@ -44,7 +45,9 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	}
 
 	public void init() {
-		List<String> basePath = new ArrayList<String>(JeboorkerPreferences.getBasePath());
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final List<String> basePath = new ArrayList<String>(preferenceStore.getBasePath());
+		
 		for(String path : basePath) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, false);
@@ -75,11 +78,12 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	}
 	
 	public TreePath restoreExpanstionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments) {
-		String basePathFor = JeboorkerPreferences.getBasePathFor(resourceHandler);
-		int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size()  - 1;
-		List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
-		String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);	
-		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final String basePathFor = preferenceStore.getBasePathFor(resourceHandler);
+		final int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size()  - 1;
+		final List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
+		final String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);	
+		final TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
 		return lastExpandedRow;
 	}
 	

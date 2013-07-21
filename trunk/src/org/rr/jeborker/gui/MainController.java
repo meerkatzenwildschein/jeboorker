@@ -38,10 +38,11 @@ import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.BasePathList;
-import org.rr.jeborker.FileWatchService;
 import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.BasePathList;
+import org.rr.jeborker.app.FileWatchService;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
@@ -64,6 +65,8 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 
 public class MainController {
+	
+	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
 	MainView mainWindow;
 	
@@ -277,11 +280,12 @@ public class MainController {
 	}
 	
 	private void initialize() throws Exception {
+		final String lookAndFeel = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
+				.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL);
+		UIManager.setLookAndFeel(lookAndFeel);
+		
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.opendb"));
 		splashScreen.setLoadingValue(35);	
-		
-		String lookAndFeel = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.LOOK_AND_FEEL);
-		UIManager.setLookAndFeel(lookAndFeel);
 		
 		mainWindow = new MainView();
 		
@@ -310,7 +314,7 @@ public class MainController {
 			}
 		});
 		
-		BasePathList basePath = JeboorkerPreferences.getBasePath();
+		BasePathList basePath = preferenceStore.getBasePath();
 		FileWatchService.addWatchPath(basePath);
 		FileWatchService.addWatchPath(EbookPropertyItemUtils.fetchPathElements());
 	}
@@ -687,7 +691,7 @@ public class MainController {
 	 * @param item The item to be added.
 	 */
 	public void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
-		if(JeboorkerPreferences.isBasePathVisible(item.getBasePath())) {
+		if(preferenceStore.isBasePathVisible(item.getBasePath())) {
 			TableModel model = getTableModel();
 			if (model instanceof EbookPropertyDBTableModel) {
 				clearSelection();
@@ -774,7 +778,7 @@ public class MainController {
 	 * @return The selected folder or <code>null</code>.
 	 */
 	public List<File> getDirectorySelection() {
-		String lastEbookFolder = JeboorkerPreferences.getGenericEntryAsString("lastEbookFolder");
+		String lastEbookFolder = preferenceStore.getGenericEntryAsString("lastEbookFolder");
 		IResourceHandler lastEbookFolderResourceLoader = ResourceHandlerFactory.getResourceHandler(lastEbookFolder);
 		if(lastEbookFolderResourceLoader == null || !lastEbookFolderResourceLoader.isDirectoryResource()) {
 			lastEbookFolder = null;
@@ -783,14 +787,14 @@ public class MainController {
 		final JDirectoryChooser chooser = new JDirectoryChooser(true);
 		
 		//restore directory chooser location
-		String location = JeboorkerPreferences.getGenericEntryAsString("JDirectoryChooserLocation");
+		String location = preferenceStore.getGenericEntryAsString("JDirectoryChooserLocation");
 		if(location != null && location.indexOf(';') != -1) {
 			String[] split = location.split(";");
 			chooser.setDialogLocation(new Point(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
 		}
 		
 		//restore directory chooser size
-		String size = JeboorkerPreferences.getGenericEntryAsString("JDirectoryChooserSize");
+		String size = preferenceStore.getGenericEntryAsString("JDirectoryChooserSize");
 		if(size != null && size.indexOf(';') != -1) {
 			String[] split = size.split(";");
 			chooser.setDialogSize(new Dimension(CommonUtils.toNumber(split[0]).intValue(), CommonUtils.toNumber(split[1]).intValue()));
@@ -798,12 +802,12 @@ public class MainController {
 		
 		List<File> selectedDirectory = chooser.getDirectorySelections(lastEbookFolder, mainWindow);
 		if(selectedDirectory!=null && !selectedDirectory.isEmpty()) {
-			JeboorkerPreferences.addGenericEntryAsString("lastEbookFolder", selectedDirectory.get(selectedDirectory.size() - 1).toString());
+			preferenceStore.addGenericEntryAsString("lastEbookFolder", selectedDirectory.get(selectedDirectory.size() - 1).toString());
 		}
 		
 		//store directory chooser size and location
-		JeboorkerPreferences.addGenericEntryAsString("JDirectoryChooserLocation", chooser.getDialogLocation().x + ";" + chooser.getDialogLocation().y);
-		JeboorkerPreferences.addGenericEntryAsString("JDirectoryChooserSize", chooser.getDialogSize().width + ";" + chooser.getDialogSize().height);
+		preferenceStore.addGenericEntryAsString("JDirectoryChooserLocation", chooser.getDialogLocation().x + ";" + chooser.getDialogLocation().y);
+		preferenceStore.addGenericEntryAsString("JDirectoryChooserSize", chooser.getDialogSize().width + ";" + chooser.getDialogSize().height);
 		return selectedDirectory;
 	}
 	

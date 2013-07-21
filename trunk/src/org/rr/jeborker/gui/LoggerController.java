@@ -4,7 +4,8 @@ import java.awt.Point;
 
 import javax.swing.JFrame;
 
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 public class LoggerController {
 	
@@ -46,22 +47,24 @@ public class LoggerController {
 	}	
 	
 	private void storeProperties() {
-		JeboorkerPreferences.addGenericEntryAsNumber("logDialogSizeWidth", getView().getSize().width);
-		JeboorkerPreferences.addGenericEntryAsNumber("logDialogSizeHeight", getView().getSize().height);
-		JeboorkerPreferences.addGenericEntryAsNumber("logDialogLocationX", getView().getLocation().x);
-		JeboorkerPreferences.addGenericEntryAsNumber("logDialogLocationY", getView().getLocation().y);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsNumber("logDialogSizeWidth", getView().getSize().width);
+		preferenceStore.addGenericEntryAsNumber("logDialogSizeHeight", getView().getSize().height);
+		preferenceStore.addGenericEntryAsNumber("logDialogLocationX", getView().getLocation().x);
+		preferenceStore.addGenericEntryAsNumber("logDialogLocationY", getView().getLocation().y);
 	}	
 
 	private void restorePropeties() {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		//restore the window size from the preferences.
-		Number metadataDialogSizeWidth = JeboorkerPreferences.getGenericEntryAsNumber("logDialogSizeWidth");
-		Number metadataDialogSizeHeight = JeboorkerPreferences.getGenericEntryAsNumber("logDialogSizeHeight");
+		Number metadataDialogSizeWidth = preferenceStore.getGenericEntryAsNumber("logDialogSizeWidth");
+		Number metadataDialogSizeHeight = preferenceStore.getGenericEntryAsNumber("logDialogSizeHeight");
 		if(metadataDialogSizeWidth!=null && metadataDialogSizeHeight!=null) {
 			getView().setSize(metadataDialogSizeWidth.intValue(), metadataDialogSizeHeight.intValue());
 		}
 		
 		//restore window location
-		Point entryAsScreenLocation = JeboorkerPreferences.getGenericEntryAsScreenLocation("logDialogLocationX", "logDialogLocationY");
+		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("logDialogLocationX", "logDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
 		}		

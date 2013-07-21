@@ -15,7 +15,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -95,7 +95,7 @@ public class DefaultDBManager {
 		}
 
 		final String dbName = "jeborkerDB";
-		final String configPath = JeboorkerPreferences.getConfigDirectory();
+		final String configPath = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getConfigDirectory();
 		final String dbFile = configPath + dbName;
 		final IResourceHandler dbResourceHandler = ResourceHandlerFactory.getResourceHandler(dbFile);
 

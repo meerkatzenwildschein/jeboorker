@@ -28,9 +28,7 @@ public class MetadataProperty implements Cloneable {
 	protected HashMap<MetadataProperty.HINTS, Object> hints;
 	
 	static interface ActionType {
-
 		String getName();
-
 	}
 	
 	public static enum HINTS implements ActionType {

@@ -12,9 +12,10 @@ import javax.swing.SwingUtilities;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.JeboorkerConstants;
-import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.JeboorkerConstants;
+import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -228,7 +229,8 @@ public class ActionUtils {
 		}
 		
 		//user file formats with basic/empty reader support
-		final String supportedBasicTypes = JeboorkerPreferences.getEntryAsString(JeboorkerPreferences.PREFERENCE_KEYS.BASIC_FILE_TYPES);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final String supportedBasicTypes = preferenceStore.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.BASIC_FILE_TYPES);
 		final String extension = resource.getFileExtension();
 		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.contains("," + extension))) {
 			return true;
@@ -245,39 +247,6 @@ public class ActionUtils {
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * Helper to fetch the resources in a default order. Tries to extract the resource
-	 * from the given text, than gets the selected resources from the application.
-	 */
-	static List<IResourceHandler> getResources(String text) {
-		ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
-		if(text != null && !text.isEmpty()) {
-			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(text);
-			if(resourceHandler != null) {
-				result.add(ResourceHandlerFactory.getResourceHandler(text));
-			}
-			return result;
-		}
-		
-		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
-		if(!selectedEbookPropertyItems.isEmpty()) {
-			for(EbookPropertyItem selectedEbookPropertyItem : selectedEbookPropertyItems) {
-				result.add(selectedEbookPropertyItem.getResourceHandler());
-			}
-			return result;
-		}
-		
-		List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
-		if(!selectedTreeItems.isEmpty()) {
-			for(IResourceHandler selectedTreeItem : selectedTreeItems) {
-				result.add(selectedTreeItem);
-			}
-			return result;
-		}		
-		
-		return result;
 	}
 	
 	/**
@@ -298,7 +267,8 @@ public class ActionUtils {
 					MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
 					importedResources.add(targetResource);
 					
-					boolean delete = JeboorkerPreferences.getEntryAsBoolean(JeboorkerPreferences.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
+					final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+					boolean delete = preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
 					if(delete) {
 						sourceResource.delete();
 						MainController.getController().getMainTreeController().removeDeletedTreeItems();

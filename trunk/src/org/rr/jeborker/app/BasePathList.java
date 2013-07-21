@@ -1,4 +1,4 @@
-package org.rr.jeborker;
+package org.rr.jeborker.app;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,21 +6,22 @@ import java.util.List;
 import org.rr.commons.collection.WrapperList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 public class BasePathList extends WrapperList<String> {
 	
-	BasePathList(List<String> basePaths) {
+	public BasePathList(List<String> basePaths) {
 		super(basePaths);
 		Collections.sort(this);
 	}
 	
-	BasePathList(String basePath) {
+	public BasePathList(String basePath) {
 		super();
 		this.add(basePath);
 		Collections.sort(this);
 	}
 	
-	BasePathList() {
+	public BasePathList() {
 		super();
 	}
 	
@@ -31,7 +32,7 @@ public class BasePathList extends WrapperList<String> {
 	public boolean isAllPathElementsVisible() {
 		for(int i = 0; i < toWrap.size(); i++) {
 			String basePath = toWrap.get(i);
-			if(!JeboorkerPreferences.isBasePathVisible(basePath)) {
+			if(!PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).isBasePathVisible(basePath)) {
 				return false;
 			}
 		}
@@ -45,7 +46,7 @@ public class BasePathList extends WrapperList<String> {
 	public boolean isNoPathElementsVisible() {
 		for(int i = 0; i < toWrap.size(); i++) {
 			String basePath = toWrap.get(i);
-			if(JeboorkerPreferences.isBasePathVisible(basePath)) {
+			if(PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).isBasePathVisible(basePath)) {
 				return false;
 			}
 		}

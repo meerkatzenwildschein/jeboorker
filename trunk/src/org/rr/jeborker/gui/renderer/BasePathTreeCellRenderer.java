@@ -28,8 +28,9 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.BasePathList;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.BasePathList;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
@@ -124,7 +125,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 						if(resourceName != null) {
 							ActionUtils.toggleBasePathVisibility(resourceName);
 						} else {
-							final BasePathList basePaths = JeboorkerPreferences.getBasePath();
+							final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+							final BasePathList basePaths = preferenceStore.getBasePath();
 							final boolean isVisible = basePaths.isAllPathElementsVisible();
 							for(String basePath : basePaths) {
 								ActionUtils.setBasePathVisibility(basePath, !isVisible);
@@ -142,7 +144,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		final int rowCount = tree.getRowCount();
-		final BasePathList basePaths = JeboorkerPreferences.getBasePath();
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final BasePathList basePaths = preferenceStore.getBasePath();
 		IResourceHandler pathResource;
 		
 		//font change may happens with look and feel change
@@ -180,7 +183,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 			label.setEnabled(true);
 			for(String basePath : basePaths) {
 				if(pathresourceString.startsWith(basePath)) {
-					boolean basePathVisible = JeboorkerPreferences.isBasePathVisible(basePath);
+					boolean basePathVisible = preferenceStore.isBasePathVisible(basePath);
 					if(!basePathVisible) {
 						label.setEnabled(false);
 					}

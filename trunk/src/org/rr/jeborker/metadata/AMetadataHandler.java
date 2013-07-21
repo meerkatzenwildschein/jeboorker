@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.xml.XMLUtils;
 import org.w3c.dom.Document;
@@ -30,18 +27,6 @@ abstract class AMetadataHandler {
 			throw new IOException("Could not read metadata document " + ebookResource, e);
 		}
 		return null;
-	}
-	
-	/**
-	 * Transform the given {@link Document} instance into bytes.
-	 * @param document The document to be transformed into bytes.
-	 * @return The xml data as bytes.
-	 * @throws TransformerFactoryConfigurationError
-	 * @throws TransformerException
-	 * @throws IOException 
-	 */
-	protected byte[] getDocumentBytes(Document document) throws TransformerFactoryConfigurationError, TransformerException, IOException {
-		return XMLUtils.formatDocument(document).getBytes("UTF-8");
 	}
 	
 	/**
