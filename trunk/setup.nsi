@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.3.4.0
+VIProductVersion 0.3.6.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
@@ -91,6 +91,8 @@ Section -Main SEC0000
     File doc\license\Unrar_Freeware_license.txt
     File doc\license\MySwing_LGPL_license.txt
     File doc\license\Carpelinx-Logo-Icon_GPL_license.txt
+    File doc\license\jgoodies-common_license.txt
+    File doc\license\jgoodies-looks_license.txt
     
     SetOutPath $INSTDIR\exec
     File 'exec\Rar.exe'
@@ -113,6 +115,8 @@ Section -Main SEC0000
     File lib\jsoup-1.7.1.jar
     File lib\junique-1.0.4.jar
     File lib\jna-3.4.0.jar
+    File lib\jgoodies-common-1.6.0.jar
+    File lib\jgoodies-looks-2.5.3.jar
     File lib\platform-3.4.0.jar
     File lib\truezip-driver-file-7.7.2.jar
     File lib\truezip-driver-zip-7.7.2.jar
