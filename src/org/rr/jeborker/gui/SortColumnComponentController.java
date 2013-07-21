@@ -215,7 +215,7 @@ public class SortColumnComponentController {
 		this.storeProperties();
 	}	
 	
-	private void storeProperties() {
+	void storeProperties() {
 		//store the sort order properties.
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<Field> selectedFields = getSelectedFields();
@@ -232,7 +232,7 @@ public class SortColumnComponentController {
 	/**
 	 * Restores the order fields and put them to view and model.
 	 */
-	private void restoreProperties() {
+	void restoreProperties() {
 		this.readOrderColumnsFromPreferences();
 	}	
 

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -306,7 +307,6 @@ public class MainController {
 			
 			@Override
 			public void run() {
-				mainWindow.pack();
 				mainWindow.setVisible(true);
 				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
 				
@@ -880,7 +880,8 @@ public class MainController {
 					model.loadProperties(items);
 					
 					setImage(null, null);
-					mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());
+					EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
+					mainWindow.addMetadataButton.setListModel(emptyListModel);
 				} else if (items.size() == 1) {
 					//single selection
 					final EbookSheetPropertyModel model = new EbookSheetPropertyModel();
@@ -908,7 +909,8 @@ public class MainController {
 				//no selection
 				mainWindow.propertySheet.setModel(new EbookSheetPropertyMultiSelectionModel());
 				setImage(null, null);
-				mainWindow.addMetadataButton.setListModel(EmptyListModel.getSharedInstance());						
+				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
+				mainWindow.addMetadataButton.setListModel(emptyListModel);						
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
