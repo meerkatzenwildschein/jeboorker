@@ -152,6 +152,9 @@ public class JeboorkerConstants {
 				if(name.startsWith("Motif")) {
 					continue;
 				}
+				if(name.contains("LookAndFeel")) {
+					name = name.substring(0, name.indexOf("LookAndFeel"));
+				}
 				put(name, className);
 			}
 		}

@@ -430,7 +430,7 @@ class MainView extends JFrame {
 				addMetadataButton = new JMenuButton();
 				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
 				addMetadataButton.setText("");
-				addMetadataButton.setWidth(45);
+				addMetadataButton.setWidth(50);
 				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
 				addMetadataButton.setListModel(emptyListModel);
 				propertySheet.addToolbarComponent(addMetadataButton);
