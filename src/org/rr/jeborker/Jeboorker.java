@@ -39,7 +39,6 @@ import org.rr.jeborker.app.JeboorkerLogger;
 import org.rr.jeborker.gui.MainController;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertGreen;
 import com.jgoodies.looks.plastic.theme.DesertRed;
@@ -97,7 +96,7 @@ public class Jeboorker {
 
 	public static boolean isRuntime = false;
 
-	public static String version = "0.3.5";
+	public static String version = "0.3.6";
 	
 	public static String app = "Jeboorker";
 
