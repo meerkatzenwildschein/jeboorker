@@ -36,7 +36,6 @@ class ChangeLookAndFeelAction extends AbstractAction {
 			if(lafClassName != null) {
 				ActionUtils.setLookAndFeel(lafClassName);
 				SwingUtilities.updateComponentTreeUI(mainWindow);
-				mainWindow.pack();
 				PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
 					.addEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL, lafClassName);
 			} else {

@@ -6,16 +6,18 @@ import javax.swing.AbstractListModel;
  * This list model is always empty. It's not possible to add something to it. 
  * It's useful for the initialization process.
  */
-public class EmptyListModel extends AbstractListModel<Object> {
+public class EmptyListModel<T> extends AbstractListModel<T> {
 
-	private static final EmptyListModel sharedInstance = new  EmptyListModel();
-	
+	@SuppressWarnings("rawtypes")
+	private static final EmptyListModel<?> sharedInstance = new EmptyListModel();
+    
 	/**
 	 * Get always the same {@link EmptyListModel} instance.
 	 * @return The desired {@link EmptyListModel} instance. Never returns <code>null</code>.
 	 */
-	public static EmptyListModel getSharedInstance() {
-		return sharedInstance;
+	@SuppressWarnings("unchecked")
+	public static final <T> EmptyListModel<T> getSharedInstance() {
+		return (EmptyListModel<T>) sharedInstance;
 	}
 	
 	@Override
@@ -24,7 +26,7 @@ public class EmptyListModel extends AbstractListModel<Object> {
 	}
 
 	@Override
-	public Object getElementAt(int index) {
+	public T getElementAt(int index) {
 		return null;
 	}
 	

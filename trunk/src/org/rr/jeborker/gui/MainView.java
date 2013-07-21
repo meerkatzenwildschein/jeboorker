@@ -103,6 +103,7 @@ import org.rr.jeborker.gui.action.PasteFromClipboardAction;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.EmptyListModel;
 import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.model.FileSystemTreeModel;
 import org.rr.jeborker.gui.renderer.BasePathTreeCellEditor;
@@ -428,7 +429,10 @@ class MainView extends JFrame {
 				
 				addMetadataButton = new JMenuButton();
 				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
-				addMetadataButton.setPreferredSize(new Dimension(60, 0));
+				addMetadataButton.setText("");
+				addMetadataButton.setWidth(45);
+				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
+				addMetadataButton.setListModel(emptyListModel);
 				propertySheet.addToolbarComponent(addMetadataButton);
 				
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
