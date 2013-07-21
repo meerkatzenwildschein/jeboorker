@@ -256,7 +256,7 @@ public class JMenuButton extends JButton {
 	 */
 	public Dimension getPreferredSize() {
 		Dimension preferredSize = super.getPreferredSize();
-		preferredSize.width += getArrowBounds().width;
+//		preferredSize.width += getArrowBounds().width;
 		if(width >= 0) {
 			preferredSize.width = getWidth();
 		}
@@ -265,6 +265,12 @@ public class JMenuButton extends JButton {
 		}
 		return preferredSize;
 //		return adjustDimension(super.getPreferredSize(), true);
+	}
+	
+	public void setPreferredSize(Dimension dim) {
+		super.setPreferredSize(dim);
+		width = dim.width;
+		height = dim.height;
 	}
 
 	/**
@@ -293,7 +299,8 @@ public class JMenuButton extends JButton {
 	 * @return The minimum width and height of the button
 	 */
 	public Dimension getMinimumSize() {
-		return adjustDimension(super.getMinimumSize(), true);
+//		return adjustDimension(super.getMinimumSize(), true);
+		return super.getMinimumSize();
 	}
 
 	/**
