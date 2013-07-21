@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

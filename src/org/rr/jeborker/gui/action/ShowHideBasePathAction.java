@@ -7,7 +7,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 /**
  * Add a folder action.
@@ -43,7 +44,8 @@ class ShowHideBasePathAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final List<String> basePaths = JeboorkerPreferences.getBasePath();
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final List<String> basePaths = preferenceStore.getBasePath();
 		if(SHOW_ALL.equals(path)) {
 			for (String basePath : basePaths) {
 				ActionUtils.setBasePathVisibility(basePath, true);

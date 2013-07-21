@@ -44,6 +44,10 @@ public class DateConversionUtilsTest extends TestCase {
 		
 		
 		//W3C
+		//2008-03-08T19:21:00.000Z
+		assertTrue(DateConversionUtils.toDate("2008-03-08T19:21:00.000Z").toString().equals("Sat Mar 08 00:00:00 CET 2008"));
+		assertTrue(DateConversionUtils.toDateTime("2008-03-08T19:21:00.000Z").toString().equals("Sat Mar 08 20:21:00 CET 2008"));
+		assertTrue(DateConversionUtils.toDate("2008-03-08T19:21:00.000Z").toString().equals("Sat Mar 08 00:00:00 CET 2008"));
 		assertTrue(DateConversionUtils.toDate("2010-10-13T12:58:49.281000+00:00").toString().equals("Wed Oct 13 00:00:00 CEST 2010"));
 		assertTrue(DateConversionUtils.toDateTime("2010-11-27T23:00:11+00:00").toString().equals("Sun Nov 28 00:00:11 CET 2010"));
 		assertTrue(DateConversionUtils.toDate("2010-11-27T23:00+00:00").toString().equals("Sun Nov 28 00:00:00 CET 2010"));

@@ -1,4 +1,4 @@
-package org.rr.jeborker;
+package org.rr.jeborker.app.preferences;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -8,104 +8,34 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.collection.ListenerList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.jeborker.db.DefaultDBManager;
-import org.rr.jeborker.db.item.PreferenceItem;
+import org.rr.jeborker.app.BasePathList;
+import org.rr.jeborker.app.FileWatchService;
+import org.rr.jeborker.app.JeboorkerPreferenceListener;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS;
 import org.rr.jeborker.gui.MainMenuBarController;
 
-public class JeboorkerPreferences {
-	
-	private static final ListenerList<JeboorkerPreferenceListener> preferenceChangeListener = new ListenerList<JeboorkerPreferenceListener>();
-	
-	private static final String BASE_PATH = "basePath";
-	
-	public static interface PreferenceKey {
-		
-		public String getKey();
+public abstract class APreferenceStore {
 
-		public String getDefaultValue();
-		
-	}	
+	private final ListenerList<JeboorkerPreferenceListener> preferenceChangeListener = new ListenerList<JeboorkerPreferenceListener>();
 	
-	public static enum PREFERENCE_KEYS implements PreferenceKey {
-		DELETE_EBOOK_AFTER_IMPORT {
-			@Override
-			public String getKey() {
-				return "deleteEbookAfterImport";
-			}
-			
-			public String getDefaultValue() {
-				return "false";
-			}
-		},
-		TREE_AUTO_SCROLLING_ENABLED {
-			@Override
-			public String getKey() {
-				return "TreeAutoScrollingEnabled";
-			}
-			
-			public String getDefaultValue() {
-				return "false";
-			}
-		},
-		MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED {
-			@Override
-			public String getKey() {
-				return "MainTableAutoSaveMetadataEnabled";
-			}
-			
-			public String getDefaultValue() {
-				return "false";
-			}
-		},
-		BASIC_FILE_TYPES {
-			@Override
-			public String getKey() {
-				return "BasicFileTypes";
-			}
-			
-			public String getDefaultValue() {
-				return "doc,docx,rtf,fb2,tr2,tr3,djvu,pdb,xeb,ceb,azw,kf8,lit,mobi,prc,opf,txt,pdb,ps,pdg,tebr,rb,xml";
-			}
-		},
-		LOOK_AND_FEEL {
-			
-			private final String INIT_DEFAULT_VALUE = "javax.swing.plaf.metal.MetalLookAndFeel";
-			
-			private String defaultValue = null;
-			
-			@Override
-			public String getKey() {
-				return "LookAndFeel";
-			}
-			
-			public String getDefaultValue() {
-				if(defaultValue == null) {
-					defaultValue = INIT_DEFAULT_VALUE;
-					final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-					for(LookAndFeelInfo laf : installedLookAndFeels) {
-						String name = laf.getName().toLowerCase();
-						if(name.contains("gtk+")) {
-							defaultValue = laf.getClassName();
-							break;
-						} else if(name.contains("windows")) {
-							defaultValue = laf.getClassName();
-							break;
-						}
-					}		
-				}
-				return defaultValue;
-			}
-		}
-	}
+	private final String BASE_PATH = "basePath";
 
-	public static void addBasePath(final String path) {
+	/**
+	 * Fetch a previously stored string value with it's key from the DB.
+	 * @param key The key to access the value.
+	 * @return The desired value or <code>null</code> if the value wasn't stored.
+	 */	
+	protected abstract String getEntryFromImpl(final String key);
+
+	protected abstract void addEntryToImpl(final String key, final String value);
+
+	protected abstract void deleteEntryFromImpl(final String key);
+
+	public void addBasePath(final String path) {
 		String basePath = getGenericEntryAsString(BASE_PATH);
 		if (basePath.length() == 0) {
 			basePath = path;
@@ -121,7 +51,7 @@ public class JeboorkerPreferences {
 	 * Removes one entry from the base path list.
 	 * @param path The path entry to be removed.
 	 */
-	public static void removeBasePath(final String path) {
+	public void removeBasePath(final String path) {
 		final List<String> oldBasePath = getBasePath();
 		final StringBuilder newBasePath = new StringBuilder();
 		for (Iterator<String> iterator = oldBasePath.iterator(); iterator.hasNext();) {
@@ -143,7 +73,7 @@ public class JeboorkerPreferences {
 	 * Get all base path entries from the preference store.
 	 * @return The stored base path entries. never returns <code>null</code>.
 	 */
-	public static BasePathList getBasePath() {
+	public BasePathList getBasePath() {
 		String basePath = getGenericEntryAsString(BASE_PATH);
 		if(basePath.length() == 0) {
 			return new BasePathList();
@@ -158,7 +88,7 @@ public class JeboorkerPreferences {
 	/**
 	 * Tests if the given path is visible. 
 	 */
-	public static boolean isBasePathVisible(String path) {
+	public boolean isBasePathVisible(String path) {
 		boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 		return isShow;
 	}
@@ -168,7 +98,7 @@ public class JeboorkerPreferences {
 	 * @return the desired {@link IResourceHandler} or <code>null</code> if no base path exists
 	 * for the given {@link IResourceHandler}.
 	 */
-	public static String getBasePathFor(IResourceHandler resource) {
+	public String getBasePathFor(IResourceHandler resource) {
 		if(resource != null) {
 			String resourceString = resource.toString();
 			List<String> basePaths = getBasePath();
@@ -186,11 +116,11 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the given value.
 	 * @param value The value which can be accessed with the given key.
 	 */
-	public static void addGenericEntryAsString(final String key, final String value) {
-		addEntryToDB(key, value);
+	public void addGenericEntryAsString(final String key, final String value) {
+		addEntryToImpl(key, value);
 	}
 	
-	public static void addEntryAsString(final PREFERENCE_KEYS key, final String value) {
+	public void addEntryAsString(final PREFERENCE_KEYS key, final String value) {
 		addGenericEntryAsString(key.getKey(), value);
 	}		
 	
@@ -199,10 +129,10 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public static String getGenericEntryAsString(final String key, String defaultValue) {
+	public String getGenericEntryAsString(final String key, String defaultValue) {
 		if(key != null) {
 			String result;
-			if((result = getEntryFromDB(key)) != null) {
+			if((result = getEntryFromImpl(key)) != null) {
 				return result;
 			}
 		} return defaultValue;
@@ -213,7 +143,7 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public static String getGenericEntryAsString(final String key) {
+	public String getGenericEntryAsString(final String key) {
 		return getGenericEntryAsString(key, "");
 	}
 	
@@ -222,8 +152,8 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the given value.
 	 * @param value The value which can be accessed with the given key.
 	 */
-	public static void addGenericEntryAsNumber(final String key, final Number value) {
-		addEntryToDB(key, String.valueOf(value.doubleValue()));
+	public void addGenericEntryAsNumber(final String key, final Number value) {
+		addEntryToImpl(key, String.valueOf(value.doubleValue()));
 	}
 	
 	/**
@@ -231,8 +161,8 @@ public class JeboorkerPreferences {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public static Number getGenericEntryAsNumber(final String key) {
-		String result = getEntryFromDB(key);
+	public Number getGenericEntryAsNumber(final String key) {
+		String result = getEntryFromImpl(key);
 		if(result != null && result.length() > 0) {
 			return Double.valueOf(result);
 		} else {
@@ -240,23 +170,19 @@ public class JeboorkerPreferences {
 		}
 	}	
 	
-	public static void addEntryAsBoolean(final PREFERENCE_KEYS key, final Boolean b) {
+	public void addEntryAsBoolean(final PREFERENCE_KEYS key, final Boolean b) {
 		addGenericEntryBoolean(key.getKey(), b);
 	}
 	
-	public static void addGenericEntryBoolean(final String key, final Boolean b) {
+	private void addGenericEntryBoolean(final String key, final Boolean b) {
 		addGenericEntryAsNumber(key, b.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0));
-	}
-	
-	public static Boolean getGenericEntryAsBoolean(final String key) {
-		return getEntryAsBoolean(key, Boolean.FALSE);
 	}
 	
 	/**
 	 * Get the given {@link PREFERENCE_KEYS} as string value.  
 	 * @return The desired value. Never returns <code>null</code>.
 	 */
-	public static String getEntryAsString(final PREFERENCE_KEYS key) {
+	public String getEntryAsString(final PREFERENCE_KEYS key) {
 		final String preferenceEntry = getGenericEntryAsString(key.getKey(), null);
 		if(preferenceEntry != null) {
 			return preferenceEntry;
@@ -269,13 +195,13 @@ public class JeboorkerPreferences {
 	 * Get the given {@link PREFERENCE_KEYS} as boolean value.  
 	 * @return The desired value. Never returns <code>null</code>.
 	 */
-	public static Boolean getEntryAsBoolean(final PREFERENCE_KEYS key) {
+	public Boolean getEntryAsBoolean(final PREFERENCE_KEYS key) {
 		final String defaultValueString = key.getDefaultValue();
 		final Boolean defaultValue = CommonUtils.toBoolean(defaultValueString);
 		return getEntryAsBoolean(key.getKey(), defaultValue);
 	}
 	
-	public static Boolean getEntryAsBoolean(final String key, Boolean defaultValue) {
+	private Boolean getEntryAsBoolean(final String key, Boolean defaultValue) {
 		Number entryAsNumber = getGenericEntryAsNumber(key);
 		if(entryAsNumber != null && entryAsNumber.intValue() == 1) {
 			return Boolean.TRUE;
@@ -286,48 +212,13 @@ public class JeboorkerPreferences {
 	}
 	
 	/**
-	 * Fetch a previously stored string value with it's key from the DB.
-	 * @param key The key to access the value.
-	 * @return The desired value or <code>null</code> if the value wasn't stored.
-	 */	
-	private static String getEntryFromDB(final String key) {
-		final DefaultDBManager db = DefaultDBManager.getInstance();
-		final List<PreferenceItem> result = db.getObject(PreferenceItem.class, "name", key);
-		
-		if(result.isEmpty()) {
-			return null;
-		} else {
-			return result.get(0).getValue();
-		}
-	}
-	
-	private static void addEntryToDB(final String key, final String value) {
-		final DefaultDBManager db = DefaultDBManager.getInstance();
-		final PreferenceItem newPreferenceItem = db.newInstance(PreferenceItem.class);
-		
-		newPreferenceItem.setName(key);
-		newPreferenceItem.setValue(value);
-		
-		deleteEntryFromDB(key);
-		db.storeObject(newPreferenceItem);
-	}
-	
-	private static void deleteEntryFromDB(final String key) {
-		final DefaultDBManager db = DefaultDBManager.getInstance();
-		final List<PreferenceItem> result = db.getObject(PreferenceItem.class, "name", key);
-		for(PreferenceItem item : result) {
-			db.deleteObject(item);
-		}
-	}
-	
-	/**
 	 * Get the point of a window where a window should be shown. 
 	 * @param xKey The key for the x value
 	 * @param yKey The key for the y value
 	 * @return The point where the window should be shown or <code>null</code> if 
 	 * there is no previously stored location point or if the window is not located at the screen.
 	 */
-	public static Point getGenericEntryAsScreenLocation(final String xKey, final String yKey) {
+	public Point getGenericEntryAsScreenLocation(final String xKey, final String yKey) {
 		String widthValue = getGenericEntryAsString(xKey);
 		String heightValue = getGenericEntryAsString(yKey);
 		Point location = new Point();
@@ -351,7 +242,7 @@ public class JeboorkerPreferences {
 		return location;
 	}	
 	
-	private static boolean intersectsScreen(Point location) {
+	private boolean intersectsScreen(Point location) {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		if(location.x +150 > screen.width || location.y +150 > screen.height) {
 			//don't restore and use the default values.
@@ -365,7 +256,7 @@ public class JeboorkerPreferences {
 	 * 
 	 * @return The config file directory.
 	 */
-	public static String getConfigDirectory() {
+	public String getConfigDirectory() {
 		String result = System.getProperties().getProperty("user.home");
 		String suffix = System.getProperties().getProperty("application.suffix");
 		
@@ -377,28 +268,28 @@ public class JeboorkerPreferences {
 	/**
 	 * Adds a preference change listener that is always invoked if a preference is changed.
 	 */
-	public static void addPreferenceChangeListener(final JeboorkerPreferenceListener listener) {
+	public void addPreferenceChangeListener(final JeboorkerPreferenceListener listener) {
 		preferenceChangeListener.addListener(listener);
 	}
 	
 	/**
 	 * Removes the given {@link JeboorkerPreferenceListener} from the listener list.
 	 */
-	public static void removePreferenceChangeListener(final JeboorkerPreferenceListener listener) {
+	public void removePreferenceChangeListener(final JeboorkerPreferenceListener listener) {
 		preferenceChangeListener.removeListener(listener);
 	}
 
 	/**
 	 * Tells if the auto scrolling the the trees is enabled.
 	 */
-	public static boolean isTreeAutoScrollingEnabled() {
+	public boolean isTreeAutoScrollingEnabled() {
 		return getEntryAsBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED);
 	}	
 	
 	/**
 	 * Sets the value for enable / disable the auto scrolling the the trees
 	 */
-	public static void setTreeAutoScrollingEnabled(final boolean value) {
+	public void setTreeAutoScrollingEnabled(final boolean value) {
 		addEntryAsBoolean(PREFERENCE_KEYS.TREE_AUTO_SCROLLING_ENABLED, Boolean.valueOf(value));
 		
 		//listener for enable the auto scroll function in the tree component.
@@ -406,17 +297,5 @@ public class JeboorkerPreferences {
 			listener.treeAutoScrollingChanged(value);
 		}
 	}	
-	
-	public static boolean isAutoSaveMetadata() {
-		return getEntryAsBoolean(PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED);
-	}
-	
-	/**
-	 * Sets the value for enable / disable the auto save function in the main table. 
-	 * The auto save function is always triggered on a click at the main table.
-	 */
-	public static void setAutoSaveMetadata(final boolean value) {
-		addEntryAsBoolean(PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED, Boolean.valueOf(value));
-	}		
 	
 }

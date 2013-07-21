@@ -3,7 +3,7 @@ package org.rr.jeborker.converter;
 import java.io.IOException;
 
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.jeborker.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 
 public interface IEBookConverter {

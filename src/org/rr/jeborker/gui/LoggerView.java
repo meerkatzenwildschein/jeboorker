@@ -23,7 +23,7 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.JeboorkerLogger;
+import org.rr.jeborker.app.JeboorkerLogger;
 
 class LoggerView extends JDialog implements ClipboardOwner {
 	

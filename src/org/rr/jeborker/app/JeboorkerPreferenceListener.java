@@ -1,4 +1,4 @@
-package org.rr.jeborker;
+package org.rr.jeborker.app;
 
 import java.util.EventListener;
 

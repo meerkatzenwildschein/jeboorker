@@ -14,7 +14,8 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.ResourceNameFilter;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -48,13 +49,14 @@ class RefreshBasePathAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final MainController controller = MainController.getController();
 		
 		controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 		String messageFinished = Bundle.getString("RefreshBasePathAction.finished");
 		try {
 			if(REFRESH_ALL.equals(path)) {
-				final List<String> basePaths = JeboorkerPreferences.getBasePath();
+				final List<String> basePaths = preferenceStore.getBasePath();
 				for (String basePath : basePaths) {
 					if(ResourceHandlerFactory.getResourceHandler(basePath).isDirectoryResource()) {
 						doRefreshBasePath(basePath, e, controller.getProgressMonitor());

@@ -17,7 +17,8 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -51,8 +52,10 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 						importEbookFromClipboard(contents, selectedEbookPropertyItemRows[0]);
 					}
 				} else {
-					IResourceHandler targetRecourceDirectory = ResourceHandlerFactory.getResourceHandler(target);
-					List<String> basePaths = JeboorkerPreferences.getBasePath();
+					final IResourceHandler targetRecourceDirectory = ResourceHandlerFactory.getResourceHandler(target);
+					final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+					final List<String> basePaths = preferenceStore.getBasePath();
+					
 					boolean isImported = false;
 					for(String basePath : basePaths) {
 						if(target.startsWith(basePath)) {

@@ -34,6 +34,7 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.compression.rar.RarUtils;
+import org.rr.jeborker.app.JeboorkerLogger;
 import org.rr.jeborker.gui.MainController;
 
 public class Jeboorker {

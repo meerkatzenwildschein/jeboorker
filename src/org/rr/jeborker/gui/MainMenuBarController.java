@@ -25,7 +25,8 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -36,7 +37,7 @@ public class MainMenuBarController {
 	
 	private MainMenuBarView view;
 	
-	HashMap<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
+	private HashMap<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
 
 	private MainMenuBarController() {
 	}
@@ -168,9 +169,11 @@ public class MainMenuBarController {
 			menu.add(action);
 		} 
 		if(items.size() >= 1) {
-			final List<String> basePath = JeboorkerPreferences.getBasePath();
-			String name = Bundle.getString("MainMenuBarController.import");
-			JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
+			final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+			final List<String> basePath = preferenceStore.getBasePath();
+			final String name = Bundle.getString("MainMenuBarController.import");
+			final JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
+			
 			mnImport.setIcon(ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
 			mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
@@ -349,18 +352,21 @@ public class MainMenuBarController {
 	}
 	
 	private void storeProperties() {
-		List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
 		if(hiddenBasePathEntries.isEmpty()) {
-			JeboorkerPreferences.addGenericEntryAsString("mainMenuBasePathHide", "");
+			preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", "");
 		} else {
-			JeboorkerPreferences.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
+			preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
 		}		
 	}
 	
 	void restoreProperties() {
-		List<String> path = JeboorkerPreferences.getBasePath();
-		String basePathPropString = JeboorkerPreferences.getGenericEntryAsString("mainMenuBasePathHide");
-		if(basePathPropString!=null && !basePathPropString.isEmpty()) {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final List<String> path = preferenceStore.getBasePath();
+		final String basePathPropString = preferenceStore.getGenericEntryAsString("mainMenuBasePathHide");
+		
+		if(basePathPropString != null && !basePathPropString.isEmpty()) {
 			List<String> split = ListUtils.split(basePathPropString, String.valueOf(File.pathSeparatorChar));
 			for(String basePath : split) {	
 				if(!path.contains(basePath)) {
@@ -368,7 +374,7 @@ public class MainMenuBarController {
 					ArrayList<String> s = new ArrayList<String>(split);
 					boolean remove = s.remove(basePath);
 					if(remove) {
-						JeboorkerPreferences.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(s, String.valueOf(File.pathSeparatorChar)));
+						preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(s, String.valueOf(File.pathSeparatorChar)));
 					}
 				} else {
 					ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, basePath).invokeAction(new ActionEvent(this, 0, "initialize"));

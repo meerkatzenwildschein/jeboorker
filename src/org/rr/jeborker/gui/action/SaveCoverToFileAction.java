@@ -16,7 +16,8 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.chooser.FileChooserDialogFactory;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser;
 import org.rr.commons.swing.dialogs.chooser.IFileChooser.RETURN_OPTION;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -38,11 +39,12 @@ public class SaveCoverToFileAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final IResourceHandler imageViewerResource = controller.getImageViewerResource();
 		final String fileExtension = ResourceHandlerUtils.getFileExtension(imageViewerResource);
 		
 		String filename = "cover" + (fileExtension != null ? fileExtension : "");
-		String dir = JeboorkerPreferences.getGenericEntryAsString(PATH_PREF_KEY);
+		String dir = preferenceStore.getGenericEntryAsString(PATH_PREF_KEY);
 		IFileChooser c = FileChooserDialogFactory.getFileChooser();
 		if(dir != null) {
 			c.setCurrentDirectory(new File(dir));
@@ -58,7 +60,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 		if (rVal == IFileChooser.RETURN_OPTION.APPROVE) {
 			filename = c.getSelectedFile().getName();
 			dir = c.getCurrentDirectory().toString();
-			JeboorkerPreferences.addGenericEntryAsString(PATH_PREF_KEY, dir);
+			preferenceStore.addGenericEntryAsString(PATH_PREF_KEY, dir);
 			
 			String targetString = dir + File.separator + filename;
 			IResourceHandler targetRecource = ResourceHandlerFactory.getResourceHandler(targetString);

@@ -17,7 +17,8 @@ import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -83,7 +84,8 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
         @SuppressWarnings("unused") Entry newEntry;
         
         try {
-	        if(JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_KEY) != null && !JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_KEY).isEmpty()) {
+        	final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+	        if(preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY) != null && !preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY).isEmpty()) {
 	        	// re-auth specific stuff
 	        	try {
 	        		reauthToDropbox();
@@ -109,8 +111,9 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 * @throws DropboxUnlinkedException if the auth has failed.
 	 */
 	private void reauthToDropbox() throws DropboxUnlinkedException {
-		String key = JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_KEY);
-		String secret = JeboorkerPreferences.getGenericEntryAsString(DROPBOX_AUTH_SECRET);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		String key = preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY);
+		String secret = preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_SECRET);
 		AccessTokenPair reAuthTokens = new AccessTokenPair(key, secret);
 		mDBApi.getSession().setAccessTokenPair(reAuthTokens);
 	}
@@ -120,6 +123,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 */
 	private void authToDropbox(WebAuthSession session, WebAuthInfo authInfo, RequestTokenPair pair) throws IOException, URISyntaxException,
 			MalformedURLException, DropboxException {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		Desktop.getDesktop().browse(new URL(authInfo.url).toURI());
 		
 		JOptionPane.showMessageDialog(MainController.getController().getMainWindow(), Bundle.getString("CopyToDropboxAction.auth"));
@@ -128,8 +132,8 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 		AccessTokenPair tokens = session.getAccessTokenPair();
 		
 		// Use this token pair in future so you don't have to re-authenticate each time:
-		JeboorkerPreferences.addGenericEntryAsString(DROPBOX_AUTH_KEY, tokens.key);
-		JeboorkerPreferences.addGenericEntryAsString(DROPBOX_AUTH_SECRET, tokens.secret);
+		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_KEY, tokens.key);
+		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_SECRET, tokens.secret);
 	}	
 	  
 }

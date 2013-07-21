@@ -18,7 +18,8 @@ import org.japura.gui.model.ListCheckModel;
 import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.ViewField;
@@ -60,7 +61,7 @@ public class FilterPanelController {
 	
 	void initialize() {
 		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
-		final String latestSearch = JeboorkerPreferences.getGenericEntryAsString("FilterPanelControllerCurrentFilter");
+		final String latestSearch = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString("FilterPanelControllerCurrentFilter");
 		
 		this.initFieldSelectionRenderer();
 		this.initFilterSelectionClosedViewValue();
@@ -212,6 +213,7 @@ public class FilterPanelController {
 	 * @see #restoreFilterHistory()
 	 */
 	private void storeFilterHistory() {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>)view.filterField.getModel();
 		final StringBuilder modelEntries = new StringBuilder();
 		for (int i = 0; i < model.getSize(); i++) {
@@ -221,9 +223,9 @@ public class FilterPanelController {
 			}
 			modelEntries.append(elementAt);
 		}
-		JeboorkerPreferences.addGenericEntryAsString("FilterPanelControllerEntries", modelEntries.toString());		
-		JeboorkerPreferences.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
-		JeboorkerPreferences.addGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerEntries", modelEntries.toString());		
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
 	}
 	
 	/**
@@ -231,9 +233,10 @@ public class FilterPanelController {
 	 * @see #storeFilterHistory() 
 	 */
 	private void restoreFilterHistory() {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		{
 			final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>)view.filterField.getModel();
-			String filterEntries = JeboorkerPreferences.getGenericEntryAsString("FilterPanelControllerEntries");
+			String filterEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerEntries");
 			if(filterEntries!=null && filterEntries.length() > 0) {
 				List<String> split = ListUtils.split(filterEntries, ",");
 				for (String string : split) {
@@ -245,7 +248,7 @@ public class FilterPanelController {
 		
 		
 		{ //restore the filter field selection
-			String filterFieldSelectionEntries = JeboorkerPreferences.getGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection");
+			String filterFieldSelectionEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection");
 			List<String> splitted = ListUtils.split(filterFieldSelectionEntries, ",");
 			final ListCheckModel<Field> model = view.filterFieldSelection.getModel();
 			final int modelSize = model.getSize();

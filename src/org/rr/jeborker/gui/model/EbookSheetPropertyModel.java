@@ -8,7 +8,7 @@ import java.util.List;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.FileRefreshBackground;
+import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;

@@ -19,7 +19,6 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyOnceAction<T> {
@@ -106,15 +105,6 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 		} else {
 			LoggerFactory.getLogger().log(Level.INFO, "Seems tehere is no cover support for " + resourceHandler);
 		}		
-	}
-	
-	/**
-	 * Tells the factory if this writer is able to work with the 
-	 * {@link IResourceHandler} given with the constructor.
-	 * @return <code>true</code> if this action is able to do something or <code>false</code> otherwise.
-	 */
-	public static boolean canHandle(final IResourceHandler resourceHandler) {
-		return MetadataHandlerFactory.hasCoverWriterSupport(resourceHandler);
 	}
 	
 	@Override

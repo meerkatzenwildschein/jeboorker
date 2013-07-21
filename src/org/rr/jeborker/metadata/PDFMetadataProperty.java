@@ -53,36 +53,6 @@ class PDFMetadataProperty extends MetadataProperty {
 			this.namespace = tagName.substring(0, namespaceSeparatorIndex);
 		}
 	}
-
-	/**
-	 * Internal class for holding a key/value pair for attributes. 
-	 */
-	static class AttributeSet {
-		String name;
-		
-		String value;
-		
-		AttributeSet(String name, String value) {
-			this.name = name;
-			this.value = value;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		public void setValue(String value) {
-			this.value = value;
-		}		
-	}
 	
 	/**
 	 * Gets the name of the property. The name did not contain the namespace.

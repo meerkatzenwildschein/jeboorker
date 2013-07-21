@@ -17,7 +17,8 @@ import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.ViewField;
@@ -181,7 +182,8 @@ public class SortColumnComponentController {
 	 */
 	private void readOrderColumnsFromPreferences() {
 		//preferences to table model
-		final String entryString = JeboorkerPreferences.getGenericEntryAsString("sortColumnFields");
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final String entryString = preferenceStore.getGenericEntryAsString("sortColumnFields");
 		if(entryString!=null && entryString.length() > 0) {
 			final List<String> splitted = ListUtils.split(entryString, ",", -1);
 			final ListCheckModel<Field> model = comboBox.getModel();
@@ -215,6 +217,7 @@ public class SortColumnComponentController {
 	
 	private void storeProperties() {
 		//store the sort order properties.
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<Field> selectedFields = getSelectedFields();
 		final StringBuilder value = new StringBuilder();
 		for (Field field : selectedFields) {
@@ -223,7 +226,7 @@ public class SortColumnComponentController {
 			}
 			value.append(field.getName());
 		}
-		JeboorkerPreferences.addGenericEntryAsString("sortColumnFields", value.toString());
+		preferenceStore.addGenericEntryAsString("sortColumnFields", value.toString());
 	}
 	
 	/**

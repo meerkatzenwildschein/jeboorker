@@ -16,7 +16,6 @@ public class ByteFilterInputStreamTest extends TestCase {
 			byte[] byteArray = IOUtils.toByteArray(nullFilterInputStream);
 			assertEquals(3, byteArray.length);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("");

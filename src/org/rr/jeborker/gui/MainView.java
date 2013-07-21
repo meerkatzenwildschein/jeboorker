@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
@@ -43,7 +44,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -94,14 +94,14 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.JeboorkerPreferenceListener;
-import org.rr.jeborker.JeboorkerPreferences;
+import org.rr.jeborker.app.JeboorkerPreferenceListener;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.PasteFromClipboardAction;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
-import org.rr.jeborker.gui.model.EbookPropertyDBTableSelectionModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.model.FileSystemTreeModel;
@@ -133,13 +133,13 @@ class MainView extends JFrame {
 	
 	private static final long serialVersionUID = 6837919427429399376L;
 	
+	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+	
 	JRTable mainTable;
 	
-	JXLayer<JRTable> mainTableLayer;
+	private JXLayer<JRTable> mainTableLayer;
 	
 	JProgressBar progressBar;
-	
-	JDialog blockingDialog;
 	
 	JSplitPane mainSplitPane;
 	
@@ -151,11 +151,9 @@ class MainView extends JFrame {
 	
 	JMenuButton addMetadataButton;
 	
-	JButton removeMetadataButton;
+	private JButton removeMetadataButton;
 	
-	JRButton saveMetadataButton;
-	
-	JPanel rootPanel;
+	private JRButton saveMetadataButton;
 	
 	private JPanel sortPanel;
 	
@@ -175,7 +173,7 @@ class MainView extends JFrame {
 	
 	JRScrollPane mainTableScrollPane;
 
-	JTabbedPane treeTabbedPane;
+	private JTabbedPane treeTabbedPane;
 	
 	private JPanel buttonPanel;
 	
@@ -183,7 +181,7 @@ class MainView extends JFrame {
 	
 	CheckComboBox<Field> filterFieldSelection;
 	
-	BasicComboBoxEditor comboboxEditor;	
+	private BasicComboBoxEditor comboboxEditor;	
 
 	/**
 	 * Create the application.
@@ -191,7 +189,7 @@ class MainView extends JFrame {
 	public MainView() {
 		initialize();
 		initializeGlobalKeystrokes();
-		JeboorkerPreferences.addPreferenceChangeListener(new MainViewPreferenceListener());
+		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
 
 	private void initializeGlobalKeystrokes() {
@@ -335,7 +333,7 @@ class MainView extends JFrame {
 
 					@Override
 					protected void processMouseEvent(final MouseEvent e, final JXLayer<? extends JRTable> l) {
-						if(JeboorkerPreferences.isAutoSaveMetadata()) {
+						if(preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED)) {
 							transferFocusOnClick(e, l);
 							
 							//save meta data and dispatch the mouse event to the jtable so it changes the selection
@@ -617,7 +615,9 @@ class MainView extends JFrame {
 			}
 		}));
 		mainTable.setTableHeader(null);
-		mainTable.setSelectionModel(new EbookPropertyDBTableSelectionModel());
+		DefaultListSelectionModel defaultListSelectionModel = new DefaultListSelectionModel();
+		defaultListSelectionModel.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		mainTable.setSelectionModel(defaultListSelectionModel);
 		mainTable.setDragEnabled(true);
 		mainTable.setStopEditOnSelectionChange(true);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
@@ -750,7 +750,7 @@ class MainView extends JFrame {
 		if(Jeboorker.isRuntime) {
 			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
 			fileSystemTree.setModel(fileSystemTreeModel);
-			fileSystemTree.setAutoMoveHorizontalSliders(JeboorkerPreferences.isTreeAutoScrollingEnabled());
+			fileSystemTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
 			fileSystemTree.setEditable(true);
 			FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
 			fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
@@ -825,7 +825,7 @@ class MainView extends JFrame {
                 	Transferable transferable = info.getTransferable();
                 	List<IResourceHandler> sourceResourceHandlers = ResourceHandlerFactory.getResourceHandler(transferable);
                 	for(IResourceHandler sourceResourceHandler : sourceResourceHandlers) {
-                		String basePathFor = JeboorkerPreferences.getBasePathFor(targetPathResource);
+                		String basePathFor = preferenceStore.getBasePathFor(targetPathResource);
                 		if(basePathFor != null) {
                 			//drop to a folder that is managed by jeboorker.
                 			PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
@@ -951,7 +951,7 @@ class MainView extends JFrame {
 			basePathTree.setCellRenderer(basePathTreeCellRenderer);
 			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
 			basePathTree.setToggleExpandOnDoubleClick(true);
-			basePathTree.setAutoMoveHorizontalSliders(JeboorkerPreferences.isTreeAutoScrollingEnabled());
+			basePathTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
 			basePathTree.setRepaintAllOnChange(true);
 			basePathTree.setEditable(true);
 		}
@@ -1072,7 +1072,7 @@ class MainView extends JFrame {
 		}		
 	}	
 	
-	void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
+	private void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
 		Action action;
 		
 		FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
@@ -1130,7 +1130,7 @@ class MainView extends JFrame {
 	 * @return 0: yes/ok, 1: no, 2:cancel, -1 none
 	 */
 	int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
-		Number showAgain = JeboorkerPreferences.getGenericEntryAsNumber(showAgainKey);
+		Number showAgain = preferenceStore.getGenericEntryAsNumber(showAgainKey);
 		if(showAgain == null) {
 		    int n;
 		    boolean dontShowAgain;
@@ -1146,9 +1146,9 @@ class MainView extends JFrame {
 		    
 		    if(dontShowAgain) {
 		    	if(defaultValue >= 0) {
-		    		JeboorkerPreferences.addGenericEntryAsNumber(showAgainKey, defaultValue);
+		    		preferenceStore.addGenericEntryAsNumber(showAgainKey, defaultValue);
 		    	} else {
-		    		JeboorkerPreferences.addGenericEntryAsNumber(showAgainKey, n);
+		    		preferenceStore.addGenericEntryAsNumber(showAgainKey, n);
 		    	}
 		    }
 			return n;
