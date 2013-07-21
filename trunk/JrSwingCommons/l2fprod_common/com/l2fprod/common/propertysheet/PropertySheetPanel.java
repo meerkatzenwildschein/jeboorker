@@ -43,12 +43,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 
-import org.rr.commons.swing.layout.HorizontalFlowLayout;
+import org.rr.commons.swing.layout.EqualsLayout;
 
 import com.l2fprod.common.swing.IconPool;
 import com.l2fprod.common.swing.LookAndFeelTweaks;
@@ -525,7 +526,8 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		LookAndFeelTweaks.setBorderLayout(this);
 		LookAndFeelTweaks.setBorder(this);
 
-		LayoutManager layout = new HorizontalFlowLayout(FlowLayout.LEADING, 2, 0);
+		LayoutManager layout = new EqualsLayout(SwingConstants.LEFT, 2);
+//		FlowLayout layout = new FlowLayout(FlowLayout.LEADING, 2, 0);
 		actionPanel = new JPanel(layout);
 		actionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 2, 0));
 		actionPanel.setOpaque(false);
