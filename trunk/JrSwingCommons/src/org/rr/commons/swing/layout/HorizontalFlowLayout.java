@@ -522,7 +522,7 @@ public class HorizontalFlowLayout implements LayoutManager, java.io.Serializable
                     cy = y + baselineOffset + maxAscent - ascent[i];
                 }
                 else {
-                    cy = y + (height - m.getHeight()) / 2;
+                    cy = y + (height - m.getHeight() != 0 ? m.getHeight() : height) / 2;
                 }
                 if (ltr) {
                     m.setLocation(x, cy);

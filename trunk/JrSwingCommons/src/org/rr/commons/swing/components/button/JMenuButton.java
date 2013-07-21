@@ -43,8 +43,12 @@ public class JMenuButton extends JButton {
 
 	private static final long serialVersionUID = -2990339964071073830L;
 
-	private ListModel listModel;
+	private ListModel<Action> listModel;
 
+	private int width = -1;
+	
+	private int height = -1;
+	
 	/**
 	 * Tracks if the mouse is inside the button or not.
 	 */
@@ -143,7 +147,7 @@ public class JMenuButton extends JButton {
 		JPopupMenu popup = new JMediumWeightPopupMenu();
 		popup.setLightWeightPopupEnabled(false);
 		
-		ListModel listModel = getListModel();
+		ListModel<Action> listModel = getListModel();
 		if(listModel!=null) {
 			int size = listModel.getSize();
 			for (int i = 0; i < size; i++) {
@@ -217,7 +221,6 @@ public class JMenuButton extends JButton {
 				arrowBounds.y, arrowBounds.y, arrowBounds.y + arrowBounds.height }, 3);
 
 		graphics.fillPolygon(poly);
-
 	}
 
 	/**
@@ -252,7 +255,16 @@ public class JMenuButton extends JButton {
 	 * @return The minimum width and height of the button
 	 */
 	public Dimension getPreferredSize() {
-		return adjustDimension(super.getPreferredSize(), true);
+		Dimension preferredSize = super.getPreferredSize();
+		preferredSize.width += getArrowBounds().width;
+		if(width >= 0) {
+			preferredSize.width = getWidth();
+		}
+		if(height >= 0) {
+			preferredSize.height = getHeight();
+		}
+		return preferredSize;
+//		return adjustDimension(super.getPreferredSize(), true);
 	}
 
 	/**
@@ -317,7 +329,7 @@ public class JMenuButton extends JButton {
 
 	}
 
-	public ListModel getListModel() {
+	public ListModel<Action> getListModel() {
 		return listModel;
 	}
 
@@ -325,7 +337,7 @@ public class JMenuButton extends JButton {
 	 * Model which provides the Action entries. 
 	 * @param listModel The model to be set.
 	 */
-	public void setListModel(final ListModel listModel) {
+	public void setListModel(final ListModel<Action> listModel) {
 		this.listModel = listModel;
 		
 		//disable the button if the model did not have any entries.
@@ -335,4 +347,20 @@ public class JMenuButton extends JButton {
 			setEnabled(true);
 		}
 	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int with) {
+		this.width = with;
+	}
+
+//	public int getHeight() {
+//		return height;
+//	}
+//
+//	public void setHeight(int height) {
+//		this.height = height;
+//	}
 }
