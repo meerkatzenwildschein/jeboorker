@@ -7,7 +7,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.swing.SwingUtils;
@@ -20,10 +19,10 @@ class ChangeLookAndFeelAction extends AbstractAction {
 
 	private static final long serialVersionUID = -6464113152395695332L;
 
-	private String laf;
+	private String lafName;
 	
 	ChangeLookAndFeelAction(String text) {
-		this.laf = text;
+		this.lafName = text;
 		putValue(Action.NAME, text);
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 	}
@@ -32,23 +31,22 @@ class ChangeLookAndFeelAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		final JFrame mainWindow = MainController.getController().getMainWindow();
 		try {
-			String lafClassName = Jeboorker.LOOK_AND_FEELS.get(laf);
+			SwingUtils.resetColors();
+			String lafClassName = Jeboorker.LOOK_AND_FEELS.get(lafName);
 			if(lafClassName != null) {
-				SwingUtils.resetColors();
-				UIManager.setLookAndFeel(lafClassName);
+				ActionUtils.setLookAndFeel(lafClassName);
 				SwingUtilities.updateComponentTreeUI(mainWindow);
 				mainWindow.pack();
 				PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
 					.addEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL, lafClassName);
 			} else {
-				LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + laf);
+				LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + lafName);
 			}
 		} catch (Exception ex) {
-			LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + laf, ex);
+			LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + lafName, ex);
 		} 
 		SwingUtilities.updateComponentTreeUI(mainWindow);
 		mainWindow.pack();
 	}
-	
 
 }
