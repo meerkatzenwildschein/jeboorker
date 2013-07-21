@@ -452,11 +452,12 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 */
 	private void completeLabelSetup(JTable table) {
 		if(!labelSetupComplete) {
+			java.awt.Font f = firstLineLabel.getFont();
+			firstLineLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
+			
 			final int oneLineHeight = 19;
 			final int lastLabelHeight = table.getRowHeight() - oneLineHeight - oneLineHeight;
 			
-			java.awt.Font f = firstLineLabel.getFont();
-			firstLineLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
 			firstLineLabel.setBorder(new EmptyBorder(0,0,0,0));
 			firstLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
 			

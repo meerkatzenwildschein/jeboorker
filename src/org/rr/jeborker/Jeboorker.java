@@ -12,8 +12,8 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +28,7 @@ import java.util.logging.Level;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.plaf.metal.OceanTheme;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
@@ -37,13 +38,51 @@ import org.rr.commons.utils.compression.rar.RarUtils;
 import org.rr.jeborker.app.JeboorkerLogger;
 import org.rr.jeborker.gui.MainController;
 
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.jgoodies.looks.plastic.theme.DesertGreen;
+import com.jgoodies.looks.plastic.theme.DesertRed;
+import com.jgoodies.looks.plastic.theme.DesertYellow;
+import com.jgoodies.looks.plastic.theme.ExperienceGreen;
+import com.jgoodies.looks.plastic.theme.ExperienceRoyale;
+import com.jgoodies.looks.plastic.theme.SkyBlue;
+import com.jgoodies.looks.plastic.theme.SkyGreen;
+import com.jgoodies.looks.plastic.theme.SkyKrupp;
+import com.jgoodies.looks.plastic.theme.SkyRed;
+import com.jgoodies.looks.plastic.theme.SkyYellow;
+
 public class Jeboorker {
 
 	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
 			60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
 			
-	public static final Map<String, String> LOOK_AND_FEELS = new HashMap<String, String>() {
+	public static final Map<String, String> LOOK_AND_FEELS = new LinkedHashMap<String, String>() {
 		{
+			put("Plastic3D;SkyBlue", Plastic3DLookAndFeel.class.getName() + ";" + SkyBlue.class.getName());
+			put("Plastic3D;SkyGreen", Plastic3DLookAndFeel.class.getName() + ";" + SkyGreen.class.getName());
+			put("Plastic3D;SkyKrupp", Plastic3DLookAndFeel.class.getName() + ";" + SkyKrupp.class.getName());
+			put("Plastic3D;SkyRed", Plastic3DLookAndFeel.class.getName() + ";" + SkyRed.class.getName());
+			put("Plastic3D;SkyYello", Plastic3DLookAndFeel.class.getName() + ";" + SkyYellow.class.getName());
+			put("Plastic3D;DesertGreen", Plastic3DLookAndFeel.class.getName() + ";" + DesertGreen.class.getName());
+			put("Plastic3D;DesertRed", Plastic3DLookAndFeel.class.getName() + ";" + DesertRed.class.getName());
+			put("Plastic3D;DesertYellow", Plastic3DLookAndFeel.class.getName() + ";" + DesertYellow.class.getName());
+			put("Plastic3D;Ocean", Plastic3DLookAndFeel.class.getName() + ";" + OceanTheme.class.getName());
+			put("Plastic3D;ExperienceGreen", Plastic3DLookAndFeel.class.getName() + ";" + ExperienceGreen.class.getName());
+			put("Plastic3D;ExperienceRoyale", Plastic3DLookAndFeel.class.getName() + ";" + ExperienceRoyale.class.getName());
+			
+			put("PlasticXP;SkyBlue", PlasticXPLookAndFeel.class.getName() + ";" + SkyBlue.class.getName());
+			put("PlasticXP;SkyGreen", PlasticXPLookAndFeel.class.getName() + ";" + SkyGreen.class.getName());
+			put("PlasticXP;SkyKrupp", PlasticXPLookAndFeel.class.getName() + ";" + SkyKrupp.class.getName());
+			put("PlasticXP;SkyRed", PlasticXPLookAndFeel.class.getName() + ";" + SkyRed.class.getName());
+			put("PlasticXP;SkyYello", PlasticXPLookAndFeel.class.getName() + ";" + SkyYellow.class.getName());
+			put("PlasticXP;DesertGreen", PlasticXPLookAndFeel.class.getName() + ";" + DesertGreen.class.getName());
+			put("PlasticXP;DesertRed", PlasticXPLookAndFeel.class.getName() + ";" + DesertRed.class.getName());
+			put("PlasticXP;DesertYellow", PlasticXPLookAndFeel.class.getName() + ";" + DesertYellow.class.getName());
+			put("PlasticXP;Ocean", PlasticXPLookAndFeel.class.getName() + ";" + OceanTheme.class.getName());
+			put("PlasticXP;ExperienceGreen", PlasticXPLookAndFeel.class.getName() + ";" + ExperienceGreen.class.getName());
+			put("PlasticXP;ExperienceRoyale", PlasticXPLookAndFeel.class.getName() + ";" + ExperienceRoyale.class.getName());
+			
 			final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 			for(LookAndFeelInfo laf : installedLookAndFeels) {
 				String className = laf.getClassName();

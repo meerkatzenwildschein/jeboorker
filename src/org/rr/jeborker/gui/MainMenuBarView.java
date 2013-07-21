@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui;
 
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import javax.swing.event.MenuListener;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -411,12 +413,23 @@ class MainMenuBarView extends JMenuBar {
 			String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
 			JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
 			lookAndFeelMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(lookAndFeelName));
-			String currentLaf = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
+			final String currentLaf = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
 					.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL);
-			ButtonGroup grp = new ButtonGroup();
+			final ButtonGroup grp = new ButtonGroup();
+			final HashMap<String, JMenu> subMenus = new HashMap<String, JMenu>();
 			for(String lafName : Jeboorker.LOOK_AND_FEELS.keySet()) {
+				JMenu parentMenu = lookAndFeelMenu;
+				String lafViewName = lafName;
+				if(lafName.contains(";")) {
+					List<String> split = ListUtils.split(lafName, ";");
+					parentMenu = subMenus.containsKey(split.get(0)) ? subMenus.get(split.get(0)) : new JMenu(split.get(0));
+					subMenus.put(split.get(0), parentMenu);
+					lookAndFeelMenu.add(parentMenu);
+					lafViewName = split.get(1);
+				}
 				ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.CHANGE_LOOK_AND_FEEL_ACTION, lafName);
 				JRadioButtonMenuItem radioMenuItem = new JRadioButtonMenuItem(action);
+				radioMenuItem.setText(lafViewName);
 				grp.add(radioMenuItem);
 				
 				if(Jeboorker.LOOK_AND_FEELS.get(lafName).equals(currentLaf)) {
@@ -424,7 +437,7 @@ class MainMenuBarView extends JMenuBar {
 				} else {
 					radioMenuItem.setSelected(false);
 				}
-				lookAndFeelMenu.add(radioMenuItem);
+				parentMenu.add(radioMenuItem);
 			}
 			extrasMenuBar.add(lookAndFeelMenu);
 		}

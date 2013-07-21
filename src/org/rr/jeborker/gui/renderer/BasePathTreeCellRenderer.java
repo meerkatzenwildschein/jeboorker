@@ -54,7 +54,9 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	private boolean isDropCell;
 	
 	private Icon eyesVisible;
+	
 	private Icon eyesInvisible;
+	
 	private Icon eyesTreeState;
 	
 	private Font labelNormalFont;
@@ -63,7 +65,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
-		setOpaque(true);
+		setOpaque(false);
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 		eyesTreeState = ImageResourceBundle.getResourceAsImageIcon("eyes_between_16.png");
@@ -207,6 +209,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	            isDropCell = true;
 	        } else if (selected) {
 				this.setBackground(SwingUtils.getSelectionBackgroundColor());
+				
 				this.setForeground(SwingUtils.getSelectionForegroundColor());
 				label.setForeground(SwingUtils.getSelectionForegroundColor());
 				isDropCell = false;

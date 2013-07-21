@@ -115,6 +115,7 @@ import org.rr.jeborker.gui.renderer.EbookTableCellEditor;
 import org.rr.jeborker.gui.renderer.EbookTableCellRenderer;
 import org.rr.jeborker.gui.renderer.FileSystemTreeCellEditor;
 import org.rr.jeborker.gui.renderer.FileSystemTreeCellRenderer;
+import org.rr.jeborker.gui.renderer.FilterFieldComboboxEditor;
 import org.rr.jeborker.gui.renderer.MultiListPropertyEditor;
 import org.rr.jeborker.gui.renderer.MultiListPropertyRenderer;
 import org.rr.jeborker.gui.renderer.StarRatingPropertyEditor;
@@ -564,7 +565,7 @@ class MainView extends JFrame {
 		filterField = new JComboBox<String>();
 		filterField.setModel(new DefaultComboBoxModel<String>());
 		filterField.setEditable(true);
-		filterField.setEditor(comboboxEditor = new BasicComboBoxEditor());
+		filterField.setEditor(comboboxEditor = new FilterFieldComboboxEditor());
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
 		((JComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());

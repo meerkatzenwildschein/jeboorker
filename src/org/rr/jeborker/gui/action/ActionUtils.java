@@ -7,11 +7,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.metal.MetalTheme;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.ReflectionFailureException;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -285,5 +292,35 @@ public class ActionUtils {
 			}
 		}
 		return importedResources;
-	}		
+	}	
+	
+	/**
+	 * Sets the given look and feel.
+	 * 
+	 * @param lafClassName The look and feel class name. Should also be a class name and a theme name which
+	 *   are separated by a ; char.
+	 * @throws ReflectionFailureException
+	 * @throws UnsupportedLookAndFeelException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public static void setLookAndFeel(String lafClassName) throws ReflectionFailureException, UnsupportedLookAndFeelException, ClassNotFoundException,
+			InstantiationException, IllegalAccessException {
+		if (lafClassName.indexOf(';') != -1) {
+			List<String> split = ListUtils.split(lafClassName, ";");
+			String className = split.get(0);
+			String themeClassName = split.get(1);
+			LookAndFeel lafInstance = (LookAndFeel) ReflectionUtils.getObjectInstance(className, null);
+			if (ReflectionUtils.containsMethod(className, "setCurrentTheme", new Class<?>[] { MetalTheme.class },
+					ReflectionUtils.VISIBILITY_VISIBLE_ACCESSIBLE_ONLY)) {
+				MetalTheme theme = (MetalTheme) ReflectionUtils.getObjectInstance(themeClassName, null);
+				ReflectionUtils.invokeMethod(lafInstance, "setCurrentTheme", theme);
+			}
+
+			UIManager.setLookAndFeel(lafInstance);
+		} else {
+			UIManager.setLookAndFeel(lafClassName);
+		}
+	}
 }
