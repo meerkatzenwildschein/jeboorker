@@ -105,7 +105,7 @@ public class PreferenceStoreFactory {
 							defaultValue = laf.getClassName();
 							break;
 						} else if(name.contains("windows")) {
-							defaultValue = laf.getClassName();
+							defaultValue = UIManager.getSystemLookAndFeelClassName();
 							break;
 						}
 					}		
