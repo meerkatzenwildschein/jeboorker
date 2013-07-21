@@ -277,6 +277,17 @@ public class ReflectionUtils implements Serializable {
 	/**
 	 * Tries to create an instance for the given class.
 	 * 
+	 * @param className The class name where a new Object instance should be created for.
+	 * @param initargs The constructor arguments 
+	 */
+	public static Object getObjectInstance(final String className, Object[] initargs) {
+		Class<?> classForName = getClassForName(className);
+		return getObjectInstance(classForName, initargs);
+	}
+	
+	/**
+	 * Tries to create an instance for the given class.
+	 * 
 	 * @param clazz The class where a new Object instance should be created for.
 	 * @param initargs The constructor arguments 
 	 * @return
@@ -332,14 +343,17 @@ public class ReflectionUtils implements Serializable {
 		return null;
 	}
 	
+	public static boolean containsMethod(final String className, final String name, final Class<?>[] initargs, final int visibility) {
+		Class<?> classForName = getClassForName(className);
+		return containsMethod(classForName, name, initargs, visibility);
+	}
+	
+	public static boolean containsMethod(final Class<?> clazz, final String name, final Class<?>[] initargs, final int visibility) {
+		return getMethod(clazz, name, initargs, visibility) != null;
+	}
+	
 	/**
 	 * Gets a Method from the given class and  
-	 * 
-	 * @param clazz
-	 * @param name
-	 * @param initargs
-	 * @param visibility
-	 * @return
 	 */
 	public static Method getMethod(final Class<?> clazz, final String name, final Class<?>[] initargs, final int visibility) {
 		Method result = null;
