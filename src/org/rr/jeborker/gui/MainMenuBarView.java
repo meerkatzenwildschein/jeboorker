@@ -23,6 +23,7 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.converter.ConverterFactory;
@@ -417,7 +418,7 @@ class MainMenuBarView extends JMenuBar {
 					.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL);
 			final ButtonGroup grp = new ButtonGroup();
 			final HashMap<String, JMenu> subMenus = new HashMap<String, JMenu>();
-			for(String lafName : Jeboorker.LOOK_AND_FEELS.keySet()) {
+			for(String lafName : JeboorkerConstants.LOOK_AND_FEELS.keySet()) {
 				JMenu parentMenu = lookAndFeelMenu;
 				String lafViewName = lafName;
 				if(lafName.contains(";")) {
@@ -432,7 +433,7 @@ class MainMenuBarView extends JMenuBar {
 				radioMenuItem.setText(lafViewName);
 				grp.add(radioMenuItem);
 				
-				if(Jeboorker.LOOK_AND_FEELS.get(lafName).equals(currentLaf)) {
+				if(JeboorkerConstants.LOOK_AND_FEELS.get(lafName).equals(currentLaf)) {
 					radioMenuItem.setSelected(true);
 				} else {
 					radioMenuItem.setSelected(false);
