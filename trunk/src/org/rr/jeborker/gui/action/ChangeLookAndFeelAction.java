@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 
@@ -32,7 +33,7 @@ class ChangeLookAndFeelAction extends AbstractAction {
 		final JFrame mainWindow = MainController.getController().getMainWindow();
 		try {
 			SwingUtils.resetColors();
-			String lafClassName = Jeboorker.LOOK_AND_FEELS.get(lafName);
+			String lafClassName = JeboorkerConstants.LOOK_AND_FEELS.get(lafName);
 			if(lafClassName != null) {
 				ActionUtils.setLookAndFeel(lafClassName);
 				SwingUtilities.updateComponentTreeUI(mainWindow);
