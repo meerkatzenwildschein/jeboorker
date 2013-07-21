@@ -1,4 +1,9 @@
 #labels Featured
+== v0.3.6 ==
+  * Look and Feel support
+  * The main table is now striped slightly
+  * Minor performance improvements
+  * Save button is no longer toggled without making a real change in the meta data.
 == v0.3.5 ==
   * Better suggestions for file renaming
   * Empty meta data reader for unsupported file formats. Any file format can be added with the preferences dialog.
