@@ -93,7 +93,10 @@ class SaveMetadataAction extends AbstractAction {
 				final Property metadataProperty = evt.getMetadataProperty();
 				boolean isEditable = metadataProperty instanceof DefaultProperty ? ((DefaultProperty) metadataProperty).isEditable() : true;
 				if(metadataProperty == null || !isEditable) {
-					if(evt.getSource() != null && evt.getSource().getClass().getName().equals(SetCoverFromDownload.class.getName())) {
+					if(evt.getSource() != null && evt.getSource().getClass().getName().equals(SetCoverFromDownload.class.getName())
+							|| evt.getSource().getClass().getName().equals(SetCoverFromClipboardAction.class.getName())
+							|| evt.getSource().getClass().getName().equals(SetCoverFromEbook.class.getName())
+							|| evt.getSource().getClass().getName().equals(SetCoverFromFileAction.class.getName()) ) {
 						action.setEnabled(true);
 					} else {
 						action.setEnabled(false);
