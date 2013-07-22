@@ -11,6 +11,7 @@ import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
@@ -92,7 +93,11 @@ class SaveMetadataAction extends AbstractAction {
 				final Property metadataProperty = evt.getMetadataProperty();
 				boolean isEditable = metadataProperty instanceof DefaultProperty ? ((DefaultProperty) metadataProperty).isEditable() : true;
 				if(metadataProperty == null || !isEditable) {
-					action.setEnabled(false);
+					if(evt.getSource() != null && evt.getSource().getClass().getName().equals(SetCoverFromDownload.class.getName())) {
+						action.setEnabled(true);
+					} else {
+						action.setEnabled(false);
+					}
 				} else {
 					action.setEnabled(true);
 				}
