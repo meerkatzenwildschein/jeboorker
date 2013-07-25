@@ -322,5 +322,6 @@ public class ActionUtils {
 		} else {
 			UIManager.setLookAndFeel(lafClassName);
 		}
+		MainController.getController().refreshUI();
 	}
 }

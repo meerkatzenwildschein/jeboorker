@@ -960,5 +960,14 @@ public class MainController {
 	public int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
 		return mainWindow.showMessageBox(message, title, option, showAgainKey, defaultValue);
 	}
+	
+	/**
+	 * Refresh some UI components. Should be invoked after changing the look and feel.
+	 */
+	public void refreshUI() {
+		if(mainWindow != null) {
+			mainWindow.refreshUI();
+		}
+	}
 }
 
