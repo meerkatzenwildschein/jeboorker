@@ -97,9 +97,9 @@ public class FileWatchService {
 	        		List<IResourceHandler> addedResources = new ArrayList<IResourceHandler>();
 		            for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
 		            	if(!FileRefreshBackground.isDisabled()) {
-			            	Path fullPath = ((Path)watchKey.watchable()).resolve((Path)watchEvent.context());
-			            	IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(fullPath.toFile());
-	            			List<EbookPropertyItem> ebookPropertyItemByResource = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
+			            	final Path fullPath = ((Path)watchKey.watchable()).resolve((Path)watchEvent.context());
+			            	final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(fullPath.toFile());
+	            			final List<EbookPropertyItem> ebookPropertyItemByResource = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
 	
 	            			if(ebookPropertyItemByResource.isEmpty() && watchEvent.kind() == ENTRY_CREATE) {
 	            				addedResources.add(resourceHandler);
@@ -145,30 +145,41 @@ public class FileWatchService {
 		private void transferDeleteAndRefresh(final List<EbookPropertyItem> ebooks) {
 			final MainController controller = MainController.getController();
 			for(final EbookPropertyItem item : ebooks) {
-				final IResourceHandler resourceHandler = item.getResourceHandler();
-				if(!resourceHandler.exists()) {
-					//remove
-					SwingUtilities.invokeLater(new Runnable() {
-						
-						@Override
-						public void run() {
-							boolean removed = controller.removeEbookPropertyItem(item);
-							controller.refreshFileSystemTreeEntry(item.getResourceHandler());
-							if(!removed) {
-								DefaultDBManager.getInstance().deleteObject(item);
+				//do not process items younger than 10 seconds since jeboorker has touched them.
+				if(isTimeLeft(item, 10000)) {
+					final IResourceHandler resourceHandler = item.getResourceHandler();
+					if(!resourceHandler.exists()) {
+						//remove
+						SwingUtilities.invokeLater(new Runnable() {
+							
+							@Override
+							public void run() {
+								boolean removed = controller.removeEbookPropertyItem(item);
+								controller.refreshFileSystemTreeEntry(item.getResourceHandler());
+								if(!removed) {
+									DefaultDBManager.getInstance().deleteObject(item);
+								}
+								LoggerFactory.getLogger().log(Level.INFO, "remove " + resourceHandler + " " + removed);
 							}
-							LoggerFactory.getLogger().log(Level.INFO, "remove " + resourceHandler + " " + removed);
-						}
-					});	
-				} else {
-					//refresh
-					EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceHandler, true);
-					DefaultDBManager.getInstance().updateObject(item);			
-					LoggerFactory.getLogger().log(Level.INFO, "refresh " + resourceHandler);
+						});	
+					} else {
+						//refresh
+						EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceHandler, true);
+						DefaultDBManager.getInstance().updateObject(item);			
+						LoggerFactory.getLogger().log(Level.INFO, "refresh " + resourceHandler);
+					}
+					
+					FileRefreshBackground.getInstance().addEbooks(ebooks);
 				}
-				
-				FileRefreshBackground.getInstance().addEbooks(ebooks);
 			}
+		}
+		
+		private boolean isTimeLeft(EbookPropertyItem item, long time) {
+			long timestamp = item.getTimestamp();
+			if(System.currentTimeMillis() - timestamp < time) {
+				return false;
+			}
+			return true;
 		}
 		
 	}

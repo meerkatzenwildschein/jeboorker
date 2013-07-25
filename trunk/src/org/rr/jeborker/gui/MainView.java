@@ -1200,10 +1200,7 @@ class MainView extends JFrame {
 		}
 	}
 
-	@Override
-	public void pack() {
-		super.pack();
-		
+	public void refreshUI() {
 		// don't know why but otherwise the renderer won't work after changing the look and feel  
 		if(!(mainTable.getDefaultRenderer(Object.class) instanceof EbookTableCellRenderer)) {
 			mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
