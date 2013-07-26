@@ -1178,14 +1178,14 @@ class MainView extends JFrame {
 	 * Tells the text filter field to display it self in and active filter color. 
 	 */
 	public void enableFilterColor(boolean enable) {
-		if(enable) {
-			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getSelectionBackgroundColor());
-			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getSelectionForegroundColor());
-			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor().brighter());
+		if (enable) {
+			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getSelectionBackgroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getSelectionForegroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor().brighter());
 		} else {
-			((JTextComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
-			((JTextComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
-			((JTextComponent)comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
 		}
 	}	
 	
