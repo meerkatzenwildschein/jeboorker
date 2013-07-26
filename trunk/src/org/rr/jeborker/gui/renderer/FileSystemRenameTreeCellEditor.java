@@ -24,6 +24,7 @@ import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.plaf.basic.BasicComboBoxUI;
@@ -42,12 +43,12 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	/** 
 	 * The Swing component being edited. 
 	 */
-	protected JComboBox<String> editorComponent;
+	protected final JComboBox<String> editorComponent;
 	
 	/**
 	 * The delegate class which handles all methods sent from the <code>CellEditor</code>.
 	 */
-	protected Delegate editorDelegate;
+	protected final Delegate editorDelegate;
 	
 	/**
 	 * An integer specifying the number of clicks needed to start editing. Even if <code>clickCountToStart</code> is defined as zero, it will not initiate
@@ -267,12 +268,18 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 			this.editor = editor;
 		}
 		
-	    /**
+	    @Override
+		public ComboBoxUI getUI() {
+			return super.getUI();
+		}
+
+		/**
 	     * Resets the UI property to a value from the current look and feel.
 	     *
 	     * @see JComponent#updateUI
 	     */
 	    public void updateUI() {
+	    	System.out.println("updateUI " + FileComboBoxEditorComponent.this.getModel().getSize() );
 	        setUI(new BasicComboBoxUI() {
 	        	@Override
 	            protected JButton createArrowButton() {
@@ -297,12 +304,11 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
         		public void setPopupVisible(JComboBox c, boolean visible) {
         		    // keeps the popup from coming down if there's nothing in the combo box
         			if(!visible) {
-        				super.setPopupVisible(c, visible);
+        				super.setPopupVisible(c, false);
         			} else if (FileComboBoxEditorComponent.this.getModel().getSize() > 0) {
         		    	super.setPopupVisible(c, visible);
         		    }
-        		}		        	
-	        	
+        		}	
 	        });
 
 	        ListCellRenderer<? super String> renderer = getRenderer();
@@ -380,7 +386,8 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 
 			@Override
 			public String getElementAt(int index) {
-				return createValues().get(index);
+				String value = createValues().get(index);
+				return value;
 			}
 			
 			/**

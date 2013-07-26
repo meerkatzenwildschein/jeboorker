@@ -106,6 +106,29 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	}
 	
 	/**
+	 * Get a fake cover property if there is a cover {@link MetadataProperty} present.
+	 * The fake property did not contains any cover data.
+	 * 
+	 * @return The desired property or <code>null</code> if no cover property exists. 
+	 */
+	public Property getCoverProperty() {
+		List<MetadataProperty> allMetadata = getAllMetaData();
+		for(MetadataProperty metadata : allMetadata) {
+			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(metadata.getName())) {
+				final DefaultProperty coverProperty = new DefaultProperty();
+				coverProperty.setDisplayName("cover");
+				coverProperty.setName(metadata.getName());
+				coverProperty.setEditable(true);
+				coverProperty.setDeletable(false);
+				coverProperty.setValue(null);
+				coverProperty.setShortDescription("cover");
+				return coverProperty;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * The rating property.
 	 * @return The desired rating property or <code>null</code> if no rating property is exists.
 	 */

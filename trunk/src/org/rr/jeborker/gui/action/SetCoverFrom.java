@@ -21,6 +21,8 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataProperty;
 
+import com.l2fprod.common.propertysheet.Property;
+
 abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyOnceAction<T> {
 
 	private static final long serialVersionUID = 4772310971481868593L;
@@ -99,7 +101,8 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 			if(isNewCoverProperty) {
 				ActionUtils.addMetadataItem(coverMetadataProperty, items.get(0));
 			} else {
-				EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(controller.getSelectedEbookPropertyItems(), null, this));
+				Property coverProperty = model.getCoverProperty();
+				EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(controller.getSelectedEbookPropertyItems(), coverProperty, this));
 			}
 			model.setChanged(true);
 		} else {
