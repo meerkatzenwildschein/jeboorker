@@ -227,9 +227,10 @@ public class ActionUtils {
 	
 	/**
 	 * Tells if this {@link AResourceHandler} instance file format is an image.
+	 * @param force Open the given {@link IResourceHandler} and read magic bytes if the ebook mime could not be detected.
 	 * @return <code>true</code> if the resource is an image or <code>false</code> otherwise.
 	 */
-	public static boolean isSupportedEbookFormat(IResourceHandler resource) {
+	public static boolean isSupportedEbookFormat(IResourceHandler resource, boolean force) {
 		if(resource.getFileExtension().equals("tmp")) {
 			//no tmp files. tmp files are used to save a changed ebook temporary.
 			return false;
@@ -243,7 +244,7 @@ public class ActionUtils {
 			return true;
 		}		
 		
-		final String mime = resource.getMimeType();
+		final String mime = resource.getMimeType(force);
 		if(mime == null || mime.length() == 0) {
 			return false;
 		}
@@ -266,7 +267,7 @@ public class ActionUtils {
 		ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
 		for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
 			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
-			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource) && !targetResource.exists()) {
+			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
 				boolean success = sourceResource.copyTo(targetResource, false);
 				if(success) {
 					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
@@ -282,7 +283,7 @@ public class ActionUtils {
 					}
 				}
 			} else {
-				if(!ActionUtils.isSupportedEbookFormat(sourceResource)) {
+				if(!ActionUtils.isSupportedEbookFormat(sourceResource, true)) {
 					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
 				} else if(sourceResource.exists()){
 					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");	                				

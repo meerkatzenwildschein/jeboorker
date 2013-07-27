@@ -97,7 +97,7 @@ public class EbookPropertyItemUtils {
 		item.setCreatedAt(new Date());
 		item.setFile(resource.getResourceString());
 		item.setBasePath(topLevelBaseFolder.getResourceString());
-		item.setMimeType(resource.getMimeType());
+		item.setMimeType(resource.getMimeType(false));
 		item.setTimestamp(resource.getModifiedAt().getTime());
 		refreshEbookPropertyItem(item, resource, true);
 		

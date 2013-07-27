@@ -128,7 +128,7 @@ class AddBasePathAction extends AbstractAction {
 			
 			@Override
 			public boolean accept(IResourceHandler resource) {
-				if(resource.isFileResource() && ActionUtils.isSupportedEbookFormat(resource)) {
+				if(resource.isFileResource() && ActionUtils.isSupportedEbookFormat(resource, true)) {
 					try {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
 						ActionUtils.addEbookPropertyItem(item);

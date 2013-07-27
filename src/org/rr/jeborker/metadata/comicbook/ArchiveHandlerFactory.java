@@ -8,7 +8,7 @@ import org.rr.commons.mufs.IResourceHandler;
 public class ArchiveHandlerFactory {
 
 	public static IArchiveHandler getHandler(IResourceHandler resource) {
-		String mimeType = resource.getMimeType();
+		String mimeType = resource.getMimeType(true);
 		if(MIME_CBZ.getMime().equals(mimeType)) {
 			return new CBZArchiveHandler(resource);
 		} else if(MIME_CBR.getMime().equals(mimeType)) {

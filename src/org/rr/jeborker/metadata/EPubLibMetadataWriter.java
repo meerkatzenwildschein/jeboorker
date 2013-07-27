@@ -196,7 +196,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	
 	private void createNewCover(final Book epub, final byte[] cover) throws IOException {
 		final IResourceHandler imageResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("DummyImageCoverName", cover);
-		final String mimeType = imageResourceLoader.getMimeType();
+		final String mimeType = imageResourceLoader.getMimeType(true);
 		final String fileExtension = mimeType.substring(mimeType.indexOf('/') + 1);
 		final Resource newCoverImage = new Resource(cover, new MediaType(mimeType, "." + mimeType.substring(mimeType.indexOf('/') + 1) ));
 		

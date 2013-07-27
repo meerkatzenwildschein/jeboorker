@@ -130,7 +130,7 @@ public class FileWatchService {
 			for (IResourceHandler resource : addedResources) {
 				if(EbookPropertyItemUtils.getEbookPropertyItemByResource(resource).isEmpty()) {
 					IResourceHandler basePathForFile = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath().getBasePathForFile(resource);
-					if( basePathForFile != null && resource.exists() && ActionUtils.isSupportedEbookFormat(resource) ) {
+					if( basePathForFile != null && resource.exists() && ActionUtils.isSupportedEbookFormat(resource, true) ) {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, basePathForFile);
 						DefaultDBManager.setDefaultDBThreadInstance();
 						DefaultDBManager.getInstance().storeObject(item);		
