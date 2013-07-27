@@ -111,7 +111,7 @@ class RefreshBasePathAction extends AbstractAction {
 			
 			@Override
 			public boolean accept(IResourceHandler resourceLoader) {
-				if(resourceLoader.isFileResource() && ActionUtils.isSupportedEbookFormat(resourceLoader)) {
+				if(resourceLoader.isFileResource() && ActionUtils.isSupportedEbookFormat(resourceLoader, true)) {
 					try {
 						List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceLoader);
 						if(!ebookPropertyItems.isEmpty()) {

@@ -2,7 +2,6 @@ package org.rr.jeborker.gui.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -126,14 +125,13 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 			try {
 				final ArrayList<IResourceHandler> subFolder = new ArrayList<IResourceHandler>();
 				final ArrayList<IResourceHandler> subFiles = new ArrayList<IResourceHandler>();
-				
 				pathResource.listResources(new ResourceNameFilter() {
 					
 					@Override
 					public boolean accept(IResourceHandler resource) {
 						if(!resource.isHidden()) {
 							if(resource.isFileResource()) {
-								if(showFiles && ActionUtils.isSupportedEbookFormat(resource)) {
+								if(showFiles && ActionUtils.isSupportedEbookFormat(resource, false)) {
 									subFiles.add(resource);
 								}
 							} else {

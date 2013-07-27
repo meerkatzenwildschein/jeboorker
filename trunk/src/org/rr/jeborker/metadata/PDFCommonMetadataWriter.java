@@ -124,7 +124,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		}
 		final XMPSchemaBasic xmpSchema = (XMPSchemaBasic) getXMPSchema("xap", xmp);
 		final IResourceHandler coverResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("PDFMetadataWriterSetCover", coverData);
-		final String coverMimeType = coverResourceLoader.getMimeType();
+		final String coverMimeType = coverResourceLoader.getMimeType(true);
 
 		Thumbnail thumbnail = xmpSchema.getThumbnail();
 		if(thumbnail == null) {

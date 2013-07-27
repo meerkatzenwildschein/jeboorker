@@ -68,7 +68,7 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 							byte[] encodeJpeg = IOUtils.toByteArray((InputStream) transferData);
 							image = new ByteArrayInputStream(encodeJpeg);
 							IResourceHandler imageDataResourceHandler = ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg);
-							if(imageDataResourceHandler.getMimeType().equals("image/jpeg")) {
+							if(imageDataResourceHandler.getMimeType(true).equals("image/jpeg")) {
 								setDialogOption(JFileChooser.APPROVE_OPTION);
 								setDialogResult(imageDataResourceHandler);		
 								ex = null;

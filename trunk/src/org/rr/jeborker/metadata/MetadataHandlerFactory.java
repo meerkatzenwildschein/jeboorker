@@ -46,16 +46,16 @@ public class MetadataHandlerFactory {
 			return cachedReader;
 		}
 		
-		final String mimeType = resource.getMimeType();
+		final String mimeType = resource.getMimeType(true);
 		if (mimeType != null) {
 			latestReader = null;
-			if(resource.getMimeType().equals(MIME_EPUB.getMime())) {
+			if(resource.getMimeType(true).equals(MIME_EPUB.getMime())) {
 				return latestReader = new EPubLibMetadataReader(resource);
-			} else if(resource.getMimeType().equals(MIME_PDF.getMime())) {
+			} else if(resource.getMimeType(true).equals(MIME_PDF.getMime())) {
 				return latestReader = new PDFCommonMetadataReader(resource);
-			} else if(resource.getMimeType().equals(MIME_CBZ.getMime()) || resource.getMimeType().equals(MIME_CBR.getMime())) {
+			} else if(resource.getMimeType(true).equals(MIME_CBZ.getMime()) || resource.getMimeType(true).equals(MIME_CBR.getMime())) {
 				return latestReader = new ComicBookMetadataReader(resource);
-			} else if(resource.getMimeType().equals(MIME_HTML.getMime())) {
+			} else if(resource.getMimeType(true).equals(MIME_HTML.getMime())) {
 				return latestReader = new HTMLMetadataReader(resource);
 			}  
 		}
@@ -83,13 +83,13 @@ public class MetadataHandlerFactory {
 	 * 	for the given {@link IResourceHandler}.
 	 */
 	public static IMetadataWriter getWriter(final IResourceHandler resource) {
-		final String mimeType = resource.getMimeType();
+		final String mimeType = resource.getMimeType(true);
 		if(mimeType!=null) {
-			if(resource.getMimeType().equals(MIME_EPUB.getMime())) {
+			if(resource.getMimeType(true).equals(MIME_EPUB.getMime())) {
 				return wrap(new EPubLibMetadataWriter(resource));
-			} else if(resource.getMimeType().equals(MIME_PDF.getMime())) {
+			} else if(resource.getMimeType(true).equals(MIME_PDF.getMime())) {
 				return wrap(new PDFCommonMetadataWriter(resource));
-			} else if(resource.getMimeType().equals(MIME_CBZ.getMime()) || resource.getMimeType().equals(MIME_CBR.getMime())) {
+			} else if(resource.getMimeType(true).equals(MIME_CBZ.getMime()) || resource.getMimeType(true).equals(MIME_CBR.getMime())) {
 				return wrap(new ComicBookMetadataWriter(resource));
 			}
 		}
@@ -115,11 +115,11 @@ public class MetadataHandlerFactory {
 	 * @return <code>true</code> if writer support is available and <code>false</code> otherwise.
 	 */
 	public static boolean hasCoverWriterSupport(final IResourceHandler resourceHandler) {
-		final String mimeType = resourceHandler.getMimeType();
+		final String mimeType = resourceHandler.getMimeType(true);
 		if(mimeType != null) {
-			if(resourceHandler.getMimeType().equals(MIME_EPUB.getMime())) {
+			if(resourceHandler.getMimeType(true).equals(MIME_EPUB.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_PDF.getMime())) {
+			} else if(resourceHandler.getMimeType(true).equals(MIME_PDF.getMime())) {
 				return true;
 			}
 		}	
@@ -132,15 +132,15 @@ public class MetadataHandlerFactory {
 	 * @return <code>true</code> if writer support is available and <code>false</code> otherwise.
 	 */
 	public static boolean hasPlainMetadataSupport(final IResourceHandler resourceHandler) {
-		final String mimeType = resourceHandler.getMimeType();
+		final String mimeType = resourceHandler.getMimeType(true);
 		if(mimeType!=null) {
-			if(resourceHandler.getMimeType().equals(MIME_EPUB.getMime())) {
+			if(resourceHandler.getMimeType(true).equals(MIME_EPUB.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_PDF.getMime())) {
+			} else if(resourceHandler.getMimeType(true).equals(MIME_PDF.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_CBZ.getMime()) || resourceHandler.getMimeType().equals(MIME_CBR.getMime())) {
+			} else if(resourceHandler.getMimeType(true).equals(MIME_CBZ.getMime()) || resourceHandler.getMimeType(true).equals(MIME_CBR.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType().equals(MIME_HTML.getMime())) {
+			} else if(resourceHandler.getMimeType(true).equals(MIME_HTML.getMime())) {
 				return true;
 			}
 		}	
