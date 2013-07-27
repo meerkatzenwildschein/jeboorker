@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.rr.commons.utils.MathUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
 
@@ -295,6 +296,24 @@ public class SwingUtils {
 	 */
 	public static String removeMnemonicMarker(String text) {
 		return StringUtils.replace(text, "&", "", 0, 1, UtilConstants.COMPARE_BINARY);
+	}
+	
+	/**
+	 * Get the surrounding component of the given type.
+	 * @param comp The component child of the component to search
+	 * @param type The parent component class. 
+	 * @return The desired component or <code>null</code> if no component could be found.
+	 */
+	public static Component getSurroundingComponent(Component comp, Class<? extends Component> type) {
+    	Component fScrollPane = null;
+    	while(comp != null) {
+    		comp = comp.getParent();
+    		if(comp != null && ReflectionUtils.isAssignable(type, comp.getClass())) {
+    			fScrollPane = comp;
+    			break;
+    		}
+    	}
+		return fScrollPane;
 	}
 	
 	/**
