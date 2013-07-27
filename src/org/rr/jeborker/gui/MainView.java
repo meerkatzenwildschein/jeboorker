@@ -751,6 +751,7 @@ class MainView extends JFrame {
 		buttonPanel.add(collapseButton);		
 		
 		fileSystemTree = new JRTree();
+		fileSystemTree.setShowsRootHandles(true);
 		fileSystemTree.setName(fileSystemTreeName);
 		if(Jeboorker.isRuntime) {
 			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
@@ -948,6 +949,7 @@ class MainView extends JFrame {
 		buttonPanel.add(collapseButton);
 		
 		basePathTree = new JRTree();
+		basePathTree.setShowsRootHandles(true);
 		basePathTree.setName(basePathTreeName);
 		if(Jeboorker.isRuntime) {
 			basePathTree.setModel(new BasePathTreeModel());
