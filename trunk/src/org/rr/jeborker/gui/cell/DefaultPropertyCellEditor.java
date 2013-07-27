@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.rr.jeborker.gui.renderer;
+package org.rr.jeborker.gui.cell;
 
 import java.util.List;
 
