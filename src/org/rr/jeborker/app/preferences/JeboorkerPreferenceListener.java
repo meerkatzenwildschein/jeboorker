@@ -1,4 +1,4 @@
-package org.rr.jeborker.app;
+package org.rr.jeborker.app.preferences;
 
 import java.util.EventListener;
 
