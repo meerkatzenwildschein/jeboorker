@@ -86,6 +86,18 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 			}
 		};
 
+		editor.addCellEditorListener(new CellEditorListener() {
+			
+			@Override
+			public void editingStopped(ChangeEvent e) {
+				//otherwise the tree have not the focus after edit
+				tree.requestFocus();
+			}
+			
+			@Override
+			public void editingCanceled(ChangeEvent e) {
+			}
+		});
 		return editor;
 	}
 }
