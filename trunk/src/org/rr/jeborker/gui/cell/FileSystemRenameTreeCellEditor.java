@@ -32,6 +32,7 @@ import org.rr.commons.swing.components.resources.ImageResourceBundle;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
+import org.rr.jeborker.gui.MainController;
 
 
 public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
@@ -56,7 +57,9 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		
 		private static final long serialVersionUID = -7161990723874074407L;
 		
-		Action internalAction = null;
+		private Action internalAction = null;
+		
+		private Component focusOwner;
 
 		/**
 		 * Creates a new instance of a wrapper action
@@ -160,6 +163,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 			
 			@Override
 			public void actionPerformed(ActionEvent ev) {
+				final Component focusOwner = SwingUtils.getSurroundingComponent(editorComponent, JTree.class);
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 				
 				JPopupMenu popup = new JMediumWeightPopupMenu();
@@ -173,6 +177,9 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 						public void actionPerformed(ActionEvent e) {
 							textField.setText(offer);
 							stopCellEditing();
+							if(focusOwner != null) {
+								focusOwner.requestFocus();
+							}
 						}
 					};		
 					action.putValue(Action.NAME, offer);
