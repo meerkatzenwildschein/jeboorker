@@ -230,9 +230,10 @@ public interface IResourceHandler extends Comparable<IResourceHandler> {
 	
 	/**
 	 * Gets the file format of the resource handled by this {@link IResourceHandler} instance.
+	 * @param force <code>true</code> for taking a look to the magic bytes of the file to detect the file name if necessary.
 	 * @return The file format.
 	 */
-	public String getMimeType();
+	public String getMimeType(boolean force);
 	
 	/**
 	 * Tries to determine the byte size of the resource. 

@@ -69,7 +69,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	 * The file format will firstly be determined by the resource extension and afterwards by it's content.
 	 */
 	@Override
-	public String getMimeType() {
+	public String getMimeType(boolean force) {
 		if (this.mime != null) {
 			if(!this.mime.isEmpty()) {
 				return this.mime;
@@ -85,19 +85,19 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			return mimeFromFileName;
 		}
 		
-		try {
-			//this is a simple but pretty good working method which detects jpeg 
-			//data which mime-util not did.
-			final String guessedMime = ResourceHandlerUtils.guessFormat(this);
-			if (guessedMime != null) {
-				return this.mime = guessedMime;
-			}
-		} catch(FileNotFoundException e) { 
-			LoggerFactory.logInfo(this, "File not found " + this, e);
-			return null; //No file, no reason to continue.
-		} catch (IOException e1) {
-			return null; //IO is not good. No reason to continue.
-		}		
+		if(force) {
+			try {
+				final String guessedMime = ResourceHandlerUtils.guessFormat(this);
+				if (guessedMime != null) {
+					return this.mime = guessedMime;
+				}
+			} catch(FileNotFoundException e) { 
+				LoggerFactory.logInfo(this, "File not found " + this, e);
+				return null; //No file, no reason to continue.
+			} catch (IOException e1) {
+				return null; //IO is not good. No reason to continue.
+			}	
+		}
 		
 		return null;
 	}
@@ -119,7 +119,6 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Tells if this {@link AResourceHandler} instance file format is an image.
@@ -127,7 +126,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	 */
 	@Override
 	public boolean isImageFormat() {
-		return getMimeType()!=null && getMimeType().startsWith("image/");
+		return getMimeType(true) != null && getMimeType(true).startsWith("image/");
 	}
 	
 	/**
@@ -149,7 +148,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			//test if the file ends with a default file extension. If the
 			//format and the extension did not match, the string behind the dot
 			//belong to the file name.
-			final String mime = this.getMimeType();
+			final String mime = this.getMimeType(false);
 			if (mime != null && mime.length() > 0 && mime.indexOf('/') != -1) {
 				final String mimeFormatPart =  mime.substring(mime.indexOf('/')+1);
 				if(mimeFormatPart.equals("jpg") || mimeFormatPart.equals("jpeg")) {
