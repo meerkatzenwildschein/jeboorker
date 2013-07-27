@@ -48,12 +48,6 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	private LRUCacheMap<String, List<String>> latestFileNameOffers = new LRUCacheMap<String, List<String>>(3);
 	
 	/**
-	 * An integer specifying the number of clicks needed to start editing. Even if <code>clickCountToStart</code> is defined as zero, it will not initiate
-	 * until a click occurs.
-	 */
-	protected int clickCountToStart = 1;
-	
-	/**
 	 * A wrapper for the actions to be displayed when the pop-up is drawn.
 	 */
 	protected class ActionOptionWrapper extends AbstractAction {
@@ -174,26 +168,6 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	}
 
 	/**
-	 * Specifies the number of clicks needed to start editing.
-	 * 
-	 * @param count
-	 *            an int specifying the number of clicks needed to start editing
-	 * @see #getClickCountToStart
-	 */
-	public void setClickCountToStart(int count) {
-		clickCountToStart = count;
-	}
-
-	/**
-	 * Returns the number of clicks needed to start editing.
-	 * 
-	 * @return the number of clicks needed to start editing
-	 */
-	public int getClickCountToStart() {
-		return clickCountToStart;
-	}
-
-	/**
 	 * Get the current cell editor value. 
 	 */
 	public Object getCellEditorValue() {
@@ -211,10 +185,10 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	 * @see #shouldSelectCell
 	 */
 	public boolean isCellEditable(EventObject anEvent) {
-		if (anEvent instanceof MouseEvent) {
-			return ((MouseEvent) anEvent).getClickCount() >= clickCountToStart;
+		if (anEvent == null || anEvent instanceof KeyEvent) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	/**
