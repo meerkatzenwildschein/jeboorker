@@ -1,7 +1,6 @@
 package org.rr.jeborker.gui.renderer;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.util.EventObject;
 
 import javax.swing.JTree;
@@ -80,7 +79,7 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 	 * @return a new <code>TextField</code> editor
 	 */
 	protected TreeCellEditor createTreeCellEditor() {
-		FileSystemRenameTreeCellEditor editor = new FileSystemRenameTreeCellEditor(this) {
+		FileSystemRenameTreeCellEditor editor = new FileSystemRenameTreeCellEditor() {
 			public boolean shouldSelectCell(EventObject event) {
 				boolean retValue = super.shouldSelectCell(event);
 				return retValue;
@@ -91,16 +90,4 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 		editor.setClickCountToStart(1);
 		return editor;
 	}
-	
-    /**
-     * Get the PreferredSize from the renderer component
-     */
-    public Dimension getRendererPreferredSize() {
-        if(renderer != null) {
-            Dimension rSize = renderer.getPreferredSize();
-            return rSize;
-        }
-        return editingComponent.getPreferredSize();
-    }	
-
 }
