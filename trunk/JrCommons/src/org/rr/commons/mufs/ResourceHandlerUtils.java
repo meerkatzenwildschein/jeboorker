@@ -193,8 +193,8 @@ public class ResourceHandlerUtils {
 				}
 				break;
 			case SORT_BY_TYPE:
-				s1 = String.valueOf(source.getMimeType());
-				s2 = String.valueOf(target.getMimeType());
+				s1 = String.valueOf(source.getMimeType(true));
+				s2 = String.valueOf(target.getMimeType(true));
 				break;
 		}
 
@@ -574,7 +574,7 @@ public class ResourceHandlerUtils {
 			return fileExtension;
 		}
 		
-		String mimeType = resourceHandler.getMimeType();
+		String mimeType = resourceHandler.getMimeType(true);
 		if(mimeType != null && !mimeType.isEmpty() &&! mimeType.startsWith("application")) {
 			String extension = mimeType.substring(mimeType.indexOf('/') + 1);
 			if(extension.equals("jpeg")) {
