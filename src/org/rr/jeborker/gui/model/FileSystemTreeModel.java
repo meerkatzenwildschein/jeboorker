@@ -132,7 +132,9 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		}
 		
 		for(FileSystemNode fsNode : nodesToRemove) {
-			removeNodeFromParent(fsNode);
+			if(fsNode.getParent().getIndex(fsNode) != -1) {
+				removeNodeFromParent(fsNode);
+			}
 		}
 	}
 	

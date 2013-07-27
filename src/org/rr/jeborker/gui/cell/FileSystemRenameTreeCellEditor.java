@@ -188,7 +188,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		if (anEvent == null || anEvent instanceof KeyEvent) {
 			return true;
 		}
-		return false;
+		return true;
 	}
 	
 	/**

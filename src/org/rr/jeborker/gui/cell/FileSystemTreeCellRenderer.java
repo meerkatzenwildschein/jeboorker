@@ -30,6 +30,8 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 				setIcon(ImageResourceBundle.FILE_16_ICON);
 			}
 		}
+		
 		return this;
 	}
+	
 }
