@@ -61,7 +61,7 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 
 	@Override
 	public boolean isCellEditable(EventObject event) {
-		if(tree != null) {
+		if(tree != null && realEditor.isCellEditable(event)) {
 			TreePath selectionPath = tree.getSelectionPath();
 			if(selectionPath != null) {
 				TreeNode node = (TreeNode) selectionPath.getLastPathComponent();
@@ -86,8 +86,6 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 			}
 		};
 
-		// One click to edit.
-		editor.setClickCountToStart(1);
 		return editor;
 	}
 }

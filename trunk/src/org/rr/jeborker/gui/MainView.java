@@ -57,7 +57,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
@@ -68,6 +67,7 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -753,6 +753,7 @@ class MainView extends JFrame {
 		fileSystemTree = new JRTree();
 		fileSystemTree.setShowsRootHandles(true);
 		fileSystemTree.setName(fileSystemTreeName);
+		fileSystemTree.setSelectionModel(new DefaultTreeSelectionModel());
 		if(Jeboorker.isRuntime) {
 			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
 			fileSystemTree.setModel(fileSystemTreeModel);
@@ -784,7 +785,6 @@ class MainView extends JFrame {
 		JRScrollPane treeScroller = new JRScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
-		treeScroller.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 		GridBagConstraints gbc_treeScroller = new GridBagConstraints();
 		gbc_treeScroller.fill = GridBagConstraints.BOTH;
 		gbc_treeScroller.anchor = GridBagConstraints.NORTHWEST;
