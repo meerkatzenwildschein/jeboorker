@@ -14,7 +14,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileWatchService;
-import org.rr.jeborker.app.JeboorkerPreferenceListener;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS;
 import org.rr.jeborker.gui.MainMenuBarController;
 
