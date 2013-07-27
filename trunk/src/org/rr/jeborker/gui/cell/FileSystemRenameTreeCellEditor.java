@@ -32,8 +32,6 @@ import org.rr.commons.swing.components.resources.ImageResourceBundle;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
-import org.rr.jeborker.gui.MainController;
-
 
 public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
@@ -59,8 +57,6 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		
 		private Action internalAction = null;
 		
-		private Component focusOwner;
-
 		/**
 		 * Creates a new instance of a wrapper action
 		 * 
