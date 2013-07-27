@@ -60,7 +60,7 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	}
 
 	@Override
-	public int getIndex(TreeNode node) {
+	public int getIndex(TreeNode node) {//TODO optimize
 		final List<IResourceHandler> childResources = getChildResources();
 		for(int i = 0; i < childResources.size(); i++) {
 			IResourceHandler resource = childResources.get(i);
@@ -141,7 +141,10 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 						return false;
 					}
 				});
-				subFolders = new CompoundList<IResourceHandler>(subFolder, subFiles);
+				subFolders = new ArrayList<IResourceHandler>();
+				subFolders.addAll(subFolder);
+				subFolders.addAll(subFiles);
+//				subFolders = new CompoundList<IResourceHandler>(subFolder, subFiles);
 			} catch (IOException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to list " + pathResource, e);
 				subFolders = new ArrayList<IResourceHandler>(0);
