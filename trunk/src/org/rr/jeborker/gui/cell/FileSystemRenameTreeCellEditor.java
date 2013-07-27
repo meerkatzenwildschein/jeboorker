@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.text.NavigationFilter;
+import javax.swing.text.Position;
 import javax.swing.tree.TreeCellEditor;
 
 import org.apache.commons.io.FilenameUtils;
@@ -50,7 +52,8 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	/**
 	 * A wrapper for the actions to be displayed when the pop-up is drawn.
 	 */
-	protected class ActionOptionWrapper extends AbstractAction {
+	private class ActionOptionWrapper extends AbstractAction {
+		
 		private static final long serialVersionUID = -7161990723874074407L;
 		
 		Action internalAction = null;
@@ -77,8 +80,32 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		public void actionPerformed(ActionEvent actionEvent) {
 			internalAction.actionPerformed(actionEvent);
 		}
-
 	}	
+	
+	/**
+	 * NavigationFilter for the text field that did not allow to navigate behind the 
+	 * file extension.
+	 */
+	private class RenameFieldNavigationFilter extends NavigationFilter {
+		
+		public void setDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias) {
+			int dotIdx = textField.getText().lastIndexOf('.');
+			if (dotIdx >= 0 && dot >= dotIdx) {
+				fb.setDot(dotIdx, bias);
+			} else {
+				fb.setDot(dot, bias);
+			}
+		}
+
+		public void moveDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias) {
+			int dotIdx = textField.getText().lastIndexOf('.');
+			if (dotIdx >= 0 && dot >= dotIdx) {
+				fb.moveDot(dotIdx, bias);
+			} else {
+				fb.moveDot(dot, bias);
+			}
+		}
+	}
 	
 	/**
 	 * Constructs a <code>DefaultCellEditor</code> object that uses a combo box.
@@ -107,6 +134,9 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 			}
         	
         };
+        
+		textField.setNavigationFilter(new RenameFieldNavigationFilter());
+
         textField.setBorder(null);
         textField.addKeyListener(new KeyAdapter() {
 
