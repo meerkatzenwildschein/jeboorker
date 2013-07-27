@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import org.rr.commons.collection.CompoundList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceNameFilter;
@@ -28,6 +29,8 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	private TreeNode parent;
 	
 	private boolean showFiles = true;
+	
+	private Boolean isLeaf;
 	
 	FileSystemNode(IResourceHandler pathResource, TreeNode parent) {
 		this.pathResource = pathResource;
@@ -76,7 +79,10 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 
 	@Override
 	public boolean isLeaf() {
-		return this.pathResource.isFileResource();
+		if(isLeaf == null) {
+			isLeaf = Boolean.valueOf(this.pathResource.isFileResource());
+		}
+		return isLeaf.booleanValue();
 	}
 
 	private List<FileSystemNode> createChildren() {
@@ -118,22 +124,26 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	private List<IResourceHandler> getChildResources() {
 		if(subFolders == null) {
 			try {
-				IResourceHandler[] listDirectoryResources = pathResource.listDirectoryResources(false);
-				subFolders = new ArrayList<IResourceHandler>(Arrays.asList(listDirectoryResources));
+				final ArrayList<IResourceHandler> subFolder = new ArrayList<IResourceHandler>();
+				final ArrayList<IResourceHandler> subFiles = new ArrayList<IResourceHandler>();
 				
-				if(showFiles) {
-					IResourceHandler[] listFileResources = pathResource.listResources(new ResourceNameFilter() {
-						
-						@Override
-						public boolean accept(IResourceHandler resource) {
-							if(ActionUtils.isSupportedEbookFormat(resource) && !resource.isHidden()) {
-								return true;
+				pathResource.listResources(new ResourceNameFilter() {
+					
+					@Override
+					public boolean accept(IResourceHandler resource) {
+						if(!resource.isHidden()) {
+							if(resource.isFileResource()) {
+								if(showFiles && ActionUtils.isSupportedEbookFormat(resource)) {
+									subFiles.add(resource);
+								}
+							} else {
+								subFolder.add(resource);
 							}
-							return false;
 						}
-					});
-					subFolders.addAll(Arrays.asList(listFileResources));
-				}
+						return false;
+					}
+				});
+				subFolders = new CompoundList<IResourceHandler>(subFolder, subFiles);
 			} catch (IOException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to list " + pathResource, e);
 				subFolders = new ArrayList<IResourceHandler>(0);
