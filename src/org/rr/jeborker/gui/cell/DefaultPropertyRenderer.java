@@ -1,4 +1,4 @@
-package org.rr.jeborker.gui.renderer;
+package org.rr.jeborker.gui.cell;
 
 import java.awt.Component;
 
