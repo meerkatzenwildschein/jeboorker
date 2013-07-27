@@ -15,7 +15,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.TreeUI;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.MathUtils;
@@ -33,31 +32,6 @@ public class JRTree extends JTree {
 
 		this.addMouseListener(new ToggleExpandOnDoubleClickMouseListener());
 		this.getSelectionModel().addTreeSelectionListener(new RepaintChangeListener());
-		this.addMouseListener(new MouseAdapter() {
-			// fixes that the renderer did not fill the tree horizontally and
-			// on clicks behind the renderer the selection did not change.
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Point point = e.getPoint();
-				int row = JRTree.this.getRowForLocation(0, point.y);
-				for (int i = 0; row < 0 && i < JRTree.this.getWidth(); i += 10) {
-					row = JRTree.this.getRowForLocation(i, point.y);
-				}
-				if (getSelectionModel().getSelectionMode() == TreeSelectionModel.SINGLE_TREE_SELECTION
-						|| !(e.isAltDown() || e.isControlDown() || e.isShiftDown())) {
-					int[] selectedRows = JRTree.this.getSelectionRows();
-					if (selectedRows != null && selectedRows.length > 0 && row != selectedRows[0]) {
-						JRTree.this.setSelectionRow(row);
-						if(JRTree.this.isEditable()) {
-							TreePath path = JRTree.this.getPathForRow(row);
-							JRTree.this.startEditingAtPath(path);
-						}
-					}
-				}
-			}
-
-		});
 		
 		final AutoMoveHorizontalMouseListener autoMoveHorizontalMouseListener = new AutoMoveHorizontalMouseListener();
 		this.addMouseMotionListener(autoMoveHorizontalMouseListener);
@@ -281,5 +255,21 @@ public class JRTree extends JTree {
         }
         return -1;
     }	
+    
+    /**
+     * Selects the node identified by the specified path and initiates
+     * editing.  The edit-attempt fails if the <code>CellEditor</code>
+     * does not allow editing for the specified item.
+     *
+     * FIX for some UI which did not ask if cell is editable 
+     * 
+     * @param path  the <code>TreePath</code> identifying a node
+     */
+    public void startEditingAtPath(TreePath path) {
+        TreeUI                  tree = getUI();
+
+        if(tree != null)
+            tree.startEditingAtPath(this, path);
+    }    
 
 }
