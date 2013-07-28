@@ -4,13 +4,19 @@ package org.rr.commons.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -255,6 +261,20 @@ public class SwingUtils {
 		stripeBackgroundColor = null;
 	}
 	
+	/**
+	 * Center the given <code>windows</code> in relative to the given <code>invoker</code>.
+	 * @param invoker Reference window for the window to center.
+	 * @param window The window instance to center.
+ 	 */
+	public static void centerOnWindow(Window invoker, Window window) {
+		Point invokerLocationOnScreen = invoker.getLocationOnScreen();
+		Dimension invokerSize = invoker.getSize();
+		Dimension windowSize = window.getSize();
+		
+		window.setLocation(invokerLocationOnScreen.x + (invokerSize.width / 2) - (windowSize.width / 2), 
+				invokerLocationOnScreen.y + ((invokerSize.height / 2) - (windowSize.height / 2) / 2));
+	}
+	
 	public static void centerOnScreen(Window window) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension size = window.getSize();
@@ -351,4 +371,16 @@ public class SwingUtils {
 
 		return size;
 	}
+
+	/**
+	 * Open the given url in the default system web browser.
+	 * @param url The url to browse-
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public static void openURL(String url) throws MalformedURLException, IOException, URISyntaxException {
+		Desktop.getDesktop().browse(new URL(url).toURI());
+	}
+	
 }
