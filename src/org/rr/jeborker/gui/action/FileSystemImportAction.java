@@ -24,7 +24,7 @@ public class FileSystemImportAction extends AbstractAction {
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
 		putValue(Action.NAME, targetFolder);
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
-		putValue(SHORT_DESCRIPTION, Bundle.getString("FileSystemCollapseAllAction.tooltip")); //tooltip
+		putValue(SHORT_DESCRIPTION, Bundle.getString("FileSystemImportAction.tooltip")); //tooltip
 	}
 	
 	@Override
