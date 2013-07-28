@@ -1,4 +1,10 @@
 #labels Featured
+== v0.3.7 ==
+  * HTML Matadata is able to add common metadata like author or title to the index
+  * Rename cell component rewritten because the old one did not works reliable.
+  * Rename cell component no longer allows to change file extension which makes it easier to navigate.
+  * Displaying expand symbols for base path root nodes no longer depending at the look and feel.
+  * Faster directory reading for the file system tree.
 == v0.3.6 ==
   * Look and Feel support
   * The main table is now striped slightly
