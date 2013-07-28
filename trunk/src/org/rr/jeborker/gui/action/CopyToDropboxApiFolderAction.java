@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
@@ -124,7 +125,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	private void authToDropbox(WebAuthSession session, WebAuthInfo authInfo, RequestTokenPair pair) throws IOException, URISyntaxException,
 			MalformedURLException, DropboxException {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		Desktop.getDesktop().browse(new URL(authInfo.url).toURI());
+		SwingUtils.openURL(authInfo.url);
 		
 		JOptionPane.showMessageDialog(MainController.getController().getMainWindow(), Bundle.getString("CopyToDropboxAction.auth"));
 		session.retrieveWebAccessToken(pair);
@@ -135,5 +136,5 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_KEY, tokens.key);
 		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_SECRET, tokens.secret);
 	}	
-	  
+	
 }

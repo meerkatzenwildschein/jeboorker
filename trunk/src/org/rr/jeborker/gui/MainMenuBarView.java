@@ -20,6 +20,7 @@ import javax.swing.event.MenuListener;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.action.WebLinkAction;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
@@ -52,6 +53,8 @@ class MainMenuBarView extends JMenuBar {
 	private JMenu editMenuBar;
 	
 	private JMenu extrasMenuBar;	
+	
+	private JMenu helpMenuBar;	
 
 	JMenu mnVerzeichnisEntfernen;
 
@@ -68,6 +71,7 @@ class MainMenuBarView extends JMenuBar {
 		add(createFileMenu());
 		add(createEditMenu());
 		add(createExtrasMenu());
+		add(createHelpMenu());
 	}
 	
 	/**
@@ -444,6 +448,17 @@ class MainMenuBarView extends JMenuBar {
 		}
 		
 		return this.extrasMenuBar;
+	}
+	
+	private JMenu createHelpMenu() {
+		final String helpMenuBarName = Bundle.getString("EborkerMainView.help");
+		
+		helpMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
+		helpMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
+		helpMenuBar.add(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_ABOUT_DIALOG_ACTION, null));
+		helpMenuBar.add(new WebLinkAction(Bundle.getString("EborkerMainView.internetUrl"), Jeboorker.URL));
+		
+		return helpMenuBar;
 	}
 	
 	/**

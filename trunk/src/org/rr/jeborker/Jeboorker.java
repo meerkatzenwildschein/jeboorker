@@ -39,9 +39,11 @@ public class Jeboorker {
 			
 	public static boolean isRuntime = false;
 
-	public static String version = "0.3.7";
+	public static final String VERSION = "0.3.7";
 	
-	public static String app = "Jeboorker";
+	public static final String APP = "Jeboorker";
+	
+	public static final String URL = "https://code.google.com/p/jeboorker/";
 
 	private static MainController mainController; 
 	
@@ -106,7 +108,7 @@ public class Jeboorker {
 			// Sends arguments to the already active instance.
 			JUnique.sendMessage(Jeboorker.class.getName(), "");
 			
-			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + version + " is already running.");
+			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + VERSION + " is already running.");
 		}
 	}
 	
@@ -118,7 +120,7 @@ public class Jeboorker {
 		List<String> args = bean.getInputArguments();
 		String argsString = ListUtils.join(args, " ");
 		
-		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.version + " started with " + argsString);
+		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.VERSION + " started with " + argsString);
 		
 		Properties props = System.getProperties();
 		Set<Object> keys = props.keySet();

@@ -134,11 +134,11 @@ public class DefaultDBManager {
 			appVersionChanged = true;
 		} else {
 			versionPreferenceItem = result.get(0);
-			if(!versionPreferenceItem.getValue().equals(Jeboorker.version)) {
+			if(!versionPreferenceItem.getValue().equals(Jeboorker.VERSION)) {
 				appVersionChanged = true;
 			}
 		}
-		versionPreferenceItem.setValue(Jeboorker.version);
+		versionPreferenceItem.setValue(Jeboorker.VERSION);
 		versionPreferenceItem.setName("latestUsedVersion");
 		storeObject(versionPreferenceItem);
 		
