@@ -1,6 +1,8 @@
 #labels Featured
+== v0.3.8 (future) ==
+  * TODO: File tree should refresh automatically
 == v0.3.7 ==
-  * HTML Matadata is able to add common metadata like author or title to the index
+  * HTML mata data reader is able to add common meta data like author or title to the Jeboorker index.
   * Rename cell component rewritten because the old one did not works reliable.
   * Rename cell component no longer allows to change file extension which makes it easier to navigate.
   * Displaying expand symbols for base path root nodes no longer depending at the look and feel.
@@ -16,5 +18,5 @@
   * The automatic save mechanism sets the selection to the clicked entry in the ebook list now.
   * Added Folders get watched for changes.
   * Sometimes, the underlying database creates duplicates *fixed*
-  * Readonly HTML meta data support.
+  * Read only HTML meta data support.
   * Find action did not show up when the main table is scrolled down *fixed*.
