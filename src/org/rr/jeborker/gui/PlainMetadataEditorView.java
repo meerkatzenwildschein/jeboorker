@@ -24,7 +24,6 @@ import org.bounce.text.xml.XMLFoldingMargin;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.layout.EqualsLayout;
 
-
 class PlainMetadataEditorView extends JDialog {
 
 	private static final long serialVersionUID = -5833977607733981288L;
@@ -65,6 +64,7 @@ class PlainMetadataEditorView extends JDialog {
 				super.paintComponent(g2);
 			}
 		};
+		
 		scroller.setViewportView(editor);
 		editor.setOpaque(false);
 		editor.setBackground(Color.WHITE);

@@ -65,7 +65,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 	}
 	
 	private void initialize() {
-		setTitle(Jeboorker.app + " " + " Logfile");
+		setTitle(Jeboorker.APP + " " + " Logfile");
 		setSize(800, 600);
 		SwingUtils.centerOnScreen(this);
 		SwingUtils.setEscapeWindowAction(this, closeAction);
