@@ -93,6 +93,8 @@ Section -Main SEC0000
     File doc\license\Carpelinx-Logo-Icon_GPL_license.txt
     File doc\license\jgoodies-common_license.txt
     File doc\license\jgoodies-looks_license.txt
+    File doc\license\pdfscissors_AGPL_license.txt
+    File doc\license\jessies_GPL2_license.txt
     
     SetOutPath $INSTDIR\exec
     File 'exec\Rar.exe'
