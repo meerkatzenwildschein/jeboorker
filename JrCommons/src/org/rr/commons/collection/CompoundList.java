@@ -2,6 +2,7 @@ package org.rr.commons.collection;
 
 import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -16,13 +17,16 @@ public class CompoundList<E> extends AbstractList<E> {
 	
 	public CompoundList(List<E> first, List<E> second) {
 		if(first == null) {
-			throw new NullPointerException("First list is null");
+			this.first = Collections.emptyList();
+		} else {
+			this.first = first;
 		}
+		
 		if(second == null) {
-			throw new NullPointerException("Second list is null");
+			this.second = Collections.emptyList();
+		} else {
+			this.second = second;	
 		}
-		this.first = first;
-		this.second = second;
 	}
 	
 	@Override
