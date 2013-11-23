@@ -17,6 +17,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
+import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -107,6 +108,7 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 	
 	private void addToDatabase(IResourceHandler resource, IResourceHandler baseFolder) {
 		final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
+		DefaultDBManager.getInstance().storeObject(item);	
 		ActionUtils.addEbookPropertyItem(item);
 	}
 
