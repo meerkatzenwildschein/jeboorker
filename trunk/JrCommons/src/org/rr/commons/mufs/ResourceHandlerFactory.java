@@ -195,7 +195,11 @@ public class ResourceHandlerFactory {
 	 * @param extension the extension for the sibling {@link IResourceHandler}.
 	 * @return The sibling {@link IResourceHandler}.
 	 */
-	public static IResourceHandler getUniqueResourceHandler(IResourceHandler sibling, final String extension) {
+	public static IResourceHandler getUniqueResourceHandler(final IResourceHandler sibling, String extension) {
+		if(extension == null) {
+			extension = sibling.getFileExtension();
+		}
+		
 		String siblingString = sibling.toString();
 		if(siblingString.lastIndexOf('.') != -1) {
 			siblingString = siblingString.substring(0, siblingString.lastIndexOf('.'));
