@@ -1,12 +1,10 @@
 package bd.amazed.pdfscissors.pdf;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import org.rr.commons.mufs.IResourceHandler;

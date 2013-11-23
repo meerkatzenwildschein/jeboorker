@@ -63,7 +63,9 @@ public class PdfCropper {
 	public BufferedImage getImage(PropertyChangeListener listener, PageGroup pageGroup) throws PdfException {
 		// TODO validate page number
 		int endPage = pageGroup.getLastPage();
-		BufferedImage lastPage = getPdfDecoder().getPageAsImage(endPage);
+		PdfDecoderMod pdfDecoder = getPdfDecoder();
+		BufferedImage lastPage = pdfDecoder.getPageAsImage(endPage);
+		pdfDecoder.closePdfFile();
 
 		if (lastPage != null) {
 			listener.propertyChange(new PropertyChangeEvent(this, "message", null, "Stacking " + pageGroup));
@@ -342,6 +344,10 @@ public class PdfCropper {
 
 			if (tempFile != null) {
 				tempFile.delete();
+			}
+			
+			if (reader != null) {
+				reader.close();
 			}
 		}
 	}
