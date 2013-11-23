@@ -3,6 +3,8 @@ package org.rr.jeborker.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rr.commons.collection.CompoundList;
+
 /**
  * A simple helper class for building query conditions.
  * @see http://code.google.com/p/orient/wiki/SQLQuery
@@ -17,15 +19,11 @@ public class QueryCondition {
 	
 	private String value;
 	
+	private boolean volatileCondition = false;
+	
 	public List<QueryCondition> andChildren = null;
 	
 	public List<QueryCondition> orChildren = null;
-	
-	public QueryCondition(String field, String value, String operator) {
-		this.fieldName = field;
-		this.value = value;
-		this.operator = operator;
-	}
 	
 	public QueryCondition(String field, String value, String operator, String identifier) {
 		this.fieldName = field;
@@ -89,6 +87,13 @@ public class QueryCondition {
 	public void setOrChildren(List<QueryCondition> orChildren) {
 		this.orChildren = orChildren;
 	}	
+	
+	/**
+	 * Get all AND and OR children.
+	 */
+	public List<QueryCondition> getAllChildren() {
+		return new CompoundList<QueryCondition>(getAndChildren(), getOrChildren());
+	}
 	
 	/**
 	 * Tests if this {@link QueryCondition} instance contains any conditions.
@@ -180,5 +185,30 @@ public class QueryCondition {
 		localSql.append(" ");
 		localSql.append("'"+getValue()+"'");	
 		return localSql.toString();
+	}
+	
+	public boolean equals(QueryCondition o) {
+		if(o == null) {
+			return false;
+		}
+		return this.toString().toString().equals(o.toString());
+	}
+
+	/**
+	 * Tells if this condition instance is volatile and can be removed after the query.
+	 * @see #setVolatileCondition(boolean)
+	 * @return <code>true</code> if the condition can be volatile and <code>false</code> otherwise.
+	 */
+	public boolean isVolatileCondition() {
+		return volatileCondition;
+	}
+
+	/**
+	 * Tells that this condition is volatile and can get removed after the query. All sub conditions will
+	 * also be removed.
+	 * @param volatileCondition <code>true</code> if the condition can be volatile and <code>false</code> otherwise.
+	 */
+	public void setVolatileCondition(boolean volatileCondition) {
+		this.volatileCondition = volatileCondition;
 	}
 }
