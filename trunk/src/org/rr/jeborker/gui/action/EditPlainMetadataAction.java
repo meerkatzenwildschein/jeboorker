@@ -6,6 +6,7 @@ import javax.swing.Action;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.event.RefreshAbstractAction;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.PlainMetadataEditorController;
@@ -22,9 +23,9 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 		this.resourceHandler = handler;
 		if(handler != null) {
 			String handlerMimeType = handler.getMimeType(true);
-			if(handler != null && handlerMimeType != null && handlerMimeType.equals("application/pdf")) {
+			if(handler != null && handlerMimeType != null && handlerMimeType.equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime())) {
 				additionalName = "XMP";
-			} else if(handler != null && handlerMimeType != null && handlerMimeType.equals("text/html")) {
+			} else if(handler != null && handlerMimeType != null && handlerMimeType.equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_HTML.getMime())) {
 				additionalName = "HTML";
 			} else {
 				additionalName = "XML";

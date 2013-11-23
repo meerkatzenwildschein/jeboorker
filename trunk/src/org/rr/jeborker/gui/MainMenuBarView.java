@@ -312,7 +312,7 @@ class MainMenuBarView extends JMenuBar {
 				createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
 				
 				JMenuItem metadataDownloadItem = new JMenuItem();
-				metadataDownloadItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_METADATA_DOWNLOAD_ACTION, null));
+				metadataDownloadItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_METADATA_DOWNLOAD_ACTION, null));
 				editMenuBar.add(metadataDownloadItem);
 				if(selectedItems.isEmpty() || !MetadataHandlerFactory.hasWriterSupport(selectedItemResources)) {
 					metadataDownloadItem.setEnabled(false);
@@ -320,10 +320,18 @@ class MainMenuBarView extends JMenuBar {
 				
 				createConvertMenuEntry(selectedItems, selectedEbookPropertyItemRows);
 				
+				JMenuItem pdfScissorsItem = new JMenuItem();
+				pdfScissorsItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_PDF_SCISSORS_ACTION, null));
+				editMenuBar.add(pdfScissorsItem);
+				if (selectedItems.size() != 1
+						|| (selectedItems.size() == 1 && !selectedItems.get(0).getMimeType().equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime()))) {
+					pdfScissorsItem.setEnabled(false);
+				}				
+				
 				editMenuBar.add(new JSeparator());
 				
 				JMenuItem editPreferencesItem = new JMenuItem();
-				editPreferencesItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_PREFERENCE_DIALOG_ACTION, null));
+				editPreferencesItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_PREFERENCE_DIALOG_ACTION, null));
 				editMenuBar.add(editPreferencesItem);				
 			}
 			

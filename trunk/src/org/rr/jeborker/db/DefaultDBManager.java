@@ -30,13 +30,13 @@ import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
-import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
-import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.sun.org.apache.xml.internal.security.signature.ObjectContainer;
+//import com.orientechnologies.orient.core.query.nativ.ONativeSynchQuery;
+//import com.orientechnologies.orient.core.query.nativ.OQueryContextNative;
 
 /**
  * The {@link DefaultDBManager} provides methods for handle database connections and it's content.
@@ -295,6 +295,7 @@ public class DefaultDBManager {
 
 		appendQueryCondition(sql, queryConditions, null, 0);
 		appendOrderBy(sql, orderFields, orderDirection);
+		removeVolatileContitions(queryConditions.getAllChildren());
 		try {
 			// long time = System.currentTimeMillis();
 			// List<T> listResult = getDB().query(new OSQLSynchQuery<T>(sql.toString()));
@@ -312,6 +313,23 @@ public class DefaultDBManager {
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Reading database entries has failed", e);
 			return Collections.emptyList();
+		}
+	}
+	
+	/**
+	 * Remove all volatile {@link QueryCondition} instances from the given {@link QueryCondition} list. 
+	 * @param queryConditions {@link QueryCondition} list where the volatile ones should be removed from.
+	 */
+	private void removeVolatileContitions(final List<QueryCondition> queryConditions) {
+		for(QueryCondition condition : queryConditions) {
+			if(condition.isVolatileCondition()) {
+				queryConditions.remove(condition);
+			}
+			
+			List<QueryCondition> allChildren = condition.getAllChildren();
+			if(!allChildren.isEmpty()) {
+				removeVolatileContitions(allChildren);
+			}
 		}
 	}
 
@@ -481,20 +499,24 @@ public class DefaultDBManager {
 			}
 		}
 
-		//search with native query
-		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
-
-			@Override
-			public boolean filter(OQueryContextNative iRecord) {
-				return iRecord.field(field).eq(value).go();
-			}
-
-			public void end() {
-				//since orientdb 1.3
-			}
-
-		}.execute((Object[]) null);
-		return new ODocumentMapper<T>(result, db);
+		final StringBuilder sql = new StringBuilder().append("select * from ").append(class1.getSimpleName())
+				.append(" where " + field + "='" + value + "'");
+		return new ODocumentMapper<T>(sql, getDB());
+		
+//		//search with native query
+//		List<?> result = (List<?>) new ONativeSynchQuery<OQueryContextNative>(getDB().getUnderlying(), class1.getSimpleName(), new OQueryContextNative()) {
+//
+//			@Override
+//			public boolean filter(OQueryContextNative iRecord) {
+//				return iRecord.field(field).eq(value).go();
+//			}
+//
+//			public void end() {
+//				//since orientdb 1.3
+//			}
+//
+//		}.execute((Object[]) null);
+//		return new ODocumentMapper<T>(result, db);
 	}
 	
 	public boolean deleteObject(IDBObject item) {
