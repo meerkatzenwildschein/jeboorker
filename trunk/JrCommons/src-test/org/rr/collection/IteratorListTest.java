@@ -15,7 +15,7 @@ public class IteratorListTest extends TestCase {
 		first.add("3");
 		first.add("4");
 		
-		IteratorList<String> t = new IteratorList<String>(first.iterator());
+		IteratorList<String> t = new IteratorList<String>(first.iterator(), first.size());
 		System.out.println(t.get(1));
 		System.out.println(t.get(3));
 		System.out.println(t.get(0));
