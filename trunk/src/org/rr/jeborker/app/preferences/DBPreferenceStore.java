@@ -43,7 +43,6 @@ class DBPreferenceStore extends APreferenceStore {
 		newPreferenceItem.setName(key);
 		newPreferenceItem.setValue(value);
 		
-		deleteEntryFromImpl(key);
 		db.storeObject(newPreferenceItem);
 		
 		CACHE.put(key, value);

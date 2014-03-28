@@ -10,10 +10,10 @@ import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.gui.FilterPanelController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
+import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class SearchAction extends AbstractAction {
@@ -28,42 +28,42 @@ class SearchAction extends AbstractAction {
 	
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		FilterPanelController filterPanelController = controller.getFilterPanelController();
-		if(filterPanelController==null) {
-			if(e.getSource() instanceof FilterPanelController) {
-				filterPanelController = (FilterPanelController) e.getSource();
-			}
-		}
+		final FilterPanelController filterPanelController = getFilterPanelController(controller, e);
 		final String filterText = filterPanelController.getFilterText();
 
 		monitorStart(filterText);
 		try {
 			final List<String> filterValues = ListUtils.split(filterText, ",", -1);
 
-			final QueryCondition rootCondition = controller.getTableModel().getQueryCondition();
-			rootCondition.removeConditionByIdentifier(QUERY_IDENTIFER); //remove possibly existing search conditions
-			
-			final QueryCondition rootFilterCondition = new QueryCondition(null,null,null, QUERY_IDENTIFER);
-			rootCondition.addAndChild(rootFilterCondition);
-			for (String filterValue : filterValues) {
-				if(!StringUtils.toString(filterValue).trim().isEmpty()) {
-					filterPanelController.enableFilterColor(true);
-					List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
-					if(!selectedFilterFields.isEmpty()) {
-						for (Field field : selectedFilterFields) {
-							//rootFilterCondition.addOrChild(new QueryCondition(field.getName(), "%" + filterValue + "%", "like", QUERY_IDENTIFER));
-							rootFilterCondition.addOrChild(new QueryCondition(field.getName(), filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
+			controller.getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+
+				@Override
+				public String getIdentifier() {
+					return QUERY_IDENTIFER;
+				}	
+				
+				@Override
+				public void appendKeyword(List<String> keywords) {
+					for (String filterValue : filterValues) {
+						if(!StringUtils.toString(filterValue).trim().isEmpty()) {
+							filterPanelController.enableFilterColor(true);
+							List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
+							if(!selectedFilterFields.isEmpty()) {
+								for (int i = 0; i < selectedFilterFields.size(); i++) {
+									Field field = selectedFilterFields.get(i);
+									keywords.add(field.getName() + ":" + filterValue);
+								}
+							} else {
+								//default filter/search fields
+								keywords.add(filterValue);
+							}
+						} else {
+							filterPanelController.enableFilterColor(false);
 						}
-					} else {
-						//default filter/search fields
-						rootFilterCondition.addOrChild(new QueryCondition("author", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
-						rootFilterCondition.addOrChild(new QueryCondition("title", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
-						rootFilterCondition.addOrChild(new QueryCondition("file", filterValue, "CONTAINSTEXT", QUERY_IDENTIFER));
 					}
-				} else {
-					filterPanelController.enableFilterColor(false);
 				}
-			}
+			});
+
 			controller.refreshTable();
 			filterPanelController.addFilterFieldSearch(filterText);
 		} finally {
@@ -78,7 +78,17 @@ class SearchAction extends AbstractAction {
 
 		}
 	}
-
+	
+	private FilterPanelController getFilterPanelController(MainController controller, ActionEvent e) {
+		FilterPanelController filterPanelController = controller.getFilterPanelController();
+		if(filterPanelController == null) {
+			if(e.getSource() instanceof FilterPanelController) {
+				filterPanelController = (FilterPanelController) e.getSource();
+			}
+		}
+		return filterPanelController;
+	}
+	
 	private void monitorStart(String filterText) {
 		MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		if(progressMonitor!=null) {

@@ -121,9 +121,9 @@ class LoggerView extends JDialog implements ClipboardOwner {
 			}
 			
 			private void setLogText() {
-				textArea.setText(JeboorkerLogger.log.toString());
+				textArea.setText(JeboorkerLogger.getLogFilePrint());
 			}
-
+			
 			@Override
 			public void windowClosing(WindowEvent e) {
 				MainController.getController().getLoggerController().close();

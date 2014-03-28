@@ -2,23 +2,30 @@ package org.rr.jeborker.db.item;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.IDBObject;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(daoClass = EbookPropertyItemDaoImpl.class)
 public class EbookPropertyItem implements IDBObject, Serializable {
 	
 	private static final long serialVersionUID = -4301328577306625467L;
 	
+	@DatabaseField(index = true)
 	@ViewField(name = "Created at", orderPriority = 0)
 	@ProtectedField
 	private Date createdAt;
@@ -26,22 +33,29 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * File name and path from the ebook file.
 	 */
+	@DatabaseField(id = true, index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "file name", orderPriority = 0)
 	@ProtectedField
-	@Index(type= {"DICTIONARY", "FULLTEXT"})
 	private String file;
+	
+	/**
+	 * The file name without path
+	 */
+	@DatabaseField(index = true, width = 1024)
+	private String fileName;
 	
 	/**
 	 * The base path of the ebook file.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Base Path", orderPriority = 0)
 	@ProtectedField
-	@Index(type= {"DICTIONARY"})
 	private String basePath;
 	
 	/**
 	 * The mime type of the ebook file.
 	 */
+	@DatabaseField(index = true, width = 128)
 	@ViewField(name = "Mime type", orderPriority = 0)
 	@ProtectedField
 	private String mimeType;
@@ -49,124 +63,132 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	/**
 	 * Title of the ebook. This property is ready from the ebook meta data.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Title", orderPriority = 99)
-	@Index(type= {"FULLTEXT"})
 	private String title;
 	
 	/**
 	 * Language of the ebook
 	 */
+	@DatabaseField(index = true, width = 256)
 	@ViewField(name = "Language", orderPriority = 30)
 	private String language;
 	
 	/**
 	 * The publishing / release date of the ebook.
 	 */
+	@DatabaseField(index = true)
 	@ViewField(name = "Publishing Date", orderPriority = 50)
 	private Date publishingDate;
 	
 	/**
 	 * The date when the ebook was created.
 	 */
+	@DatabaseField(index = true)
 	@ViewField(name = "Creation Date", orderPriority = 50)
 	private Date creationDate;	
 
 	/**
 	 * One of the authors of the ebook.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Author", orderPriority = 101)
-	@Index(type= {"FULLTEXT"})
 	private String author;
 	
 	/**
 	 * The author's name in a good sortable manner (last name first if possible)
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Author Sort", orderPriority = 100)
-	@Index(type= {"FULLTEXT"})
 	private String authorSort;	
 
 	/**
 	 * Epub Identifier. This is a UUID value
 	 */
+	@DatabaseField(index = true, width = 128)
 	private String uuid;
 	
 	/**
 	 * ISBN number of the ebook
 	 */
+	@DatabaseField(index = true, width = 52)
 	@ViewField(name = "ISBN", orderPriority = 50)
 	private String isbn;
 	
 	/**
 	 * Description / summary of the book.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Description", orderPriority = 20)
-	@Index(type= {"FULLTEXT"})
 	private String description;
 	
 	/**
 	 * Just some keywords for the book. Primary used with pdf.
 	 */
 	@ViewField(name = "Keywords", orderPriority = 0)
-	@Index(type= {"FULLTEXT"})
-	private List<EbookKeywordItem> keywords;
+	@DatabaseField(width = Integer.MAX_VALUE)
+	private String keywords;
 	
 	/**
 	 * publisher of the ebook.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Publisher", orderPriority = 80)
-	@Index(type= {"FULLTEXT"})
 	private String publisher;
 	
 	/**
 	 * The subject is for example "Belletristik/Krimis, Thriller, Spionage"
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Genre", orderPriority = 90)
-	@Index(type= {"FULLTEXT"})
 	private String genre;
 	
 	/**
 	 * If the ebook is part of a series like a trilogy, the name of the serie could be stored here.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Series name", orderPriority = 90)
-	@Index(type= {"FULLTEXT"})
 	private String seriesName;
 	
 	/**
 	 * If the ebook is part of a series like a trilogy, the number of the serie could be stored here.
 	 */
+	@DatabaseField(index = true, width = 256)
 	@ViewField(name = "Series index", orderPriority = 89)
 	private String seriesIndex;
 	
 	/**
 	 * The book rating. We use a 0.00 digit schema here. 
 	 */
+	@DatabaseField(index = true)
 	@ViewField(name = "Rating", orderPriority = 95)
 	private Integer rating;
 	
 	/**
 	 * Something like "All rights reserved" 
 	 */
+	@DatabaseField(width = Integer.MAX_VALUE)
 	@ViewField(name = "Rights", orderPriority = 10)
-	@Index(type= {"FULLTEXT"})
 	private String rights;
 	
 	/**
 	 * The release scope for the book. For example "Germany"
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Coverage", orderPriority = 10)
-	@Index(type= {"FULLTEXT"})
 	private String coverage;
 	
 	/**
 	 * age suggestion. Something like '12-13' or simple '12'.
 	 */
+	@DatabaseField(index = true, width = Integer.MAX_VALUE)
 	@ViewField(name = "Age suggestion", orderPriority = 80)
-	@Index(type= {"FULLTEXT"})
 	private String ageSuggestion;
 	
 	/**
 	 * Timestamp of the ebook file. 
 	 */
+	@DatabaseField(index = true)
 	private long timestamp = 0l;
 	
 	public EbookPropertyItem() {
@@ -221,7 +243,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	 * Clears all metadata excepting this ones which have a {@link ProtectedField} annotation.
 	 */
 	public void clearMetadata() {
-		List<Field> dbViewFields = EbookPropertyItemUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
+		List<Field> dbViewFields = ReflectionUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
 		for (Field field : dbViewFields) {
 			try {
 				if(field.getAnnotation(ProtectedField.class) == null) {
@@ -252,6 +274,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	
 	public void setFile(String file) {
 		this.file = file;
+		this.fileName = file != null ? FilenameUtils.getName(file) : null;
 	}
 
 	public String getTitle() {
@@ -367,15 +390,15 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		this.createdAt = createdAt;
 	}
 
-	public List<EbookKeywordItem> getKeywords() {
+	public List<String> getKeywords() {
 		if(keywords != null) {
-			return new ArrayList<EbookKeywordItem>(keywords);
+			return ListUtils.split(keywords, ",");
 		}
-		return keywords;
+		return Collections.emptyList();
 	}
 
-	public void setKeywords(List<EbookKeywordItem> keywords) {
-		this.keywords = keywords;
+	public void setKeywords(List<String> keywords) {
+		this.keywords = ListUtils.join(keywords, ",");
 	}
 
 	public String getMimeType() {

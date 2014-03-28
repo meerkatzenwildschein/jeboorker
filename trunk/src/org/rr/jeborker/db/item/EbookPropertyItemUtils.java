@@ -3,8 +3,6 @@ package org.rr.jeborker.db.item;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,7 +16,6 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
@@ -67,25 +64,6 @@ public class EbookPropertyItemUtils {
 		final List<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
 		return items;
 	}
-	
-    /**
-     * Get all fields which are marked with a {@link ViewField} annotation.
-     * @return The desired fields.
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<Field> getFieldsByAnnotation(final Class annotationClass, final Class<?> itemClass) {
-		//get fields to be displayed in the combobox
-		final List<Field> fields = ReflectionUtils.getFields(itemClass, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
-		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
-		for (Field field : fields) {
-			Object dbViewFieldAnnotation = field.getAnnotation(annotationClass);
-			if(dbViewFieldAnnotation!=null) {
-				listEntries.add(field);
-			}
-		} 
-		
-		return listEntries;  	
-    } 	
 	
 	/**
 	 * Creates a new {@link EbookPropertyItem} from the given resource.
@@ -174,19 +152,6 @@ public class EbookPropertyItemUtils {
 			LoggerFactory.getLogger().log(Level.WARNING, "Failed to store thumbnail for " + item.getResourceHandler().getName(), e);
 		}
 	}	
-	
-	/**
-	 * Get a list of EbookKeywordItem for a list of keyword strings.
-	 * @param keywords The keywords to be used for the reuslt list.
-	 * @return The list over EbookKeywordItem instances.
-	 */
-	public static List<EbookKeywordItem> getAsEbookKeywordItem(List<String> keywords) {
-		final ArrayList<EbookKeywordItem> result = new ArrayList<EbookKeywordItem>(keywords.size());
-		for (String keyword : keywords) {
-			result.add(new EbookKeywordItem(keyword));
-		}
-		return result;
-	}
 	
 	/**
 	 * Deletes the cover thumbnail for the given ebook {@link IResourceHandler}. 

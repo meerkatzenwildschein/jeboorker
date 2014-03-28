@@ -12,6 +12,10 @@ public class OrderDirection {
 		this.direction = direction;
 	}
 	
+	public boolean isAscending() {
+		return direction == DIRECTION_ASC;
+	}
+	
 	public String toString() {
 		if(direction==DIRECTION_ASC) {
 			return "asc";

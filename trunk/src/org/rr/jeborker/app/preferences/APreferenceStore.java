@@ -255,7 +255,7 @@ public abstract class APreferenceStore {
 	 * 
 	 * @return The config file directory.
 	 */
-	public String getConfigDirectory() {
+	public static String getConfigDirectory() {
 		String result = System.getProperties().getProperty("user.home");
 		String suffix = System.getProperties().getProperty("application.suffix");
 		

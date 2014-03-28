@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -24,15 +25,16 @@ import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
-import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.MainMonitor;
+import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.metadata.MetadataProperty;
 
+import com.j256.ormlite.stmt.Where;
 import com.l2fprod.common.propertysheet.Property;
 
 public class ActionUtils {
@@ -157,14 +159,24 @@ public class ActionUtils {
 	 * @param path path which visibility should be set. 
 	 * @param show <code>true</code> if the base path should be shown and <code>false</code> for hide it.
 	 */
-	public static void setBasePathVisibility(String path, boolean show) {
+	public static void setBasePathVisibility(final String path, boolean show) {
 		final String queryIdentifier = ShowHideBasePathAction.class.getName() + "_" + path;
 		final MainController controller = MainController.getController();
 		try {
-			QueryCondition queryCondition = controller.getTableModel().getQueryCondition();
-			queryCondition.removeConditionByIdentifier(queryIdentifier); //remove possibly existing queries.
+			controller.getTableModel().removeWhereCondition(queryIdentifier); //remove possibly existing queries.
 			if(!show) {
-				queryCondition.addAndChild(new QueryCondition("basePath", path, "<>", queryIdentifier));
+				controller.getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+					
+					@Override
+					public String getIdentifier() {
+						return queryIdentifier;
+					}
+					
+					@Override
+					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+						where.ne("basePath", path);
+					}
+				});
 			}
 				
 			MainMenuBarController.getController().setShowHideBasePathStatusShow(path, show);

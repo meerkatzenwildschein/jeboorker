@@ -1,11 +1,13 @@
 package org.rr.jeborker.gui.model;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
@@ -15,32 +17,60 @@ import javax.swing.table.TableModel;
 
 import org.rr.commons.collection.BlindElementList;
 import org.rr.commons.collection.CompoundList;
+import org.rr.commons.collection.ICloseableList;
 import org.rr.commons.collection.InsertElementList;
-import org.rr.commons.collection.IteratorList;
 import org.rr.commons.collection.ReplacementElementList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.FileRefreshBackground;
+import org.rr.jeborker.db.DBUtils;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.OrderDirection;
-import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 
-public class EbookPropertyDBTableModel implements TableModel {
+import com.j256.ormlite.stmt.NullArgHolder;
+import com.j256.ormlite.stmt.Where;
 
+public class EbookPropertyDBTableModel implements TableModel {
+	
+	public abstract static class EbookPropertyDBTableModelQuery {
+		public boolean isVolatile() {
+			return false;
+		}
+		
+		public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+			where.raw("true = true", new NullArgHolder[0]);
+		};
+		
+		public void appendKeyword(List<String> keyword) {};
+		
+		public abstract String getIdentifier();
+
+		@Override
+		public boolean equals(Object obj) {
+			if(this == obj) {
+				return true;
+			} else if(obj instanceof EbookPropertyDBTableModelQuery) {
+				return ((EbookPropertyDBTableModelQuery)obj).getIdentifier().equals(this.getIdentifier());
+			}
+			return false;
+		}
+		
+	};
+	
     /** List of listeners */
     protected EventListenerList listenerList = new EventListenerList();
     
-    private List<EbookPropertyItem> dbItems;
+    private ICloseableList<EbookPropertyItem> dbItems;
     
     private List<EbookPropertyItem> allItems;
     
+    private final List<EbookPropertyDBTableModelQuery> whereConditions = new ArrayList<EbookPropertyDBTableModelQuery>();
+
     private final List<Field> orderByColumns = new ArrayList<Field>();
     
-    private OrderDirection orderDirection =null;
-    
-    private QueryCondition queryConditions;
+    private OrderDirection orderDirection = null;
     
     private boolean dirty = false;
     
@@ -56,9 +86,9 @@ public class EbookPropertyDBTableModel implements TableModel {
     public EbookPropertyDBTableModel(EbookPropertyDBTableModel copy, boolean emptyModel) {
     	super();
     	this.emptyModel = emptyModel;
-    	this.setOrderByColumns(copy.getOrderByColumns());
-    	this.setOrderDirection(copy.getOrderDirection());
-    	this.queryConditions = copy.getQueryCondition();
+    	setOrderByColumns(copy.getOrderByColumns());
+    	setOrderDirection(copy.getOrderDirection());
+    	whereConditions.addAll(copy.whereConditions);
     }
     
     /**
@@ -97,7 +127,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public int getRowCount() {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		if(ebookItems != null) {
 			final int size = ebookItems.size();
 			if(size > oldSize) {
@@ -120,16 +150,14 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
+		List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		final EbookPropertyItem ebookPropertyItem;
 		try {
 			if(ebookItems.size() < rowIndex) {
 				setDirty();
-				ebookItems = this.getEbookItems(false);
+				ebookItems = this.getEbookItems();
 			}
 			ebookPropertyItem = ebookItems.get(rowIndex);
-			
-			handleDuplicateItem(rowIndex, ebookItems, ebookPropertyItem);
 		} catch(IndexOutOfBoundsException ex) {
 			return null;
 		}
@@ -143,32 +171,13 @@ public class EbookPropertyDBTableModel implements TableModel {
 		}
 		return null;
 	}
-
-	/**
-	 * duplicate check. this could sometimes happens if orientdb stores the item twice.
-	 * @param rowIndex index of the row where the next entry should be checked.
-	 * @param ebookItems the currently used item list.
-	 * @param ebookPropertyItem The item at the <code>rowIndex</code> row.
-	 */
-	private void handleDuplicateItem(int rowIndex, List<EbookPropertyItem> ebookItems, final EbookPropertyItem ebookPropertyItem) {
-		if(ebookItems.size() > rowIndex) {
-			if(ebookItems.size() > rowIndex + 1) {
-				EbookPropertyItem dupCheckItem = ebookItems.get(rowIndex + 1); 
-				if(dupCheckItem != null && ebookPropertyItem.getFile().equals(dupCheckItem.getFile())) {
-					if(DefaultDBManager.getInstance().deleteObject(dupCheckItem)) {
-						this.allItems = new BlindElementList<EbookPropertyItem>(this.allItems, rowIndex + 1);
-					}
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Gets the {@link EbookPropertyItem} displayed in the given row.
 	 * @return The desired {@link EbookPropertyItem} or possibly <code>null</code>.
 	 */
 	public EbookPropertyItem getEbookPropertyItemAt(int rowIndex) {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		try {
 			return ebookItems.get(rowIndex);
 		} catch(IndexOutOfBoundsException ex) {
@@ -183,7 +192,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 * @param rowIndex Index of {@link EbookPropertyItem} to be reloaded.
 	 */
 	public void reloadEbookPropertyItemAt(int rowIndex) {
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		if(rowIndex >= 0) {
 			final EbookPropertyItem modelItem = this.getEbookPropertyItemAt(rowIndex);
 			if(modelItem != null) {
@@ -204,7 +213,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			return -1;
 		}
 		
-		final List<EbookPropertyItem> ebookItems = this.getEbookItems(false);
+		final List<EbookPropertyItem> ebookItems = this.getEbookItems();
 		for(int i = 0; i < ebookItems.size(); i++) {
 			EbookPropertyItem ebookPropertyItem = ebookItems.get(i);
 			if(ebookPropertyItem.equals(item)) {
@@ -311,19 +320,22 @@ public class EbookPropertyDBTableModel implements TableModel {
      *  for using them from cache.
      * @return The desired {@link EbookPropertyItem}s.
      */
-    private List<EbookPropertyItem> getEbookItems(boolean clearQueryConditions) {
+    private List<EbookPropertyItem> getEbookItems() {
     	//NO BREAKPOINT HERE!
     	if(Jeboorker.isRuntime) {
     		if(emptyModel) {
     			this.allItems = Collections.emptyList();
     		} else if(isDirty() || dbItems == null) {
 	    		this.dirty = false;
-	    		Iterable<EbookPropertyItem> items = DefaultDBManager.getInstance().getItems(EbookPropertyItem.class, this.getQueryCondition(), this.getOrderByColumns(), this.getOrderDirection());
+	    		Where<EbookPropertyItem, EbookPropertyItem> whereConditions = prepareQuery();
+	    		List<String> keywords = prepareKeywords();
+	    		ICloseableList<EbookPropertyItem> items = DefaultDBManager.getInstance().queryFullTextSearch(EbookPropertyItem.class, whereConditions, keywords, getOrderByColumns(), getOrderDirection());
+	    		clearVolatileConditions();
 	    		
-	    		this.dbItems = new IteratorList<EbookPropertyItem>(items);
-	    		if(this.dbItems == null) {
-	    			this.dbItems = Collections.emptyList();
+	    		if(this.dbItems != null) {
+	    			this.dbItems.close();
 	    		}
+	    		this.dbItems = items;
 	    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
 	    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
 	    	}
@@ -331,6 +343,34 @@ public class EbookPropertyDBTableModel implements TableModel {
     	} else {
     		return null;
     	}
+    }
+    
+    private List<String> prepareKeywords() {
+    	ArrayList<String> result = new ArrayList<String>();
+    	for(EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
+    		whereCondition.appendKeyword(result);
+    	}
+    	return result;
+    }
+    
+    private Where<EbookPropertyItem, EbookPropertyItem> prepareQuery() {
+    	List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<EbookPropertyDBTableModelQuery>();
+    	Where<EbookPropertyItem, EbookPropertyItem> where = DefaultDBManager.getInstance().getQueryBuilder(EbookPropertyItem.class).where();
+    	for(EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
+    		try {
+    			if(!DBUtils.isEmpty(where)) {
+    				where.and();
+    			}
+				whereCondition.appendQuery(where);
+			} catch (SQLException e) {
+				LoggerFactory.log(Level.SEVERE, this, "Failed to prepare Query", e);
+			}
+    		if(whereCondition.isVolatile()) {
+    			toRemove.add(whereCondition);
+    		}
+    	}
+    	whereConditions.removeAll(toRemove);
+    	return where;
     }
     
     /**
@@ -409,7 +449,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 * <code>MainController.getController().refreshTable(true);</code>
 	 * 
 	 * @param orderByColumns Order columns to be set to the model. 
-	 * Previously setted order columns will be removed. 
+	 * Previously set order columns will be removed. 
 	 */
 	public void setOrderByColumns(List<Field> orderByColumns) {
 		this.orderByColumns.clear();
@@ -436,15 +476,43 @@ public class EbookPropertyDBTableModel implements TableModel {
 	}
 
 	/**
-	 * Gets the current list of filter conditions.
-	 * @return The current filter condition list. Never returns <code>null</code>.
+	 * Remove all conditions marked as volatile conditions.
 	 */
-	public QueryCondition getQueryCondition() {
-		if(this.queryConditions == null) {
-			//set as root condition
-			this.queryConditions = new QueryCondition(null, null, null, "ROOT");
+	private void clearVolatileConditions() {
+		List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery>();
+		for (EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
+			if(whereCondition.isVolatile()) {
+				toRemove.add(whereCondition);
+			}
 		}
-		return queryConditions;
+		whereConditions.removeAll(toRemove);
+	}
+	
+	/**
+	 * Adds a {@link EbookPropertyDBTableModelQuery} which will be used to create the
+	 * model's sql query.
+	 */
+	public void addWhereCondition(EbookPropertyDBTableModelQuery query) {
+		removeWhereCondition(query.getIdentifier());
+		whereConditions.add(query);
+	}
+	
+	/**
+	 * Removes a {@link EbookPropertyDBTableModelQuery} which was previously added with the
+	 * {@link #addWhereCondition(EbookPropertyDBTableModelQuery)} method.
+	 * @param identifier The identifier of the {@link EbookPropertyDBTableModelQuery} instance to be removed. 
+	 * the {@link EbookPropertyDBTableModelQuery#getIdentifier()} method is used to identify the {@link EbookPropertyDBTableModelQuery}
+	 * which gets removed.
+	 * @return <code>true</code> if a condition was removed and <code>false</code> otherwise.
+	 */
+	public boolean removeWhereCondition(String identifier) {
+		List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery>();
+		for (EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
+			if(whereCondition.getIdentifier().compareTo(identifier) == 0) {
+				toRemove.add(whereCondition);
+			}
+		}
+		return whereConditions.removeAll(toRemove);
 	}
 
 }
