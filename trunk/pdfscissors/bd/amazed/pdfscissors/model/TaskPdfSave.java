@@ -2,6 +2,7 @@ package bd.amazed.pdfscissors.model;
 
 import java.awt.Component;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -18,11 +19,13 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
-import org.rr.jeborker.db.QueryCondition;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.action.ActionUtils;
+import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+
+import com.j256.ormlite.stmt.Where;
 
 public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 
@@ -89,12 +92,25 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 	
 	private void applyFilter(IResourceHandler targetResourceHandler) {
 		final MainController controller = MainController.getController();
-		String sourcePdfFileName = FilenameUtils.removeExtension(pdfFile.getOriginalFile().getName());
-		QueryCondition rootCondition = controller.getTableModel().getQueryCondition();
-		rootCondition.removeConditionByIdentifier(QUERY_IDENTIFER); //remove possibly existing search conditions
-		QueryCondition newQueryCondition = new QueryCondition("file", sourcePdfFileName, "CONTAINSTEXT", QUERY_IDENTIFER);
-		newQueryCondition.setVolatileCondition(true);
-		rootCondition.addAndChild(newQueryCondition);
+		final String sourcePdfFileName = FilenameUtils.removeExtension(pdfFile.getOriginalFile().getName());
+		
+		MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+
+			@Override
+			public String getIdentifier() {
+				return QUERY_IDENTIFER;
+			}
+
+			@Override
+			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+				where.like("fileName", sourcePdfFileName + "%");
+			}
+
+			@Override
+			public boolean isVolatile() {
+				return true;
+			}
+		});
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			
