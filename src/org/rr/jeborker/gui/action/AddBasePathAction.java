@@ -21,7 +21,6 @@ import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
-import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 /**
@@ -77,7 +76,6 @@ class AddBasePathAction extends AbstractAction {
 				//only attach the new path if it is not a part of an already configured path.
 				if(!isAlreadyExistingBasePath(preferenceStore.getBasePath(), path)) {
 					preferenceStore.addBasePath(path); //add path to preferences
-					MainMenuBarController.getController().addBasePathMenuEntry(path); //add path to ui
 					int count = readEbookFilesToDB(selectedDirectory);
 					messageFinished = Bundle.getFormattedString("AddBasePathAction.finishedCount", String.valueOf(count));
 				} else {

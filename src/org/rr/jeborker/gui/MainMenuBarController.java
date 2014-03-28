@@ -100,24 +100,6 @@ public class MainMenuBarController {
 	}
 	
 	/**
-	 * Adds a menu item having the given path to the base path sub menu.
-	 * @param path The path to be added.
-	 */
-	public void addBasePathMenuEntry(String path) {
-		{
-			JMenuItem pathItem = new JMenuItem();
-			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
-			getView().mnVerzeichnisEntfernen.add(pathItem);
-		}
-		
-		{
-			JMenuItem pathItem = new JMenuItem();
-			pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, path));
-			getView().mnVerzeichnisRefresh.add(pathItem);
-		}
-	}
-	
-	/**
 	 * Shows the popup menu for the selected entries.
 	 * @param location The locaten where the popup should appears.
 	 * @param invoker The invoker for the popup menu.

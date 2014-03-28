@@ -2,17 +2,23 @@ package org.rr.jeborker.gui.cell;
 
 import java.awt.Component;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.EventObject;
+import java.util.logging.Level;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.db.QueryCondition;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
+import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+
+import com.j256.ormlite.stmt.Where;
 
 public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
@@ -54,7 +60,7 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 				((BasePathTreeModel)tree.getModel()).setFilterTreePath(filterTreePath);
 				MainController.getController().refreshTable();
 			} else {
-				boolean remove = removePathFilter();
+				boolean remove = MainController.getController().getTableModel().removeWhereCondition(QUERY_IDENTIFER);
 				((BasePathTreeModel)tree.getModel()).setFilterTreePath(null);
 				if(remove) {
 					MainController.getController().refreshTable();
@@ -64,24 +70,21 @@ public class BasePathTreeCellEditor extends AbstractCellEditor implements TreeCe
 		previousEditorValue = cellEditorValue;
 	}
 	
-	private void setPathFilter(String fullResourceFilterPath) {
-		final QueryCondition rootCondition = MainController.getController().getTableModel().getQueryCondition();
-		final QueryCondition additionalFilterCondition = new QueryCondition(null, null, null, QUERY_IDENTIFER);
-		
-		removePathFilter();
-		additionalFilterCondition.addOrChild(new QueryCondition("file", fullResourceFilterPath + "%", "like", QUERY_IDENTIFER));
-		rootCondition.addAndChild(additionalFilterCondition);		
-	}
-	
-	/**
-	 * Removes a previously set filter condition. Invoke <code>MainController.getController().refreshTable(true);</code> for
-	 * pushing the change into the view.
-	 * 
-	 * @return <code>true</code> if removing was successfully and <code>false</code> if nothing was found to remove.
-	 */
-	private boolean removePathFilter() {
-		final QueryCondition rootCondition = MainController.getController().getTableModel().getQueryCondition();
-		return rootCondition.removeConditionByIdentifier(QUERY_IDENTIFER); //remove possibly existing search conditions	
-	}
+	private void setPathFilter(final String fullResourceFilterPath) {
+		MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+			
+			@Override
+			public String getIdentifier() {
+				return QUERY_IDENTIFER;
+			}
+			
+			@Override
+			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+				where.like("file", fullResourceFilterPath + "%");
+			}
+		});
 
+		//additionalFilterCondition.addOrChild(new QueryCondition("file", fullResourceFilterPath + "%", "like", QUERY_IDENTIFER));
+		//rootCondition.addAndChild(additionalFilterCondition);		
+	}
 }

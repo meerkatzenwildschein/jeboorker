@@ -1,72 +1,61 @@
 package org.rr.jeborker.app;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.rr.commons.collection.LruList;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.rr.commons.log.LoggerFactory;
+import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.gui.MainController;
 
 public class JeboorkerLogger extends Handler {
 	
-	/**
-	 * List that is limited to n elements and overwrites the
-	 * toString method so each entry is written into one line.
-	 */
-	public static final LruList<String> log = new LruList<String>(1000) {
-		private static final int FIRST = 80;
-		
-		private ArrayList<String> firstRows = new ArrayList<String>(FIRST);
-		
-		@Override
-		public boolean add(String e) {
-			if(firstRows.size() < FIRST) {
-				return firstRows.add(e);
-			} else {
-				return super.add(e);
-			}
+	private static final File LOG_FILE = new File(APreferenceStore.getConfigDirectory(), Jeboorker.APP + ".log");
+	
+	private static final String LINE_BREAK = System.getProperty("line.separator");
+	
+	private OutputStream logfileOutputStream;
+	
+	public JeboorkerLogger() {
+		try {
+			logfileOutputStream = new FileOutputStream(LOG_FILE);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace(System.err);
 		}
-		
-		@Override
-		public String toString() {
-			StringBuilder result = new StringBuilder();
-			for(String s : firstRows) {
-				if(result.length() != 0) {
-					result.append("\n");
-				}
-				result.append(s);				
-			}
-			
-			if(!map.isEmpty()) {
-				result.append("\n\n...\n");
-			}
-			
-			for(String s : map.values()) {
-				result.append("\n");
-				result.append(s);
-			}
-			
-			return result.toString();
-		}
-
-	};
+	}
 	
 	@Override
 	public void close() throws SecurityException {
+		flush();
+		IOUtils.closeQuietly(logfileOutputStream);
 	}
 
 	@Override
 	public void flush() {
+		try {
+			logfileOutputStream.flush();
+		} catch (IOException e) {
+			e.printStackTrace(System.err);
+		}
 	}
 
 	@Override
 	public void publish(LogRecord record) {
 		toConsole(record);
-		toAppLog(record);
+		toLogFile(record);
 		if(MainController.isInitialized()) {
 			toMonitor(record);
 		}
@@ -97,9 +86,11 @@ public class JeboorkerLogger extends Handler {
 		}
 	}
 	
-	private static void toAppLog(LogRecord record) {
+	private void toLogFile(LogRecord record) {
+		StringBuilder s = new StringBuilder();
 		if (record.getMessage() != null) {
-			log.add(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + record.getLevel() + ": " + record.getMessage());
+			s.append(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + record.getLevel() + ": " + record.getMessage());
+			s.append(LINE_BREAK);
 		}
 		
 		if(record.getThrown() != null) {
@@ -108,7 +99,36 @@ public class JeboorkerLogger extends Handler {
 			record.getThrown().printStackTrace(new PrintWriter(stringWriter));
 			printWriter.flush();
 			printWriter.close();
-			log.add(stringWriter.getBuffer().toString());
+			s.append(stringWriter.getBuffer().toString());
 		}
+		try {
+			logfileOutputStream.write(s.toString().getBytes());
+		} catch (IOException e) {
+			e.printStackTrace(System.err);
+		}
+	}
+
+	public static String getLogFilePrint() {
+		int bytesToRead = 500000; //500kb
+		if(LOG_FILE.length() <= bytesToRead * 2) {
+			try {
+				return FileUtils.readFileToString(LOG_FILE);
+			} catch (IOException e) {
+				LoggerFactory.log(Level.WARNING, JeboorkerLogger.class, "Failed to read bytes from log file " + LOG_FILE, e);
+			}
+		} else {
+			byte[] intro = new byte[bytesToRead];
+			byte[] tail = new byte[bytesToRead];
+			try(RandomAccessFile raf = new RandomAccessFile(LOG_FILE, "r")) {
+				raf.read(intro);
+				raf.seek(LOG_FILE.length() - bytesToRead);
+				raf.read(tail, 0, bytesToRead);
+				
+				return new StringBuilder(new String(intro)).append("\n...\n").append(new String(tail)).toString(); 
+			} catch (Exception e) {
+				LoggerFactory.log(Level.WARNING, JeboorkerLogger.class, "Failed to read bytes from log file " + LOG_FILE, e);
+			}
+		}
+		return null;
 	}
 }

@@ -23,9 +23,7 @@ import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
 import org.rr.commons.utils.compression.zip.LazyZipEntryStream;
 import org.rr.commons.utils.compression.zip.ZipUtils;
-import org.rr.jeborker.db.item.EbookKeywordItem;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 
 abstract class AEpubMetadataHandler extends AMetadataHandler {
@@ -60,8 +58,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				List<String> keywords = ListUtils.split(metadataProperty.getValueAsString(), ",");
-				List<EbookKeywordItem> asEbookKeywordItem = EbookPropertyItemUtils.getAsEbookKeywordItem(keywords);
-				item.setKeywords(asEbookKeywordItem);
+				item.setKeywords(keywords);
 			}			
 		},CALIBRE_RATING {
 			public String getName() {

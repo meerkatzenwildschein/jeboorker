@@ -16,6 +16,7 @@ import org.japura.gui.model.ListCheckModel;
 import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -150,7 +151,7 @@ public class SortColumnComponentController {
 	 */
 	private DefaultListCheckModel<Field> initModel() {
 		//get fields to be displayed in the combobox
-		final List<Field> listEntries = EbookPropertyItemUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
+		final List<Field> listEntries = ReflectionUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
 		
 		//sort the fields to the DBViewField.orderPriority()
 		Collections.sort(listEntries, ebookPropertyItemFieldComperator);
