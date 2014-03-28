@@ -1,43 +1,37 @@
 package org.rr.commons.collection;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 
 /**
  * Encapsulates an Iterator and provide it's data with a list
  * interface. The iterator content is only be copied if needed (lazy). 
  */
-public class IteratorList<E> implements List<E> {
+public class IteratorList<E> implements ICloseableList<E> {
 	
 	private Iterator<E> iterator;
 	
-	private Iterable<E> iterable;
-	
-	private int iteratorSize = -1;
+	private int size;
 	
 	private List<E> list = new ArrayList<E>();
 	
-	private Method method;
-	
 	private boolean completlyCopied = false;
 	
-	public IteratorList(Iterator<E> iterator) {
+	public IteratorList(Iterator<E> iterator, int size) {
 		this.iterator = iterator;
+		this.size = size;
 	}
-	
-	public IteratorList(Iterable<E> iterable) {
-		this.iterator = iterable.iterator();
-		this.iterable = iterable;
-	}	
 
 	@Override
 	public boolean add(E e) {
@@ -178,42 +172,10 @@ public class IteratorList<E> implements List<E> {
 			return list.size();
 		}
 		
-		if(iterable instanceof List) {
-			return ((List<?>)iterable).size();
-		} else if(iterator.getClass().getName().equals("com.orientechnologies.orient.core.iterator.OObjectIteratorMultiCluster") || iterator.getClass().getName().equals("com.orientechnologies.orient.object.iterator.OObjectIteratorClass")) {
-			// some special handling for the orientdb result. It's much faster to get the size via reflection.
-			try {
-				//field underlying / com.orientechnologies.orient.core.iterator.ORecordIteratorClass
-				//field browsedRecords / int
-				final Object underlying = ReflectionUtils.getFieldValue(iterator, "underlying", false);
-				final Long records = (Long)ReflectionUtils.getFieldValue(underlying, "totalAvailableRecords", false);
-				if (records != null) {
-					return records.intValue();
-				}
-			} catch (ReflectionFailureException e) {
-				LoggerFactory.logInfo(this, "could not fetch size via reflection", e);
-			}
-		} else if(method!=null || (method = ReflectionUtils.getMethod(iterable.getClass(), "size", null, ReflectionUtils.VISIBILITY_VISIBLE_ALL))!=null) {
-			try {
-				Object result = method.invoke(iterable, new Object[0]);
-				if( result != null) {
-					Number number = CommonUtils.toNumber(result);
-					if(number != null) {
-						return number.intValue();
-					}
-				}
-			} catch (Exception e) {
-				//sometimes happens if the list is empty.
-				try {
-					List<?> l = (List<?>) ReflectionUtils.getFieldValue(iterable, "documents", false);
-					if (l != null) {
-						return iteratorSize = l.size();
-					}
-				} catch (ReflectionFailureException e1) {
-				}
-				e.printStackTrace();
-			}
+		if(this.size >= 0) {
+			return this.size;
 		}
+
 		this.copyIterator();
 		return list.size();
 	}
@@ -236,6 +198,27 @@ public class IteratorList<E> implements List<E> {
 		return this.list.toArray(a);
 	}
 	
+	@Override
+	public void close() {
+		if(this.iterator instanceof Closeable) {
+			try {
+				((Closeable)this.iterator).close();
+			} catch (IOException e) {
+				LoggerFactory.log(Level.WARNING, this, "Can not close Iterator", e);
+			}
+		} else {
+			Method closeMethod = ReflectionUtils.getMethod(this.iterator.getClass(), "close", new Class[0], ReflectionUtils.VISIBILITY_VISIBLE_ALL);
+			if(closeMethod != null) {
+				closeMethod.setAccessible(true);
+				try {
+					closeMethod.invoke(this.iterator, new Object[0]);
+				} catch (Exception e) {
+					LoggerFactory.log(Level.WARNING, this, "Can not close Iterator", e);
+				} 
+			}
+		}
+	}
+
 	/**
 	 * Fills the internal list with the data from the iterator and returns it's content.
 	 * @param index The index needed to fetch.

@@ -97,6 +97,25 @@ public class ReflectionUtils implements Serializable {
 		}
 	}
 	
+    /**
+     * Get all fields which are marked with the given annotation class.
+     * @return The desired fields.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List<Field> getFieldsByAnnotation(final Class annotationClass, final Class<?> itemClass) {
+		//get fields to be displayed in the combobox
+		final List<Field> fields = ReflectionUtils.getFields(itemClass, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
+		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
+		for (Field field : fields) {
+			Object dbViewFieldAnnotation = field.getAnnotation(annotationClass);
+			if(dbViewFieldAnnotation!=null) {
+				listEntries.add(field);
+			}
+		} 
+		
+		return listEntries;  	
+    } 		
+	
 	/**
 	 * Gets the <code>Field</code> value from the field with the name specified with the
 	 * <code>fieldName</code> parameter from the Object instance specified with the <code>object</code> parameter.
