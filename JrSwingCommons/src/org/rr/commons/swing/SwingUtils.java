@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -25,9 +26,14 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.metal.MetalTheme;
 
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.MathUtils;
+import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.commons.utils.UtilConstants;
@@ -249,19 +255,6 @@ public class SwingUtils {
 	}	
 	
 	/**
-	 * Reset the stored fore- and background colors for
-	 * {@link #getBackgroundColor()}, {@link #getForegroundColor()} {@link #getSelectionBackgroundColor()}
-	 * and {@link #getSelectionForegroundColor()}.
-	 */
-	public static void resetColors() {
-		backgroundColor = null;
-		foregroundColor = null;
-		selectionBackgroundColor = null;
-		selectionForegroundColor = null;
-		stripeBackgroundColor = null;
-	}
-	
-	/**
 	 * Center the given <code>windows</code> in relative to the given <code>invoker</code>.
 	 * @param invoker Reference window for the window to center.
 	 * @param window The window instance to center.
@@ -382,5 +375,35 @@ public class SwingUtils {
 	public static void openURL(String url) throws MalformedURLException, IOException, URISyntaxException {
 		Desktop.getDesktop().browse(new URL(url).toURI());
 	}
+	
+	/**
+	 * Sets the given look and feel.
+	 * 
+	 * @param lafClassName The look and feel class name. Should also be a class name and a theme name which
+	 *   are separated by a ; char.
+	 * @throws ReflectionFailureException
+	 * @throws UnsupportedLookAndFeelException
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public static void setLookAndFeel(String lafClassName) throws ReflectionFailureException, UnsupportedLookAndFeelException, ClassNotFoundException,
+			InstantiationException, IllegalAccessException {
+		if (lafClassName.indexOf(';') != -1) {
+			List<String> split = ListUtils.split(lafClassName, ";");
+			String className = split.get(0);
+			String themeClassName = split.get(1);
+			LookAndFeel lafInstance = (LookAndFeel) ReflectionUtils.getObjectInstance(className, null);
+			if (ReflectionUtils.containsMethod(className, "setCurrentTheme", new Class<?>[] { MetalTheme.class },
+					ReflectionUtils.VISIBILITY_VISIBLE_ACCESSIBLE_ONLY)) {
+				MetalTheme theme = (MetalTheme) ReflectionUtils.getObjectInstance(themeClassName, null);
+				ReflectionUtils.invokeMethod(lafInstance, "setCurrentTheme", theme);
+			}
+
+			UIManager.setLookAndFeel(lafInstance);
+		} else {
+			UIManager.setLookAndFeel(lafClassName);
+		}
+	}	
 	
 }
