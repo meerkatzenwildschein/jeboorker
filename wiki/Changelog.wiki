@@ -1,8 +1,8 @@
 #labels Featured
 == v0.3.9 ==
   * Metadata downloader did not writes the cover image into the document if the document did not already have a cover (The cover downloader does). 
-  * Exchanges the underlying database system. Now using H2 instead of orientdb. I run into too many bugs with orientdb for getting Jeboorker running stable.
-  * Implemented the great looking //Web Look and Feel// and made it as the default look and feel.   
+  * Exchanges the underlying database system. Now using H2 instead of OrientDB. I run into too many bugs with OrientDB to getting Jeboorker running stable.
+  * Implemented the great looking //Web Look and Feel// and made it as the default look and feel.
 == v0.3.8 ==
   * HTML mata data reader is able to add common meta data like author or title to the Jeboorker index.
   * Rename cell component rewritten because the old one did not works reliable.
