@@ -1,7 +1,5 @@
 package org.rr.jeborker.app.preferences;
 
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 /***
  * {@link PreferenceStoreFactory} allows to access the different preference store implementations.
