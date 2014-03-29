@@ -1136,18 +1136,27 @@ class MainView extends JFrame {
 	 * @param option The dialog option: JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.YES_NO_OPTION, JOptionPane.OK_CANCEL_OPTION
 	 * @return 0: yes/ok, 1: no, 2:cancel, -1 none
 	 */
-	int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
+	int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue, boolean isConfirmDialog) {
 		Number showAgain = preferenceStore.getGenericEntryAsNumber(showAgainKey);
 		if(showAgain == null) {
-		    int n;
+		    int n = defaultValue;
 		    boolean dontShowAgain;
+
 		    if(showAgainKey != null) {
 			    JCheckBox checkbox = new JCheckBox(Bundle.getString("EborkerMainView.messagebox.showAgainMessage"));  
-			    Object[] params = {message, checkbox};  
-		    	n = JOptionPane.showConfirmDialog(this, params, title, option);
+			    Object[] params = {message, checkbox}; 
+			    if(isConfirmDialog) {
+			    	n = JOptionPane.showConfirmDialog(this, params, title, option);
+			    } else {
+			    	JOptionPane.showMessageDialog(this, params, title, option);
+			    }
 		    	dontShowAgain = checkbox.isSelected();  
 		    } else {
-		    	n = JOptionPane.showConfirmDialog(this, message, title, option);
+		    	if(isConfirmDialog) {
+		    		n = JOptionPane.showConfirmDialog(this, message, title, option);
+		    	} else {
+		    		JOptionPane.showMessageDialog(this, message, title, option);
+		    	}
 		    	dontShowAgain = false;  		    	
 		    }
 		    

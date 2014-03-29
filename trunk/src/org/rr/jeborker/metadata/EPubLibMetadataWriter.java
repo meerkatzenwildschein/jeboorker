@@ -160,7 +160,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 					if(differes(oldCoverImage.getData(), cover)) {
 						String message = Bundle.getString("EPubLibMetadataWriter.overwriteCover.message");
 						String title = Bundle.getString("EPubLibMetadataWriter.overwriteCover.title");
-						int result = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_CANCEL_OPTION, "EPubLibMetadataWriter_Cover_Ovwerwrite_Key", -1);
+						int result = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_CANCEL_OPTION, "EPubLibMetadataWriter_Cover_Ovwerwrite_Key", -1, true);
 						 
 						if(result == JOptionPane.YES_OPTION) {
 							this.replaceOldCover(epub, cover, oldCoverImage);
