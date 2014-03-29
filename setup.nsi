@@ -82,6 +82,7 @@ Section -Main SEC0000
     File doc\license\Commons-IO_license.txt
     File doc\license\Commons-Excec_license.txt
     File doc\license\Commons-Net_license.txt
+    File doc\license\Commons-DBUtils_license.txt
     File doc\license\Htmlcleaner_BSD_license.txt
     File doc\license\KXML_license.txt
     File doc\license\Yasis-Icons_license.txt
@@ -94,6 +95,9 @@ Section -Main SEC0000
     File doc\license\jgoodies-looks_license.txt
     File doc\license\pdfscissors_AGPL_license.txt
     File doc\license\jessies_GPL2_license.txt
+    File doc\license\WebLookAndFeel_GPL3_license.txt
+    File doc\license\Ormlite_ISC_license.txt
+    File doc\license\BoneCP_ApacheV2_license.txt
     
     SetOutPath $INSTDIR\exec
     File 'exec\Rar.exe'
