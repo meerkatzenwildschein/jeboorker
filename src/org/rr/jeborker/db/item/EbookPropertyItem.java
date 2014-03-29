@@ -1,5 +1,6 @@
 package org.rr.jeborker.db.item;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -273,7 +274,8 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 	
 	public void setFile(String file) {
-		this.file = file;
+		this.file = StringUtils.replace(file, "/", File.separator);
+		this.file = StringUtils.replace(this.file, "\\", File.separator);
 		this.fileName = file != null ? FilenameUtils.getName(file) : null;
 	}
 
