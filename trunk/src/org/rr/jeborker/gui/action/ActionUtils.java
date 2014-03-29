@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.action;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -273,7 +274,7 @@ public class ActionUtils {
 			final List<IResourceHandler> sourceResourcesToTransfer) throws IOException {
 		ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
 		for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
-			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + "/" + sourceResource.getName());
+			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + File.separator + sourceResource.getName());
 			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
 				boolean success = sourceResource.copyTo(targetResource, false);
 				if(success) {
