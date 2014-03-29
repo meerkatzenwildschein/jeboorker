@@ -16,8 +16,7 @@ You can copy Books simply by Dragging it in the Jeboorker list. The book is copi
 located. You can also drag a book from Jeboorker to you favourite file manager.
 
 = Search books using the filters =
-Jeboorker provides a filter field at the bottom which allows to filter for keywords. Separating keywords by comma cause 
-a filter for each of the separated keywords. You can specify which kind of data should be searched by checking the desired kinds at the filter combobox at the left of
+Jeboorker provides a filter field at the bottom which allows to filter for keywords. You can specify which kind of data should be searched by checking the desired kinds at the filter combobox at the left of
 the filter text field. If no filter is selected the filter is performed to title, author and file name. 
 
 Another way to filter is to use the filter tree at the left. Each base path registered with Jeboorker can be found in that
