@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.rr.commons.collection.ListenerList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS;
@@ -258,7 +258,6 @@ public abstract class APreferenceStore {
 	public static String getConfigDirectory() {
 		String result = System.getProperties().getProperty("user.home");
 		String suffix = System.getProperties().getProperty("application.suffix");
-		
 		result += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : "") + File.separator;
 		
 		return result;
