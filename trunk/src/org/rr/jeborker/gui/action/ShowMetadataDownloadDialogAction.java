@@ -128,6 +128,9 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 			List<MetadataProperty> coverMetadataList = reader.getMetadataByType(true, readMetaData, IMetadataReader.METADATA_TYPES.COVER);
 			if(!coverMetadataList.isEmpty()) {
 				MetadataProperty metadataProperty = coverMetadataList.get(0);
+				if(!readMetaData.contains(metadataProperty)) {
+					readMetaData.add(metadataProperty);
+				}
 				metadataProperty.setValue(coverImage, 0);
 			}
 		}

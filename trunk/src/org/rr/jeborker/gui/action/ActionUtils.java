@@ -20,6 +20,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -55,8 +56,9 @@ public class ActionUtils {
 	 */
 	static void quit() {
 		MainController.getController().dispose();
+		FileWatchService.shutdownWatchService();
 		try {
-		DefaultDBManager.getInstance().shutdown();
+			DefaultDBManager.getInstance().shutdown();
 		} catch(Exception e1) {
 			LoggerFactory.logWarning(ActionUtils.class, "Database shutdown failed.", e1);
 		}

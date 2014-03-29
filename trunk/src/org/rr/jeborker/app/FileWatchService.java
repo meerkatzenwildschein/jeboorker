@@ -38,8 +38,6 @@ public class FileWatchService {
 
 	private static WatchService watchService;
 
-//	private static final List<Pair<String, WatchKey>> items = Collections.synchronizedList(new ArrayList<Pair<String, WatchKey>>());
-
 	private static final HashMap<String, WatchKey> items = new HashMap<String, WatchKey>();
 	
 	static {
@@ -65,6 +63,7 @@ public class FileWatchService {
 	 * Adds the given folders to the watched ones.  
 	 */
 	public static void addWatchPath(final Collection<String> p) {
+		LoggerFactory.getLogger(FileWatchService.class).log(Level.INFO, "Adding " + p.size() + " folders to watch service.");
 		for(String path : p) {
 			try {
 				File pathFile = new File(path);
@@ -73,9 +72,20 @@ public class FileWatchService {
 					items.put(path, watchKey);
 				}
 			} catch (Exception e) {
-				LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "Failed to add path " + path + "to file watch service", e);
+				LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "Failed to add path " + path + " to file watch service. Stopping to add watches.", e);
+				break;
 			}			
 		}
+	}
+	
+	/**
+	 * Shutdown the watch service. No file change is detected after shutting down the service.
+	 */
+	public static void shutdownWatchService() {
+		for(WatchKey key : items.values()) {
+			key.cancel();
+		}
+		items.clear();
 	}
 	
 	/**
