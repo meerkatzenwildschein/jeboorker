@@ -101,9 +101,7 @@ public class PreferenceStoreFactory {
 		},
 		LOOK_AND_FEEL {
 			
-			private final String INIT_DEFAULT_VALUE = "javax.swing.plaf.metal.MetalLookAndFeel";
-			
-			private String defaultValue = null;
+			private final String INIT_DEFAULT_VALUE = com.alee.laf.WebLookAndFeel.class.getName();
 			
 			@Override
 			public String getKey() {
@@ -112,21 +110,7 @@ public class PreferenceStoreFactory {
 			
 			@Override
 			public String getDefaultValue() {
-				if(defaultValue == null) {
-					defaultValue = INIT_DEFAULT_VALUE;
-					final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-					for(LookAndFeelInfo laf : installedLookAndFeels) {
-						String name = laf.getName().toLowerCase();
-						if(name.contains("gtk+")) {
-							defaultValue = laf.getClassName();
-							break;
-						} else if(name.contains("windows")) {
-							defaultValue = UIManager.getSystemLookAndFeelClassName();
-							break;
-						}
-					}		
-				}
-				return defaultValue;
+				return INIT_DEFAULT_VALUE;
 			}
 			
 			@Override

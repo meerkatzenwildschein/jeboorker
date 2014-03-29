@@ -5,12 +5,9 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.swing.SwingUtils;
-import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
@@ -30,13 +27,11 @@ class ChangeLookAndFeelAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final JFrame mainWindow = MainController.getController().getMainWindow();
 		try {
-			SwingUtils.resetColors();
 			String lafClassName = JeboorkerConstants.LOOK_AND_FEELS.get(lafName);
 			if(lafClassName != null) {
-				ActionUtils.setLookAndFeel(lafClassName);
-				SwingUtilities.updateComponentTreeUI(mainWindow);
+				openMessageDialog();
+				
 				PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
 					.addEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL, lafClassName);
 			} else {
@@ -45,8 +40,12 @@ class ChangeLookAndFeelAction extends AbstractAction {
 		} catch (Exception ex) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Could not set look and feel " + lafName, ex);
 		} 
-		SwingUtilities.updateComponentTreeUI(mainWindow);
-		mainWindow.pack();
+	}
+
+	private void openMessageDialog() {
+		String message = Bundle.getFormattedString("ChangeLookAndFeelAction.restart.message", lafName);
+		String title = Bundle.getString("ChangeLookAndFeelAction.name");
+		MainController.getController().showMessageBox(message, title, JOptionPane.OK_OPTION, "ChangeLookAndFeelAction", -1, false);
 	}
 
 }

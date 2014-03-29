@@ -65,7 +65,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	
 	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
-		setOpaque(true);
+		setOpaque(false);
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 		eyesTreeState = ImageResourceBundle.getResourceAsImageIcon("eyes_between_16.png");

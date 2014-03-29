@@ -145,6 +145,7 @@ public class JeboorkerConstants {
 			put("PlasticXP;ExperienceGreen", PlasticXPLookAndFeel.class.getName() + ";" + ExperienceGreen.class.getName());
 			put("PlasticXP;ExperienceRoyale", PlasticXPLookAndFeel.class.getName() + ";" + ExperienceRoyale.class.getName());
 			
+			put("Web Look and Feel", com.alee.laf.WebLookAndFeel.class.getName());
 			final LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 			for(LookAndFeelInfo laf : installedLookAndFeels) {
 				String className = laf.getClassName();

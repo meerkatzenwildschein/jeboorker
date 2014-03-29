@@ -33,6 +33,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.swing.dialogs.JSplashScreen;
@@ -47,7 +48,6 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
-import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
@@ -284,7 +284,7 @@ public class MainController {
 		final String lookAndFeel = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
 				.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL);
 		
-		ActionUtils.setLookAndFeel(lookAndFeel);
+		SwingUtils.setLookAndFeel(lookAndFeel);
 		
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.opendb"));
 		splashScreen.setLoadingValue(35);	
@@ -955,10 +955,11 @@ public class MainController {
 	 * @param option The dialog option: JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.YES_NO_OPTION, JOptionPane.OK_CANCEL_OPTION
 	 * @param defaultValue The value which is stored if the user do not want to see the dialog again. 
 	 * 		-1 for store the result value instead.
+	 * @param isConfirmDialog Tells if the dialog to be shown is a confirm (Yes/No) Dialog or a simple OK Message-Box 
 	 * @return 0: yes/ok, 1: no, 2:cancel, -1 none
 	 */
-	public int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue) {
-		return mainWindow.showMessageBox(message, title, option, showAgainKey, defaultValue);
+	public int showMessageBox(String message, String title, int option, String showAgainKey, int defaultValue, boolean isConfirmDialog) {
+		return mainWindow.showMessageBox(message, title, option, showAgainKey, defaultValue, isConfirmDialog);
 	}
 	
 	/**

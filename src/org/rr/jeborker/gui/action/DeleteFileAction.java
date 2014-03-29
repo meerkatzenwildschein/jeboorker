@@ -86,7 +86,7 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 		if(this.result == null) {
 			String message = Bundle.getString("DeleteFileAction.delete.message");
 			String title = Bundle.getString("DeleteFileAction.name");
-			int value = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_OPTION, "DeleteFileActionKey", JOptionPane.YES_OPTION);
+			int value = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_OPTION, "DeleteFileActionKey", JOptionPane.YES_OPTION, true);
 			this.result = Integer.valueOf(value);
 		}
 		return result;
