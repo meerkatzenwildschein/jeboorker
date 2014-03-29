@@ -1,20 +1,20 @@
 #labels Featured
-== v0.3.8 ==
+== v0.3.9 ==
   * Metadata downloader did not writes the cover image into the document if the document did not already have a cover (The cover downloader does). 
   * Exchanges the underlying database system. Now using H2 instead of orientdb. I run into too many bugs with orientdb for getting Jeboorker running stable.
   * Implemented the great looking //Web Look and Feel// and made it as the default look and feel.   
-== v0.3.7 ==
+== v0.3.8 ==
   * HTML mata data reader is able to add common meta data like author or title to the Jeboorker index.
   * Rename cell component rewritten because the old one did not works reliable.
   * Rename cell component no longer allows to change file extension which makes it easier to navigate.
   * Displaying expand symbols for base path root nodes no longer depending at the look and feel.
   * Faster directory reading for the file system tree.
-== v0.3.6 ==
+== v0.3.7 ==
   * Look and Feel support
   * The main table is now striped slightly
   * Minor performance improvements
   * Save button is no longer toggled without making a real change in the meta data.
-== v0.3.5 ==
+== v0.3.6 ==
   * Better suggestions for file renaming
   * Empty meta data reader for unsupported file formats. Any file format can be added with the preferences dialog.
   * The automatic save mechanism sets the selection to the clicked entry in the ebook list now.
