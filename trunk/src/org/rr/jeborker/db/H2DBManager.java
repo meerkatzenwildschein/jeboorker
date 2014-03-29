@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.h2.jdbc.JdbcResultSet;
 import org.h2.result.LocalResult;
 import org.rr.commons.collection.ICloseableList;
@@ -172,6 +174,7 @@ System.out.println(sql);
 				if (keyword.contains(":")) {
 					keyword = keyword.substring(keyword.indexOf(':') + 1);
 				}
+				keyword = StringEscapeUtils.escapeSql(keyword);
 				sql.append("select * from FT_SEARCH_DATA('").append(keyword).append("', 0, 0) B where B.TABLE='").append(tableName).append("'");
 			}
 			sql.append(") B");
@@ -189,9 +192,10 @@ System.out.println(sql);
 			for (String keyword : keywords) {
 				if (keyword.contains(":")) {
 					String searchColumn = keyword.substring(0, keyword.indexOf(':')).toUpperCase();
-					keyword = keyword.substring(keyword.indexOf(':') + 1);
-
-					localSQL.append("upper(").append(searchColumn).append(") like '%").append(keyword.toUpperCase()).append("%'").append(orString);
+					keyword = keyword.substring(keyword.indexOf(':') + 1).toUpperCase();
+					keyword = StringEscapeUtils.escapeSql(keyword);
+					
+					localSQL.append("upper(").append(searchColumn).append(") like '%").append(keyword).append("%'").append(orString);
 					append = true;
 				}
 			}
