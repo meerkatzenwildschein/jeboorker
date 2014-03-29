@@ -74,7 +74,6 @@ Section -Main SEC0000
     File doc\license\HTTP-Components_Apache_license.txt
     File doc\license\JSON-Simple_Apache_license.txt
     File doc\license\Dropbox_MIT_license.txt
-    File doc\license\Orientdb_Apache_license.txt
     File doc\license\JSoup_MIT_license.txt
     File doc\license\Junique_LGPL_license.txt
     File doc\license\Bouncycastle_MIT_license.txt
@@ -125,6 +124,13 @@ Section -Main SEC0000
     File lib\truezip-file-7.7.2.jar
     File lib\truezip-kernel-7.7.2.jar
     File lib\truezip-swing-7.7.2.jar
+    File lib\h2-1.3.175.jar
+    File lib\commons-dbutils-1.5.jar
+    File lib\bonecp-0.8.0.RELEASE.jar
+    File lib\jpa.jar
+    File lib\ormlite-core-4.48.jar
+    File lib\ormlite-jdbc-4.48.jar
+    File lib\weblaf-1.26.jar
     
     RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
@@ -146,15 +152,7 @@ Section -Main SEC0000
     File lib\epublib\commons-vfs-1.0.jar
     File lib\epublib\htmlcleaner-2.2.jar
     File lib\epublib\kxml2-2.2.2.jar
-    
-    RMDir /r $INSTDIR\lib\orientdb
-    SetOutPath $INSTDIR\lib\orientdb
-    File lib\orientdb\javassist.jar
-    File lib\orientdb\orient-commons-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\orientdb-core-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\orientdb-nativeos-1.4.0-SNAPSHOT.jar
-    File lib\orientdb\orientdb-object-1.4.0-SNAPSHOT.jar
-    
+        
     SetOutPath $INSTDIR\lib\epubcheck
     File lib\epubcheck\epubcheck-1.2.jar
     File lib\epubcheck\jing.jar
