@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.h2.jdbc.JdbcResultSet;
 import org.h2.result.LocalResult;
