@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -81,7 +82,7 @@ public class EpubProcessorSupport {
 			result.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
 			result.setOutput(out);
 		} catch (Exception e) {
-			log.warning("When creating XmlSerializer: " + e.getClass().getName() + ": " + e.getMessage());
+			log.log(Level.WARNING, " When creating XmlSerializer: " + e.getClass().getName() + ": " + e.getMessage(), e);
 		}
 		return result;
 	}
