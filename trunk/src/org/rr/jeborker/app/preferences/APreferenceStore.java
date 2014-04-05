@@ -256,11 +256,15 @@ public abstract class APreferenceStore {
 	 * @return The config file directory.
 	 */
 	public static String getConfigDirectory() {
-		String result = System.getProperties().getProperty("user.home");
+		String configDir = System.getProperties().getProperty("user.home");
 		String suffix = System.getProperties().getProperty("application.suffix");
-		result += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : "") + File.separator;
+		configDir += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : "") + File.separator;
 		
-		return result;
+		if(!new File(configDir).exists()) {
+			new File(configDir).mkdirs();
+		}
+		
+		return configDir;
 	}
 	
 	/**
