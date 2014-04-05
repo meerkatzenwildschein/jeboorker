@@ -17,6 +17,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.app.BasePathList;
+import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.metadata.IMetadataReader;
@@ -29,7 +30,7 @@ import org.rr.pm.image.ImageUtils;
 public class EbookPropertyItemUtils {
 	
 	private static final String ALL_BOOK_PATH_COLLECTION = "allBookPathCollection";
-	private static final String thumbnailFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getConfigDirectory() + "thumbs/";
+	private static final String thumbnailFolder = APreferenceStore.getConfigDirectory() + "thumbs/";
 	static {
 		IResourceHandler thumbnailFolderResource = ResourceHandlerFactory.getResourceHandler(thumbnailFolder);
 		if(!thumbnailFolderResource.exists()) {
@@ -201,7 +202,7 @@ public class EbookPropertyItemUtils {
 	 * @return The desired {@link IResourceHandler} instance for the cover thumbnail. Returns <code>null</code> if 
 	 *   no cover is stored for the given ebook {@link IResourceHandler}. 
 	 */
-	public static IResourceHandler getCoverThumbnail(final IResourceHandler ebookResource) {
+	private static IResourceHandler getCoverThumbnail(final IResourceHandler ebookResource) {
 		IResourceHandler coverThumbnailResourceHandler = getCoverThumbnailResourceHandler(ebookResource);
 		if(coverThumbnailResourceHandler.exists()) {
 			return coverThumbnailResourceHandler;
