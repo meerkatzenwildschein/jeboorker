@@ -218,6 +218,16 @@ public final class StringUtils implements Serializable {
 		return result;
 	}
 	
+	public static final int occurrence(String text, String search) {
+		int idx = 0;
+		int count = 0;
+		while((idx = text.indexOf(search, idx)) != -1) {
+			idx += search.length();
+			count ++;
+		}
+		return count;
+	}
+	
 	/**
 	 * Searches for all occurrences specified with the <code>search</code> parameter in the <code>text</code>. 
 	 * @param text The text to be searched in.
@@ -239,6 +249,14 @@ public final class StringUtils implements Serializable {
 		//the could be no occurrences here
 		if (text == null || text.length()==0) {
 			return 0;
+		}
+		
+		if(openExclusion==null && closeExclusion==null) {
+			int result = 0;
+			for(String s : search) {
+				result += occurrence(text, s);
+			}
+			return result;
 		}
 		
 		if(openExclusion==null) {
