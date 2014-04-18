@@ -245,7 +245,7 @@ public class ResourceHandlerFactory {
 			String data;
 			try {
 				data = (String) t.getTransferData(DataFlavor.stringFlavor);
-				transferedFiles = getFileList(data);
+				transferedFiles = getFileList(data, 100);
 			} catch (UnsupportedFlavorException e) {
 			}
 		} else if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
@@ -292,7 +292,7 @@ public class ResourceHandlerFactory {
 		} else if(contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 			try {
 				String data = (String) contents.getTransferData(DataFlavor.stringFlavor);
-				List<Object> fileList = getFileList(data);
+				List<Object> fileList = getFileList(data, 10);
 				return !fileList.isEmpty();
 			} catch (Exception e) {
 				return false;
@@ -370,9 +370,11 @@ public class ResourceHandlerFactory {
 	/**
 	 * Splits the given Data string into a list of files. 
 	 * @param data The data to be splitted into a file list.
+	 * @param invalid The number of non existing file entries before the list creation gets aborted.
 	 * @return The list of files. Never returns <code>null</code>.
 	 */
-	private static List<Object> getFileList(String data) {
+	private static List<Object> getFileList(String data, int invalid) {
+		int invalidCount = 0;
 		ArrayList<Object> result = new ArrayList<Object>();
 		data = data.replace("\r", "");
 		List<String> splitData = ListUtils.split(data, '\n');
@@ -388,6 +390,11 @@ public class ResourceHandlerFactory {
 					
 					if (file.isFile()) {
 						result.add(file);
+					} else if(!file.isDirectory()) {
+						invalidCount ++;
+						if(invalidCount > invalid) {
+							break;
+						}
 					}
 				} catch (URISyntaxException e) {
 //					LoggerFactory.getLogger().log(Level.INFO, "No valid file " + splitDataItem);

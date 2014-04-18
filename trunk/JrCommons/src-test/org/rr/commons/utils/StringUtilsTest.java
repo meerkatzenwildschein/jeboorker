@@ -58,4 +58,16 @@ public class StringUtilsTest extends TestCase {
 		result = StringUtils.ltrim(text, trims);
 		assertEquals("abcdefghij", result);		
 	}
+	
+	public void testOccurence() {
+		String text = "abcdefghija";
+		assertEquals(2, StringUtils.occurrence(text, "a"));
+		
+		text = "aabcdefghij";
+		assertEquals(2, StringUtils.occurrence(text, "a"));
+		
+		text = "bcdefghij";
+		assertEquals(0, StringUtils.occurrence(text, "a"));
+	}
+	
 }
