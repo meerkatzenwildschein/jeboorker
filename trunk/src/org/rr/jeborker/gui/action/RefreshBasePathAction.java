@@ -2,6 +2,7 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -82,6 +83,7 @@ class RefreshBasePathAction extends AbstractAction {
 		IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(path);
 		removeDeletedFiles(resourceLoader);
 		refreshEbookFiles(resourceLoader);
+		
 		MainController.getController().refreshTable();
 	}
 	
@@ -89,7 +91,7 @@ class RefreshBasePathAction extends AbstractAction {
 	 * Removes all deleted files from the database.
 	 * @param basePath The folder to be processed.
 	 */
-	static void removeDeletedFiles(final IResourceHandler basePath) {
+	private static void removeDeletedFiles(final IResourceHandler basePath) {
 		final DefaultDBManager db = DefaultDBManager.getInstance();
 		final ArrayList<EbookPropertyItem> itemsToTest = RemoveBasePathAction.getItemsByBasePath(basePath.toString());
 		for(EbookPropertyItem item : itemsToTest) {
@@ -104,9 +106,10 @@ class RefreshBasePathAction extends AbstractAction {
 	 * Read all ebook files recursive and stores them directly to the database.
 	 * @param basePath The folder where the ebook search should be started.
 	 */
-	static void refreshEbookFiles(final IResourceHandler basePath) {
+	private void refreshEbookFiles(final IResourceHandler basePath) {
 		final DefaultDBManager db = DefaultDBManager.getInstance();
 		final HashSet<String> path = new HashSet<String>();
+		final Collection<String> oldPathElements = EbookPropertyItemUtils.fetchPathElements();
 		ResourceHandlerUtils.readAllFilesFromBasePath(basePath, new ResourceNameFilter() {
 			
 			@Override
@@ -138,6 +141,21 @@ class RefreshBasePathAction extends AbstractAction {
 			}
 		});
 		EbookPropertyItemUtils.storePathElements(path);
+		reloadBasePathTree(path, oldPathElements);
+	}
+
+	/**
+	 * Reloads the base path tree if there are any new entries in <code>pathElements</code>
+	 * @param pathElements Elements to test for new path elements.
+	 * @param oldPathElements The old path list which is used to evaluate which entry is new.
+	 */
+	private void reloadBasePathTree(final Collection<String> pathElements, final Collection<String> oldPathElements) {
+		for(String newPathElement : pathElements) {
+			if(!oldPathElements.contains(newPathElement)) {
+				MainController.getController().refreshBasePathTree();
+				break;
+			}
+		}
 	}	
 	
 }

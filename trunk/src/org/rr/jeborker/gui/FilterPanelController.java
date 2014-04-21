@@ -22,7 +22,6 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.ViewField;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.additional.EbookPropertyItemFieldComperator;
@@ -49,18 +48,7 @@ public class FilterPanelController {
 		}
 	}
 	
-//	/**
-//	 * Get the menu view which is a {@link JMenuBar} instance.
-//	 * @return The menu view.
-//	 */
-//	static JPanel getView() {
-//		if(view==null) {
-//			view = new FilterPanelView();
-//		}
-//		return view;
-//	}
-	
-	void initialize() {
+	private void initialize() {
 		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
 		final String latestSearch = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString("FilterPanelControllerCurrentFilter");
 		
