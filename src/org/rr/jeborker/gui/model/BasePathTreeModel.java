@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JTree;
-import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -44,7 +43,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		this.filterTreePath = filterTreePath;
 	}
 
-	public void init() {
+	private void init() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<String> basePath = new ArrayList<String>(preferenceStore.getBasePath());
 		
@@ -68,13 +67,6 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			//happens for example if the tree is in edit mode.
 			LoggerFactory.getLogger().log(Level.WARNING, "Reloading nodes has failed", e);
 		}
-	}	
-	
-	public void dispose() {
-		TreeModelListener[] treeModelListeners = getTreeModelListeners();
-		for(TreeModelListener treeModelListener : treeModelListeners) {
-			removeTreeModelListener(treeModelListener);
-		}
 	}
 	
 	public TreePath restoreExpanstionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments) {
@@ -91,7 +83,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	 * This is a special node and did not represents a base path. It's the "All Entries" node
 	 * that allows to toggle the visibility of all base path nodes.  
 	 */
-	class UniqueAllEntryNode implements MutableTreeNode, NamedNode, Comparable<UniqueAllEntryNode> {
+	private class UniqueAllEntryNode implements MutableTreeNode, NamedNode, Comparable<UniqueAllEntryNode> {
 
 		private String localizedName;
 

@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -27,6 +28,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -125,6 +127,7 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 import skt.swing.StringConvertor;
 
+import com.j256.ormlite.stmt.Where;
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
 import com.l2fprod.common.propertysheet.PropertySheet;
@@ -571,9 +574,9 @@ class MainView extends JFrame {
 		filterField.setEditable(true);
 		filterField.setEditor(comboboxEditor = new FilterFieldComboboxEditor());
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
-		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
-		((JComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
-		((JComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());		
+//		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
+//		((JComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
+//		((JComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());		
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.insets = new Insets(0, 0, 0, 5);
 		gbc_searchField.weightx = 1.0;
@@ -974,6 +977,57 @@ class MainView extends JFrame {
 		
 		basePathTree.setRootVisible(false);
 		basePathTree.setRowHeight(25);
+		
+		basePathTree.addMouseListener(new MouseAdapter() {
+
+			private static final String QUERY_IDENTIFER = "BASE_PATH_MOUSE_LISTENER";
+			
+			private Object previousEditorValue;
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				final int row = basePathTree.getRowForLocation(e.getPoint().x < 50 ? e.getPoint().x : 50, e.getPoint().y);
+				final TreePath filterTreePath = basePathTree.getPathForRow(row);
+				
+				if(filterTreePath != null) {
+					Object cellEditorValue = filterTreePath.getLastPathComponent();
+					if(cellEditorValue == null || !cellEditorValue.equals(previousEditorValue)) {
+						if(cellEditorValue instanceof FileSystemNode) {
+							setPathFilter(((FileSystemNode)cellEditorValue).getName());
+							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(filterTreePath);
+							MainController.getController().refreshTable();
+						} else {
+							boolean remove = MainController.getController().getTableModel().removeWhereCondition(QUERY_IDENTIFER);
+							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(null);
+							if(remove) {
+								MainController.getController().refreshTable();
+							}				
+						}
+					}
+					previousEditorValue = cellEditorValue;
+				}
+			}
+			
+			
+			private void setPathFilter(final String fullResourceFilterPath) {
+				MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+					
+					@Override
+					public String getIdentifier() {
+						return QUERY_IDENTIFER;
+					}
+					
+					@Override
+					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+						where.like("file", fullResourceFilterPath + "%");
+					}
+				});
+
+				//additionalFilterCondition.addOrChild(new QueryCondition("file", fullResourceFilterPath + "%", "like", QUERY_IDENTIFER));
+				//rootCondition.addAndChild(additionalFilterCondition);		
+			}			
+			
+		});
 		
 		basePathTree.setTransferHandler(new TransferHandler() {
 
