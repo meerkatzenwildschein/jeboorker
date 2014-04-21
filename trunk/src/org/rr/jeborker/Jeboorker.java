@@ -39,7 +39,7 @@ public class Jeboorker {
 			
 	public static boolean isRuntime = false;
 
-	public static final String VERSION = "0.4.0";
+	public static final String VERSION = "0.4.1";
 	
 	public static final String APP = "Jeboorker";
 	
