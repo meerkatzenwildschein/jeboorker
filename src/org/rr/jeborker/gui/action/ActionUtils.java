@@ -268,10 +268,11 @@ public class ActionUtils {
 	/**
 	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
 	 * The files will be copied and the {@link EbookPropertyItem}s will be created. 
+	 * @param deleteAnyway Deletes the resource after a successful import in any case.
 	 * @return A list of all imported (target) file resources.
 	 */
 	public static List<IResourceHandler> importEbookResources(int dropRow, String basePath, IResourceHandler targetRecourceDirectory,
-			final List<IResourceHandler> sourceResourcesToTransfer) throws IOException {
+			final List<IResourceHandler> sourceResourcesToTransfer, boolean delete) throws IOException {
 		ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
 		for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
 			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + File.separator + sourceResource.getName());
@@ -283,8 +284,6 @@ public class ActionUtils {
 					MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
 					importedResources.add(targetResource);
 					
-					final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-					boolean delete = preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
 					if(delete) {
 						sourceResource.delete();
 						MainController.getController().getMainTreeController().removeDeletedTreeItems();

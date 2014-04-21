@@ -57,7 +57,7 @@ public class FileRefreshBackground {
 				items.addAll(changedResources);
 			}
 		}
-	}	
+	}
 	
 	/**
 	 * Disabled the {@link FileRefreshBackground}. The {@link #addEbook(EbookPropertyItem)} method
@@ -92,11 +92,14 @@ public class FileRefreshBackground {
 							List<EbookPropertyItem> processedItems = new ArrayList<EbookPropertyItem>();
 							Iterator<EbookPropertyItem> itemsIter = items.iterator();
 							while(itemsIter.hasNext()) {
-								ebookPropertyItem = itemsIter.next();
-								this.processItem(ebookPropertyItem);
-								processedItems.add(ebookPropertyItem);
+								ebookPropertyItem = itemsIter.next();						
+								if(ebookPropertyItem != null) {
+									this.processItem(ebookPropertyItem);
+									processedItems.add(ebookPropertyItem);
+								}
 							}
 							items.removeAll(processedItems);
+							items.remove(null);
 						}
 					} catch(Exception e) {
 						LoggerFactory.log(Level.WARNING, this, "Failed to handle " + ebookPropertyItem + " in background process", e);
