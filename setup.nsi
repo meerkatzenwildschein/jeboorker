@@ -134,7 +134,7 @@ Section -Main SEC0000
     File lib\jpa.jar
     File lib\ormlite-core-4.48.jar
     File lib\ormlite-jdbc-4.48.jar
-    File lib\weblaf-1.26.jar
+    File lib\weblaf-1.27.jar
     
     RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
