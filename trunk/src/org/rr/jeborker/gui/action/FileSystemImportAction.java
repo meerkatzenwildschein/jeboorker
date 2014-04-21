@@ -36,7 +36,8 @@ public class FileSystemImportAction extends AbstractAction {
 		final String targetBasePath = preferenceStore.getBasePathFor(targetRecourceDirectory);
 		
 		try {
-			ActionUtils.importEbookResources(Integer.MIN_VALUE, targetBasePath, targetRecourceDirectory, selectedTreeItems);
+			boolean delete = preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
+			ActionUtils.importEbookResources(Integer.MIN_VALUE, targetBasePath, targetRecourceDirectory, selectedTreeItems, delete);
 		} catch(Exception ex) {
 			LoggerFactory.log(Level.WARNING, this, "Failed to import file to " + targetFolder, ex);
 		}
