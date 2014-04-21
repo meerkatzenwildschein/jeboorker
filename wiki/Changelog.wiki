@@ -4,8 +4,7 @@
   * Sometimes a click into the library tree is not recognized with Web L&F *fixed*
   * Startup is very slow if the clipboard contains something large *fixed*
   * New folders will be recognized during runtime after a folder refresh now. 
-  * Drag & Drop and Clipboard actions will delete the source file in any case and 
-    gets no longer be affected by the "delete source" property.
+  * Drag & Drop and Clipboard actions will delete the source file in any case and gets no longer be affected by the "delete source" property.
   * Windows path separators make some problem with H2 queries. *fixed*
 == v0.4.0 ==
   * Bugfix for new installations.
