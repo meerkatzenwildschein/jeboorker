@@ -1019,7 +1019,8 @@ class MainView extends JFrame {
 					
 					@Override
 					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-						where.like("file", fullResourceFilterPath + "%");
+						String fullResourceFilterPathStatement = StringUtils.replace(fullResourceFilterPath, "\\", "\\\\");
+						where.like("file", fullResourceFilterPathStatement + "%");
 					}
 				});
 
