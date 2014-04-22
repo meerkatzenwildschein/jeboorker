@@ -97,7 +97,7 @@ public abstract class DefaultDBManager {
 
 	public IDBObject storeObject(final IDBObject item) {
 		try {
-			Dao<IDBObject, ?> createDao = DaoManager.createDao(connection, item.getClass());
+			Dao<IDBObject, ?> createDao = (Dao<IDBObject, ?>) DaoManager.createDao(connection, item.getClass());
 			createDao.createOrUpdate(item);
 		} catch (Exception e) {
 			LoggerFactory.log(Level.SEVERE, this, "Failed to store object " + item, e);
@@ -111,10 +111,9 @@ public abstract class DefaultDBManager {
 	 * @param cls The class type of the pojos to be fetched
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> Collection<T> getItems(Class<T> cls) {
 		try {
-			Dao<IDBObject, T> createDao = DaoManager.createDao(connection, cls);
+			Dao<IDBObject, T> createDao = (Dao<IDBObject, T>) DaoManager.createDao(connection, cls);
 			List<T> queryForAll = (List<T>) createDao.queryForAll();
 			return queryForAll;
 		} catch (Exception e) {
@@ -220,7 +219,7 @@ public abstract class DefaultDBManager {
 	 */
 	public boolean deleteObject(IDBObject item, boolean deleteCover) {
 		try {
-			Dao<IDBObject, ?> createDao = DaoManager.createDao(connection, item.getClass());
+			Dao<IDBObject, ?> createDao = (Dao<IDBObject, ?>) DaoManager.createDao(connection, item.getClass());
 			createDao.delete(item);
 
 			if (item instanceof EbookPropertyItem) {
@@ -240,7 +239,6 @@ public abstract class DefaultDBManager {
 	 *            The class for the new {@link IDBObject}.
 	 * @return The desired object instance.
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T newInstance(Class<T> item) {
 		return (T) ReflectionUtils.getObjectInstance(item, null);
 	}
@@ -253,7 +251,7 @@ public abstract class DefaultDBManager {
 	public IDBObject reload(IDBObject item) {
 		if (item != null) {
 			try {
-				Dao<IDBObject, ?> createDao = DaoManager.createDao(connection, item.getClass());
+				Dao<IDBObject, ?> createDao = (Dao<IDBObject, ?>) DaoManager.createDao(connection, item.getClass());
 				createDao.refresh(item);
 			} catch(Exception e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "failed to load " + item, e);
