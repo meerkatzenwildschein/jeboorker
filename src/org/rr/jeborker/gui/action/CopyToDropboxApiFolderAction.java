@@ -1,12 +1,10 @@
 package org.rr.jeborker.gui.action;
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
@@ -18,6 +16,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
@@ -75,7 +74,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 */
 	private void doUpload(IResourceHandler resource) throws DropboxException, MalformedURLException, IOException, URISyntaxException {
 		// https://www.dropbox.com/developers
-		AppKeyPair appKey = new AppKeyPair("z8mvgnac9a1c5ad", "tm585kkw5tc98dr");
+		AppKeyPair appKey = new AppKeyPair(StringUtils.rot13("m8zitanp9n1p5nq"), StringUtils.rot13("gz585xxj5gp98qe"));
 		
         WebAuthSession session = new WebAuthSession(appKey, ACCESS_TYPE);
         WebAuthInfo authInfo = session.getAuthInfo();
