@@ -1,4 +1,6 @@
 #labels Featured
+== v0.4.2 (2014-04-23)==
+  * Bugfix for new Web L&F 1.27 library 
 == v0.4.1 (2014-04-21)==
   * Deliver new Web L&F 1.27
   * Sometimes a click into the library tree is not recognized with Web L&F *fixed*
