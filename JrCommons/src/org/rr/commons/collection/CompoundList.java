@@ -1,52 +1,95 @@
 package org.rr.commons.collection;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 /**
- * A list which maps two lists into one without copy
+ * A list which maps two lists into one without copy.
  */
 public class CompoundList<E> extends AbstractList<E> {
 
+	public static final int ADD_TO_FIRST = 0;
+	public static final int ADD_TO_SECOND = 1;
+	
+	private int addTo = 1;
 	private List<E> first; 
 	private List<E> second;
 	
-	public CompoundList(List<E> first, List<E> second) {
+	/**
+	 * Constructs a new {@link CompoundList} instance.
+	 *  
+	 * @param first first {@link List} to merge into this {@link CompoundList} instance.
+	 * @param second second {@link List} to merge into this {@link CompoundList} instance.
+	 * @param addTo Determines which {@link List} gets new added entries. Valid values
+	 * are {@link CompoundList#ADD_TO_FIRST} or {@link CompoundList#ADD_TO_SECOND}
+	 */
+	public CompoundList(List<E> first, List<E> second, int addTo) {
 		if(first == null) {
-			this.first = Collections.emptyList();
+			this.first = new ArrayList<>();
 		} else {
 			this.first = first;
 		}
 		
 		if(second == null) {
-			this.second = Collections.emptyList();
+			this.second = new ArrayList<>();
 		} else {
 			this.second = second;	
-		}
+		}		
+		
+		this.addTo = addTo;
+	}
+
+	/**
+	 * Constructs a new {@link CompoundList} instance which adds it's new entries to
+	 * the {@link List} given with the second parameter.
+	 *  
+	 * @param first first {@link List} to merge into this {@link CompoundList} instance.
+	 * @param second second {@link List} to merge into this {@link CompoundList} instance.
+	 */
+	public CompoundList(List<E> first, List<E> second) {
+		this(first, second, ADD_TO_SECOND);
 	}
 	
 	@Override
 	public boolean add(E e) {
-		return second.add(e);
+		if(addTo == ADD_TO_SECOND) {
+			return second.add(e);
+		} else {
+			return first.add(e);
+		}
 	}
 
 	@Override
 	public void add(int index, E element) {
-		throw new UnsupportedOperationException();
+		int size = first.size();
+		if(index <= size) {
+			first.add(index, element);
+		} else {
+			second.add(index - size, element);
+		}
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		return second.addAll(c);
+		if(addTo == ADD_TO_SECOND) {
+			return second.addAll(c);
+		} else {
+			return first.addAll(c);
+		}
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
+		int size = first.size();
+		if(index <= size) {
+			return first.addAll(index, c);
+		} else {
+			return second.addAll(index - size, c);
+		}
 	}
 
 	@Override
@@ -62,7 +105,12 @@ public class CompoundList<E> extends AbstractList<E> {
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		for(Object o : c) {
+			if(!contains(o)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
