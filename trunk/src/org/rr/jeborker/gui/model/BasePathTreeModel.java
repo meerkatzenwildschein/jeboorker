@@ -25,6 +25,8 @@ public class BasePathTreeModel extends DefaultTreeModel {
 
 	private static final long serialVersionUID = 1442592632931949573L;
 	
+	private static final UniqueAllEntryNode singletonUniqueAllEntryNode = new UniqueAllEntryNode();
+	
 	private DefaultMutableTreeNode root;
 	
 	private TreePath filterTreePath;
@@ -52,7 +54,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, false);
 			root.add(basePathNode);
 		}
-		root.add(new UniqueAllEntryNode());
+		root.add(singletonUniqueAllEntryNode);
 	}
 	
 	/**

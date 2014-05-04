@@ -63,11 +63,11 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	}
 
 	@Override
-	public int getIndex(TreeNode node) {//TODO optimize
+	public int getIndex(TreeNode node) {
 		final List<IResourceHandler> childResources = getChildResources();
 		for(int i = 0; i < childResources.size(); i++) {
 			IResourceHandler resource = childResources.get(i);
-			if(((FileSystemNode)node).pathResource.equals(resource)) {
+			if(((FileSystemNode)node).pathResource.equals(resource)) {		
 				return i;
 			}
 		}
@@ -208,14 +208,16 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 
 	@Override
 	public int compareTo(FileSystemNode o) {
-		return o.pathResource.toString().compareTo(pathResource.toString());
+		return o.pathResource.compareTo(pathResource);
 	}	
 	
 	public boolean equals(Object o) {
-		 if(o instanceof FileSystemNode) {
-			 return this.compareTo((FileSystemNode)o) == 0;
-		 }
-		 return false;
+		if(this == o) {
+			return true;
+		} else if(o instanceof FileSystemNode) {
+			return this.compareTo((FileSystemNode)o) == 0;
+		}
+		return false;
 	}
 
 	@Override
