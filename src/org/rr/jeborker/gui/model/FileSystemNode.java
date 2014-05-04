@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.rr.commons.collection.CompoundList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceNameFilter;
@@ -20,6 +19,8 @@ import org.rr.jeborker.gui.action.ActionUtils;
 public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<FileSystemNode> {
 
 	private IResourceHandler pathResource;
+	
+	private int hashCode;
 	
 	private List<IResourceHandler> subFolders;
 
@@ -34,12 +35,14 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	FileSystemNode(IResourceHandler pathResource, TreeNode parent) {
 		this.pathResource = pathResource;
 		this.parent = parent;
+		this.hashCode = pathResource.toString().hashCode();
 	}
 	
 	FileSystemNode(IResourceHandler pathResource, TreeNode parent, boolean showFiles) {
 		this.pathResource = pathResource;
 		this.parent = parent;
 		this.showFiles = showFiles;
+		this.hashCode = pathResource.toString().hashCode();
 	}
 	
 	@Override
@@ -144,7 +147,6 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 				subFolders = new ArrayList<IResourceHandler>();
 				subFolders.addAll(subFolder);
 				subFolders.addAll(subFiles);
-//				subFolders = new CompoundList<IResourceHandler>(subFolder, subFiles);
 			} catch (IOException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to list " + pathResource, e);
 				subFolders = new ArrayList<IResourceHandler>(0);
@@ -218,7 +220,7 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 
 	@Override
 	public int hashCode() {
-		return pathResource.toString().hashCode();
+		return hashCode;
 	}
 	
 }
