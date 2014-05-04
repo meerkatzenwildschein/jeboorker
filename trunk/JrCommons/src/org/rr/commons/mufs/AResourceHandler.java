@@ -319,10 +319,12 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	/**
 	 * Tests the resource string of the given object with this
 	 * instance for equalness.
-	 * @return <code>true</code> if the resources are equal und <code>false</code> otherwise.
+	 * @return <code>true</code> if the resources are equal and <code>false</code> otherwise.
 	 */
 	public boolean equals(Object o) {
-		if(o instanceof IResourceHandler) {
+		if(this == o) {
+			return true;
+		} else if(o instanceof IResourceHandler) {
 			return ((IResourceHandler)o).getResourceString().equals(this.getResourceString());
 		}
 		
