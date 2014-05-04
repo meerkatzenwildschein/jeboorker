@@ -19,8 +19,8 @@ public abstract class WrapperList<T> implements List<T> {
 		this.toWrap = new ArrayList<T>();
 	}
 	
-	public WrapperList(List<T> basePaths) {
-		this.toWrap = basePaths;
+	public WrapperList(List<T> toWrap) {
+		this.toWrap = toWrap;
 	}
 
 	@Override
