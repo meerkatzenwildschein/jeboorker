@@ -83,7 +83,9 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	 * This is a special node and did not represents a base path. It's the "All Entries" node
 	 * that allows to toggle the visibility of all base path nodes.  
 	 */
-	private class UniqueAllEntryNode implements MutableTreeNode, NamedNode, Comparable<UniqueAllEntryNode> {
+	private static class UniqueAllEntryNode implements MutableTreeNode, NamedNode, Comparable<UniqueAllEntryNode> {
+		
+		private static final int HASH_CODE = UniqueAllEntryNode.class.getName().hashCode();
 
 		private String localizedName;
 
@@ -176,7 +178,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 
 		@Override
 		public int hashCode() {
-			return getClass().getName().hashCode();
+			return HASH_CODE;
 		}		
 		
 	}
