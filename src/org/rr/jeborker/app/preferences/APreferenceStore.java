@@ -251,7 +251,8 @@ public abstract class APreferenceStore {
 	}
 	
 	/**
-	 * Gets the default configuration directory. The path have a trailing / 
+	 * Gets the default configuration directory. The path have a trailing '/'. The config
+	 * file directory is something like <code>user.home/.jeboorker/</code>.
 	 * 
 	 * @return The config file directory.
 	 */
