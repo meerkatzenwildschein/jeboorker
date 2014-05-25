@@ -19,6 +19,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.LookupOp;
 import java.awt.image.PixelGrabber;
 import java.awt.image.ShortLookupTable;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -511,6 +512,65 @@ public class ImageUtils {
         }
         return dest;
     }
+    
+	/**
+	 * Create a black and white image from a gray scale image
+	 */
+	public static BufferedImage grayToBlackWhite(BufferedImage inputImage, boolean dither) {
+		int w = inputImage.getWidth();
+		int h = inputImage.getHeight();
+		BufferedImage outputImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_BINARY);
+
+		// Work on a copy of input image because it is modified by diffusion
+		WritableRaster input = inputImage.copyData(null);
+		WritableRaster output = outputImage.getRaster();
+
+		final int threshold = 128;
+		float value, qerror;
+
+		for (int y = 0; y < h; ++y) {
+			for (int x = 0; x < w; ++x) {
+				value = input.getSample(x, y, 0);
+
+				// Threshold value and compute quantization error
+				if (value < threshold) {
+					output.setSample(x, y, 0, 0);
+					qerror = value;
+				} else {
+					output.setSample(x, y, 0, 1);
+					qerror = value - 255;
+				}
+
+				// Spread error amongst neighboring pixels
+				// Based on Floyd-Steinberg Dithering
+				// http://en.wikipedia.org/wiki/Floyd-Steinberg_dithering
+				if (dither) {
+					if((x > 0) && (y > 0) && (x < (w-1)) && (y < (h-1))) {
+						// 7/16
+						value = input.getSample(x+1, y, 0);
+						input.setSample(x+1, y, 0, clamp(value + 0.4375f * qerror));
+						// 3/16
+						value = input.getSample(x-1, y+1, 0);
+						input.setSample(x-1, y+1, 0, clamp(value + 0.1875f * qerror));
+						// 5/16
+						value = input.getSample(x, y+1, 0);
+						input.setSample(x, y+1, 0, clamp(value + 0.3125f * qerror));
+						// 1/16
+						value = input.getSample(x+1, y+1, 0);
+						input.setSample(x+1, y+1, 0, clamp(value + 0.0625f * qerror));
+					}
+				}
+			}
+		}
+		return outputImage;
+	}    
+	
+	/**
+	 * Forces a value to a 0-255 integer range
+	 */
+	private static int clamp(float value) {
+		return Math.min(Math.max(Math.round(value), 0), 255);
+	}	
     
     /**
      * Rotates the given image by the given degree and returns the transformed image.
