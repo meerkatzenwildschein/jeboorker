@@ -1,6 +1,5 @@
 package bd.amazed.pdfscissors.model;
 
-import java.io.File;
 import java.util.Vector;
 
 import org.rr.commons.mufs.IResourceHandler;
