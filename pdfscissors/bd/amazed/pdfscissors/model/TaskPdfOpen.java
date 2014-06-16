@@ -21,26 +21,20 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 	private int groupType;
 	private boolean isCancelled;
 	private PdfCropper cropper = null;
-	private Component owner;
 	private boolean shouldCreateStackView;
 
-	public TaskPdfOpen(File file, int groupType, boolean shouldCreateStackView, Component owner) {
+	public TaskPdfOpen(File file, int groupType, boolean shouldCreateStackView) {
 		this.originalFile = file;
 		isCancelled = false;
-		this.owner = owner;
 		this.groupType = groupType;
 		this.shouldCreateStackView = shouldCreateStackView;
 	}
 
 	@Override
 	protected Vector<PageGroup> doInBackground() throws Exception {
-
-		debug("Normalzing pdf...");
 		pdfFile = PdfCropper.getNormalizedPdf(originalFile);
 		pdfFile.getNormalizedFile().deleteOnExit();
 
-		debug("Extracting pdf image...");
-		Vector<BufferedImage> loadedImages = null;
 		try {
 			cropper = new PdfCropper(ResourceHandlerFactory.getResourceHandler(pdfFile.getNormalizedFile()));
 
