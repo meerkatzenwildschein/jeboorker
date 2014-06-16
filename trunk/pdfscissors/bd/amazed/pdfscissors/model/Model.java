@@ -3,6 +3,8 @@ package bd.amazed.pdfscissors.model;
 import java.io.File;
 import java.util.Vector;
 
+import org.rr.commons.mufs.IResourceHandler;
+
 import bd.amazed.pdfscissors.view.Rect;
 
 public class Model {
@@ -84,7 +86,7 @@ public class Model {
 	 *
 	 * @param file
 	 */
-	public void setPdfLoadFailed(File file, Throwable err) {
+	public void setPdfLoadFailed(IResourceHandler file, Throwable err) {
 		fireSetPdfFailed(file, err);
 	}
 
@@ -144,7 +146,7 @@ public class Model {
 		}
 	}
 
-	protected void fireSetPdfFailed(File failedFile, Throwable cause) {
+	protected void fireSetPdfFailed(IResourceHandler failedFile, Throwable cause) {
 		for (ModelListener listener : modelListeners) {
 			listener.pdfLoadFailed(failedFile, cause);
 		}

@@ -12,18 +12,19 @@ import java.util.logging.Level;
 import javax.swing.SwingWorker;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 
 public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
 	private PdfFile pdfFile;
-	private File originalFile;
+	private IResourceHandler originalFile;
 	private int groupType;
 	private boolean isCancelled;
 	private PdfCropper cropper = null;
 	private boolean shouldCreateStackView;
 
-	public TaskPdfOpen(File file, int groupType, boolean shouldCreateStackView) {
+	public TaskPdfOpen(IResourceHandler file, int groupType, boolean shouldCreateStackView) {
 		this.originalFile = file;
 		isCancelled = false;
 		this.groupType = groupType;
@@ -36,7 +37,7 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 		pdfFile.getNormalizedFile().deleteOnExit();
 
 		try {
-			cropper = new PdfCropper(ResourceHandlerFactory.getResourceHandler(pdfFile.getNormalizedFile()));
+			cropper = new PdfCropper(pdfFile.getNormalizedFile());
 
 			Vector<PageGroup> pageGroups = PageGroup.createGroup(groupType, pdfFile.getPageCount());
 

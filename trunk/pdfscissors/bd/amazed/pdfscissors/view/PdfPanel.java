@@ -22,6 +22,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 
 import bd.amazed.pdfscissors.model.Model;
@@ -108,10 +109,10 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 	public void newPdfLoaded(PdfFile pdfFile) {
 		debug("listening to new pdf loaded");
 		// updateSize();
-		File filePath = pdfFile.getNormalizedFile();
+		IResourceHandler filePath = pdfFile.getNormalizedFile();
 		System.out.println("url: " + filePath);
 		try {
-			super.openPdfFile(ResourceHandlerFactory.getResourceHandler(filePath));
+			super.openPdfFile(filePath);
 			// System.out.println ("page count: " + pdfDecoder.getPageCount ());
 			super.decodePage(uiHandler.getPage());
 			//setPageParameters(1.0f, 1, 0); // values scaling (1=100%). page number
@@ -122,7 +123,7 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 	}
 
 	@Override
-	public void pdfLoadFailed(File failedFile, Throwable cause) {
+	public void pdfLoadFailed(IResourceHandler failedFile, Throwable cause) {
 		// nothing to do
 	}
 

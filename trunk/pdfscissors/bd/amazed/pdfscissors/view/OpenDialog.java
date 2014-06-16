@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -22,18 +23,19 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
+
 import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.PageGroup;
-import javax.swing.JCheckBox;
-
-import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 public class OpenDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField filePath;
 	private PdfScissorsMainFrame mainFrame;
-	protected File file;
+	protected IResourceHandler file;
 	private Vector<Component> advancedOptions;
 
 	/**
@@ -54,7 +56,7 @@ public class OpenDialog extends JDialog {
 	 */
 	public OpenDialog() {
 		advancedOptions = new Vector<Component>();
-		setTitle("Open pdf");		
+		setTitle("Open pdf");
 		setBounds(100, 100, 509, 299);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -85,7 +87,7 @@ public class OpenDialog extends JDialog {
 			contentPanel.add(filePath, gbc_filePath);
 			filePath.setColumns(10);
 		}
-		
+
 		final ButtonGroup stackGroupTypeChoices = new ButtonGroup();
 		String lastSelectionOption = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString(Model.PROPERTY_LAST_STACK_TYPE);
 		{
@@ -97,7 +99,7 @@ public class OpenDialog extends JDialog {
 			gbc_btnBrowse.gridy = 1;
 			contentPanel.add(btnBrowse, gbc_btnBrowse);
 			btnBrowse.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					showFileChooserDialog();
@@ -178,7 +180,7 @@ public class OpenDialog extends JDialog {
 			contentPanel.add(btnShowAdvancedOptions, gbc_btnShowAdvancedOptions);
 		}
 		final JCheckBox chckbxCreateStackedView = new JCheckBox("Create stacked view that helps cropping");
-		{	
+		{
 			chckbxCreateStackedView.setSelected(true);
 			GridBagConstraints gbc_chckbxCreateStackedView = new GridBagConstraints();
 			gbc_chckbxCreateStackedView.anchor = GridBagConstraints.WEST;
@@ -189,8 +191,8 @@ public class OpenDialog extends JDialog {
 			chckbxCreateStackedView.setVisible(false);
 			contentPanel.add(chckbxCreateStackedView, gbc_chckbxCreateStackedView);
 		}
-		
-	
+
+
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -224,9 +226,9 @@ public class OpenDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-	
+
 	}
-	
+
 	public void showFileChooserDialog() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(mainFrame.createFileFilter());
@@ -237,10 +239,10 @@ public class OpenDialog extends JDialog {
 
 		int retval = fileChooser.showOpenDialog(OpenDialog.this);
 		if (retval == JFileChooser.APPROVE_OPTION) {
-			file = fileChooser.getSelectedFile();
+			file = ResourceHandlerFactory.getResourceHandler(fileChooser.getSelectedFile());
 			if (file != null) {
-				PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).addGenericEntryAsString(Model.PROPERTY_LAST_FILE, file.getParentFile().getAbsolutePath());
-				filePath.setText(file.getAbsolutePath());
+				PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).addGenericEntryAsString(Model.PROPERTY_LAST_FILE, file.toFile().getAbsolutePath());
+				filePath.setText(file.toFile().getAbsolutePath());
 			} else {
 				filePath.setText("");
 			}
