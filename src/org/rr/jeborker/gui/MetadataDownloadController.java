@@ -37,19 +37,16 @@ public class MetadataDownloadController {
 	private MetadataDownloadView getView() {
 		if(metadataDownloadView == null) {
 			this.metadataDownloadView = new MetadataDownloadView(this, mainWindow);
-			this.initialize();
+			this.restorePropeties();
 		}
 		return metadataDownloadView;
 	}
 
-	private void initialize() {
-		restorePropeties();		
-	}
-	
 	public void close() {
 		storeProperties();
 		metadataDownloadView.setVisible(false);
 		metadataDownloadView.dispose();
+		metadataDownloadView = null;
 	}		
 
 	private void storeProperties() {

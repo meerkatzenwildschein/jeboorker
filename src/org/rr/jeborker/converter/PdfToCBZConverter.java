@@ -17,6 +17,10 @@ import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.ImageUtils;
 
+import com.jmupdf.interfaces.Page;
+import com.jmupdf.interfaces.PagePixels;
+import com.jmupdf.page.PageRect;
+
 public class PdfToCBZConverter implements IEBookConverter {
 
 	private IResourceHandler pdfResource;
@@ -34,15 +38,17 @@ public class PdfToCBZConverter implements IEBookConverter {
 	 * @throws IOException
 	 */
 	private List<byte[]> renderPage(ConverterPreferenceController converterPreferenceDialog, com.jmupdf.pdf.PdfDocument doc, int pageNumber) throws Exception {
-		com.jmupdf.page.PagePixels pp = null;
-		com.jmupdf.page.Page page = null;
+		PagePixels pp = null;
+		Page page = null;
+		PageRect bb = null;
 		try {
 			page = doc.getPage(pageNumber);
 
-			pp = new com.jmupdf.page.PagePixels(page);
-			pp.setRotation(com.jmupdf.page.Page.PAGE_ROTATE_NONE);
-			pp.setZoom(1.5f);
-			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
+			pp = page.getPagePixels();
+			bb = page.getBoundBox();
+			pp.getOptions().setRotate(Page.PAGE_ROTATE_NONE);
+			pp.getOptions().setZoom(1.5f);
+			pp.drawPage(null, bb.getX0(), bb.getY0(), bb.getX1(), bb.getY1());
 			BufferedImage image = pp.getImage();
 			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, converterPreferenceDialog);
 			List<byte[]> result = new ArrayList<byte[]>(processImageModifications.size());

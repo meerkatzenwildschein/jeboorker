@@ -272,6 +272,10 @@ public class MainController {
 		return MetadataDownloadController.getInstance(mainWindow);
 	}
 	
+	public RenameFileController getRenameFileController() {
+		return RenameFileController.getInstance(mainWindow);
+	}
+	
 	/**
 	 * Tells if the {@link MainController} is already initialized.
 	 * @return <code>true</code> if the {@link MainController} is initialized and <code>false</code> otherwise.

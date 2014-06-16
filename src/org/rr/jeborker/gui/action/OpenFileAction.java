@@ -16,10 +16,10 @@ class OpenFileAction extends AbstractAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
 	
-	private String folder;
+	private String file;
 
 	OpenFileAction(String text) {
-		this.folder = text;
+		this.file = text;
 		String name = Bundle.getString("OpenFileAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("file_16.png"));
@@ -29,10 +29,10 @@ class OpenFileAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final File file = new File(folder);
-		boolean sucess = DesktopUtils.openFile(file);
+		final File fileToOpen = new File(file);
+		boolean sucess = DesktopUtils.openFile(fileToOpen);
 		if(!sucess) {
-			LoggerFactory.getLogger().log(Level.INFO, "Open file in associated application has failed for " + file);
+			LoggerFactory.getLogger().log(Level.INFO, "Open file in associated application has failed for " + fileToOpen);
 		}
 	}
 	

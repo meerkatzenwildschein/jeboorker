@@ -145,7 +145,7 @@ public class MainMenuBarController {
 			}
 			
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).toString());
-			menu.add(action);			
+			menu.add(action);
 			
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).toString());
 			menu.add(action);
@@ -209,10 +209,15 @@ public class MainMenuBarController {
 			}
 		}	
 		
+		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, "");
+		JMenuItem item = new JMenuItem(action);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false));
+		menu.add(item);
+		
 		if(items.size() == 1) {
 			//only visible to single selections
-			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).getFile());
-			menu.add(action);			
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).getFile());
+			menu.add(action);
 			
 			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile());
 			menu.add(action);
@@ -221,8 +226,8 @@ public class MainMenuBarController {
 		JMenu copyToSubMenu = createCopyToMenu();
 		menu.add(copyToSubMenu);
 
-		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
-		JMenuItem item = new JMenuItem(action);
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
+		item = new JMenuItem(action);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false));
 		menu.add(item);
 		

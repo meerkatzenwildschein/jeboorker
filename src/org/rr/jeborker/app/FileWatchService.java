@@ -103,8 +103,8 @@ public class FileWatchService {
 	        	try {
 	        		WatchKey watchKey = watchService.take();
 	        		
-	        		List<EbookPropertyItem> changedEbooks = new ArrayList<EbookPropertyItem>();
-	        		List<IResourceHandler> addedResources = new ArrayList<IResourceHandler>();
+	        		final List<EbookPropertyItem> changedEbooks = new ArrayList<EbookPropertyItem>();
+	        		final List<IResourceHandler> addedResources = new ArrayList<IResourceHandler>();
 		            for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
 		            	if(!FileRefreshBackground.isDisabled()) {
 			            	final Path fullPath = ((Path)watchKey.watchable()).resolve((Path)watchEvent.context());
@@ -120,16 +120,17 @@ public class FileWatchService {
 		            }
 		            watchKey.reset();
 		            
-					//seems the file may be not ready to read, wait...
-					ReflectionUtils.sleepSilent(500);
-					
-        			FileRefreshBackground.setDisabled(true);
-        			try {
-			            transferDeleteAndRefresh(changedEbooks);
-			            transferNewEbookFiles(addedResources);
-        			} finally {
-        				FileRefreshBackground.setDisabled(false);
-        			}
+					FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
+						
+						@Override
+						public void run() {
+							//seems the file may be not ready to read, wait...
+							ReflectionUtils.sleepSilent(500);
+							
+				            transferDeleteAndRefresh(changedEbooks);
+				            transferNewEbookFiles(addedResources);
+						}
+					});
 	        	} catch(Exception e) {
 	        		LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "WatchFolderRunnable", e);	        		
 	        	}

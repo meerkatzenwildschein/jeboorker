@@ -17,6 +17,7 @@ import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -135,58 +136,58 @@ import com.l2fprod.common.propertysheet.PropertySheetPanel;
 
 
 class MainView extends JFrame {
-	
+
 	private static final long serialVersionUID = 6837919427429399376L;
-	
+
 	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-	
+
 	JRTable mainTable;
-	
+
 	private JXLayer<JRTable> mainTableLayer;
-	
+
 	JProgressBar progressBar;
-	
+
 	JSplitPane mainSplitPane;
-	
+
 	JSplitPane propertySheetImageSplitPane;
-	
+
 	SimpleImageViewer imageViewer;
-	
+
 	PropertySheetPanel propertySheet;
-	
+
 	JMenuButton addMetadataButton;
-	
+
 	private JButton removeMetadataButton;
-	
+
 	private JRButton saveMetadataButton;
-	
+
 	private JPanel sortPanel;
-	
+
 	private JLabel sortLabel;
-	
+
 	CheckComboBox<Field> sortColumnComboBox;
-	
+
 	JToggleButton sortOrderAscButton;
-	
+
 	JToggleButton sortOrderDescButton;
-	
+
 	JSplitPane treeMainTableSplitPane;
-	
+
 	JRTree basePathTree;
-	
+
 	JRTree fileSystemTree;
-	
+
 	JRScrollPane mainTableScrollPane;
 
 	private JTabbedPane treeTabbedPane;
-	
+
 	private JPanel buttonPanel;
-	
+
 	JComboBox<String> filterField;
-	
+
 	CheckComboBox<Field> filterFieldSelection;
-	
-	private BasicComboBoxEditor comboboxEditor;	
+
+	private BasicComboBoxEditor comboboxEditor;
 
 	/**
 	 * Create the application.
@@ -200,20 +201,20 @@ class MainView extends JFrame {
 	private void initializeGlobalKeystrokes() {
 		final InputMap inputMap = this.getRootPane().getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW);
 		final ActionMap actionMap = this.getRootPane().getActionMap();
-		
+
 		KeyStroke quitKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK);
 		inputMap.put(quitKeyStroke, "QUIT");
 		actionMap.put("QUIT", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
-		
+
 		KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK);
 		inputMap.put(saveKeyStroke, "SAVE");
-		actionMap.put("SAVE", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));	
-		
+		actionMap.put("SAVE", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
+
 		KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
 		inputMap.put(find, "FIND");
 		actionMap.put("FIND", ActionFactory.getTableFindAction(mainTable));
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -228,19 +229,19 @@ class MainView extends JFrame {
 				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null).invokeAction();
 			}
 		});
-		
-		this.setGlassPane(new ShadowPanel());	
-		
+
+		this.setGlassPane(new ShadowPanel());
+
 		JPanel contentPane = new JPanel();
 		contentPane.setOpaque(true);
-		
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
 		gridBagLayout.rowHeights = new int[]{350, 25, 30};
 		gridBagLayout.columnWeights = new double[]{1.0};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 4.9E-324};
 		contentPane.setLayout(gridBagLayout);
-		
+
 		mainSplitPane = new JSplitPane();
 		mainSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		mainSplitPane.setOneTouchExpandable(true);
@@ -256,7 +257,8 @@ class MainView extends JFrame {
 		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
 		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
 		KeyStroke refresh = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
-		
+		KeyStroke rename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false);
+
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
 		gbl_propertyContentPanel.columnWidths = new int[]{0};
@@ -265,7 +267,7 @@ class MainView extends JFrame {
 		gbl_propertyContentPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		propertyContentPanel.setLayout(gbl_propertyContentPanel);
 		mainSplitPane.setLeftComponent(propertyContentPanel);
-				
+
 				sortPanel = new JPanel();
 				GridBagConstraints gbc_sortPanel = new GridBagConstraints();
 				gbc_sortPanel.insets = new Insets(5, 0, 5, 0);
@@ -279,7 +281,7 @@ class MainView extends JFrame {
 				gbl_sortPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 				gbl_sortPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 				sortPanel.setLayout(gbl_sortPanel);
-				
+
 				sortLabel = new JLabel(Bundle.getString("EborkerMainView.sortby"));
 				GridBagConstraints gbc_sortLabel = new GridBagConstraints();
 				gbc_sortLabel.fill = GridBagConstraints.VERTICAL;
@@ -288,7 +290,7 @@ class MainView extends JFrame {
 				gbc_sortLabel.gridx = 0;
 				gbc_sortLabel.gridy = 0;
 				sortPanel.add(sortLabel, gbc_sortLabel);
-				
+
 				sortColumnComboBox = new CheckComboBox<Field>();
 				sortColumnComboBox.setPreferredSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
@@ -296,7 +298,7 @@ class MainView extends JFrame {
 				gbc_sortColumnComboBox.gridx = 3;
 				gbc_sortColumnComboBox.gridy = 0;
 				sortPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
-				
+
 				final Icon ascOrderIcon =  new ImageIcon(MainView.class.getResource("resources/sort_asc.gif"));
 				final Icon descOrderIcon = new ImageIcon(MainView.class.getResource("resources/sort_desc.gif"));
 
@@ -310,7 +312,7 @@ class MainView extends JFrame {
 				gbc_sortOrderAscButton.gridx = 1;
 				gbc_sortOrderAscButton.gridy = 0;
 				sortPanel.add(sortOrderAscButton, gbc_sortOrderAscButton);
-				
+
 				sortOrderDescButton = new JToggleButton();
 				sortOrderDescButton.setIcon(descOrderIcon);
 				sortOrderDescButton.setPreferredSize(new Dimension(0, 25));
@@ -321,7 +323,7 @@ class MainView extends JFrame {
 				gbc_sortOrderDescButton.gridx = 2;
 				gbc_sortOrderDescButton.gridy = 0;
 				sortPanel.add(sortOrderDescButton, gbc_sortOrderDescButton);
-				
+
 				treeMainTableSplitPane = new JSplitPane();
 				treeMainTableSplitPane.setDividerLocation(220);
 				GridBagConstraints gbc_treeMainTableSplitPane = new GridBagConstraints();
@@ -329,9 +331,9 @@ class MainView extends JFrame {
 				gbc_treeMainTableSplitPane.gridx = 0;
 				gbc_treeMainTableSplitPane.gridy = 1;
 				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
-				
-				createMainTable(copy, paste, delete, refresh);
-				
+
+				createMainTable(copy, paste, delete, refresh, rename);
+
 				mainTableScrollPane = new JRScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
@@ -340,7 +342,7 @@ class MainView extends JFrame {
 					protected void processMouseEvent(final MouseEvent e, final JXLayer<? extends JRTable> l) {
 						if(preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED)) {
 							transferFocusOnClick(e, l);
-							
+
 							//save meta data and dispatch the mouse event to the jtable so it changes the selection
 							if(saveMetadataButton.isEnabled()) {
 								if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getSource() == mainTable ) {
@@ -350,11 +352,11 @@ class MainView extends JFrame {
 											.invokeAction(null, new Runnable() {
 												public void run() {
 													SwingUtilities.invokeLater(new Runnable() {
-														
+
 														@Override
 														public void run() {
-															MouseEvent click = new MouseEvent((Component) e.getSource(), MouseEvent.MOUSE_CLICKED, e.getWhen(), 
-																	e.getModifiers(), e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(), 
+															MouseEvent click = new MouseEvent((Component) e.getSource(), MouseEvent.MOUSE_CLICKED, e.getWhen(),
+																	e.getModifiers(), e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(),
 																	e.getClickCount(), e.isPopupTrigger(), e.getButton());
 															for(MouseListener ml: l.getView().getMouseListeners()){
 															    ml.mousePressed(click);
@@ -364,35 +366,35 @@ class MainView extends JFrame {
 														}
 													});
 												}
-											});										
+											});
 										}
-									});								
-	
+									});
+
 								}
 								e.consume();
 							}
 						}
 					}
-					
+
 					private void transferFocusOnClick(final MouseEvent e, final JXLayer<? extends JRTable> l) {
 						if(e.getID() != MouseEvent.MOUSE_DRAGGED && e.getID() != MouseEvent.MOUSE_MOVED
 								&& e.getID() != MouseEvent.MOUSE_ENTERED && e.getID() != MouseEvent.MOUSE_EXITED) {
-							//transfer the focus cause that the edit mode in the meta data sheet 
+							//transfer the focus cause that the edit mode in the meta data sheet
 							l.getView().requestFocus();
-						}						
+						}
 					}
-					
+
 					public long getLayerEventMask() {
 						//fix for mouse wheel scrolling @see https://www.java.net//node/696371
 						return AWTEvent.MOUSE_EVENT_MASK;
 					}
-					
+
 				});
 				mainTableScrollPane.setViewportView(mainTableLayer);
-				
+
 				treeTabbedPane = new JTabbedPane();
 				treeTabbedPane.setDropTarget(new DropTarget(treeTabbedPane, new DropTargetAdapter() {
-					
+
 					@Override
 					public void dragOver(DropTargetDragEvent dtde) {
 						Point location = dtde.getLocation();
@@ -405,18 +407,18 @@ class MainView extends JFrame {
 					@Override
 					public void drop(DropTargetDropEvent dtde) {
 					}
-				
+
 				}));
-				
+
 				JComponent basePathTreeComp = createBasePathTree();
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
-				
+
 				JComponent fileSystemTreeComp = createFileSystemTree(copy, paste, delete, refresh);
-				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);				
-				
+				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
+
 				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
 				treeMainTableSplitPane.setOneTouchExpandable(true);
-				
+
 				JPanel sheetPanel = new JPanel();
 				GridBagLayout gbl_sheetPanel = new GridBagLayout();
 				gbl_sheetPanel.columnWidths = new int[]{0, 0};
@@ -424,12 +426,12 @@ class MainView extends JFrame {
 				gbl_sheetPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 				gbl_sheetPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 				sheetPanel.setLayout(gbl_sheetPanel);
-				
+
 				propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
 				propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
 				propertySheet.setDescriptionVisible(true);
 				propertySheet.setShowCategoryButton(false);
-				
+
 				addMetadataButton = new JMenuButton();
 				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
 				addMetadataButton.setText("");
@@ -437,39 +439,39 @@ class MainView extends JFrame {
 				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
 				addMetadataButton.setListModel(emptyListModel);
 				propertySheet.addToolbarComponent(addMetadataButton);
-				
+
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
 				propertySheet.addToolbarComponent(removeMetadataButton);
-				
+
 				saveMetadataButton = new JRButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 				saveMetadataButton.setText("");
 				new EnablePropertyChangeHighlighterSupport(saveMetadataButton, Color.RED, 3);
-				
-				propertySheet.addToolbarComponent(saveMetadataButton);				
-				
+
+				propertySheet.addToolbarComponent(saveMetadataButton);
+
 				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>) null, DefaultPropertyRenderer.class);
 				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor((Class<?>) null, DefaultPropertyCellEditor.class);
 				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(String.class, DefaultPropertyRenderer.class);
 				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(String.class, DefaultPropertyCellEditor.class);
-				
+
 				DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(Date.class, calendarDatePropertyRenderer);
-		        
+
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("rating", StarRatingPropertyEditor.class);
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("rating", StarRatingPropertyRenderer.class);
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("calibre:rating", StarRatingPropertyEditor.class);
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("calibre:rating", StarRatingPropertyRenderer.class);
-		        
+
 		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, MultiListPropertyEditor.class);
 		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(java.util.List.class, MultiListPropertyRenderer.class);
-		        
+
 				GridBagConstraints gbc_propertySheet = new GridBagConstraints();
 				gbc_propertySheet.fill = GridBagConstraints.BOTH;
 				gbc_propertySheet.gridx = 0;
 				gbc_propertySheet.gridy = 0;
 				sheetPanel.add(propertySheet, gbc_propertySheet);
-				
+
 				propertySheetImageSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 				propertySheetImageSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
 				propertySheetImageSplitPane.setOneTouchExpandable(true);
@@ -487,10 +489,10 @@ class MainView extends JFrame {
 				propertySheetImageSplitPane.setRightComponent(imageViewerPanel);
 				propertySheetImageSplitPane.setLeftComponent(sheetPanel);
 				propertySheetImageSplitPane.setDividerLocation(getSize().height / 2);
-				
+
 				mainSplitPane.setDividerLocation(getSize().width - 220);
-				
-				
+
+
 		JPanel filterPanel = createFilterPanel();
 		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
 		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
@@ -499,7 +501,7 @@ class MainView extends JFrame {
 		gbc_searchPanel.gridx = 0;
 		gbc_searchPanel.gridy = 1;
 		contentPane.add(filterPanel, gbc_searchPanel);
-				
+
 		JPanel statusPanel = new JPanel();
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
 		gbc_statusPanel.insets = new Insets(0, 3, 3, 3);
@@ -513,18 +515,18 @@ class MainView extends JFrame {
 		gbl_statusPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		gbl_statusPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		statusPanel.setLayout(gbl_statusPanel);
-		
+
 		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
 		Dimension statusLabelSize = new Dimension(55, label.getPreferredSize().height);
 		label.setPreferredSize(statusLabelSize);
-		label.setMinimumSize(statusLabelSize);			
+		label.setMinimumSize(statusLabelSize);
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.anchor = GridBagConstraints.WEST;
 		gbc_label.fill = GridBagConstraints.NONE;
 		gbc_label.gridx = 0;
 		gbc_label.gridy = 0;
 		statusPanel.add(label, gbc_label);
-		
+
 		progressBar = new JProgressBar();
 		GridBagConstraints gbc_progressBar = new GridBagConstraints();
 		gbc_progressBar.weighty = 1.0;
@@ -533,7 +535,7 @@ class MainView extends JFrame {
 		gbc_progressBar.gridx = 1;
 		gbc_progressBar.gridy = 0;
 		statusPanel.add(progressBar, gbc_progressBar);
-		
+
 		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 	}
@@ -551,13 +553,13 @@ class MainView extends JFrame {
 		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
 		Dimension lblSearchSize = new Dimension(55, lblSearch.getPreferredSize().height);
 		lblSearch.setPreferredSize(lblSearchSize);
-		lblSearch.setMinimumSize(lblSearchSize);		
+		lblSearch.setMinimumSize(lblSearchSize);
 		GridBagConstraints gbc_lblSearch = new GridBagConstraints();
 		gbc_lblSearch.anchor = GridBagConstraints.EAST;
 		gbc_lblSearch.gridx = 0;
 		gbc_lblSearch.gridy = 0;
 		filterPanel.add(lblSearch, gbc_lblSearch);
-		
+
 		filterFieldSelection = new CheckComboBox<Field>();
 		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
 		filterFieldSelection.setPreferredSize(filterFieldSelectionSize);
@@ -576,7 +578,7 @@ class MainView extends JFrame {
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 //		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
 //		((JComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
-//		((JComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());		
+//		((JComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.insets = new Insets(0, 0, 0, 5);
 		gbc_searchField.weightx = 1.0;
@@ -593,31 +595,31 @@ class MainView extends JFrame {
 		gbc_textField.gridx = 3;
 		gbc_textField.gridy = 0;
 		filterPanel.add(searchButton, gbc_textField);
-		
+
 		return filterPanel;
 	}
 
-	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete, KeyStroke refresh) {
+	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete, KeyStroke refresh, KeyStroke rename) {
 		mainTable = new JRTable();
 		mainTable.setName("MainTable");
 		mainTable.setRowHeight(74);
 		mainTable.setModel(new EbookPropertyDBTableModel(true));
 		mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
 		mainTable.setDefaultEditor(Object.class, new EbookTableCellEditor(new EbookTableCellEditor.EditListener() {
-			
+
 			@Override
 			public void editingStoped() {
 			}
-			
+
 			@Override
 			public void editingStarted() {
 				fileSystemTree.stopEditing();
 				fileSystemTree.clearSelection();
-				
+
 				basePathTree.stopEditing();
-				basePathTree.clearSelection();				
+				basePathTree.clearSelection();
 			}
-			
+
 			@Override
 			public void editingCanceled() {
 			}
@@ -629,11 +631,12 @@ class MainView extends JFrame {
 		mainTable.setDragEnabled(true);
 		mainTable.setStopEditOnSelectionChange(true);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
-		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
+		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
 		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, null), "RefreshEntry", refresh, JComponent.WHEN_FOCUSED);
+		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, null), "RenameFile", rename, JComponent.WHEN_FOCUSED);
 		mainTable.putClientProperty(StringConvertor.class, new StringConvertor() {
-			
+
 			@Override
 			public String toString(Object obj) {
 				if(obj instanceof EbookPropertyItem) {
@@ -647,7 +650,7 @@ class MainView extends JFrame {
 				return StringUtils.toString(obj);
 			}
 		});
-		
+
 		mainTable.setTransferHandler(new TransferHandler() {
 
 			private static final long serialVersionUID = -371360766111031218L;
@@ -662,7 +665,7 @@ class MainView extends JFrame {
 		        if (dl.getRow() == -1) {
 		            return false;
 		        }
-		        
+
 		        return true;
 		    }
 
@@ -670,7 +673,7 @@ class MainView extends JFrame {
 		        if (!info.isDrop()) {
 		            return false;
 		        }
-		        
+
 		        // Check for String flavor
 		        if (!(info.isDataFlavorSupported(DataFlavor.stringFlavor) || info.isDataFlavorSupported(DataFlavor.javaFileListFlavor))) {
 		        	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
@@ -681,11 +684,11 @@ class MainView extends JFrame {
 		        int dropRow = dl.getRow();
 		        return PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), dropRow);
 		    }
-		    
+
 		    public int getSourceActions(JComponent c) {
 		        return COPY;
 		    }
-		    
+
 		    /**
 		     * Create a new Transferable that is used to drag files from jeboorker to a native application.
 		     */
@@ -694,7 +697,7 @@ class MainView extends JFrame {
 		        final int[] selectedRows = list.getSelectedRows();
 		        final List<URI> uriList = new ArrayList<URI>();
 		        final List<String> files = new ArrayList<String>();
-		        
+
 		        for (int i = 0; i < selectedRows.length; i++) {
 		        	EbookPropertyItem val = (EbookPropertyItem) mainTable.getModel().getValueAt(selectedRows[i], 0);
 		        	try {
@@ -703,8 +706,8 @@ class MainView extends JFrame {
 							} catch (Exception e) {
 								LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + val.getResourceHandler().toString(), e);
 							}
-		        }    
-		        
+		        }
+
 		        if(CommonUtils.isLinux()) {
 		        	if(ReflectionUtils.javaVersion() == 16) {
 		        		return new URIListTransferable(uriList, null);
@@ -720,21 +723,21 @@ class MainView extends JFrame {
 
 	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete, final KeyStroke refresh) {
 		final String fileSystemTreeName = "FileSystemTree";
-		
+
 		JPanel fileSystemTreePanel = new JPanel();
 		fileSystemTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		fileSystemTreePanel.setOpaque(true);
-		
+
 		GridBagLayout gbl_fileSystemTreePanel = new GridBagLayout();
 		gbl_fileSystemTreePanel.columnWidths = new int[]{76, 0};
 		gbl_fileSystemTreePanel.rowHeights = new int[]{25, 0, 0};
 		gbl_fileSystemTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_fileSystemTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
-		
+
 		buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
-		
+
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
@@ -742,17 +745,17 @@ class MainView extends JFrame {
 		gbc_buttonPanel.gridy = 0;
 		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
 		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3, true));
-		
+
 		Dimension buttonDimension = new Dimension(28, 28);
-		
+
 		JButton syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
 		syncButton.setPreferredSize(buttonDimension);
 		buttonPanel.add(syncButton);
-		
+
 		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, fileSystemTreeName));
 		collapseButton.setPreferredSize(buttonDimension);
-		buttonPanel.add(collapseButton);		
-		
+		buttonPanel.add(collapseButton);
+
 		fileSystemTree = new JRTree();
 		fileSystemTree.setShowsRootHandles(true);
 		fileSystemTree.setName(fileSystemTreeName);
@@ -767,11 +770,11 @@ class MainView extends JFrame {
 			fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
 			if(((DefaultMutableTreeNode) fileSystemTreeModel.getRoot()).getChildCount() == 1) {
 				fileSystemTree.addTreeExpansionListener(new TreeExpansionListener() {
-					
+
 					@Override
 					public void treeExpanded(TreeExpansionEvent event) {
 					}
-					
+
 					@Override
 					public void treeCollapsed(TreeExpansionEvent event) {
 						TreePath path = event.getPath();
@@ -784,6 +787,30 @@ class MainView extends JFrame {
 				fileSystemTree.expandRow(0);
 			}
 		}
+		fileSystemTree.registerKeyboardAction(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TreePath[] selectionPaths = fileSystemTree.getSelectionPaths();
+				if(selectionPaths.length == 0) {
+					return;
+				} else if(selectionPaths.length == 1) {
+					Object lastPathComponent = selectionPaths[0].getLastPathComponent();
+					if(lastPathComponent instanceof FileSystemNode && ((FileSystemNode)lastPathComponent).getResource().isFileResource()) {
+						fileSystemTree.startEditingAtPath(selectionPaths[0]);
+					}
+				} else {
+					for(TreePath selectionPath : selectionPaths) {
+						Object lastPathComponent = selectionPath.getLastPathComponent();
+						if(lastPathComponent instanceof FileSystemNode && ((FileSystemNode)lastPathComponent).getResource().isDirectoryResource()) {
+							return;
+						}
+					}
+					ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, null).actionPerformed(e);
+				}
+
+			}
+		}, "RenameFile", KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false), JComponent.WHEN_FOCUSED);
 
 		JRScrollPane treeScroller = new JRScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
@@ -794,14 +821,14 @@ class MainView extends JFrame {
 		gbc_treeScroller.gridx = 0;
 		gbc_treeScroller.gridy = 1;
 		fileSystemTreePanel.add(treeScroller, gbc_treeScroller);
-		
+
 		fileSystemTree.setRootVisible(false);
 		fileSystemTree.setRowHeight(25);
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
-		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);		
+		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
 		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, null), "Refresh", refresh, JComponent.WHEN_FOCUSED);
-		
+
 		fileSystemTree.setDragEnabled(true);
 		fileSystemTree.setTransferHandler(new TransferHandler() {
 
@@ -815,7 +842,7 @@ class MainView extends JFrame {
                 if (!info.isDrop()) {
                     return false;
                 }
-                
+
                 if (!DragAndDropUtils.isFileImportRequest(info)) {
                 	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
                     return false;
@@ -859,14 +886,14 @@ class MainView extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 					return false;
-				} 
+				}
                 return true;
             }
-            
+
             public int getSourceActions(JComponent c) {
                 return COPY;
             }
-            
+
             /**
              * Create a new Transferable that is used to drag files from jeboorker to a native application.
              */
@@ -874,7 +901,7 @@ class MainView extends JFrame {
             	List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 		        final List<URI> uriList = new ArrayList<URI>(selectedTreeItems.size());
 		        final List<String> files = new ArrayList<String>(selectedTreeItems.size());
-		        
+
 				for (int i = 0; i < selectedTreeItems.size(); i++) {
 					IResourceHandler selectedTreeItem = selectedTreeItems.get(i);
 					try {
@@ -885,7 +912,7 @@ class MainView extends JFrame {
 						LoggerFactory.getLogger().log(Level.WARNING, "Failed to encode " + selectedTreeItem.toString(), e);
 					}
 				}
-		        
+
 		        if(CommonUtils.isLinux()) {
 		        	if(ReflectionUtils.javaVersion() == 16) {
 		        		return new URIListTransferable(uriList, null);
@@ -897,7 +924,7 @@ class MainView extends JFrame {
 		        }
 	        }
         });
-		
+
 		fileSystemTree.addFocusListener(new FocusAdapter() {
 
 			@Override
@@ -905,29 +932,29 @@ class MainView extends JFrame {
 				mainTable.stopEdit();
 				mainTable.getSelectionModel().clearSelection();
 			}
-			
+
 		});
-		
-		return fileSystemTreePanel;		
+
+		return fileSystemTreePanel;
 	}
-	
+
 	private JComponent createBasePathTree() {
 		final String basePathTreeName = "BasePathTree";
-		
+
 		JPanel basePathTreePanel = new JPanel();
 		basePathTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		basePathTreePanel.setOpaque(true);
-		
+
 		GridBagLayout gbl_basePathTreePanel = new GridBagLayout();
 		gbl_basePathTreePanel.columnWidths = new int[]{76, 0};
 		gbl_basePathTreePanel.rowHeights = new int[]{25, 0, 0};
 		gbl_basePathTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_basePathTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		basePathTreePanel.setLayout(gbl_basePathTreePanel);
-		
+
 		buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
-		
+
 		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
 		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
 		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
@@ -935,22 +962,22 @@ class MainView extends JFrame {
 		gbc_buttonPanel.gridy = 0;
 		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
 		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3, true));
-		
+
 		Dimension buttonDimension = new Dimension(28, 28);
-		
+
 		JButton syncButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null));
 		syncButton.setPreferredSize(buttonDimension);
 		buttonPanel.add(syncButton);
-		
+
 		JButton addButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
 		addButton.setPreferredSize(buttonDimension);
 		addButton.setText("");
 		buttonPanel.add(addButton);
-		
+
 		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, basePathTreeName));
 		collapseButton.setPreferredSize(buttonDimension);
 		buttonPanel.add(collapseButton);
-		
+
 		basePathTree = new JRTree();
 		basePathTree.setShowsRootHandles(true);
 		basePathTree.setName(basePathTreeName);
@@ -974,21 +1001,21 @@ class MainView extends JFrame {
 		gbc_basePathTreeScroller.gridx = 0;
 		gbc_basePathTreeScroller.gridy = 1;
 		basePathTreePanel.add(basePathTreeScroller, gbc_basePathTreeScroller);
-		
+
 		basePathTree.setRootVisible(false);
 		basePathTree.setRowHeight(25);
-		
+
 		basePathTree.addMouseListener(new MouseAdapter() {
 
 			private static final String QUERY_IDENTIFER = "BASE_PATH_MOUSE_LISTENER";
-			
+
 			private Object previousEditorValue;
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				final int row = basePathTree.getRowForLocation(e.getPoint().x < 50 ? e.getPoint().x : 50, e.getPoint().y);
 				final TreePath filterTreePath = basePathTree.getPathForRow(row);
-				
+
 				if(filterTreePath != null) {
 					Object cellEditorValue = filterTreePath.getLastPathComponent();
 					if(cellEditorValue == null || !cellEditorValue.equals(previousEditorValue)) {
@@ -1001,22 +1028,22 @@ class MainView extends JFrame {
 							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(null);
 							if(remove) {
 								MainController.getController().refreshTable();
-							}				
+							}
 						}
 					}
 					previousEditorValue = cellEditorValue;
 				}
 			}
-			
-			
+
+
 			private void setPathFilter(final String fullResourceFilterPath) {
 				MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
-					
+
 					@Override
 					public String getIdentifier() {
 						return QUERY_IDENTIFER;
 					}
-					
+
 					@Override
 					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
 						String fullResourceFilterPathStatement = StringUtils.replace(fullResourceFilterPath, "\\", "\\\\");
@@ -1025,11 +1052,11 @@ class MainView extends JFrame {
 				});
 
 				//additionalFilterCondition.addOrChild(new QueryCondition("file", fullResourceFilterPath + "%", "like", QUERY_IDENTIFER));
-				//rootCondition.addAndChild(additionalFilterCondition);		
-			}			
-			
+				//rootCondition.addAndChild(additionalFilterCondition);
+			}
+
 		});
-		
+
 		basePathTree.setTransferHandler(new TransferHandler() {
 
 			private static final long serialVersionUID = -371360766111031218L;
@@ -1042,7 +1069,7 @@ class MainView extends JFrame {
                 if (!info.isDrop()) {
                     return false;
                 }
-                
+
                 // Check for String flavor
                 if (!DragAndDropUtils.isFileImportRequest(info)) {
                 	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
@@ -1060,14 +1087,14 @@ class MainView extends JFrame {
 					basePathTree.startEditingAtPath(dropRow);
 				} catch (Exception e) {
 					return false;
-				} 
+				}
                 return true;
             }
-            
+
             public int getSourceActions(JComponent c) {
                 return COPY;
             }
-            
+
             /**
              * Create a new Transferable that is used to drag files from jeboorker to a native application.
              */
@@ -1075,7 +1102,7 @@ class MainView extends JFrame {
             	return null;
             }
         });
-		
+
 		basePathTree.addFocusListener(new FocusAdapter() {
 
 			@Override
@@ -1086,65 +1113,65 @@ class MainView extends JFrame {
 				fileSystemTree.stopEditing();
 				fileSystemTree.clearSelection();
 			}
-			
-		});		
-		
+
+		});
+
 		GridBagConstraints gbc_tree = new GridBagConstraints();
 		gbc_tree.fill = GridBagConstraints.BOTH;
 		gbc_tree.gridx = 0;
 		gbc_tree.gridy = 0;
 		return basePathTreePanel;
 	}
-	
+
 	/**
 	 * Shows the cover popup menu for the selected entries.
 	 * @param location The locaten where the popup should appears.
 	 * @param invoker The invoker for the popup menu.
-	 */	
+	 */
 	void showCoverPopupMenu(Point location, Component invoker) {
 		List<EbookPropertyItem> selectedItems = MainController.getController().getSelectedEbookPropertyItems();
 		JPopupMenu menu = createCoverPopupMenu(selectedItems);
-		
+
 		//setup and show popup
 		if(menu.getComponentCount() > 0) {
 			menu.setLocation(location);
 			menu.show(invoker, location.x, location.y);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Shows the cover popup menu for the selected entries.
 	 * @param location The locaten where the popup should appears.
 	 * @param invoker The invoker for the popup menu.
-	 */	
+	 */
 	void showTreePopupMenu(Point location, Component invoker) {
 		final JPopupMenu menu = new JPopupMenu();
-		
+
         //int selRow = tree.getRowForLocation((int)location.getX(), (int)location.getY());
         TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
-        
+
 		if(treeTabbedPane.getSelectedIndex() == 0) {
 			addBasePathTreeMenuItems(menu, selPath);
 		}
-			
+
 		//setup and show popup
 		if(menu.getComponentCount() > 0) {
 			menu.setLocation(location);
 			menu.show(invoker, location.x, location.y);
-		}		
-	}	
-	
+		}
+	}
+
 	private void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
 		Action action;
-		
+
 		FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
-		
+
 		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
-		menu.add(new JMenuItem(action));	
-	}	
-	
+		menu.add(new JMenuItem(action));
+	}
+
 	/**
-	 * Create the popup menu containing the cover actions.  
+	 * Create the popup menu containing the cover actions.
 	 * @param items The items to be tested if they're matching against the menu entries.
 	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
 	 */
@@ -1153,37 +1180,37 @@ class MainView extends JFrame {
 		final MainController controller = MainController.getController();
 		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 		final JPopupMenu menu = new JPopupMenu();
-		
+
 		addCoverMenuItems(menu, items, selectedEbookPropertyItemRows);
 		return menu;
 	}
-	
+
 	static void addCoverMenuItems(JComponent menu, List<EbookPropertyItem> items, int[] rowsToRefreshAfter) {
 		if(!items.isEmpty()) {
 			Action action;
-			
+
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
-			menu.add(new JMenuItem(action));	
-	
+			menu.add(new JMenuItem(action));
+
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_CLIPBOARD_ACTION, items, rowsToRefreshAfter);
-			menu.add(new JMenuItem(action));	
-			
+			menu.add(new JMenuItem(action));
+
 			menu.add(new JSeparator());
-			
+
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_FILE_ACTION, items, rowsToRefreshAfter);
 			menu.add(new JMenuItem(action));
-			
+
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_DOWNLOAD_ACTION, items, rowsToRefreshAfter);
 			menu.add(new JMenuItem(action));
-			
+
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SET_COVER_FROM_EBOOK_ACTION, items, rowsToRefreshAfter);
-			menu.add(new JMenuItem(action));		
-			
+			menu.add(new JMenuItem(action));
+
 			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.SAVE_COVER_TO_FILE_ACTION, items, rowsToRefreshAfter);
 			menu.add(new JMenuItem(action));
 		}
 	}
-	
+
 	/**
 	 * Shows a dialog to the user.
 	 * @param message The message of the dialog
@@ -1198,23 +1225,23 @@ class MainView extends JFrame {
 		    boolean dontShowAgain;
 
 		    if(showAgainKey != null) {
-			    JCheckBox checkbox = new JCheckBox(Bundle.getString("EborkerMainView.messagebox.showAgainMessage"));  
-			    Object[] params = {message, checkbox}; 
+			    JCheckBox checkbox = new JCheckBox(Bundle.getString("EborkerMainView.messagebox.showAgainMessage"));
+			    Object[] params = {message, checkbox};
 			    if(isConfirmDialog) {
 			    	n = JOptionPane.showConfirmDialog(this, params, title, option);
 			    } else {
 			    	JOptionPane.showMessageDialog(this, params, title, option);
 			    }
-		    	dontShowAgain = checkbox.isSelected();  
+		    	dontShowAgain = checkbox.isSelected();
 		    } else {
 		    	if(isConfirmDialog) {
 		    		n = JOptionPane.showConfirmDialog(this, message, title, option);
 		    	} else {
 		    		JOptionPane.showMessageDialog(this, message, title, option);
 		    	}
-		    	dontShowAgain = false;  		    	
+		    	dontShowAgain = false;
 		    }
-		    
+
 		    if(dontShowAgain) {
 		    	if(defaultValue >= 0) {
 		    		preferenceStore.addGenericEntryAsNumber(showAgainKey, defaultValue);
@@ -1235,13 +1262,13 @@ class MainView extends JFrame {
 		}
 		return null;
 	}
-	
+
 	JTree getFileSystemTree() {
 		return fileSystemTree;
 	}
-	
+
 	/**
-	 * Tells the text filter field to display it self in and active filter color. 
+	 * Tells the text filter field to display it self in and active filter color.
 	 */
 	public void enableFilterColor(boolean enable) {
 		if (enable) {
@@ -1253,8 +1280,8 @@ class MainView extends JFrame {
 			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
 			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
 		}
-	}	
-	
+	}
+
 	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
 
 		@Override
@@ -1267,7 +1294,7 @@ class MainView extends JFrame {
 	}
 
 	public void refreshUI() {
-		// don't know why but otherwise the renderer won't work after changing the look and feel  
+		// don't know why but otherwise the renderer won't work after changing the look and feel
 		if(!(mainTable.getDefaultRenderer(Object.class) instanceof EbookTableCellRenderer)) {
 			mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
 		}
