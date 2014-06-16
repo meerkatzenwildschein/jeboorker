@@ -172,7 +172,7 @@ public class JImageDownloadDialog extends JDialog {
 		getContentPane().setLayout(gridBagLayout);
 		
 		JPanel borderPanel = new JPanel();
-		borderPanel.setBorder(new TitledBorder(null, Bundle.getString("ImageDownloadDialog.title"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		borderPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
 		GridBagConstraints gbc_borderPanel = new GridBagConstraints();
 		gbc_borderPanel.fill = GridBagConstraints.BOTH;
 		gbc_borderPanel.gridx = 0;

@@ -16,6 +16,8 @@ public class JRTable extends JTable {
 
 	private boolean stopEditOnSelectionChange = false;
 	
+	private boolean editable = true;
+	
 	public JRTable() {
 	    getSelectionModel().addListSelectionListener(new StopEditListSelectionListener());
 	}
@@ -88,5 +90,24 @@ public class JRTable extends JTable {
 		super.setSelectionModel(newModel);
 		newModel.addListSelectionListener(new StopEditListSelectionListener());
 	}
+	
+	/**
+	 * Specify if cells in the table should be editable or not.
+	 * @param editable <code>true</code> is the default behavior and <code>false</code> makes all
+	 * cells uneditable.
+	 * 
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
+
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		if(editable) { 
+			return super.isCellEditable(row, column);
+		}
+		return false;
+	}
+	
     
 }
