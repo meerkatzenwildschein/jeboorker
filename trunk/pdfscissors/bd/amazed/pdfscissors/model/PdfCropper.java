@@ -20,6 +20,7 @@ import java.util.logging.Level;
 
 import javax.swing.ProgressMonitor;
 
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
@@ -136,13 +137,14 @@ public class PdfCropper {
 		PdfReader reader = null;
 		Document doc = null;
 		PdfWriter writer = null;
-		try {
+		FileOutputStream fout = null;
+		try  {
 			File tempFile = TempFileManager.getInstance().createTempFile(TEMP_PREFIX_PDFSCISSOR + originalFile.getName() + "_", null, true);
 			reader = new PdfReader(originalFile.getAbsolutePath());
 			int endPage = reader.getNumberOfPages();
 			Rectangle maxBoundingBox = getMaxBoundingBox(reader, endPage);
 			doc = new Document(maxBoundingBox, 0, 0, 0, 0);
-			writer = PdfWriter.getInstance(doc, new FileOutputStream(tempFile));
+			writer = PdfWriter.getInstance(doc, fout = new FileOutputStream(tempFile));
 			doc.open();
 			PdfContentByte cb = writer.getDirectContent();
 
@@ -179,12 +181,15 @@ public class PdfCropper {
 			}
 
 			if (writer != null) {
+				writer.flush();
 				writer.close();
 			}
 
 			if (reader != null) {
 				reader.close();
 			}
+
+			IOUtils.closeQuietly(fout);
 		}
 	}
 

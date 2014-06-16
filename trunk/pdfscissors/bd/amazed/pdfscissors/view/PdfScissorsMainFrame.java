@@ -348,7 +348,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	private void launchOpenTask(File file, int groupType, boolean shouldCreateStackView, String string) {
-		final TaskPdfOpen task = new TaskPdfOpen(file, groupType, shouldCreateStackView, this);
+		final TaskPdfOpen task = new TaskPdfOpen(file, groupType, shouldCreateStackView);
 		final StackViewCreationDialog stackViewCreationDialog = new StackViewCreationDialog(this);
 		stackViewCreationDialog.setModal(true);
 		stackViewCreationDialog.enableProgress(task, new ActionListener() {
