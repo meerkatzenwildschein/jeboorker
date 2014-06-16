@@ -1,27 +1,21 @@
 package bd.amazed.pdfscissors.view;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-
-import javax.swing.JPanel;
-import javax.swing.JFrame;
 import java.awt.Dimension;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
-
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 
 public class StackViewCreationDialog extends JDialog {
 
@@ -49,7 +43,7 @@ public class StackViewCreationDialog extends JDialog {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -61,7 +55,7 @@ public class StackViewCreationDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -85,7 +79,7 @@ public class StackViewCreationDialog extends JDialog {
 
 	/**
 	 * This method initializes textArea
-	 * 
+	 *
 	 * @return javax.swing.JTextArea
 	 */
 	private JTextArea getTextArea() {
@@ -102,7 +96,7 @@ public class StackViewCreationDialog extends JDialog {
 
 	/**
 	 * This method initializes bottomPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getBottomPanel() {
@@ -115,7 +109,7 @@ public class StackViewCreationDialog extends JDialog {
 
 	/**
 	 * This method initializes progressbar
-	 * 
+	 *
 	 * @return javax.swing.JProgressBar
 	 */
 	public JProgressBar getProgressbar() {
@@ -151,7 +145,7 @@ public class StackViewCreationDialog extends JDialog {
 
 	/**
 	 * This method initializes cancelButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getCancelButton() {

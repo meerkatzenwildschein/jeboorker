@@ -8,9 +8,9 @@ import java.util.Vector;
  * Use this class to create Temp file, instead of calling {@link File#createTempFile(String, String)}. Looks like there
  * are some bugs to clean up temp files. See http://www.devx.com/java/Article/22018/0/page/2. So we will do some
  * housekeeping in this class.
- * 
+ *
  * @author Amazed
- * 
+ *
  */
 public class TempFileManager {
 

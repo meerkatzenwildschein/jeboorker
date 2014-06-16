@@ -8,9 +8,9 @@ import bd.amazed.pdfscissors.view.Rect;
 public class Model {
 
 	public static final String PROPERTY_LAST_FILE = "lastFile";
-	
+
 	public static final String PROPERTY_LAST_STACK_TYPE= "lastStackType";
-	
+
 	private static Model instance;
 
 	private Vector<ModelListener> modelListeners;
@@ -23,7 +23,7 @@ public class Model {
 	private boolean isClipboardCut;
 
 	private Vector<PageGroup> pageGroups;
-	
+
 	private Model() {
 		modelListeners = new java.util.Vector<ModelListener>();
 		reset();
@@ -51,7 +51,7 @@ public class Model {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if listener has been removed, false if not found
 	 */
 	public boolean removeListener(ModelListener listener) {
@@ -59,7 +59,7 @@ public class Model {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param file file, must not be null. This should be a normalized temp file
 	 * @param originalFile original file
 	 * @param previewImage previewImage, must not be null
@@ -81,13 +81,13 @@ public class Model {
 
 	/**
 	 * Notify model that some pdf loading has failed.
-	 * 
+	 *
 	 * @param file
 	 */
 	public void setPdfLoadFailed(File file, Throwable err) {
 		fireSetPdfFailed(file, err);
 	}
-	
+
 	private void setPageGroups(Vector<PageGroup> pageGroups) {
 		this.pageGroups = pageGroups;
 		firePageGroupChanged(pageGroups);
@@ -114,11 +114,11 @@ public class Model {
 	public Rect getClipboardRect() {
 		return clipboardRect;
 	}
-	
+
 	public Vector<PageGroup> getPageGroups() {
 		return pageGroups;
 	}
-	
+
 	public PageRectsMap getPageRectsMap() {
 		PageGroup pageGroup = null;
 		Vector<Integer> pages = null;
@@ -149,7 +149,7 @@ public class Model {
 			listener.pdfLoadFailed(failedFile, cause);
 		}
 	}
-	
+
 	protected void firePageGroupChanged(Vector<PageGroup> pageGroups) {
 		for (ModelListener listener : modelListeners) {
 			listener.pageGroupChanged(pageGroups);

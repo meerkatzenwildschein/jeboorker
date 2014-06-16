@@ -63,7 +63,7 @@ import bd.amazed.pdfscissors.model.TempFileManager;
 
 /**
  * @author Gagan
- * 
+ *
  */
 public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
@@ -123,7 +123,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		registerComponentsToModel();
 		updateOpenFileDependents();
 		try {
-			URL url = PdfScissorsMainFrame.class.getResource("/icon.png"); 
+			URL url = PdfScissorsMainFrame.class.getResource("/icon.png");
 			if (url != null) {
 				setIconImage(ImageIO.read(url));
 			}
@@ -146,7 +146,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			}
 		});
 	}
-	
+
 	/**
 	 * This is the default constructor
 	 */
@@ -156,7 +156,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -164,7 +164,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		this.uiHandler = new UIHandler();
 		this.setContentPane(getJContentPane());
 		this.setJMenuBar(getJJMenuBar());
-		this.setTitle(Bundle.getString("PdfScissorsMainFrame.PdfScissors")); 
+		this.setTitle(Bundle.getString("PdfScissorsMainFrame.PdfScissors"));
 		this.setSize(new Dimension(800, 600));
 		this.setMinimumSize(new Dimension(200, 200));
 		Dimension screen = getToolkit().getScreenSize();
@@ -219,7 +219,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -242,7 +242,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		}
 		return pageGroupScrollPanel;
 	}
-	
+
 	private JList getPageGroupList() {
 		if (pageGroupList == null) {
 			pageGroupList = new JList();
@@ -274,9 +274,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	private JButton getButtonOpen() {
 		if (jButton == null) {
-			jButton = new JButton(Bundle.getString("PdfScissorsMainFrame.Open")); // a string literal is here only for eclipse visual editor. 
-			String imageFile = "/open.png"; 
-			String text = Bundle.getString("PdfScissorsMainFrame.OpenPdfFile"); 
+			jButton = new JButton(Bundle.getString("PdfScissorsMainFrame.Open")); // a string literal is here only for eclipse visual editor.
+			String imageFile = "/open.png";
+			String text = Bundle.getString("PdfScissorsMainFrame.OpenPdfFile");
 			setButton(jButton, imageFile, text, false);
 			jButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -296,7 +296,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			button.setText(null);
 		} else { // no image found
 			button.setText(tooltip);
-			System.err.println(Bundle.getString("PdfScissorsMainFrame.ResourceNotFound") + imgLocation); 
+			System.err.println(Bundle.getString("PdfScissorsMainFrame.ResourceNotFound") + imgLocation);
 		}
 		button.setToolTipText(tooltip);
 		button.setActionCommand(tooltip);
@@ -310,9 +310,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		openDialog.seMainFrame(this);
 		openDialog.setModal(true);
 		openDialog.setVisible(true);
-		
+
 	}
-	
+
 	public void openFile(File file, int pageGroupType, boolean shouldCreateStackView) {
 		// create new scrollpane content
 		pdfPanelsContainer = new JPanel();
@@ -336,8 +336,8 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		uiHandler.removeAllListeners();
 		registerComponentsToModel();
 		uiHandler.addListener(new UIHandlerLisnterForFrame());
-		
-		launchOpenTask(file, pageGroupType, shouldCreateStackView, Bundle.getString("PdfScissorsMainFrame.ReadingPdf")); 
+
+		launchOpenTask(file, pageGroupType, shouldCreateStackView, Bundle.getString("PdfScissorsMainFrame.ReadingPdf"));
 	}
 
 	private PdfPanel getDefaultPdfPanel() {
@@ -376,19 +376,19 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 				if (file.isDirectory()) {
 					return true;
 				}
-				return file.toString().toLowerCase().endsWith(".pdf"); 
+				return file.toString().toLowerCase().endsWith(".pdf");
 			}
 
 			@Override
 			public String getDescription() {
-				return "*.pdf"; 
+				return "*.pdf";
 			}
 		};
 	}
 
 	/**
 	 * This method initializes scrollPanel
-	 * 
+	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getScrollPanel() {
@@ -404,7 +404,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	private void handleException(String userFriendlyMessage, Throwable ex) {
-		JOptionPane.showMessageDialog(this, Bundle.getString("PdfScissorsMainFrame.Oops") + userFriendlyMessage + Bundle.getString("PdfScissorsMainFrame.TechnikcalDetails") + ex.getMessage());  
+		JOptionPane.showMessageDialog(this, Bundle.getString("PdfScissorsMainFrame.Oops") + userFriendlyMessage + Bundle.getString("PdfScissorsMainFrame.TechnikcalDetails") + ex.getMessage());
 		ex.printStackTrace();
 	}
 
@@ -414,13 +414,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes toolBar
-	 * 
+	 *
 	 * @return javax.swing.JToolBar
 	 */
 	private JToolBar getToolBar() {
 		if (toolBar == null) {
 			toolBar = new JToolBar();
-			if(showOpenFile) { 
+			if(showOpenFile) {
 				toolBar.add(getButtonOpen());
 			}
 			toolBar.add(getButtonSave());
@@ -441,15 +441,15 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		if (bottomPanel == null) {
 			bottomPanel = new JPanel();
 
-			backButton = new JButton("<"); 
+			backButton = new JButton("<");
 			openFileDependendComponents.add(backButton);
-			backButton.setToolTipText(Bundle.getString("PdfScissorsMainFrame.BackOnePage")); 
+			backButton.setToolTipText(Bundle.getString("PdfScissorsMainFrame.BackOnePage"));
 			bottomPanel.add(backButton);
 			backButton.addActionListener(new PageChangeHandler(false));
 
-			forwardButton = new JButton(">"); 
+			forwardButton = new JButton(">");
 			openFileDependendComponents.add(forwardButton);
-			forwardButton.setToolTipText(Bundle.getString("PdfScissorsMainFrame.ForwardOnePage")); 
+			forwardButton.setToolTipText(Bundle.getString("PdfScissorsMainFrame.ForwardOnePage"));
 			bottomPanel.add(getPageSelectionCombo(), null);
 			bottomPanel.add(forwardButton);
 			forwardButton.addActionListener(new PageChangeHandler(true));
@@ -459,26 +459,26 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonSave
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getButtonSave() {
 		if (buttonSave == null) {
-			buttonSave = new JButton(Bundle.getString("PdfScissorsMainFrame.Save")); 
-			setButton(buttonSave, "/crop.png", Bundle.getString("PdfScissorsMainFrame.CropAndSave"), true);  
+			buttonSave = new JButton(Bundle.getString("PdfScissorsMainFrame.Save"));
+			setButton(buttonSave, "/crop.png", Bundle.getString("PdfScissorsMainFrame.CropAndSave"), true);
 			buttonSave.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if(saveFile != null) {
 						saveFile(saveFile);
 					} else {
-						openSaveFileChooser();						
+						openSaveFileChooser();
 					}
 				}
 			});
 		}
 		return buttonSave;
 	}
-	
+
 	public void setSaveFile(File file) {
 		this.saveFile = file;
 	}
@@ -491,25 +491,25 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		String filePath = originalPdf.getAbsolutePath();
 		int dot = filePath.lastIndexOf('.');
 		int separator = filePath.lastIndexOf(File.separator);
-		filePath = filePath.substring(0, separator + 1) + filePath.substring(separator + 1, dot) + "_scissored.pdf"; 
+		filePath = filePath.substring(0, separator + 1) + filePath.substring(separator + 1, dot) + "_scissored.pdf";
 		fileChooser.setSelectedFile(new File(filePath));
 		int retval = fileChooser.showSaveDialog(this);
 		if (retval == JFileChooser.APPROVE_OPTION) {
 			File targetFile = fileChooser.getSelectedFile();
 			if (targetFile.equals(originalPdf)) {
-				if (0 != JOptionPane.showConfirmDialog(this, Bundle.getString("PdfScissorsMainFrame.OverwriteMessage"), Bundle.getString("PdfScissorsMainFrame.ConfirmOverwrite"), JOptionPane.YES_NO_CANCEL_OPTION)) {  
+				if (0 != JOptionPane.showConfirmDialog(this, Bundle.getString("PdfScissorsMainFrame.OverwriteMessage"), Bundle.getString("PdfScissorsMainFrame.ConfirmOverwrite"), JOptionPane.YES_NO_CANCEL_OPTION)) {
 					return; // overwrite not allowed by user
 				}
 			} else if (targetFile.exists()) {
 				// confirm overwrite
-				if (0 != JOptionPane.showConfirmDialog(this, targetFile.getName() + " " + Bundle.getString("PdfScissorsMainFrame.AlreadyExistsAskOverwrite"), Bundle.getString("PdfScissorsMainFrame.OverwriteMessage"), JOptionPane.YES_NO_CANCEL_OPTION)) {  
+				if (0 != JOptionPane.showConfirmDialog(this, targetFile.getName() + " " + Bundle.getString("PdfScissorsMainFrame.AlreadyExistsAskOverwrite"), Bundle.getString("PdfScissorsMainFrame.OverwriteMessage"), JOptionPane.YES_NO_CANCEL_OPTION)) {
 					return; // overwrite not allowed by user
 				}
 			}
 			saveFile(targetFile);
 		}
 	}
-	
+
 	private void saveFile(File targetFile) {
 		launchSaveTask(Model.getInstance().getPdf(), targetFile);
 	}
@@ -522,13 +522,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonDraw
-	 * 
+	 *
 	 * @return javax.swing.JToggleButton
 	 */
 	private JToggleButton getButtonDraw() {
 		if (buttonDraw == null) {
-			buttonDraw = new JToggleButton(Bundle.getString("PdfScissorsMainFrame.Draw"), true); // selected initially 
-			setButton(buttonDraw, "/draw.png", Bundle.getString("PdfScissorsMainFrame.DrawAreaForCropping"), true);  
+			buttonDraw = new JToggleButton(Bundle.getString("PdfScissorsMainFrame.Draw"), true); // selected initially
+			setButton(buttonDraw, "/draw.png", Bundle.getString("PdfScissorsMainFrame.DrawAreaForCropping"), true);
 			setToggleButtonGroup(buttonDraw, rectButtonGroup);
 			buttonDraw.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -541,13 +541,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonSelect
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JToggleButton getButtonSelect() {
 		if (buttonSelect == null) {
-			buttonSelect = new JToggleButton(Bundle.getString("PdfScissorsMainFrame.Select")); 
-			setButton(buttonSelect, "/select.png", Bundle.getString("PdfScissorsMainFrame.SelectAndResize"), true);  
+			buttonSelect = new JToggleButton(Bundle.getString("PdfScissorsMainFrame.Select"));
+			setButton(buttonSelect, "/select.png", Bundle.getString("PdfScissorsMainFrame.SelectAndResize"), true);
 			setToggleButtonGroup(buttonSelect, rectButtonGroup);
 			buttonSelect.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -560,13 +560,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonDeleteRect
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getButtonDeleteRect() {
 		if (buttonDeleteRect == null) {
-			buttonDeleteRect = new JButton(Bundle.getString("PdfScissorsMainFrame.Delete")); 
-			setButton(buttonDeleteRect, "/del.png", Bundle.getString("PdfScissorsMainFrame.DeleteSelectedCropArea"), true);  
+			buttonDeleteRect = new JButton(Bundle.getString("PdfScissorsMainFrame.Delete"));
+			setButton(buttonDeleteRect, "/del.png", Bundle.getString("PdfScissorsMainFrame.DeleteSelectedCropArea"), true);
 			buttonDeleteRect.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getSelectedRect() != null) {
@@ -582,19 +582,19 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonDelAll
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getButtonDelAll() {
 		if (buttonDelAll == null) {
-			buttonDelAll = new JButton(Bundle.getString("PdfScissorsMainFrame.DeleteAll")); 
-			setButton(buttonDelAll, "/delAll.png", Bundle.getString("PdfScissorsMainFrame.DeleteAllCropAreas"), true);  
+			buttonDelAll = new JButton(Bundle.getString("PdfScissorsMainFrame.DeleteAll"));
+			setButton(buttonDelAll, "/delAll.png", Bundle.getString("PdfScissorsMainFrame.DeleteAllCropAreas"), true);
 			buttonDelAll.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getRectCount() <= 0) {
 						showDialogNoRectYet();
 					} else if (JOptionPane.showConfirmDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.Delete") + uiHandler.getRectCount() + " " + Bundle.getString("PdfScissorsMainFrame.CropArea") + (uiHandler.getRectCount() > 1 ? "s" : "") // singular/plural   //$NON-NLS-3$ //$NON-NLS-4$
-							+ "?", Bundle.getString("PdfScissorsMainFrame.Confirm"), JOptionPane.YES_NO_CANCEL_OPTION) == 0) {  
+							+ "?", Bundle.getString("PdfScissorsMainFrame.Confirm"), JOptionPane.YES_NO_CANCEL_OPTION) == 0) {
 						uiHandler.deleteAll();
 					}
 				}
@@ -605,13 +605,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonEqualWidth
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getButtonEqualWidth() {
 		if (buttonEqualWidth == null) {
-			buttonEqualWidth = new JButton(Bundle.getString("PdfScissorsMainFrame.EqualWidth")); 
-			setButton(buttonEqualWidth, "/sameWidth.png", Bundle.getString("PdfScissorsMainFrame.SetWidthOfAllAreasSame"), true);  
+			buttonEqualWidth = new JButton(Bundle.getString("PdfScissorsMainFrame.EqualWidth"));
+			setButton(buttonEqualWidth, "/sameWidth.png", Bundle.getString("PdfScissorsMainFrame.SetWidthOfAllAreasSame"), true);
 			buttonEqualWidth.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getRectCount() > 0) {
@@ -627,13 +627,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes buttonEqualHeight
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getButtonEqualHeight() {
 		if (buttonEqualHeight == null) {
-			buttonEqualHeight = new JButton(Bundle.getString("PdfScissorsMainFrame.EqualHeight")); 
-			setButton(buttonEqualHeight, "/sameHeight.png", Bundle.getString("PdfScissorsMainFrame.SetHeightsOfCropAreasSame"), true);  
+			buttonEqualHeight = new JButton(Bundle.getString("PdfScissorsMainFrame.EqualHeight"));
+			setButton(buttonEqualHeight, "/sameHeight.png", Bundle.getString("PdfScissorsMainFrame.SetHeightsOfCropAreasSame"), true);
 			buttonEqualHeight.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getRectCount() > 0) {
@@ -649,8 +649,8 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	private JButton getButtonSplitHorizontal() {
 		if (buttonSplitHorizontal == null) {
-			buttonSplitHorizontal = new JButton(Bundle.getString("PdfScissorsMainFrame.SplitHorizontal")); 
-			setButton(buttonSplitHorizontal, "/splitHorizontal.png", Bundle.getString("PdfScissorsMainFrame.SplitAreaInTwoEqualsHorizontalAreas"), true);  
+			buttonSplitHorizontal = new JButton(Bundle.getString("PdfScissorsMainFrame.SplitHorizontal"));
+			setButton(buttonSplitHorizontal, "/splitHorizontal.png", Bundle.getString("PdfScissorsMainFrame.SplitAreaInTwoEqualsHorizontalAreas"), true);
 			buttonSplitHorizontal.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getSelectedRect() != null) {
@@ -666,8 +666,8 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	private JButton getButtonSplitVertical() {
 		if (buttonSplitVertical == null) {
-			buttonSplitVertical = new JButton(Bundle.getString("PdfScissorsMainFrame.SplitVertical")); 
-			setButton(buttonSplitVertical, "/splitVertical.png", Bundle.getString("PdfScissorsMainFrame.SplitAreaInTwoEqualsVerticalAreas"), true);  
+			buttonSplitVertical = new JButton(Bundle.getString("PdfScissorsMainFrame.SplitVertical"));
+			setButton(buttonSplitVertical, "/splitVertical.png", Bundle.getString("PdfScissorsMainFrame.SplitAreaInTwoEqualsVerticalAreas"), true);
 			buttonSplitVertical.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getSelectedRect() != null) {
@@ -683,7 +683,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * Ensures other buttons in the group will be unselected when given button is selected.
-	 * 
+	 *
 	 * @param button
 	 * @param group
 	 */
@@ -712,9 +712,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	@Override
 	public void pdfLoadFailed(File failedFile, Throwable cause) {
-		handleException(Bundle.getString("PdfScissorsMainFrame.FailedToLoadPdfFile"), cause); 
+		handleException(Bundle.getString("PdfScissorsMainFrame.FailedToLoadPdfFile"), cause);
 	}
-	
+
 	@Override
 	public void pageGroupChanged(Vector<PageGroup> pageGroups) {
 		JList list = getPageGroupList();
@@ -723,11 +723,11 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		for (int i = 0; i < pageGroups.size(); i++) {
 			listModel.add(i, pageGroups.elementAt(i));
 		}
-		list.setModel(listModel); 
+		list.setModel(listModel);
 		list.setSelectedIndex(0);
 		getPageGroupPanel().getViewport().removeAll();
 		getPageGroupPanel().getViewport().add(list);
-		
+
 	}
 
 	@Override
@@ -754,7 +754,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes pageSelectionCombo
-	 * 
+	 *
 	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getPageSelectionCombo() {
@@ -781,7 +781,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 						try {
 							defaultPdfPanel.decodePage(pageNumber);
 						} catch (Exception ex) {
-							handleException(Bundle.getString("PdfScissorsMainFrame.FailedToDecodePage") + pageNumber, ex); 
+							handleException(Bundle.getString("PdfScissorsMainFrame.FailedToDecodePage") + pageNumber, ex);
 						}
 						defaultPdfPanel.invalidate();
 						defaultPdfPanel.repaint();
@@ -841,7 +841,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		public void pageChanged(int index) {
 
 		}
-		
+
 		@Override
 		public void pageGroupSelected(PageGroup pageGroup) {
 			// update combo page list
@@ -849,7 +849,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			JComboBox combo = getPageSelectionCombo();
 			combo.removeAllItems();
 			if (pageCount > 1) {
-				combo.addItem(Bundle.getString("PdfScissorsMainFrame.StackedView")); 
+				combo.addItem(Bundle.getString("PdfScissorsMainFrame.StackedView"));
 			}
 			for (int i = 0; i < pageCount; i++) {
 				combo.addItem(String.valueOf(pageGroup.getPageNumberAt(i)));
@@ -867,14 +867,14 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 				backButton.setEnabled(true);
 			}
 			getScrollPanel().revalidate();
-			
+
 			if(uiHandler.getRectCount() > 0) {
 				uiHandler.setEditingMode(UIHandler.EDIT_MODE_SELECT);
 			} else {
 				uiHandler.setEditingMode(uiHandler.EDIT_MODE_DRAW);
 			}
 		}
-		
+
 		@Override
 		public void rectsStateChanged() {
 			getPageGroupList().repaint();
@@ -884,7 +884,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes jJMenuBar
-	 * 
+	 *
 	 * @return javax.swing.JMenuBar
 	 */
 	private JMenuBar getJJMenuBar() {
@@ -899,17 +899,17 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuFile
-	 * 
+	 *
 	 * @return javax.swing.JMenu
 	 */
 	private JMenu getMenuFile() {
 		if (menuFile == null) {
-			menuFile = new JMenu(Bundle.getString("PdfScissorsMainFrame.File")); 
+			menuFile = new JMenu(Bundle.getString("PdfScissorsMainFrame.File"));
 			menuFile.setMnemonic(KeyEvent.VK_F);
 			if(showOpenFile) {
 				menuFile.add(getMenuFileOpen());
 			}
-			
+
 			menuFile.add(getMenuSave());
 			menuFile.add(getMenuSaveAs());
 		}
@@ -918,12 +918,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuFileOpen
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuFileOpen() {
 		if (menuFileOpen == null) {
-			menuFileOpen = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Open"), KeyEvent.VK_O); 
+			menuFileOpen = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Open"), KeyEvent.VK_O);
 			menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 			menuFileOpen.addActionListener(new ActionListener() {
 
@@ -938,12 +938,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuSave
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuSaveAs() {
 		if (menuSaveAs == null) {
-			menuSaveAs = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.CropAndSaveAs"), KeyEvent.VK_S); 
+			menuSaveAs = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.CropAndSaveAs"), KeyEvent.VK_S);
 			menuSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 			menuSaveAs.addActionListener(new ActionListener() {
 
@@ -955,49 +955,49 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		}
 		return menuSaveAs;
 	}
-	
+
 	/**
 	 * This method initializes menuSave
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuSave() {
 		if (menuSave == null) {
-			menuSave = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.CropAndSave"), KeyEvent.VK_U); 
+			menuSave = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.CropAndSave"), KeyEvent.VK_U);
 			menuSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
 			menuSave.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if(saveFile != null) {
 						saveFile(saveFile);
 					} else {
-						openSaveFileChooser();						
+						openSaveFileChooser();
 					}
 				}
 			});
 		}
 		return menuSave;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem createMenuDonate() {
-		JMenuItem menuDonate = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Donate"), KeyEvent.VK_D); 
+		JMenuItem menuDonate = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Donate"), KeyEvent.VK_D);
 		menuDonate.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (Desktop.isDesktopSupported()) {
 					try {
-						Desktop.getDesktop().browse(new URI(Bundle.getString("PdfScissorsMainFrame.DonateUrl"))); 
+						Desktop.getDesktop().browse(new URI(Bundle.getString("PdfScissorsMainFrame.DonateUrl")));
 					} catch (URISyntaxException e) {
-						JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.FailedToLaunchBrowserMessage")); 
+						JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.FailedToLaunchBrowserMessage"));
 						e.printStackTrace();
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.FailedToLaunchBrowserMessage")); 
+						JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.FailedToLaunchBrowserMessage"));
 						e.printStackTrace();
 					}
 				}
@@ -1008,12 +1008,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuEdit
-	 * 
+	 *
 	 * @return javax.swing.JMenu
 	 */
 	private JMenu getMenuEdit() {
 		if (menuEdit == null) {
-			menuEdit = new JMenu(Bundle.getString("PdfScissorsMainFrame.Edit")); 
+			menuEdit = new JMenu(Bundle.getString("PdfScissorsMainFrame.Edit"));
 			menuEdit.setMnemonic(KeyEvent.VK_E);
 			menuEdit.add(getMenuCopy());
 			menuEdit.add(getMenuCut());
@@ -1025,12 +1025,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuCopy
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuCopy() {
 		if (menuCopy == null) {
-			menuCopy = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Copy"), KeyEvent.VK_C); 
+			menuCopy = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Copy"), KeyEvent.VK_C);
 			menuCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 			menuCopy.addActionListener(new ActionListener() {
 				@Override
@@ -1045,12 +1045,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuCut
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuCut() {
 		if (menuCut == null) {
-			menuCut = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Cut"), KeyEvent.VK_X); 
+			menuCut = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Cut"), KeyEvent.VK_X);
 			menuCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 			menuCut.addActionListener(new ActionListener() {
 				@Override
@@ -1066,12 +1066,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuPaste
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuPaste() {
 		if (menuPaste == null) {
-			menuPaste = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Paste"), KeyEvent.VK_V); 
+			menuPaste = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Paste"), KeyEvent.VK_V);
 			menuPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
 			if (Model.getInstance().getClipboardRect() == null) {
 				menuPaste.setEnabled(false);
@@ -1089,13 +1089,13 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuDelete
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuDelete() {
 		if (menuDelete == null) {
-			menuDelete = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Delete"), KeyEvent.VK_D); 
-			menuDelete.setAccelerator(KeyStroke.getKeyStroke(Bundle.getString("PdfScissorsMainFrame.Delete").toUpperCase())); 
+			menuDelete = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Delete"), KeyEvent.VK_D);
+			menuDelete.setAccelerator(KeyStroke.getKeyStroke(Bundle.getString("PdfScissorsMainFrame.Delete").toUpperCase()));
 			if (Model.getInstance().getClipboardRect() == null) {
 				menuPaste.setEnabled(false);
 			}
@@ -1111,17 +1111,17 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	private void showDialogNoRectYet() {
-		JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.SelectRectangleTool")); 
+		JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.SelectRectangleTool"));
 	}
 
 	/**
 	 * This method initializes menuHelp
-	 * 
+	 *
 	 * @return javax.swing.JMenu
 	 */
 	private JMenu getMenuHelp() {
 		if (menuHelp == null) {
-			menuHelp = new JMenu(Bundle.getString("PdfScissorsMainFrame.Help")); 
+			menuHelp = new JMenu(Bundle.getString("PdfScissorsMainFrame.Help"));
 			menuHelp.setMnemonic(KeyEvent.VK_H);
 			menuHelp.add(getMenuAbout());
 			menuHelp.addSeparator();
@@ -1132,12 +1132,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	/**
 	 * This method initializes menuAbout
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	private JMenuItem getMenuAbout() {
 		if (menuAbout == null) {
-			menuAbout = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.About"), KeyEvent.VK_A); 
+			menuAbout = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.About"), KeyEvent.VK_A);
 			menuAbout.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

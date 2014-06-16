@@ -21,22 +21,18 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import javax.swing.JPanel;
-
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-
 
 import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
 import bd.amazed.pdfscissors.model.PdfFile;
 import bd.amazed.pdfscissors.model.RectChangeListener;
-import bd.amazed.pdfscissors.model.TaskPdfSave;
 import bd.amazed.pdfscissors.pdf.PdfDecoder;
 
 /**
- * 
+ *
  * @author Gagan
  */
 public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeListener, UIHandlerListener {
@@ -58,7 +54,7 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 
 	@Override
 	public void paintComponent(Graphics g) {
-		if (uiHandler.isShowMergedMode()) {		
+		if (uiHandler.isShowMergedMode()) {
 			Image image = getImage();
 			if (image != null) {
 				g.drawImage(image, 0, 0, this);
@@ -196,20 +192,20 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 	public void pageChanged(int index) {
 
 	}
-	
+
 	@Override
 	public void pageGroupChanged(Vector<PageGroup> pageGroups) {
-		
+
 	}
-	
+
 	@Override
 	public void pageGroupSelected(PageGroup pageGroup) {
 		repaint();
 	}
-	
+
 	@Override
 	public void rectsStateChanged() {
-		
+
 	}
 
 	protected class MouseHandler extends MouseAdapter implements MouseMotionListener {
