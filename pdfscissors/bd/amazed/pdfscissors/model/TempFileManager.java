@@ -49,10 +49,6 @@ public class TempFileManager {
 	}
 
 	public void clean() {
-		File file = null;
-		for (int i = tempFiles.size() - 1; i >= 0; i--) {
-			file = tempFiles.elementAt(i);
-		}
 		tempFiles.removeAllElements();
 	}
 
