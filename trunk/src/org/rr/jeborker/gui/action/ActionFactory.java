@@ -52,7 +52,7 @@ public class ActionFactory {
 	
 	public static enum COMMON_ACTION_TYPES {
 		ADD_BASE_PATH_ACTION, REMOVE_BASE_PATH_ACTION, REFRESH_BASE_PATH_ACTION, SHOW_HIDE_BASE_PATH_ACTION, REFRESH_ENTRY_ACTION, QUIT_ACTION, SEARCH_ACTION, REMOVE_METADATA_ENTRY_ACTION, SAVE_METADATA_ACTION, SYNC_FOLDER_ACTION, OPEN_FOLDER_ACTION,
-		OPEN_FILE_ACTION, DELETE_FILE_ACTION, VIEW_LOG_MONITOR_ACTION, VIEW_ABOUT_DIALOG_ACTION, SHOW_METADATA_DOWNLOAD_ACTION, SHOW_PDF_SCISSORS_ACTION, SHOW_PREFERENCE_DIALOG_ACTION, COPY_TO_CLIPBOARD_ACTION, PASTE_FROM_CLIPBOARD_ACTION, FILE_SYSTEM_REFRESH_ACTION, FILE_SYSTEM_COLLAPSE_ALL_ACTION, FILE_SYSTEM_IMPORT_ACTION,
+		OPEN_FILE_ACTION, RENAME_FILE_ACTION, DELETE_FILE_ACTION, VIEW_LOG_MONITOR_ACTION, VIEW_ABOUT_DIALOG_ACTION, SHOW_METADATA_DOWNLOAD_ACTION, SHOW_PDF_SCISSORS_ACTION, SHOW_PREFERENCE_DIALOG_ACTION, COPY_TO_CLIPBOARD_ACTION, PASTE_FROM_CLIPBOARD_ACTION, FILE_SYSTEM_REFRESH_ACTION, FILE_SYSTEM_COLLAPSE_ALL_ACTION, FILE_SYSTEM_IMPORT_ACTION,
 		CHANGE_LOOK_AND_FEEL_ACTION
 
 	}
@@ -268,6 +268,28 @@ public class ActionFactory {
 				return true;
 			}			
 		},
+		RENAME_FILE_ACTION {
+			
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return RenameFileAction.class;
+			}
+			
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				return item.getResourceHandler().exists();
+			}
+			
+			@Override
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return resourceHandler.exists();
+			}				
+			
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}			
+		},
 		COPY_TO_DROPBOX_ACTION {
 			
 			@Override
@@ -419,10 +441,11 @@ public class ActionFactory {
 				break;
 			case OPEN_FILE_ACTION:
 				action = new OpenFileAction(text);
-				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(text);
-				if(resourceHandler != null && !resourceHandler.isFileResource()) {
-					action.setEnabled(false);
-				}				
+				setEnabledForFile(text, action);
+				break;
+			case RENAME_FILE_ACTION:
+				action = new RenameFileAction(text);
+				setEnabledForFile(text, action);				
 				break;
 			case DELETE_FILE_ACTION:
 				action = new DeleteFileAction(text);			
@@ -470,8 +493,19 @@ public class ActionFactory {
 		} 
 		return null;
 	}
+
+	/**
+	 * Set the given action to disabled if the given <code>text</code>did not represents a file. 
+	 * @param text A resource which can be parsed into a file.
+	 * @param action The action which should be disabled if the given <code>text</code> is not an existing file.
+	 */
+	private static void setEnabledForFile(final String text, Action action) {
+		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(text);
+		if(resourceHandler != null && !resourceHandler.isFileResource()) {
+			action.setEnabled(false);
+		}
+	}
 	
-	@SuppressWarnings("unchecked")
 	public static ApplicationAction getActionForResource(final DYNAMIC_ACTION_TYPES type, List<IResourceHandler> resourceHandlers) {
 		resourceHandlers = (List<IResourceHandler>) (resourceHandlers != null ? resourceHandlers : Collections.emptyList());
 		

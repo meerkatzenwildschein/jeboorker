@@ -130,6 +130,15 @@ public class PreferenceStoreFactory {
 	
 	private static final PropertiesPreferenceStore PROPERTIES_STORE_INSTANCE = new PropertiesPreferenceStore();
 	
+	private static final DummyPreferenceStore DUMMY_STORE_INSTANCE = new DummyPreferenceStore();
+	
+	/**
+	 * @return a dummy preference store implementation. 
+	 */
+	public static APreferenceStore getDummyPreferenceStore() {
+		return DUMMY_STORE_INSTANCE;
+	}
+	
 	/**
 	 * Get the store of the given <code>type</code>
 	 * @param type The key where the store should be returned for. For example

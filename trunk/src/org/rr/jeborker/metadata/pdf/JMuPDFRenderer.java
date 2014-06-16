@@ -9,6 +9,10 @@ import org.rr.pm.image.ImageUtils;
 
 import com.jmupdf.exceptions.DocException;
 import com.jmupdf.exceptions.DocSecurityException;
+import com.jmupdf.exceptions.PageException;
+import com.jmupdf.interfaces.Page;
+import com.jmupdf.interfaces.PagePixels;
+import com.jmupdf.page.PageRect;
 
 class JMuPDFRenderer extends PDFCommonRenderer {
 
@@ -27,17 +31,19 @@ class JMuPDFRenderer extends PDFCommonRenderer {
 	@Override
 	public BufferedImage renderPage(int pageNumber) throws IOException {
 		com.jmupdf.pdf.PdfDocument doc = null;
-		com.jmupdf.page.PagePixels pp = null;
-		com.jmupdf.page.Page page = null;
+		PagePixels pp = null;
+		Page page = null;
+		PageRect bb = null;
 		try {
 			byte[] pdfdata = getResourceHandler().getContent();
 			doc = new com.jmupdf.pdf.PdfDocument(pdfdata);
 
 			page = doc.getPage(pageNumber);
-
-			pp = new com.jmupdf.page.PagePixels(page);
-			pp.setRotation(com.jmupdf.page.Page.PAGE_ROTATE_NONE);
-			pp.drawPage(null, pp.getX0(), pp.getY0(), pp.getX1(), pp.getY1());
+			
+			pp = page.getPagePixels();
+			bb = page.getBoundBox();
+			pp.getOptions().setRotate(Page.PAGE_ROTATE_NONE);
+			pp.drawPage(null, bb.getX0(), bb.getY0(), bb.getX1(), bb.getY1());
 			BufferedImage image = pp.getImage();
 			return image;
 		} catch (IOException e) {
@@ -45,6 +51,8 @@ class JMuPDFRenderer extends PDFCommonRenderer {
 		} catch (DocException e) {
 			LoggerFactory.getLogger().log(Level.INFO, "Failed to render image for " + getResourceHandler() , e);
 		} catch (DocSecurityException e) {
+			LoggerFactory.getLogger().log(Level.INFO, "Failed to render image for " + getResourceHandler() , e);
+		} catch (PageException e) {
 			LoggerFactory.getLogger().log(Level.INFO, "Failed to render image for " + getResourceHandler() , e);
 		} finally {
 			if (pp != null) {

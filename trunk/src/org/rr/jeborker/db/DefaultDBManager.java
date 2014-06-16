@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.rr.commons.collection.ICloseableList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ReflectionUtils;
@@ -24,20 +25,20 @@ import com.j256.ormlite.stmt.Where;
 
 /**
  * The {@link DefaultDBManager} provides methods for handle database connections and it's content.
- * 
+ *
  * @param <T>
  */
 public abstract class DefaultDBManager {
 
 	private static DefaultDBManager manager;
-	
+
 	protected static final Class<?>[] KNOWN_CLASSES = new Class<?>[] { EbookPropertyItem.class, PreferenceItem.class };
 
 	private JdbcPooledConnectionSource connection;
-	
+
 	/**
 	 * Gets a shared {@link ConfigManager} instance.
-	 * 
+	 *
 	 * @return The desired {@link ConfigManager} instance.
 	 */
 	public synchronized static DefaultDBManager getInstance() {
@@ -56,14 +57,14 @@ public abstract class DefaultDBManager {
 	 * Initializes the database system to be used by this {@link DefaultDBManager} instance.
 	 */
 	protected abstract JdbcPooledConnectionSource initDatabase();
-	
+
 	/**
 	 * @return the connection pool used by this {@link DefaultDBManager} instance.
 	 */
 	protected JdbcPooledConnectionSource getConnectionPool() {
 		return connection;
 	}
-	
+
 	protected void setConnectionPool(JdbcPooledConnectionSource connection) {
 		this.connection = connection;
 	}
@@ -82,7 +83,7 @@ public abstract class DefaultDBManager {
 	/**
 	 * Get a {@link QueryBuilder} instance for the given entity class.
 	 * @return a new {@link QueryBuilder} instance for the given class. Never returns <code>null</code>
-	 * @throws RuntimeException if an SQL error occurs. 
+	 * @throws RuntimeException if an SQL error occurs.
 	 */
 	public <T> QueryBuilder<T, T> getQueryBuilder(Class<T> cls) {
 		Dao<T, T> createDao;
@@ -107,7 +108,7 @@ public abstract class DefaultDBManager {
 
 	/**
 	 * Gets simply all items from the database which matches to the given class type.
-	 * 
+	 *
 	 * @param cls The class type of the pojos to be fetched
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
@@ -121,10 +122,10 @@ public abstract class DefaultDBManager {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	/**
 	 * Gets simply all items from the database which matches to the given class type.
-	 * 
+	 *
 	 * @param cls The class type of the pojos to be fetched
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
@@ -136,11 +137,11 @@ public abstract class DefaultDBManager {
 			if(where != null && !DBUtils.isEmpty(where)) {
 				queryBuilder.setWhere(where);
 			}
-			
+
 			for(Field orderField : orderFields) {
 				queryBuilder.orderBy(orderField.getName(), orderDirection.isAscending());
 			}
-			
+
 //System.out.println(DBUtils.isEmpty(where) ? "" : where.getStatement());
 			List<T> queryRaw = createDao.query(queryBuilder.prepare());
 //System.out.println(queryRaw.size() + " items fetched");
@@ -151,13 +152,13 @@ public abstract class DefaultDBManager {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	public abstract <T> ICloseableList<T> queryFullTextSearch(Class<T> cls, Where<T, T> where, List<String> keywords, List<Field> orderFields,
 			OrderDirection orderDirection);
 
 	/**
 	 * Updates the given item.
-	 * 
+	 *
 	 * @param item
 	 *            {@link IDBObject} instance to be updated.
 	 */
@@ -182,7 +183,7 @@ public abstract class DefaultDBManager {
 
 	/**
 	 * Simple getObject method which searches for an entry with the given class type allowing to specify one field with a value as condition.
-	 * 
+	 *
 	 * @param <T>
 	 *            The class type to be searched
 	 * @param class1
@@ -197,7 +198,7 @@ public abstract class DefaultDBManager {
 		try {
 			Dao<T, T> createDao = DaoManager.createDao(connection, class1);
 			QueryBuilder<T, T> queryBuilder = createDao.queryBuilder();
-			queryBuilder.where().eq(field, value);
+			queryBuilder.where().eq(field, StringEscapeUtils.escapeSql(value));
 			List<T> query = createDao.query(queryBuilder.prepare());
 			return query;
 		} catch(Exception e) {
@@ -212,7 +213,7 @@ public abstract class DefaultDBManager {
 
 	/**
 	 * Deletes the given item and it's binary entries from the database.
-	 * 
+	 *
 	 * @param item
 	 *            The item to be deleted.
 	 * @return
@@ -234,7 +235,7 @@ public abstract class DefaultDBManager {
 
 	/**
 	 * Gets an instance for the desired {@link IDBObject} class.
-	 * 
+	 *
 	 * @param item
 	 *            The class for the new {@link IDBObject}.
 	 * @return The desired object instance.
@@ -245,7 +246,7 @@ public abstract class DefaultDBManager {
 
 	/**
 	 * Rereads the given item from the database.
-	 * 
+	 *
 	 * @return The new item or <code>null</code> if the item is no longer present in the database.
 	 */
 	public IDBObject reload(IDBObject item) {

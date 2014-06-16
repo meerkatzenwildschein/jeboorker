@@ -42,38 +42,38 @@ class MainMenuBarView extends JMenuBar {
 	private static Icon eyesVisible;
 
 	private static Icon eyesInvisible;
-	
+
 	static {
 		eyesVisible = ImageResourceBundle.getResourceAsImageIcon("eyes_blue_16.png");
 		eyesInvisible = ImageResourceBundle.getResourceAsImageIcon("eyes_gray_16.png");
 	}
-	
+
 	private JMenu fileMenuBar;
-	
+
 	private JMenu editMenuBar;
-	
-	private JMenu extrasMenuBar;	
-	
-	private JMenu helpMenuBar;	
+
+	private JMenu extrasMenuBar;
+
+	private JMenu helpMenuBar;
 
 	JMenu mnVerzeichnisEntfernen;
 
 	JMenu mnVerzeichnisRefresh;
-	
+
 	private JMenu mnVerzeichnisShowHide;
 
-	
+
 	MainMenuBarView() {
 		this.init();
 	}
-	
+
 	private void init() {
 		add(createFileMenu());
 		add(createEditMenu());
 		add(createExtrasMenu());
 		add(createHelpMenu());
 	}
-	
+
 	/**
 	 * Creates the file menu entry with it's menu items.
 	 * @return The new created menu entry.
@@ -82,34 +82,34 @@ class MainMenuBarView extends JMenuBar {
 		String fileMenuBarName = Bundle.getString("EborkerMainView.file");
 		this.fileMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(fileMenuBarName));
 		this.fileMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(fileMenuBarName));
-		
+
 		this.fileMenuBar.addMenuListener(new MenuListener() {
-			
+
 			@Override
 			public void menuSelected(MenuEvent e) {
 				createDynamicFileMenu();
 			}
-			
+
 			@Override
 			public void menuDeselected(MenuEvent e) {
 			}
-			
+
 			@Override
 			public void menuCanceled(MenuEvent e) {
 			}
-			
+
 			private void createDynamicFileMenu() {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
 				final List<IResourceHandler> selectedResources = controller.getMainTreeController().getSelectedTreeItems();
-				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
+				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 
 				fileMenuBar.removeAll();
-				
+
 				JMenuItem mntmAddEbooks = new JMenuItem();
 				mntmAddEbooks.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
 				fileMenuBar.add(mntmAddEbooks);
-				
+
 				final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 				final List<String> basePath = preferenceStore.getBasePath();
 				{
@@ -125,15 +125,15 @@ class MainMenuBarView extends JMenuBar {
 					fileMenuBar.add(mnVerzeichnisEntfernen);
 					if(basePath.isEmpty()) {
 						mnVerzeichnisEntfernen.setEnabled(false);
-					}	
-					
-					mnVerzeichnisEntfernen.add(new JSeparator());		
-					
+					}
+
+					mnVerzeichnisEntfernen.add(new JSeparator());
+
 					if(basePath.size() > 1) {
 						JMenuItem pathItem = new JMenuItem();
 						pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, "removeAll"));
-						mnVerzeichnisEntfernen.add(pathItem);				
-					}			
+						mnVerzeichnisEntfernen.add(pathItem);
+					}
 				}
 
 				{
@@ -150,16 +150,16 @@ class MainMenuBarView extends JMenuBar {
 					if(basePath.isEmpty()) {
 						mnVerzeichnisRefresh.setEnabled(false);
 					}
-					
+
 					mnVerzeichnisRefresh.add(new JSeparator());
-					
+
 					if(basePath.size() > 1) {
 						JMenuItem pathItem = new JMenuItem();
 						pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_BASE_PATH_ACTION, "refreshAll"));
-						mnVerzeichnisRefresh.add(pathItem);				
+						mnVerzeichnisRefresh.add(pathItem);
 					}
 				}
-				
+
 				{
 					String name = Bundle.getString("EborkerMainView.basePathVisibility");
 					mnVerzeichnisShowHide = new JMenu(SwingUtils.removeMnemonicMarker(name));
@@ -167,19 +167,19 @@ class MainMenuBarView extends JMenuBar {
 					for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 						String path = iterator.next();
 						ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, path);
-						
+
 						boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 						if(isShow) {
 							action.putValue(Action.SMALL_ICON, eyesVisible);
 						} else {
 							action.putValue(Action.SMALL_ICON, eyesInvisible);
-						}		
+						}
 						JMenuItem pathItem = new JMenuItem(action);
 						mnVerzeichnisShowHide.add(pathItem);
 					}
-					
+
 					mnVerzeichnisShowHide.add(new JSeparator());
-					
+
 					if(basePath.size() > 1) {
 						{
 							JMenuItem pathItem = new JMenuItem();
@@ -190,52 +190,62 @@ class MainMenuBarView extends JMenuBar {
 							JMenuItem pathItem = new JMenuItem();
 							pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_HIDE_BASE_PATH_ACTION, "hideAll"));
 							mnVerzeichnisShowHide.add(pathItem);
-						}		
+						}
 					}
-					
+
 					fileMenuBar.add(mnVerzeichnisShowHide);
 					if(basePath.isEmpty()) {
 						mnVerzeichnisShowHide.setEnabled(false);
-					}		
+					}
 				}
-				
+
 				fileMenuBar.add(new JSeparator());
-				
+
 				final JMenuItem saveMetadataMenuEntry = new JMenuItem((ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, "")));
 				saveMetadataMenuEntry.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
 				fileMenuBar.add(saveMetadataMenuEntry);
-				
+
 				fileMenuBar.add(new JSeparator());
-				
+
 				//Open folder only for single selection.
 				final JMenuItem openFolderMenuEntry;
 				final JMenuItem openFileMenuEntry;
+				final JMenuItem renameFileMenuEntry;
 				final JMenuItem deleteFileMenuEntry;
 				if(selectedItems.size() == 1) {
 					openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedItems.get(0).getFile()));
 					openFolderMenuEntry.setEnabled(true);
-					
+
 					openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedItems.get(0).getFile()));
 					openFileMenuEntry.setEnabled(true);
 				} else {
 					if(selectedResources.size() == 1) {
 						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedResources.get(0).toString()));
 						openFolderMenuEntry.setEnabled(true);
-						
+
 						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedResources.get(0).toString()));
-						openFileMenuEntry.setEnabled(true);						
-					} else {					
+						openFileMenuEntry.setEnabled(true);
+					} else {
 						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
 						openFolderMenuEntry.setEnabled(false);
-						
+
 						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
 						openFileMenuEntry.setEnabled(false);
 					}
 				}
-				
+				renameFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, ""));
+				renameFileMenuEntry.setEnabled(true);
+				for(IResourceHandler selectedResource : selectedResources) {
+					if(selectedResource.isDirectoryResource()) {
+						renameFileMenuEntry.setEnabled(false);
+						break;
+					}
+				}
+				renameFileMenuEntry.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false));
+
 				if(selectedItems.size() >= 1) {
 					deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedItems, selectedEbookPropertyItemRows));
-					deleteFileMenuEntry.setEnabled(true);	
+					deleteFileMenuEntry.setEnabled(true);
 				} else {
 					List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
 					if(selectedTreeItems.size() > 0) {
@@ -246,49 +256,50 @@ class MainMenuBarView extends JMenuBar {
 						deleteFileMenuEntry.setEnabled(false);
 					}
 				}
-				
+
 				JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu();
 				if(selectedItems.size() >= 1) {
 					copyToSubMenu.setEnabled(true);
 				}  else {
 					if(controller.getMainTreeController().getSelectedTreeItems().size() > 0) {
-						copyToSubMenu.setEnabled(true);	
+						copyToSubMenu.setEnabled(true);
 					} else {
 						copyToSubMenu.setEnabled(false);
 					}
 				}
-				
+
 				fileMenuBar.add(openFileMenuEntry);
+				fileMenuBar.add(renameFileMenuEntry);
 				fileMenuBar.add(openFolderMenuEntry);
 				fileMenuBar.add(copyToSubMenu);
 				fileMenuBar.add(deleteFileMenuEntry);
-				
+
 				fileMenuBar.add(new JSeparator());
-				
+
 				//quit menu entry
 				JMenuItem mntmQuit = new JMenuItem();
 				mntmQuit.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, (String) null));
 				mntmQuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
-				
+
 				fileMenuBar.add(mntmQuit);
 			}
 		});
-		
+
 		return fileMenuBar;
 	}
-	
+
 	private JMenu createEditMenu() {
 		String editMenuBarName = Bundle.getString("EborkerMainView.edit");
 		this.editMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(editMenuBarName));
 		this.editMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(editMenuBarName));
-		
+
 		this.editMenuBar.addMenuListener(new MenuListener() {
-			
+
 			@Override
 			public void menuSelected(MenuEvent e) {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
-				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();	
+				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 				final List<IResourceHandler> selectedItemResources = new TransformValueList<EbookPropertyItem, IResourceHandler>(selectedItems) {
 
 					@Override
@@ -296,74 +307,74 @@ class MainMenuBarView extends JMenuBar {
 						return source.getResourceHandler();
 					}
 				};
-				
+
 				editMenuBar.removeAll();
 				createDynamicEditMenu(selectedItems, selectedEbookPropertyItemRows);
-				
+
 				JMenuItem find = new JMenuItem(ActionFactory.getTableFindAction(null));
 				find.setText(SwingUtils.removeMnemonicMarker(Bundle.getString("MainMenuBarView.find")));
 				find.setMnemonic(SwingUtils.getMnemonicKeyCode(Bundle.getString("MainMenuBarView.find")));
 				find.setIcon(ImageResourceBundle.getResourceAsImageIcon("find_16.png"));
 				find.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
-				editMenuBar.add(find);						
-				
+				editMenuBar.add(find);
+
 				editMenuBar.add(new JSeparator());
-				
+
 				createDynamicMetadataMenuEntries(selectedItems, selectedEbookPropertyItemRows);
-				
+
 				JMenuItem metadataDownloadItem = new JMenuItem();
 				metadataDownloadItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_METADATA_DOWNLOAD_ACTION, null));
 				editMenuBar.add(metadataDownloadItem);
 				if(selectedItems.isEmpty() || !MetadataHandlerFactory.hasWriterSupport(selectedItemResources)) {
 					metadataDownloadItem.setEnabled(false);
-				}				
-				
+				}
+
 				createConvertMenuEntry(selectedItems, selectedEbookPropertyItemRows);
-				
+
 				JMenuItem pdfScissorsItem = new JMenuItem();
 				pdfScissorsItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_PDF_SCISSORS_ACTION, null));
 				editMenuBar.add(pdfScissorsItem);
 				if (selectedItems.size() != 1
 						|| (selectedItems.size() == 1 && !selectedItems.get(0).getMimeType().equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime()))) {
 					pdfScissorsItem.setEnabled(false);
-				}				
-				
+				}
+
 				editMenuBar.add(new JSeparator());
-				
+
 				JMenuItem editPreferencesItem = new JMenuItem();
 				editPreferencesItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_PREFERENCE_DIALOG_ACTION, null));
-				editMenuBar.add(editPreferencesItem);				
+				editMenuBar.add(editPreferencesItem);
 			}
-			
+
 			@Override
 			public void menuDeselected(MenuEvent e) {
 			}
-			
+
 			@Override
 			public void menuCanceled(MenuEvent e) {
 			}
-			
+
 			private void createDynamicEditMenu(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
 				List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
-				
+
 				JMenuItem copyClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
 				if(!copyClipboard.isEnabled()) {
 					copyClipboard = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, selectedTreeItems));
 				}
 				copyClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
-				editMenuBar.add(copyClipboard);	
-				
-				
+				editMenuBar.add(copyClipboard);
+
+
 				JMenuItem pasteClipboard = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedItems, selectedEbookPropertyItemRows));
 				if(!pasteClipboard.isEnabled()) {
 					pasteClipboard = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, selectedTreeItems));
 				}
 				pasteClipboard.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
-				editMenuBar.add(pasteClipboard);	
+				editMenuBar.add(pasteClipboard);
 			}
-			
+
 			/**
-			 * Creates the menu entries for the metadata menu entry. 
+			 * Creates the menu entries for the metadata menu entry.
 			 * @param items Items for the menu items.
 			 * @return The list of menu entries.
 			 */
@@ -373,55 +384,55 @@ class MainMenuBarView extends JMenuBar {
 				coverSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 				coverSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("image_16.png"));
 				MainView.addCoverMenuItems(coverSubMenu, selectedItems, selectedEbookPropertyItemRows);
-				editMenuBar.add(coverSubMenu);		
+				editMenuBar.add(coverSubMenu);
 				if(coverSubMenu.getMenuComponentCount() == 0) {
 					coverSubMenu.setEnabled(false);
 				}
-				
+
 				Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, selectedItems, selectedEbookPropertyItemRows);
-				editMenuBar.add(new JMenuItem(action));		
-				
+				editMenuBar.add(new JMenuItem(action));
+
 				action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, selectedItems, selectedEbookPropertyItemRows);
-				editMenuBar.add(new JMenuItem(action));				
+				editMenuBar.add(new JMenuItem(action));
 			}
-			
+
 			private void createConvertMenuEntry(List<EbookPropertyItem> selectedItems, int[] selectedEbookPropertyItemRows) {
 				String name = Bundle.getString("EborkerMainView.convert");
 				JMenu convertSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 				convertSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 				convertSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));
 				convertSubMenu.setEnabled(false);
-				
+
 				if(!selectedItems.isEmpty() && sameType(selectedItems)) {
 					List<IEBookConverter> converter = ConverterFactory.getConverter(selectedItems.get(0).getResourceHandler());
 					for(IEBookConverter c : converter) {
 						Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.CONVERT_EBOOK_ACTION, selectedItems, selectedEbookPropertyItemRows);
 						action.putValue("converterClass", c.getClass());
 						JMenuItem converterMenuItem = new JMenuItem(action);
-						
+
 						converterMenuItem.setText(StringUtils.capitalize(c.getConversionSourceType().getName()) + " " + Bundle.getString("MainMenuBarView.conversion.connector") + " " + StringUtils.capitalize(c.getConversionTargetType().getName()));
 						convertSubMenu.add(converterMenuItem);
 						convertSubMenu.setEnabled(true);
 					}
-				} 
+				}
 				editMenuBar.add(convertSubMenu);
 			}
-		});		
+		});
 
-		
+
 		return this.editMenuBar;
 	}
-	
+
 	private JMenu createExtrasMenu() {
 		final String extrasMenuBarName = Bundle.getString("EborkerMainView.extras");
-		
+
 		this.extrasMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(extrasMenuBarName));
 		this.extrasMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(extrasMenuBarName));
 
 		JMenuItem logItem = new JMenuItem();
 		logItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_LOG_MONITOR_ACTION, null));
 		extrasMenuBar.add(logItem);
-		
+
 		{ // look and feel menu
 			String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
 			JMenu lookAndFeelMenu = new JMenu(SwingUtils.removeMnemonicMarker(lookAndFeelName));
@@ -444,7 +455,7 @@ class MainMenuBarView extends JMenuBar {
 				JRadioButtonMenuItem radioMenuItem = new JRadioButtonMenuItem(action);
 				radioMenuItem.setText(lafViewName);
 				grp.add(radioMenuItem);
-				
+
 				if(JeboorkerConstants.LOOK_AND_FEELS.get(lafName).equals(currentLaf)) {
 					radioMenuItem.setSelected(true);
 				} else {
@@ -454,23 +465,23 @@ class MainMenuBarView extends JMenuBar {
 			}
 			extrasMenuBar.add(lookAndFeelMenu);
 		}
-		
+
 		return this.extrasMenuBar;
 	}
-	
+
 	private JMenu createHelpMenu() {
 		final String helpMenuBarName = Bundle.getString("EborkerMainView.help");
-		
+
 		helpMenuBar = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
 		helpMenuBar.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
 		helpMenuBar.add(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_ABOUT_DIALOG_ACTION, null));
 		helpMenuBar.add(new WebLinkAction(Bundle.getString("EborkerMainView.internetUrl"), Jeboorker.URL));
-		
+
 		return helpMenuBar;
 	}
-	
+
 	/**
-	 * Tests of the selected {@link EbookPropertyItem} are from the same mime type. 
+	 * Tests of the selected {@link EbookPropertyItem} are from the same mime type.
 	 */
 	private static boolean sameType(List<EbookPropertyItem> selectedItems) {
 		String type = null;
@@ -487,5 +498,5 @@ class MainMenuBarView extends JMenuBar {
 		}
 		return true;
 	}
-	
+
 }

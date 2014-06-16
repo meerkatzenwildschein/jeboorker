@@ -18,7 +18,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,11 +28,9 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.components.JRTable;
 import org.rr.commons.swing.components.container.ShadowPanel;
-import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.cell.MetadataDownloadTableCellEditor;
@@ -47,40 +44,40 @@ import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
 import org.rr.jeborker.remote.metadata.MetadataDownloadProviderFactory;
 import org.rr.jeborker.remote.metadata.MetadataDownloader;
 
-class MetadataDownloadView extends JDialog {
-	
+class MetadataDownloadView extends AbstractDialogView {
+
+	private static final int ABORT_BUTTON_INDEX = 0;
+
+	private static final int OK_BUTTON_INDEX = 1;
+
 	public static final int ACTION_RESULT_OK = 0;
-	
+
 	private int actionResult = -1;
-	
+
 	private boolean hasCoverWriterSupport = true;
-	
+
 	private HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
-	
+
 	private byte[] coverImage;
 
 	private MetadataDownloadController controller;
 
 	private JPanel bottomPanel;
 
-	private JButton btnOk;
-
-	private JButton btnAbort;
-	
 	private final ActionListener abortAction = new ActionListener() {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			controller.close();
 		}
 	};
-	
+
 	private final ActionListener okAction = new ActionListener() {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			MetadataDownloadTableCellEditor editor = (MetadataDownloadTableCellEditor) table.stopEdit();
-			
+
 			actionResult = ACTION_RESULT_OK;
 			if(editor != null) {
 				textValues = editor.getEditingValues();
@@ -91,29 +88,29 @@ class MetadataDownloadView extends JDialog {
 			} else {
 				textValues = new HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>>();
 			}
-			
+
 			controller.close();
 		}
 	};
-	
+
 	private final ActionListener searchAction = new ActionListener() {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			final String selectedItem = (String) searchProviderCombobox.getSelectedItem();
 			final MetadataDownloader downloader = MetadataDownloadProviderFactory.getDownloader(selectedItem);
 			final MetadataDownloadModel model = new MetadataDownloadModel(downloader, searchTextField.getText());
 			final ShadowPanel shadowPanel = new ShadowPanel();
-			
+
 			setGlassPane(shadowPanel);
 			new Thread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					try {
 						shadowPanel.setVisible(true);
 						model.loadSearchResult();
-						
+
 						//new renderer and editor instances for releasing cached resources and avoid get cached values
 						//from the old search.
 						table.setDefaultRenderer(MetadataDownloadEntry.class, new MetadataDownloadTableCellRenderer(hasCoverWriterSupport));
@@ -130,21 +127,17 @@ class MetadataDownloadView extends JDialog {
 
 	private JRScrollPane scrollPane;
 
-	private JRTable table;	
-	
+	private JRTable table;
+
 	private JPanel searchPanel;
-	
+
 	private JTextField searchTextField;
-	
+
 	private JButton searchButton;
-	
+
 	private JLabel lblSearch;
-	
+
 	private JComboBox<String> searchProviderCombobox;
-	
-	public MetadataDownloadView() {
-		this.initialize();
-	}
 
 	public MetadataDownloadView(MetadataDownloadController controller, JFrame mainWindow) {
 		super(mainWindow);
@@ -153,22 +146,18 @@ class MetadataDownloadView extends JDialog {
 		this.initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
+		super.initialize();
 		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
-		this.hasCoverWriterSupport = hasCoverWriterSupport(selectedEbookPropertyItems);
-		
-		setTitle(Bundle.getString("MetadataDownloadView.title"));
-		setSize(700, 500);
-		SwingUtils.centerOnScreen(this);
-		SwingUtils.setEscapeWindowAction(this, abortAction);
-		
+		hasCoverWriterSupport = hasCoverWriterSupport(selectedEbookPropertyItems);
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
-		
+
 		searchPanel = new JPanel();
 		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
 		gbc_searchPanel.insets = new Insets(5, 3, 5, 3);
@@ -182,7 +171,7 @@ class MetadataDownloadView extends JDialog {
 		gbl_searchPanel.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_searchPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		searchPanel.setLayout(gbl_searchPanel);
-		
+
 		searchProviderCombobox = new JComboBox<String>(new DefaultComboBoxModel<String>(MetadataDownloadProviderFactory.getDownloaderNames().toArray(new String[0])));
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
@@ -190,7 +179,7 @@ class MetadataDownloadView extends JDialog {
 		gbc_comboBox.gridx = 0;
 		gbc_comboBox.gridy = 0;
 		searchPanel.add(searchProviderCombobox, gbc_comboBox);
-		
+
 		lblSearch = new JLabel(Bundle.getString("MetadataDownloadView.label.search") + ":");
 		GridBagConstraints gbc_lblSucheingabe = new GridBagConstraints();
 		gbc_lblSucheingabe.insets = new Insets(0, 3, 0, 5);
@@ -198,7 +187,7 @@ class MetadataDownloadView extends JDialog {
 		gbc_lblSucheingabe.gridx = 1;
 		gbc_lblSucheingabe.gridy = 0;
 		searchPanel.add(lblSearch, gbc_lblSucheingabe);
-		
+
 		searchTextField = new JTextField();
 		GridBagConstraints gbc_searchTextField = new GridBagConstraints();
 		gbc_searchTextField.fill = GridBagConstraints.BOTH;
@@ -209,23 +198,23 @@ class MetadataDownloadView extends JDialog {
 		searchPanel.add(searchTextField, gbc_searchTextField);
 		searchTextField.setColumns(10);
 		searchTextField.addKeyListener(new KeyAdapter() {
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					searchAction.actionPerformed(null);
 				}
 			}
-		});		
+		});
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				searchTextField.selectAll();
 				searchTextField.requestFocus();
 			}
 		});
-		
+
 		if(!selectedEbookPropertyItems.isEmpty()) {
 			String searchPhrase = (StringUtils.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
 			if(!searchPhrase.isEmpty()) {
@@ -235,7 +224,7 @@ class MetadataDownloadView extends JDialog {
 				searchTextField.setText(fileName);
 			}
 		}
-		
+
 		searchButton = new JButton(ImageResourceBundle.getResourceAsImageIcon("play_16.png"));
 		searchButton.setPreferredSize(new Dimension(27, 27));
 		GridBagConstraints gbc_searchButton = new GridBagConstraints();
@@ -244,43 +233,35 @@ class MetadataDownloadView extends JDialog {
 		gbc_searchButton.gridy = 0;
 		searchPanel.add(searchButton, gbc_searchButton);
 		searchButton.addActionListener(searchAction);
-		
+
 		scrollPane = new JRScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.insets = new Insets(0, 3, 5, 3);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
-		getContentPane().add(scrollPane, gbc_scrollPane);		
-		
+		getContentPane().add(scrollPane, gbc_scrollPane);
+
 		table = new JRTable();
 		table.setTableHeader(null);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setStopEditOnSelectionChange(true);
 		scrollPane.setViewportView(table);
-		
-		bottomPanel = new JPanel();
+
+		//bottom OK and abort button
+		bottomPanel = createBottomButtonPanel();
 		GridBagConstraints gbc_panel2 = new GridBagConstraints();
 		gbc_panel2.insets = new Insets(5, 3, 5, 3);
 		gbc_panel2.fill = GridBagConstraints.BOTH;
 		gbc_panel2.gridx = 0;
 		gbc_panel2.gridy = 2;
 		getContentPane().add(bottomPanel, gbc_panel2);
-		bottomPanel.setLayout(new EqualsLayout(3));
-		
-		btnAbort = new JButton(Bundle.getString("MetadataDownloadView.Abort"));
-		bottomPanel.add(btnAbort);
-		btnAbort.addActionListener(abortAction);	
-		
-		btnOk = new JButton(Bundle.getString("MetadataDownloadView.OK"));
-		btnOk.addActionListener(okAction);
-		bottomPanel.add(btnOk);			
 	}
 
 	public int getActionResult() {
 		return this.actionResult;
 	}
-	
+
 	/**
 	 * Test all selected resources for cover writer support.
 	 * @param selectedEbookPropertyItems Selected items to be tested.
@@ -297,10 +278,10 @@ class MetadataDownloadView extends JDialog {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Get the downloaded metadata string value for the given type.
-	 * @return A list with the downloaded values for the given type. Each list entry 
+	 * @return A list with the downloaded values for the given type. Each list entry
 	 *     is a {@link Entry} with the checkbox boolean value as <code>key</code> and the
 	 *     text with the <code>value</code>.
 	 */
@@ -337,21 +318,21 @@ class MetadataDownloadView extends JDialog {
 		}
 		return Collections.<Entry<Boolean, String>> emptyList();
 	}
-	
+
 	/**
 	 * Get the cover image from the downloader.
 	 */
 	public byte[] getCoverImage() {
 		return coverImage;
 	}
-	
+
 	/**
 	 * get the selected index of the search provider combobox.
 	 */
 	int getSearchProviderIndex() {
 		return this.searchProviderCombobox.getSelectedIndex();
 	}
-	
+
 	/**
 	 * Set the given index to the search provider combobox.
 	 */
@@ -359,6 +340,53 @@ class MetadataDownloadView extends JDialog {
 		this.searchProviderCombobox.setSelectedIndex(index);
 	}
 
+	@Override
+	protected int getBottomButtonCount() {
+		return 2;
+	}
 
+	@Override
+	protected ActionListener getBottomButtonAction(int index) {
+		switch(index) {
+			case ABORT_BUTTON_INDEX: return abortAction;
+			case OK_BUTTON_INDEX: return okAction;
+		}
+
+		return null;
+	}
+
+	@Override
+	protected String getBottomButtonLabel(int index) {
+		switch(index) {
+			case 0: return Bundle.getString("MetadataDownloadView.Abort");
+			case 1: return Bundle.getString("MetadataDownloadView.OK");
+		}
+		return null;
+	}
+
+	@Override
+	protected Dimension getDefaultDialogSize() {
+		return new Dimension(700, 500);
+	}
+
+	@Override
+	protected String getDialogTitle() {
+		return Bundle.getString("MetadataDownloadView.title");
+	}
+
+	@Override
+	protected Dimension getDialogMinimumSize() {
+		return new Dimension(350, 250);
+	}
+
+	@Override
+	protected boolean isDefaultButtonAction(int idx) {
+		return idx == OK_BUTTON_INDEX;
+	}
+
+	@Override
+	protected boolean isAbortAction(int idx) {
+		return idx == ABORT_BUTTON_INDEX;
+	}
 
 }

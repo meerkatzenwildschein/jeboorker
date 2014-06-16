@@ -34,7 +34,7 @@ public class FileRefreshBackground {
 	
 	private FileRefreshBackground() {
 	}
-
+	
 	public static synchronized FileRefreshBackground getInstance() {
 		if (singleton == null) {
 			singleton = new FileRefreshBackground();
@@ -70,6 +70,19 @@ public class FileRefreshBackground {
 			isDisabled ++;
 		} else {
 			isDisabled --;
+		}
+	}
+	
+	/**
+	 * Starts the given {@link Runnable} and takes sure that the background refresh is disabled while running. 
+	 * @param run The {@link Runnable} to be started while no file refresh will be detected.
+	 */
+	public static void runWithDisabledRefresh(Runnable run) {
+		setDisabled(true);
+		try {
+			run.run();
+		} finally {
+			setDisabled(false);
 		}
 	}
 	

@@ -28,7 +28,7 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 public class EbookPropertyItemUtils {
-	
+
 	private static final String ALL_BOOK_PATH_COLLECTION = "allBookPathCollection";
 	private static final String thumbnailFolder = APreferenceStore.getConfigDirectory() + "thumbs/";
 	static {
@@ -41,7 +41,7 @@ public class EbookPropertyItemUtils {
 			}
 		}
 	}
-	
+
 	/**
 	 * Reloads the given item from the database.
 	 * @param item Item to be reloaded.
@@ -51,10 +51,10 @@ public class EbookPropertyItemUtils {
 		EbookPropertyItem refreshed = (EbookPropertyItem) DefaultDBManager.getInstance().reload(item);
 		return refreshed;
 	}
-	
+
 	/**
 	 * Get the {@link EbookPropertyItem}s for the given {@link IResourceHandler}.
-	 * @param resourceLoader The {@link IResourceHandler} instance where the {@link EbookPropertyItem} should be fetched from the database. 
+	 * @param resourceLoader The {@link IResourceHandler} instance where the {@link EbookPropertyItem} should be fetched from the database.
 	 * @return The desired {@link EbookPropertyItem}s.
 	 */
 	public static List<EbookPropertyItem> getEbookPropertyItemByResource(IResourceHandler resourceLoader) {
@@ -65,7 +65,7 @@ public class EbookPropertyItemUtils {
 		final List<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
 		return items;
 	}
-	
+
 	/**
 	 * Creates a new {@link EbookPropertyItem} from the given resource.
 	 * @param resource The resource where the {@link EbookPropertyItem} should be created from.
@@ -75,11 +75,13 @@ public class EbookPropertyItemUtils {
 		final EbookPropertyItem item = (EbookPropertyItem) DefaultDBManager.getInstance().newInstance(EbookPropertyItem.class);
 		item.setCreatedAt(new Date());
 		item.setFile(resource.getResourceString());
-		item.setBasePath(topLevelBaseFolder.getResourceString());
+		if(topLevelBaseFolder != null) {
+			item.setBasePath(topLevelBaseFolder.getResourceString());
+		}
 		item.setMimeType(resource.getMimeType(false));
 		item.setTimestamp(resource.getModifiedAt().getTime());
 		refreshEbookPropertyItem(item, resource, true);
-		
+
 		return item;
 	}
 
@@ -117,26 +119,26 @@ public class EbookPropertyItemUtils {
 			item.setTimestamp(resource.getModifiedAt().getTime());
 		}
 	}
-	
+
 	/**
 	 * Does the setup for the cover image bytes. A new {@link EbookPropertyCoverItem} is created
 	 * and stored and the reference is set to the given {@link EbookPropertyItem}.
-	 * 
+	 *
 	 * @param item The {@link EbookPropertyItem} instance to be setup.
 	 * @param imageData The data to be stored in a {@link EbookPropertyCoverItem}
 	 * @return The newly created {@link EbookPropertyCoverItem} with the cover data.
 	 */
-	public static void setupCoverData(final EbookPropertyItem item, byte[] imageData) { 
+	public static void setupCoverData(final EbookPropertyItem item, byte[] imageData) {
 		//create thumbnail to be stored
 		try {
 			if(imageData != null && imageData.length > 0) {
 				IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getVirtualResourceHandler(UUID.randomUUID().toString(), imageData));
 				if(imageProvider != null) {
 					BufferedImage thumbnailImage = ImageUtils.scaleToHeight(imageProvider.getImage(), 100);
-					
+
 					//much faster cropping the thumbnail than the original sized cover image.
 					BufferedImage cropedImage = ImageUtils.crop(thumbnailImage);
-					
+
 					byte[] thumbnailImageBytes = ImageUtils.getImageBytes(cropedImage, "image/jpeg");
 					if(thumbnailImageBytes != null) {
 						setCoverThumbnail(thumbnailImageBytes, item.getResourceHandler());
@@ -152,10 +154,10 @@ public class EbookPropertyItemUtils {
 		} catch(Exception e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Failed to store thumbnail for " + item.getResourceHandler().getName(), e);
 		}
-	}	
-	
+	}
+
 	/**
-	 * Deletes the cover thumbnail for the given ebook {@link IResourceHandler}. 
+	 * Deletes the cover thumbnail for the given ebook {@link IResourceHandler}.
 	 * @param ebookResource The ebook where the cover thumbnail should be deleted for.
 	 * @throws IOException
 	 */
@@ -165,7 +167,7 @@ public class EbookPropertyItemUtils {
 			thumbnailResourceLoader.delete();
 		}
 	}
-	
+
 	/**
 	 * Stores the given thumbnail bytes for the given ebook {@link IResourceHandler}.
 	 * @param thumbnailData The thumbnail data to be stored.
@@ -178,9 +180,9 @@ public class EbookPropertyItemUtils {
 			thumbnailResourceLoader.setContent(thumbnailData);
 		}
 	}
-	
+
 	/**
-	 * Get the cover thumbnail bytes for the given ebook resource. 
+	 * Get the cover thumbnail bytes for the given ebook resource.
 	 * @param ebookResource The ebook resource wehere the cover thumbnail bytes should be loaded for.
 	 * @return The desired cover thumbnail bytes or <code>null</code> if no cover is stored for the given ebook {@link IResourceHandler}.
 	 */
@@ -195,12 +197,12 @@ public class EbookPropertyItemUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the cover thumbnail {@link IResourceHandler} for the given ebook {@link IResourceHandler}.
 	 * @param ebookResource The ebook {@link IResourceHandler} where the {@link Thumbnail} should be fetched for.
-	 * @return The desired {@link IResourceHandler} instance for the cover thumbnail. Returns <code>null</code> if 
-	 *   no cover is stored for the given ebook {@link IResourceHandler}. 
+	 * @return The desired {@link IResourceHandler} instance for the cover thumbnail. Returns <code>null</code> if
+	 *   no cover is stored for the given ebook {@link IResourceHandler}.
 	 */
 	private static IResourceHandler getCoverThumbnail(final IResourceHandler ebookResource) {
 		IResourceHandler coverThumbnailResourceHandler = getCoverThumbnailResourceHandler(ebookResource);
@@ -209,24 +211,43 @@ public class EbookPropertyItemUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the {@link IResourceHandler} pointing to the cover thumbnail for the given ebook {@link IResourceHandler}.
 	 * @param ebookResource The ebook {@link IResourceHandler} where the cover thumbnail {@link IResourceHandler} should be fetched for.
 	 * @return The desired cover thumbnail {@link IResourceHandler} instance.
 	 */
-	private static IResourceHandler getCoverThumbnailResourceHandler(final IResourceHandler ebookResource) {
-		final String thumbnail = thumbnailFolder + UUID.nameUUIDFromBytes(ebookResource.toString().getBytes()) + ".jpg";
+	private static IResourceHandler getCoverThumbnailResourceHandler(IResourceHandler ebookResource) {
+		String thumbnail = thumbnailFolder + UUID.nameUUIDFromBytes(ebookResource.toString().getBytes()) + ".jpg";
 		return ResourceHandlerFactory.getResourceHandler(thumbnail);
 	}
-	
+
+	/**
+	 * Renames the cover thumbnail for the given source resource to one which matches to the given target {@link IResourceHandler}.
+	 * This always happens if the file name changes.
+	 * @param source The source to be renamed.
+	 * @param target The target {@link IResourceHandler} for the cover thumbnail.
+	 */
+	public static void renameCoverThumbnail(IResourceHandler source, IResourceHandler target) {
+		IResourceHandler sourceThumbnailResourceHandler = getCoverThumbnailResourceHandler(source);
+		if(sourceThumbnailResourceHandler.exists()) {
+			IResourceHandler targetThumbnailResourceHandler = getCoverThumbnailResourceHandler(target);
+			try {
+				sourceThumbnailResourceHandler.moveTo(targetThumbnailResourceHandler, true);
+			} catch (IOException e) {
+				LoggerFactory.getLogger().log(Level.WARNING,
+						String.format("Failed to rename thumbnail from %s to %s", sourceThumbnailResourceHandler, targetThumbnailResourceHandler), e);
+			}
+		}
+	}
+
 	/**
 	 * Stores the given path collection to the database.
 	 * @param path The path elements to be stored.
 	 */
 	public static void storePathElements(final Collection<String> path) {
 		final List<String> oldPathElements = fetchPathElements();
-		final BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
+		final BasePathList basePathList = PreferenceStoreFactory.getDummyPreferenceStore().getBasePath();
 		String indexedString;
 		if(oldPathElements != null && !oldPathElements.isEmpty()) {
 			final HashSet<String> allElements = new HashSet<String>(path.size());
@@ -242,7 +263,7 @@ public class EbookPropertyItemUtils {
 		}
 		PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).addGenericEntryAsString(ALL_BOOK_PATH_COLLECTION, indexedString);
 	}
-	
+
 	/**
 	 * Fetches these path elements previously stored with the {@link #storePathElements(Collection)}
 	 * method.
