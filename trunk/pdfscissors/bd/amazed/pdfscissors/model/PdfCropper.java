@@ -16,17 +16,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 import java.util.logging.Level;
 
 import javax.swing.ProgressMonitor;
 
-import org.omg.IOP.IOR;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
 import bd.amazed.pdfscissors.pdf.PdfException;
-import bd.amazed.pdfscissors.view.Rect;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -43,7 +40,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * 
+ *
  * @author Gagan
  */
 public class PdfCropper {
@@ -70,12 +67,12 @@ public class PdfCropper {
 		if (lastPage != null) {
 			listener.propertyChange(new PropertyChangeEvent(this, "message", null, "Stacking " + pageGroup));
 			lastPage = new BufferedImage(lastPage.getWidth(), lastPage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			
+
 			Graphics2D g2d = (Graphics2D) lastPage.getGraphics();
-			
+
 			g2d.setColor(Color.WHITE);
 			g2d.fillRect(0, 0, lastPage.getWidth(), lastPage.getHeight());
-			
+
 			float alpha = 0.5f;
 			int type = AlphaComposite.SRC_OVER;
 			AlphaComposite composite = AlphaComposite.getInstance(type, alpha);
@@ -215,14 +212,14 @@ public class PdfCropper {
 
 		float pdfWidth = pdfFile.getNormalizedPdfWidth();
 		float pdfHeight = pdfFile.getNormalizedPdfHeight();
-		
+
 		LoggerFactory.getLogger(PdfCropper.class).log(Level.INFO, "Finding ratio : viewSize " + viewWidth + "x" + viewHeight + ", pdf size " + pdfWidth + "x" + pdfHeight);
 		double widthRatio = pdfWidth / viewWidth;
 		double heightRatio = pdfHeight / viewHeight;
 		if (widthRatio != heightRatio) {
 			System.err.println("WARNING>>> RATION NOT SAME ?! " + widthRatio + " " + heightRatio);
 		}
-		
+
 
 		Document document = null;
 		PdfCopy writer = null;
@@ -250,7 +247,7 @@ public class PdfCropper {
 			document.open();
 
 			PdfImportedPage page;
-			
+
 			int newPageCount = 0;
 			for (int i = 0; i < originalPageCount;) {
 				++i;
@@ -259,7 +256,7 @@ public class PdfCropper {
 				if (cropRects != null) {
 					cropCellCount = cropRects.size();
 				}
-				
+
 				if (cropCellCount == 0) {
 					cropCellCount = 1;//we will assume there is one crop cell that covers the whole page
 				}
@@ -302,7 +299,7 @@ public class PdfCropper {
 				if (cropRectsInIPDFCoords != null) {
 					cropCellCount = cropRectsInIPDFCoords.size();
 				}
-				
+
 				if (cropCellCount == 0) {
 					newPageCount++; // we will still add one full page
 					LoggerFactory.getLogger(PdfCropper.class).log(Level.INFO, "Cropping page " + newPageCount + " ... full page size");
@@ -326,7 +323,7 @@ public class PdfCropper {
 							pdfDictionary.put(PdfName.MEDIABOX, cropCell);
 							pdfDictionary.put(PdfName.TRIMBOX, cropCell);
 							pdfDictionary.put(PdfName.BLEEDBOX, cropCell);
-						} 
+						}
 					}
 				}
 			}
@@ -345,7 +342,7 @@ public class PdfCropper {
 			if (tempFile != null) {
 				tempFile.delete();
 			}
-			
+
 			if (reader != null) {
 				reader.close();
 			}

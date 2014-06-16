@@ -1,9 +1,7 @@
 package bd.amazed.pdfscissors.view;
 
-import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -29,14 +27,14 @@ public class UIHandler {
 		listeners = new Vector<UIHandlerListener>();
 		reset();
 	}
-	
+
 	public void setPageGroup(PageGroup pageGroup) {
 		rects = pageGroup.getRects();
 		selectedRect = null;
 		this.currentPageGroup = pageGroup;
 		firePageGroupSelectionChanged(pageGroup);
 	}
-	
+
 	public PageGroup getCurrentPageGroup() {
 		return currentPageGroup;
 	}
@@ -213,13 +211,13 @@ public class UIHandler {
 			listener.pageChanged(page);
 		}
 	}
-	
+
 	private void firePageGroupSelectionChanged(PageGroup pageGroup) {
 		for (UIHandlerListener listener : listeners) {
 			listener.pageGroupSelected(pageGroup);
 		}
 	}
-	
+
 	public void notifyRectsStateChanged() {
 		for (UIHandlerListener listener : listeners) {
 			listener.rectsStateChanged();

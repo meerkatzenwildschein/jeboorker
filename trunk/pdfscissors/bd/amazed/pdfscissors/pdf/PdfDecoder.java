@@ -20,7 +20,7 @@ import org.rr.jeborker.metadata.pdf.PDFCommonRenderer;
 public class PdfDecoder extends JPanel {
 
 	private PDFCommonRenderer pdfRendererInstance;
-	
+
 	private BufferedImage currentPage;
     /**
      * routine to open PDF file and extract key info from pdf file so we can
@@ -32,29 +32,29 @@ public class PdfDecoder extends JPanel {
 		closePdfFile();
 		pdfRendererInstance = PDFCommonRenderer.getPDFRendererInstance(filePath);
 	}
-	
+
     /**
      * convenience method to close the current PDF file
      */
 	public void closePdfFile() {
-	}	
+	}
 
     /**
      * decode a page, - <b>page</b> must be between 1 and
      * <b>PdfDecoder.getPageCount()</b> - Will kill off if already running
      *
      * returns minus page if trying to open linearized page not yet available
-     * @throws PdfException 
+     * @throws PdfException
      */
 	public void decodePage(int page) throws PdfException {
 		currentPage = getPageAsImage(page);
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(currentPage, 0, 0, this.getWidth(), this.getHeight(), null);
 	}
-	
+
 	public void paint(Graphics g) {
 		super.paint(g);
 	}
@@ -63,7 +63,7 @@ public class PdfDecoder extends JPanel {
      * generate BufferedImage of a page in current file
      *
      * Page size is defined by CropBox
-     * @throws PdfException 
+     * @throws PdfException
      */
 	public BufferedImage getPageAsImage(int pageIndex) throws PdfException {
 		try {
@@ -79,7 +79,7 @@ public class PdfDecoder extends JPanel {
     	}
     	return new Dimension(800,600);
     }
-    
+
 
     final public Dimension getMinimumSize() {
         return new Dimension(100,100);
@@ -93,5 +93,5 @@ public class PdfDecoder extends JPanel {
      */
     public Dimension getPreferredSize() {
         return getMaximumSize();
-    }    
+    }
 }

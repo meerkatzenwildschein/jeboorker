@@ -27,7 +27,7 @@ public class Rect implements Cloneable {
 	protected static final Color COLOR_RECT = new Color(0x55555555, true);
 	public static Stroke STROKE_DASHED = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 9 }, 0);
 	public static Stroke STROKE_SOLID = new BasicStroke();
-	
+
 	private static Font font;
 
 	protected Vector<RectChangeListener> listeners = new Vector<RectChangeListener>();
@@ -35,7 +35,7 @@ public class Rect implements Cloneable {
 
 	/**
 	 * Initial width, height is zero.
-	 * 
+	 *
 	 * @param start starting point
 	 */
 	public Rect(Point start, UIHandler uiHandler) {
@@ -97,7 +97,7 @@ public class Rect implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param repaintArea can be null to indicate repaint whole area
 	 */
 	void fireEvent(Rectangle repaintArea) {
@@ -111,9 +111,9 @@ public class Rect implements Cloneable {
 	}
 
 	public void draw(Graphics g, Rectangle clipRect) {
-		draw(g, 1, STROKE_DASHED, true); 
+		draw(g, 1, STROKE_DASHED, true);
 	}
-	
+
 	public void draw(Graphics g, float scale, Stroke rectBorderStroke, boolean drawIndex) {
 		if (isSelected) {
 			g.setColor(COLOR_SELECTED_RECT);
@@ -122,7 +122,7 @@ public class Rect implements Cloneable {
 		}
 		g.fillRect( (int) (bounds.x * scale), (int)( bounds.y * scale), (int)( bounds.width * scale), (int)( bounds.height * scale));
 
-		
+
 		// draw order number
 		if (drawIndex) {
 			if (font == null) {
@@ -152,14 +152,14 @@ public class Rect implements Cloneable {
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(rectBorderStroke);
 		g.drawRect((int) (bounds.x * scale), (int)( bounds.y * scale), (int)( bounds.width * scale), (int)( bounds.height * scale));
-		
+
 		if (scale != 1)
 //		System.out.println("BOX " + (int) (bounds.x * scale) + "," +  (int)( bounds.y * scale) + "," +  (int)( bounds.width * scale) + "," + (int)( bounds.height * scale));
 		g2d.setStroke(oldStroke);
 		if (isSelected) {
 			Rectangle[] cornerboxs = getCornerboxRects();
 			for (int i = 0; i < cornerboxs.length; i++)
-				g.fillRect( (int) (cornerboxs[i].x * scale), (int)( cornerboxs[i].y * scale), 
+				g.fillRect( (int) (cornerboxs[i].x * scale), (int)( cornerboxs[i].y * scale),
 						(int) (cornerboxs[i].width * scale), (int)(cornerboxs[i].height * scale));
 		}
 	}

@@ -1,13 +1,11 @@
 package bd.amazed.pdfscissors.model;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 
 /**
  * Contains data related to the pdf file. Use normalized pdf file for actual cropping.
- * 
+ *
  */
 public class PdfFile {
 
@@ -64,8 +62,8 @@ public class PdfFile {
 	public void setPdfInfo(HashMap<String, String> pdfInfo) {
 		this.pdfInfo = pdfInfo;
 	}
-	
-	
+
+
 
 	public int getPageCount() {
 		return pageCount;

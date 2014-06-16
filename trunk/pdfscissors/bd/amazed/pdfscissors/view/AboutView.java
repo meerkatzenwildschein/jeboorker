@@ -1,46 +1,37 @@
 package bd.amazed.pdfscissors.view;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class AboutView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private String url = "www.pdfscissors.com"; // @jve:decl-index=0:
 	private String versionValue = "0.0.2 beta";
-	private String authorLabel = "Author";
-	private String authorValue = "Abdullah Al Mazed (Gagan)";
 	private String homePageValue = "<html><a href=\"" + url + "\">" + url + "</a></html>";
 	private String sourceForget = "<html><a href=\"https://sourceforge.net/projects/pdfscissors/\">sourceforge.net/projects/pdfscissors</a></html>";
 	private String appDesc = "<HTML>" + "<B>PDF Scissors </B>" + versionValue + "<BR><BR>" +
 
 	"<B>Author: </B> Abdullah Al Mazed (Gagan)" + "<BR><BR>" +
-	
+
 	"<B>Code contributor: </B> Sergio Gragera Camino" + "<BR><BR>" +
 
 	"<B> License: </B>This is a free open source software.<BR>" + "Use it for free respecting Affero General Public License.<BR> <BR>" +
 
-	"<B>Libraries used :</B> iTextPdf, JPedal.<br><BR> <BR>" +
-
 	"<B>If this software was any useful, please drop a comment to inspire!<br>Enjoy! :) </B>" + "</HTML>";
-	//
 
 	private JPanel jContentPane = null;
 	private JLabel image = null;
@@ -62,7 +53,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -74,7 +65,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -94,7 +85,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes centerPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getCenterPanel() {
@@ -110,7 +101,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes description
-	 * 
+	 *
 	 * @return javax.swing.JTextArea
 	 */
 	private JLabel getDescription() {
@@ -122,7 +113,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes bottomPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getBottomPanel() {
@@ -137,7 +128,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes button
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getButton() {
@@ -167,7 +158,7 @@ public class AboutView extends JDialog {
 
 	/**
 	 * This method initializes button
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getSourceButton() {
