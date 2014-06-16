@@ -26,7 +26,7 @@ import bd.amazed.pdfscissors.view.PdfScissorsMainFrame;
 class ShowPdfScissorsAction extends AbstractAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
-	
+
 	ShowPdfScissorsAction(String text) {
 		String name = Bundle.getString("ShowPdfScissorsAction.name");
 		if(text == null) {
@@ -39,22 +39,22 @@ class ShowPdfScissorsAction extends AbstractAction {
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
 		final List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
-		
+
 		if(!selectedEbookPropertyItems.isEmpty()) {
 			PdfScissorsMainFrame scissors = new PdfScissorsMainFrame(false);
 			scissors.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			scissors.setExtendedState(JFrame.NORMAL);
-			
+
 			EbookPropertyItem ebookPropertyItem = selectedEbookPropertyItems.get(0);
 			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
 			IResourceHandler uniqueResourceHandler = ResourceHandlerFactory.getUniqueResourceHandler(resourceHandler, null);
 			scissors.setSaveFile(uniqueResourceHandler.toFile());
-			
+
 			openOptionDialog(controller, scissors, resourceHandler);
 		}
 	}
@@ -69,12 +69,12 @@ class ShowPdfScissorsAction extends AbstractAction {
 		}));
 		pageGroupTypeCombobox.setWide(true);
 		preference.addPreferenceEntry(new PreferenceEntry("0", Bundle.getString("ShowPdfScissorsAction.cropType.label"), pageGroupTypeCombobox));
-		
+
 		final JCheckBox shouldCreateStackViewCheckBox = new JCheckBox();
 		shouldCreateStackViewCheckBox.setSelected(true);
 		preference.addPreferenceEntry(new PreferenceEntry("1", Bundle.getString("ShowPdfScissorsAction.stackedView"), shouldCreateStackViewCheckBox));
-		
-		
+
+
 		preference.setVisible(true);
 		if(preference.getActionResult() == JPreferenceDialog.ACTION_RESULT_OK) {
 			final int pageGroupType;
@@ -90,14 +90,14 @@ class ShowPdfScissorsAction extends AbstractAction {
 			}
 			scissors.setVisible(true);
 			SwingUtilities.invokeLater(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					scissors.openFile(resourceHandler.toFile(), pageGroupType, shouldCreateStackViewCheckBox.isSelected());
+					scissors.openFile(resourceHandler, pageGroupType, shouldCreateStackViewCheckBox.isSelected());
 				}
 			});
-			
+
 		}
 	}
-	
+
 }

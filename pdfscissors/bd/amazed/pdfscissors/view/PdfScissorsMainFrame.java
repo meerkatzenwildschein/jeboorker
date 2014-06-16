@@ -51,6 +51,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
 
 import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.ModelListener;
@@ -313,7 +314,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	}
 
-	public void openFile(File file, int pageGroupType, boolean shouldCreateStackView) {
+	public void openFile(IResourceHandler file, int pageGroupType, boolean shouldCreateStackView) {
 		// create new scrollpane content
 		pdfPanelsContainer = new JPanel();
 		pdfPanelsContainer.setLayout(new GridBagLayout());
@@ -347,7 +348,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		return defaultPdfPanel;
 	}
 
-	private void launchOpenTask(File file, int groupType, boolean shouldCreateStackView, String string) {
+	private void launchOpenTask(IResourceHandler file, int groupType, boolean shouldCreateStackView, String string) {
 		final TaskPdfOpen task = new TaskPdfOpen(file, groupType, shouldCreateStackView);
 		final StackViewCreationDialog stackViewCreationDialog = new StackViewCreationDialog(this);
 		stackViewCreationDialog.setModal(true);
@@ -486,9 +487,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private void openSaveFileChooser() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(createFileFilter());
-		File originalPdf = Model.getInstance().getPdf().getOriginalFile();
+		IResourceHandler originalPdf = Model.getInstance().getPdf().getOriginalFile();
 		// find file name without extension
-		String filePath = originalPdf.getAbsolutePath();
+		String filePath = originalPdf.toFile().getAbsolutePath();
 		int dot = filePath.lastIndexOf('.');
 		int separator = filePath.lastIndexOf(File.separator);
 		filePath = filePath.substring(0, separator + 1) + filePath.substring(separator + 1, dot) + "_scissored.pdf";
@@ -711,7 +712,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	@Override
-	public void pdfLoadFailed(File failedFile, Throwable cause) {
+	public void pdfLoadFailed(IResourceHandler failedFile, Throwable cause) {
 		handleException(Bundle.getString("PdfScissorsMainFrame.FailedToLoadPdfFile"), cause);
 	}
 

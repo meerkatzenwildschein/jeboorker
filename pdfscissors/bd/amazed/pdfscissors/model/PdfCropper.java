@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -23,6 +24,8 @@ import javax.swing.ProgressMonitor;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.metadata.pdf.PDFUtils;
 
 import bd.amazed.pdfscissors.pdf.PdfException;
 
@@ -133,18 +136,18 @@ public class PdfCropper {
 	/**
 	 * Normalizing takes care of different widths / heights of pages by setting max width, height to all pages.a
 	 */
-	public static PdfFile getNormalizedPdf(File originalFile) throws DocumentException, IOException {
+	public static PdfFile getNormalizedPdf(IResourceHandler originalFile) throws DocumentException, IOException {
 		PdfReader reader = null;
 		Document doc = null;
 		PdfWriter writer = null;
-		FileOutputStream fout = null;
+		OutputStream fout = null;
 		try  {
-			File tempFile = TempFileManager.getInstance().createTempFile(TEMP_PREFIX_PDFSCISSOR + originalFile.getName() + "_", null, true);
-			reader = new PdfReader(originalFile.getAbsolutePath());
+			IResourceHandler tempFile = ResourceHandlerFactory.getTemporaryResource(".pdfscissor");
+			reader = PDFUtils.getReader(originalFile.toFile());
 			int endPage = reader.getNumberOfPages();
 			Rectangle maxBoundingBox = getMaxBoundingBox(reader, endPage);
 			doc = new Document(maxBoundingBox, 0, 0, 0, 0);
-			writer = PdfWriter.getInstance(doc, fout = new FileOutputStream(tempFile));
+			writer = PdfWriter.getInstance(doc, fout = tempFile.getContentOutputStream(false));
 			doc.open();
 			PdfContentByte cb = writer.getDirectContent();
 
@@ -210,10 +213,10 @@ public class PdfCropper {
 	public static void cropPdf(PdfFile pdfFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth,
 			int viewHeight, ProgressMonitor progressMonitor) throws IOException, DocumentException {
 
-		File originalFile = pdfFile.getOriginalFile();
+		IResourceHandler originalFile = pdfFile.getOriginalFile();
 		HashMap<String, String> pdfInfo = pdfFile.getPdfInfo();
 
-		PdfReader reader = new PdfReader(originalFile.getAbsolutePath());
+		PdfReader reader = PDFUtils.getReader(originalFile.toFile());
 
 		float pdfWidth = pdfFile.getNormalizedPdfWidth();
 		float pdfHeight = pdfFile.getNormalizedPdfHeight();
