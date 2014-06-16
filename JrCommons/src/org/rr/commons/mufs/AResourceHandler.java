@@ -25,7 +25,7 @@ import org.rr.commons.log.LoggerFactory;
  * but the {@link IResourceHandler} interface must be implemented.
  */
 abstract class AResourceHandler implements IResourceHandler, Comparable<IResourceHandler> {
-	
+
 	private static final HashMap<String, Pattern> FILE_EXTENSION_PATTERNS = new HashMap<String, Pattern>() {
 		{
 			put("image/jpeg", Pattern.compile("(.jpg|.jpeg)$"));
@@ -50,12 +50,12 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", Pattern.compile("(.docx)$"));
 		}
 	};
-	
+
 	/**
 	 * The file format. This is a cached value, so the format should not be determined each time.
 	 */
 	private String mime = null;
-	
+
 	/**
 	 * An empty implementation because it's not needed for all {@link IResourceHandler} implementations.
 	 */
@@ -79,26 +79,26 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			this.mime = "";
 			return null;
 		}
-		
+
 		String mimeFromFileName = extractMimeTypeFromFileName();
 		if(mimeFromFileName != null) {
 			return mimeFromFileName;
 		}
-		
+
 		if(force) {
 			try {
 				final String guessedMime = ResourceHandlerUtils.guessFormat(this);
 				if (guessedMime != null) {
 					return this.mime = guessedMime;
 				}
-			} catch(FileNotFoundException e) { 
+			} catch(FileNotFoundException e) {
 				LoggerFactory.logInfo(this, "File not found " + this, e);
 				return null; //No file, no reason to continue.
 			} catch (IOException e1) {
 				return null; //IO is not good. No reason to continue.
-			}	
+			}
 		}
-		
+
 		return null;
 	}
 
@@ -128,13 +128,13 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public boolean isImageFormat() {
 		return getMimeType(true) != null && getMimeType(true).startsWith("image/");
 	}
-	
+
 	/**
-	 * Gets the file extension of the file resource. The last three characters behind the dot must not 
+	 * Gets the file extension of the file resource. The last three characters behind the dot must not
 	 * really be the file extension! The format of the file will be determined and compared to
 	 * the file system file extension. Only of the format and the file system file extension
-	 * matches to each other, the extension of the file is returned. 
-	 * 
+	 * matches to each other, the extension of the file is returned.
+	 *
 	 * @return The file extension. If no extension is detected, an empty String is returned.
 	 */
 	public String getFileExtension() {
@@ -144,7 +144,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			if(fileName.indexOf('.') == -1 || isDirectoryResource()) {
 				return "";
 			}
-			
+
 			//test if the file ends with a default file extension. If the
 			//format and the extension did not match, the string behind the dot
 			//belong to the file name.
@@ -165,18 +165,18 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 					}
 				}
 			}
-			
-			//return with the chars behind the last dot. 
+
+			//return with the chars behind the last dot.
 			return fileName.substring(this.getName().lastIndexOf('.') + 1);
 		} catch (Exception e) {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * Tells if the reosurce handled by this {@link AResourceHandler} is
 	 * a file resource.
-	 * 
+	 *
 	 * @return <code>true</code> if it's a file resource or <code>false</code> otherwise.
 	 */
 	public boolean isFileResource() {
@@ -185,11 +185,11 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		}
 		return !this.isDirectoryResource();
 	}
-	
+
 
 	/**
 	 * Reads the content of the {@link InputStream} provided by this {@link InputStreamResourceHandler}
-	 * and puts it into the target {@link IResourceHandler}. 
+	 * and puts it into the target {@link IResourceHandler}.
 	 */
 	@Override
 	public boolean copyTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
@@ -197,7 +197,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		if(!overwrite && targetRecourceLoader.exists()) {
 			return false;
 		}
-		
+
 		//perform a slow stream copy.
 		OutputStream contentOutputStream = null;
 		try {
@@ -216,8 +216,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public void moveTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
 		copyTo(targetRecourceLoader, overwrite);
 		delete();
-	}	
-	
+	}
+
 	/**
 	 * A general filter listResources method. Should be reimplemented if a {@link IResourceHandler} implementation
 	 * is able to perform a more performant way.
@@ -230,10 +230,10 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		//get files and directories
 		List<IResourceHandler> listFileResources = Arrays.asList(this.listFileResources());
 		List<IResourceHandler> listDirectoryResources = Arrays.asList(this.listDirectoryResources());
-		
+
 		//create the result containing both, directories and files with the right size, so the list must ne be resized while copying into it.
-		ArrayList<IResourceHandler> resultFileResources = new ArrayList<IResourceHandler>(listFileResources.size()+listDirectoryResources.size()); 
-		
+		ArrayList<IResourceHandler> resultFileResources = new ArrayList<IResourceHandler>(listFileResources.size()+listDirectoryResources.size());
+
 		//loop directory resources
 		for (int i = 0; i < listDirectoryResources.size(); i++) {
 			final IResourceHandler resourceHandler = listDirectoryResources.get(i);
@@ -241,8 +241,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 				//add the resource.
 				resultFileResources.add(resourceHandler);
 			}
-		}		
-		
+		}
+
 		//loop file resources
 		for (int i = 0; i < listFileResources.size(); i++) {
 			final IResourceHandler resourceHandler = listFileResources.get(i);
@@ -251,24 +251,24 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 				resultFileResources.add(resourceHandler);
 			}
 		}
-		
+
 		final IResourceHandler[] result = resultFileResources.toArray(new IResourceHandler[resultFileResources.size()]);
 		return result;
-	}	
+	}
 
 	/**
 	 * Gets the resource string as toString output. Use
 	 * {@link #getResourceString()} instead of {@link #toString()} if the
 	 * path for this {@link AResourceHandler} instance is needed.
-	 * @return The strign representation for this {@link AResourceHandler} instance. 
+	 * @return The strign representation for this {@link AResourceHandler} instance.
 	 */
 	public String toString() {
 		return this.getResourceString();
 	}
-	
+
 	/**
 	 * Gets the content of the resource handled by this {@link IResourceHandler} instance.
-	 * 
+	 *
 	 * @return The content of the resource.
 	 */
 	@Override
@@ -278,13 +278,13 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		IOUtils.closeQuietly(contentInputStream);
 		return byteArray;
 	}
-	
+
 	/**
 	 * Sometimes, on heavy IO, the garbage collector isn't fast enough to free the heap.
-	 * To prevent this, the garbage collector is triggered if not enough space is 
+	 * To prevent this, the garbage collector is triggered if not enough space is
 	 * present.
 	 * @param heapRequired The amount of heap needed in the near future.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	protected void cleanHeapIfNeeded(long heapRequired) throws IOException {
 		final MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
@@ -295,10 +295,10 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			System.gc();
 		}
 	}
-	
+
 	/**
 	 * Gets the content of the resource handled by this {@link IResourceHandler} instance.
-	 * 
+	 *
 	 * @return The content of the resource.
 	 */
 	@Override
@@ -308,14 +308,14 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		ResourceHandlerUtils.copy(contentInputStream, output, length);
 		IOUtils.closeQuietly(contentInputStream);
 		return output.toByteArray();
-	}	
-	
+	}
+
 	public void setContent(byte[] content) throws IOException {
 		OutputStream contentOutputStream = this.getContentOutputStream(false);
 		IOUtils.write(content, contentOutputStream);
 		IOUtils.closeQuietly(contentOutputStream);
 	}
-	
+
 	/**
 	 * Tests the resource string of the given object with this
 	 * instance for equalness.
@@ -327,17 +327,17 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		} else if(o instanceof IResourceHandler) {
 			return ((IResourceHandler)o).getResourceString().equals(this.getResourceString());
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.
-     * 
-     * This is an alphanumeric comperator. 
-     * 
+     *
+     * This is an alphanumeric comperator.
+     *
      * @param   o the object to be compared.
      * @return  a negative integer, zero, or a positive integer as this object
      *		is less than, equal to, or greater than the specified objec
@@ -347,7 +347,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public int compareTo(IResourceHandler o) {
 	        return ResourceHandlerUtils.compareTo(this, o, ResourceHandlerUtils.SORT_BY_NAME);
 	}
-	
+
 	/**
 	 * Tests if this {@link AResourceHandler} instance is a root instance
 	 * by getting the parent resource. If the parent resource is <code>null</code>
@@ -358,15 +358,15 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public boolean isRoot() {
 		return this.getParentResource()==null;
 	}
-	
+
 	/**
-	 * Always returns <code>false</code>. Should overriden for local 
+	 * Always returns <code>false</code>. Should overriden for local
 	 * file system implementations.
 	 */
 	public boolean isFloppyDrive() {
 		return false;
 	}
-	
+
 	/**
 	 * @return the root node for this {@link AResourceHandler} instance.
 	 * If multiple roots supported, this method should be overridden.
@@ -378,14 +378,14 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		}
 		return new IResourceHandler[] {parent};
 	}
-	
+
 	/**
 	 * This default implementation uses the {@link FilenameFilter} to filter
 	 * these files starting with a '.'.
 	 */
 	public IResourceHandler[] listFileResources(final boolean showHidden) throws IOException {
 		IResourceHandler[] listResources = this.listResources(new ResourceNameFilter() {
-		
+
 			@Override
 			public boolean accept(IResourceHandler loader) {
 				if(!loader.isFileResource()) {
@@ -393,13 +393,13 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 				}
 				if(!showHidden && loader.getName().startsWith(".")) {
 					return false;
-				} 
+				}
 				return true;
 			}
 		});
 		return listResources;
 	}
-	
+
 	/**
 	 * This default implementation uses the {@link FilenameFilter} to filter
 	 * these files starting with a '.'.
@@ -407,22 +407,22 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	@Override
 	public IResourceHandler[] listDirectoryResources(final boolean showHidden) throws IOException {
 		IResourceHandler[] listResources = this.listDirectoryResources(new ResourceNameFilter() {
-			
+
 			@Override
 			public boolean accept(IResourceHandler loader) {
 				if(!showHidden && loader.getName().startsWith(".")) {
 					return false;
-				} 
+				}
 				return true;
 			}
 		});
 		return listResources;
 	}
-	
+
 	public final IResourceHandler[] listDirectoryResources() throws IOException {
 		return listDirectoryResources(null);
 	}
-	
+
 	/**
 	 * The default implementation did not support these feature.
 	 * The {@link #getName()} result is returned.
@@ -430,8 +430,8 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	@Override
 	public String getSystemDisplayName() {
 		return this.getName();
-	}	
-	
+	}
+
 	/**
 	 * Creates a new folder with the name "New Folder".
 	 */
@@ -447,7 +447,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			throw new IOException(e);
 		}
 	}
-	
+
 	@Override
 	public File toFile() {
 		String name = getName();
@@ -455,7 +455,7 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 		if(fileExtension != null && name.endsWith(fileExtension)) {
 			name = name.substring(0, name.length() - fileExtension.length() - 1);
 		}
-		
+
 		try {
 			File createTempFile = File.createTempFile(name, fileExtension);
 			IResourceHandler tmpResourceHandler = ResourceHandlerFactory.getResourceHandler(createTempFile);
@@ -466,15 +466,19 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public List<String> getPathSegments() {
 		List<String> emptyList = Collections.emptyList();
 		return emptyList;
 	}
-	
+
 	@Override
 	public boolean isHidden() {
 		return false;
-	}	
+	}
+
+	public void deleteOnExit() {
+		ResourceHandlerFactory.deleteOnExit(this);
+	}
 }
