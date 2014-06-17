@@ -71,7 +71,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private PdfPanel defaultPdfPanel;
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
-	private JButton jButton = null;
 	private JScrollPane scrollPanel = null;
 	/** Panel containing PdfPanels. */
 	private JPanel pdfPanelsContainer = null;
@@ -94,7 +93,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private JComboBox<String> pageSelectionCombo = null;
 	private JMenuBar jJMenuBar = null;
 	private JMenu menuFile = null;
-	private JMenuItem menuFileOpen = null;
 	private JMenuItem menuSaveAs = null;
 	private JMenuItem menuSave = null;
 	private JMenu menuEdit = null;
@@ -111,12 +109,10 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private PageGroupRenderer pageGroupListRenderer;
 	private JButton forwardButton = null;
 	private JButton backButton = null;
-	private boolean showOpenFile = true;
 	private File saveFile;
 
-	public PdfScissorsMainFrame(boolean showOpenFileMenuItem) {
+	public PdfScissorsMainFrame() {
 		super();
-		this.showOpenFile = showOpenFileMenuItem;
 		modelRegisteredListeners = new Vector<ModelListener>();
 		openFileDependendComponents = new Vector<Component>();
 		initialize();
@@ -145,13 +141,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 				TempFileManager.getInstance().clean();
 			}
 		});
-	}
-
-	/**
-	 * This is the default constructor
-	 */
-	public PdfScissorsMainFrame() {
-		this(true);
 	}
 
 	/**
@@ -272,22 +261,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		return this.pageGroupListRenderer;
 	}
 
-	private JButton getButtonOpen() {
-		if (jButton == null) {
-			jButton = new JButton(Bundle.getString("PdfScissorsMainFrame.Open")); // a string literal is here only for eclipse visual editor.
-			String imageFile = "/open.png";
-			String text = Bundle.getString("PdfScissorsMainFrame.OpenPdfFile");
-			setButton(jButton, imageFile, text, false);
-			jButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					showFileOpenDialog();
-				}
-
-			});
-		}
-		return jButton;
-	}
-
 	private void setButton(AbstractButton button, String imageLocation, String tooltip, boolean isOpenFileDependent) {
 		String imgLocation = imageLocation;
 		URL imageURL = PdfScissorsMainFrame.class.getResource(imageLocation);
@@ -303,14 +276,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		if (isOpenFileDependent) {
 			openFileDependendComponents.add(button);
 		}
-	}
-
-	private void showFileOpenDialog() {
-		OpenDialog openDialog = new OpenDialog();
-		openDialog.seMainFrame(this);
-		openDialog.setModal(true);
-		openDialog.setVisible(true);
-
 	}
 
 	public void openFile(IResourceHandler file, int pageGroupType, boolean shouldCreateStackView) {
@@ -412,9 +377,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private JToolBar getToolBar() {
 		if (toolBar == null) {
 			toolBar = new JToolBar();
-			if(showOpenFile) {
-				toolBar.add(getButtonOpen());
-			}
 			toolBar.add(getButtonSave());
 			toolBar.add(getButtonDraw());
 			toolBar.add(getButtonSelect());
@@ -479,12 +441,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(createFileFilter());
 		IResourceHandler originalPdf = Model.getInstance().getPdf().getOriginalFile();
-		// find file name without extension
-		String filePath = originalPdf.toFile().getAbsolutePath();
-		int dot = filePath.lastIndexOf('.');
-		int separator = filePath.lastIndexOf(File.separator);
-		filePath = filePath.substring(0, separator + 1) + filePath.substring(separator + 1, dot) + "_scissored.pdf";
-		fileChooser.setSelectedFile(new File(filePath));
+		fileChooser.setSelectedFile(originalPdf.toFile());
 		int retval = fileChooser.showSaveDialog(this);
 		if (retval == JFileChooser.APPROVE_OPTION) {
 			File targetFile = fileChooser.getSelectedFile();
@@ -898,34 +855,10 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		if (menuFile == null) {
 			menuFile = new JMenu(Bundle.getString("PdfScissorsMainFrame.File"));
 			menuFile.setMnemonic(KeyEvent.VK_F);
-			if(showOpenFile) {
-				menuFile.add(getMenuFileOpen());
-			}
-
 			menuFile.add(getMenuSave());
 			menuFile.add(getMenuSaveAs());
 		}
 		return menuFile;
-	}
-
-	/**
-	 * This method initializes menuFileOpen
-	 *
-	 * @return javax.swing.JMenuItem
-	 */
-	private JMenuItem getMenuFileOpen() {
-		if (menuFileOpen == null) {
-			menuFileOpen = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Open"), KeyEvent.VK_O);
-			menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-			menuFileOpen.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					showFileOpenDialog();
-				}
-			});
-		}
-		return menuFileOpen;
 	}
 
 	/**

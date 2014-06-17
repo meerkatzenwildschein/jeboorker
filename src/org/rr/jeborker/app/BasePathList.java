@@ -16,58 +16,58 @@ import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
 public class BasePathList extends WrapperList<String> {
-	
+
 	private static String importBasePath;
-	
+
 	private final List<String> stickyBasePath = new ArrayList<String>();
-	
+
 	public BasePathList(List<String> basePaths) {
 		super(Collections.<String>emptyList());
 		init(basePaths);
 	}
-	
+
 	public BasePathList(String basePath) {
 		super();
 		init(null);
 		this.add(basePath);
 	}
-	
+
 	public BasePathList() {
 		super();
 		init(null);
 	}
-	
+
 	/**
 	 * Initialize a newly created {@link BasePathList} instance.
 	 * @param basePaths The base paths which should be initially contained by this {@link BasePathList} instance.
 	 */
 	private void init(List<String> basePaths) {
-		super.toWrap = new CompoundList<String>(basePaths != null ? basePaths : super.toWrap, stickyBasePath, 
+		super.toWrap = new CompoundList<String>(basePaths != null ? basePaths : super.toWrap, stickyBasePath,
 				CompoundList.ADD_TO_FIRST);
 		Collections.sort(toWrap);
 		stickyBasePath.add(getImportBasePath());
 	}
-	
+
 	/**
 	 * Get the base path for the default import folder.
 	 * @return The path for the import folder. Never returns <code>null</code>.
 	 */
-	private String getImportBasePath() {
+	public static String getImportBasePath() {
 		if(importBasePath == null) {
 			importBasePath = APreferenceStore.getConfigDirectory() + "Import" + File.separator;
 			IResourceHandler importPathResourceHandler = ResourceHandlerFactory.getResourceHandler(importBasePath);
 			if(!importPathResourceHandler.exists()) {
-				LoggerFactory.log(Level.INFO, this, "Creating folder " + importBasePath + " for import.");
+				LoggerFactory.log(Level.INFO, BasePathList.class, "Creating folder " + importBasePath + " for import.");
 				try {
 					importPathResourceHandler.mkdirs();
 				} catch (IOException e) {
-					LoggerFactory.log(Level.WARNING, this, "Failed to create import directory " + importBasePath);
+					LoggerFactory.log(Level.WARNING, BasePathList.class, "Failed to create import directory " + importBasePath);
 				}
 			}
 		}
 		return importBasePath;
 	}
-	
+
 	/**
 	 * Tests if all base path elements are visible and returns <code>true</code> if they are and
 	 * <code>false</code> if some are not.
@@ -81,7 +81,7 @@ public class BasePathList extends WrapperList<String> {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Tests if no base path elements are visible and returns <code>true</code> if they are and
 	 * <code>false</code> if some are not.
@@ -95,7 +95,7 @@ public class BasePathList extends WrapperList<String> {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Find the best matching base path for the given {@link IResourceHandler}.
 	 * @return The desired base path or <code>null</code> if no base path is matching.
@@ -110,9 +110,9 @@ public class BasePathList extends WrapperList<String> {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Tests if the given file / path have a valid base path. 
+	 * Tests if the given file / path have a valid base path.
 	 * @return <code>true</code> if a base path could be found for the given path or <code>false</code> otherwise.
 	 */
 	public boolean containsBasePathFor(final String path) {
