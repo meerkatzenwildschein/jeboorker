@@ -140,7 +140,6 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 				uiHandler.addRect(cloned);
 				uiHandler.setSelectedRect(cloned);
 			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} // we dont modify the old
 		}
@@ -299,11 +298,7 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 		public void mouseReleased(MouseEvent e) {
 			Rect selectedRect = uiHandler.getSelectedRect();
 			if (selectedRect != null && selectedRect.bounds != null && (selectedRect.bounds.getWidth() <= 0 || selectedRect.bounds.getHeight() <= 10)) { // TOO
-				// small,
-				// we
-				// dont
-				// add
-				// those
+				// small, we dont add those
 				uiHandler.deleteSelected();
 			}
 			if (uiHandler.getEditingMode() == UIHandler.EDIT_MODE_DRAW) {

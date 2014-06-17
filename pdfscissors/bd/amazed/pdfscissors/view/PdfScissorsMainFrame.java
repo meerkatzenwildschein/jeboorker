@@ -71,11 +71,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private JScrollPane scrollPanel = null;
 	/** Panel containing PdfPanels. */
 	private JPanel pdfPanelsContainer = null;
-	private ButtonGroup rectButtonGroup = null; // @jve:decl-index=0:
+	private ButtonGroup rectButtonGroup = null;
 	/** Contains all components that are disabled until file open. */
 	private Vector<Component> openFileDependendComponents = null;
-	/**
-	 */
 	private Vector<ModelListener> modelRegisteredListeners;
 	private JToolBar toolBar = null;
 	private UIHandler uiHandler = null;

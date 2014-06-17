@@ -44,7 +44,6 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class PdfCropper {
 
-	private static final String TEMP_PREFIX_PDFSCISSOR = "~pdfscissor_";
 	private IResourceHandler mainFile;
 	private PdfDecoderMod pdfDecoder;
 	private boolean isCancel;
@@ -63,7 +62,8 @@ public class PdfCropper {
 		pdfDecoder.closePdfFile();
 
 		if (lastPage != null) {
-			listener.propertyChange(new PropertyChangeEvent(this, "message", null, "Stacking " + pageGroup));
+			listener.propertyChange(new PropertyChangeEvent(this, "message", null, Bundle.getString("PdfCropper.stacking") +
+					" " + pageGroup));
 			lastPage = new BufferedImage(lastPage.getWidth(), lastPage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 			Graphics2D g2d = (Graphics2D) lastPage.getGraphics();
@@ -121,7 +121,7 @@ public class PdfCropper {
 		PdfWriter writer = null;
 		OutputStream fout = null;
 		try  {
-			IResourceHandler tempFile = ResourceHandlerFactory.getTemporaryResource(".pdfscissor");
+			IResourceHandler tempFile = ResourceHandlerFactory.getTemporaryResource("pdfscissor");
 			reader = PDFUtils.getReader(originalFile.toFile());
 			int endPage = reader.getNumberOfPages();
 			Rectangle maxBoundingBox = getMaxBoundingBox(reader, endPage);
@@ -211,8 +211,8 @@ public class PdfCropper {
 		Document document = null;
 		PdfCopy writer = null;
 		PdfStamper stamper = null;
-		File tempFile = null;
-		FileOutputStream fout = null;
+		IResourceHandler tempFile = null;
+		OutputStream fout = null;
 
 		// TODO handle bookmarks
 		// List bookmarks = SimpleBookmark.getBookmark(reader);
@@ -229,8 +229,9 @@ public class PdfCropper {
 			reader.consolidateNamedDestinations();
 			int originalPageCount = reader.getNumberOfPages();
 			document = new Document(reader.getPageSizeWithRotation(1));
-			tempFile = TempFileManager.getInstance().createTempFile(TEMP_PREFIX_PDFSCISSOR + System.currentTimeMillis(), null, true);
-			writer = new PdfCopy(document, fout = new FileOutputStream(tempFile));
+			tempFile = ResourceHandlerFactory.getTemporaryResource(".tmp");
+			//tempFile = TempFileManager.getInstance().createTempFile(TEMP_PREFIX_PDFSCISSOR + System.currentTimeMillis(), null, true);
+			writer = new PdfCopy(document, fout = tempFile.getContentOutputStream(false));
 			document.open();
 
 			PdfImportedPage page;
@@ -258,7 +259,7 @@ public class PdfCropper {
 
 			document.close();
 			document = null;
-			reader = new PdfReader(tempFile.getAbsolutePath());
+			reader = PDFUtils.getReader(tempFile.toFile());
 
 			stamper = new PdfStamper(reader, new FileOutputStream(targetFile));
 			int pageCount = reader.getNumberOfPages();
