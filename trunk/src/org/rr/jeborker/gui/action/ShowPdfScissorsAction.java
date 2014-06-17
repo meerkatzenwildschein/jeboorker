@@ -46,7 +46,7 @@ class ShowPdfScissorsAction extends AbstractAction {
 		final List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
 
 		if(!selectedEbookPropertyItems.isEmpty()) {
-			PdfScissorsMainFrame scissors = new PdfScissorsMainFrame(false);
+			PdfScissorsMainFrame scissors = new PdfScissorsMainFrame();
 			scissors.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			scissors.setExtendedState(JFrame.NORMAL);
 
