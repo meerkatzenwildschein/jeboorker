@@ -906,32 +906,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	/**
-	 *
-	 * @return javax.swing.JMenuItem
-	 */
-	private JMenuItem createMenuDonate() {
-		JMenuItem menuDonate = new JMenuItem(Bundle.getString("PdfScissorsMainFrame.Donate"), KeyEvent.VK_D);
-		menuDonate.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (Desktop.isDesktopSupported()) {
-					try {
-						Desktop.getDesktop().browse(new URI(Bundle.getString("PdfScissorsMainFrame.DonateUrl")));
-					} catch (URISyntaxException e) {
-						JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.FailedToLaunchBrowserMessage"));
-						e.printStackTrace();
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.FailedToLaunchBrowserMessage"));
-						e.printStackTrace();
-					}
-				}
-			}
-		});
-		return menuDonate;
-	}
-
-	/**
 	 * This method initializes menuEdit
 	 *
 	 * @return javax.swing.JMenu
@@ -1050,7 +1024,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			menuHelp.setMnemonic(KeyEvent.VK_H);
 			menuHelp.add(getMenuAbout());
 			menuHelp.addSeparator();
-			menuHelp.add(createMenuDonate());
 		}
 		return menuHelp;
 	}
