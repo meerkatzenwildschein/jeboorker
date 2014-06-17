@@ -9,14 +9,14 @@ import bd.amazed.pdfscissors.view.Rect;
 
 /**
  * A group of pages that are cropped together.
- * 
+ *
  */
 public class PageGroup {
-	
+
 	public static final int GROUP_TYPE_ODD_EVEN = 0;
 	public static final int GROUP_TYPE_ALL = 1;
 	public static final int GROUP_TYPE_INDIVIDUAL = 2;
-	
+
 	private java.util.Vector<Integer> pages = new Vector<Integer>();
 	private ArrayList<Rect> rects = new ArrayList<Rect>();
 	private String name;
@@ -25,7 +25,7 @@ public class PageGroup {
 	public PageGroup(String name) {
 		this.name = name;
 	}
-	
+
 	public java.util.Vector<Integer> getPages() {
 		return pages;
 	}
@@ -33,7 +33,7 @@ public class PageGroup {
 	public void setPages(java.util.Vector<Integer> pages) {
 		this.pages = pages;
 	}
-	
+
 	public void addPage(int pageNumber) {
 		pages.add(Integer.valueOf(pageNumber));
 	}
@@ -45,7 +45,7 @@ public class PageGroup {
 		}
 		return rectangles;
 	}
-	
+
 	public ArrayList<Rect> getRects() {
 		return rects;
 	}
@@ -53,10 +53,10 @@ public class PageGroup {
 	public void setRects(ArrayList<Rect> rects) {
 		this.rects = rects;
 	}
-	
-	
+
+
 	public static Vector<PageGroup> createGroupForAllPages(int pageCount) {
-		PageGroup allPages = new PageGroup("All pages");
+		PageGroup allPages = new PageGroup(Bundle.getString("PageGroup.allPages"));
 		for (int i = 1; i <= pageCount; i++ ) {
 			allPages.addPage(i);
 		}
@@ -64,21 +64,21 @@ public class PageGroup {
 		pageGroups.add(allPages);
 		return pageGroups;
 	}
-	
+
 	public static Vector<PageGroup> createGroupForIndividualPage(int pageCount) {
 		Vector<PageGroup> pageGroups = new Vector<PageGroup>(pageCount);
 		for (int i = 1; i <= pageCount; i++ ) {
-			PageGroup group = new PageGroup("Page " + i);
+			PageGroup group = new PageGroup(Bundle.getString("PageGroup.Page") + " " + i);
 			group.addPage(i);
 			pageGroups.add(group);
 		}
 		return pageGroups;
 	}
-	
-	
+
+
 	public static Vector<PageGroup> createGroupForOddEven(int pageCount) {
-		PageGroup oddPages = new PageGroup("Odd pages");
-		PageGroup evenPages = new PageGroup("Even pages");
+		PageGroup oddPages = new PageGroup(Bundle.getString("PageGroup.oddPages"));
+		PageGroup evenPages = new PageGroup(Bundle.getString("PageGroup.evenPages"));
 		for (int i = 1; i <= pageCount; i++ ) {
 			if (i % 2 == 0) {
 				evenPages.addPage(i);
@@ -91,9 +91,9 @@ public class PageGroup {
 		pageGroups.add(evenPages);
 		return pageGroups;
 	}
-	
-	
-	
+
+
+
 	public BufferedImage getStackImage() {
 		return stackImage;
 	}
@@ -118,7 +118,7 @@ public class PageGroup {
 	public int getPageCount() {
 		return pages.size();
 	}
-	
+
 	public int getPageNumberAt(int index) {
 		return pages.elementAt(index);
 	}
@@ -127,7 +127,7 @@ public class PageGroup {
 		switch (groupType) {
 		case GROUP_TYPE_ALL:
 			return PageGroup.createGroupForAllPages(pageCount);
-		case GROUP_TYPE_ODD_EVEN: 
+		case GROUP_TYPE_ODD_EVEN:
 			return PageGroup.createGroupForOddEven(pageCount);
 		case GROUP_TYPE_INDIVIDUAL:
 			return PageGroup.createGroupForIndividualPage(pageCount);

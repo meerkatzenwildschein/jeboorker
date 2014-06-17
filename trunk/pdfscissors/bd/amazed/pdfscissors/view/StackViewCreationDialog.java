@@ -22,7 +22,6 @@ import bd.amazed.pdfscissors.model.PageGroup;
 
 public class StackViewCreationDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
 	private JTextArea textArea = null;
 	private JButton cancelButton = null;
@@ -34,7 +33,7 @@ public class StackViewCreationDialog extends JDialog {
 	 * This is the default constructor
 	 */
 	public StackViewCreationDialog(JFrame owner) {
-		super(owner, "Stack creation", true);
+		super(owner, Bundle.getString("StackViewCreationDialog.StackCreation"), true);
 		initialize();
 	}
 
@@ -86,7 +85,8 @@ public class StackViewCreationDialog extends JDialog {
 			textArea.setCursor(null);
 			textArea.setOpaque(false);
 			textArea.setFocusable(false);
-			textArea.setText("Creating stack, please wait...\n\nStacking pages with transparency will help you cropping all pages together.\n");
+			textArea.setText(Bundle.getString("StackViewCreationDialog.CreatingStackMessage1")
+					+ "\n\n" + Bundle.getString("StackViewCreationDialog.CreatingStackMessage2"));
 		}
 		return textArea;
 	}
@@ -113,7 +113,7 @@ public class StackViewCreationDialog extends JDialog {
 		if (progressbar == null) {
 			progressbar = new JProgressBar();
 			progressbar.setToolTipText("Creating page stack. This will help you during cropping.");
-			progressbar.setString("Opening pdf...");
+			progressbar.setString(Bundle.getString("StackViewCreationDialog.OpeningPdf"));
 			progressbar.setStringPainted(true);
 		}
 		return progressbar;
@@ -147,8 +147,8 @@ public class StackViewCreationDialog extends JDialog {
 	 */
 	private JButton getCancelButton() {
 		if (cancelButton == null) {
-			cancelButton = new JButton("Cancel");
+			cancelButton = new JButton(Bundle.getString("StackViewCreationDialog.Cancel"));
 		}
 		return cancelButton;
 	}
-} // @jve:decl-index=0:visual-constraint="10,10"
+}
