@@ -2,7 +2,6 @@ package bd.amazed.pdfscissors.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,8 +17,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -1023,7 +1020,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			menuHelp = new JMenu(Bundle.getString("PdfScissorsMainFrame.Help"));
 			menuHelp.setMnemonic(KeyEvent.VK_H);
 			menuHelp.add(getMenuAbout());
-			menuHelp.addSeparator();
 		}
 		return menuHelp;
 	}
