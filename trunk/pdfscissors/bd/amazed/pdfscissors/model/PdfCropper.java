@@ -57,7 +57,6 @@ public class PdfCropper {
 	}
 
 	public BufferedImage getImage(PropertyChangeListener listener, PageGroup pageGroup) throws PdfException {
-		// TODO validate page number
 		int endPage = pageGroup.getLastPage();
 		PdfDecoderMod pdfDecoder = getPdfDecoder();
 		BufferedImage lastPage = pdfDecoder.getPageAsImage(endPage);
