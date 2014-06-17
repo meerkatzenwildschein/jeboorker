@@ -213,6 +213,7 @@ public class PdfCropper {
 		PdfCopy writer = null;
 		PdfStamper stamper = null;
 		File tempFile = null;
+		FileOutputStream fout = null;
 
 		// TODO handle bookmarks
 		// List bookmarks = SimpleBookmark.getBookmark(reader);
@@ -226,12 +227,11 @@ public class PdfCropper {
 
 		// open the original
 		try {
-
 			reader.consolidateNamedDestinations();
 			int originalPageCount = reader.getNumberOfPages();
 			document = new Document(reader.getPageSizeWithRotation(1));
 			tempFile = TempFileManager.getInstance().createTempFile(TEMP_PREFIX_PDFSCISSOR + System.currentTimeMillis(), null, true);
-			writer = new PdfCopy(document, new FileOutputStream(tempFile));
+			writer = new PdfCopy(document, fout = new FileOutputStream(tempFile));
 			document.open();
 
 			PdfImportedPage page;
@@ -246,7 +246,7 @@ public class PdfCropper {
 				}
 
 				if (cropCellCount == 0) {
-					cropCellCount = 1;//we will assume there is one crop cell that covers the whole page
+					cropCellCount = 1; //we will assume there is one crop cell that covers the whole page
 				}
 				newPageCount += cropCellCount;
 				for (int iCell = 0; iCell < cropCellCount; iCell++) {
@@ -317,6 +317,13 @@ public class PdfCropper {
 			if (reader != null) {
 				reader.close();
 			}
+
+			if(writer != null) {
+				writer.flush();
+				writer.close();
+			}
+
+			IOUtils.closeQuietly(fout);
 		}
 	}
 
