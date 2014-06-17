@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package bd.amazed.pdfscissors.model;
 
 import java.awt.AlphaComposite;
@@ -81,10 +76,6 @@ public class PdfCropper {
 			int type = AlphaComposite.SRC_OVER;
 			AlphaComposite composite = AlphaComposite.getInstance(type, alpha);
 			g2d.setComposite(composite);
-			int argb;
-			int r;
-			int g;
-			int b;
 			int pageCount = pageGroup.getPageCount();
 			for (int iPageInGroup = pageCount - 1; iPageInGroup >= 0 && !isCancel; iPageInGroup--) {
 				int i = pageGroup.getPageNumberAt(iPageInGroup);
@@ -93,17 +84,6 @@ public class PdfCropper {
 				listener.propertyChange(new PropertyChangeEvent(this, "progress", null, percentageDone));
 				BufferedImage pageImage = getPdfDecoder().getPageAsImage(i);
 				if (pageImage != null) {
-//					for (int x = 0; x < pageImage.getWidth(); x++) {
-//						for (int y = 0; y < pageImage.getHeight(); y++) {
-//							argb = pageImage.getRGB(x, y);
-//							r = (argb >> 16) & 0x000000FF;
-//							g = (argb >> 8) & 0x000000FF;
-//							b = (argb) & 0x000000FF;
-//							if ((r == g && g == b && b == r && r > 150)) {
-//								pageImage.setRGB(x, y, 0x00FF0000);// transparent
-//							}
-//						}
-//					}
 					g2d.drawImage(pageImage, 0, 0, null);
 				}
 			}
@@ -272,28 +252,11 @@ public class PdfCropper {
 				for (int iCell = 0; iCell < cropCellCount; iCell++) {
 					progressMonitor.setNote("Writing page " + ((i - 1) * cropCellCount + iCell) + " of " + newPageCount);
 					progressMonitor.setProgress(i * 100 / originalPageCount);
-
-//					java.awt.Rectangle awtRect = cropRectsInIPDFCoords.get(iCell);
-					// Rectangle itextRect = new Rectangle(awtRect.x , awtRect.y +
-					// awtRect.height, awtRect.x + awtRect.width, awtRect.y);
-					// Rectangle itextRect = new Rectangle(100,50);
-					// writer.setBoxSize("crop", itextRect);
-					// writer.setBoxSize("trim", itextRect);
-					// writer.setBoxSize("art", itextRect);
-					// writer.setBoxSize("bleed", itextRect);
 					page = writer.getImportedPage(reader, i);
-					// writer.setPageSize(itextRect);
 					writer.addPage(page);
 				}
 			}
-			// PRAcroForm form = reader.getAcroForm();
-			// if (form != null) {
-			// writer.copyAcroForm(reader);
-			// }
-			// f++;
-			// if (!master.isEmpty()) {
-			// writer.setOutlines(master);
-			// }
+
 			document.close();
 			document = null;
 			reader = new PdfReader(tempFile.getAbsolutePath());
@@ -360,39 +323,5 @@ public class PdfCropper {
 	public void cancel() {
 		isCancel = true;
 	}
-
-
-	// helper code: //http://itext-general.2136553.n4.nabble.com/How-to-Shrink-Content-and-Add-Margins-td2167577.html
-	// public static void solution2() throws IOException, DocumentException {
-	// PdfReader reader = new PdfReader("sample.pdf");
-	// int n = reader.getNumberOfPages();
-	// PdfDictionary pageDict;
-	// ArrayList old_mediabox;
-	// PdfArray new_mediabox;
-	// PdfNumber value;
-	// PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("solution2.pdf"));
-	// BaseFont font = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
-	// PdfContentByte directcontent;
-	// for (int i = 1; i <= n; i++) {
-	// pageDict = reader.getPageN(i);
-	// new_mediabox = new PdfArray();
-	// old_mediabox = pageDict.getAsArray(PdfName.MEDIABOX).getArrayList();
-	// value = (PdfNumber)old_mediabox.get(0);
-	// new_mediabox.add(new PdfNumber(value.floatValue() - 36));
-	// value = (PdfNumber)old_mediabox.get(1);
-	// new_mediabox.add(new PdfNumber(value.floatValue() - 36));
-	// value = (PdfNumber)old_mediabox.get(2);
-	// new_mediabox.add(new PdfNumber(value.floatValue() + 36));
-	// value = (PdfNumber)old_mediabox.get(3);
-	// new_mediabox.add(new PdfNumber(value.floatValue() + 36));
-	// pageDict.put(PdfName.MEDIABOX, new_mediabox);
-	// directcontent = stamper.getOverContent(i);
-	// directcontent.beginText();
-	// directcontent.setFontAndSize(font, 12);
-	// directcontent.showTextAligned(Element.ALIGN_LEFT, "TEST", 0, -18, 0);
-	// directcontent.endText();
-	// }
-	// stamper.close();
-	// }
 
 }

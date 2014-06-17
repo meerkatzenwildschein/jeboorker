@@ -226,11 +226,9 @@ public class UIHandler {
 
 	public void equalizeWidthOfSelected(int viewWidth) {
 		int maxWidth = -1;
-		Rect maxWidthRect;
 		for (Rect rect : rects) {
 			if (rect.bounds.width > maxWidth) {
 				maxWidth = rect.bounds.width;
-				maxWidthRect = rect;
 			}
 		}
 		for (Rect rect : rects) {
@@ -248,11 +246,9 @@ public class UIHandler {
 
 	public void equalizeHeightOfSelected(int viewHeight) {
 		int maxHeight = -1;
-		Rect maxWidthRect;
 		for (Rect rect : rects) {
 			if (rect.bounds.height > maxHeight) {
 				maxHeight = rect.bounds.height;
-				maxWidthRect = rect;
 			}
 		}
 		for (Rect rect : rects) {

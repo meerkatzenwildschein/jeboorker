@@ -91,7 +91,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private JButton buttonSplitHorizontal = null;
 	private JButton buttonSplitVertical = null;
 	private JPanel bottomPanel;
-	private JComboBox pageSelectionCombo = null;
+	private JComboBox<String> pageSelectionCombo = null;
 	private JMenuBar jJMenuBar = null;
 	private JMenu menuFile = null;
 	private JMenuItem menuFileOpen = null;
@@ -107,13 +107,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private JMenu menuHelp = null;
 	private JMenuItem menuAbout = null;
 	private JScrollPane pageGroupScrollPanel = null;
-	private JList pageGroupList = null;
+	private JList<PageGroup> pageGroupList = null;
 	private PageGroupRenderer pageGroupListRenderer;
 	private JButton forwardButton = null;
 	private JButton backButton = null;
 	private boolean showOpenFile = true;
 	private File saveFile;
-	private boolean openSavedPdf;
 
 	public PdfScissorsMainFrame(boolean showOpenFileMenuItem) {
 		super();
@@ -237,16 +236,16 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	private JScrollPane getPageGroupPanel() {
 		if (pageGroupScrollPanel == null) {
-			JList list = getPageGroupList();
+			JList<PageGroup> list = getPageGroupList();
 			pageGroupScrollPanel = new JScrollPane(list);
 			openFileDependendComponents.add(pageGroupScrollPanel);
 		}
 		return pageGroupScrollPanel;
 	}
 
-	private JList getPageGroupList() {
+	private JList<PageGroup> getPageGroupList() {
 		if (pageGroupList == null) {
-			pageGroupList = new JList();
+			pageGroupList = new JList<PageGroup>();
 			pageGroupList.setMinimumSize(new Dimension(200,100));
 			openFileDependendComponents.add(pageGroupList);
 			pageGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -400,17 +399,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		return scrollPanel;
 	}
 
-	private void debug(String string) {
-		LoggerFactory.getLogger(PdfScissorsMainFrame.class).log(Level.INFO, string);
-	}
-
 	private void handleException(String userFriendlyMessage, Throwable ex) {
 		JOptionPane.showMessageDialog(this, Bundle.getString("PdfScissorsMainFrame.Oops") + userFriendlyMessage + Bundle.getString("PdfScissorsMainFrame.TechnikcalDetails") + ex.getMessage());
 		ex.printStackTrace();
-	}
-
-	private void message(String string) {
-		JOptionPane.showMessageDialog(this, string);
 	}
 
 	/**
@@ -718,9 +709,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	@Override
 	public void pageGroupChanged(Vector<PageGroup> pageGroups) {
-		JList list = getPageGroupList();
+		JList<PageGroup> list = getPageGroupList();
 		list.removeAll();
-		DefaultListModel listModel = new DefaultListModel();
+		DefaultListModel<PageGroup> listModel = new DefaultListModel<>();
 		for (int i = 0; i < pageGroups.size(); i++) {
 			listModel.add(i, pageGroups.elementAt(i));
 		}
@@ -758,9 +749,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	 *
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getPageSelectionCombo() {
+	private JComboBox<String> getPageSelectionCombo() {
 		if (pageSelectionCombo == null) {
-			pageSelectionCombo = new JComboBox();
+			pageSelectionCombo = new JComboBox<String>();
 			openFileDependendComponents.add(pageSelectionCombo);
 			pageSelectionCombo.setEditable(true);
 
@@ -847,7 +838,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		public void pageGroupSelected(PageGroup pageGroup) {
 			// update combo page list
 			int pageCount = pageGroup.getPageCount();
-			JComboBox combo = getPageSelectionCombo();
+			JComboBox<String> combo = getPageSelectionCombo();
 			combo.removeAllItems();
 			if (pageCount > 1) {
 				combo.addItem(Bundle.getString("PdfScissorsMainFrame.StackedView"));
@@ -872,7 +863,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			if(uiHandler.getRectCount() > 0) {
 				uiHandler.setEditingMode(UIHandler.EDIT_MODE_SELECT);
 			} else {
-				uiHandler.setEditingMode(uiHandler.EDIT_MODE_DRAW);
+				uiHandler.setEditingMode(UIHandler.EDIT_MODE_DRAW);
 			}
 		}
 

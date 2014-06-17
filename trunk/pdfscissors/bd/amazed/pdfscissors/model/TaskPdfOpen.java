@@ -1,10 +1,8 @@
 package bd.amazed.pdfscissors.model;
 
-import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -13,7 +11,6 @@ import javax.swing.SwingWorker;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.mufs.ResourceHandlerFactory;
 
 public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
