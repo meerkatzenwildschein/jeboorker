@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package bd.amazed.pdfscissors.view;
 
 import java.awt.Color;
@@ -23,7 +18,6 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
-import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
 import bd.amazed.pdfscissors.model.PdfFile;
@@ -36,7 +30,6 @@ import bd.amazed.pdfscissors.pdf.PdfDecoder;
  */
 public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeListener, UIHandlerListener {
 
-	private String name = "DefaultPanel";
 	protected UIHandler uiHandler;
 
 	public PdfPanel(UIHandler uiHandler) {
@@ -83,7 +76,6 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 	}
 
 	private Image getImage() {
-		Model model = Model.getInstance();
 		Image image = null;
 		if(uiHandler.getCurrentPageGroup() != null)
 			image = uiHandler.getCurrentPageGroup().getStackImage();

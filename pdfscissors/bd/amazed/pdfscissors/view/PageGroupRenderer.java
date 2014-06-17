@@ -14,7 +14,7 @@ import javax.swing.ListCellRenderer;
 
 import bd.amazed.pdfscissors.model.PageGroup;
 
-public class PageGroupRenderer extends JComponent implements ListCellRenderer {
+public class PageGroupRenderer extends JComponent implements ListCellRenderer<PageGroup> {
 
 	private PageGroup currentGroup;
 	private float pdfWidth = 100;
@@ -35,8 +35,7 @@ public class PageGroupRenderer extends JComponent implements ListCellRenderer {
 	}
 
 
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-			boolean hasFocus) {
+	public Component getListCellRendererComponent(JList<? extends PageGroup> list, PageGroup value, int index, boolean isSelected, boolean cellHasFocus) {
 		if (value instanceof PageGroup) {
 			PageGroup pageGroup = (PageGroup) value;
 			currentGroup = pageGroup;
@@ -44,6 +43,7 @@ public class PageGroupRenderer extends JComponent implements ListCellRenderer {
 		this.isSelected = isSelected;
 		return this;
 	}
+
 
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);

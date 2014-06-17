@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,6 +18,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 
+import bd.amazed.pdfscissors.model.PageGroup;
+
 public class StackViewCreationDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -25,13 +28,7 @@ public class StackViewCreationDialog extends JDialog {
 	private JButton cancelButton = null;
 	private JLabel helpImage = null;
 	private JPanel bottomPanel = null;
-	private ActionListener actionListener;
 	private JProgressBar progressbar = null;
-
-	public StackViewCreationDialog(ActionListener okActionListener) {
-		this.actionListener = okActionListener;
-		initialize();
-	}
 
 	/**
 	 * This is the default constructor
@@ -122,7 +119,7 @@ public class StackViewCreationDialog extends JDialog {
 		return progressbar;
 	}
 
-	public void enableProgress(SwingWorker worker, ActionListener progressCancelListener) {
+	public void enableProgress(SwingWorker<Vector<PageGroup>, Void> worker, ActionListener progressCancelListener) {
 		getBottomPanel().removeAll();
 		getBottomPanel().add(getProgressbar(), null);
 		getBottomPanel().add(getCancelButton());
