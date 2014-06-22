@@ -195,7 +195,8 @@ public class PdfCropper {
 		IResourceHandler originalFile = pdfFile.getOriginalFile();
 		HashMap<String, String> pdfInfo = pdfFile.getPdfInfo();
 
-		PdfReader reader = PDFUtils.getReader(originalFile.toFile());
+		PdfReader reader1 = PDFUtils.getReader(originalFile.toFile());
+		PdfReader reader2 = null;
 
 		float pdfWidth = pdfFile.getNormalizedPdfWidth();
 		float pdfHeight = pdfFile.getNormalizedPdfHeight();
@@ -212,7 +213,7 @@ public class PdfCropper {
 		PdfCopy writer = null;
 		PdfStamper stamper = null;
 		IResourceHandler tempFile = null;
-		OutputStream fout = null;
+		OutputStream tempFileOut = null;
 
 		// TODO handle bookmarks
 		// List bookmarks = SimpleBookmark.getBookmark(reader);
@@ -226,12 +227,11 @@ public class PdfCropper {
 
 		// open the original
 		try {
-			reader.consolidateNamedDestinations();
-			int originalPageCount = reader.getNumberOfPages();
-			document = new Document(reader.getPageSizeWithRotation(1));
-			tempFile = ResourceHandlerFactory.getTemporaryResource(".tmp");
-			//tempFile = TempFileManager.getInstance().createTempFile(TEMP_PREFIX_PDFSCISSOR + System.currentTimeMillis(), null, true);
-			writer = new PdfCopy(document, fout = tempFile.getContentOutputStream(false));
+			reader1.consolidateNamedDestinations();
+			int originalPageCount = reader1.getNumberOfPages();
+			document = new Document(reader1.getPageSizeWithRotation(1));
+			tempFile = ResourceHandlerFactory.getTemporaryResource("tmp");
+			writer = new PdfCopy(document, tempFileOut = tempFile.getContentOutputStream(false));
 			document.open();
 
 			PdfImportedPage page;
@@ -252,17 +252,18 @@ public class PdfCropper {
 				for (int iCell = 0; iCell < cropCellCount; iCell++) {
 					progressMonitor.setNote("Writing page " + ((i - 1) * cropCellCount + iCell) + " of " + newPageCount);
 					progressMonitor.setProgress(i * 100 / originalPageCount);
-					page = writer.getImportedPage(reader, i);
+					page = writer.getImportedPage(reader1, i);
 					writer.addPage(page);
 				}
 			}
 
 			document.close();
 			document = null;
-			reader = PDFUtils.getReader(tempFile.toFile());
+			
+			reader2 = PDFUtils.getReader(tempFile.toFile());
 
-			stamper = new PdfStamper(reader, new FileOutputStream(targetFile));
-			int pageCount = reader.getNumberOfPages();
+			stamper = new PdfStamper(reader2, new FileOutputStream(targetFile));
+			int pageCount = reader2.getNumberOfPages();
 			newPageCount = 0;
 			for (int iOriginalPage = 1; iOriginalPage <= originalPageCount; iOriginalPage++) {
 				ArrayList<java.awt.Rectangle> cropRectsInIPDFCoords = pageRectsMap.getConvertedRectsForCropping(iOriginalPage, viewWidth, viewHeight, pdfWidth, pdfHeight);
@@ -282,7 +283,7 @@ public class PdfCropper {
 						progressMonitor.setNote("Cropping page " + newPageCount + " of " + pageCount);
 						progressMonitor.setProgress(newPageCount * 100 / pageCount);
 						if (cropRectsInIPDFCoords != null) {
-							PdfDictionary pdfDictionary = reader.getPageN(newPageCount);
+							PdfDictionary pdfDictionary = reader2.getPageN(newPageCount);
 							PdfArray cropCell = new PdfArray();
 							java.awt.Rectangle awtRect = cropRectsInIPDFCoords.get(i - 1);
 							LoggerFactory.getLogger(PdfCropper.class).log(Level.INFO, "Cropping page " + newPageCount + " with " + awtRect);
@@ -310,20 +311,24 @@ public class PdfCropper {
 				stamper.close();
 			}
 
-			if (tempFile != null) {
-				tempFile.delete();
+			if (reader1 != null) {
+				reader1.close();
 			}
-
-			if (reader != null) {
-				reader.close();
+			
+			if (reader2 != null) {
+				reader2.close();
 			}
 
 			if(writer != null) {
 				writer.flush();
 				writer.close();
 			}
+			
+			IOUtils.closeQuietly(tempFileOut);
 
-			IOUtils.closeQuietly(fout);
+			if (tempFile != null) {
+				tempFile.delete();
+			}
 		}
 	}
 
