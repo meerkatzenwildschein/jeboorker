@@ -13,8 +13,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -57,7 +55,6 @@ import bd.amazed.pdfscissors.model.PageRectsMap;
 import bd.amazed.pdfscissors.model.PdfFile;
 import bd.amazed.pdfscissors.model.TaskPdfOpen;
 import bd.amazed.pdfscissors.model.TaskPdfSave;
-import bd.amazed.pdfscissors.model.TempFileManager;
 
 /**
  * @author Gagan
@@ -127,15 +124,6 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		} catch (Throwable e) {
 			LoggerFactory.getLogger(PdfScissorsMainFrame.class).log(Level.WARNING, "Failed to set exit on close.", e);
 		}
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				super.windowClosing(e);
-				getDefaultPdfPanel().closePdfFile(); // TODO may be implement a better way to notify to close
-				TempFileManager.getInstance().clean();
-			}
-		});
 	}
 
 	/**
@@ -422,6 +410,8 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 					} else {
 						openSaveFileChooser();
 					}
+					setVisible(false);
+					dispose();
 				}
 			});
 		}

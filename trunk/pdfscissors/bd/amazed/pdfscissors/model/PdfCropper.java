@@ -59,7 +59,6 @@ public class PdfCropper {
 		int endPage = pageGroup.getLastPage();
 		PdfDecoderMod pdfDecoder = getPdfDecoder();
 		BufferedImage lastPage = pdfDecoder.getPageAsImage(endPage);
-		pdfDecoder.closePdfFile();
 
 		if (lastPage != null) {
 			listener.propertyChange(new PropertyChangeEvent(this, "message", null, Bundle.getString("PdfCropper.stacking") +
@@ -89,12 +88,6 @@ public class PdfCropper {
 		}
 
 		return lastPage;
-	}
-
-	public void close() {
-		if (pdfDecoder != null) {
-			pdfDecoder.closePdfFile();
-		}
 	}
 
 	private PdfDecoderMod getPdfDecoder() throws PdfException {
@@ -259,7 +252,7 @@ public class PdfCropper {
 
 			document.close();
 			document = null;
-			
+
 			reader2 = PDFUtils.getReader(tempFile.toFile());
 
 			stamper = new PdfStamper(reader2, new FileOutputStream(targetFile));
@@ -314,7 +307,7 @@ public class PdfCropper {
 			if (reader1 != null) {
 				reader1.close();
 			}
-			
+
 			if (reader2 != null) {
 				reader2.close();
 			}
@@ -323,7 +316,7 @@ public class PdfCropper {
 				writer.flush();
 				writer.close();
 			}
-			
+
 			IOUtils.closeQuietly(tempFileOut);
 
 			if (tempFile != null) {
