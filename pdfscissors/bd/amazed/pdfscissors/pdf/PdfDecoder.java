@@ -29,14 +29,7 @@ public class PdfDecoder extends JPanel {
      * closePdfFile() to Java will not release all the memory
      */
 	public void openPdfFile(IResourceHandler filePath) {
-		closePdfFile();
 		pdfRendererInstance = PDFCommonRenderer.getPDFRendererInstance(filePath);
-	}
-
-    /**
-     * convenience method to close the current PDF file
-     */
-	public void closePdfFile() {
 	}
 
     /**
@@ -79,7 +72,6 @@ public class PdfDecoder extends JPanel {
     	}
     	return new Dimension(800,600);
     }
-
 
     final public Dimension getMinimumSize() {
         return new Dimension(100,100);

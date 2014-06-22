@@ -33,40 +33,34 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 		pdfFile = PdfCropper.getNormalizedPdf(originalFile);
 		pdfFile.getNormalizedFile().deleteOnExit();
 
-		try {
-			cropper = new PdfCropper(pdfFile.getNormalizedFile());
+		cropper = new PdfCropper(pdfFile.getNormalizedFile());
 
-			Vector<PageGroup> pageGroups = PageGroup.createGroup(groupType, pdfFile.getPageCount());
+		Vector<PageGroup> pageGroups = PageGroup.createGroup(groupType, pdfFile.getPageCount());
 
-			if (shouldCreateStackView && groupType != PageGroup.GROUP_TYPE_INDIVIDUAL) {
-				setProgress(0);
-				PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-					}
-				};
-
-				for (int i = 0; i < pageGroups.size(); i++) {
-					PageGroup pageGroup = pageGroups.elementAt(i);
-					BufferedImage image = cropper.getImage(propertyChangeListener, pageGroup);
-
-					if (image == null) {
-						debug("Ups.. null image for " + pdfFile.getNormalizedFile());
-					} else {
-						debug("PDF loaded " + pageGroup + " from " + pdfFile.getNormalizedFile());
-					}
-					pageGroup.setStackImage(image);
-
+		if (shouldCreateStackView && groupType != PageGroup.GROUP_TYPE_INDIVIDUAL) {
+			setProgress(0);
+			PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
 				}
-				setProgress(100);
+			};
+
+			for (int i = 0; i < pageGroups.size(); i++) {
+				PageGroup pageGroup = pageGroups.elementAt(i);
+				BufferedImage image = cropper.getImage(propertyChangeListener, pageGroup);
+
+				if (image == null) {
+					debug("Ups.. null image for " + pdfFile.getNormalizedFile());
+				} else {
+					debug("PDF loaded " + pageGroup + " from " + pdfFile.getNormalizedFile());
+				}
+				pageGroup.setStackImage(image);
+
 			}
-			return pageGroups;
-		} finally {
-			if (cropper != null) {
-				cropper.close();
-			}
+			setProgress(100);
 		}
+		return pageGroups;
 	}
 
 	public void cancel() {
