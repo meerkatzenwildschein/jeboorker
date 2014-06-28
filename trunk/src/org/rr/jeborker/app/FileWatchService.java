@@ -39,7 +39,7 @@ public class FileWatchService {
 	private static WatchService watchService;
 
 	private static final HashMap<String, WatchKey> items = new HashMap<String, WatchKey>();
-	
+
 	static {
 		try {
 			watchService = FileSystems.getDefault().newWatchService();
@@ -47,37 +47,52 @@ public class FileWatchService {
 		} catch (IOException e) {
 			LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "Failed to add file watch service", e);
 		}
-	}	
-	
+	}
+
 	private FileWatchService() {
 	}
-	
+
 	/**
-	 * Adds the given folders to the watched ones.  
+	 * Adds the given folders to the watched ones.
 	 */
-	public static void addWatchPath(final String path) {
+	public static void addWatchPath(String path) {
 		addWatchPath(Collections.singletonList(path));
 	}
-	
+
 	/**
-	 * Adds the given folders to the watched ones.  
+	 * Removes the given path from the watch
+	 * @param path The path to be removed from watch.
+	 */
+	public static void removeWatchPath(String path) {
+		path = new File(path).getAbsolutePath();
+		WatchKey watchKey = items.remove(path);
+		if(watchKey != null) {
+			watchKey.cancel();
+			LoggerFactory.getLogger(FileWatchService.class).log(Level.INFO, "Removing " + path + " from watch service.");
+		}
+	}
+
+	/**
+	 * Adds the given folders to the watched ones.
 	 */
 	public static void addWatchPath(final Collection<String> p) {
 		LoggerFactory.getLogger(FileWatchService.class).log(Level.INFO, "Adding " + p.size() + " folders to watch service.");
 		for(String path : p) {
 			try {
+				path = new File(path).getAbsolutePath();
 				File pathFile = new File(path);
 				if(!isAlreadyWatched(path) && pathFile.isDirectory()) {
 					WatchKey watchKey = Paths.get(path).register(watchService, new Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE });
 					items.put(path, watchKey);
+					LoggerFactory.getLogger(FileWatchService.class).log(Level.INFO, "Added " + path + " to watch service.");
 				}
 			} catch (Exception e) {
 				LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "Failed to add path " + path + " to file watch service. Stopping to add watches.", e);
 				break;
-			}			
+			}
 		}
 	}
-	
+
 	/**
 	 * Shutdown the watch service. No file change is detected after shutting down the service.
 	 */
@@ -87,14 +102,14 @@ public class FileWatchService {
 		}
 		items.clear();
 	}
-	
+
 	/**
-	 * Tells if the given path is already under watch. 
+	 * Tells if the given path is already under watch.
 	 */
 	private static boolean isAlreadyWatched(final String path) {
 		return items.containsKey(path);
 	}
-	
+
 	private static class WatchFolderRunnable implements Runnable {
 
 		@Override
@@ -102,7 +117,7 @@ public class FileWatchService {
 	        while (true) {
 	        	try {
 	        		WatchKey watchKey = watchService.take();
-	        		
+
 	        		final List<EbookPropertyItem> changedEbooks = new ArrayList<EbookPropertyItem>();
 	        		final List<IResourceHandler> addedResources = new ArrayList<IResourceHandler>();
 		            for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
@@ -110,7 +125,7 @@ public class FileWatchService {
 			            	final Path fullPath = ((Path)watchKey.watchable()).resolve((Path)watchEvent.context());
 			            	final IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(fullPath.toFile());
 	            			final List<EbookPropertyItem> ebookPropertyItemByResource = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler);
-	
+
 	            			if(ebookPropertyItemByResource.isEmpty() && watchEvent.kind() == ENTRY_CREATE) {
 	            				addedResources.add(resourceHandler);
 	            			} else if(watchEvent.kind() == ENTRY_DELETE || watchEvent.kind() == ENTRY_MODIFY) {
@@ -119,31 +134,31 @@ public class FileWatchService {
 		            	}
 		            }
 		            watchKey.reset();
-		            
+
 					FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
-						
+
 						@Override
 						public void run() {
 							//seems the file may be not ready to read, wait...
 							ReflectionUtils.sleepSilent(500);
-							
+
 				            transferDeleteAndRefresh(changedEbooks);
 				            transferNewEbookFiles(addedResources);
 						}
 					});
 	        	} catch(Exception e) {
-	        		LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "WatchFolderRunnable", e);	        		
+	        		LoggerFactory.getLogger(FileWatchService.class).log(Level.WARNING, "WatchFolderRunnable", e);
 	        	}
 	        }
 		}
-		
+
 		private void transferNewEbookFiles(final List<IResourceHandler> addedResources) {
 			for (IResourceHandler resource : addedResources) {
 				if(EbookPropertyItemUtils.getEbookPropertyItemByResource(resource).isEmpty()) {
 					IResourceHandler basePathForFile = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath().getBasePathForFile(resource);
 					if( basePathForFile != null && resource.exists() && ActionUtils.isSupportedEbookFormat(resource, true) ) {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, basePathForFile);
-						DefaultDBManager.getInstance().storeObject(item);		
+						DefaultDBManager.getInstance().storeObject(item);
 						ActionUtils.addEbookPropertyItem(item);
 						MainController.getController().refreshFileSystemTreeEntry(basePathForFile);
 						LoggerFactory.getLogger().log(Level.INFO, "add " + resource);
@@ -151,7 +166,7 @@ public class FileWatchService {
 				}
 			}
 		}
-		
+
 		private void transferDeleteAndRefresh(final List<EbookPropertyItem> ebooks) {
 			final MainController controller = MainController.getController();
 			for(final EbookPropertyItem item : ebooks) {
@@ -161,7 +176,7 @@ public class FileWatchService {
 					if(!resourceHandler.exists()) {
 						//remove
 						SwingUtilities.invokeLater(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								boolean removed = controller.removeEbookPropertyItem(item);
@@ -171,19 +186,19 @@ public class FileWatchService {
 								}
 								LoggerFactory.getLogger().log(Level.INFO, "remove " + resourceHandler + " " + removed);
 							}
-						});	
+						});
 					} else {
 						//refresh
 						EbookPropertyItemUtils.refreshEbookPropertyItem(item, resourceHandler, true);
-						DefaultDBManager.getInstance().updateObject(item);			
+						DefaultDBManager.getInstance().updateObject(item);
 						LoggerFactory.getLogger().log(Level.INFO, "refresh " + resourceHandler);
 					}
-					
+
 					FileRefreshBackground.getInstance().addEbooks(ebooks);
 				}
 			}
 		}
-		
+
 		private boolean isTimeLeft(EbookPropertyItem item, long time) {
 			long timestamp = item.getTimestamp();
 			if(System.currentTimeMillis() - timestamp < time) {
@@ -191,7 +206,7 @@ public class FileWatchService {
 			}
 			return true;
 		}
-		
+
 	}
-	
+
 }
