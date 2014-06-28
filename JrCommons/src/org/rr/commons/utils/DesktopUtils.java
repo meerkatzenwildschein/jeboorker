@@ -1,15 +1,21 @@
 package org.rr.commons.utils;
 
+import java.awt.Component;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteWatchdog;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 
 public class DesktopUtils {
-	
+
 	/**
 	 * Using the freedesktop.org functions to open the given file or folder with the
 	 * associated software.
@@ -18,9 +24,9 @@ public class DesktopUtils {
 	public static boolean openFile(final File file) {
 		try {
 			if(CommonUtils.isLinux() && ResourceHandlerFactory.getResourceHandler("/usr/bin/xdg-open").exists()) {
-				//try with xdg-open from freedesktop.org which is installed with the xdg-utils package. 
+				//try with xdg-open from freedesktop.org which is installed with the xdg-utils package.
 				CommandLine cl = CommandLine.parse("/usr/bin/xdg-open " + file.toURI().toString());
-				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				ProcessExecutor.runProcess(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);
 				return true;
 			} else {
 				try {
@@ -35,9 +41,9 @@ public class DesktopUtils {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Opens the given folder in the associated software. If a file is given, the folder of 
+	 * Opens the given folder in the associated software. If a file is given, the folder of
 	 * the file will be opened.
 	 * @return <code>true</code> if opening was successfully or <code>false</code> otherwise.
 	 */
@@ -67,39 +73,91 @@ public class DesktopUtils {
 			return true;
 		} catch (Exception e) {
 		}
-		
+
 		if(new File(windir + File.separator + "explorer.exe").exists()) {
 			try {
 				CommandLine cl = new CommandLine("C:\\Windows\\explorer.exe");
 				cl.addArgument("/e");
 				cl.addArgument("/select,\"" + file.toString() + "\"", false);
-				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
-				return true;
-			} catch(Exception e2) {
-				e2.printStackTrace(); //debug output
-			}		
-		}
-		return false;
-	}
-	
-	private static boolean openLinuxFolder(File file) {
-		if(new File("/usr/bin/gnome-open").exists()) {
-			try {
-				CommandLine cl = CommandLine.parse("/usr/bin/gnome-open \"" + file.toString() + "\"");
-				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
-				return true;
-			} catch(Exception e2) {
-				e2.printStackTrace(); //debug output
-			}			
-		} else if(new File("/usr/bin/kde-open").exists()) {
-			try {
-				CommandLine cl = CommandLine.parse("/usr/bin/kde-open \"" + file.toString() + "\"");
-				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);	
+				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);
 				return true;
 			} catch(Exception e2) {
 				e2.printStackTrace(); //debug output
 			}
-		}	
+		}
 		return false;
-	}	
+	}
+
+	private static boolean openLinuxFolder(File file) {
+		if(new File("/usr/bin/gnome-open").exists()) {
+			try {
+				CommandLine cl = CommandLine.parse("/usr/bin/gnome-open \"" + file.toString() + "\"");
+				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);
+				return true;
+			} catch(Exception e2) {
+				e2.printStackTrace(); //debug output
+			}
+		} else if(new File("/usr/bin/kde-open").exists()) {
+			try {
+				CommandLine cl = CommandLine.parse("/usr/bin/kde-open \"" + file.toString() + "\"");
+				ProcessExecutor.runProcessAsScript(cl, new ProcessExecutor.EmptyProcessExecutorHandler(), ExecuteWatchdog.INFINITE_TIMEOUT);
+				return true;
+			} catch(Exception e2) {
+				e2.printStackTrace(); //debug output
+			}
+		}
+		return false;
+	}
+
+	public static String showInputDialog(Component parent, String message, String title, String defaultValue) {
+		File zenityBinary = getZenityBinary();
+		if (zenityBinary != null) {
+			CommandLine cl = CommandLine.parse(DesktopUtils.getZenityBinary().getAbsolutePath());
+			cl.addArgument("--entry", false);
+			cl.addArgument("--title=" + title, false);
+			cl.addArgument("--text=" + message, false);
+			if(StringUtils.isNotEmpty(defaultValue)) {
+				cl.addArgument("--entry-text");
+				cl.addArgument(defaultValue);
+			}
+			try {
+				final StringBuilder fileName = new StringBuilder();
+				Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
+
+					@Override
+					public void onStandardOutput(String msg) {
+						fileName.setLength(0);
+						fileName.append(msg);
+					}
+
+					@Override
+					public void onStandardError(String msg) {
+						LoggerFactory.getLogger().log(Level.WARNING, msg);
+					}
+				}, ExecuteWatchdog.INFINITE_TIMEOUT);
+
+				p.get(); // wait
+				return fileName.toString();
+			} catch (Exception e) {
+				LoggerFactory.getLogger().log(Level.WARNING, "Failed to execute zenity", e);
+				return null;
+			}
+		} else {
+			return JOptionPane.showInputDialog(parent, message, title, JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	/**
+	 * Get the zenity binary if zenity is installed on the operating system.
+	 * @return The location of the zenity binary or <code>null</code> if no zenity can be found.
+	 */
+	public static File getZenityBinary() {
+		if(CommonUtils.isLinux()) {
+			File zenityBin = new File("/usr/bin/zenity");
+			if(zenityBin.exists()) {
+				return zenityBin;
+			}
+		}
+		return null;
+	}
 }
