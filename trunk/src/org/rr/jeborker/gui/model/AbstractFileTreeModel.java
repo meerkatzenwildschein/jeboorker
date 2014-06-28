@@ -1,10 +1,13 @@
 package org.rr.jeborker.gui.model;
 
+import java.util.logging.Level;
+
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
 public abstract class AbstractFileTreeModel extends DefaultTreeModel {
@@ -21,7 +24,12 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 		if(node instanceof FileSystemNode) {
 			((FileSystemNode)node).reset();
 		}
-		super.reload(node);
+
+		try {
+			super.reload(node);
+		} catch(Exception e) {
+			LoggerFactory.getLogger(this).log(Level.WARNING, "Reload node " + node + " failed.", e);
+		}
 	}
 
 	/**

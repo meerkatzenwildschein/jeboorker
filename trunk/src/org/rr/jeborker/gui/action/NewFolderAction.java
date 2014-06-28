@@ -14,6 +14,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.utils.DesktopUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -34,8 +35,8 @@ class NewFolderAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		MainController controller = MainController.getController();
-		String newFolderName = JOptionPane.showInputDialog(controller.getMainWindow(), Bundle.getString("NewFolderAction.text"),
-				Bundle.getString("NewFolderAction.title"), JOptionPane.INFORMATION_MESSAGE);
+		String newFolderName = DesktopUtils.showInputDialog(controller.getMainWindow(), Bundle.getString("NewFolderAction.text"),
+				Bundle.getString("NewFolderAction.title"), null);
 
 		newFolderName = ResourceHandlerUtils.removeInvalidCharacters(newFolderName);
 		if(StringUtils.isNotEmpty(newFolderName)) {

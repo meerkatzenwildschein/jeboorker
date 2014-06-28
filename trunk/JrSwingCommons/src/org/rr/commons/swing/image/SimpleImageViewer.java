@@ -87,7 +87,7 @@ public class SimpleImageViewer extends JComponent {
     	this.repaintRunnable = run;
     }
     
-	public void setImageResource(IResourceHandler resourceHandler) {
+	public void setImageViewerResource(IResourceHandler resourceHandler) {
 		//clear the view
 		if(resourceHandler==null) {
 			this.currentDisplayedResource = null;
