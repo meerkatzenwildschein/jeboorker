@@ -9,6 +9,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.DesktopUtils;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
 
@@ -18,15 +19,15 @@ import org.rr.commons.utils.ProcessExecutorHandler;
 class ZenityFileChooser implements IFileChooser {
 
 	private File selectedFile;
-	
+
 	private File selectedDir;
-	
+
 	private DIALOG_TPYE type = DIALOG_TPYE.OPEN;
-	
+
 	private RETURN_OPTION returnValue;
-	
+
 	private String title;
-	
+
 	@Override
 	public void setSelectedFile(File file) {
 		this.selectedFile = file;
@@ -54,25 +55,25 @@ class ZenityFileChooser implements IFileChooser {
 
 	@Override
 	public RETURN_OPTION showDialog(Component parent) {
-		String commandLineString = "/usr/bin/zenity --file-selection --confirm-overwrite ";
+		String commandLineString = DesktopUtils.getZenityBinary().getAbsolutePath() + " --file-selection --confirm-overwrite ";
 		CommandLine cl = CommandLine.parse(commandLineString);
 		if(type.equals(DIALOG_TPYE.SAVE)) {
 			cl.addArgument("--save");
 		}
-		
+
 		if(getSelectedFile() != null && getSelectedFile().getName() != null) {
 			cl.addArgument("--filename=" + getSelectedFile().getName());
 		}
-		
+
 		if(this.title != null) {
-			
+
 			cl.addArgument("--title=" + ProcessExecutor.saveWhitespaces(this.title));
-		}		
+		}
 
 		final StringBuilder result = new StringBuilder();
 		try {
 			Future<Long> p = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
-				
+
 				@Override
 				public void onStandardOutput(String msg) {
 					if(result.length() > 0) {
@@ -80,7 +81,7 @@ class ZenityFileChooser implements IFileChooser {
 					}
 					result.append(msg);
 				}
-				
+
 				@Override
 				public void onStandardError(String msg) {
 				}
@@ -96,10 +97,10 @@ class ZenityFileChooser implements IFileChooser {
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "Failed to open zenity dialog", e);
 			return returnValue = RETURN_OPTION.ERROR;
-		}	
+		}
 		return returnValue = RETURN_OPTION.CANCEL;
 	}
-	
+
 	static boolean isSupported() {
 		if(CommonUtils.isLinux()) {
 			return new File("/usr/bin/zenity").exists();
