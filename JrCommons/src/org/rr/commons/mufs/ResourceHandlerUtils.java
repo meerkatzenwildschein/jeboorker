@@ -25,7 +25,7 @@ import org.rr.commons.utils.ProcessExecutorHandler;
 import org.rr.commons.utils.ReflectionUtils;
 
 /**
- * A class providing some util methods to be used with 
+ * A class providing some util methods to be used with
  * {@link IResourceHandler} instances.
  */
 public class ResourceHandlerUtils {
@@ -35,12 +35,12 @@ public class ResourceHandlerUtils {
 	public static final int SORT_BY_SIZE = 1;
 
 	public static final int SORT_BY_MODIFY_AT = 2;
-	
+
 	public static final int SORT_BY_TYPE = 3;
 
 	/**
 	 * Gets the resource hierarchy starting with the given base {@link IResourceHandler}.
-	 * 
+	 *
 	 * @param base The base {@link IResourceHandler} where the resource hierarchy should starts from.
 	 * @param target The target - containing more entries than this one given with the base.
 	 * @return The resource hierarchy.
@@ -49,24 +49,24 @@ public class ResourceHandlerUtils {
 	public static IResourceHandler[] getRealtivePathResourceHierarchy(final IResourceHandler base, final IResourceHandler target) {
 		final IResourceHandler[] baseResourceHierarchy = getResourceHierarchy(base);
 		final IResourceHandler[] targetResourceHierarchy = getResourceHierarchy(target);
-		
+
 		//test if the base is longer than the target. no relative path could be created than.
 		if(baseResourceHierarchy.length >= targetResourceHierarchy.length) {
 			return new IResourceHandler[0];
 		}
-		
+
 		IResourceHandler[] realtivePathResourceHierarchy = new IResourceHandler[targetResourceHierarchy.length-baseResourceHierarchy.length];
-		                 
+
 		//loop the target by starting where the base ends.
 		for (int i = baseResourceHierarchy.length; i < targetResourceHierarchy.length; i++) {
 			realtivePathResourceHierarchy[i-baseResourceHierarchy.length] = targetResourceHierarchy[i];
 		}
-		
+
 		return realtivePathResourceHierarchy;
 	}
-	
+
 	/**
-	 * Gets the hierarchy for the given {@link IResourceHandler} starting with the root. The last element is always the given {@link IResourceHandler}. 
+	 * Gets the hierarchy for the given {@link IResourceHandler} starting with the root. The last element is always the given {@link IResourceHandler}.
 	 * @param resourceHandler The {@link IResourceHandler} where the hirarchy should be fetched for.
 	 * @return The resource hierarchy.
 	 */
@@ -77,29 +77,29 @@ public class ResourceHandlerUtils {
 			hierarchy.add(parent);
 			parent = parent.getParentResource();
 		}
-		
+
 		Collections.reverse(hierarchy);
 		return hierarchy.toArray(new IResourceHandler[hierarchy.size()]);
 	}
-	
+
 	/**
 	 * Sorts the given {@link IResourceHandler} instances. The result of the sort is always a new array instance.
 	 * Directories and files gets sorted separately, so the sorted directories are always at the top of the sort result.
-	 * 
+	 *
 	 * @param resourceHandlers The {@link IResourceHandler} instances to be sorted.
 	 * @param sortType The sort type: {@link #SORT_BY_NAME}, {@link #SORT_BY_MODIFY_AT}, {@link #SORT_BY_TYPE}, {@link #SORT_BY_SIZE}
-	 * @param ascending Tells if the given {@link IResourceHandler} instances should be sorted ascending or descending. 
+	 * @param ascending Tells if the given {@link IResourceHandler} instances should be sorted ascending or descending.
 	 * @return A new, sorted {@link IResourceHandler} array instance but with the same {@link IResourceHandler} instances specified with the <code>resourceHandlers<7code> parameter.
 	 */
 	public static IResourceHandler[] sortResourceHandlers(final IResourceHandler[] resourceHandlers, final int sortType, final boolean ascending) {
 		if(resourceHandlers==null) {
 			return null;
 		}
-		
+
 		//split into folders and files to be sorted separately.
 		final ArrayList<IResourceHandler> directoryResourceHandler = new ArrayList<IResourceHandler>();
 		final ArrayList<IResourceHandler> fileResourceHandler = new ArrayList<IResourceHandler>();
-		
+
 		for (int i = 0; i < resourceHandlers.length; i++) {
 			if(resourceHandlers[i].isDirectoryResource()) {
 				directoryResourceHandler.add(resourceHandlers[i]);
@@ -107,18 +107,18 @@ public class ResourceHandlerUtils {
 				fileResourceHandler.add(resourceHandlers[i]);
 			}
 		}
-		
+
 		IResourceHandler[] sortedDirectoryResources = sort(directoryResourceHandler.toArray(new IResourceHandler[directoryResourceHandler.size()]), sortType, ascending);
 		IResourceHandler[] sortedFileResources = sort(fileResourceHandler.toArray(new IResourceHandler[fileResourceHandler.size()]), sortType, ascending);
-		
+
 		//the result array
 		final IResourceHandler[] result = new IResourceHandler[resourceHandlers.length];
 		System.arraycopy(sortedDirectoryResources, 0, result, 0, sortedDirectoryResources.length);
 		System.arraycopy(sortedFileResources, 0, result, sortedDirectoryResources.length, sortedFileResources.length);
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Creates a {@link Comparator} which can be used for comparing {@link IResourceHandler} instances.
 	 * @param compare The compare mode.
@@ -126,7 +126,7 @@ public class ResourceHandlerUtils {
 	 */
 	public static Comparator<IResourceHandler> getResourceHandlerComparator(final int compare) {
 		Comparator<IResourceHandler> comparator = new Comparator<IResourceHandler>() {
-		
+
 			@Override
 			public int compare(IResourceHandler o1, IResourceHandler o2) {
 				return compareTo(o1, o2, compare);
@@ -134,10 +134,10 @@ public class ResourceHandlerUtils {
 		};
 		return comparator;
 	}
-	
+
 	/**
 	 * Simple bubble sort which sorts the given {@link IResourceHandler} array.
-	 * 
+	 *
 	 * @param arr The entries to be sorted.
 	 * @return the same as the given {@link IResourceHandler} array instance.
 	 */
@@ -155,26 +155,26 @@ public class ResourceHandlerUtils {
 				}
 			}
 		}
-		
+
 		return arr;
 	}
 
 	/**
 	 * Compares this object with the specified object for order. Returns a negative integer, zero, or a positive integer as this object is less than, equal to,
 	 * or greater than the specified object.
-	 * 
+	 *
 	 * This is an alphanumeric comperator.
-	 * 
+	 *
 	 * @param target
 	 *            the object to be compared.
 	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified objec
-	 * 
+	 *
 	 * @see Comparable#compareTo(Object)
 	 */
 	static int compareTo(final IResourceHandler source, final IResourceHandler target, final int compare) {
 		String s1 = source.getName(); // this.getName();
 		String s2 = target.getName();
-		
+
 		switch(compare) {
 			case SORT_BY_SIZE:
 				s1 = String.valueOf(source.size());
@@ -267,7 +267,7 @@ public class ResourceHandlerUtils {
 		}
 		return chunk.toString();
 	}
-	
+
 	/**
 	 * removes the upper folder path segement from the given String.
 	 * @param relativePath The relative path statement. For example:
@@ -283,7 +283,7 @@ public class ResourceHandlerUtils {
 				i++;
 				continue;
 			}
-			
+
 			if(result.length()==0) {
 				result.append('/');
 			} if(result.charAt(result.length()-1) != '/') {
@@ -291,10 +291,10 @@ public class ResourceHandlerUtils {
 			}
 			result.append(parts.get(i));
 		}
-		
+
 		return result.toString();
 	}
-	
+
     /**
      * Returns all root partitions on this system. For example, on
      * Windows, this would be the A: through Z: drives.
@@ -306,7 +306,7 @@ public class ResourceHandlerUtils {
 		for (int i = 0; i < roots.length; i++) {
 			resultRoots.add(ResourceHandlerFactory.getResourceHandler(roots[i]));
 		}
-		
+
 		//attach the virtual drives like the Desktop folder. At Windows, The Desktop folder
 		//also allows to access the Network environment.
 		FileSystemView fileSystemView = FileSystemView.getFileSystemView();
@@ -318,37 +318,37 @@ public class ResourceHandlerUtils {
 				resultRoots.add(0, ResourceHandlerFactory.getResourceHandler(roots[i]));
 			}
 		}
-		
+
 		return resultRoots.toArray(new IResourceHandler[resultRoots.size()]);
 	}
-	
+
 	/**
 	 * Reads all files starting from the baseFolder. You can do what you want with each file
 	 * using the {@link ResourceNameFilter}. For performance reasons, there is no list result
 	 * because it's more performant to do whatever else directly during the iteration process
 	 * instead of creating a list and after that doing something with the list.
-	 * 
+	 *
 	 * @param baseFolder Folder to start reading.
 	 * @param filter The filter where we have the possibility to do something with the files.
 	 */
 	public static int readAllDirectoriesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
 		return readAllDirectoriesFromBasePathRecursive(baseFolder, baseFolder, filter);
 	}
-	
+
 	private static int readAllDirectoriesFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
 		int count = 0;
 		if(baseFolder == null || baseFolder.isFileResource()) {
 			return count;
 		}
-		
+
 		//collect all ebook files from the baseFolder
 		try {
 			count = baseFolder.listDirectoryResources(filter).length;
 		} catch (IOException e) {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading folder.", e);
 		}
-		
-		//go into depth 
+
+		//go into depth
 		IResourceHandler[] listDirectoryResources;
 		try {
 			listDirectoryResources = baseFolder.listDirectoryResources();
@@ -359,35 +359,35 @@ public class ResourceHandlerUtils {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading subfolders.", e);
 		}
 		return count;
-	}	
-	
+	}
+
 	/**
 	 * Reads all files starting from the baseFolder. You can do what you want with each file
 	 * using the {@link ResourceNameFilter}. For performance reasons, there is no list result
 	 * because it's more performant to do whatever else directly during the iteration process
 	 * instead of creating a list and after that doing something with the list.
-	 * 
+	 *
 	 * @param baseFolder Folder to start reading.
 	 * @param filter The filter where we have the possibility to do something with the files.
 	 */
 	public static int readAllFilesFromBasePath(final IResourceHandler baseFolder, final ResourceNameFilter filter) {
 		return readAllFilesFromBasePathRecursive(baseFolder, baseFolder, filter);
-	}	
-	
+	}
+
 	private static int readAllFilesFromBasePathRecursive(final IResourceHandler baseFolder, final IResourceHandler topLevelBaseFolder, final ResourceNameFilter filter) {
 		int count = 0;
 		if(baseFolder == null || baseFolder.isFileResource()) {
 			return count;
 		}
-		
+
 		//collect all ebook files from the baseFolder
 		try {
 			count = baseFolder.listResources(filter).length;
 		} catch (IOException e) {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading folder.", e);
 		}
-		
-		//go into depth 
+
+		//go into depth
 		IResourceHandler[] listDirectoryResources;
 		try {
 			listDirectoryResources = baseFolder.listDirectoryResources();
@@ -398,8 +398,8 @@ public class ResourceHandlerUtils {
 			LoggerFactory.log(Level.INFO, ResourceHandlerUtils.class, "Failed reading subfolders.", e);
 		}
 		return count;
-	}	
-	
+	}
+
     /**
      * Tries to guess what the image type (if any) of a file based on the file's "magic numbers," the first bytes of the file.
      * <p>
@@ -493,12 +493,12 @@ public class ResourceHandlerUtils {
 
         // no format detected..
         return null;
-    } 
-    
+    }
+
 	/**
 	 * Copy bytes from an <code>InputStream</code> to an
 	 * <code>OutputStream</code>.
-	 * 
+	 *
 	 * @param input the <code>InputStream</code> to read from
 	 * @param output the <code>OutputStream</code> to write to
 	 * @return the number of bytes copied
@@ -513,8 +513,8 @@ public class ResourceHandlerUtils {
 			count += n;
 		}
 		return count;
-	}    
-    
+	}
+
 	/**
 	 * Move the given {@link IResourceHandler} into the user trash.
 	 * @param resourceHandler {@link IResourceHandler} to be moved to trash.
@@ -532,25 +532,25 @@ public class ResourceHandlerUtils {
 					String extension = ".trashinfo";
 					int extensionNum = 0;
 					File trashInfo;
-					
+
 					while( (trashInfo =  new File(trashInfoFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "")  + extension)).exists() ) {
 						extensionNum ++;
 					}
-					
+
 					{ //create trashinfo
 						StringBuilder trashInfoContent = new StringBuilder();
 						trashInfoContent.append("[Trash]").append(System.getProperty("line.separator"));
-						
+
 						// Path=/home/admin/Videos/video.avi
 						trashInfoContent.append("Path=").append(resourceHandler.toString()).append(System.getProperty("line.separator"));
-						
+
 						// DeletionDate=2012-09-10T13:58:13
 						trashInfoContent.append("DeletionDate=").append(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").format(new Date())).append(System.getProperty("line.separator"));
-						
+
 						IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(trashInfo);
 						resourceLoader.writeStringContent(trashInfoContent.toString(), System.getProperty("file.encoding"));
 					}
-					
+
 					resourceHandler.moveTo(ResourceHandlerFactory.getResourceHandler(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
 					return true;
 				}
@@ -558,22 +558,22 @@ public class ResourceHandlerUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Evaluates the file extension for the given {@link IResourceHandler}. If the file
-	 * did not have a valid extension, the extension is created from the mime type 
+	 * did not have a valid extension, the extension is created from the mime type
 	 * of the file.
 	 */
 	public static String getFileExtension(IResourceHandler resourceHandler) {
 		if(resourceHandler == null) {
 			return null;
 		}
-		
+
 		String fileExtension = resourceHandler.getFileExtension();
 		if(fileExtension != null && !fileExtension.isEmpty()) {
 			return fileExtension;
 		}
-		
+
 		String mimeType = resourceHandler.getMimeType(true);
 		if(mimeType != null && !mimeType.isEmpty() &&! mimeType.startsWith("application")) {
 			String extension = mimeType.substring(mimeType.indexOf('/') + 1);
@@ -582,12 +582,12 @@ public class ResourceHandlerUtils {
 			}
 			return "." + extension;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
-	 * Get the file name of the given {@link IResourceHandler} instance without path and file extension. 
+	 * Get the file name of the given {@link IResourceHandler} instance without path and file extension.
 	 * @return The desired file name. Never returns <code>null</code> but an empty {@link String} is possible.
 	 */
 	public static String getFileNameWithoutFileExtension(IResourceHandler resourceHandler) {
@@ -598,11 +598,11 @@ public class ResourceHandlerUtils {
 		}
 		return name;
 	}
-	
+
 	/**
 	 * Get all child folder of the given {@link IResourceHandler} that matches to the given
 	 * regular expression.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public static List<IResourceHandler> getChildFolderByRegExp(IResourceHandler base, String regExp) {
@@ -610,7 +610,7 @@ public class ResourceHandlerUtils {
 		IResourceHandler[] listDirectoryResources;
 		try {
 			listDirectoryResources = base.listDirectoryResources(new ResourceNameFilter() {
-				
+
 				@Override
 				public boolean accept(IResourceHandler loader) {
 					String name = loader.getName();
@@ -622,12 +622,12 @@ public class ResourceHandlerUtils {
 			});
 			return Arrays.asList(listDirectoryResources);
 		} catch (IOException e) {
-			return Collections.emptyList(); 
+			return Collections.emptyList();
 		}
 	}
 
 	/**
-	 * Get a list over all external drives. 
+	 * Get a list over all external drives.
 	 * @return All external drives. never returns <code>null</code>.
 	 */
 	public static List<IResourceHandler> getExternalDriveResources() {
@@ -636,7 +636,7 @@ public class ResourceHandlerUtils {
 			try {
 				CommandLine cl = CommandLine.parse("/bin/df");
 				Future<Long> runProcess = ProcessExecutor.runProcess(cl, new ProcessExecutorHandler() {
-					
+
 					@Override
 					public void onStandardOutput(String msg) {
 						int mediaIdx = msg.lastIndexOf("/media/");
@@ -648,7 +648,7 @@ public class ResourceHandlerUtils {
 							}
 						}
 					}
-					
+
 					@Override
 					public void onStandardError(String msg) {
 					}
@@ -668,15 +668,15 @@ public class ResourceHandlerUtils {
 					//C is mostly no external drive and A is a floppy which causes timeouts while
 					//getting some information from it. No need for this.
 					break;
-				}				
-			}			
+				}
+			}
 		}
 
 		return result;
 	}
-	
+
 	/**
-	 * Test all given {@link IResourceHandler} instances if they're files. 
+	 * Test all given {@link IResourceHandler} instances if they're files.
 	 * @return <code>true</code> if all given {@link IResourceHandler} are files and <code>false</code> otherwise.
 	 */
 	public static boolean containFilesOnly(List<IResourceHandler> resourceHandlers) {
@@ -687,5 +687,21 @@ public class ResourceHandlerUtils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Remove those characters which can't be used in file names.
+	 * @param fileName The file name to be filtered for invalid characters.
+	 * @return The filtered fileName which no longer contains invalid characters.
+	 */
+	public static String removeInvalidCharacters(String fileName) {
+		if(fileName == null) {
+			return null;
+		}
+		fileName = fileName.replaceAll("%", "");
+		fileName = fileName.replaceAll("/", "");
+		fileName = fileName.replaceAll("\\\\", "");
+		fileName = fileName.replaceAll(File.pathSeparator, "");
+		return fileName;
 	}
 }

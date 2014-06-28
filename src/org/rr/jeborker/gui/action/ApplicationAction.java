@@ -2,10 +2,12 @@ package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
 
@@ -16,37 +18,42 @@ import org.rr.jeborker.app.FileRefreshBackground;
 public class ApplicationAction extends AbstractAction {
 
 	/**
-	 * Can be used as key for the actions to get marked as singleton.  
+	 * Can be used as key for the actions to get marked as singleton.
 	 * Example: <code>putValue(ApplicationAction.SINGLETON_ACTION_KEY, Boolean.TRUE);</code>
 	 */
 	public static final String SINGLETON_ACTION_KEY = "singletonAction";
-	
+
 	/**
-	 * Can be used as key for the actions to get marked they're not invoked in a separate thread.  
+	 * Can be used as key for the actions to get marked they're not invoked in a separate thread.
 	 * Example: <code>putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE);</code>
 	 */
-	public static final String NON_THREADED_ACTION_KEY = "nonThreadedAction"; 
-	
+	public static final String NON_THREADED_ACTION_KEY = "nonThreadedAction";
+
 	private static final HashMap<Class<?>, ApplicationAction> singletonInstances = new HashMap<Class<?>, ApplicationAction>();
-	
+
 	private final Action realAction;
-	
-	public static ApplicationAction getInstance(Action realAction) {
+
+	private ActionCallback callback;
+
+	public static ApplicationAction getInstance(Action realAction, ActionCallback callback) {
 		Object isSingleton = realAction.getValue(SINGLETON_ACTION_KEY);
 		if(isSingleton instanceof Boolean && ((Boolean)isSingleton).booleanValue()) {
 			Class<?> realActionClass = realAction.getClass();
 			if(singletonInstances.containsKey(realActionClass)) {
-				return singletonInstances.get(realActionClass);
+				ApplicationAction action = singletonInstances.get(realActionClass);
+				action.setCallback(callback);
+				return action;
 			} else {
-				ApplicationAction action = new ApplicationAction(realAction);
+				ApplicationAction action = new ApplicationAction(realAction, callback);
 				singletonInstances.put(realActionClass, action);
 				return action;
 			}
 		}
-		return new ApplicationAction(realAction);
+		return new ApplicationAction(realAction, callback);
 	}
-	
-	private ApplicationAction(Action realAction) {
+
+	private ApplicationAction(Action realAction, ActionCallback callback) {
+		this.callback = callback;
 		this.realAction = realAction;
 		this.setEnabled(realAction.isEnabled());
 	}
@@ -54,11 +61,15 @@ public class ApplicationAction extends AbstractAction {
 	public void invokeAction() {
 		this.invokeAction(null);
 	}
-	
+
 	public void invokeAction(final ActionEvent e) {
 		this.invokeAction(e, null);
 	}
-	
+
+	void setCallback(ActionCallback callback) {
+		this.callback = callback;
+	}
+
 	public void invokeAction(final ActionEvent e, final Runnable invokeLater) {
 		final Object noRealActionThreading = realAction.getValue(NON_THREADED_ACTION_KEY);
 		final boolean noRealActionThreadingValue = noRealActionThreading instanceof Boolean && ((Boolean) noRealActionThreading).booleanValue();
@@ -73,16 +84,17 @@ public class ApplicationAction extends AbstractAction {
 				}
 			} finally {
 				endAction();
+				fireAfterAction();
 			}
-			
+
 			if(invokeLater != null) {
 				invokeLater.run();
 			}
 		} else {
 			ActionEventQueue.addActionEvent(this, e, invokeLater);
-		}		
+		}
 	}
-	
+
 	void invokeRealAction(ActionEvent e) {
 		startAction();
 		try {
@@ -92,7 +104,8 @@ public class ApplicationAction extends AbstractAction {
 			}
 		} finally {
 			endAction();
-		}		
+			fireAfterAction();
+		}
 	}
 
 	@Override
@@ -103,13 +116,13 @@ public class ApplicationAction extends AbstractAction {
 		} finally {
 			endAction();
 		}
-	}	
-	
+	}
+
 	@Override
 	public Object getValue(String key) {
 		return realAction.getValue(key);
 	}
-	
+
 	@Override
 	public void setEnabled(boolean newValue) {
 		super.setEnabled(newValue);
@@ -121,13 +134,23 @@ public class ApplicationAction extends AbstractAction {
 		super.putValue(key, newValue);
 		realAction.putValue(key, newValue);
 	}
-	
+
 	private void startAction() {
 		FileRefreshBackground.setDisabled(true);
 	}
-	
+
 	private void endAction() {
 		FileRefreshBackground.setDisabled(false);
-		TrueZipUtils.unmout();		
+		TrueZipUtils.unmout();
+	}
+
+	private void fireAfterAction() {
+		if(callback != null) {
+			try {
+				callback.afterAction();
+			} catch(Exception e) {
+				LoggerFactory.getLogger(this).log(Level.WARNING, "after action callback caused an exception", e);
+			}
+		}
 	}
 }

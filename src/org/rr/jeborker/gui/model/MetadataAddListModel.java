@@ -11,23 +11,23 @@ import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 public class MetadataAddListModel extends AbstractListModel<Action> {
-	
+
 	private static final long serialVersionUID = 661585601885502869L;
-	
+
 	private List<MetadataProperty> supportedMetaData = null;
-	
+
 	private List<Action> actionsForMetadataProperties = null;
-	
+
 	private List<MetadataProperty> currentMetaData;
-	
+
 	private final EbookPropertyItem item;
-	
+
 	public MetadataAddListModel(final List<MetadataProperty> supportedMetaData, final List<MetadataProperty> currentMetaData, final EbookPropertyItem item) {
 		this.item = item;
 		this.currentMetaData = currentMetaData;
 		this.supportedMetaData = supportedMetaData;
 	}
-	
+
 	@Override
 	public int getSize() {
 		if(supportedMetaData == null || actionsForMetadataProperties == null) {
@@ -35,15 +35,15 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 		}
 		return supportedMetaData.size();
 	}
-	
+
 	@Override
 	public Action getElementAt(int index) {
 		if(supportedMetaData == null || actionsForMetadataProperties == null) {
 			initialize();
-		}			
+		}
 		return actionsForMetadataProperties.get(index);
 	}
-	
+
 	private void initialize() {
 		//remove those metadata from the button list which are already in use and only be single ones.
 		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
@@ -57,6 +57,6 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 			}
 		}
 		supportedMetaData.removeAll(toRemove);
-		actionsForMetadataProperties = ActionFactory.getAddMetadataActions(supportedMetaData, item);
+		actionsForMetadataProperties = ActionFactory.getAddMetadataActions(supportedMetaData, item, null);
 	}
 }

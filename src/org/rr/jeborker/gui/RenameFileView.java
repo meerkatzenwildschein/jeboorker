@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +28,7 @@ import javax.swing.table.TableModel;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.components.JRTable;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -87,7 +87,8 @@ public class RenameFileView extends AbstractDialogView {
 				return cachedValues[rowIndex];
 			}
 			EbookPropertyItem ebookPropertyItem = toRename.get(rowIndex);
-			cachedValues[rowIndex] = removeInvalidCharacters(formatFileName(getFileNamePattern(), ebookPropertyItem, rowIndex));
+			cachedValues[rowIndex] = ResourceHandlerUtils.removeInvalidCharacters(formatFileName(getFileNamePattern(), ebookPropertyItem, rowIndex));
+			cachedValues[rowIndex] = StringUtils.removeMultipleWhiteSpaces(cachedValues[rowIndex]);
 			return cachedValues[rowIndex];
 		}
 
@@ -300,20 +301,6 @@ public class RenameFileView extends AbstractDialogView {
 			return pattern + "." + fileExtension;
 		}
 		return pattern;
-	}
-
-	/**
-	 * Remove those characters which can't be used in file names.
-	 * @param fileName The file name to be filtered for invalid characters.
-	 * @return The filtered fileName which no longer contains invalid characters.
-	 */
-	private String removeInvalidCharacters(String fileName) {
-		fileName = fileName.replaceAll("%", "");
-		fileName = fileName.replaceAll("/", "");
-		fileName = fileName.replaceAll("\\\\", "");
-		fileName = fileName.replaceAll(File.pathSeparator, "");
-		fileName = StringUtils.removeMultipleWhiteSpaces(fileName);
-		return fileName;
 	}
 
 	/**

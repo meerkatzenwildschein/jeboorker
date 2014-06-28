@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -21,18 +20,18 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
-public class BasePathTreeModel extends DefaultTreeModel {
+public class BasePathTreeModel extends AbstractFileTreeModel {
 
 	private static final long serialVersionUID = 1442592632931949573L;
-	
+
 	private static final UniqueAllEntryNode singletonUniqueAllEntryNode = new UniqueAllEntryNode();
-	
+
 	private DefaultMutableTreeNode root;
-	
+
 	private TreePath filterTreePath;
-	
-	public BasePathTreeModel() {
-		super(new DefaultMutableTreeNode("root"));
+
+	public BasePathTreeModel(JTree tree) {
+		super(tree, new DefaultMutableTreeNode("root"));
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.init();
 	}
@@ -48,7 +47,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 	private void init() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<String> basePath = new ArrayList<String>(preferenceStore.getBasePath());
-		
+
 		for(String path : basePath) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, false);
@@ -56,7 +55,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		}
 		root.add(singletonUniqueAllEntryNode);
 	}
-	
+
 	/**
 	 * Reloads the model. Changes will be taken under account.
 	 */
@@ -70,33 +69,33 @@ public class BasePathTreeModel extends DefaultTreeModel {
 			LoggerFactory.getLogger().log(Level.WARNING, "Reloading nodes has failed", e);
 		}
 	}
-	
+
 	public TreePath restoreExpanstionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments) {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final String basePathFor = preferenceStore.getBasePathFor(resourceHandler);
 		final int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size()  - 1;
 		final List<String> basePathSegements = ListUtils.extract(fullPathSegments, segments, fullPathSegments.size());
-		final String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);	
+		final String treeExpansionPathString = ListUtils.join(basePathSegements, TreeUtil.PATH_SEPARATOR);
 		final TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
 		return lastExpandedRow;
 	}
-	
+
 	/**
 	 * This is a special node and did not represents a base path. It's the "All Entries" node
-	 * that allows to toggle the visibility of all base path nodes.  
+	 * that allows to toggle the visibility of all base path nodes.
 	 */
 	private static class UniqueAllEntryNode implements MutableTreeNode, NamedNode, Comparable<UniqueAllEntryNode> {
-		
+
 		private static final int HASH_CODE = UniqueAllEntryNode.class.getName().hashCode();
 
 		private String localizedName;
 
 		private TreeNode parent;
-		
+
 		UniqueAllEntryNode() {
-			localizedName = Bundle.getString("BasePathTreeModel.nodeName.all");			
+			localizedName = Bundle.getString("BasePathTreeModel.nodeName.all");
 		}
-		
+
 		@Override
 		public TreeNode getChildAt(int childIndex) {
 			return null;
@@ -136,7 +135,7 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		public String getName() {
 			return this.localizedName;
 		}
-		
+
 		public String toString() {
 			return this.localizedName;
 		}
@@ -165,12 +164,12 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		public void setParent(MutableTreeNode newParent) {
 			this.parent = newParent;
 		}
-		
+
 		@Override
 		public int compareTo(UniqueAllEntryNode o) {
 			return 0;
-		}	
-		
+		}
+
 		public boolean equals(Object o) {
 			 if(o instanceof UniqueAllEntryNode) {
 				 return true;
@@ -181,8 +180,8 @@ public class BasePathTreeModel extends DefaultTreeModel {
 		@Override
 		public int hashCode() {
 			return HASH_CODE;
-		}		
-		
+		}
+
 	}
-	
+
 }

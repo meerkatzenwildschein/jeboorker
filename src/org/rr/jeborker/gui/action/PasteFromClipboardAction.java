@@ -20,7 +20,6 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
-import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
@@ -31,7 +30,7 @@ import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class PasteFromClipboardAction extends AbstractAction implements ClipboardOwner {
-	    
+
 	//source file to copy
 	String target;
 
@@ -43,7 +42,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("paste_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(hasValidClipboardContent()) {
@@ -53,7 +52,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 				final MainController controller = MainController.getController();
 				if(target == null) {
 					final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-					
+
 					if(selectedEbookPropertyItemRows.length > 0) {
 						importEbookFromClipboard(contents, selectedEbookPropertyItemRows[0]);
 					}
@@ -61,7 +60,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 					final IResourceHandler targetRecourceDirectory = ResourceHandlerFactory.getResourceHandler(target);
 					final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 					final List<String> basePaths = preferenceStore.getBasePath();
-					
+
 					boolean isImported = false;
 					for(String basePath : basePaths) {
 						if(target.startsWith(basePath)) {
@@ -83,15 +82,15 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 				}
 			} catch (Exception ex) {
 				LoggerFactory.log(Level.WARNING, this, "Failed to import file from Clipboard", ex);
-			} 
+			}
 		}
 	}
 
 	@Override
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
 	}
-	
-	public static boolean hasValidClipboardContent() {	
+
+	public static boolean hasValidClipboardContent() {
 		final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		boolean hasResourceHandler = ResourceHandlerFactory.hasResourceHandler(clipboard.getContents(null));
 		return hasResourceHandler;
@@ -100,11 +99,11 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 	/**
 	 * Imports the file behind the given Transferable into JEboorker.
 	 * @param t The transferable containing the data for the file import.
-	 * @param row The row for the import target. 
-	 */	
+	 * @param row The row for the import target.
+	 */
 	public static boolean importEbookFromClipboard(Transferable t, int dropRow) {
 		EbookPropertyDBTableModel listModel = MainController.getController().getTableModel();
-		
+
 		// Get the current string under the drop.
 		EbookPropertyItem value = (EbookPropertyItem) listModel.getValueAt(dropRow, 0);
 
@@ -112,7 +111,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		try {
 			IResourceHandler targetRecourceDirectory = value.getResourceHandler().getParentResource();
 			importEbookFromClipboard(t, dropRow, value.getBasePath(), targetRecourceDirectory);
-		} 
+		}
 		catch (Exception e) { return false; }
 
 		return true;
@@ -125,7 +124,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		List<IResourceHandler> importEbookResources = ActionUtils.importEbookResources(dropRow, basePath, targetRecourceDirectory, sourceFiles, deleteSourceFiles);
 		removeDeletedFileFromModel(importEbookResources);
 	}
-	
+
 	 /**
 	  * Removes the deleted files from model if they're located in a base path and no longer exists
 	  */
