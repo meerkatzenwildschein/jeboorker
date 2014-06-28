@@ -12,6 +12,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -19,21 +20,21 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integer>, IFinalizeAction {
 
 	private static final long serialVersionUID = -6464113132395695332L;
-	
+
 	private Integer result = null;
-	
+
 	final IResourceHandler fileToDelete;
 
 	DeleteFileAction(final String text) {
 		this(ResourceHandlerFactory.getResourceHandler(text));
 	}
-	
+
 	public DeleteFileAction(final IResourceHandler resourceLoader) {
 		this.fileToDelete = resourceLoader;
 		String name = Bundle.getString("DeleteFileAction.name");
 		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("delete_16.png"));
-		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("delete_22.png"));	
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("delete_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 
@@ -63,9 +64,13 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 			LoggerFactory.logWarning(this, "could not delete file " + fileToDelete, e1);
 		}
 	}
-	
+
 	private static void doDelete(IResourceHandler fileToDelete) throws IOException {
 		try {
+			if(fileToDelete.isDirectoryResource()) {
+				FileWatchService.removeWatchPath(fileToDelete.toString());
+			}
+
 			if(!fileToDelete.moveToTrash()) {
 				fileToDelete.delete();
 				if(fileToDelete.exists()) {
@@ -80,7 +85,7 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 			LoggerFactory.logWarning(DeleteFileAction.class, "File is already deleted " + fileToDelete, e);
 		}
 	}
-	
+
 	@Override
 	public Integer doOnce() {
 		if(this.result == null) {
@@ -105,6 +110,6 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	@Override
 	public void finalizeAction(int count) {
 	}
-	
+
 
 }

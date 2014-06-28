@@ -21,6 +21,10 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 
 	@Override
 	public void reload(TreeNode node) {
+		if(node == null) {
+			return;
+		}
+
 		if(node instanceof FileSystemNode) {
 			((FileSystemNode)node).reset();
 		}
