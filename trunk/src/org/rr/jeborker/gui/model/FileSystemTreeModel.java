@@ -11,8 +11,6 @@ import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.rr.commons.log.LoggerFactory;
@@ -21,21 +19,21 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.utils.ListUtils;
 
-public class FileSystemTreeModel extends DefaultTreeModel {
+public class FileSystemTreeModel extends AbstractFileTreeModel {
 
 	private static final long serialVersionUID = -456216843620742653L;
 
 	private JTree tree;
-	
+
 	private DefaultMutableTreeNode root;
-	
+
 	public FileSystemTreeModel(JTree tree) {
-		super(new DefaultMutableTreeNode("root"));
+		super(tree, new DefaultMutableTreeNode("root"));
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.tree = tree;
 		init();
 	}
-	
+
 	private void init() {
 		List<File> specialFolders = getSpecialFolders();
 		for(File specialFolder : specialFolders) {
@@ -43,9 +41,9 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null);
 			this.root.add(basePathNode);
 		}
-		
+
 		File[] listRoots = File.listRoots();
-		Arrays.sort(listRoots);		
+		Arrays.sort(listRoots);
 		for(File root : listRoots) {
 			if(!root.toString().equalsIgnoreCase("A:\\")) {
 				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(root);
@@ -53,7 +51,7 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 				this.root.add(basePathNode);
 			}
 		}
-	}	
+	}
 
 	protected void fireTreeStructureChanged(Object source, Object[] path, int[] childIndices, Object[] children) {
 		super.fireTreeStructureChanged(source, path, childIndices, children);
@@ -75,46 +73,20 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 		}
 		nodeChanged(aNode);
 	}
-	
-	@Override
-	public void reload(TreeNode node) {
-		if(node instanceof FileSystemNode) {
-			((FileSystemNode)node).reset();
-		}
-		super.reload(node);
-	}	
 
-	/**
-	 * Reloads these node which represents the given {@link IResourceHandler} instance.
-	 * If the node is not opened it will not be refreshed.
-	 */
-	public void reload(final IResourceHandler resourceToRefresh) {
-		int rowCount = tree.getRowCount();
-		for(int i = 0; i < rowCount; i++) {
-			TreePath pathForRow = tree.getPathForRow(i);
-			if(pathForRow.getLastPathComponent() instanceof FileSystemNode) {
-				IResourceHandler resourceHandler = ((FileSystemNode) pathForRow.getLastPathComponent()).getResource();
-				if(resourceHandler.equals(resourceToRefresh)) {
-					reload((TreeNode) pathForRow.getLastPathComponent());
-					break;
-				}
-			}
-		}
-	}
-	
 	public void dispose() {
 		TreeModelListener[] treeModelListeners = getTreeModelListeners();
 		for(TreeModelListener treeModelListener : treeModelListeners) {
 			removeTreeModelListener(treeModelListener);
 		}
 	}
-	
+
 	public TreePath restoreExpansionState(JTree tree, List<String> fullPathSegments) {
-		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);	
+		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);
 		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
 		return lastExpandedRow;
 	}
-	
+
 	/**
 	 * Remove all deleted files from the model.
 	 */
@@ -130,21 +102,21 @@ public class FileSystemTreeModel extends DefaultTreeModel {
 				}
 			}
 		}
-		
+
 		for(FileSystemNode fsNode : nodesToRemove) {
 			if(fsNode.getParent().getIndex(fsNode) != -1) {
 				removeNodeFromParent(fsNode);
 			}
 		}
 	}
-	
+
 	/**
 	 * Get some special folder to be shown at the root file levels.
 	 */
 	private List<File> getSpecialFolders() {
 		final ArrayList<File> result = new ArrayList<File>();
 		final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-		
+
 		File defaultDirectory = fileSystemView.getDefaultDirectory();
 		if(defaultDirectory != null) {
 			result.add(defaultDirectory);

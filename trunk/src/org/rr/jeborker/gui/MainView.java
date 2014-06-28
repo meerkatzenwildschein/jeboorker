@@ -26,13 +26,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -49,6 +54,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -64,6 +70,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
@@ -80,6 +88,8 @@ import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
+import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRButton;
 import org.rr.commons.swing.components.JRScrollPane;
@@ -101,6 +111,9 @@ import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.JeboorkerPreferenceListener;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.event.ApplicationEvent;
+import org.rr.jeborker.event.EventManager;
+import org.rr.jeborker.gui.action.ActionCallback;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.PasteFromClipboardAction;
 import org.rr.jeborker.gui.cell.BasePathTreeCellEditor;
@@ -121,21 +134,124 @@ import org.rr.jeborker.gui.cell.StarRatingPropertyRenderer;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
 import org.rr.jeborker.gui.model.EmptyListModel;
 import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.model.FileSystemTreeModel;
+import org.rr.jeborker.gui.model.MetadataAddListModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+import org.rr.jeborker.metadata.IMetadataReader;
+import org.rr.jeborker.metadata.MetadataProperty;
 
 import skt.swing.StringConvertor;
 
 import com.j256.ormlite.stmt.Where;
+import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
+import com.l2fprod.common.propertysheet.PropertySheetTableModel;
+import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 
 
 class MainView extends JFrame {
+
+	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
+
+		@Override
+		public void treeAutoScrollingChanged(boolean value) {
+			Component[] allComponents = SwingUtils.getAllComponents(JRTree.class, MainView.this.getRootPane());
+			for(Component c : allComponents) {
+				((JRTree)c).setAutoMoveHorizontalSliders(value);
+			}
+		}
+	}
+
+	/**
+	 * ListSelectionListener which is invoked by changing the selection in the main table. It saves and sets the metadata properties of
+	 * the {@link PropertySheet}.
+	 */
+	private class PropertySheetListSelectionListener implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if(!e.getValueIsAdjusting()) {
+				Property selectedMetadataProperty = getSelectedMetadataProperty();
+				refreshSheetProperties();
+				setSelectedMetadataProperty(selectedMetadataProperty);
+			}
+		}
+
+	}
+
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
+	private class MainTablePopupMouseListener extends MouseAdapter {
+
+		public void mouseReleased(MouseEvent event) {
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				final int rowAtPoint = mainTable.rowAtPoint(event.getPoint());
+
+				//set selection for the right click
+				if(mainTable.getSelectedRowCount() <= 1 ) {
+					mainTable.getSelectionModel().setSelectionInterval(rowAtPoint, rowAtPoint);
+				}
+
+				MainMenuBarController.getController().showMainPopupMenu(event.getPoint(), mainTable);
+			}
+		}
+	}
+
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
+	private class FileSystemTreePopupMouseListener extends MouseAdapter {
+
+		public void mouseReleased(MouseEvent event) {
+
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				final TreePath rowAtPoint = fileSystemTree.getPathForLocation(event.getX(), event.getY());
+
+				//set selection for the right click
+				if(fileSystemTree.getSelectionCount() <= 1 ) {
+					fileSystemTree.setSelectionPath(rowAtPoint);
+				}
+
+				showFileSystemTreePopupMenu(event.getPoint(), fileSystemTree);
+			}
+		}
+	}
+
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
+	private class CoverPopupMouseListener extends MouseAdapter {
+
+		public void mouseReleased(MouseEvent event) {
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				showCoverPopupMenu(event.getPoint(), imageViewer);
+			}
+		}
+	}
+
+	/**
+	 * Mouse listener which handles the right click / popup menu on the main table.
+	 */
+	private class BasePathTreePopupMouseListener extends MouseAdapter {
+
+		public void mouseReleased(MouseEvent event) {
+			if (event.getButton() == MouseEvent.BUTTON3) {
+				Point location = event.getPoint();
+				int row = basePathTree.getRowForLocation((int)location.getX(), (int)location.getY());
+				if(row >= 0) {
+					basePathTree.setSelectionRow(row);
+					showBasePathTreePopupMenu(event.getPoint(), basePathTree);
+				}
+			}
+		}
+	}
 
 	private static final long serialVersionUID = 6837919427429399376L;
 
@@ -189,11 +305,15 @@ class MainView extends JFrame {
 
 	private BasicComboBoxEditor comboboxEditor;
 
+	private MainController controller;
+
 	/**
 	 * Create the application.
 	 */
-	public MainView() {
+	public MainView(MainController controller) {
+		this.controller = controller;
 		initialize();
+		initListeners();
 		initializeGlobalKeystrokes();
 		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
@@ -538,6 +658,46 @@ class MainView extends JFrame {
 
 		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
+	}
+
+	/**
+	 * Attach all needed listeners to the view
+	 */
+	private void initListeners() {
+		mainTable.getSelectionModel().addListSelectionListener(new PropertySheetListSelectionListener());
+		mainTable.addMouseListener(new MainTablePopupMouseListener());
+
+		imageViewer.addMouseListener(new CoverPopupMouseListener());
+		basePathTree.addMouseListener(new BasePathTreePopupMouseListener());
+		fileSystemTree.addMouseListener(new FileSystemTreePopupMouseListener());
+		propertySheet.addPropertySheetChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent e) {
+				if("value".equals(e.getPropertyName())) {
+					//sheet has been edited
+					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+				}
+			}
+		});
+
+		propertySheet.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if(!e.getValueIsAdjusting()) {
+					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_SELECTION_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+				}
+			}
+		});
+
+		mainTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if(!e.getValueIsAdjusting()) {
+					EventManager.fireEvent(EventManager.EVENT_TYPES.EBOOK_ITEM_SELECTION_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+				}
+			}
+		});
 	}
 
 	private JPanel createFilterPanel() {
@@ -982,7 +1142,7 @@ class MainView extends JFrame {
 		basePathTree.setShowsRootHandles(true);
 		basePathTree.setName(basePathTreeName);
 		if(Jeboorker.isRuntime) {
-			basePathTree.setModel(new BasePathTreeModel());
+			basePathTree.setModel(new BasePathTreeModel(basePathTree));
 			basePathTree.setEditable(true);
 			BasePathTreeCellRenderer basePathTreeCellRenderer = new BasePathTreeCellRenderer(basePathTree);
 			basePathTree.setCellRenderer(basePathTreeCellRenderer);
@@ -1050,9 +1210,6 @@ class MainView extends JFrame {
 						where.like("file", fullResourceFilterPathStatement + "%");
 					}
 				});
-
-				//additionalFilterCondition.addOrChild(new QueryCondition("file", fullResourceFilterPath + "%", "like", QUERY_IDENTIFER));
-				//rootCondition.addAndChild(additionalFilterCondition);
 			}
 
 		});
@@ -1125,7 +1282,7 @@ class MainView extends JFrame {
 
 	/**
 	 * Shows the cover popup menu for the selected entries.
-	 * @param location The locaten where the popup should appears.
+	 * @param location The location where the popup should appears.
 	 * @param invoker The invoker for the popup menu.
 	 */
 	void showCoverPopupMenu(Point location, Component invoker) {
@@ -1140,19 +1297,31 @@ class MainView extends JFrame {
 	}
 
 	/**
-	 * Shows the cover popup menu for the selected entries.
-	 * @param location The locaten where the popup should appears.
+	 * Shows the base path tree popup menu for the selected entries.
+	 * @param location The location where the popup should appears.
 	 * @param invoker The invoker for the popup menu.
 	 */
-	void showTreePopupMenu(Point location, Component invoker) {
-		final JPopupMenu menu = new JPopupMenu();
-
-        //int selRow = tree.getRowForLocation((int)location.getX(), (int)location.getY());
+	void showBasePathTreePopupMenu(Point location, Component invoker) {
+		JPopupMenu menu = new JPopupMenu();
         TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
 
-		if(treeTabbedPane.getSelectedIndex() == 0) {
-			addBasePathTreeMenuItems(menu, selPath);
-		}
+//		if(treeTabbedPane.getSelectedIndex() == 0) {
+			final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
+
+			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
+			menu.add(new JMenuItem(action));
+
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.NEW_FOLDER_ACTION, pathNode.getResource().toString(), new ActionCallback() {
+
+				@Override
+				public void afterAction() {
+					((BasePathTreeModel) basePathTree.getModel()).reload(pathNode);
+					((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNode.getResource());
+				}
+
+			});
+			menu.add(new JMenuItem(action));
+//		}
 
 		//setup and show popup
 		if(menu.getComponentCount() > 0) {
@@ -1161,13 +1330,85 @@ class MainView extends JFrame {
 		}
 	}
 
-	private void addBasePathTreeMenuItems(JComponent menu, TreePath selPath) {
+	/**
+	 * Shows the popup menu for the selected entries.
+	 * @param location The locaten where the popup should appears.
+	 * @param invoker The invoker for the popup menu.
+	 */
+	void showFileSystemTreePopupMenu(Point location, Component invoker) {
+		TreePath selPath = fileSystemTree.getPathForLocation((int)location.getX(), (int)location.getY());
+		JPopupMenu menu = createFileSystemTreePopupMenu(selPath);
+
+		//setup and show popup
+		if(menu.getComponentCount() > 0) {
+			menu.setLocation(location);
+			menu.show(invoker, location.x, location.y);
+		}
+	}
+
+	private JPopupMenu createFileSystemTreePopupMenu(final TreePath selPath) {
+		final MainController controller = MainController.getController();
+		final List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
+		final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
+		final JPopupMenu menu = new JPopupMenu();
+
 		Action action;
+		if(items.size() == 1) {
+			//only visible to single selections
+			if(items.get(0).isDirectoryResource()) {
+				action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, items.get(0).toString());
+				JMenuItem item = new JMenuItem(action);
+				item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false));
+				menu.add(item);
+			}
 
-		FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).toString());
+			menu.add(action);
 
-		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
-		menu.add(new JMenuItem(action));
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).toString());
+			menu.add(action);
+
+			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.NEW_FOLDER_ACTION, pathNode.getResource().toString(), new ActionCallback() {
+
+				@Override
+				public void afterAction() {
+					((BasePathTreeModel) basePathTree.getModel()).reload(pathNode.getResource());
+					((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNode);
+				}
+
+			});
+			menu.add(new JMenuItem(action));
+		}
+		if(items.size() >= 1) {
+			final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+			final List<String> basePath = preferenceStore.getBasePath();
+			final String name = Bundle.getString("MainMenuBarController.import");
+			final JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
+
+			mnImport.setIcon(ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
+			mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
+			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
+				String path = iterator.next();
+				JMenuItem pathItem = new JMenuItem();
+				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_IMPORT_ACTION, path));
+				mnImport.add(pathItem);
+			}
+			menu.add(mnImport);
+			if(!ResourceHandlerUtils.containFilesOnly(items)) {
+				mnImport.setEnabled(false);
+			}
+		}
+
+		MainMenuBarController.getController();
+		JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu();
+		menu.add(copyToSubMenu);
+
+		action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items);
+		JMenuItem item = new JMenuItem(action);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false));
+		menu.add(item);
+
+		return menu;
 	}
 
 	/**
@@ -1282,21 +1523,180 @@ class MainView extends JFrame {
 		}
 	}
 
-	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
-
-		@Override
-		public void treeAutoScrollingChanged(boolean value) {
-			Component[] allComponents = SwingUtils.getAllComponents(JRTree.class, MainView.this.getRootPane());
-			for(Component c : allComponents) {
-				((JRTree)c).setAutoMoveHorizontalSliders(value);
-			}
-		}
-	}
-
 	public void refreshUI() {
 		// don't know why but otherwise the renderer won't work after changing the look and feel
 		if(!(mainTable.getDefaultRenderer(Object.class) instanceof EbookTableCellRenderer)) {
 			mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+		}
+	}
+
+	/**
+	 * Gets all selected items from the main table.
+	 * @return The selected items. Never returns <code>null</code>.
+	 */
+	public List<EbookPropertyItem> getSelectedEbookPropertyItems() {
+		final int[] selectedRows = getSelectedEbookPropertyItemRows();
+		final ArrayList<EbookPropertyItem> result = new ArrayList<EbookPropertyItem>(selectedRows.length);
+		for (int i = 0; i < selectedRows.length; i++) {
+			EbookPropertyItem valueAt = (EbookPropertyItem) controller.getTableModel().getValueAt(selectedRows[i], 0);
+			result.add(valueAt);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Gets all selected rows from the main table.
+	 * @return all selected rows or an empty array if no row is selected. Never returns <code>null</code>.
+	 */
+	public int[] getSelectedEbookPropertyItemRows() {
+		if (mainTable != null) {
+			final int[] selectedRows = mainTable.getSelectedRows();
+			return selectedRows;
+		} else {
+			return new int[0];
+		}
+	}
+
+	/**
+	 * Get the currently selected metadata property from the metadata sheet.
+	 * @return The desired {@link Property} instance or <code>null</code> if no selection is made.
+	 */
+	public Property getSelectedMetadataProperty() {
+		final int selectedRow = propertySheet.getTable().getSelectedRow();
+
+		if(selectedRow >= 0) {
+			final EbookSheetPropertyModel model = (EbookSheetPropertyModel) propertySheet.getModel();
+			final PropertySheetTableModel.Item item = (Item) model.getObject(selectedRow);
+			final Property property = item.getProperty();
+
+			return property;
+		}
+		return null;
+	}
+
+	/**
+	 * Set the given property as selected one in the metadata sheet.
+	 * @param property The property to be set as selected.
+	 */
+	public void setSelectedMetadataProperty(final Property property) {
+		if(property != null) {
+			final EbookSheetPropertyModel model = (EbookSheetPropertyModel) propertySheet.getModel();
+			final int rowCount = model.getRowCount();
+
+			for (int i = 0; i < rowCount; i++) {
+				final PropertySheetTableModel.Item item = (Item) model.getObject(i);
+
+				if(item != null && item.getName() != null && item.getName().equals(model.getDisplayName(property))) {
+					propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
+					break;
+				} else {
+					if(property != null && item != null && item.getProperty() != null && item.getProperty().getName() != null && item.getProperty().getName().equals(property.getName())) {
+						propertySheet.getTable().getSelectionModel().setSelectionInterval(i, i);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Rereads the metadata properties and set them to the sheet.
+	 */
+	public void refreshSheetProperties() {
+		try {
+			if(mainTable.getSelectedRowCount() >= 1) {
+				final int rowCount = mainTable.getRowCount();
+				final int[] selectedRows = mainTable.getSelectedRows();
+				final int[] modelRowsIndex = new int[selectedRows.length];
+				final List<EbookPropertyItem> items = new ArrayList<EbookPropertyItem>(selectedRows.length);
+				for (int i = 0; i < selectedRows.length; i++) {
+					if(mainTable.getRowSorter() != null) {
+						modelRowsIndex[i] = mainTable.getRowSorter().convertRowIndexToModel(selectedRows[i]);
+					} else {
+						modelRowsIndex[i] = selectedRows[i];
+					}
+					if(modelRowsIndex[i] < rowCount) {
+						items.add(((EbookPropertyDBTableModel)mainTable.getModel()).getEbookPropertyItemAt(modelRowsIndex[i]));
+					}
+				}
+
+				PropertySheetTableModel oldModel = propertySheet.getModel();
+				oldModel.dispose();
+
+				if(items.size() > 1) {
+					//multiple selection
+					final EbookSheetPropertyMultiSelectionModel model = new EbookSheetPropertyMultiSelectionModel();
+					propertySheet.setModel(model);
+
+					model.loadProperties(items);
+
+					setImage(null, null);
+					EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
+					addMetadataButton.setListModel(emptyListModel);
+				} else if (items.size() == 1) {
+					//single selection
+					final EbookSheetPropertyModel model = new EbookSheetPropertyModel();
+					propertySheet.setModel(model);
+
+					if(items.get(0) != null) {
+						EbookPropertyItem ebookPropertyItem = items.get(0);
+						model.loadProperties(ebookPropertyItem);
+						byte[] cover = model.getCover();
+						if(cover != null && cover.length > 0) {
+							setImage(cover, ebookPropertyItem);
+						} else {
+							setImage(null, null);
+						}
+
+						IMetadataReader reader = model.getMetadataReader();
+						if(reader != null) {
+							List<MetadataProperty> allMetaData = model.getAllMetaData();
+							MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetaData(), allMetaData, ebookPropertyItem);
+							addMetadataButton.setListModel(metadataAddListModel);
+						}
+					}
+				}
+			} else {
+				//no selection
+				propertySheet.setModel(new EbookSheetPropertyMultiSelectionModel());
+				setImage(null, null);
+				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
+				addMetadataButton.setListModel(emptyListModel);
+			}
+		} catch (Exception e) {
+			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
+		}
+	}
+
+	/**
+	 * Shows the image given with the <code>cover</code> parameter in the simple image viewer.
+	 * The image viewer is set to black if the given <code>cover</code> is <code>null</code>.
+	 */
+	private void setImage(final byte[] cover, final EbookPropertyItem ebookPropertyItem) {
+		if (cover != null && ebookPropertyItem != null) {
+			//remove file extension by removing the separation dot because an image file name is expected.
+			final String coverFileName = StringUtils.replace(ebookPropertyItem.getResourceHandler().getResourceString(), new String[] {".", "/", "\\"}, "_");
+			imageViewer.setImageViewerResource(ResourceHandlerFactory.getVirtualResourceHandler(coverFileName, new VirtualStaticResourceDataLoader() {
+
+			ByteArrayInputStream byteArrayInputStream = null;
+
+			@Override
+			public InputStream getContentInputStream() {
+				if(byteArrayInputStream == null) {
+					byteArrayInputStream = new ByteArrayInputStream(cover);
+				}
+				byteArrayInputStream.reset();
+				return byteArrayInputStream;
+			}
+
+			@Override
+			public long length() {
+				return cover.length;
+			}
+			}));
+		} else {
+			imageViewer.setImageViewerResource(null);
 		}
 	}
 }
