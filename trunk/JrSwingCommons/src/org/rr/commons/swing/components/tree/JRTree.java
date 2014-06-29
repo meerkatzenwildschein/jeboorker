@@ -25,30 +25,30 @@ import org.rr.commons.utils.MathUtils;
 public class JRTree extends JTree {
 
 	private boolean toggleExpandOnDoubleClick = false;
-	
+
 	private boolean autoMoveHorizontalSliders = false;
-	
+
 	private boolean repaintAllOnChange = false;
-	
+
 	public JRTree() {
 		super();
 
 		this.addMouseListener(new ToggleExpandOnDoubleClickMouseListener());
 		this.getSelectionModel().addTreeSelectionListener(new RepaintChangeListener());
-		
+
 		final AutoMoveHorizontalMouseListener autoMoveHorizontalMouseListener = new AutoMoveHorizontalMouseListener();
 		this.addMouseMotionListener(autoMoveHorizontalMouseListener);
-		
+
 		this.addAncestorListener(new AncestorListener() {
-			
+
 			@Override
 			public void ancestorRemoved(AncestorEvent event) {
 			}
-			
+
 			@Override
 			public void ancestorMoved(AncestorEvent event) {
 			}
-			
+
 			@Override
 			public void ancestorAdded(AncestorEvent event) {
 				JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(JRTree.this);
@@ -67,7 +67,7 @@ public class JRTree extends JTree {
 		if (surroundingScrollPane != null) {
 			int rowForPath = getRowForPath(path);
 			int y = rowForPath * getRowHeight();
-			
+
 			int halfHeight = surroundingScrollPane.getPreferredSize().height / 2;
 			surroundingScrollPane.getVerticalScrollBar().setValue(y - halfHeight);
 			surroundingScrollPane.getHorizontalScrollBar().setValue(0);
@@ -76,7 +76,7 @@ public class JRTree extends JTree {
 			}
 		}
 	}
-	
+
 	public boolean isToggleExpandOnDoubleClick() {
 		return toggleExpandOnDoubleClick;
 	}
@@ -84,19 +84,19 @@ public class JRTree extends JTree {
 	public void setToggleExpandOnDoubleClick(boolean expandOnDoubleClick) {
 		this.toggleExpandOnDoubleClick = expandOnDoubleClick;
 	}
-	
+
 	private class ToggleExpandOnDoubleClickMouseListener extends MouseAdapter {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			Point point = e.getPoint();
 			int row = JRTree.this.getRowForLocation(0, point.y);
-			
+
 			if(toggleExpandOnDoubleClick && e.getClickCount() == 2) {
 				if(JRTree.this.isExpanded(row)) {
 					JRTree.this.collapseRow(row);
 				} else {
-					JRTree.this.expandRow(row);						
+					JRTree.this.expandRow(row);
 				}
 			}
 		}
@@ -109,12 +109,12 @@ public class JRTree extends JTree {
 	public void setAutoMoveHorizontalSliders(boolean autoMoveHorizontalSliders) {
 		this.autoMoveHorizontalSliders = autoMoveHorizontalSliders;
 	}
-	
+
 	private class AutoMoveHorizontalMouseListener extends MouseAdapter {
 
 		private int latestX;
 		private int latestRow;
-		
+
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			if(isAutoMoveHorizontalSliders()) {
@@ -131,8 +131,8 @@ public class JRTree extends JTree {
 				}
 				move(e);
 			}
-		}		
-		
+		}
+
 		private void move(MouseEvent e) {
 			int row = JRTree.this.getRowForLocation(0, e.getX());
 			for (int paddingLeft = 0; row < 0 && paddingLeft < JRTree.this.getWidth(); paddingLeft += 10) {
@@ -151,12 +151,12 @@ public class JRTree extends JTree {
 						if(row < JRTree.this.getRowCount()) {
 							underValue = calculateScrollBarLocation(e.getLocationOnScreen().x, surroundingScrollPane, paddingLeft, row + 1);
 						}
-								
+
 						if(value >= 0) {
 							value = Math.max(value, aboveValue);
-							value = Math.max(value, underValue);		
+							value = Math.max(value, underValue);
 							int oldValueDiff = surroundingScrollPane.getHorizontalScrollBar().getValue() - value;
-							
+
 							if(!MathUtils.between(oldValueDiff, 11, -11)) {
 								surroundingScrollPane.getHorizontalScrollBar().setValue(value);
 							}
@@ -177,12 +177,12 @@ public class JRTree extends JTree {
 			final boolean isLeaf = node.isLeaf();
 			final Component treeCellRendererComponent = JRTree.this.getCellRenderer().getTreeCellRendererComponent(JRTree.this, pathForLocation.getLastPathComponent(), false, isExpanded(row), isLeaf, row, false);
 			final int rendererWidth = treeCellRendererComponent.getPreferredSize().width;
-			
+
 			if(surroundingScrollPane != null) {
 				final int visibleComponentWidth = surroundingScrollPane.getBounds().width ;
 				final int scrollBarWidth = surroundingScrollPane.getVerticalScrollBar().getPreferredSize().width;
 
-				final int leafPadding = (isLeaf ? 15 : 25);				
+				final int leafPadding = (isLeaf ? 15 : 25);
 				final int visibleWidth = visibleComponentWidth - paddingLeft - rendererWidth - scrollBarWidth; // a minus value for the hidden width
 				if(visibleWidth < -10) { //scroll to hidden
 					int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
@@ -195,11 +195,11 @@ public class JRTree extends JTree {
 								//scroll to the end of the renderer component
 								return value;
 							}
-						} else { 
+						} else {
 							//scroll to the beginning of the renderer component
 							return rendererBegin;
-						}								
-//					} 
+						}
+//					}
 				} else if(visibleWidth > 10) {
 					int rendererBegin = paddingLeft - leafPadding; //begin of the renderer location
 					int horizontalScrollbarLocation = surroundingScrollPane.getHorizontalScrollBar().getValue();
@@ -227,7 +227,7 @@ public class JRTree extends JTree {
 	public void setRepaintAllOnChange(boolean repaintAllOnChnage) {
 		this.repaintAllOnChange = repaintAllOnChnage;
 	}
-	
+
 	private class RepaintChangeListener implements TreeSelectionListener {
 
 		@Override
@@ -237,7 +237,7 @@ public class JRTree extends JTree {
 			}
 		}
 	}
-	
+
     /**
      * Returns the row that displays the node identified by the specified
      * path.
@@ -257,8 +257,8 @@ public class JRTree extends JTree {
             }
         }
         return -1;
-    }	
-    
+    }
+
     /** Expands all the nodes in this tree. */
     public void expandAll() {
         expandOrCollapsePath(new TreePath(getModel().getRoot()), true);
@@ -268,12 +268,12 @@ public class JRTree extends JTree {
     public void collapseAll() {
         expandOrCollapsePath(new TreePath(getModel().getRoot()), false);
     }
-    
+
     /** Expands or collapses all nodes beneath the given path represented as an array of nodes. */
     public void expandOrCollapsePath(TreeNode[] nodes, boolean expand) {
         expandOrCollapsePath(new TreePath(nodes), expand);
     }
-    
+
     /** Expands or collapses all nodes beneath the given path. */
     private void expandOrCollapsePath(TreePath parent, boolean expand) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
@@ -289,8 +289,8 @@ public class JRTree extends JTree {
         } else {
             collapsePath(parent);
         }
-    }    
-    
+    }
+
     /**
      * Makes JTree's implementation less width-greedy. Left to JTree, we'll
      * grow to be wide enough to show our widest node without using a scroll
@@ -305,12 +305,12 @@ public class JRTree extends JTree {
         size.width = getMinimumSize().width;
         return size;
     }
-    
+
     /**
      * Selects the nodes matching the given string. The matching is
      * a case-insensitive substring match. The selection is not cleared
      * first; you must do this yourself if it's the behavior you want.
-     * 
+     *
      * If ensureVisible is true, the first selected node in the model
      * will be made visible via scrollPathToVisible.
      */
@@ -321,7 +321,7 @@ public class JRTree extends JTree {
             scrollPathToVisible(getSelectionPath());
         }
     }
-    
+
     private void selectNodesMatching(TreePath parent, String string) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
@@ -335,7 +335,7 @@ public class JRTree extends JTree {
             addSelectionPath(parent);
         }
     }
-    
+
     /** Scrolls the path to the middle of the scroll pane. */
     public void scrollPathToVisible(TreePath path) {
         if (path == null) {
@@ -351,6 +351,23 @@ public class JRTree extends JTree {
                 scrollRectToVisible(visibleRect);
             }
         }
-    }    
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * This implementation tries the x value around until a valid value returns because
+     * the default implementation returns only a row if the tree renderer was clicked
+     * but did not take the clicks before and behind it under account.
+     */
+	@Override
+	public int getRowForLocation(int x, int y) {
+		int rowForLocation = super.getRowForLocation(x, y);
+		int width = getWidth();
+		for(int i = 10; rowForLocation == -1 && i < width; i+=10) {
+			rowForLocation = super.getRowForLocation(i, y);
+		}
+		return rowForLocation;
+	}
 
 }

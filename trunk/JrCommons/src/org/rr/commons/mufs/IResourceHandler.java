@@ -374,4 +374,13 @@ public interface IResourceHandler extends Comparable<IResourceHandler> {
 
 	public void deleteOnExit();
 
+	/**
+	 * If this {@link IResourceHandler} instance is a directory it tells if there are any
+	 * childs in the directory. If it's a file it tells if the file is empty.
+	 * @return <code>true</code> if the directory or file is empty. <code>false</code> if the
+	 * directory have childs, or the file has a length larger than 0. Also <code>false</code>
+	 * if returned if the {@link IResourceHandler} did not exists.
+	 */
+	public boolean isEmpty();
+
 }

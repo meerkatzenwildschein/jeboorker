@@ -481,4 +481,19 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 	public void deleteOnExit() {
 		ResourceHandlerFactory.deleteOnExit(this);
 	}
+
+	public boolean isEmpty() {
+		if(!exists()) {
+			return false;
+		}
+		try {
+			if(isDirectoryResource()) {
+				return listResources(null).length == 0;
+			} else {
+				return size() == 0;
+			}
+		} catch(Exception e) {
+			return false;
+		}
+	}
 }

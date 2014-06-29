@@ -65,9 +65,12 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 		}
 	}
 
-	private static void doDelete(IResourceHandler fileToDelete) throws IOException {
+	private void doDelete(IResourceHandler fileToDelete) throws IOException {
 		try {
 			if(fileToDelete.isDirectoryResource()) {
+				if(!deleteFolderIfItIsNotEmpty(fileToDelete)) {
+					return;
+				}
 				FileWatchService.removeWatchPath(fileToDelete.toString());
 			}
 
@@ -84,6 +87,24 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 		} catch(java.io.FileNotFoundException e) {
 			LoggerFactory.logWarning(DeleteFileAction.class, "File is already deleted " + fileToDelete, e);
 		}
+	}
+
+	/**
+	 * Asks the user if he really want to delete the folder if it's not empty.
+	 * @param folderToDelete The folder which should be tested if it's empty.
+	 * @return <code>true</code> if the folder is empty and <code>false</code> otherwise.
+	 */
+	private boolean deleteFolderIfItIsNotEmpty(IResourceHandler folderToDelete) {
+		if(!fileToDelete.isEmpty()) {
+			String title = Bundle.getString("DeleteFileAction.dirNotEmpty.title");
+			String message = Bundle.getFormattedString("DeleteFileAction.dirNotEmpty.message", folderToDelete.toString());
+			int deleteFolder = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_OPTION, "DeleteFolderActionKey", JOptionPane.YES_OPTION, true);
+			if(deleteFolder == JOptionPane.YES_OPTION) {
+				return true;
+			}
+			return false;
+		}
+		return true;
 	}
 
 	@Override

@@ -1173,7 +1173,7 @@ class MainView extends JFrame {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				final int row = basePathTree.getRowForLocation(e.getPoint().x < 50 ? e.getPoint().x : 50, e.getPoint().y);
+				final int row = basePathTree.getRowForLocation(e.getPoint().x, e.getPoint().y);
 				final TreePath filterTreePath = basePathTree.getPathForRow(row);
 
 				if(filterTreePath != null) {
