@@ -353,21 +353,25 @@ public class JRTree extends JTree {
         }
     }
 
-    /**
-     * {@inheritDoc}
+	/**
+     * Returns the path for the node at the specified location.
      *
-     * This implementation tries the x value around until a valid value returns because
-     * the default implementation returns only a row if the tree renderer was clicked
-     * but did not take the clicks before and behind it under account.
+     * @param x an integer giving the number of pixels horizontally from
+     *          the left edge of the display area, minus any left margin
+     * @param y an integer giving the number of pixels vertically from
+     *          the top of the display area, minus any top margin
+     * @return  the <code>TreePath</code> for the node at that location
      */
-	@Override
-	public int getRowForLocation(int x, int y) {
-		int rowForLocation = super.getRowForLocation(x, y);
-		int width = getWidth();
-		for(int i = 10; rowForLocation == -1 && i < width; i+=10) {
-			rowForLocation = super.getRowForLocation(i, y);
-		}
-		return rowForLocation;
-	}
+	public TreePath getPathForLocation(int x, int y) {
+		TreePath closestPath = getClosestPathForLocation(x, y);
 
+		if (closestPath != null) {
+			Rectangle pathBounds = getPathBounds(closestPath);
+
+			if (pathBounds != null && y >= pathBounds.y && y < (pathBounds.y + pathBounds.height)) {
+				return closestPath;
+			}
+		}
+		return null;
+	}
 }
