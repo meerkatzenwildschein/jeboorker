@@ -1304,24 +1304,24 @@ class MainView extends JFrame {
 	void showBasePathTreePopupMenu(Point location, Component invoker) {
 		JPopupMenu menu = new JPopupMenu();
         TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
+        final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
+        List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
 
-//		if(treeTabbedPane.getSelectedIndex() == 0) {
-			final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
+		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
+		menu.add(new JMenuItem(action));
 
-			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
-			menu.add(new JMenuItem(action));
+		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.NEW_FOLDER_ACTION, pathNode.getResource().toString(), new ActionCallback() {
 
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.NEW_FOLDER_ACTION, pathNode.getResource().toString(), new ActionCallback() {
+			@Override
+			public void afterAction() {
+				((BasePathTreeModel) basePathTree.getModel()).reload(pathNode);
+				((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNode.getResource());
+			}
 
-				@Override
-				public void afterAction() {
-					((BasePathTreeModel) basePathTree.getModel()).reload(pathNode);
-					((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNode.getResource());
-				}
+		});
+		menu.add(new JMenuItem(action));
 
-			});
-			menu.add(new JMenuItem(action));
-//		}
+		menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
 
 		//setup and show popup
 		if(menu.getComponentCount() > 0) {
@@ -1403,10 +1403,7 @@ class MainView extends JFrame {
 		JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu();
 		menu.add(copyToSubMenu);
 
-		action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items);
-		JMenuItem item = new JMenuItem(action);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false));
-		menu.add(item);
+		menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
 
 		return menu;
 	}

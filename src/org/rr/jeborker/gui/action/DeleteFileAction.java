@@ -95,7 +95,7 @@ class DeleteFileAction extends AbstractAction implements IDoOnlyOnceAction<Integ
 	 * @return <code>true</code> if the folder is empty and <code>false</code> otherwise.
 	 */
 	private boolean deleteFolderIfItIsNotEmpty(IResourceHandler folderToDelete) {
-		if(!fileToDelete.isEmpty()) {
+		if(fileToDelete != null && !fileToDelete.isEmpty()) {
 			String title = Bundle.getString("DeleteFileAction.dirNotEmpty.title");
 			String message = Bundle.getFormattedString("DeleteFileAction.dirNotEmpty.message", folderToDelete.toString());
 			int deleteFolder = MainController.getController().showMessageBox(message, title, JOptionPane.YES_NO_OPTION, "DeleteFolderActionKey", JOptionPane.YES_OPTION, true);
