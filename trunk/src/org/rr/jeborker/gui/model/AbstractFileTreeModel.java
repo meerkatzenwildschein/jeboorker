@@ -31,6 +31,9 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 
 		try {
 			super.reload(node);
+		} catch(NullPointerException e) {
+			// happens sometimes if the node to be reloaded is not expanded.
+			LoggerFactory.getLogger(this).log(Level.WARNING, "NullPointer for node " + node, e);
 		} catch(Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Reload node " + node + " failed.", e);
 		}
