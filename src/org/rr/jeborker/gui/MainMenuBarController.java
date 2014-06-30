@@ -1,9 +1,6 @@
 package org.rr.jeborker.gui;
 
-import java.awt.Component;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,24 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
 
-import org.apache.commons.lang.StringUtils;
-import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.mufs.ResourceHandlerUtils;
-import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
-import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionFactory;
-import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class MainMenuBarController {
 
@@ -36,9 +21,10 @@ public class MainMenuBarController {
 
 	private MainMenuBarView view;
 
-	private HashMap<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
+	private Map<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
 
 	private MainMenuBarController() {
+		super();
 	}
 
 	/**
@@ -73,164 +59,7 @@ public class MainMenuBarController {
 	 * @param path The path entry to be removed.
 	 */
 	public void removeBasePathMenuEntry(String path) {
-		{
-			final Component[] menuComponents = view.mnVerzeichnisEntfernen.getMenuComponents();
-			for (int i = 0; i < menuComponents.length; i++) {
-				if(menuComponents[i] instanceof JMenuItem) {
-					final String name = (String) ((JMenuItem)menuComponents[i]).getAction().getValue(Action.NAME);
-					if(StringUtils.replace(name, File.separator, "").equals(StringUtils.replace(path, File.separator, ""))) {
-						view.mnVerzeichnisEntfernen.remove((JMenuItem)menuComponents[i]);
-					}
-				}
-			}
-		}
-
-		{
-			final Component[] menuComponents = view.mnVerzeichnisRefresh.getMenuComponents();
-			for (int i = 0; i < menuComponents.length; i++) {
-				if(menuComponents[i] instanceof JMenuItem) {
-					final String name = (String) ((JMenuItem)menuComponents[i]).getAction().getValue(Action.NAME);
-					if(StringUtils.replace(name, File.separator, "").equals(StringUtils.replace(path, File.separator, ""))) {
-						view.mnVerzeichnisRefresh.remove((JMenuItem)menuComponents[i]);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Shows the popup menu for the selected entries.
-	 * @param location The locaten where the popup should appears.
-	 * @param invoker The invoker for the popup menu.
-	 */
-	void showMainPopupMenu(Point location, Component invoker) {
-		JPopupMenu menu = createMainTablePopupMenu();
-
-		//setup and show popup
-		if(menu.getComponentCount() > 0) {
-			menu.setLocation(location);
-			menu.show(invoker, location.x, location.y);
-		}
-	}
-
-	/**
-	 * Creates the popup menu for the main table having only these entries inside
-	 * that can be processed with the given {@link EbookPropertyItem} list.
-	 * @param items The items to be tested if they're matching against the menu entries.
-	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
-	 */
-	private static JPopupMenu createMainTablePopupMenu() {
-		final MainController controller = MainController.getController();
-		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
-		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-		final JPopupMenu menu = new JPopupMenu();
-
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				menu.add(action);
-			}
-		}
-
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows);
-			JMenuItem item = new JMenuItem(action);
-			item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false));
-			if(action.isEnabled()) {
-				menu.add(item);
-			}
-		}
-
-		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, "");
-		JMenuItem item = new JMenuItem(action);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false));
-		menu.add(item);
-
-		if(items.size() == 1) {
-			//only visible to single selections
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).getFile());
-			menu.add(action);
-
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).getFile());
-			menu.add(action);
-		}
-
-		JMenu copyToSubMenu = createCopyToMenu();
-		menu.add(copyToSubMenu);
-
-		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, items, selectedEbookPropertyItemRows);
-		item = new JMenuItem(action);
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false));
-		menu.add(item);
-
-		return menu;
-	}
-
-	/**
-	 * Creates the <code>copy to</code> submenu.
-	 */
-	static JMenu createCopyToMenu() {
-		final MainController controller = MainController.getController();
-		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
-		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
-		final String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
-		final JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
-
-		copyToSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("copy_16.png"));
-		copyToSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
-		Action action;
-
-		if(!items.isEmpty()) {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
-		} else {
-			action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, selectedTreeItems);
-		}
-		copyToSubMenu.add(action);
-
-		if(!items.isEmpty()) {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
-		} else {
-			action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
-		}
-		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceHandler(System.getProperty("user.home"));
-		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
-		action.putValue("TARGET", homeFolder);
-		action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("home_16.png"));
-		action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("home_22.png"));
-		copyToSubMenu.add(action);
-
-		List<IResourceHandler> externalDriveResources = ResourceHandlerUtils.getExternalDriveResources();
-		for(IResourceHandler externalResource : externalDriveResources) {
-			if(!items.isEmpty()) {
-				action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
-			} else {
-				action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
-			}
-			action.putValue(Action.NAME, externalResource.toString());
-			action.putValue("TARGET", externalResource);
-			action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("removable_drive_16.png"));
-			action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("removable_drive_22.png"));
-			copyToSubMenu.add(action);
-
-			//add also the ebook folders in the external drive
-			List<IResourceHandler> childFolderByRegExp = ResourceHandlerUtils.getChildFolderByRegExp(externalResource, "[eE]{0,1}-{0,1}[bB][oO][oO][kK]");
-			if(!childFolderByRegExp.isEmpty()) {
-				for(IResourceHandler ebookFolder : childFolderByRegExp) {
-					if(!items.isEmpty()) {
-						action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
-					} else {
-						action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
-					}
-					action.putValue(Action.NAME, ebookFolder.toString());
-					action.putValue("TARGET", ebookFolder);
-					action.putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("removable_drive_16.png"));
-					action.putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("removable_drive_22.png"));
-					copyToSubMenu.add(action);
-				}
-			}
-		}
-		return copyToSubMenu;
+		view.removeBasePathMenuEntry(path);
 	}
 
 	/**

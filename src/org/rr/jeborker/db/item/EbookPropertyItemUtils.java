@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.apache.jempbox.xmp.Thumbnail;
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -274,5 +275,20 @@ public class EbookPropertyItemUtils {
 			return Collections.emptyList();
 		}
 		return ListUtils.fromIndexString(indexedListString, File.pathSeparatorChar);
+	}
+
+	/**
+	 * Creates a list of {@link IResourceHandler} for the given {@link EbookPropertyItem} list.
+	 * @param ebookPropertyItems The {@link EbookPropertyItem} list which {@link IResourceHandler} should be returned.
+	 * @return The desired list, never returns <code>null</code>.
+	 */
+	public static List<IResourceHandler> createIResourceHandlerList(List<EbookPropertyItem> ebookPropertyItems) {
+		return new TransformValueList<EbookPropertyItem, IResourceHandler>(ebookPropertyItems) {
+
+			@Override
+			public IResourceHandler transform(EbookPropertyItem source) {
+				return source.getResourceHandler();
+			}
+		};
 	}
 }
