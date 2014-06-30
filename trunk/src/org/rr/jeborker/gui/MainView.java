@@ -111,9 +111,9 @@ import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.JeboorkerPreferenceListener;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
-import org.rr.jeborker.gui.action.ActionCallback;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.PasteFromClipboardAction;
 import org.rr.jeborker.gui.cell.BasePathTreeCellEditor;
@@ -199,7 +199,7 @@ class MainView extends JFrame {
 					mainTable.getSelectionModel().setSelectionInterval(rowAtPoint, rowAtPoint);
 				}
 
-				MainMenuBarController.getController().showMainPopupMenu(event.getPoint(), mainTable);
+				showMainTablePopupMenu(event.getPoint(), mainTable);
 			}
 		}
 	}
@@ -373,11 +373,6 @@ class MainView extends JFrame {
 		gbc_mainSplitPane.gridx = 0;
 		gbc_mainSplitPane.gridy = 0;
 		contentPane.add(mainSplitPane, gbc_mainSplitPane);
-		KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
-		KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
-		KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-		KeyStroke refresh = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false);
-		KeyStroke rename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false);
 
 		JPanel propertyContentPanel = new JPanel();
 		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
@@ -452,7 +447,7 @@ class MainView extends JFrame {
 				gbc_treeMainTableSplitPane.gridy = 1;
 				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
 
-				createMainTable(copy, paste, delete, refresh, rename);
+				createMainTable();
 
 				mainTableScrollPane = new JRScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
@@ -533,7 +528,7 @@ class MainView extends JFrame {
 				JComponent basePathTreeComp = createBasePathTree();
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
 
-				JComponent fileSystemTreeComp = createFileSystemTree(copy, paste, delete, refresh);
+				JComponent fileSystemTreeComp = createFileSystemTree();
 				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
 
 				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
@@ -736,9 +731,6 @@ class MainView extends JFrame {
 		filterField.setEditable(true);
 		filterField.setEditor(comboboxEditor = new FilterFieldComboboxEditor());
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
-//		((JComponent)comboboxEditor.getEditorComponent()).setOpaque(true);
-//		((JComponent)comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
-//		((JComponent)comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.insets = new Insets(0, 0, 0, 5);
 		gbc_searchField.weightx = 1.0;
@@ -759,7 +751,7 @@ class MainView extends JFrame {
 		return filterPanel;
 	}
 
-	private void createMainTable(KeyStroke copy, KeyStroke paste, KeyStroke delete, KeyStroke refresh, KeyStroke rename) {
+	private void createMainTable() {
 		mainTable = new JRTable();
 		mainTable.setName("MainTable");
 		mainTable.setRowHeight(74);
@@ -790,11 +782,13 @@ class MainView extends JFrame {
 		mainTable.setSelectionModel(defaultListSelectionModel);
 		mainTable.setDragEnabled(true);
 		mainTable.setStopEditOnSelectionChange(true);
-		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
-		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);
-		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
-		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, null), "RefreshEntry", refresh, JComponent.WHEN_FOCUSED);
-		mainTable.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, null), "RenameFile", rename, JComponent.WHEN_FOCUSED);
+
+		MainViewMenuUtils.registerCopyToClipboardKeyAction(mainTable);
+		MainViewMenuUtils.registerPasteFromClipboardKeyAction(mainTable);
+		MainViewMenuUtils.registerDeleteKeyAction(mainTable);
+		MainViewMenuUtils.registerRefreshEntryKeyAction(mainTable);
+		MainViewMenuUtils.registerRenameFileKeyAction(mainTable);
+
 		mainTable.putClientProperty(StringConvertor.class, new StringConvertor() {
 
 			@Override
@@ -881,7 +875,7 @@ class MainView extends JFrame {
 		});
 	}
 
-	private JComponent createFileSystemTree(final KeyStroke copy, final KeyStroke paste, final KeyStroke delete, final KeyStroke refresh) {
+	private JComponent createFileSystemTree() {
 		final String fileSystemTreeName = "FileSystemTree";
 
 		JPanel fileSystemTreePanel = new JPanel();
@@ -970,7 +964,7 @@ class MainView extends JFrame {
 				}
 
 			}
-		}, "RenameFile", KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false), JComponent.WHEN_FOCUSED);
+		}, "RenameFile", MainViewMenuUtils.RENAME_KEY, JComponent.WHEN_FOCUSED);
 
 		JRScrollPane treeScroller = new JRScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
@@ -984,15 +978,14 @@ class MainView extends JFrame {
 
 		fileSystemTree.setRootVisible(false);
 		fileSystemTree.setRowHeight(25);
-		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.COPY_TO_CLIPBOARD_ACTION, null), "Copy", copy, JComponent.WHEN_FOCUSED);
-		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, null), "Paste", paste, JComponent.WHEN_FOCUSED);
-		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, null), "DeleteFile", delete, JComponent.WHEN_FOCUSED);
-		fileSystemTree.registerKeyboardAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, null), "Refresh", refresh, JComponent.WHEN_FOCUSED);
+
+		MainViewMenuUtils.registerCopyToClipboardKeyAction(fileSystemTree);
+		MainViewMenuUtils.registerPasteFromClipboardKeyAction(fileSystemTree);
+		MainViewMenuUtils.registerDeleteKeyAction(fileSystemTree);
+		MainViewMenuUtils.registerFileSystemRefreshKeyAction(fileSystemTree);
 
 		fileSystemTree.setDragEnabled(true);
 		fileSystemTree.setTransferHandler(new TransferHandler() {
-
-			private static final long serialVersionUID = -371360766111031218L;
 
 			public boolean canImport(TransferHandler.TransferSupport info) {
                 return DragAndDropUtils.isFileImportRequest(info);
@@ -1044,7 +1037,7 @@ class MainView extends JFrame {
                 		}
                 	}
 				} catch (Exception e) {
-					e.printStackTrace();
+					LoggerFactory.getLogger(this).log(Level.WARNING, e.getMessage(), e);
 					return false;
 				}
                 return true;
@@ -1165,6 +1158,8 @@ class MainView extends JFrame {
 		basePathTree.setRootVisible(false);
 		basePathTree.setRowHeight(25);
 
+		MainViewMenuUtils.registerDeleteKeyAction(basePathTree);
+
 		basePathTree.addMouseListener(new MouseAdapter() {
 
 			private static final String QUERY_IDENTIFER = "BASE_PATH_MOUSE_LISTENER";
@@ -1215,8 +1210,6 @@ class MainView extends JFrame {
 		});
 
 		basePathTree.setTransferHandler(new TransferHandler() {
-
-			private static final long serialVersionUID = -371360766111031218L;
 
 			public boolean canImport(TransferHandler.TransferSupport info) {
 				return DragAndDropUtils.isFileImportRequest(info);
@@ -1304,30 +1297,22 @@ class MainView extends JFrame {
 	void showBasePathTreePopupMenu(Point location, Component invoker) {
 		JPopupMenu menu = new JPopupMenu();
         TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
-        final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
-        List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
+        if(selPath.getLastPathComponent() instanceof FileSystemNode) {
+	        final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
+	        List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
 
-		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
-		menu.add(new JMenuItem(action));
+			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
+			menu.add(new JMenuItem(action));
 
-		action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.NEW_FOLDER_ACTION, pathNode.getResource().toString(), new ActionCallback() {
+			menu.add(MainViewMenuUtils.createNewFolderMenuItem(basePathTree, fileSystemTree, pathNode));
+			menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
 
-			@Override
-			public void afterAction() {
-				((BasePathTreeModel) basePathTree.getModel()).reload(pathNode);
-				((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNode.getResource());
+			//setup and show popup
+			if(menu.getComponentCount() > 0) {
+				menu.setLocation(location);
+				menu.show(invoker, location.x, location.y);
 			}
-
-		});
-		menu.add(new JMenuItem(action));
-
-		menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
-
-		//setup and show popup
-		if(menu.getComponentCount() > 0) {
-			menu.setLocation(location);
-			menu.show(invoker, location.x, location.y);
-		}
+        }
 	}
 
 	/**
@@ -1352,32 +1337,14 @@ class MainView extends JFrame {
 		final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
 		final JPopupMenu menu = new JPopupMenu();
 
-		Action action;
 		if(items.size() == 1) {
-			//only visible to single selections
+			// only visible to single selections
 			if(items.get(0).isDirectoryResource()) {
-				action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_REFRESH_ACTION, items.get(0).toString());
-				JMenuItem item = new JMenuItem(action);
-				item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, false));
-				menu.add(item);
+				menu.add(MainViewMenuUtils.createFileSystemRefreshMenuItem(items));
 			}
-
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, items.get(0).toString());
-			menu.add(action);
-
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, items.get(0).toString());
-			menu.add(action);
-
-			action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.NEW_FOLDER_ACTION, pathNode.getResource().toString(), new ActionCallback() {
-
-				@Override
-				public void afterAction() {
-					((BasePathTreeModel) basePathTree.getModel()).reload(pathNode.getResource());
-					((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNode);
-				}
-
-			});
-			menu.add(new JMenuItem(action));
+			menu.add(MainViewMenuUtils.createOpenFileMenuItem(items));
+			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(items));
+			menu.add(MainViewMenuUtils.createNewFolderMenuItem(basePathTree, fileSystemTree, pathNode));
 		}
 		if(items.size() >= 1) {
 			final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
@@ -1389,9 +1356,7 @@ class MainView extends JFrame {
 			mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 				String path = iterator.next();
-				JMenuItem pathItem = new JMenuItem();
-				pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_IMPORT_ACTION, path));
-				mnImport.add(pathItem);
+				mnImport.add(MainViewMenuUtils.crateFileSystemImportTargetMenuItem(path));
 			}
 			menu.add(mnImport);
 			if(!ResourceHandlerUtils.containFilesOnly(items)) {
@@ -1399,11 +1364,66 @@ class MainView extends JFrame {
 			}
 		}
 
-		MainMenuBarController.getController();
-		JMenu copyToSubMenu = MainMenuBarController.createCopyToMenu();
-		menu.add(copyToSubMenu);
-
+		menu.add(MainViewMenuUtils.createCopyToMenu());
 		menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
+
+		return menu;
+	}
+
+	/**
+	 * Shows the popup menu for the selected entries.
+	 * @param location The locaten where the popup should appears.
+	 * @param invoker The invoker for the popup menu.
+	 */
+	void showMainTablePopupMenu(Point location, Component invoker) {
+		JPopupMenu menu = createMainTablePopupMenu();
+
+		//setup and show popup
+		if(menu.getComponentCount() > 0) {
+			menu.setLocation(location);
+			menu.show(invoker, location.x, location.y);
+		}
+	}
+
+	/**
+	 * Creates the popup menu for the main table having only these entries inside
+	 * that can be processed with the given {@link EbookPropertyItem} list.
+	 * @param items The items to be tested if they're matching against the menu entries.
+	 * @return The desired {@link JPopupMenu}. Never returns <code>null</code>.
+	 */
+	private static JPopupMenu createMainTablePopupMenu() {
+		final MainController controller = MainController.getController();
+		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
+		final List<IResourceHandler> selectedResources = EbookPropertyItemUtils.createIResourceHandlerList(items);
+		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+		final JPopupMenu menu = new JPopupMenu();
+
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);
+			if(action.isEnabled()) {
+				menu.add(action);
+			}
+		}
+
+		{
+			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows);
+			JMenuItem item = new JMenuItem(action);
+			item.setAccelerator(MainViewMenuUtils.REFRESH_KEY);
+			if(action.isEnabled()) {
+				menu.add(item);
+			}
+		}
+
+		menu.add(MainViewMenuUtils.createRenameFileMenuItem());
+
+		if(items.size() == 1) {
+			//only visible to single selections
+			menu.add(MainViewMenuUtils.createOpenFileMenuItem(selectedResources));
+			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(selectedResources));
+		}
+
+		menu.add(MainViewMenuUtils.createCopyToMenu());
+		menu.add(MainViewMenuUtils.createDeleteMenuItem(selectedResources));
 
 		return menu;
 	}
@@ -1696,4 +1716,5 @@ class MainView extends JFrame {
 			imageViewer.setImageViewerResource(null);
 		}
 	}
+
 }

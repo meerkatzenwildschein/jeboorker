@@ -7,11 +7,10 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.DefaultApplicationEventListener;
 import org.rr.jeborker.event.EventManager;
@@ -29,9 +28,9 @@ import com.l2fprod.common.propertysheet.Property;
 class SaveMetadataAction extends AbstractAction {
 
 	private static final long serialVersionUID = 1208674185052606967L;
-	
+
 	private static SaveMetadataAction saveMetadataEntryAction = null;
-	
+
 	private SaveMetadataAction() {
 		String name = Bundle.getString("SaveMetadataAction.name");
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("save_16.png"));
@@ -44,14 +43,14 @@ class SaveMetadataAction extends AbstractAction {
 		setEnabled(false);
 		initListener();
 	}
-	
+
 	static SaveMetadataAction getInstance() {
 		if(saveMetadataEntryAction == null) {
 			saveMetadataEntryAction = new SaveMetadataAction();
 		}
 		return saveMetadataEntryAction;
-	}	
-	
+	}
+
 	private void initListener() {
 		EventManager.addListener(new SaveMetadataEntryApplicationEventListener());
 	}
@@ -59,7 +58,7 @@ class SaveMetadataAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
-		
+
 		if(action.isEnabled()) {
 			final MainController controller = MainController.getController();
 			final MainMonitor progressMonitor = controller.getProgressMonitor();
@@ -74,19 +73,13 @@ class SaveMetadataAction extends AbstractAction {
 			}
 		}
 	}
-	
+
 	private static class SaveMetadataEntryApplicationEventListener extends DefaultApplicationEventListener {
-		
+
 		@Override
 		public void metaDataSheetContentChanged(ApplicationEvent evt) {
-			final List<IResourceHandler> itemResourceList = new TransformValueList<EbookPropertyItem, IResourceHandler>(evt.getItems()) {
+			final List<IResourceHandler> itemResourceList = EbookPropertyItemUtils.createIResourceHandlerList(evt.getItems());
 
-				@Override
-				public IResourceHandler transform(EbookPropertyItem source) {
-					return source.getResourceHandler();
-				}
-			};
-			
 			if(MetadataHandlerFactory.hasWriterSupport(itemResourceList)) {
 				final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
 				final Property metadataProperty = evt.getMetadataProperty();
