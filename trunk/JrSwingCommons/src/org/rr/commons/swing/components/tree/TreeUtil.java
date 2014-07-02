@@ -9,9 +9,9 @@ import javax.swing.tree.TreePath;
 import org.rr.commons.utils.ListUtils;
 
 public class TreeUtil {
-	
+
 	public static final String PATH_SEPARATOR = "\t";
-	
+
 	/**
 	 * Cleans the separator chars from the given node name.
 	 */
@@ -33,7 +33,7 @@ public class TreeUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Get the tree path names in a separated string
 	 */
@@ -53,7 +53,7 @@ public class TreeUtil {
 		}
 		return result.toString();
 	}
-	
+
 	private static TreePath restoreTreePathByName(JTree tree, String pathString, String separator) {
 		List<String> split = ListUtils.split(pathString, separator);
 		int row = 0;
@@ -72,13 +72,13 @@ public class TreeUtil {
 						break;
 					}
 				}
-			}			
+			}
 		}
 		return lastRowPath;
 	}
 
 	/**
-	 * Get the expansion states for the expanded nodes of the given {@link JTree} as string. 
+	 * Get the expansion states for the expanded nodes of the given {@link JTree} as string.
 	 * Only those nodes gets collected that implements the {@link NamedNode} interface.
 	 * @see #restoreExpanstionState(JRTree, String)
 	 */
@@ -89,14 +89,14 @@ public class TreeUtil {
 			String treePathName = getTreePathName(path, PATH_SEPARATOR);
 			if(result.length() > 0) {
 				result.append("\n");
-			}			
+			}
 			result.append(treePathName);
 		}
 		return result.toString();
 	}
 
 	/**
-	 * Restores the expansion states from the given String. 
+	 * Restores the expansion states from the given String.
 	 * @see TreeUtil#getExpansionStates(JRTree)
 	 */
 	public static TreePath restoreExpanstionState(JTree tree, String expansionStates) {
@@ -107,10 +107,25 @@ public class TreeUtil {
 		}
 		return lastExpandedRow;
 	}
-	
-	public static int getRowForPath(JTree tree, TreePath path) {
-		
-		return -1;
+
+	/**
+	 * Tells if the given rootPath ends with a member of the given childPath.
+	 * @param path1 The root path
+	 * @param path2 The path which is tested if the root is the same.
+	 * @return <code>true</code> if the rootPath ends with a member of the given childPath and <code>false</code> otherwise.
+	 */
+	public static boolean isChild(TreePath rootPath, TreePath childPath) {
+		Object lastRootPathComponent = rootPath.getLastPathComponent();
+		TreePath childParentPath = childPath;
+		do {
+			if(childParentPath.getLastPathComponent().equals(lastRootPathComponent)) {
+				return true;
+			}
+
+			childParentPath = childParentPath.getParentPath();
+		} while(childParentPath != null);
+
+		return false;
 	}
 
 }
