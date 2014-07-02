@@ -19,34 +19,32 @@ import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.model.FileSystemTreeModel;
 
 public class MainTreeController {
-	
+
 	private JRTree basePathTree;
-	
+
 	private JRTree fileSystemTree;
-	
+
 	private MainController controller;
-	
+
 	private MainView mainWindow;
-	
+
 	MainTreeController(JRTree basePathTree, JRTree fileSystemTree) {
 		this.basePathTree = basePathTree;
 		this.fileSystemTree = fileSystemTree;
 		this.controller = MainController.getController();
 		this.mainWindow = MainController.getController().mainWindow;
-		
 	}
-	
+
 	/**
 	 * Removes the selected items in the tree if they no longer exists.
 	 */
 	public void removeDeletedTreeItems() {
-		final JTree fileSystemTree = mainWindow.getFileSystemTree();
 		final TreeModel model = ((JTree) fileSystemTree).getModel();
 		if(model instanceof FileSystemTreeModel) {
 			((FileSystemTreeModel) model).removeDeletedFileNodes();
 		}
 	}
-	
+
 	/**
 	 * Get the selected Tree items from that tree that is currently visible to the user
 	 */
@@ -69,16 +67,16 @@ public class MainTreeController {
 		}
 		return Collections.emptyList();
 	}
-	
+
 	/**
 	 * Expands the nodes for the given {@link IResourceHandler} instances in this
-	 * tree that is currently be shown to the user. 
+	 * tree that is currently be shown to the user.
 	 */
 	public void addExpandedTreeItems(final List<IResourceHandler> resourceHandlers) {
 		JTree selectedComponent = mainWindow.getSelectedTreePathComponent();
 		for(IResourceHandler resourceHandler : resourceHandlers) {
 			TreeModel model = ((JTree) selectedComponent).getModel();
-			
+
 			List<String> pathSegments = resourceHandler.getPathSegments();
 			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
 			for(int i = 0; i < pathSegments.size(); i++) {
@@ -94,15 +92,15 @@ public class MainTreeController {
 					String join = ListUtils.join(extract, File.separator);
 					fullPathSegments.add(File.separator + join);
 				}
-			}	
-			
+			}
+
 			TreePath lastExpandedRow = null;
 			if(model instanceof FileSystemTreeModel) {
 				lastExpandedRow = ((FileSystemTreeModel) model).restoreExpansionState((JTree) selectedComponent, fullPathSegments);
 			} else if(model instanceof BasePathTreeModel) {
 				lastExpandedRow = ((BasePathTreeModel) model).restoreExpanstionState((JTree) selectedComponent, resourceHandler, fullPathSegments);
 			}
-			
+
 			if(lastExpandedRow != null) {
 				((JRTree) selectedComponent).scrollPathToVisibleVertical(lastExpandedRow, true);
 			}
@@ -110,8 +108,8 @@ public class MainTreeController {
 				mainWindow.mainTable.clearSelection();
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Collapse all tree nodes in the tree with the given name.
 	 */
@@ -122,7 +120,7 @@ public class MainTreeController {
 		} else if(fileSystemTree.getName().equals(name)) {
 			collpase = fileSystemTree;
 		}
-		
+
 		if(collpase != null) {
 			collpase.clearSelection();
 			collpase.stopEditing();
@@ -132,5 +130,5 @@ public class MainTreeController {
 			}
 		}
 	}
-	
+
 }

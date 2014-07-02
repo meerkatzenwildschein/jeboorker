@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -66,7 +65,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
@@ -321,16 +319,13 @@ class MainView extends JFrame {
 		final InputMap inputMap = this.getRootPane().getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW);
 		final ActionMap actionMap = this.getRootPane().getActionMap();
 
-		KeyStroke quitKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK);
-		inputMap.put(quitKeyStroke, "QUIT");
+		inputMap.put(MainViewMenuUtils.QUIT_KEY, "QUIT");
 		actionMap.put("QUIT", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.QUIT_ACTION, null));
 
-		KeyStroke saveKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK);
-		inputMap.put(saveKeyStroke, "SAVE");
+		inputMap.put(MainViewMenuUtils.SAVE_KEY, "SAVE");
 		actionMap.put("SAVE", ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 
-		KeyStroke find = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK, false);
-		inputMap.put(find, "FIND");
+		inputMap.put(MainViewMenuUtils.FIND_KEY, "FIND");
 		actionMap.put("FIND", ActionFactory.getTableFindAction(mainTable));
 	}
 
@@ -502,7 +497,6 @@ class MainView extends JFrame {
 						//fix for mouse wheel scrolling @see https://www.java.net//node/696371
 						return AWTEvent.MOUSE_EVENT_MASK;
 					}
-
 				});
 				mainTableScrollPane.setViewportView(mainTableLayer);
 
@@ -521,7 +515,6 @@ class MainView extends JFrame {
 					@Override
 					public void drop(DropTargetDropEvent dtde) {
 					}
-
 				}));
 
 				JComponent basePathTreeComp = createBasePathTree();
@@ -805,8 +798,6 @@ class MainView extends JFrame {
 		});
 
 		mainTable.setTransferHandler(new TransferHandler() {
-
-			private static final long serialVersionUID = -371360766111031218L;
 
 			public boolean canImport(TransferHandler.TransferSupport info) {
 		        //only import Strings
@@ -1205,7 +1196,6 @@ class MainView extends JFrame {
 					}
 				});
 			}
-
 		});
 
 		basePathTree.setTransferHandler(new TransferHandler() {
@@ -1262,7 +1252,6 @@ class MainView extends JFrame {
 				fileSystemTree.stopEditing();
 				fileSystemTree.clearSelection();
 			}
-
 		});
 
 		GridBagConstraints gbc_tree = new GridBagConstraints();
@@ -1397,20 +1386,16 @@ class MainView extends JFrame {
 		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 		final JPopupMenu menu = new JPopupMenu();
 
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);
-			if(action.isEnabled()) {
-				menu.add(action);
-			}
+		Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.EDIT_PLAIN_METADATA_ACTION, items, selectedEbookPropertyItemRows);
+		if(action.isEnabled()) {
+			menu.add(action);
 		}
 
-		{
-			Action action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows);
-			JMenuItem item = new JMenuItem(action);
-			item.setAccelerator(MainViewMenuUtils.REFRESH_KEY);
-			if(action.isEnabled()) {
-				menu.add(item);
-			}
+		action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.REFRESH_ENTRY_ACTION, items, selectedEbookPropertyItemRows);
+		JMenuItem item = new JMenuItem(action);
+		item.setAccelerator(MainViewMenuUtils.REFRESH_KEY);
+		if(action.isEnabled()) {
+			menu.add(item);
 		}
 
 		menu.add(MainViewMenuUtils.createRenameFileMenuItem());
@@ -1518,10 +1503,6 @@ class MainView extends JFrame {
 			return (JTree) allComponents[0];
 		}
 		return null;
-	}
-
-	JTree getFileSystemTree() {
-		return fileSystemTree;
 	}
 
 	/**
