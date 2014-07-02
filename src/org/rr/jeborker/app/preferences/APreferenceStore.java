@@ -90,8 +90,7 @@ public abstract class APreferenceStore {
 	 * Tests if the given path is visible.
 	 */
 	public boolean isBasePathVisible(String path) {
-		boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
-		return isShow;
+		return MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 	}
 
 	/**
