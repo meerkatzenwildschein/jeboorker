@@ -182,7 +182,6 @@ class MainView extends JFrame {
 				setSelectedMetadataProperty(selectedMetadataProperty);
 			}
 		}
-
 	}
 
 	/**
