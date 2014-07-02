@@ -90,13 +90,9 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		checkbox.setTriStateIcon(eyesTreeState);
 		checkbox.setIcon(eyesInvisible); //unselected icon
 		checkbox.setSelectedIcon(eyesVisible); //selected icon
-
-//		checkbox.setRolloverIcon(eyesVisible); //rollover unselected
-
 		checkbox.setDisabledIcon(eyesInvisible);
 		checkbox.setDisabledSelectedIcon(eyesInvisible);
 		checkbox.setOpaque(false);
-//		checkbox.setRolloverSelectedIcon(eyesInvisible); //rollover selected
 
 		label = new JLabel();
 		setupLabelFont();
@@ -147,7 +143,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		final int rowCount = tree.getRowCount();
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getDummyPreferenceStore();
 		final BasePathList basePaths = preferenceStore.getBasePath();
 		IResourceHandler pathResource;
 
@@ -175,30 +171,10 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 			this.value = null;
 		}
 
-		//setup label dimensions
-		Dimension textDimension = SwingUtils.getTextDimension(label.getText(), label.getFont());
-		textDimension.width += 5;
-		label.setSize(textDimension);
-		label.setPreferredSize(textDimension);
-
-		if(pathResource != null) {
-			String pathresourceString = pathResource.toString();
-			label.setEnabled(true);
-			for(String basePath : basePaths) {
-				if(pathresourceString.startsWith(basePath)) {
-					boolean basePathVisible = preferenceStore.isBasePathVisible(basePath);
-					if(!basePathVisible) {
-						label.setEnabled(false);
-					}
-				}
-			}
-		}
+		setLabelEnabled(preferenceStore, basePaths, pathResource);
 
 		try {
-			if(label.getFont() != labelNormalFont) {
-				//reset font
-				label.setFont(labelNormalFont);
-			}
+			resetLabelFont();
 			JTree.DropLocation dropLocation = tree.getDropLocation();
 	        if (dropLocation != null
 	                && dropLocation.getChildIndex() == -1
@@ -238,6 +214,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 
 				isDropCell = false;
 			}
+
+			setLabelDimension();
 		} catch (Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to render Jtree row", e);
 		}
@@ -245,7 +223,32 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		return this;
 	}
 
+	private void resetLabelFont() {
+		if(label.getFont() != labelNormalFont) {
+			label.setFont(labelNormalFont);
+		}
+	}
 
+	private void setLabelEnabled(final APreferenceStore preferenceStore, final BasePathList basePaths, IResourceHandler pathResource) {
+		if(pathResource != null) {
+			String pathresourceString = pathResource.toString();
+			label.setEnabled(true);
+			for(String basePath : basePaths) {
+				if(pathresourceString.startsWith(basePath)) {
+					boolean basePathVisible = preferenceStore.isBasePathVisible(basePath);
+					if(!basePathVisible) {
+						label.setEnabled(false);
+					}
+				}
+			}
+		}
+	}
+
+	private void setLabelDimension() {
+		Dimension textDimension = SwingUtils.getTextDimension(label.getText(), label.getFont());
+		textDimension.width += 15;
+		label.setPreferredSize(textDimension);
+	}
 
 	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final BasePathList basePaths) {
 		final String pathResourceString = StringUtils.toString(pathResourceHandler);
