@@ -115,6 +115,10 @@ public class TreeUtil {
 	 * @return <code>true</code> if the rootPath ends with a member of the given childPath and <code>false</code> otherwise.
 	 */
 	public static boolean isChild(TreePath rootPath, TreePath childPath) {
+		if(childPath == null || rootPath == null) {
+			return false;
+		}
+		
 		Object lastRootPathComponent = rootPath.getLastPathComponent();
 		TreePath childParentPath = childPath;
 		do {
