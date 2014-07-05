@@ -143,7 +143,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		final int rowCount = tree.getRowCount();
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getDummyPreferenceStore();
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final BasePathList basePaths = preferenceStore.getBasePath();
 		IResourceHandler pathResource;
 
