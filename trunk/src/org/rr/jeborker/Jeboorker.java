@@ -36,51 +36,51 @@ public class Jeboorker {
 
 	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
 			60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
-			
+
 	public static boolean isRuntime = false;
 
-	public static final String VERSION = "0.4.2";
-	
+	public static final String VERSION = "0.4.3";
+
 	public static final String APP = "Jeboorker";
-	
+
 	public static final String URL = "https://code.google.com/p/jeboorker/";
 
-	private static MainController mainController; 
-	
+	private static MainController mainController;
+
 	public static long startupTime = System.currentTimeMillis();
-	
+
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		isRuntime = true;
-		
+
 		//setup the logger
 		LoggerFactory.addHandler(new JeboorkerLogger());
 
 		setupClasspath();
-		
+
 		//Setup the location for the rar executables.
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
 			RarUtils.setRarExecFolder(getAppFolder() + File.separator + "exec");
 		} else {
 			RarUtils.setRarExecFolder("/usr/bin");
 		}
-		
+
 		boolean start = true;
 		try {
 			JUnique.acquireLock(Jeboorker.class.getName(), new MessageHandler() {
-				public String handle(String message) {			
+				public String handle(String message) {
 					if (mainController != null) {
 						java.awt.EventQueue.invokeLater(new Runnable() {
 						    @Override
 						    public void run() {
 						        int state = mainController.getMainWindow().getExtendedState();
 						        state &= ~Frame.ICONIFIED;
-						        
+
 						        mainController.getMainWindow().setExtendedState(state);
 						        mainController.getMainWindow().setFocusableWindowState(false);
-						    	mainController.getMainWindow().toFront();	
+						    	mainController.getMainWindow().toFront();
 					    		//seems to be needed to work. Don't know why.
 					    		ReflectionUtils.sleepSilent(1000);
 						    	mainController.getMainWindow().setFocusableWindowState(true);
@@ -94,46 +94,46 @@ public class Jeboorker {
 			// Application already running.
 			start = false;
 		}
-		
+
 		if(start) {
 			try {
 				logSystemInfo();
-				
+
 				mainController = MainController.getController();
 			} catch (Exception e) {
-				LoggerFactory.log(Level.SEVERE, null, "Main failed", e); 
+				LoggerFactory.log(Level.SEVERE, null, "Main failed", e);
 				System.exit(-1);
 			}
 		} else {
 			// Sends arguments to the already active instance.
 			JUnique.sendMessage(Jeboorker.class.getName(), "");
-			
+
 			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + VERSION + " is already running.");
 		}
 	}
-	
+
 	/**
-	 * Dumps the application version and the vm start parameters to the log 
+	 * Dumps the application version and the vm start parameters to the log
 	 */
 	private static void logSystemInfo() {
 		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
 		List<String> args = bean.getInputArguments();
 		String argsString = ListUtils.join(args, " ");
-		
+
 		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.VERSION + " started with " + argsString);
-		
+
 		Properties props = System.getProperties();
 		Set<Object> keys = props.keySet();
 		for(Object key : keys) {
 			Object value = props.get(key);
 			LoggerFactory.getLogger().info(StringUtils.toString(key) + "=" + StringUtils.toString(value));
 		}
-		
+
 	}
-	
+
 	/**
 	 * Get the application folder. Jeboorker must be configured that the app folder
-	 * is the current directory. 
+	 * is the current directory.
 	 */
 	public static String getAppFolder() {
 		return System.getProperties().getProperty("user.dir");
@@ -142,7 +142,7 @@ public class Jeboorker {
 	private static void setupClasspath() {
 		final String appFolder = getAppFolder();
 		final Set<String> jarFileSet = new HashSet<String>();
-		
+
 		try {
 			addPath(new File(appFolder + File.separator + "lib/"), jarFileSet);
 			addPath(new File(appFolder + File.separator + "lib/orientdb/"), jarFileSet);
@@ -150,13 +150,13 @@ public class Jeboorker {
 			addPath(new File(appFolder + File.separator + "lib/epublib/"), jarFileSet);
 			addPath(new File(appFolder + File.separator + "lib/dropbox/"), jarFileSet);
 			addPath(new File(appFolder + File.separator + "lib/jmupdf/"), jarFileSet);
-			
+
 			String nativeLibPath = appFolder + File.separator + "lib/jmupdf/";
 			ReflectionUtils.addLibraryPath(nativeLibPath);
 		} catch (Exception e1) {
-			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1); 
+			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1);
 			System.exit(-1);
-		} 
+		}
 	}
 
 	/**
@@ -167,13 +167,13 @@ public class Jeboorker {
 	public static void addPath(final File dir, final Set<String> jarFileSet) throws Exception {
 		if(dir != null && dir.isDirectory()) {
 			final File[] files = dir.listFiles(new FileFilter() {
-	
+
 				@Override
 				public boolean accept(File pathname) {
 					return pathname.getName().endsWith(".jar");
 				}
 			});
-	
+
 			if(files != null) {
 				final URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 				final Class<URLClassLoader> urlClass = URLClassLoader.class;
@@ -191,13 +191,13 @@ public class Jeboorker {
 	}
 
 	private static class ApplicationThreadFactory implements ThreadFactory {
-		
+
 		private static final AtomicInteger poolNumber = new AtomicInteger(1);
-		
+
 		private final ThreadGroup group;
-		
+
 		private final AtomicInteger threadNumber = new AtomicInteger(1);
-		
+
 		private final String namePrefix;
 
 		ApplicationThreadFactory() {
@@ -216,6 +216,6 @@ public class Jeboorker {
 			}
 			return t;
 		}
-	}	
+	}
 
 }
