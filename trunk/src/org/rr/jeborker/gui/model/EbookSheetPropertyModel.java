@@ -23,15 +23,15 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	private static final long serialVersionUID = -4633492433120559387L;
-	
+
 	protected static final Comparator<Property> PROPERTY_COMPARATOR = new MetadataPropertyComparator();
 
 	private boolean changed = false;
-	
+
 	protected IMetadataReader reader;
 
 	private IResourceHandler resourceHandler;
-	
+
 	protected List<MetadataProperty> allMetaData;
 
 	public boolean isChanged() {
@@ -50,10 +50,10 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void addProperty(int index, Property property) {
-		if(!isCoverProperty(property)) { 
+		if(!isCoverProperty(property)) {
 			super.addProperty(index, property);
 		}
-		
+
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
 			allMetaData.add(metadataProperty);
@@ -63,14 +63,14 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void addProperty(Property property) {
-		if(!isCoverProperty(property)) { 
+		if(!isCoverProperty(property)) {
 			super.addProperty(property);
 		}
-		
+
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
 			allMetaData.add(metadataProperty);
-		}		
+		}
 		changed = true;
 	}
 
@@ -81,7 +81,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
 			allMetaData.remove(metadataProperty);
-		}		
+		}
 		changed = true;
 	}
 
@@ -90,7 +90,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		super.setProperties(newProperties);
 		changed = false;
 	}
-	
+
 	/**
 	 * The rating property.
 	 * @return The desired rating property or <code>null</code> if no rating property is exists.
@@ -104,12 +104,12 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get a fake cover property if there is a cover {@link MetadataProperty} present.
 	 * The fake property did not contains any cover data.
-	 * 
-	 * @return The desired property or <code>null</code> if no cover property exists. 
+	 *
+	 * @return The desired property or <code>null</code> if no cover property exists.
 	 */
 	public Property getCoverProperty() {
 		List<MetadataProperty> allMetadata = getAllMetaData();
@@ -127,7 +127,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * The rating property.
 	 * @return The desired rating property or <code>null</code> if no rating property is exists.
@@ -140,8 +140,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			}
 		}
 		return -1;
-	}	
-	
+	}
+
 	public void loadProperties(EbookPropertyItem item) {
 		this.resourceHandler = ResourceHandlerFactory.getResourceHandler(item.getFile());
 		if(resourceHandler.exists()) {
@@ -153,7 +153,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			FileRefreshBackground.getInstance().addEbook(item);
 		}
 	}
-	
+
 	public IMetadataReader getMetadataReader() {
 		return reader;
 	}
@@ -161,11 +161,11 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public IResourceHandler getResourceHandler() {
 		return resourceHandler;
 	}
-	
+
 	/**
 	 * Get the display name for the given property.
 	 * @param property The property where the display name should be gotten for.
-	 * @return The desired display name. Never returns <code>null</code>.  
+	 * @return The desired display name. Never returns <code>null</code>.
 	 */
 	public String getDisplayName(Property property) {
 		if(property instanceof DefaultProperty) {
@@ -176,7 +176,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Get the {@link EbookPropertyItem} assigned to the given {@link Property} instance.
 	 * @param property The {@link Property} instance where none, one or more {@link EbookPropertyItem} assigned to.
@@ -189,24 +189,24 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 		return Collections.emptyList();
 	}
-	
+
 	/**
 	 * Get the {@link MetadataProperty} assigned to the given {@link Property} instance.
 	 * @param property The {@link Property} instance where none, one or more {@link MetadataProperty} assigned to.
 	 * @return The list with all assigned {@link MetadataProperty}. Never returns <code>null</code>.
-	 */	
+	 */
 	public List<MetadataProperty> getMetadataProperties(Property property) {
 		if(property instanceof EbookSheetProperty) {
 			List<MetadataProperty> metadataProperties = ((EbookSheetProperty)property).getMetadataProperties();
 			return metadataProperties;
 		}
-		return Collections.emptyList();		
+		return Collections.emptyList();
 	}
-	
+
 	public List<MetadataProperty> getAllMetaData() {
 		return allMetaData;
 	}
-	
+
 	/**
 	 * Get the cover bytes from the metadata.
 	 * @return The desired cover bytes or <code>null</code> if no cover bytes are present.
@@ -238,24 +238,24 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		if(resourceHandler == null) {
 			return new Property[0];
 		}
-		
+
 		final List<Property> properties = setupMetadata(Collections.singletonList(item), reader);
-		
+
 		final DefaultProperty fileNameProperty = new DefaultProperty();
 		fileNameProperty.setDisplayName(Bundle.getString("EbookPropertySheetProperty.property.name.file"));
 		fileNameProperty.setName("file");
 		fileNameProperty.setEditable(false);
 		fileNameProperty.setDeletable(false);
 		fileNameProperty.setValue(resourceHandler);
-		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : "");		
+		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : "");
 		properties.add(fileNameProperty);
-		
+
 		Collections.sort(properties, PROPERTY_COMPARATOR);
-		
+
 		return properties.toArray(new Property[properties.size()]);
-	}	
-	
-	
+	}
+
+
 	/**
 	 * attaches a property for each metadata item of the resource given with the
 	 * resourceLoader parameter.
@@ -265,7 +265,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	protected List<Property> setupMetadata(final List<EbookPropertyItem> items, final IMetadataReader reader) {
 		final ArrayList<Property> result = new ArrayList<Property>(items.size() + 1);
 		final List<MetadataProperty> allMetaData = new ArrayList<MetadataProperty>(this.allMetaData = reader.readMetaData());
-		
+
 		for (int i = 0; i < allMetaData.size(); i++) {
 			final MetadataProperty metadataProperty = allMetaData.get(i);
 			final List<Object> values = metadataProperty.getValues();
@@ -274,7 +274,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				List<MetadataProperty> mergedProperties = MetadataUtils.getSameProperties(metadataProperty, allMetaData);
 				if(mergedProperties.size() > 1) {
 					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties, items);
-					result.add(property);					
+					result.add(property);
 					allMetaData.removeAll(mergedProperties);
 					i--;
 				} else {
@@ -284,24 +284,24 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			} else {
 				for (int j=0; j < values.size(); j++) {
 					Property property = createProperty(metadataProperty, items, j);
-					result.add(property);				
+					result.add(property);
 				}
 			}
 		}
-		
+
 		this.removeCoverProperty(result);
-		
+
 		return result;
 	}
-	
+
 	protected void removeCoverProperty(List<Property> result) {
 		for(Property property : new ArrayList<Property>(result)) {
 			if(isCoverProperty(property)) {
 				result.remove(property);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * tests if the given {@link Property} instance is a cover property instance.
 	 * @param property The {@link Property} instance to be tested.
@@ -310,14 +310,14 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	private boolean isCoverProperty(Property property) {
 		if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(property.getName())) {
 			return true;
-		}		
+		}
 		return false;
 	}
 
 	public static Property createProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, int valueIndex) {
 		return new EbookSheetProperty(metadataProperty, items, valueIndex);
-	}	
-	
+	}
+
 	protected static class MetadataPropertyComparator implements Comparator<Property> {
 
 		@Override
@@ -326,7 +326,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			String name2 = getOrderValue(p2);
 			return name1.compareTo(name2);
 		}
-		
+
 		private String getOrderValue(Property p1) {
 			String name1 = StringUtils.toString(p1.getName()).toLowerCase();
 			if(name1.equals("file")) {
@@ -339,8 +339,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				return "50" + name1;
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * This {@link EbookSheetProperty} derivat can handle multiple {@link MetadataProperty} instances.
 	 * The first instance in the given {@link MetadataProperty} array is this one, where the name
@@ -350,9 +350,9 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	protected static class MultipleEbookSheetProperty extends EbookSheetProperty {
 
 		private static final long serialVersionUID = 3047729348480097722L;
-		
+
 		final List<MetadataProperty> metadataProperties;
-		                                                                     
+
 		public MultipleEbookSheetProperty(final List<MetadataProperty> metadataProperties, final List<EbookPropertyItem> items) {
 			super(metadataProperties.get(0), items, 0);
 			this.metadataProperties = metadataProperties;
@@ -365,32 +365,32 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 		@Override
 		public void setValue(Object value) {
+			super.setValue(value);
 			if(value!=null && !value.equals(getValue())) {
 				for (MetadataProperty metadataProperty : metadataProperties) {
 					metadataProperty.setValue(value, 0);
 				}
-				
-				this.setChanged(true);	
+
+				this.setChanged(true);
 			}
-			super.setValue(value);
 		}
-		
+
 		/**
 		 * Gets the encapsulated {@link MetadataProperty} which holds the current value state.
 		 * @return The encapsulated {@link MetadataProperty} or <code>null</code> if no one existing.
 		 */
 		public List<MetadataProperty> getMetadataProperties() {
 			return metadataProperties;
-		}		
+		}
 	}
-	
+
 	public void dispose() {
 		super.dispose();
 		if(this.reader != null) {
 			this.reader = null;
 		}
 	}
-	
+
 	/**
 	 * search for the property which has the ebook file as value
 	 * @param properties The properties to be searched.
@@ -403,13 +403,13 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				return Collections.singletonList((IResourceHandler) property.getValue());
 			}
 		}
-		
+
 		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		final List<IResourceHandler> result = new ArrayList<IResourceHandler>(selectedEbookPropertyItems.size());
 		for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
 			result.add(ebookPropertyItem.getResourceHandler());
 		}
 		return result;
-	}	
+	}
 
 }

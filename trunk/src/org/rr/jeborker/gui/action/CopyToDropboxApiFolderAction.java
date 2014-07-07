@@ -34,12 +34,12 @@ import com.dropbox.client2.session.WebAuthSession;
 import com.dropbox.client2.session.WebAuthSession.WebAuthInfo;
 
 public class CopyToDropboxApiFolderAction extends AbstractAction {
-	
+
 	private static final String DROPBOX_AUTH_SECRET = "dropboxAuthSecret";
 	private static final String DROPBOX_AUTH_KEY = "dropboxAuthKey";
 	private static final AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 	private static DropboxAPI<WebAuthSession> mDBApi;
-	    
+
 	//source file to copy
 	String source;
 
@@ -47,7 +47,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 		this.source = text;
 		putValue(Action.NAME, Bundle.getString("CopyToDropboxAction.name"));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("copy_dropbox_16.png"));
-		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("copy_dropbox_22.png"));		
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("copy_dropbox_22.png"));
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
         try {
         	String message = Bundle.getFormattedString("CopyToDropboxAction.uploading", resource.getName());
         	MainController.getController().getProgressMonitor().monitorProgressStart(message);
-        	
+
 			doUpload(resource);
 		} catch (Exception ex) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Upload failed", ex);
@@ -68,30 +68,30 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	/**
 	 * Uploads the given {@link IResourceHandler} to the dropbox folder of the application.
 	 * @param resource The resource to be uploaded.
-	 * 
+	 *
 	 * @see http://aaka.sh/patel/2011/12/20/authenticating-dropbox-java-api/
 	 * @see http://berry120.blogspot.de/2012/02/dropbox-java-api.html
 	 */
 	private void doUpload(IResourceHandler resource) throws DropboxException, MalformedURLException, IOException, URISyntaxException {
 		// https://www.dropbox.com/developers
 		AppKeyPair appKey = new AppKeyPair(StringUtils.rot13("m8zitanp9n1p5nq"), StringUtils.rot13("gz585xxj5gp98qe"));
-		
+
         WebAuthSession session = new WebAuthSession(appKey, ACCESS_TYPE);
         WebAuthInfo authInfo = session.getAuthInfo();
         RequestTokenPair pair = authInfo.requestTokenPair;
         mDBApi = new DropboxAPI<WebAuthSession>(session);
         InputStream inputStream = resource.getContentInputStream();
         @SuppressWarnings("unused") Entry newEntry;
-        
+
         try {
         	final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-	        if(preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY) != null && !preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY).isEmpty()) {
+        	if(StringUtils.isNotEmpty(preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY))) {
 	        	// re-auth specific stuff
 	        	try {
 	        		reauthToDropbox();
-	        		
+
 	        		//throws the DropboxUnlinkedException if auth was detracted.
-	        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null); 
+	        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
 	        	} catch(DropboxUnlinkedException e) {
 	        		// retry with an auth if the old auth are no longer be valid.
 	        		authToDropbox(session, authInfo, pair);
@@ -125,15 +125,15 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 			MalformedURLException, DropboxException {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		SwingUtils.openURL(authInfo.url);
-		
+
 		JOptionPane.showMessageDialog(MainController.getController().getMainWindow(), Bundle.getString("CopyToDropboxAction.auth"));
 		session.retrieveWebAccessToken(pair);
-    
+
 		AccessTokenPair tokens = session.getAccessTokenPair();
-		
+
 		// Use this token pair in future so you don't have to re-authenticate each time:
 		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_KEY, tokens.key);
 		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_SECRET, tokens.secret);
-	}	
-	
+	}
+
 }

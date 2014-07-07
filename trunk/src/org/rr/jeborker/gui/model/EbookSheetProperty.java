@@ -20,18 +20,18 @@ import com.l2fprod.common.propertysheet.DefaultProperty;
 class EbookSheetProperty extends DefaultProperty {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final List<EbookPropertyItem> items;
-	
+
 	protected MetadataProperty metadataProperty;
-	
+
 	protected int propertyIndex;
-	
+
 	/**
-	 * Flags that tells that the value for this property has changed 
+	 * Flags that tells that the value for this property has changed
 	 */
 	private boolean changed = false;
-	
+
 	public EbookSheetProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, final int propertyIndex) {
 		this.metadataProperty = metadataProperty;
 		this.propertyIndex = propertyIndex;
@@ -39,7 +39,7 @@ class EbookSheetProperty extends DefaultProperty {
 		this.setEditable(metadataProperty.isEditable());
 		this.setDeletable(metadataProperty.isDeletable());
 	}
-	
+
 	/**
 	 * Get the {@link EbookPropertyItem} for this property.
 	 * @return The desired {@link EbookPropertyItem}.
@@ -51,7 +51,7 @@ class EbookSheetProperty extends DefaultProperty {
 	void firePropertyChanged(Object oldValue, Object newValue) {
 		firePropertyChange(oldValue, newValue);
 	}
-	
+
 	/**
 	 * Tells if the property value has changed.
 	 * @return <code>true</code> if the property value has changed and <code>false</code> otherwise.
@@ -67,21 +67,20 @@ class EbookSheetProperty extends DefaultProperty {
 	@Override
 	public void setValue(Object value) {
 		Object editorValue = getValue();
-		System.out.println(editorValue + "/" + value);
 		if(value instanceof Date && editorValue instanceof Date) {
 			if(!DateUtils.equals((Date) value, (Date) editorValue)) {
 				metadataProperty.setValue(value, this.propertyIndex);
-				this.setChanged(true);	
+				this.setChanged(true);
 			} else {
 				this.setChanged(false);
 				return;
 			}
 		} else if (value != null && !value.equals(editorValue)) {
 			metadataProperty.setValue(value, this.propertyIndex);
-			this.setChanged(true);	
+			this.setChanged(true);
 		} else if(value == null) {
 			metadataProperty.setValue(value, this.propertyIndex);
-			this.setChanged(true);	
+			this.setChanged(true);
 		} else {
 			this.setChanged(false);
 			return;
@@ -94,7 +93,7 @@ class EbookSheetProperty extends DefaultProperty {
 		String name = metadataProperty.getName();
 		return name;
 	}
-	
+
 	@Override
 	public String getShortDescription() {
 		final StringBuilder value = new StringBuilder();
@@ -119,7 +118,7 @@ class EbookSheetProperty extends DefaultProperty {
 			}
 			value.append(StringUtils.toString(metadataProperty.getValues().get(lpropertyIndex)));
 		}
-		
+
 		return value.toString();
 	}
 
@@ -129,15 +128,15 @@ class EbookSheetProperty extends DefaultProperty {
 
 		String localizedName = MainController.getController().getLocalizedString(name);
 		if(!isMultiSelection() && metadataProperty.getValues().size() > 1) {
-			localizedName = (this.propertyIndex + 1) + ") " + StringUtils.toString(localizedName); 
+			localizedName = (this.propertyIndex + 1) + ") " + StringUtils.toString(localizedName);
 		}
-		
+
 		return StringUtils.toString(localizedName);
 	}
 
 	public String getDisplayDescriptionName() {
 		final String name = metadataProperty.getName();
-		
+
 		String localizedName = getDisplayName();
 		localizedName += "</b><i> &lt;" + name+"&gt;</i><b>";
 		return localizedName;
@@ -156,7 +155,7 @@ class EbookSheetProperty extends DefaultProperty {
 			return metadataProperty.getValues().get(propertyIndex);
 		} else {
 			final List<Object> values = metadataProperty.getValues();
-			return values;			
+			return values;
 		}
 	}
 
@@ -173,10 +172,10 @@ class EbookSheetProperty extends DefaultProperty {
 	public List<MetadataProperty> getMetadataProperties() {
 		return Arrays.asList(this.metadataProperty);
 	}
-	
+
 	/**
-	 * Tells if there is currently more than one entry selected. 
-	 * @return <code>true</code> if more than one value is selected and <code>false</code> otherwise. 
+	 * Tells if there is currently more than one entry selected.
+	 * @return <code>true</code> if more than one value is selected and <code>false</code> otherwise.
 	 */
 	private boolean isMultiSelection() {
 		return MainController.getController().getSelectedEbookPropertyItemRows().length > 1;
