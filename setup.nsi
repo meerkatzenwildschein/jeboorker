@@ -100,6 +100,7 @@ Section -Main SEC0000
     File doc\license\BoneCP_ApacheV2_license.txt
     File doc\license\Gson_Apache_license.txt
     File doc\license\Jpushbullet_Apache_license.txt
+    File doc\license\Commons-Codec_license.txt
 
     SetOutPath $INSTDIR\exec
     File 'exec\Rar.exe'
