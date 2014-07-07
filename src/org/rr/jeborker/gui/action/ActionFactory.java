@@ -311,6 +311,27 @@ public class ActionFactory {
 			public boolean hasMultiSelectionSupport() {
 				return true;
 			}
+		},COPY_TO_PUSHBULLET_ACTION {
+
+			@Override
+			public Class<? extends Action> getActionClass() {
+				return CopyToPusbulletApiFolderAction.class;
+			}
+
+			@Override
+			public boolean canHandle(EbookPropertyItem item) {
+				return item.getResourceHandler().isFileResource();
+			}
+
+			@Override
+			public boolean canHandle(IResourceHandler resourceHandler) {
+				return resourceHandler.isFileResource();
+			}
+
+			@Override
+			public boolean hasMultiSelectionSupport() {
+				return true;
+			}
 		},
 		COPY_TO_TARGET_ACTION {
 

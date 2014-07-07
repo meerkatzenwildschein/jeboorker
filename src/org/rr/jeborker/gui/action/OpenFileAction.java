@@ -8,8 +8,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.utils.DesktopUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class OpenFileAction extends AbstractAction {

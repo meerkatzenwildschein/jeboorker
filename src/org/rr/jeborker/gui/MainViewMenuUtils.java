@@ -89,6 +89,30 @@ class MainViewMenuUtils {
 		return new JMenuItem(action);
 	}
 
+	static Action createCopyToDropboxAction(List<EbookPropertyItem> items, List<IResourceHandler> selectedTreeItems, int[] selectedEbookPropertyItemRows) {
+		if(items.isEmpty()) {
+			return ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, selectedTreeItems);
+		} else {
+			return ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
+		}
+	}
+
+	static Action createCopyToPushbulletAction(List<EbookPropertyItem> items, List<IResourceHandler> selectedTreeItems, int[] selectedEbookPropertyItemRows) {
+		if(items.isEmpty()) {
+			return ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_PUSHBULLET_ACTION, selectedTreeItems);
+		} else {
+			return ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_PUSHBULLET_ACTION, items, selectedEbookPropertyItemRows);
+		}
+	}
+
+	static Action createCopyToTargetAction(List<EbookPropertyItem> items, List<IResourceHandler> selectedTreeItems, int[] selectedEbookPropertyItemRows) {
+		if(items.isEmpty()) {
+			return ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
+		} else {
+			return ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
+		}
+	}
+
 	/**
 	 * Creates the <code>copy to</code> menu with all sub menu targets.
 	 */
@@ -102,20 +126,11 @@ class MainViewMenuUtils {
 
 		copyToSubMenu.setIcon(ImageResourceBundle.getResourceAsImageIcon("copy_16.png"));
 		copyToSubMenu.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
-		Action action;
 
-		if(items.isEmpty()) {
-			action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, selectedTreeItems);
-		} else {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_DROPBOX_ACTION, items, selectedEbookPropertyItemRows);
-		}
-		copyToSubMenu.add(action);
+		copyToSubMenu.add(createCopyToDropboxAction(items, selectedTreeItems, selectedEbookPropertyItemRows));
+		copyToSubMenu.add(createCopyToPushbulletAction(items, selectedTreeItems, selectedEbookPropertyItemRows));
 
-		if(items.isEmpty()) {
-			action = ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, selectedTreeItems);
-		} else {
-			action = ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.COPY_TO_TARGET_ACTION, items, selectedEbookPropertyItemRows);
-		}
+		Action action = createCopyToTargetAction(items, selectedTreeItems, selectedEbookPropertyItemRows);
 		IResourceHandler homeFolder = ResourceHandlerFactory.getResourceHandler(System.getProperty("user.home"));
 		action.putValue(Action.NAME, Bundle.getString("MainMenuBarController.userhome"));
 		action.putValue("TARGET", homeFolder);
