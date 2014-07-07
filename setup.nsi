@@ -61,7 +61,7 @@ Section -Main SEC0000
     File Jeboorker.vbs
     File Jeboorker.exe
     File Readme.txt
-    
+
     SetOutPath $INSTDIR\doc\license
     File doc\license\Bounce_license.txt
     File doc\license\Commons-Logging_license.txt
@@ -98,11 +98,13 @@ Section -Main SEC0000
     File doc\license\WebLookAndFeel_GPL3_license.txt
     File doc\license\Ormlite_ISC_license.txt
     File doc\license\BoneCP_ApacheV2_license.txt
-    
+    File doc\license\Gson_Apache_license.txt
+    File doc\license\Jpushbullet_Apache_license.txt
+
     SetOutPath $INSTDIR\exec
     File 'exec\Rar.exe'
     File 'exec\UnRAR.exe'
-    
+
     RMDir /r $INSTDIR\lib
     SetOutPath $INSTDIR\lib
     File lib\bcprov-jdk15on-147.jar
@@ -135,14 +137,14 @@ Section -Main SEC0000
     File lib\ormlite-core-4.48.jar
     File lib\ormlite-jdbc-4.48.jar
     File lib\weblaf-1.27.jar
-    
+
     RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
     File lib\jmupdf\jmupdf.jar
     File lib\jmupdf\jmupdf-viewer.jar
     File lib\jmupdf\jmupdf32.dll
     File lib\jmupdf\jmupdf64.dll
-    
+
     RMDir /r $INSTDIR\lib\dropbox
     SetOutPath $INSTDIR\lib\dropbox
     File lib\dropbox\dropbox-java-sdk-1.5.3.jar
@@ -150,13 +152,13 @@ Section -Main SEC0000
     File lib\dropbox\httpcore-4.0.1.jar
     File lib\dropbox\httpmime-4.0.3.jar
     File lib\dropbox\json_simple-1.1.jar
-    
+
     RMDir /r $INSTDIR\lib\epublib
     SetOutPath $INSTDIR\lib\epublib
     File lib\epublib\commons-vfs-1.0.jar
     File lib\epublib\htmlcleaner-2.2.jar
     File lib\epublib\kxml2-2.2.2.jar
-        
+
     SetOutPath $INSTDIR\lib\epubcheck
     File lib\epubcheck\epubcheck-1.2.jar
     File lib\epubcheck\jing.jar
