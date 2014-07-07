@@ -22,7 +22,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;
 
-public abstract class PDFCommonDocument {
+public abstract class PDFDocument {
 
 	public static final int ITEXT = 0;
 	
@@ -40,11 +40,11 @@ public abstract class PDFCommonDocument {
 	
 	protected byte[] xmpMetadata;
 	
-	public static PDFCommonDocument getPDFCommonDocumentInstance(int type, IResourceHandler pdfFile) {
-		PDFCommonDocument result = null;
+	public static PDFDocument getPDFCommonDocumentInstance(int type, IResourceHandler pdfFile) {
+		PDFDocument result = null;
 		switch(type) {
 		case ITEXT:
-			result = new PDFCommonDocument.ItextPDFDocument();
+			result = new PDFDocument.ItextPDFDocument();
 			break;
 		}
 		result.setResourceHandler(pdfFile);
@@ -52,7 +52,7 @@ public abstract class PDFCommonDocument {
 	}
 	
 	/**
-	 * Set the pdf file containing the pdf data used for the {@link PDFCommonDocument} instance.
+	 * Set the pdf file containing the pdf data used for the {@link PDFDocument} instance.
 	 * @param pdfFile The pdf file to be used.
 	 */
 	protected void setResourceHandler(IResourceHandler pdfFile)  {
@@ -60,8 +60,8 @@ public abstract class PDFCommonDocument {
 	}
 	
 	/**
-	 * get the pdf file for this {@link PDFCommonDocument} instance.
-	 * @return The desired {@link PDFCommonDocument}.
+	 * get the pdf file for this {@link PDFDocument} instance.
+	 * @return The desired {@link PDFDocument}.
 	 */
 	public IResourceHandler getResourceHandler() {
 		return this.pdfFile;
@@ -99,7 +99,7 @@ public abstract class PDFCommonDocument {
 	 */
 	public abstract void write() throws IOException;
 	
-	private static class ItextPDFDocument extends PDFCommonDocument {
+	private static class ItextPDFDocument extends PDFDocument {
 
 		private PdfReader pdfReaderI;
 		
@@ -191,7 +191,7 @@ public abstract class PDFCommonDocument {
 		
 		public byte[] fetchCoverFromPDFContent() throws IOException {
 			try {
-				PDFCommonRenderer renderer = PDFCommonRenderer.getPDFRendererInstance(getResourceHandler());				
+				PDFRenderer renderer = PDFRenderer.getPDFRendererInstance(getResourceHandler());				
 				return renderer.renderPagetoJpeg(1);
 			} catch (Throwable e) {
 				LoggerFactory.log(Level.WARNING, this, "could not render PDF " + getResourceHandler());

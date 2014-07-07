@@ -22,7 +22,7 @@ import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.metadata.pdf.PDFCommonDocument;
+import org.rr.jeborker.metadata.pdf.PDFDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -33,11 +33,11 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 
 	private IResourceHandler ebookResource;
 	
-	private PDFCommonDocument pdfDoc;
+	private PDFDocument pdfDoc;
 
 	PDFCommonMetadataReader(final IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
-		this.pdfDoc = PDFCommonDocument.getPDFCommonDocumentInstance(PDFCommonDocument.ITEXT, ebookResource);
+		this.pdfDoc = PDFDocument.getPDFCommonDocumentInstance(PDFDocument.ITEXT, ebookResource);
 	}
 	
 	@Override

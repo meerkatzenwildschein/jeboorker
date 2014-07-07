@@ -17,7 +17,7 @@ import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.metadata.pdf.PDFCommonDocument;
+import org.rr.jeborker.metadata.pdf.PDFDocument;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageInfo;
 import org.rr.pm.image.ImageProviderFactory;
@@ -29,11 +29,11 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 
 	private IResourceHandler ebookResource;
 	
-	private PDFCommonDocument pdfDoc;
+	private PDFDocument pdfDoc;
 
 	PDFCommonMetadataWriter(final IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
-		this.pdfDoc = PDFCommonDocument.getPDFCommonDocumentInstance(PDFCommonDocument.ITEXT, ebookResource);
+		this.pdfDoc = PDFDocument.getPDFCommonDocumentInstance(PDFDocument.ITEXT, ebookResource);
 	}
 
 	@Override

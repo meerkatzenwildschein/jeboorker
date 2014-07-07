@@ -14,7 +14,7 @@ import com.jmupdf.interfaces.Page;
 import com.jmupdf.interfaces.PagePixels;
 import com.jmupdf.page.PageRect;
 
-class JMuPDFRenderer extends PDFCommonRenderer {
+class JMuPDFRenderer extends PDFRenderer {
 
 	public byte[] renderPagetoJpeg(int pageNumber) {
 		BufferedImage image;
