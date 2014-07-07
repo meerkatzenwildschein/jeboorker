@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.jeborker.metadata.pdf.PDFCommonRenderer;
+import org.rr.jeborker.metadata.pdf.PDFRenderer;
 
 /**
  * Provides an object to decode pdf files and provide a rasterizer if required -
@@ -19,7 +19,7 @@ import org.rr.jeborker.metadata.pdf.PDFCommonRenderer;
  */
 public class PdfDecoder extends JPanel {
 
-	private PDFCommonRenderer pdfRendererInstance;
+	private PDFRenderer pdfRendererInstance;
 
 	private BufferedImage currentPage;
     /**
@@ -29,7 +29,7 @@ public class PdfDecoder extends JPanel {
      * closePdfFile() to Java will not release all the memory
      */
 	public void openPdfFile(IResourceHandler filePath) {
-		pdfRendererInstance = PDFCommonRenderer.getPDFRendererInstance(filePath);
+		pdfRendererInstance = PDFRenderer.getPDFRendererInstance(filePath);
 	}
 
     /**
