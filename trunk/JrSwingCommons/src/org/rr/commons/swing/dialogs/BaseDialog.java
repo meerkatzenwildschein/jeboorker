@@ -49,7 +49,7 @@ import com.l2fprod.common.swing.ButtonAreaLayout;
 /**
  * An extension of the <code>JDialog</code> with built-in support for
  * OK/CANCEL/CLOSE buttons.
- * 
+ *
  * <code>BaseDialog</code> adds:
  * <ul>
  * <li>support for ESCAPE key to dispose the window</li>
@@ -100,18 +100,18 @@ public class BaseDialog extends JDialog {
   }
 
   public BaseDialog(Dialog owner) throws HeadlessException {
-    super(owner);
+    super(owner, true);
     buildUI();
   }
 
   public static BaseDialog newBaseDialog(Component parent) {
     Window window = parent instanceof Window?(Window)parent
       :(Window)SwingUtilities.getAncestorOfClass(Window.class, parent);
-    
+
     if (window instanceof Frame) {
       return new BaseDialog((Frame)window);
     } else if (window instanceof Dialog) {
-      return new BaseDialog((Dialog)window);      
+      return new BaseDialog((Dialog)window);
     } else {
       return new BaseDialog();
     }
@@ -123,7 +123,7 @@ public class BaseDialog extends JDialog {
   }
 
   public BaseDialog(Frame owner) throws HeadlessException {
-    super(owner);
+    super(owner, true);
     buildUI();
   }
 
@@ -133,7 +133,7 @@ public class BaseDialog extends JDialog {
   }
 
   public BaseDialog(Dialog owner, String title) throws HeadlessException {
-    super(owner, title);
+    super(owner, title, true);
     buildUI();
   }
 
@@ -144,7 +144,7 @@ public class BaseDialog extends JDialog {
   }
 
   public BaseDialog(Frame owner, String title) throws HeadlessException {
-    super(owner, title);
+    super(owner, title, true);
     buildUI();
   }
 
@@ -209,7 +209,7 @@ public class BaseDialog extends JDialog {
   /**
    * Sets the mode of this dialog. Default mode is
    * {@link BaseDialog#OK_CANCEL_DIALOG}
-   * 
+   *
    * @param mode {@link BaseDialog#OK_CANCEL_DIALOG}or
    *          {@link BaseDialog#CLOSE_DIALOG}
    */
@@ -251,14 +251,14 @@ public class BaseDialog extends JDialog {
 
   /**
    * Gets this dialog mode
-   * 
+   *
    * @return this dialog mode
    */
   public int getDialogMode() {
     return mode;
   }
 
-  
+
   public int getReturnValue() {
 	  if(cancelClicked) {
 		  return JFileChooser.CANCEL_OPTION;
@@ -266,7 +266,7 @@ public class BaseDialog extends JDialog {
 		  return JFileChooser.APPROVE_OPTION;
 	  }
   }
-  
+
   /**
    * Centers this dialog on screen.
    */
