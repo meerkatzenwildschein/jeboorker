@@ -138,6 +138,9 @@ Section -Main SEC0000
     File lib\ormlite-core-4.48.jar
     File lib\ormlite-jdbc-4.48.jar
     File lib\weblaf-1.27.jar
+    File lib\commons-codec-1.6.jar
+    File lib\jpushbullet.jar
+    File lib\gson-2.2.4.jar
 
     RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
@@ -153,6 +156,7 @@ Section -Main SEC0000
     File lib\dropbox\httpcore-4.0.1.jar
     File lib\dropbox\httpmime-4.0.3.jar
     File lib\dropbox\json_simple-1.1.jar
+    File lib\dropbox\apache-mime4j-0.6.jar
 
     RMDir /r $INSTDIR\lib\epublib
     SetOutPath $INSTDIR\lib\epublib
