@@ -22,6 +22,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.metadata.pdf.PDFUtils;
 
+import bd.amazed.pdfscissors.pdf.PdfDecoder;
 import bd.amazed.pdfscissors.pdf.PdfException;
 
 import com.itextpdf.text.Document;
@@ -45,7 +46,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PdfCropper {
 
 	private IResourceHandler mainFile;
-	private PdfDecoderMod pdfDecoder;
+	private PdfDecoder pdfDecoder;
 	private boolean isCancel;
 
 	public PdfCropper(IResourceHandler file) {
@@ -57,7 +58,7 @@ public class PdfCropper {
 
 	public BufferedImage getImage(PropertyChangeListener listener, PageGroup pageGroup) throws PdfException {
 		int endPage = pageGroup.getLastPage();
-		PdfDecoderMod pdfDecoder = getPdfDecoder();
+		PdfDecoder pdfDecoder = getPdfDecoder();
 		BufferedImage lastPage = pdfDecoder.getPageAsImage(endPage);
 
 		if (lastPage != null) {
@@ -90,9 +91,9 @@ public class PdfCropper {
 		return lastPage;
 	}
 
-	private PdfDecoderMod getPdfDecoder() throws PdfException {
+	private PdfDecoder getPdfDecoder() throws PdfException {
 		if (pdfDecoder == null) {
-			pdfDecoder = new PdfDecoderMod(true);
+			pdfDecoder = new PdfDecoder();
 			try {
 				pdfDecoder.openPdfFile(mainFile);
 			} catch (RuntimeException ex) {
