@@ -8,8 +8,8 @@ import java.util.logging.Level;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.DesktopUtils;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
 
