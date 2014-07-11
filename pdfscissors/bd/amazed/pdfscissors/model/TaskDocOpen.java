@@ -12,8 +12,8 @@ import javax.swing.SwingWorker;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
-import bd.amazed.pdfscissors.pdf.DocumentCropper;
-import bd.amazed.pdfscissors.pdf.DocumentInfo;
+import bd.amazed.pdfscissors.doc.DocumentCropper;
+import bd.amazed.pdfscissors.doc.DocumentInfo;
 
 public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
@@ -83,7 +83,7 @@ public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
 				if (pageGroups != null && !isCancelled) {
 					Model.getInstance().setDoc(docFile, pageGroups);
 				} else {
-					Model.getInstance().setDocLoadFailed(originalFile, new bd.amazed.pdfscissors.pdf.ScissorsDocumentException("Failed to extract image. Check if PDF is password protected or corrupted."));
+					Model.getInstance().setDocLoadFailed(originalFile, new bd.amazed.pdfscissors.doc.ScissorsDocumentException("Failed to extract image. Check if PDF is password protected or corrupted."));
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace(); // ignore

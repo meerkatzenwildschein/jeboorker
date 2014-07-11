@@ -25,8 +25,8 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
-import bd.amazed.pdfscissors.pdf.DocumentCropper;
-import bd.amazed.pdfscissors.pdf.DocumentInfo;
+import bd.amazed.pdfscissors.doc.DocumentCropper;
+import bd.amazed.pdfscissors.doc.DocumentInfo;
 
 import com.j256.ormlite.stmt.Where;
 

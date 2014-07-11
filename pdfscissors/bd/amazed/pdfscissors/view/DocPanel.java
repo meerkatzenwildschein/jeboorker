@@ -18,21 +18,21 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
+import bd.amazed.pdfscissors.doc.DocumentInfo;
+import bd.amazed.pdfscissors.doc.JDocumentDecoderPanel;
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
 import bd.amazed.pdfscissors.model.RectChangeListener;
-import bd.amazed.pdfscissors.pdf.JDocumentDecoderPanel;
-import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
 /**
  *
  * @author Gagan
  */
-public class PdfPanel extends JDocumentDecoderPanel implements ModelListener, RectChangeListener, UIHandlerListener {
+public class DocPanel extends JDocumentDecoderPanel implements ModelListener, RectChangeListener, UIHandlerListener {
 
 	protected UIHandler uiHandler;
 
-	public PdfPanel(UIHandler uiHandler) {
+	public DocPanel(UIHandler uiHandler) {
 		super();
 		this.uiHandler = uiHandler;
 		MouseHandler handler = new MouseHandler();
@@ -41,7 +41,7 @@ public class PdfPanel extends JDocumentDecoderPanel implements ModelListener, Re
 	}
 
 	private void debug(String string) {
-		LoggerFactory.getLogger(PdfPanel.class).log(Level.INFO, string);
+		LoggerFactory.getLogger(DocPanel.class).log(Level.INFO, string);
 	}
 
 	@Override
@@ -226,7 +226,7 @@ public class PdfPanel extends JDocumentDecoderPanel implements ModelListener, Re
 				}
 			} else {
 				Rect newRect = new Rect(curPt, uiHandler); // create rect here
-				newRect.addListener(PdfPanel.this);
+				newRect.addListener(DocPanel.this);
 				uiHandler.addRect(newRect);
 				uiHandler.setSelectedRect(newRect);
 				dragStatus = DRAG_CREATE; // drag will create (resize) this rect
