@@ -3,14 +3,17 @@ package org.rr.jeborker.app.preferences;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.rr.commons.collection.ListenerList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileWatchService;
@@ -267,6 +270,33 @@ public abstract class APreferenceStore {
 		}
 
 		return configDir;
+	}
+
+	/**
+	 * Stores location and size of the given windows under the given key.
+	 * @param key The unique key where the window location adn size are stored.
+	 * @param window The window which location and size should be stored.
+	 */
+	public void storeWindowLocationAndSize(String key, Window window) {
+		Point location = window.getLocation();
+		Dimension size = window.getSize();
+		List<Integer> values = Arrays.asList(new Integer[] { Integer.valueOf(location.x), Integer.valueOf(location.y), Integer.valueOf(size.width),
+				Integer.valueOf(size.height) });
+		addGenericEntryAsString(key, ListUtils.join(values, ";"));
+	}
+
+	/**
+	 * Restores the size and location previously stored with the {@link #storeWindowLocationAndSize(String, Window)} method.
+	 * @param key The key where the location and size was previously stored
+	 * @param window The window where the location and size should be applied to.
+	 */
+	public void restoreWindowLocationAndSize(String key, Window window) {
+		String sizeAndLocation = getGenericEntryAsString(key);
+		if(StringUtils.isNotEmpty(sizeAndLocation)) {
+			List<String> s = ListUtils.split(sizeAndLocation, ";");
+			window.setLocation(new Point(NumberUtils.toInt(s.get(0)), NumberUtils.toInt(s.get(1))));
+			window.setSize(NumberUtils.toInt(s.get(2)), NumberUtils.toInt(s.get(3)));
+		}
 	}
 
 	/**
