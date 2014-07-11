@@ -55,10 +55,10 @@ class PdfCropper extends DocumentCropper {
 	}
 
 	@Override
-	public void cropPdf(DocumentInfo pdfFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth,
+	public void crop(DocumentInfo pdfFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth,
 			int viewHeight, ProgressMonitor progressMonitor) throws IOException, DocumentException {
 		IResourceHandler originalFile = pdfFile.getOriginalFile();
-		HashMap<String, String> pdfInfo = pdfFile.getPdfInfo();
+		HashMap<String, String> pdfInfo = pdfFile.getDocInfo();
 
 		PdfReader reader1 = PDFUtils.getReader(originalFile.toFile());
 		PdfReader reader2 = null;
@@ -214,7 +214,7 @@ class PdfCropper extends DocumentCropper {
 			// put the information, like author name etc.
 			HashMap<String, String> info = reader.getInfo();
 			DocumentInfo docFile = new DocumentInfo(mainFile, mainFile, endPage);
-			docFile.setPdfInfo(info);
+			docFile.setDocInfo(info);
 			docFile.setPageCount(endPage);
 			docFile.setNormalizedWidth(Math.abs(maxBoundingBox.getWidth()));
 			docFile.setNormalizedHeight(Math.abs(maxBoundingBox.getHeight()));

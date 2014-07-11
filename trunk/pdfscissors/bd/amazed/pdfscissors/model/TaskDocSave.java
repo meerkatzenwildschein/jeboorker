@@ -30,10 +30,10 @@ import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
 import com.j256.ormlite.stmt.Where;
 
-public class TaskPdfSave extends SwingWorker<Boolean, Void> {
+public class TaskDocSave extends SwingWorker<Boolean, Void> {
 
-	private static final String QUERY_IDENTIFER = TaskPdfSave.class.getName();
-	private DocumentInfo pdfFile;
+	private static final String QUERY_IDENTIFER = TaskDocSave.class.getName();
+	private DocumentInfo docFile;
 	private File targetFile;
 	PageRectsMap pageRectsMap;
 	private int viewWidth;
@@ -43,9 +43,9 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 
 	ProgressMonitor progressMonitor;
 
-	public TaskPdfSave(DocumentInfo pdfFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight,
+	public TaskDocSave(DocumentInfo docFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight,
 			Component owner) {
-		this.pdfFile = pdfFile;
+		this.docFile = docFile;
 		this.targetFile = targetFile;
 		this.pageRectsMap = pageRectsMap;
 		this.owner = owner;
@@ -60,7 +60,7 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 		debug("Cropping to " + targetFile + "...");
 		try {
 			FileRefreshBackground.setDisabled(true);
-			DocumentCropper.getCropper(pdfFile.getOriginalFile()).cropPdf(pdfFile, targetFile, pageRectsMap, viewWidth, viewHeight, progressMonitor);
+			DocumentCropper.getCropper(docFile.getOriginalFile()).crop(docFile, targetFile, pageRectsMap, viewWidth, viewHeight, progressMonitor);
 		} finally {
 			FileRefreshBackground.setDisabled(false);
 		}
@@ -95,7 +95,7 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 
 	private void applyFilter(IResourceHandler targetResourceHandler) {
 		final MainController controller = MainController.getController();
-		final String sourcePdfFileName = FilenameUtils.removeExtension(pdfFile.getOriginalFile().getName());
+		final String sourcePdfFileName = FilenameUtils.removeExtension(docFile.getOriginalFile().getName());
 
 		MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
@@ -132,6 +132,6 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 	}
 
 	private void debug(String string) {
-		LoggerFactory.getLogger(TaskPdfSave.class).log(Level.INFO, string);
+		LoggerFactory.getLogger(TaskDocSave.class).log(Level.INFO, string);
 	}
 }
