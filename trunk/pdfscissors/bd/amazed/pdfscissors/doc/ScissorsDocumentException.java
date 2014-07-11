@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.pdf;
+package bd.amazed.pdfscissors.doc;
 
 public class ScissorsDocumentException extends Exception {
     /**

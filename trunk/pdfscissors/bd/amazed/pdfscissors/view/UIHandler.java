@@ -84,7 +84,7 @@ public class UIHandler {
 		delete(selectedRect);
 	}
 
-	public void splitHorizontalSelected(PdfPanel pdfPanel) {
+	public void splitHorizontalSelected(DocPanel pdfPanel) {
 		if (selectedRect != null) {
 			Rectangle bounds = selectedRect.bounds;
 			Point location = bounds.getLocation();
@@ -107,7 +107,7 @@ public class UIHandler {
 		}
 	}
 
-	public void splitVerticalSelected(PdfPanel pdfPanel) {
+	public void splitVerticalSelected(DocPanel pdfPanel) {
 		if (selectedRect != null) {
 			Rectangle bounds = selectedRect.bounds;
 			Point location = bounds.getLocation();

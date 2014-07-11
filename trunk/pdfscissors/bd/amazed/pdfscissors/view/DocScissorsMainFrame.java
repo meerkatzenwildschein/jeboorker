@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -51,25 +53,27 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 
+import bd.amazed.pdfscissors.doc.DocumentInfo;
 import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
 import bd.amazed.pdfscissors.model.PageRectsMap;
 import bd.amazed.pdfscissors.model.TaskDocOpen;
 import bd.amazed.pdfscissors.model.TaskDocSave;
-import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
 /**
  * @author Gagan
  *
  */
-public class PdfScissorsMainFrame extends JFrame implements ModelListener {
+public class DocScissorsMainFrame extends JFrame implements ModelListener {
 
-	private PdfPanel defaultPdfPanel;
-	private static final long serialVersionUID = 1L;
+	private static final String MAIN_FRAME_KEY = DocScissorsMainFrame.class.getName() + "_WINDOW_IDENTIFIER";
+
+	private DocPanel defaultPdfPanel;
 	private JPanel jContentPane = null;
 	private JScrollPane scrollPanel = null;
 	/** Panel containing PdfPanels. */
@@ -109,27 +113,31 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private JButton backButton = null;
 	private File saveFile;
 
-	public PdfScissorsMainFrame() {
+	public DocScissorsMainFrame() {
 		super();
 		modelRegisteredListeners = new Vector<ModelListener>();
 		openFileDependendComponents = new Vector<Component>();
 		initialize();
+		PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).restoreWindowLocationAndSize(MAIN_FRAME_KEY, this);
 		registerComponentsToModel();
 		updateOpenFileDependents();
 		try {
-			URL url = PdfScissorsMainFrame.class.getResource("/icon.png");
+			URL url = DocScissorsMainFrame.class.getResource("/icon.png");
 			if (url != null) {
 				setIconImage(ImageIO.read(url));
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(PdfScissorsMainFrame.class).log(Level.WARNING, "Failed to get frame icon", e);
+			LoggerFactory.getLogger(DocScissorsMainFrame.class).log(Level.WARNING, "Failed to get frame icon", e);
 		}
 
-		try {
-			setDefaultCloseOperation(EXIT_ON_CLOSE);
-		} catch (Throwable e) {
-			LoggerFactory.getLogger(PdfScissorsMainFrame.class).log(Level.WARNING, "Failed to set exit on close.", e);
-		}
+		this.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE)
+						.storeWindowLocationAndSize(MAIN_FRAME_KEY, DocScissorsMainFrame.this);
+			}
+		});
 	}
 
 	/**
@@ -252,7 +260,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	private void setButton(AbstractButton button, String imageLocation, String tooltip, boolean isOpenFileDependent) {
 		String imgLocation = imageLocation;
-		URL imageURL = PdfScissorsMainFrame.class.getResource(imageLocation);
+		URL imageURL = DocScissorsMainFrame.class.getResource(imageLocation);
 		if (imageURL != null) { // image found
 			button.setIcon(new ImageIcon(imageURL, tooltip));
 			button.setText(null);
@@ -294,9 +302,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		launchOpenTask(file, pageGroupType, shouldCreateStackView, Bundle.getString("PdfScissorsMainFrame.ReadingPdf"));
 	}
 
-	private PdfPanel getDefaultPdfPanel() {
+	private DocPanel getDefaultPdfPanel() {
 		if (defaultPdfPanel == null) {
-			defaultPdfPanel = new PdfPanel(uiHandler);
+			defaultPdfPanel = new DocPanel(uiHandler);
 		}
 		return defaultPdfPanel;
 	}
@@ -543,7 +551,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (uiHandler.getRectCount() <= 0) {
 						showDialogNoRectYet();
-					} else if (JOptionPane.showConfirmDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.Delete") + uiHandler.getRectCount() + " " + Bundle.getString("PdfScissorsMainFrame.CropArea") + (uiHandler.getRectCount() > 1 ? "s" : "") // singular/plural   //$NON-NLS-3$ //$NON-NLS-4$
+					} else if (JOptionPane.showConfirmDialog(DocScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.Delete") + uiHandler.getRectCount() + " " + Bundle.getString("PdfScissorsMainFrame.CropArea") + (uiHandler.getRectCount() > 1 ? "s" : "") // singular/plural   //$NON-NLS-3$ //$NON-NLS-4$
 							+ "?", Bundle.getString("PdfScissorsMainFrame.Confirm"), JOptionPane.YES_NO_CANCEL_OPTION) == 0) {
 						uiHandler.deleteAll();
 					}
@@ -1011,7 +1019,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	private void showDialogNoRectYet() {
-		JOptionPane.showMessageDialog(PdfScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.SelectRectangleTool"));
+		JOptionPane.showMessageDialog(DocScissorsMainFrame.this, Bundle.getString("PdfScissorsMainFrame.SelectRectangleTool"));
 	}
 
 	/**
@@ -1039,11 +1047,10 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 			menuAbout.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new AboutView(PdfScissorsMainFrame.this).setVisible(true);
+					new AboutView(DocScissorsMainFrame.this).setVisible(true);
 				}
 			});
 		}
 		return menuAbout;
 	}
-
 }

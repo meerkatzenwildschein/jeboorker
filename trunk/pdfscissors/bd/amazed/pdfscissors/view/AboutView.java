@@ -71,7 +71,7 @@ public class AboutView extends JDialog {
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
 			image = new JLabel();
-			URL imageURL = PdfScissorsMainFrame.class.getResource("/logo.png");
+			URL imageURL = DocScissorsMainFrame.class.getResource("/logo.png");
 			if (imageURL != null) { // image found
 				image.setIcon(new ImageIcon(imageURL));
 			}
