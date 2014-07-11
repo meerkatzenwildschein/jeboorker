@@ -8,7 +8,6 @@ import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.rr.commons.mufs.IResourceHandler;
@@ -35,8 +34,6 @@ class ShowPdfScissorsAction extends AbstractAction {
 		} else {
 			putValue(Action.NAME, text);
 		}
-//		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("download_16.png"));
-//		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("download_22.png"));
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
@@ -75,7 +72,7 @@ class ShowPdfScissorsAction extends AbstractAction {
 		shouldCreateStackViewCheckBox.setSelected(true);
 		preference.addPreferenceEntry(new PreferenceEntry("1", Bundle.getString("ShowPdfScissorsAction.stackedView"), shouldCreateStackViewCheckBox));
 
-
+		SwingUtils.centerOnWindow(controller.getMainWindow(), preference);
 		preference.setVisible(true);
 		if(preference.getActionResult() == JPreferenceDialog.ACTION_RESULT_OK) {
 			final int pageGroupType;
@@ -90,10 +87,10 @@ class ShowPdfScissorsAction extends AbstractAction {
 				pageGroupType = PageGroup.GROUP_TYPE_ALL;
 			}
 
-			new SwingWorker() {
+			new SwingWorker<Void,Void>() {
 
 				@Override
-				protected Object doInBackground() throws Exception {
+				protected Void doInBackground() throws Exception {
 					scissors.openFile(resourceHandler, pageGroupType, shouldCreateStackViewCheckBox.isSelected());
 					return null;
 				}
@@ -104,18 +101,6 @@ class ShowPdfScissorsAction extends AbstractAction {
 				}
 
 			}.execute();
-
-
-
-			SwingUtilities.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-
-
-				}
-			});
-
 		}
 	}
 
