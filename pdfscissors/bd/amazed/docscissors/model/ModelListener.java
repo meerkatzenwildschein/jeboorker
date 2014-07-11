@@ -1,11 +1,11 @@
-package bd.amazed.pdfscissors.model;
+package bd.amazed.docscissors.model;
 
 import java.util.Vector;
 
 import org.rr.commons.mufs.IResourceHandler;
 
-import bd.amazed.pdfscissors.doc.DocumentInfo;
-import bd.amazed.pdfscissors.view.Rect;
+import bd.amazed.docscissors.doc.DocumentInfo;
+import bd.amazed.docscissors.view.Rect;
 
 public interface ModelListener {
 

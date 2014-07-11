@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.view;
+package bd.amazed.docscissors.view;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -18,11 +18,11 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
-import bd.amazed.pdfscissors.doc.DocumentInfo;
-import bd.amazed.pdfscissors.doc.JDocumentDecoderPanel;
-import bd.amazed.pdfscissors.model.ModelListener;
-import bd.amazed.pdfscissors.model.PageGroup;
-import bd.amazed.pdfscissors.model.RectChangeListener;
+import bd.amazed.docscissors.doc.DocumentInfo;
+import bd.amazed.docscissors.doc.JDocumentDecoderPanel;
+import bd.amazed.docscissors.model.ModelListener;
+import bd.amazed.docscissors.model.PageGroup;
+import bd.amazed.docscissors.model.RectChangeListener;
 
 /**
  *

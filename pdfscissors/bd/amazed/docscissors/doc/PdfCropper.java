@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.doc;
+package bd.amazed.docscissors.doc;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +16,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.metadata.pdf.PDFUtils;
 
-import bd.amazed.pdfscissors.model.PageRectsMap;
+import bd.amazed.docscissors.model.PageRectsMap;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;

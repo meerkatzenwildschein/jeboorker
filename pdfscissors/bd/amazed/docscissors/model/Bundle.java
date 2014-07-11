@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.view;
+package bd.amazed.docscissors.model;
 
 import java.net.URL;
 import java.text.MessageFormat;

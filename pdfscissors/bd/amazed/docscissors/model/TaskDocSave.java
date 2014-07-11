@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.model;
+package bd.amazed.docscissors.model;
 
 import java.awt.Component;
 import java.io.File;
@@ -25,8 +25,8 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
-import bd.amazed.pdfscissors.doc.DocumentCropper;
-import bd.amazed.pdfscissors.doc.DocumentInfo;
+import bd.amazed.docscissors.doc.DocumentCropper;
+import bd.amazed.docscissors.doc.DocumentInfo;
 
 import com.j256.ormlite.stmt.Where;
 

@@ -19,8 +19,8 @@ import org.rr.commons.swing.dialogs.JPreferenceDialog.PreferenceEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 
-import bd.amazed.pdfscissors.model.PageGroup;
-import bd.amazed.pdfscissors.view.PdfScissorsMainFrame;
+import bd.amazed.docscissors.model.PageGroup;
+import bd.amazed.docscissors.view.DocScissorsMainFrame;
 
 
 class ShowPdfScissorsAction extends AbstractAction {
@@ -44,7 +44,7 @@ class ShowPdfScissorsAction extends AbstractAction {
 		final List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
 
 		if(!selectedEbookPropertyItems.isEmpty()) {
-			PdfScissorsMainFrame scissors = new PdfScissorsMainFrame();
+			DocScissorsMainFrame scissors = new DocScissorsMainFrame();
 			scissors.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			scissors.setExtendedState(JFrame.NORMAL);
 
@@ -57,7 +57,7 @@ class ShowPdfScissorsAction extends AbstractAction {
 		}
 	}
 
-	private void openOptionDialog(final MainController controller, final PdfScissorsMainFrame scissors, final IResourceHandler resourceHandler) {
+	private void openOptionDialog(final MainController controller, final DocScissorsMainFrame scissors, final IResourceHandler resourceHandler) {
 		JPreferenceDialog preference = new JPreferenceDialog(controller.getMainWindow());
 		JRComboBox<String> pageGroupTypeCombobox = new JRComboBox<String>();
 		pageGroupTypeCombobox.setModel(new DefaultComboBoxModel<String>(new String[] {

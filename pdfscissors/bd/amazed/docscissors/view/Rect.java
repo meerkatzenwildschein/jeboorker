@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.view;
+package bd.amazed.docscissors.view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -10,7 +10,7 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.Vector;
 
-import bd.amazed.pdfscissors.model.RectChangeListener;
+import bd.amazed.docscissors.model.RectChangeListener;
 
 public class Rect implements Cloneable {
 	protected Rectangle bounds;
