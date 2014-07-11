@@ -41,7 +41,7 @@ import org.japura.gui.renderer.CheckListRenderer;
  * <P>
  * For more information, contact: <A HREF="www.japura.org">www.japura.org</A>
  * <P>
- * 
+ *
  * @author Carlos Eduardo Leite de Andrade
  */
 public class CheckList<T> extends JList{
@@ -125,7 +125,7 @@ public class CheckList<T> extends JList{
   @Override
   public void setModel(ListModel model) {
 	if (model instanceof ListCheckModel) {
-	  setModel(model);
+	  setModel((ListCheckModel) model);
 	} else {
 	  throw new IllegalArgumentException("model must be ListCheckModel");
 	}
