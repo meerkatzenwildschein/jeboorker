@@ -25,22 +25,25 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
+import bd.amazed.pdfscissors.pdf.DocumentCropper;
+import bd.amazed.pdfscissors.pdf.DocumentInfo;
+
 import com.j256.ormlite.stmt.Where;
 
 public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 
 	private static final String QUERY_IDENTIFER = TaskPdfSave.class.getName();
-	private PdfFile pdfFile;
+	private DocumentInfo pdfFile;
 	private File targetFile;
 	PageRectsMap pageRectsMap;
 	private int viewWidth;
 	private int viewHeight;
 	private Component owner;
 	private boolean targetFileExists;
-	
+
 	ProgressMonitor progressMonitor;
 
-	public TaskPdfSave(PdfFile pdfFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight,
+	public TaskPdfSave(DocumentInfo pdfFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight,
 			Component owner) {
 		this.pdfFile = pdfFile;
 		this.targetFile = targetFile;
@@ -57,7 +60,7 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 		debug("Cropping to " + targetFile + "...");
 		try {
 			FileRefreshBackground.setDisabled(true);
-			PdfCropper.cropPdf(pdfFile, targetFile, pageRectsMap, viewWidth, viewHeight, progressMonitor);
+			DocumentCropper.getCropper(pdfFile.getOriginalFile()).cropPdf(pdfFile, targetFile, pageRectsMap, viewWidth, viewHeight, progressMonitor);
 		} finally {
 			FileRefreshBackground.setDisabled(false);
 		}
@@ -75,7 +78,7 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetFile);
 					String baseFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePathFor(resourceHandler);
 					if(StringUtils.isNotEmpty(baseFolder)) {
-						if(!this.targetFileExists) { //Do not add again 
+						if(!this.targetFileExists) { //Do not add again
 							addToDatabase(resourceHandler, ResourceHandlerFactory.getResourceHandler(baseFolder));
 						}
 						applyFilter(resourceHandler);
@@ -89,11 +92,11 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 			}
 		}
 	}
-	
+
 	private void applyFilter(IResourceHandler targetResourceHandler) {
 		final MainController controller = MainController.getController();
 		final String sourcePdfFileName = FilenameUtils.removeExtension(pdfFile.getOriginalFile().getName());
-		
+
 		MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 			@Override
@@ -111,20 +114,20 @@ public class TaskPdfSave extends SwingWorker<Boolean, Void> {
 				return true;
 			}
 		});
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				controller.refreshTable();		
+				controller.refreshTable();
 			}
 		});
-		
+
 	}
-	
+
 	private void addToDatabase(IResourceHandler resource, IResourceHandler baseFolder) {
 		final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
-		DefaultDBManager.getInstance().storeObject(item);	
+		DefaultDBManager.getInstance().storeObject(item);
 		ActionUtils.addEbookPropertyItem(item);
 	}
 

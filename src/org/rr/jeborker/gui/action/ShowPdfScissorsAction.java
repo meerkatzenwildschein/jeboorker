@@ -9,6 +9,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -88,12 +89,30 @@ class ShowPdfScissorsAction extends AbstractAction {
 			} else {
 				pageGroupType = PageGroup.GROUP_TYPE_ALL;
 			}
-			scissors.setVisible(true);
+
+			new SwingWorker() {
+
+				@Override
+				protected Object doInBackground() throws Exception {
+					scissors.openFile(resourceHandler, pageGroupType, shouldCreateStackViewCheckBox.isSelected());
+					return null;
+				}
+
+				@Override
+				protected void done() {
+					scissors.setVisible(true);
+				}
+
+			}.execute();
+
+
+
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					scissors.openFile(resourceHandler, pageGroupType, shouldCreateStackViewCheckBox.isSelected());
+
+
 				}
 			});
 

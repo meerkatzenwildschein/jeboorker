@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.model;
+package bd.amazed.pdfscissors.pdf;
 
 import java.util.HashMap;
 
@@ -8,7 +8,7 @@ import org.rr.commons.mufs.IResourceHandler;
  * Contains data related to the pdf file. Use normalized pdf file for actual cropping.
  *
  */
-public class PdfFile {
+public class DocumentInfo {
 
 	// we basically read from a temp normalized file.
 	// Original file reference is just stored.
@@ -19,25 +19,13 @@ public class PdfFile {
 	private float normalizedPdfWidth;
 	private float normalizedPdfHeight;
 
-	private PdfFile() {
-
+	private DocumentInfo() {
+		super();
 	}
 
-	public PdfFile(IResourceHandler normalizedFile, IResourceHandler origiFile, int pageCount) {
-		setNormalizedFile(normalizedFile);
+	public DocumentInfo(IResourceHandler normalizedFile, IResourceHandler origiFile, int pageCount) {
 		setOriginalFile(origiFile);
 		setPageCount(pageCount);
-	}
-
-	public IResourceHandler getNormalizedFile() {
-		return normalizedFile;
-	}
-
-	public void setNormalizedFile(IResourceHandler normalizedFile) {
-		if (normalizedFile == null) {
-			throw new IllegalArgumentException("Cannot set null file to model");
-		}
-		this.normalizedFile = normalizedFile;
 	}
 
 	public IResourceHandler getOriginalFile() {
@@ -51,7 +39,7 @@ public class PdfFile {
 		this.originalFile = originalFile;
 	}
 
-	public HashMap<String, String> getPdfInfo() {
+	public HashMap getPdfInfo() {
 		if (pdfInfo == null) {
 			return new HashMap<String, String>();
 		} else {
@@ -59,7 +47,7 @@ public class PdfFile {
 		}
 	}
 
-	public void setPdfInfo(HashMap<String, String> pdfInfo) {
+	public void setPdfInfo(HashMap pdfInfo) {
 		this.pdfInfo = pdfInfo;
 	}
 
@@ -71,24 +59,24 @@ public class PdfFile {
 		this.pageCount = pageCount;
 	}
 
-	public float getNormalizedPdfWidth() {
+	public float getNormalizedWidth() {
 		return normalizedPdfWidth;
 	}
 
-	public void setNormalizedPdfWidth(float normalizedPdfWidth) {
+	public void setNormalizedWidth(float normalizedPdfWidth) {
 		this.normalizedPdfWidth = normalizedPdfWidth;
 	}
 
-	public float getNormalizedPdfHeight() {
+	public float getNormalizedHeight() {
 		return normalizedPdfHeight;
 	}
 
-	public void setNormalizedPdfHeight(float normalizedPdfHeight) {
+	public void setNormalizedHeight(float normalizedPdfHeight) {
 		this.normalizedPdfHeight = normalizedPdfHeight;
 	}
 
-	public static PdfFile NullPdf() {
-		return new PdfFile();
+	public static DocumentInfo NullPdf() {
+		return new DocumentInfo();
 	}
 
 }

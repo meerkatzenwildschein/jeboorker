@@ -4,11 +4,12 @@ import java.util.Vector;
 
 import org.rr.commons.mufs.IResourceHandler;
 
+import bd.amazed.pdfscissors.pdf.DocumentInfo;
 import bd.amazed.pdfscissors.view.Rect;
 
 public interface ModelListener {
 
-	public void newPdfLoaded(PdfFile pdfFile);
+	public void newPdfLoaded(DocumentInfo pdfFile);
 
 	public void pdfLoadFailed(IResourceHandler failedFile, Throwable cause);
 

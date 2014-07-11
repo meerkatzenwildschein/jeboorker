@@ -6,28 +6,28 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ComicBookDocument {
-	
+
 	private final HashMap<String, Object> info = new HashMap<String, Object>();
 
 	private final List<ComicBookPageInfo> pages = new ArrayList<ComicBookPageInfo>();
-	
+
 	private List<String> archiveEntries;
-	
+
 	final byte[] comicInfoXml;
-	
+
 	private byte[] cover = null;
-	
+
 	private String xmlFilePath;
-	
+
 	private IArchiveHandler archiveHandler;
-	
+
 	ComicBookDocument(IArchiveHandler archiveHandler) {
 		this.archiveHandler = archiveHandler;
 		this.comicInfoXml = archiveHandler.getComicXmlData();
 		this.xmlFilePath = archiveHandler.getComicXmlFilename();
 		this.archiveEntries = archiveHandler.getArchiveEntries();
 	}
-	
+
 	public String getTitle() {
 		return (String) info.get("Title");
 	}
@@ -35,14 +35,14 @@ public class ComicBookDocument {
 	public void setTitle(String title) {
 		info.put("Title", title);
 	}
-	
+
 	public String getRating() {
 		return (String) info.get("Rating");
 	}
 
 	public void setRating(String rating) {
 		info.put("Rating", rating);
-	}	
+	}
 
 	public String getSeries() {
 		return (String) info.get("Series");
@@ -290,7 +290,7 @@ public class ComicBookDocument {
 					break;
 				}
 			}
-			
+
 			//simply get the first image as cover image
 			if(this.cover == null && !archiveEntries.isEmpty()) {
 				try {
@@ -305,9 +305,13 @@ public class ComicBookDocument {
 	public byte[] getComicInfoXml() {
 		return comicInfoXml;
 	}
-	
+
 	String getComicInfoFilePath() {
 		return this.xmlFilePath;
 	}
-	
+
+	public List<String> getImageNames() {
+		return this.archiveEntries;
+	}
+
 }

@@ -13,11 +13,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
@@ -45,16 +48,19 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
 
 import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
 import bd.amazed.pdfscissors.model.PageRectsMap;
-import bd.amazed.pdfscissors.model.PdfFile;
 import bd.amazed.pdfscissors.model.TaskPdfOpen;
 import bd.amazed.pdfscissors.model.TaskPdfSave;
+import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
 /**
  * @author Gagan
@@ -183,7 +189,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	 * Enable/disable buttons etc which should be disabled when there is no file.
 	 */
 	private void updateOpenFileDependents() {
-		boolean shouldEnable = Model.getInstance().getPdf().getNormalizedFile() != null;
+		boolean shouldEnable = Model.getInstance().getPdf().getOriginalFile() != null;
 		for (Component component : openFileDependendComponents) {
 			component.setEnabled(shouldEnable);
 		}
@@ -297,24 +303,32 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 
 	private void launchOpenTask(IResourceHandler file, int groupType, boolean shouldCreateStackView, String string) {
 		final TaskPdfOpen task = new TaskPdfOpen(file, groupType, shouldCreateStackView);
-		final StackViewCreationDialog stackViewCreationDialog = new StackViewCreationDialog(this);
-		stackViewCreationDialog.setModal(true);
-		stackViewCreationDialog.enableProgress(task, new ActionListener() {
+		final CountDownLatch lock = new CountDownLatch(1);
+		task.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				// what happens on cancel
-				task.cancel();
-				stackViewCreationDialog.dispose();
-				PdfScissorsMainFrame.this.dispose();
-
+			public void propertyChange(PropertyChangeEvent evt) {
+				MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+				if ("progress".equals(evt.getPropertyName())) {
+					int progress = (Integer) evt.getNewValue();
+					progressMonitor.setProgress(progress, 100);
+				} else if ("done".equals(evt.getPropertyName())) {
+					lock.countDown();
+					MainController.getController().getProgressMonitor().blockMainFrame(false);
+					progressMonitor.clearMessage();
+				} else if ("message".equals(evt.getPropertyName())) {
+					progressMonitor.setMessage((String)evt.getNewValue());
+				}
 			}
 		});
-		// what happens on ok
+
+		MainController.getController().getProgressMonitor().blockMainFrame(true);
 		task.execute();
-
-		stackViewCreationDialog.setVisible(true);
-
+		try {
+			lock.await();
+		} catch (InterruptedException e) {
+			LoggerFactory.log(Level.WARNING, this, "Wait for opening " + file + " finished interrupted", e);
+		}
 	}
 
 	public FileFilter createFileFilter() {
@@ -324,12 +338,14 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 				if (file.isDirectory()) {
 					return true;
 				}
-				return file.toString().toLowerCase().endsWith(".pdf");
+
+				String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
+				return extension.equals("pdf") || extension.equals("cbz") || extension.equals("cbr");
 			}
 
 			@Override
 			public String getDescription() {
-				return "*.pdf";
+				return "Documents";
 			}
 		};
 	}
@@ -448,7 +464,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 		launchSaveTask(Model.getInstance().getPdf(), targetFile);
 	}
 
-	private void launchSaveTask(PdfFile pdfFile, File targetFile) {
+	private void launchSaveTask(DocumentInfo pdfFile, File targetFile) {
 		PageRectsMap pageRectsMap = Model.getInstance().getPageRectsMap();
 		TaskPdfSave taskPdfSave = new TaskPdfSave(pdfFile, targetFile, pageRectsMap , defaultPdfPanel.getWidth(), defaultPdfPanel.getHeight(), this);
 		taskPdfSave.execute();
@@ -638,9 +654,9 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	@Override
-	public void newPdfLoaded(PdfFile pdfFile) {
+	public void newPdfLoaded(DocumentInfo pdfFile) {
 		updateOpenFileDependents();
-		getPageGroupListCellRenderer().setPageSize(pdfFile.getNormalizedPdfWidth(), pdfFile.getNormalizedPdfHeight());
+		getPageGroupListCellRenderer().setPageSize(pdfFile.getNormalizedWidth(), pdfFile.getNormalizedHeight());
 		getPageGroupList().invalidate(); // to recalculate size etc
 	}
 
