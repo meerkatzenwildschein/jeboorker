@@ -16,18 +16,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class ComicBookWriter {
-	
-	
+
 	private ComicBookDocument doc;
 
 	private IArchiveHandler archiveHandler;
-
 
 	public ComicBookWriter(ComicBookDocument doc, IResourceHandler resource) {
 		this.doc = doc;
 		this.archiveHandler = ArchiveHandlerFactory.getHandler(resource);
 	}
-	
+
+	public ComicBookDocument getDocument() {
+		return this.doc;
+	}
+
 	public void writeDocument() throws IOException {
 		try {
 			final byte[] comicInfoXml = createXML();
@@ -38,7 +40,7 @@ public class ComicBookWriter {
 			throw new IOException(e);
 		}
 	}
-	
+
 	public void writePlainXML(byte[] comicInfoXml) throws IOException {
 		try {
 			String comicInfoFilePath;
@@ -53,16 +55,25 @@ public class ComicBookWriter {
 			throw e;
 		} catch(Exception e) {
 			throw new IOException(e);
-		}		
+		}
 	}
-	
+
+	/**
+	 * Adds the given bytes with the given file name to the archive.
+	 * @param name The of the file in the archive
+	 * @param content The image bytes
+	 */
+	public void addArchiveEntry(String name, byte[] content) {
+		archiveHandler.addArchiveEntry(name, content);
+	}
+
 	private byte[] createXML() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, IOException {
 		Document xmlDoc = XMLUtils.createEmptyDocument("ComicInfo");
 		Element comicInfoElement = xmlDoc.getDocumentElement();
 		comicInfoElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
 		comicInfoElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-	
-		setupEntries(xmlDoc, comicInfoElement);		
+
+		setupEntries(xmlDoc, comicInfoElement);
 		setupPages(xmlDoc, comicInfoElement);
 		String xml = XMLUtils.formatDocument(xmlDoc);
 		return xml.getBytes();
@@ -73,7 +84,7 @@ public class ComicBookWriter {
 		for (Entry<String, Object> e : docInfo.entrySet()){
 		    String tagName = e.getKey();
 		    Object value = e.getValue();
-		    
+
 		    if(value != null) {
 			    Element element = xmlDoc.createElement(tagName);
 			    element.setTextContent(String.valueOf(value));
@@ -81,7 +92,7 @@ public class ComicBookWriter {
 		    }
 		}
 	}
-	
+
 	private void setupPages(Document xmlDoc, Element comicInfoElement) {
 		List<ComicBookPageInfo> pages = doc.getPages();
 		if(!pages.isEmpty()) {
@@ -97,5 +108,5 @@ public class ComicBookWriter {
 			comicInfoElement.appendChild(pagesElement);
 		}
 	}
-	
+
 }

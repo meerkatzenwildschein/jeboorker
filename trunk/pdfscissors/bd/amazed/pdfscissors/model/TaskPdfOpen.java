@@ -12,13 +12,16 @@ import javax.swing.SwingWorker;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
+import bd.amazed.pdfscissors.pdf.DocumentCropper;
+import bd.amazed.pdfscissors.pdf.DocumentInfo;
+
 public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
-	private PdfFile pdfFile;
+	private DocumentInfo docFile;
 	private IResourceHandler originalFile;
 	private int groupType;
 	private boolean isCancelled;
-	private PdfCropper cropper = null;
+	private DocumentCropper cropper = null;
 	private boolean shouldCreateStackView;
 
 	public TaskPdfOpen(IResourceHandler file, int groupType, boolean shouldCreateStackView) {
@@ -30,12 +33,10 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
 	@Override
 	protected Vector<PageGroup> doInBackground() throws Exception {
-		pdfFile = PdfCropper.getNormalizedPdf(originalFile);
-		pdfFile.getNormalizedFile().deleteOnExit();
+		cropper = DocumentCropper.getCropper(originalFile);
+		docFile = cropper.getDocumentInfo();
 
-		cropper = new PdfCropper(pdfFile.getNormalizedFile());
-
-		Vector<PageGroup> pageGroups = PageGroup.createGroup(groupType, pdfFile.getPageCount());
+		Vector<PageGroup> pageGroups = PageGroup.createGroup(groupType, docFile.getPageCount());
 
 		if (shouldCreateStackView && groupType != PageGroup.GROUP_TYPE_INDIVIDUAL) {
 			setProgress(0);
@@ -48,12 +49,12 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
 			for (int i = 0; i < pageGroups.size(); i++) {
 				PageGroup pageGroup = pageGroups.elementAt(i);
-				BufferedImage image = cropper.getImage(propertyChangeListener, pageGroup);
+				BufferedImage image = cropper.getNormalizedImage(docFile, propertyChangeListener, pageGroup);
 
 				if (image == null) {
-					debug("Ups.. null image for " + pdfFile.getNormalizedFile());
+					debug("Ups.. null image for " + docFile.getOriginalFile());
 				} else {
-					debug("PDF loaded " + pageGroup + " from " + pdfFile.getNormalizedFile());
+					debug("PDF loaded " + pageGroup + " from " + docFile.getOriginalFile());
 				}
 				pageGroup.setStackImage(image);
 
@@ -80,9 +81,9 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 			try {
 				pageGroups = this.get();
 				if (pageGroups != null && !isCancelled) {
-					Model.getInstance().setPdf(pdfFile, pageGroups);
+					Model.getInstance().setPdf(docFile, pageGroups);
 				} else {
-					Model.getInstance().setPdfLoadFailed(originalFile, new bd.amazed.pdfscissors.pdf.PdfException("Failed to extract image. Check if PDF is password protected or corrupted."));
+					Model.getInstance().setPdfLoadFailed(originalFile, new bd.amazed.pdfscissors.pdf.ScissorsDocumentException("Failed to extract image. Check if PDF is password protected or corrupted."));
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace(); // ignore

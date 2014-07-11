@@ -1,12 +1,12 @@
 package bd.amazed.pdfscissors.pdf;
 
-public class PdfException extends Exception {
+public class ScissorsDocumentException extends Exception {
     /**
      * Constructs a new exception with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      */
-    public PdfException() {
+    public ScissorsDocumentException() {
 	super();
     }
 
@@ -18,7 +18,7 @@ public class PdfException extends Exception {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public PdfException(String message) {
+    public ScissorsDocumentException(String message) {
 	super(message);
     }
 
@@ -35,7 +35,7 @@ public class PdfException extends Exception {
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */
-    public PdfException(String message, Throwable cause) {
+    public ScissorsDocumentException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -52,7 +52,7 @@ public class PdfException extends Exception {
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */
-    public PdfException(Throwable cause) {
+    public ScissorsDocumentException(Throwable cause) {
         super(cause);
     }
 }

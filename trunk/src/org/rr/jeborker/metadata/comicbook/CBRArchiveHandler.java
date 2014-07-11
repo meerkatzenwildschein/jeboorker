@@ -23,16 +23,16 @@ public class CBRArchiveHandler extends AArchiveHandler {
 		boolean success = RarUtils.add(resource, comicInfoFilePath, new ByteArrayInputStream(comicInfoXml));
 		if(!success) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Writing CBR " + resource + " has failed.");
-		}	
-		
+		}
+
 		return success;
 	}
-	
+
 	@Override
 	public void readArchive() throws IOException {
 		archiveEntries.clear();
 		List<CompressedDataEntry> comicInfoXml = RarUtils.extract(resource, new FileEntryFilter() {
-			
+
 			@Override
 			public boolean accept(String entry, byte[] rawEntry) {
 				if(entry.toLowerCase().endsWith("comicinfo.xml")) {
@@ -43,18 +43,23 @@ public class CBRArchiveHandler extends AArchiveHandler {
 				return false;
 			}
 		});
-		
+
 		Collections.sort(archiveEntries);
-		
+
 		if(!comicInfoXml.isEmpty()) {
 			comicInfoXmlContent = comicInfoXml.get(0).getBytes();
 			comicInfoXmlFilePath = comicInfoXml.get(0).path;
 		}
 	}
-	
+
 	@Override
 	public byte[] getArchiveEntry(String archiveEntry) throws IOException {
 		CompressedDataEntry extract = RarUtils.extract(resource, archiveEntry);
 		return extract.getBytes();
-	}	
+	}
+
+	@Override
+	public void addArchiveEntry(String name, byte[] content) {
+		RarUtils.add(resource, name, new ByteArrayInputStream(content));
+	}
 }

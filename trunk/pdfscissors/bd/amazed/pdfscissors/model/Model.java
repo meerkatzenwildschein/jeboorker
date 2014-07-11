@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import org.rr.commons.mufs.IResourceHandler;
 
+import bd.amazed.pdfscissors.pdf.DocumentInfo;
 import bd.amazed.pdfscissors.view.Rect;
 
 public class Model {
@@ -16,7 +17,7 @@ public class Model {
 
 	private Vector<ModelListener> modelListeners;
 
-	private PdfFile currentPdf = PdfFile.NullPdf();
+	private DocumentInfo currentPdf = DocumentInfo.NullPdf();
 
 	private double zoomFactor;
 
@@ -65,7 +66,7 @@ public class Model {
 	 * @param originalFile original file
 	 * @param previewImage previewImage, must not be null
 	 */
-	public void setPdf(PdfFile pdfFile, Vector<PageGroup> pageGroups) {
+	public void setPdf(DocumentInfo pdfFile, Vector<PageGroup> pageGroups) {
 		if (currentPdf == null) {
 			throw new IllegalArgumentException("Cannot set null pdf file");
 		}
@@ -76,7 +77,7 @@ public class Model {
 	}
 
 
-	public PdfFile getPdf() {
+	public DocumentInfo getPdf() {
 		return this.currentPdf;
 	}
 
@@ -139,7 +140,7 @@ public class Model {
 		return zoomFactor;
 	}
 
-	protected void fireNewPdf(PdfFile pdfFile) {
+	protected void fireNewPdf(DocumentInfo pdfFile) {
 		for (ModelListener listener : modelListeners) {
 			listener.newPdfLoaded(pdfFile);
 		}

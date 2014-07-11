@@ -20,15 +20,15 @@ import org.rr.commons.mufs.IResourceHandler;
 
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
-import bd.amazed.pdfscissors.model.PdfFile;
 import bd.amazed.pdfscissors.model.RectChangeListener;
-import bd.amazed.pdfscissors.pdf.PdfDecoder;
+import bd.amazed.pdfscissors.pdf.JDocumentDecoderPanel;
+import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
 /**
  *
  * @author Gagan
  */
-public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeListener, UIHandlerListener {
+public class PdfPanel extends JDocumentDecoderPanel implements ModelListener, RectChangeListener, UIHandlerListener {
 
 	protected UIHandler uiHandler;
 
@@ -96,18 +96,15 @@ public class PdfPanel extends PdfDecoder implements ModelListener, RectChangeLis
 	}
 
 	@Override
-	public void newPdfLoaded(PdfFile pdfFile) {
-		debug("listening to new pdf loaded");
-		// updateSize();
-		IResourceHandler filePath = pdfFile.getNormalizedFile();
+	public void newPdfLoaded(DocumentInfo pdfFile) {
+		IResourceHandler filePath = pdfFile.getOriginalFile();
 		System.out.println("url: " + filePath);
 		try {
-			super.openPdfFile(filePath);
-			// System.out.println ("page count: " + pdfDecoder.getPageCount ());
+			super.openPdfFile(pdfFile);
 			super.decodePage(uiHandler.getPage());
-			//setPageParameters(1.0f, 1, 0); // values scaling (1=100%). page number
 			invalidate();
 		} catch (Exception e) {
+			LoggerFactory.getLogger(this).log(Level.WARNING, "Loading pdf " + pdfFile + " failed", e);
 			e.printStackTrace();
 		}
 	}

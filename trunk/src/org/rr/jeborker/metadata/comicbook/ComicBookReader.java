@@ -14,15 +14,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ComicBookReader {
-	
+
 	private ComicBookDocument doc;
-	
+
 	private IArchiveHandler archiveHandler;
-	
+
 	public ComicBookReader(IResourceHandler resource) {
 		this.archiveHandler = ArchiveHandlerFactory.getHandler(resource);
 	}
-	
+
 	public ComicBookDocument getDocument() throws IOException {
 		if(doc == null) {
 			doc = read();
@@ -32,13 +32,13 @@ public class ComicBookReader {
 
 	private ComicBookDocument read() throws IOException {
 		archiveHandler.readArchive();
-		
+
 		//needs to be sorted because the entries will be shown in it's sorted order.
 		ComicBookDocument doc = buildDocument(archiveHandler);
-		
+
 		return doc;
 	}
-	
+
 	private ComicBookDocument buildDocument(IArchiveHandler archiveHandler) throws IOException {
 		final ComicBookDocument doc = new ComicBookDocument(archiveHandler);
 		byte[] comicXmlData = archiveHandler.getComicXmlData();
@@ -47,7 +47,7 @@ public class ComicBookReader {
 				Document document = XMLUtils.getDocument(comicXmlData);
 				Element comicInfoElement = document.getDocumentElement();
 				NodeList childNodes = comicInfoElement.getChildNodes();
-				for(int i = 0; i < childNodes.getLength(); i++) { 
+				for(int i = 0; i < childNodes.getLength(); i++) {
 					if(childNodes.item(i) instanceof Element) {
 						Element item = (Element) childNodes.item(i);
 						if(item.getNodeName().equalsIgnoreCase("Pages")) {
@@ -62,14 +62,16 @@ public class ComicBookReader {
 			} catch (SAXException e) {
 				throw new IOException(e);
 			}
+		} else {
+			doc.setCount(archiveHandler.getArchiveEntries().size());
 		}
 		return doc;
 	}
-	
+
 	private void setupComicItem(Element item, ComicBookDocument doc) {
 		doc.getInfo().put(item.getNodeName(), item.getTextContent());
 	}
-	
+
 	private void setupPages(Element pagesElement, ComicBookDocument doc) throws IOException {
 		NodeList pageNodes = pagesElement.getChildNodes();
 		for(int i = 0; i < pageNodes.getLength(); i++) {
@@ -77,16 +79,20 @@ public class ComicBookReader {
 				final ComicBookPageInfo page = new ComicBookPageInfo();
 				final Element pageElement = (Element) pageNodes.item(i);
 				final NamedNodeMap attributes = pageElement.getAttributes();
-				
+
 				for(int j = 0; j < attributes.getLength(); j++) {
 					Node item = attributes.item(j);
 					String attributeName = item.getNodeName();
 					String attributeValue = item.getNodeValue();
-					
+
 					page.getInfo().put(attributeName, attributeValue);
 				}
 				doc.getPages().add(page);
 			}
 		}
+	}
+
+	public IArchiveHandler getArchiveHandler() {
+		return archiveHandler;
 	}
 }

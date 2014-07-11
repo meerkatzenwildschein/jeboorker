@@ -343,11 +343,17 @@ class MainMenuBarView extends JMenuBar {
 
 				JMenuItem pdfScissorsItem = new JMenuItem();
 				pdfScissorsItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SHOW_PDF_SCISSORS_ACTION, null));
-				menuEdit.add(pdfScissorsItem);
-				if (!MainViewSelectionUtils.isMainTableSingleSelection()
-						|| (MainViewSelectionUtils.isMainTableSingleSelection() && !selectedItems.get(0).getMimeType().equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime()))) {
-					pdfScissorsItem.setEnabled(false);
+				pdfScissorsItem.setEnabled(false);
+				if(MainViewSelectionUtils.isMainTableSingleSelection()) {
+					if(selectedItems.get(0).getMimeType().equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime())) {
+						pdfScissorsItem.setEnabled(true);
+					} else if(selectedItems.get(0).getMimeType().equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ.getMime())) {
+						pdfScissorsItem.setEnabled(true);
+					} else if(selectedItems.get(0).getMimeType().equals(JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR.getMime())) {
+						pdfScissorsItem.setEnabled(true);
+					}
 				}
+				menuEdit.add(pdfScissorsItem);
 
 				menuEdit.add(new JSeparator());
 

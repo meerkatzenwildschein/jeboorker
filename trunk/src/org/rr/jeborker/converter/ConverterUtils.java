@@ -23,25 +23,25 @@ class ConverterUtils {
 		IMetadataReader targetReader = MetadataHandlerFactory.getReader(targetResource);
 		List<MetadataProperty> sourceMetaData = sourceReader.readMetaData();
 		List<MetadataProperty> targetMetaData = new ArrayList<MetadataProperty>(sourceMetaData.size());
-		
+
 		for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
 			List<MetadataProperty> sourceMetadataByType = sourceReader.getMetadataByType(false, sourceMetaData, type);
 			List<MetadataProperty> targetMetadataByType = targetReader.getMetadataByType(true, targetMetaData, type);
-			
+
 			if(!sourceMetadataByType.isEmpty()) {
 				MetadataProperty sourceMetadataProperty = sourceMetadataByType.get(0);
 				MetadataProperty targetMetadataProperty = targetMetadataByType.get(0);
 				targetMetadataProperty.setPropertyClass(sourceMetadataProperty.getPropertyClass());
 				targetMetadataProperty.setValues(sourceMetadataProperty.getValues());
-				
+
 				targetMetaData.add(targetMetadataProperty);
 			}
 		}
-		
+
 		IMetadataWriter writer = MetadataHandlerFactory.getWriter(targetResource);
 		writer.writeMetadata(targetMetaData);
-	}	
-	
+	}
+
 	/**
 	 * Applies the image modifications from the given {@link ConverterPreferenceController}.
 	 * @param bufferedImage The image to be modified
@@ -53,7 +53,7 @@ class ConverterUtils {
     	if(imageSize != null && imageSize.intValue() < 99) {
     		bufferedImage = ImageUtils.scalePercent(bufferedImage, (double)imageSize.intValue() / 100);
     	}
-    	
+
     	final float imageWidth = ((float)bufferedImage.getWidth());
     	final float imageHeight = ((float)bufferedImage.getHeight());
 
@@ -63,7 +63,7 @@ class ConverterUtils {
 	    		return Collections.singletonList(bufferedImage);
 	    	} else if(converterPreferenceController.isLandscapePageRotate()) {
 	    		if(converterPreferenceController.isRotateClockwise()) {
-	    			//rotate image clockwise	    	
+	    			//rotate image clockwise
 	    			return Collections.singletonList(ImageUtils.rotate90Degree(bufferedImage, true));
 	    		} else {
 	    			//rotate image counterclockwise
@@ -80,7 +80,7 @@ class ConverterUtils {
     	}
     	return Collections.singletonList(bufferedImage);
     }
-    
+
 	/**
 	 * Test if the given name have an image file extension.
 	 */
@@ -89,6 +89,6 @@ class ConverterUtils {
 			return true;
 		}
 		return false;
-	}    
+	}
 
 }
