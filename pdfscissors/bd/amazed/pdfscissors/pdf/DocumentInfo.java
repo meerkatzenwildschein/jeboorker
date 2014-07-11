@@ -39,7 +39,7 @@ public class DocumentInfo {
 		this.originalFile = originalFile;
 	}
 
-	public HashMap getPdfInfo() {
+	public HashMap getDocInfo() {
 		if (pdfInfo == null) {
 			return new HashMap<String, String>();
 		} else {
@@ -47,7 +47,7 @@ public class DocumentInfo {
 		}
 	}
 
-	public void setPdfInfo(HashMap pdfInfo) {
+	public void setDocInfo(HashMap pdfInfo) {
 		this.pdfInfo = pdfInfo;
 	}
 
@@ -75,7 +75,7 @@ public class DocumentInfo {
 		this.normalizedPdfHeight = normalizedPdfHeight;
 	}
 
-	public static DocumentInfo NullPdf() {
+	public static DocumentInfo NullDoc() {
 		return new DocumentInfo();
 	}
 

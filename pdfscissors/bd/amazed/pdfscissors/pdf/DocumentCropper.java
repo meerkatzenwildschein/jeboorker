@@ -53,7 +53,7 @@ public abstract class DocumentCropper {
 		isCancel = true;
 	}
 
-	public abstract void cropPdf(DocumentInfo docFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight, ProgressMonitor progressMonitor) throws IOException, DocumentException;
+	public abstract void crop(DocumentInfo docFile, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight, ProgressMonitor progressMonitor) throws IOException, DocumentException;
 
 	public BufferedImage getNormalizedImage(DocumentInfo docFile, PropertyChangeListener listener, PageGroup pageGroup) throws ScissorsDocumentException {
 		BufferedImage image = getImage(docFile, listener, pageGroup);
@@ -84,7 +84,6 @@ public abstract class DocumentCropper {
 			for (int iPageInGroup = pageCount - 1; iPageInGroup >= 0 && !isCancel; iPageInGroup--) {
 				int i = pageGroup.getPageNumberAt(iPageInGroup);
 				int percentageDone = (100 * (pageCount - iPageInGroup)) / pageCount;
-//				System.out.println("Stacking page: " + i + ", completed " + percentageDone);
 				listener.propertyChange(new PropertyChangeEvent(this, "progress", null, percentageDone));
 				BufferedImage pageImage = getDocumentDecoder(docFile).getPageAsImage(i);
 				if (pageImage != null) {

@@ -58,8 +58,8 @@ import bd.amazed.pdfscissors.model.Model;
 import bd.amazed.pdfscissors.model.ModelListener;
 import bd.amazed.pdfscissors.model.PageGroup;
 import bd.amazed.pdfscissors.model.PageRectsMap;
-import bd.amazed.pdfscissors.model.TaskPdfOpen;
-import bd.amazed.pdfscissors.model.TaskPdfSave;
+import bd.amazed.pdfscissors.model.TaskDocOpen;
+import bd.amazed.pdfscissors.model.TaskDocSave;
 import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
 /**
@@ -189,7 +189,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	 * Enable/disable buttons etc which should be disabled when there is no file.
 	 */
 	private void updateOpenFileDependents() {
-		boolean shouldEnable = Model.getInstance().getPdf().getOriginalFile() != null;
+		boolean shouldEnable = Model.getInstance().getDoc().getOriginalFile() != null;
 		for (Component component : openFileDependendComponents) {
 			component.setEnabled(shouldEnable);
 		}
@@ -302,7 +302,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	private void launchOpenTask(IResourceHandler file, int groupType, boolean shouldCreateStackView, String string) {
-		final TaskPdfOpen task = new TaskPdfOpen(file, groupType, shouldCreateStackView);
+		final TaskDocOpen task = new TaskDocOpen(file, groupType, shouldCreateStackView);
 		final CountDownLatch lock = new CountDownLatch(1);
 		task.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -441,7 +441,7 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	private void openSaveFileChooser() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(createFileFilter());
-		IResourceHandler originalPdf = Model.getInstance().getPdf().getOriginalFile();
+		IResourceHandler originalPdf = Model.getInstance().getDoc().getOriginalFile();
 		fileChooser.setSelectedFile(originalPdf.toFile());
 		int retval = fileChooser.showSaveDialog(this);
 		if (retval == JFileChooser.APPROVE_OPTION) {
@@ -461,12 +461,12 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	private void saveFile(File targetFile) {
-		launchSaveTask(Model.getInstance().getPdf(), targetFile);
+		launchSaveTask(Model.getInstance().getDoc(), targetFile);
 	}
 
 	private void launchSaveTask(DocumentInfo pdfFile, File targetFile) {
 		PageRectsMap pageRectsMap = Model.getInstance().getPageRectsMap();
-		TaskPdfSave taskPdfSave = new TaskPdfSave(pdfFile, targetFile, pageRectsMap , defaultPdfPanel.getWidth(), defaultPdfPanel.getHeight(), this);
+		TaskDocSave taskPdfSave = new TaskDocSave(pdfFile, targetFile, pageRectsMap , defaultPdfPanel.getWidth(), defaultPdfPanel.getHeight(), this);
 		taskPdfSave.execute();
 	}
 
@@ -654,14 +654,14 @@ public class PdfScissorsMainFrame extends JFrame implements ModelListener {
 	}
 
 	@Override
-	public void newPdfLoaded(DocumentInfo pdfFile) {
+	public void newDocLoaded(DocumentInfo pdfFile) {
 		updateOpenFileDependents();
 		getPageGroupListCellRenderer().setPageSize(pdfFile.getNormalizedWidth(), pdfFile.getNormalizedHeight());
 		getPageGroupList().invalidate(); // to recalculate size etc
 	}
 
 	@Override
-	public void pdfLoadFailed(IResourceHandler failedFile, Throwable cause) {
+	public void docLoadFailed(IResourceHandler failedFile, Throwable cause) {
 		handleException(Bundle.getString("PdfScissorsMainFrame.FailedToLoadPdfFile"), cause);
 	}
 

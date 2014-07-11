@@ -96,9 +96,8 @@ public class PdfPanel extends JDocumentDecoderPanel implements ModelListener, Re
 	}
 
 	@Override
-	public void newPdfLoaded(DocumentInfo pdfFile) {
+	public void newDocLoaded(DocumentInfo pdfFile) {
 		IResourceHandler filePath = pdfFile.getOriginalFile();
-		System.out.println("url: " + filePath);
 		try {
 			super.openPdfFile(pdfFile);
 			super.decodePage(uiHandler.getPage());
@@ -110,7 +109,7 @@ public class PdfPanel extends JDocumentDecoderPanel implements ModelListener, Re
 	}
 
 	@Override
-	public void pdfLoadFailed(IResourceHandler failedFile, Throwable cause) {
+	public void docLoadFailed(IResourceHandler failedFile, Throwable cause) {
 		// nothing to do
 	}
 

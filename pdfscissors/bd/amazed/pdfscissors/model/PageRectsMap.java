@@ -45,14 +45,14 @@ public class PageRectsMap {
 	/*
 	 *@return Returns the converted awt rectangles ready to use for cropping. null means there is no cropping rect, keep the whole page
 	 */
-	public ArrayList<Rectangle> getConvertedRectsForCropping(int pageNumber, int viewWidth, int viewHeight, float pdfWidth, float pdfHeight) {
+	public ArrayList<Rectangle> getConvertedRectsForCropping(int pageNumber, int viewWidth, int viewHeight, float docWidth, float docHeight) {
 		ArrayList<Rectangle> rects = getRects(pageNumber);
 		if (rects == null) {
 			return null;
 		}
-		ArrayList<java.awt.Rectangle> cropRectsInIPDFCoords = new ArrayList<java.awt.Rectangle>(rects.size());
-		double widthRatio = pdfWidth / viewWidth;
-		double heightRatio = pdfHeight / viewHeight;
+		ArrayList<java.awt.Rectangle> cropRectsInIDocCoords = new ArrayList<java.awt.Rectangle>(rects.size());
+		double widthRatio = docWidth / viewWidth;
+		double heightRatio = docHeight / viewHeight;
 		if (widthRatio != heightRatio) {
 			System.err.println("WARNING>>> RATION NOT SAME ?! " + widthRatio + " " + heightRatio);
 		}
@@ -61,7 +61,7 @@ public class PageRectsMap {
 			covertedRect.x = (int) (widthRatio * rect.x);
 			if(orientationMode == ORIENTATION_Y_BOTTOM) {
 				covertedRect.y = (int) (widthRatio * (viewHeight - rect.y - rect.height));
-				covertedRect.y = covertedRect.y - ((int)viewHeight - (int) pdfHeight); // move y for different page heights
+				covertedRect.y = covertedRect.y - ((int)viewHeight - (int) docHeight); // move y for different page heights
 			} else if (orientationMode == ORIENTATION_Y_TOP) {
 				covertedRect.y = (int) (widthRatio * (rect.y));
 			} else {
@@ -69,10 +69,10 @@ public class PageRectsMap {
 			}
 			covertedRect.width = (int) (widthRatio * rect.width);
 			covertedRect.height = (int) (widthRatio * rect.height);
-			cropRectsInIPDFCoords.add(covertedRect);
+			cropRectsInIDocCoords.add(covertedRect);
 		}
 
-		return cropRectsInIPDFCoords;
+		return cropRectsInIDocCoords;
 
 	}
 

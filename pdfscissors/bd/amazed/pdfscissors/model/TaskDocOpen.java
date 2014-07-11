@@ -15,7 +15,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import bd.amazed.pdfscissors.pdf.DocumentCropper;
 import bd.amazed.pdfscissors.pdf.DocumentInfo;
 
-public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
+public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
 
 	private DocumentInfo docFile;
 	private IResourceHandler originalFile;
@@ -24,7 +24,7 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 	private DocumentCropper cropper = null;
 	private boolean shouldCreateStackView;
 
-	public TaskPdfOpen(IResourceHandler file, int groupType, boolean shouldCreateStackView) {
+	public TaskDocOpen(IResourceHandler file, int groupType, boolean shouldCreateStackView) {
 		this.originalFile = file;
 		isCancelled = false;
 		this.groupType = groupType;
@@ -54,7 +54,7 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 				if (image == null) {
 					debug("Ups.. null image for " + docFile.getOriginalFile());
 				} else {
-					debug("PDF loaded " + pageGroup + " from " + docFile.getOriginalFile());
+					debug("Document loaded " + pageGroup + " from " + docFile.getOriginalFile());
 				}
 				pageGroup.setStackImage(image);
 
@@ -81,20 +81,20 @@ public class TaskPdfOpen extends SwingWorker<Vector<PageGroup>, Void> {
 			try {
 				pageGroups = this.get();
 				if (pageGroups != null && !isCancelled) {
-					Model.getInstance().setPdf(docFile, pageGroups);
+					Model.getInstance().setDoc(docFile, pageGroups);
 				} else {
-					Model.getInstance().setPdfLoadFailed(originalFile, new bd.amazed.pdfscissors.pdf.ScissorsDocumentException("Failed to extract image. Check if PDF is password protected or corrupted."));
+					Model.getInstance().setDocLoadFailed(originalFile, new bd.amazed.pdfscissors.pdf.ScissorsDocumentException("Failed to extract image. Check if PDF is password protected or corrupted."));
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace(); // ignore
 			} catch (ExecutionException e) {
-				Model.getInstance().setPdfLoadFailed(originalFile, e.getCause());
+				Model.getInstance().setDocLoadFailed(originalFile, e.getCause());
 			}
 		}
 	}
 
 	private void debug(String string) {
-		LoggerFactory.getLogger(TaskPdfOpen.class).log(Level.INFO, string);
+		LoggerFactory.getLogger(TaskDocOpen.class).log(Level.INFO, string);
 	}
 
 }

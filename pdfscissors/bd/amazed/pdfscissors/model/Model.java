@@ -17,11 +17,12 @@ public class Model {
 
 	private Vector<ModelListener> modelListeners;
 
-	private DocumentInfo currentPdf = DocumentInfo.NullPdf();
+	private DocumentInfo currentDoc = DocumentInfo.NullDoc();
 
 	private double zoomFactor;
 
 	private Rect clipboardRect;
+
 	private boolean isClipboardCut;
 
 	private Vector<PageGroup> pageGroups;
@@ -66,19 +67,19 @@ public class Model {
 	 * @param originalFile original file
 	 * @param previewImage previewImage, must not be null
 	 */
-	public void setPdf(DocumentInfo pdfFile, Vector<PageGroup> pageGroups) {
-		if (currentPdf == null) {
-			throw new IllegalArgumentException("Cannot set null pdf file");
+	public void setDoc(DocumentInfo docFile, Vector<PageGroup> pageGroups) {
+		if (currentDoc == null) {
+			throw new IllegalArgumentException("Cannot set null doc file");
 		}
-		this.currentPdf = pdfFile;
+		this.currentDoc = docFile;
 		reset(); //on new pdf load reset everything
-		fireNewPdf(pdfFile);
+		fireNewDoc(docFile);
 		setPageGroups(pageGroups);
 	}
 
 
-	public DocumentInfo getPdf() {
-		return this.currentPdf;
+	public DocumentInfo getDoc() {
+		return this.currentDoc;
 	}
 
 	/**
@@ -86,8 +87,8 @@ public class Model {
 	 *
 	 * @param file
 	 */
-	public void setPdfLoadFailed(IResourceHandler file, Throwable err) {
-		fireSetPdfFailed(file, err);
+	public void setDocLoadFailed(IResourceHandler file, Throwable err) {
+		fireSetDocFailed(file, err);
 	}
 
 	private void setPageGroups(Vector<PageGroup> pageGroups) {
@@ -140,15 +141,15 @@ public class Model {
 		return zoomFactor;
 	}
 
-	protected void fireNewPdf(DocumentInfo pdfFile) {
+	protected void fireNewDoc(DocumentInfo docFile) {
 		for (ModelListener listener : modelListeners) {
-			listener.newPdfLoaded(pdfFile);
+			listener.newDocLoaded(docFile);
 		}
 	}
 
-	protected void fireSetPdfFailed(IResourceHandler failedFile, Throwable cause) {
+	protected void fireSetDocFailed(IResourceHandler failedFile, Throwable cause) {
 		for (ModelListener listener : modelListeners) {
-			listener.pdfLoadFailed(failedFile, cause);
+			listener.docLoadFailed(failedFile, cause);
 		}
 	}
 

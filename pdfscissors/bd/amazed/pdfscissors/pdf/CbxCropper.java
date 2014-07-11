@@ -73,7 +73,7 @@ public class CbxCropper extends DocumentCropper {
 	}
 
 	@Override
-	public void cropPdf(DocumentInfo docInfo, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight, ProgressMonitor progressMonitor)
+	public void crop(DocumentInfo docInfo, File targetFile, PageRectsMap pageRectsMap, int viewWidth, int viewHeight, ProgressMonitor progressMonitor)
 			throws IOException, DocumentException {
 		IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFile);
 		IArchiveHandler targetArchiveHandler = ArchiveHandlerFactory.getHandler(targetResourceHandler);
@@ -109,8 +109,8 @@ public class CbxCropper extends DocumentCropper {
 		MetadataUtils.copyMetadata(docInfo.getOriginalFile(), targetResourceHandler);
 	}
 
-	private void addImageNameWhenUsed(Set<String> usedImageNames, String imageName, ArrayList<Rectangle> cropRectsInIPDFCoords) {
-		boolean multiplePages = cropRectsInIPDFCoords.size() > 1;
+	private void addImageNameWhenUsed(Set<String> usedImageNames, String imageName, ArrayList<Rectangle> cropRectsInIDocCoords) {
+		boolean multiplePages = cropRectsInIDocCoords.size() > 1;
 		if(multiplePages) {
 			usedImageNames.add(imageName); //mark the current name as used when having multiple rectangles on the page
 		}
@@ -123,7 +123,7 @@ public class CbxCropper extends DocumentCropper {
 		Rectangle maxBoundingBox = getMaxBoundingBox(reader);
 
 		DocumentInfo docFile = new DocumentInfo(mainFile, mainFile, doc.getCount());
-		docFile.setPdfInfo(doc.getInfo());
+		docFile.setDocInfo(doc.getInfo());
 		docFile.setPageCount(doc.getCount());
 		docFile.setNormalizedWidth(Math.abs((float)maxBoundingBox.getWidth()));
 		docFile.setNormalizedHeight(Math.abs((float)maxBoundingBox.getHeight()));

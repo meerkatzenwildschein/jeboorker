@@ -9,9 +9,9 @@ import bd.amazed.pdfscissors.view.Rect;
 
 public interface ModelListener {
 
-	public void newPdfLoaded(DocumentInfo pdfFile);
+	public void newDocLoaded(DocumentInfo docFile);
 
-	public void pdfLoadFailed(IResourceHandler failedFile, Throwable cause);
+	public void docLoadFailed(IResourceHandler failedFile, Throwable cause);
 
 	public void zoomChanged(double oldZoomFactor, double newZoomFactor);
 
