@@ -34,60 +34,60 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 
 public class JPreferenceDialog extends JDialog {
-	
+
 	private static final Dimension DEFAULT_SIZE = new Dimension(450,250);
 
 	public static final int ACTION_RESULT_OK = 0;
-	
+
 	public static final int ACTION_RESULT_ABORT = 1;
-	
+
 	private final LinkedHashMap<String, PreferenceEntry> preferenceEntries = new LinkedHashMap<String, PreferenceEntry>();
 
 	private final ActionListener okAction = new ActionListener() {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			actionResult = ACTION_RESULT_OK;
 			setVisible(false);
 			dispose();
 		}
-	};	
-	
+	};
+
 	private final ActionListener abortAction = new ActionListener() {
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			actionResult = ACTION_RESULT_ABORT;
 			setVisible(false);
 			dispose();
 		}
-	};	
-	
+	};
+
 	private int actionResult = -1;
-	
+
 	private boolean isInitialized = false;
-	
+
 	public JPreferenceDialog(JFrame owner) {
 		super(owner);
-		
+
 		setModal(true);
 		SwingUtils.centerOnScreen(this);
 		setSize(DEFAULT_SIZE);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);		
-		setTitle(Bundle.getString("PreferenceView.title"));		
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setTitle(Bundle.getString("PreferenceView.title"));
 	}
-	
+
 	/**
-	 * Adds a {@link PreferenceEntry} to this {@link JPreferenceDialog} instance. 
-	 * The order of the {@link PreferenceEntry} are taken under account for 
+	 * Adds a {@link PreferenceEntry} to this {@link JPreferenceDialog} instance.
+	 * The order of the {@link PreferenceEntry} are taken under account for
 	 * the order of the components shown to the user.
-	 * 
+	 *
 	 * @param entry The {@link PreferenceEntry} to be added.
 	 */
 	public void addPreferenceEntry(PreferenceEntry entry) {
 		preferenceEntries.put(entry.getName(), entry);
 	}
-	
+
 	/**
 	 * Gets the action result of this {@link JPreferenceDialog} instance.
 	 * @return The action result. This is ACTION_RESULT_OK or ACTION_RESULT_ABORT.
@@ -95,15 +95,15 @@ public class JPreferenceDialog extends JDialog {
 	public int getActionResult() {
 		return this.actionResult;
 	}
-	
+
 	/**
-	 * Get all preference entries 
+	 * Get all preference entries
 	 */
 	public List<PreferenceEntry> getPreferenceEntries() {
 		Collection<PreferenceEntry> values = preferenceEntries.values();
 		return new ArrayList<PreferenceEntry>(values);
 	}
-	
+
 	/**
 	 * Get the preference entry with the given name.
 	 */
@@ -111,15 +111,15 @@ public class JPreferenceDialog extends JDialog {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
 		return preferenceEntry;
 	}
-	
+
 	/**
-	 * Get the result value for the {@link PreferenceEntry} with the given name. 
+	 * Get the result value for the {@link PreferenceEntry} with the given name.
 	 */
 	public boolean getBooleanValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
 		if(preferenceEntry != null) {
 			final Component component = preferenceEntry.getCustomComponent();
-			
+
 			if(component instanceof JCheckBox) {
 				return ((JCheckBox)component).isSelected();
 			} else if(component instanceof JTextComponent) {
@@ -134,15 +134,15 @@ public class JPreferenceDialog extends JDialog {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Get the result value for the {@link PreferenceEntry} with the given name. 
+	 * Get the result value for the {@link PreferenceEntry} with the given name.
 	 */
 	public String getStringValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
 		if(preferenceEntry != null) {
 			final Component component = preferenceEntry.getCustomComponent();
-			
+
 			if(component instanceof JCheckBox) {
 				return Boolean.valueOf(((JCheckBox)component).isSelected()).toString();
 			} else if(component instanceof JTextComponent) {
@@ -153,20 +153,20 @@ public class JPreferenceDialog extends JDialog {
 				return text;
 			} else if(component instanceof JSlider) {
 				String text = StringUtils.toString( ((JSlider)component).getValue() );
-				return text;			
+				return text;
 			}
 		}
 		return "";
 	}
-	
+
 	/**
-	 * Get the result value for the {@link PreferenceEntry} with the given name. 
+	 * Get the result value for the {@link PreferenceEntry} with the given name.
 	 */
 	public Number getNumericValue(final String name) {
 		final PreferenceEntry preferenceEntry = preferenceEntries.get(name);
 		if(preferenceEntry != null) {
 			final Component component = preferenceEntry.getCustomComponent();
-			
+
 			if(component instanceof JCheckBox) {
 				return ((JCheckBox)component).isSelected() ? Integer.valueOf(1) : Integer.valueOf(0);
 			} else if(component instanceof JTextComponent) {
@@ -180,12 +180,12 @@ public class JPreferenceDialog extends JDialog {
 		}
 		return null;
 	}
-	
+
 	public void setVisible(boolean visible) {
 		this.initialize();
 		super.setVisible(visible);
 	}
-	
+
 	private void initialize() {
 		if(!isInitialized) {
 			isInitialized = true;
@@ -193,10 +193,10 @@ public class JPreferenceDialog extends JDialog {
 			final ArrayList<JPanel> generalPanels = new ArrayList<JPanel>(categories.size());
 			getContentPane().setLayout(new BorderLayout());
 			((JComponent)getContentPane()).registerKeyboardAction(abortAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-			
+
 			for(final String category : categories) {
 				final JPanel generalPanel = new JPanel();
-				
+
 				GridBagLayout gbl_generalPanel = new GridBagLayout();
 				gbl_generalPanel.columnWidths = new int[]{0, 0, 0, 0};
 				gbl_generalPanel.rowHeights = new int[]{0, 0};
@@ -205,12 +205,12 @@ public class JPreferenceDialog extends JDialog {
 				generalPanel.setLayout(gbl_generalPanel);
 				generalPanel.setName(category);
 				generalPanels.add(generalPanel);
-				
+
 				List<PreferenceEntry> preferenceEntriesByCategory = getPreferenceEntriesByCategory(category);
 				int preferenceEntriesSize = preferenceEntriesByCategory.size();
 				for(int i = 0; i < preferenceEntriesSize; i++) {
 					final PreferenceEntry preferenceEntry = preferenceEntriesByCategory.get(i);
-					
+
 					JLabel label = new JLabel(preferenceEntry.getLabel());
 					GridBagConstraints gbc_label = new GridBagConstraints();
 					gbc_label.insets = new Insets(0, 3, 0, 5);
@@ -218,7 +218,7 @@ public class JPreferenceDialog extends JDialog {
 					gbc_label.gridy = i;
 					gbc_label.anchor = GridBagConstraints.WEST;
 					generalPanel.add(label, gbc_label);
-					
+
 					Component c = preferenceEntry.getCustomComponent();
 					GridBagConstraints gbc_component = new GridBagConstraints();
 					gbc_component.gridx = 2;
@@ -228,9 +228,9 @@ public class JPreferenceDialog extends JDialog {
 						gbc_component.weightx = 1.0;
 						gbc_component.fill = GridBagConstraints.HORIZONTAL;
 					}
-					generalPanel.add(c, gbc_component);				
+					generalPanel.add(c, gbc_component);
 				}
-				
+
 				//add a panel at the end which fills the rest of the space so the
 				//other components are located at the top of the dialog panel.
 				Component fillPanel = new JPanel();
@@ -240,50 +240,51 @@ public class JPreferenceDialog extends JDialog {
 				gbc_fillPanel.gridy = preferenceEntriesSize;
 				gbc_fillPanel.fill = GridBagConstraints.BOTH;
 				gbc_fillPanel.weighty = 1f;
-				generalPanel.add(fillPanel, gbc_fillPanel);		
-				
+				generalPanel.add(fillPanel, gbc_fillPanel);
+
 				int minHeight = (preferenceEntriesSize * 30) + 80;
 				if(getSize().width == DEFAULT_SIZE.width && getSize().height == DEFAULT_SIZE.height) {
 					setSize(DEFAULT_SIZE.width, minHeight);
 				}
 				setMinimumSize(new Dimension(DEFAULT_SIZE.width, minHeight));
 			}
-			
+
 			//add the category panels to the dialog root pane.
 			if(generalPanels.size() > 1) {
 				JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 				getContentPane().add(tabbedPane, BorderLayout.CENTER);
-				
+
 				for(JPanel generalPanel : generalPanels) {
 					tabbedPane.addTab(generalPanel.getName(), null, generalPanel, null);
 				}
 			} else if(!generalPanels.isEmpty()) {
 				JPanel panel = new JPanel(new BorderLayout());
 				getContentPane().add(panel, BorderLayout.CENTER);
-				
+
 				JPanel generalPanel = generalPanels.get(0);
 				panel.add(generalPanel, BorderLayout.CENTER);
-				
+
 				if(!generalPanel.getName().isEmpty()) {
 					TitledBorder border = new TitledBorder(generalPanel.getName());
 					generalPanel.setBorder(border);
 				}
 			}
-			
+
 			JPanel bottomPanel = new JPanel();
 			bottomPanel.setLayout(new EqualsLayout(1));
 			getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-			
+
 			JButton btnAbort = new JButton(Bundle.getString("PreferenceDialog.Action.Cancel"));
 			bottomPanel.add(btnAbort);
-			btnAbort.addActionListener(abortAction);	
-			
+			btnAbort.addActionListener(abortAction);
+
 			JButton btnOK = new JButton(Bundle.getString("PreferenceDialog.Action.OK"));
 			bottomPanel.add(btnOK);
-			btnOK.addActionListener(okAction);		
+			btnOK.addActionListener(okAction);
+			getRootPane().setDefaultButton(btnOK);
 		}
 	}
-	
+
 	/**
 	 * Get all {@link PreferenceEntry} instances for the given category.
 	 * @return The desired {@link PreferenceEntry} instances. Never returns <code>null</code>.
@@ -297,7 +298,7 @@ public class JPreferenceDialog extends JDialog {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Get a list of existing categories. Empty/null categories are contained as empty {@link String} category.
 	 */
@@ -309,33 +310,33 @@ public class JPreferenceDialog extends JDialog {
 				result.add(category);
 			}
 		}
-		return result;		
+		return result;
 	}
-	
+
 	public static class PreferenceEntry {
-		
+
 		private String category;
-		
+
 		private String name;
-		
+
 		private String label;
-		
+
 		private Component customComponent;
-		
+
 		private Object value;
-		
+
 		private Runnable okAction;
-		
+
 		public PreferenceEntry(String name, String label, Component customComponent) {
 			this.name = name;
 			this.label = label;
 			this.customComponent = customComponent;
 		}
-		
+
 		public PreferenceEntry(String name, String label, Component customComponent, String category) {
 			this(name, label, customComponent, category, null);
 		}
-		
+
 		public PreferenceEntry(String name, String label, Component customComponent, String category, Runnable okAction) {
 			this.name = name;
 			this.label = label;
@@ -359,7 +360,7 @@ public class JPreferenceDialog extends JDialog {
 		public void setLabel(String label) {
 			this.label = label;
 		}
-		
+
 		public Component getCustomComponent() {
 			return customComponent;
 		}
@@ -387,6 +388,6 @@ public class JPreferenceDialog extends JDialog {
 		public void setOkAction(Runnable okAction) {
 			this.okAction = okAction;
 		}
-		
+
 	}
 }
