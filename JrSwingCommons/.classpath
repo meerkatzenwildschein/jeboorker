@@ -8,5 +8,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry kind="lib" path="lib/commons-exec-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0-swing.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

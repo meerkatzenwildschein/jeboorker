@@ -41,15 +41,15 @@ import org.rr.commons.mufs.IResourceHandler;
  * provides some static methods to deal with images.
  */
 public class ImageUtils {
-	
+
 	private static final short[] invertTable;
 	static {
 		invertTable = new short[256];
 		for (int i = 0; i < 256; i++) {
 			invertTable[i] = (short) (255 - i);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Creates the image bytes from the given image.
 	 * @param image the image to be converted into bytes.
@@ -60,12 +60,12 @@ public class ImageUtils {
 		if (image == null) {
 			return null;
 		}
-		
+
 		//image/jpg did not always work with ImageIO.getImageWritersByMIMEType
 		if(mime.equals("image/jpg")) {
 			mime = "image/jpeg";
 		}
-		
+
 		ImageWriter writer = null;
         Iterator<ImageWriter> imageWritersByFormatName = ImageIO.getImageWritersByMIMEType(mime);
         while(imageWritersByFormatName.hasNext()) {
@@ -77,7 +77,7 @@ public class ImageUtils {
         		writer = next;
         	}
         }
-		
+
         if(writer != null) {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			MemoryCacheImageOutputStream mem = new MemoryCacheImageOutputStream(output);
@@ -86,7 +86,7 @@ public class ImageUtils {
 				writer.write(image);
 			} catch (IOException e) {
 				LoggerFactory.logInfo(ImageUtils.class, "could not create thumbnail", e);
-			} finally {				
+			} finally {
 				try {mem.flush();} catch (Exception e) {}
 				try {mem.close();} catch (Exception e) {}
 				try {writer.setOutput(null);} catch(Exception e) {}
@@ -96,7 +96,7 @@ public class ImageUtils {
         }
         return null;
 	}
-	
+
 	/**
 	 * Loaded the given jpg file and decodes it.
 	 * @param resourceLoader The jpeg resource to be loaded.
@@ -112,30 +112,30 @@ public class ImageUtils {
 			//LoggerFactory.getLogger().log(Level.WARNING, "Could not decode image " + resourceLoader, e);
 		} finally {
 			IOUtils.closeQuietly(bin);
-			bin = null;				
+			bin = null;
 		}
-		
+
 		return bi;
 	}
-	
+
 	/**
 	 * Scales the given image to the maximum fitting into the given frame
 	 * dimension without loosing the proportions.
-	 * 
+	 *
 	 * @param frame The dimension for the target image
-	 * @param image The image to be resized. 
-	 * 
+	 * @param image The image to be resized.
+	 *
 	 * @return a new {@link BufferedImage} instance with the scaled image data.
 	 */
 	public static BufferedImage scaleToMatch(final BufferedImage image, final Dimension frame, boolean proportional) {
 		if(image==null) {
 			return null;
 		}
-		
+
 		if(proportional) {
 			double heightFactor = ((double)frame.height) / ((double)image.getHeight());
 			double widthFactor = ((double)frame.width) / ((double)image.getWidth());
-	
+
 			BufferedImage scaledImage = scalePercent(image, Math.min(heightFactor, widthFactor));
 			return scaledImage;
 		} else {
@@ -146,51 +146,51 @@ public class ImageUtils {
 			return scaledImage;
 		}
 	}
-	
+
 	/**
 	 * Scales the given image so it matches to the given width
 	 * without loosing it's proportions.
-	 * 
+	 *
 	 * @param width The width where the image should be scaled to.
-	 * @param image The image to be resized. 
-	 * 
+	 * @param image The image to be resized.
+	 *
 	 * @return a new {@link BufferedImage} instance with the scaled image data.
 	 */
 	public static BufferedImage scaleToWidth(BufferedImage image, int width) {
 		if(image==null) {
 			return null;
 		}
-		
+
 		double widthFactor = ((double)width) / ((double)image.getWidth());
 
 		BufferedImage scaledImage = scalePercent(image, widthFactor);
 		return scaledImage;
 	}
-	
+
 	/**
 	 * Scales the given image so it matches to the given height
 	 * without loosing it's proportions.
-	 * 
+	 *
 	 * @param width The width where the image should be scaled to.
-	 * @param image The image to be resized. 
-	 * 
+	 * @param image The image to be resized.
+	 *
 	 * @return a new {@link BufferedImage} instance with the scaled image data.
 	 */
 	public static BufferedImage scaleToHeight(BufferedImage image, int height) {
 		if(image==null) {
 			return null;
 		}
-		
+
 		double heightFactor = ((double)height) / ((double)image.getHeight());
 
 		BufferedImage scaledImage = scalePercent(image, heightFactor);
 		return scaledImage;
-	}	
-	
+	}
+
 	/**
 	 * Shrinks or enlarges the current JpgImage object by the given scale
 	 * factor, with a scale of 1 being 100% (or no change).<p>
-	 * For example, if you need to reduce the image to 75% of the current size, 
+	 * For example, if you need to reduce the image to 75% of the current size,
 	 * you should use a scale of 0.75. If you want to double the size of the
 	 * image, you should use a scale of 2. If you attempt to scale using a
 	 * negative number, the image will not be modified.
@@ -202,18 +202,18 @@ public class ImageUtils {
 		if ((scale > 0) && (scale != 1)) {
 			AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
 			AffineTransformOp op = new AffineTransformOp(scaleInstance, null);
-			
+
 			return op.filter(image, null);
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Scales the image so it shall match into the given frame dimension.
-	 * 
+	 *
 	 * @param frame The dimension for the target image
-	 * @param image The image to be resized. 
-	 * 
+	 * @param image The image to be resized.
+	 *
 	 * @return a new {@link BufferedImage} instance with the scaled image data.
 	 */
 	public static BufferedImage cut(BufferedImage image, Rectangle frame) {
@@ -240,14 +240,14 @@ public class ImageUtils {
 	}
 
 	/**
-	 * Crops the frame having the given crop color around the given image.  
-	 * 
+	 * Crops the frame having the given crop color around the given image.
+	 *
 	 * @param image The image to be croped.
 	 * @param cropColor The color around the image.
 	 * @return The croped image or the given image instance if no crop is needed.
 	 */
 	public static BufferedImage cropByColor(BufferedImage image, Color cropColor) {
-		
+
 		return null;
 	}
 
@@ -269,7 +269,7 @@ public class ImageUtils {
 			widthFactor = ((double)frame.width) / ((double)image.getWidth());
 		}
 		double scale = Math.min(heightFactor, widthFactor);
-		
+
 		AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
 
 		//apply a transform to the AffineTransform so the image is located at the middle/center
@@ -279,15 +279,39 @@ public class ImageUtils {
 		double emptyX = ((double)frame.width) - (((double)image.getWidth()) * scaleX);
 		double emptyY = ((double)frame.height) - (((double)image.getHeight()) * scaleY);
 		scaleInstance.translate(emptyX/2/scaleX, emptyY/2/scaleY);
-		
+
 		//apply the rotation
 		scaleInstance.rotate(Math.toRadians(rotatenDegree), (double)image.getWidth()/2 , (double)image.getHeight()/2);
-		
+
 		return scaleInstance;
-	}	
-	
+	}
+
 	/**
-	 * Detect and crop a white / light gray frame around the given image. 
+	 * Resize the given image without scaling it. If the target size is larger than the source image,
+	 * the overlapping area fill be filled with the given color.
+	 * @param image The image which should be expanded
+	 * @param newSize The target image size
+	 * @param c The background color-
+	 * @return The expanded image or <code>null</code> if the given image is <code>null</code>.
+	 */
+	public static BufferedImage crop(BufferedImage image, Rectangle newSize, Color c) {
+		if(image == null) {
+			return null;
+		}
+		BufferedImage resultImage = new BufferedImage(newSize.width, newSize.height, image.getType());
+		Graphics resultGraphics = resultImage.getGraphics();
+		resultGraphics.setColor(c);
+		resultGraphics.fillRect(0, 0, newSize.width, newSize.height);
+
+		resultGraphics.drawImage(image,
+				0, 0, newSize.width, newSize.height, //dest
+				newSize.x, newSize.y, newSize.x + newSize.width, newSize.y + newSize.height, //source
+				c, null);
+		return resultImage;
+	}
+
+	/**
+	 * Detect and crop a white / light gray frame around the given image.
 	 * @param image The image to be croped.
 	 * @return The croped image or the given one if no crop is needed.
 	 */
@@ -295,11 +319,11 @@ public class ImageUtils {
 		if(image == null) {
 			return null;
 		}
-		
+
 		try {
 			int minRow = -1;
 			int maxRow = -1;
-			
+
 			int[] img_pixels = new int[image.getHeight() * image.getWidth()];
 			// ...grab this images's pixels
 			PixelGrabber pg = new PixelGrabber(image, 0, 0, image.getWidth(), image.getHeight(), img_pixels, 0, image.getWidth());
@@ -313,7 +337,7 @@ public class ImageUtils {
 					}
 				}
 			}
-	
+
 			// ...how about column-based cropping?
 			int minCol = -1;
 			int maxCol = -1;
@@ -326,7 +350,7 @@ public class ImageUtils {
 					}
 				}
 			}
-			
+
 			if(minCol > 1 && maxRow > 1) {
 				minCol+=1;
 				minRow+=1;
@@ -334,7 +358,7 @@ public class ImageUtils {
 				maxRow-=1;
 				int cropedWidth = maxCol - minCol;
 				int cropedHeight = maxRow - minRow;
-				
+
 				if(cropedWidth < 10 || cropedHeight < 10) {
 					return image;
 				}
@@ -342,7 +366,7 @@ public class ImageUtils {
 				Graphics scaledImageGraphics = scaledImage.getGraphics();
 				scaledImageGraphics.drawImage(image, 0, 0, scaledImage.getWidth(), scaledImage.getHeight(), minCol, minRow, maxCol, maxRow, null);
 				scaledImageGraphics.dispose();
-				
+
 				return scaledImage;
 			} else {
 				return image;
@@ -352,9 +376,9 @@ public class ImageUtils {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Tests if the given pixel is in the color area for cropping.  
+	 * Tests if the given pixel is in the color area for cropping.
 	 * @param pixel The pixel to be tested.
 	 * @return <code>true</code> if the pixel is in the crop color area als <code>false</code> otherwise.
 	 */
@@ -368,7 +392,7 @@ public class ImageUtils {
 	}
 
 	/**
-	 * Tests if the given pixels in the specified range are in the cropping color area.  
+	 * Tests if the given pixels in the specified range are in the cropping color area.
 	 * @param pixels The pixels contains the row to be tested.
 	 * @param off The start offset for the pixels to be tested.
 	 * @param len The amount of pixels to be tested starting with the off parameter.
@@ -400,7 +424,7 @@ public class ImageUtils {
 		}
 		return true;
 	}
-	
+
 	public static BufferedImage toBufferedImage(Image image) {
 	    if (image instanceof BufferedImage) {
 	        return (BufferedImage)image;
@@ -449,8 +473,8 @@ public class ImageUtils {
 	    g.dispose();
 
 	    return bimage;
-	}	
-	
+	}
+
 	public static boolean hasAlpha(Image image) {
 	    // If buffered image, the color model is readily available
 	    if (image instanceof BufferedImage) {
@@ -470,7 +494,7 @@ public class ImageUtils {
 	    ColorModel cm = pg.getColorModel();
 	    return cm.hasAlpha();
 	}
-	
+
 	/**
 	 * Inverts the colors of the given image.
 	 * @param src The image to be invert.
@@ -480,20 +504,20 @@ public class ImageUtils {
 		final int w = src.getWidth();
 		final int h = src.getHeight();
 		final BufferedImage dst = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-		 
-		final BufferedImageOp invertOp = new LookupOp(new ShortLookupTable(0, invertTable), null);			
+
+		final BufferedImageOp invertOp = new LookupOp(new ShortLookupTable(0, invertTable), null);
 		if(src.getType() == BufferedImage.TYPE_BYTE_INDEXED || src.getType() == 12) {
 			BufferedImage newSrc = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			newSrc.getGraphics().drawImage(src, 0, 0, null);
 			return invertOp.filter(newSrc, dst);
 		} else {
-			return invertOp.filter(src, dst);	
+			return invertOp.filter(src, dst);
 		}
-	}	
-	
+	}
 
-    /** 
-     * @author flubshi 
+
+    /**
+     * @author flubshi
      */
     public static BufferedImage convertToGrayScale(final BufferedImage bufferedImage) {
         final BufferedImage dest = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -512,7 +536,7 @@ public class ImageUtils {
         }
         return dest;
     }
-    
+
 	/**
 	 * Create a black and white image from a gray scale image
 	 */
@@ -563,36 +587,36 @@ public class ImageUtils {
 			}
 		}
 		return outputImage;
-	}    
-	
+	}
+
 	/**
 	 * Forces a value to a 0-255 integer range
 	 */
 	private static int clamp(float value) {
 		return Math.min(Math.max(Math.round(value), 0), 255);
-	}	
-    
+	}
+
     /**
      * Rotates the given image by the given degree and returns the transformed image.
-     * If the degree value is 0 the given image is returned. 
+     * If the degree value is 0 the given image is returned.
      */
     public static BufferedImage rotate90Degree(BufferedImage image, boolean clockwise) {
 		    int w = image.getWidth();
 		    int h = image.getHeight();
 		    double theta = Math.toRadians(clockwise ? 90 : -90);
-		    
+
 		    BufferedImage rotatedImage = new BufferedImage(h, w, image.getType() > 0 ? image.getType() : BufferedImage.TYPE_INT_RGB);
 		    Graphics2D g2d = (Graphics2D) rotatedImage.getGraphics();
-		    
+
             double x = (h - w) / 2.0;
             double y = (w - h) / 2.0;
-            
+
             AffineTransform at = AffineTransform.getTranslateInstance(x, y);
             at.rotate(theta, w / 2.0, h / 2.0);
-            g2d.drawImage(image, at, null);            
-		    
+            g2d.drawImage(image, at, null);
+
             g2d.dispose();
 	    	return rotatedImage;
     }
-	
+
 }
