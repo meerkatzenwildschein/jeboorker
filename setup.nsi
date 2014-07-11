@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 0.3.6.0
+VIProductVersion 0.4.4.0
 VIAddVersionKey ProductName Jeboorker
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey FileVersion "${VERSION}"
