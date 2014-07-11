@@ -1,8 +1,8 @@
-package bd.amazed.pdfscissors.model;
+package bd.amazed.docscissors.model;
 
 import java.awt.Rectangle;
 
-import bd.amazed.pdfscissors.view.Rect;
+import bd.amazed.docscissors.view.Rect;
 
 public interface RectChangeListener {
 	/**

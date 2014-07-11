@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.view;
+package bd.amazed.docscissors.view;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
-import bd.amazed.pdfscissors.model.PageGroup;
+import bd.amazed.docscissors.model.PageGroup;
 
 public class UIHandler {
 	public static int EDIT_MODE_SELECT = 1;

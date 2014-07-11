@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.view;
+package bd.amazed.docscissors.view;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import bd.amazed.pdfscissors.model.PageGroup;
+import bd.amazed.docscissors.model.PageGroup;
 
 public class PageGroupRenderer extends JComponent implements ListCellRenderer<PageGroup> {
 

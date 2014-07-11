@@ -1,11 +1,11 @@
-package bd.amazed.pdfscissors.model;
+package bd.amazed.docscissors.model;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import bd.amazed.pdfscissors.view.Rect;
+import bd.amazed.docscissors.view.Rect;
 
 /**
  * A group of pages that are cropped together.

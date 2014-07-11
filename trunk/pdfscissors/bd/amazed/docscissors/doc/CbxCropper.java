@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.doc;
+package bd.amazed.docscissors.doc;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -27,7 +27,7 @@ import org.rr.pm.image.ImageInfo;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
-import bd.amazed.pdfscissors.model.PageRectsMap;
+import bd.amazed.docscissors.model.PageRectsMap;
 
 import com.itextpdf.text.DocumentException;
 

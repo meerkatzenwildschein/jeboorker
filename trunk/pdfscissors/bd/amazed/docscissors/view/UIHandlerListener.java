@@ -1,6 +1,6 @@
-package bd.amazed.pdfscissors.view;
+package bd.amazed.docscissors.view;
 
-import bd.amazed.pdfscissors.model.PageGroup;
+import bd.amazed.docscissors.model.PageGroup;
 
 public interface UIHandlerListener {
 

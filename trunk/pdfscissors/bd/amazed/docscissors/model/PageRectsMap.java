@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.model;
+package bd.amazed.docscissors.model;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;

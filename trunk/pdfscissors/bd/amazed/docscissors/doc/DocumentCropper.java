@@ -1,4 +1,4 @@
-package bd.amazed.pdfscissors.doc;
+package bd.amazed.docscissors.doc;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -16,9 +16,9 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.pm.image.ImageUtils;
 
-import bd.amazed.pdfscissors.model.Bundle;
-import bd.amazed.pdfscissors.model.PageGroup;
-import bd.amazed.pdfscissors.model.PageRectsMap;
+import bd.amazed.docscissors.model.Bundle;
+import bd.amazed.docscissors.model.PageGroup;
+import bd.amazed.docscissors.model.PageRectsMap;
 
 import com.itextpdf.text.DocumentException;
 
