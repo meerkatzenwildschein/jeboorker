@@ -28,26 +28,26 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 
 	private static final HashMap<String, Pattern> FILE_EXTENSION_PATTERNS = new HashMap<String, Pattern>() {
 		{
-			put("image/jpeg", Pattern.compile("(.jpg|.jpeg)$"));
-			put("image/png", Pattern.compile("(.png)$"));
-			put("image/gif", Pattern.compile("(.gif)$"));
-			put("text/plain", Pattern.compile("(.txt)$"));
-			put("application/epub+zip", Pattern.compile("(.epub)$"));
-			put("application/pdf", Pattern.compile("(.pdf)$"));
-			put("application/x-cbz", Pattern.compile("(.cbz)$"));
-			put("application/x-cbr", Pattern.compile("(.cbr)$"));
-			put("text/html", Pattern.compile("(.htm|.html|.xhtml)$"));
-			put("text/xml", Pattern.compile("(.xml)$"));
-			put("application/rtf", Pattern.compile("(.rtf)$"));
-			put("application/x-mobipocket-ebook", Pattern.compile("(.mobi)$"));
-			put("application/vnd.amazon.ebook", Pattern.compile("(.azw)$"));
-			put("application/x-fictionbook+xml", Pattern.compile("(.fb2)$"));
-			put("application/x-ms-reader", Pattern.compile("(.lit)$"));
-			put("application/x-newton-compatible-pkg", Pattern.compile("(.pkg)$"));
-			put("application/x-rocketbook", Pattern.compile("(.rb)$"));
-			put("image/vnd.djvu", Pattern.compile("(.djvu)$"));
-			put("application/msword", Pattern.compile("(.doc)$"));
-			put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", Pattern.compile("(.docx)$"));
+			put(MimeUtils.MIME_JPEG, Pattern.compile("(.jpg|.jpeg)$"));
+			put(MimeUtils.MIME_PNG, Pattern.compile("(.png)$"));
+			put(MimeUtils.MIME_GIF, Pattern.compile("(.gif)$"));
+			put(MimeUtils.MIME_TEXT, Pattern.compile("(.txt)$"));
+			put(MimeUtils.MIME_EPUB, Pattern.compile("(.epub)$"));
+			put(MimeUtils.MIME_PDF, Pattern.compile("(.pdf)$"));
+			put(MimeUtils.MIME_CBZ, Pattern.compile("(.cbz)$"));
+			put(MimeUtils.MIME_CBR, Pattern.compile("(.cbr)$"));
+			put(MimeUtils.MIME_HTML, Pattern.compile("(.htm|.html|.xhtml)$"));
+			put(MimeUtils.MIME_XML, Pattern.compile("(.xml)$"));
+			put(MimeUtils.MIME_RTF, Pattern.compile("(.rtf)$"));
+			put(MimeUtils.MIME_MOBI, Pattern.compile("(.mobi)$"));
+			put(MimeUtils.MIME_AZW, Pattern.compile("(.azw)$"));
+			put(MimeUtils.MIME_FB2, Pattern.compile("(.fb2)$"));
+			put(MimeUtils.MIME_LIT, Pattern.compile("(.lit)$"));
+			put(MimeUtils.MIME_PKG, Pattern.compile("(.pkg)$"));
+			put(MimeUtils.MIME_RB, Pattern.compile("(.rb)$"));
+			put(MimeUtils.MIME_DJVU, Pattern.compile("(.djvu)$"));
+			put(MimeUtils.MIME_DOC, Pattern.compile("(.doc)$"));
+			put(MimeUtils.MIME_DOCX, Pattern.compile("(.docx)$"));
 		}
 	};
 
