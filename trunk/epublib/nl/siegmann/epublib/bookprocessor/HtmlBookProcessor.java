@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.Charsets;
+
 import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
@@ -13,14 +15,14 @@ import nl.siegmann.epublib.service.MediatypeService;
 
 /**
  * Helper class for BookProcessors that only manipulate html type resources.
- * 
+ *
  * @author paul
  *
  */
 public abstract class HtmlBookProcessor implements BookProcessor {
 
-	private final static Logger log = Logger.getLogger(HtmlBookProcessor.class.getName()); 
-	public static final String OUTPUT_ENCODING = "UTF-8";
+	private final static Logger log = Logger.getLogger(HtmlBookProcessor.class.getName());
+	public static final String OUTPUT_ENCODING = Charsets.UTF_8.name();
 
 	public HtmlBookProcessor() {
 	}
