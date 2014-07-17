@@ -13,6 +13,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubReader;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -27,21 +28,21 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 
 abstract class AEpubMetadataHandler extends AMetadataHandler {
-	
+
 	private IResourceHandler ebookResourceHandler;
-	
+
 	private Date ebookResourceHandlerTimestamp;
 
 	private byte[] containerOpfData = null;
-	
+
 	private String opfFileName = null;
 
 	protected static interface MetadataEntryType {
 		String getName();
-		
+
 		void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item);
-	}	
-	
+	}
+
 	static enum EPUB_METADATA_TYPES implements MetadataEntryType {
 		JB_AGE_SUGGESTION {
 			public String getName() {
@@ -55,11 +56,11 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			public String getName() {
 				return "jeboorker:keywords";
 			}
-			
+
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				List<String> keywords = ListUtils.split(metadataProperty.getValueAsString(), ",");
 				item.setKeywords(keywords);
-			}			
+			}
 		},CALIBRE_RATING {
 			public String getName() {
 				return "calibre:rating";
@@ -231,7 +232,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			public String getName() {
 				return "contributor";
 			}
-			
+
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				//no EbookPropertyItem
 			}
@@ -239,7 +240,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			public String getName() {
 				return "format";
 			}
-			
+
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				//no EbookPropertyItem
 			}
@@ -247,18 +248,18 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			public String getName() {
 				return "cover";
 			}
-			
+
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
 				METADATA_TYPES.COVER.fillItem(metadataProperty, item);
 			}
 		}
 	}
-	
+
 	AEpubMetadataHandler(IResourceHandler ebookResourceHandler) {
 		this.ebookResourceHandler = ebookResourceHandler;
 		this.ebookResourceHandlerTimestamp = ebookResourceHandler.getModifiedAt();
-	}	
-	
+	}
+
 	/**
 	 * Gets the {@link IResourceHandler} instance for the ebook which is processed
 	 * by this {@link AMetadataHandler} instance.
@@ -267,15 +268,15 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	public List<IResourceHandler> getEbookResource() {
 		return Collections.singletonList(this.ebookResourceHandler);
 	}
-	
+
 	/**
 	 * Gets the Opf file where the metadata is stored. The information where the opf
 	 * file could be found is stored in the META-INF/container.xml file. This information
-	 * will be extracted from there. 
-	 * 
+	 * will be extracted from there.
+	 *
 	 * @param zipData The zip data bytes.
 	 * @return The desired file name or <code>null</code> if no one could be found.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	protected String getOpfFile(final IResourceHandler ebookResource) throws IOException {
 		if(this.opfFileName == null) {
@@ -300,7 +301,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 		}
 		return this.opfFileName;
-	}	
+	}
 
 	/**
 	 * gets the container opf file content bytes containing the metdadata informations.
@@ -333,9 +334,9 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Read all entries from, the given zip data and creates a {@link Book} instance from them. 
+	 * Read all entries from, the given zip data and creates a {@link Book} instance from them.
 	 * @throws IOException
 	 */
 	protected Book readBook(final InputStream zipData, final IResourceHandler ebookResourceHandler, final boolean lazy) throws IOException {
@@ -346,12 +347,12 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			final List<CompressedDataEntry> extracted = ZipUtils.extract(ebookResourceHandler, epubZipFileFilter);
 			final List<String> lazyEntries = epubZipFileFilter.getLazyEntries();
 			final List<byte[]> lazyRawEntries = epubZipFileFilter.getLazyRawEntries();
-			
+
 			for(CompressedDataEntry entry : extracted) {
 				Resource resource = new Resource(entry.getBytes(), entry.rawPath);
 				resources.add(resource);
 			}
-			
+
 			if(lazyEntries.size() == lazyRawEntries.size()) {
 				for(int i = 0; i < lazyEntries.size(); i++) {
 					String entry = lazyEntries.get(i);
@@ -362,14 +363,14 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			} else {
 				throw new IOException("Zip entries not even");
 			}
-			
-			final Book epub = reader.readEpub(resources, "UTF-8", ebookResourceHandler.getName());
+
+			final Book epub = reader.readEpub(resources, Charsets.UTF_8.name(), ebookResourceHandler.getName());
 			return epub;
 		} finally {
 			IOUtils.closeQuietly(zipData);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Zip file filter that collects all zip file entries and support lazy handling for
 	 * having not all files to be extracted. Only these files will be extracted which
@@ -378,15 +379,15 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 	private static class EpubZipFileFilter implements FileEntryFilter {
 
 		boolean lazy = false;
-		
+
 		List<String> lazyEntries = new ArrayList<String>();
-		
+
 		List<byte[]> lazyRawEntries = new ArrayList<byte[]>();
-		
+
 		EpubZipFileFilter(boolean lazy) {
 			this.lazy = lazy;
 		}
-		
+
 		@Override
 		public boolean accept(String entry, byte[] rawEntry) {
 			boolean accept = true;
@@ -404,14 +405,14 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 					accept = false;
 				}
 			}
-			
+
 			if(!accept) {
 				lazyEntries.add(entry);
 				lazyRawEntries.add(rawEntry);
 			}
 			return accept;
 		}
-		
+
 		public List<String> getLazyEntries() {
 			return this.lazyEntries;
 		}
