@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
+import org.apache.commons.io.Charsets;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,21 +25,21 @@ import org.rr.commons.utils.Base64;
 import org.rr.jeborker.Jeboorker;
 
 class AmazonDeMetadataDownloader implements MetadataDownloader {
-	
-	private static final int FETCH_PAGES = 2; 
+
+	private static final int FETCH_PAGES = 2;
 
 	private static final String AMAZON_CONTENT_ENTRY_DIV = "result_"; //_15, _16...
-	
+
 	private ExecutorService pool = Jeboorker.APPLICATION_THREAD_POOL;
-	
+
 	protected String amazonURL = "http://www.amazon.de";
-	
+
 	protected String ageSuggestionMarker = "Vom Hersteller empfohlenes Alter:";
-	
+
 	protected String languageMarker = "Sprache:";
-	
+
 	protected String authorMarker = "(Autor)";
-	
+
 	@Override
 	public List<MetadataDownloadEntry> search(String searchTerm) {
 		final ArrayList<MetadataDownloadEntry> result = new ArrayList<MetadataDownloadEntry>();
@@ -70,9 +71,9 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	 * @param searchTerm Value to be searched.
 	 */
 	private List<Future<Elements>> fetchAmazonSearchPageDivElements(final String searchTerm) throws IOException, InterruptedException {
-		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
+		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, Charsets.UTF_8.name());
 		final List<Callable<Elements>> callables = new ArrayList<Callable<Elements>>(FETCH_PAGES);
-		
+
 		for(int i = 0; i < FETCH_PAGES; i++) {
 			final int page = i;
 			callables.add(new Callable<Elements>() {
@@ -80,21 +81,21 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 				@Override
 				public Elements call() throws Exception {
 					byte[] fetch = loadAmazonSearchPage(encodesSearchPhrase, page);
-					String html = new String(fetch, "UTF-8");
+					String html = new String(fetch, Charsets.UTF_8);
 					Document htmlDoc = Jsoup.parse(html);
 					Elements contentDivs = htmlDoc.getElementsByAttributeValueStarting("id", AMAZON_CONTENT_ENTRY_DIV);
 					return contentDivs;
 				}
-		       
+
 		    });
-		}	
-		
+		}
+
 		List<Future<Elements>> elements = pool.invokeAll(callables);
 		return elements;
 	}
-	
+
 	/**
-	 * Get the cover thumbnail url from the given div element. 
+	 * Get the cover thumbnail url from the given div element.
 	 */
 	private URL getThumbnailImageUrl(Element contentDiv) throws MalformedURLException {
 		Elements elementsByClass = contentDiv.getElementsByClass("productImage");
@@ -105,9 +106,9 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Get the URL for the target page which contains all the details to this div. 
+	 * Get the URL for the target page which contains all the details to this div.
 	 */
 	private URL getTargetPageUrl(Element contentDiv) throws MalformedURLException {
 		Elements elementsByClass = contentDiv.getElementsByClass("newaps");
@@ -119,9 +120,9 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/**
 	 * Get the headline / title provided by the given div element.
 	 */
@@ -134,7 +135,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Loads the amazon search page html bytes for the given page number.
 	 */
@@ -145,19 +146,19 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		final byte[] content = resourceLoader.getContent();
 		return content;
 	}
-	
+
 	private class AmazonMetadataDownloadEntry implements MetadataDownloadEntry {
-		
+
 		private final Future<Document> amazonDetailPageDocument;
-		
+
 		private final Future<byte[]> thumbnailBytes;
-		
+
 		private String base64EncodedThumbnail;
-		
+
 		private final String title;
-		
+
 		private final String id;
-		
+
 		private Document document;
 
 		AmazonMetadataDownloadEntry(final String title, final String id, final URL targetPageURL, final URL thumbnailImageURL) {
@@ -174,12 +175,12 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 						} catch(Exception e) {
 							LoggerFactory.getLogger().log(Level.WARNING, "Failed to load image " + thumbnailImageURL, e);
 						}
-					} 
+					}
 					return null;
 				}
 			});
 			amazonDetailPageDocument = pool.submit(new Callable<Document>() {
-				
+
 				@Override
 				public Document call() throws Exception {
 					if(targetPageURL != null) {
@@ -203,17 +204,17 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 				return thumbnailBytes.get();
 			} catch (Exception e) {
 				LoggerFactory.getLogger().log(Level.WARNING, "Failed to fetch thumbnail image for '" + getTitle() + "'", e);
-			} 
+			}
 			return null;
 		}
-		
+
 		@Override
 		public String getBase64EncodedThumbnailImage() {
 			if(base64EncodedThumbnail == null) {
 				base64EncodedThumbnail = Base64.encodeToString(getThumbnailImageBytes(), false);
 			}
 			return base64EncodedThumbnail;
-		}		
+		}
 
 		@Override
 		public String getTitle() {
@@ -236,10 +237,10 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 									Element nextSibling = (Element) sibling.nextSibling().nextSibling();
 									if(nextSibling.text().equalsIgnoreCase(authorMarker)) {
 										result.add(author);
-									}									
+									}
 								}
 							}
-						}						
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -247,7 +248,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			}
 			return result;
 		}
-		
+
 		@Override
 		public String getDescription() {
 			try {
@@ -259,16 +260,16 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 				}
 			} catch (Exception e) {
 				LoggerFactory.getLogger().log(Level.WARNING, "Failed to fetch author for '" + getTitle() + "'", e);
-			}			
-			
+			}
+
 			return null;
-		}		
+		}
 
 		@Override
 		public String getIsbn10() {
 			return getProductInformationValue("ISBN-10:");
 		}
-		
+
 		@Override
 		public String getIsbn13() {
 			return getProductInformationValue("ISBN-13:");
@@ -278,12 +279,12 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		public String getAgeSuggestion() {
 			return getProductInformationValue(ageSuggestionMarker);
 		}
-		
+
 		@Override
 		public String getLanguage() {
 			return getProductInformationValue(languageMarker);
 		}
-		
+
 		@Override
 		public byte[] getCoverImage() {
 			try {
@@ -314,7 +315,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 
 		/**
 		 * Get a value from the product info box at the amazon page.
-		 * @param label The label for the value.  
+		 * @param label The label for the value.
 		 * @return The desired value or <code>null</code> if the value did not exists.
 		 */
 		private String getProductInformationValue(String label) {
@@ -335,7 +336,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			}
 			return null;
 		}
-		
+
 		private Document getDocument() throws InterruptedException, ExecutionException {
 			if(document == null) {
 				document = amazonDetailPageDocument.get();
