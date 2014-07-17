@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.Charsets;
 import org.apache.jempbox.impl.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,27 +42,12 @@ import org.xml.sax.InputSource;
 /**
  * This class represents the top level XMP data structure and gives access to
  * the various schemas that are available as part of the XMP specification.
- * 
+ *
  * @author <a href="mailto:ben@benlitchfield.com">Ben Litchfield</a>
  * @version $Revision: 1.10 $
  */
 public class XMPMetadata
 {
-    /**
-     * Supported encoding for persisted XML.
-     */
-    public static final String ENCODING_UTF8 = "UTF-8";
-
-    /**
-     * Supported encoding for persisted XML.
-     */
-    public static final String ENCODING_UTF16BE = "UTF-16BE";
-
-    /**
-     * Supported encoding for persisted XML.
-     */
-    public static final String ENCODING_UTF16LE = "UTF-16LE";
-
     /**
      * The DOM representation of the metadata.
      */
@@ -70,7 +56,7 @@ public class XMPMetadata
     /**
      * The encoding of the XMP document. Default is UTF8.
      */
-    protected String encoding = ENCODING_UTF8;
+    protected String encoding = Charsets.UTF_8.name();
 
     /**
      * A mapping of namespaces.
@@ -79,7 +65,7 @@ public class XMPMetadata
 
     /**
      * Default constructor, creates blank XMP doc.
-     * 
+     *
      * @throws IOException
      *             If there is an error creating the initial document.
      */
@@ -108,7 +94,7 @@ public class XMPMetadata
 
     /**
      * Constructor from an existing XML document.
-     * 
+     *
      * @param doc
      *            The root XMP document.
      */
@@ -142,9 +128,9 @@ public class XMPMetadata
 
     /**
      * Will add a XMPSchema to the set of identified schemas.
-     * 
+     *
      * The class needs to have a constructor with parameter Element
-     * 
+     *
      * @param namespace
      *            The namespace URI of the schmema for instance
      *            http://purl.org/dc/elements/1.1/.
@@ -165,9 +151,9 @@ public class XMPMetadata
 
     /**
      * Get the PDF Schema.
-     * 
+     *
      * @return The first PDF schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -175,25 +161,25 @@ public class XMPMetadata
     {
         return (XMPSchemaPDF) getSchemaByClass(XMPSchemaPDF.class);
     }
-    
+
     /**
      * Get the PDFX Schema.
-     * 
+     *
      * @return The first PDFX schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
     public XMPSchemaPDFX getPDFXSchema() throws IOException
     {
         return (XMPSchemaPDFX) getSchemaByClass(XMPSchemaPDFX.class);
-    }    
-    
+    }
+
     /**
      * Get the XMP Schema.
-     * 
+     *
      * @return The first XMP schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -201,13 +187,13 @@ public class XMPMetadata
     {
     	XMPSchemaXMP schema = (XMPSchemaXMP) getSchemaByClass(XMPSchemaXMP.class);
     	return schema;
-    }    
+    }
 
     /**
      * Get the Basic Schema.
-     * 
+     *
      * @return The first Basic schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -218,9 +204,9 @@ public class XMPMetadata
 
     /**
      * Get the Dublin Core Schema.
-     * 
+     *
      * @return The first Dublin schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -228,25 +214,25 @@ public class XMPMetadata
     {
         return (XMPSchemaDublinCore) getSchemaByClass(XMPSchemaDublinCore.class);
     }
-    
+
     /**
      * Get the Dublin Core Schema.
-     * 
+     *
      * @return The first Dublin schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
     public XMPSchemaPhotoshop getPhotoshopSchema() throws IOException
     {
         return (XMPSchemaPhotoshop) getSchemaByClass(XMPSchemaPhotoshop.class);
-    }    
+    }
 
     /**
      * Get the Media Management Schema.
-     * 
+     *
      * @return The first Media Management schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -258,9 +244,9 @@ public class XMPMetadata
 
     /**
      * Get the Schema Rights Schema.
-     * 
+     *
      * @return The first Schema Rights schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -272,9 +258,9 @@ public class XMPMetadata
 
     /**
      * Get the Job Ticket Schema.
-     * 
+     *
      * @return The first Job Ticket schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -285,9 +271,9 @@ public class XMPMetadata
 
     /**
      * Get the Dynamic Media Schema.
-     * 
+     *
      * @return The first Dynamic Media schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -298,9 +284,9 @@ public class XMPMetadata
 
     /**
      * Get the Paged Text Schema.
-     * 
+     *
      * @return The first Paged Text schema in the list.
-     * 
+     *
      * @throws IOException
      *             If there is an error accessing the schema.
      */
@@ -311,7 +297,7 @@ public class XMPMetadata
 
     /**
      * Add a new Media Management schema.
-     * 
+     *
      * @return The newly added schema.
      */
     public XMPSchemaMediaManagement addMediaManagementSchema()
@@ -322,7 +308,7 @@ public class XMPMetadata
 
     /**
      * Add a new Rights Managment schema.
-     * 
+     *
      * @return The newly added schema.
      */
     public XMPSchemaRightsManagement addRightsManagementSchema()
@@ -333,7 +319,7 @@ public class XMPMetadata
 
     /**
      * Add a new Job Ticket schema.
-     * 
+     *
      * @return The newly added schema.
      */
     public XMPSchemaBasicJobTicket addBasicJobTicketSchema()
@@ -344,7 +330,7 @@ public class XMPMetadata
 
     /**
      * Add a new Dynamic Media schema.
-     * 
+     *
      * @return The newly added schema.
      */
     public XMPSchemaDynamicMedia addDynamicMediaSchema()
@@ -355,7 +341,7 @@ public class XMPMetadata
 
     /**
      * Add a new Paged Text schema.
-     * 
+     *
      * @return The newly added schema.
      */
     public XMPSchemaPagedText addPagedTextSchema()
@@ -367,7 +353,7 @@ public class XMPMetadata
     /**
      * Add a custom schema to the root rdf. The schema has to have been created
      * as a child of this XMPMetadata.
-     * 
+     *
      * @param schema
      *            The schema to add.
      */
@@ -379,10 +365,10 @@ public class XMPMetadata
 
     /**
      * Save the XMP document to a file.
-     * 
+     *
      * @param file
      *            The file to save the XMP document to.
-     * 
+     *
      * @throws Exception
      *             If there is an error while writing to the stream.
      */
@@ -393,10 +379,10 @@ public class XMPMetadata
 
     /**
      * Save the XMP document to a stream.
-     * 
+     *
      * @param outStream
      *            The stream to save the XMP document to.
-     * 
+     *
      * @throws TransformerException
      *             If there is an error while writing to the stream.
      */
@@ -407,7 +393,7 @@ public class XMPMetadata
 
     /**
      * Get the XML document as a byte array.
-     * 
+     *
      * @return The metadata as an XML byte stream.
      * @throws Exception
      *             If there is an error creating the stream.
@@ -419,7 +405,7 @@ public class XMPMetadata
 
     /**
      * Get the XML document from this object.
-     * 
+     *
      * @return This object as an XML document.
      */
     public Document getXMPDocument()
@@ -429,10 +415,10 @@ public class XMPMetadata
 
     /**
      * Generic add schema method.
-     * 
+     *
      * @param schema
      *            The schema to add.
-     * 
+     *
      * @return The newly added schema.
      */
     protected XMPSchema basicAddSchema(XMPSchema schema)
@@ -447,7 +433,7 @@ public class XMPMetadata
      * document will only have one PDF schema (but multiple are supported) so it
      * is recommended that you first check the existence of a PDF scheme by
      * using getPDFSchema()
-     * 
+     *
      * @return A new blank PDF schema that is now part of the metadata.
      */
     public XMPSchemaPDF addPDFSchema()
@@ -455,41 +441,41 @@ public class XMPMetadata
         XMPSchemaPDF schema = new XMPSchemaPDF(this);
         return (XMPSchemaPDF) basicAddSchema(schema);
     }
-    
+
     /**
      * Create and add a new PDFX Schema to this metadata. Typically a XMP
      * document will only have one PDF schema (but multiple are supported) so it
      * is recommended that you first check the existence of a PDF scheme by
      * using getPDFXSchema()
-     * 
+     *
      * @return A new blank PDF schema that is now part of the metadata.
      */
     public XMPSchemaPDFX addPDFXSchema()
     {
         XMPSchemaPDFX schema = new XMPSchemaPDFX(this);
         return (XMPSchemaPDFX) basicAddSchema(schema);
-    }    
-    
+    }
+
     /**
      * Create and add a new PDFX Schema to this metadata. Typically a XMP
      * document will only have one PDF schema (but multiple are supported) so it
      * is recommended that you first check the existence of a PDF scheme by
      * using getPDFXSchema()
-     * 
+     *
      * @return A new blank XMP schema that is now part of the metadata.
      */
     public XMPSchemaXMP addXMPSchema()
     {
     	XMPSchemaXMP schema = new XMPSchemaXMP(this);
         return (XMPSchemaXMP) basicAddSchema(schema);
-    }      
+    }
 
     /**
      * Create and add a new Dublin Core Schema to this metadata. Typically a XMP
      * document will only have one schema for each type (but multiple are
      * supported) so it is recommended that you first check the existence of a
      * this scheme by using getDublinCoreSchema()
-     * 
+     *
      * @return A new blank PDF schema that is now part of the metadata.
      */
     public XMPSchemaDublinCore addDublinCoreSchema()
@@ -503,7 +489,7 @@ public class XMPMetadata
      * document will only have one schema for each type (but multiple are
      * supported) so it is recommended that you first check the existence of a
      * this scheme by using getDublinCoreSchema()
-     * 
+     *
      * @return A new blank PDF schema that is now part of the metadata.
      */
     public XMPSchemaBasic addBasicSchema()
@@ -514,7 +500,7 @@ public class XMPMetadata
 
     /**
      * Create and add a new IPTC schema to this metadata.
-     * 
+     *
      * @return A new blank IPTC schema that is now part of the metadata.
      */
     public XMPSchemaIptc4xmpCore addIptc4xmpCoreSchema()
@@ -525,7 +511,7 @@ public class XMPMetadata
 
     /**
      * Create and add a new Photoshop schema to this metadata.
-     * 
+     *
      * @return A new blank Photoshop schema that is now part of the metadata.
      */
     public XMPSchemaPhotoshop addPhotoshopSchema()
@@ -537,7 +523,7 @@ public class XMPMetadata
     /**
      * The encoding used to write the XML. Default value:UTF-8<br/> See the
      * ENCODING_XXX constants
-     * 
+     *
      * @param xmlEncoding
      *            The encoding to write the XML as.
      */
@@ -548,7 +534,7 @@ public class XMPMetadata
 
     /**
      * Get the current encoding that will be used to write the XML.
-     * 
+     *
      * @return The current encoding to write the XML to.
      */
     public String getEncoding()
@@ -558,7 +544,7 @@ public class XMPMetadata
 
     /**
      * Get the root RDF element.
-     * 
+     *
      * @return The root RDF element.
      */
     private Element getRDFElement()
@@ -574,12 +560,12 @@ public class XMPMetadata
 
     /**
      * Load metadata from the filesystem.
-     * 
+     *
      * @param file
      *            The file to load the metadata from.
-     * 
+     *
      * @return The loaded XMP document.
-     * 
+     *
      * @throws IOException
      *             If there is an error reading the data.
      */
@@ -590,12 +576,12 @@ public class XMPMetadata
 
     /**
      * Load a schema from an input source.
-     * 
+     *
      * @param is
      *            The input source to load the schema from.
-     * 
+     *
      * @return The loaded/parsed schema.
-     * 
+     *
      * @throws IOException
      *             If there was an error while loading the schema.
      */
@@ -606,12 +592,12 @@ public class XMPMetadata
 
     /**
      * Load metadata from the filesystem.
-     * 
+     *
      * @param is
      *            The stream to load the data from.
-     * 
+     *
      * @return The loaded XMP document.
-     * 
+     *
      * @throws IOException
      *             If there is an error reading the data.
      */
@@ -622,7 +608,7 @@ public class XMPMetadata
 
     /**
      * Test main program.
-     * 
+     *
      * @param args
      *            The command line arguments.
      * @throws Exception
@@ -659,10 +645,10 @@ public class XMPMetadata
 
     /**
      * This will get a list of XMPSchema(or subclass) objects.
-     * 
+     *
      * @return A non null read-only list of schemas that are part of this
      *         metadata.
-     * 
+     *
      * @throws IOException
      *             If there is an error creating a specific schema.
      */
@@ -723,7 +709,7 @@ public class XMPMetadata
      * Will return all schemas that fit the given namespaceURI. Which is only
      * done by using the namespace mapping (nsMapping) and not by actually
      * checking the xmlns property.
-     * 
+     *
      * @param namespaceURI
      *            The namespaceURI to filter for.
      * @return A list containing the found schemas or an empty list if non are
@@ -760,9 +746,9 @@ public class XMPMetadata
 
     /**
      * This will return true if the XMP contains an unknown schema.
-     * 
+     *
      * @return True if an unknown schema is found, false otherwise
-     * 
+     *
      * @throws IOException
      *             If there is an error
      */
@@ -791,12 +777,12 @@ public class XMPMetadata
 
     /**
      * Tries to retrieve a schema from this by classname.
-     * 
+     *
      * @param targetSchema
      *            Class for targetSchema.
-     * 
+     *
      * @return XMPSchema or null if no target is found.
-     * 
+     *
      * @throws IOException
      *             if there was an error creating the schemas of this.
      */
@@ -814,12 +800,12 @@ public class XMPMetadata
         // not found
         return null;
     }
-    
+
     /**
      * Merge this metadata with the given metadata object.
-     * 
+     *
      * @param metadata The metadata to merge with this document.
-     * 
+     *
      * @throws IOException If there is an error merging the data.
      */
     public void merge(XMPMetadata metadata) throws IOException
