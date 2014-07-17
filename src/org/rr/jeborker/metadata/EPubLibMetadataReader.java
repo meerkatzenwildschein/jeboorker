@@ -20,13 +20,14 @@ import nl.siegmann.epublib.domain.Relator;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 
+import org.apache.commons.io.Charsets;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
-	
+
 	EPubLibMetadataReader(IResourceHandler ebookResourceHandler) {
 		super(ebookResourceHandler);
 	}
@@ -34,12 +35,12 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	@Override
 	public List<MetadataProperty> readMetaData() {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-		
+
 		try {
 //			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final Book epub = readBook(ebookResourceHandler.getContentInputStream(), ebookResourceHandler, true);
 			final Metadata metadata = epub.getMetadata();
-			
+
 			final List<MetadataProperty> metadataList = this.createMetadataList(epub, metadata);
 			return metadataList;
 		} catch (Throwable e) {
@@ -49,12 +50,12 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		}
 		return new ArrayList<MetadataProperty>(0);
 	}
-	
+
 	/**
 	 * Read all metadata entries from the given {@link Metadata} instance into {@link EpubLibMetadataProperty}.
 	 * @param metadata The metadata instance where the entries read from.
 	 * @return All available metadata from teh given {@link Metadata} instance.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private List<MetadataProperty> createMetadataList(final Book epub, final Metadata metadata) throws IOException {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>() {
@@ -67,7 +68,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 				}
 				return false;
 			}
-			
+
 			private boolean isListEmpty(List<Object> values) {
 				if(values != null && !values.isEmpty()) {
 					for(Object value : values) {
@@ -75,33 +76,33 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 							return false;
 						}
 					}
-				}	
+				}
 				return true;
 			}
-			
+
 		};
-		
+
 		List<Author> authors = metadata.getAuthors();
 		for (Author author : authors) {
 			EpubLibMetadataProperty<Author> epubLibMetadataProperty = new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName() , (author.getFirstname() + " " + author.getLastname()).trim(), author);
 			result.add(epubLibMetadataProperty);
 		}
-		
+
 		List<String> titles = metadata.getTitles();
 		for (String title : titles) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.TITLE.getName(), title, null));
 		}
-		
+
 		List<String> descriptions = metadata.getDescriptions();
 		for (String description : descriptions) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.DESCRIPTION.getName(), description, null));
-		}		
-		
+		}
+
 		List<String> publishers = metadata.getPublishers();
 		for (String publisher : publishers) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.PUBLISHER.getName(), publisher, null));
 		}
-		
+
 		List<String> rights = metadata.getRights();
 		for (String right : rights) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.RIGHTS.getName(), right, null));
@@ -111,36 +112,36 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		for (String subject : subjects) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.SUBJECT.getName(), subject, null));
 		}
-		
+
 		List<String> types = metadata.getTypes();
 		for (String type : types) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.TYPE.getName(), type, null));
 		}
-		
+
 		List<Author> contributors = metadata.getContributors();
 		for (Author contributor : contributors) {
 			Relator relator = contributor.getRelator();
 			if(relator != null && relator.getName().equalsIgnoreCase("CREATOR")) {
 				result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.CREATOR.getName(), contributor.getFirstname() + contributor.getLastname(), contributor));
 			} else {
-				result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.CONTRIBUTOR.getName(), contributor.getFirstname() + contributor.getLastname(), contributor));				
+				result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.CONTRIBUTOR.getName(), contributor.getFirstname() + contributor.getLastname(), contributor));
 			}
 		}
-		
+
 		List<nl.siegmann.epublib.domain.Date> dates = metadata.getDates();
-		for (nl.siegmann.epublib.domain.Date date : dates) { 
+		for (nl.siegmann.epublib.domain.Date date : dates) {
 			Event event = date.getEvent();
 			if(event != null && Event.PUBLICATION.equals(event)) {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName(), date.getValue(), date));	
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName(), date.getValue(), date));
 			} else if(event != null && Event.CREATION.equals(event)) {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.CREATION_DATE.getName(), date.getValue(), date));	
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.CREATION_DATE.getName(), date.getValue(), date));
 			} else if(event != null && Event.MODIFICATION.equals(event)) {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.MODIFICATION_DATE.getName(), date.getValue(), date));	
+				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.MODIFICATION_DATE.getName(), date.getValue(), date));
 			} else {
 				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.DATE.getName(), date.getValue(), date));
 			}
 		}
-		
+
 		List<Identifier> identifiers = metadata.getIdentifiers();
 		for (Identifier identifier : identifiers) {
 			EpubLibMetadataProperty<Identifier> epubLibMetadataProperty;
@@ -149,18 +150,18 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			} else if("isbn".equalsIgnoreCase(identifier.getScheme())) {
 				epubLibMetadataProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.ISBN.getName(), identifier.getValue(), identifier);
 			} else {
-				epubLibMetadataProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.IDENTIFIER.getName(), identifier.getValue(), identifier);	
+				epubLibMetadataProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.IDENTIFIER.getName(), identifier.getValue(), identifier);
 			}
 			result.add(epubLibMetadataProperty);
 		}
-		
+
 		Map<QName, String> otherProperties = metadata.getOtherProperties();
 		for (Map.Entry<QName, String> e : otherProperties.entrySet()){
 		    QName key = e.getKey();
 		    String value = e.getValue();
 		    result.add(new EpubLibMetadataProperty<QName>(key.getPrefix() + ":" + key.getLocalPart(), value, key));
-		}		
-		
+		}
+
 		List<Meta> otherMeta = metadata.getOtherMeta();
 		for(Meta meta : otherMeta) {
 			//no need to read the cover meta entry. It's already provided by the Reader and added later.
@@ -169,17 +170,17 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			}
 			result.add(new EpubLibMetadataProperty<Meta>(meta.getName(), meta.getContent(), meta));
 		}
-		
+
 		String format = metadata.getFormat();
 		if(format != null && !format.isEmpty()) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.FORMAT.getName(), format, null));
 		}
-		
+
 		String language = metadata.getLanguage();
 		if(language != null && !language.isEmpty()) {
 			result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.LANGUAGE.getName(), language, null));
 		}
-		
+
 		final Resource coverImage = epub.getCoverImage();
 		final byte[] data;
 		if(coverImage != null) {
@@ -188,7 +189,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			data = searchCoverImage(epub);
 		}
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), data, null));
-		
+
 		return new ArrayList<MetadataProperty>(result);
 	}
 
@@ -214,9 +215,9 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 				}
 			}
 		}
-		
+
 		return null;
-	}	
+	}
 
 	@Override
 	public void fillEbookPropertyItem(final List<MetadataProperty> metadataProperties, final EbookPropertyItem item) {
@@ -237,52 +238,52 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		Author author = new Author("");
 		author.setRelator(Relator.AUTHOR);
 		result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName(), "", author));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.TITLE.getName(), ""));
-		
+
 		Meta ageSuggestion = new Meta(EPUB_METADATA_TYPES.JB_AGE_SUGGESTION.getName(), "");
 		result.add(new EpubLibMetadataProperty<Meta>(ageSuggestion.getName(), "", ageSuggestion));
-		
+
 		Meta keywords = new Meta(EPUB_METADATA_TYPES.JB_KEYWORDS.getName(), "");
 		result.add(new EpubLibMetadataProperty<Meta>(keywords.getName(), "", keywords));
-		
+
 		Meta rating = new Meta(EPUB_METADATA_TYPES.CALIBRE_RATING.getName(), "");
 		result.add(new EpubLibMetadataProperty<Meta>(rating.getName(), "", rating));
-		
+
 		Meta seriesIndex = new Meta(EPUB_METADATA_TYPES.CALIBRE_SERIES_INDEX.getName(), "");
 		result.add(new EpubLibMetadataProperty<Meta>(seriesIndex.getName(), "", seriesIndex));
-		
+
 		Meta seriesName = new Meta(EPUB_METADATA_TYPES.CALIBRE_SERIES.getName(), "");
 		result.add(new EpubLibMetadataProperty<Meta>(seriesName.getName(), "", seriesName));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.SUBJECT.getName(), ""));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.PUBLISHER.getName(), ""));
-		
+
 		Identifier identifier = new Identifier("uuid", UUID.randomUUID().toString());
 		result.add(new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.UUID.getName(), identifier.getValue(), identifier));
-		
+
 		Identifier isbn = new Identifier("isbn", "");
 		result.add(new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.ISBN.getName(), "", isbn));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.RIGHTS.getName(), ""));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.LANGUAGE.getName(), ""));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.DESCRIPTION.getName(), ""));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.DATE.getName(), ""));
-		
+
 		Author creator = new Author("");
-		creator.setRelator(Relator.CREATOR);		
+		creator.setRelator(Relator.CREATOR);
 		result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.CREATOR.getName(), "", creator));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.TYPE.getName(), ""));
-		
+
 		Author contributor = new Author("");
-		contributor.setRelator(Relator.CONTRIBUTOR);		
+		contributor.setRelator(Relator.CONTRIBUTOR);
 		result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.CONTRIBUTOR.getName(), "", contributor));
-		
+
 		result.add(new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.FORMAT.getName(), ""));
 		return result;
 	}
@@ -291,7 +292,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	public String getPlainMetaData() {
 		try {
 			final byte[] containerXmlData = getContainerOPF(getEbookResource().get(0));
-			return new String(containerXmlData, "UTF-8");
+			return new String(containerXmlData, Charsets.UTF_8);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get plain metadata for " + getEbookResource(), e);
 		}
@@ -309,7 +310,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		switch(type) {
 		case AUTHOR:
 			Author author = new Author("");
-			author.setRelator(Relator.AUTHOR);			
+			author.setRelator(Relator.AUTHOR);
 			newProperty = new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName(), "", author);
 			break;
 		case TITLE:
@@ -325,21 +326,21 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		case RATING:
 			Meta ratingName = new Meta(EPUB_METADATA_TYPES.CALIBRE_RATING.getName(), "");
 			newProperty = new EpubLibMetadataProperty<Meta>(ratingName.getName(), "", ratingName);
-			break;	
+			break;
 		case AGE_SUGGESTION:
 			Meta ageSuggestionName = new Meta(EPUB_METADATA_TYPES.JB_AGE_SUGGESTION.getName(), "");
 			newProperty = new EpubLibMetadataProperty<Meta>(ageSuggestionName.getName(), "", ageSuggestionName);
-			break;	
+			break;
 		case DESCRIPTION:
 			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.DESCRIPTION.getName(), "");
-			break;	
+			break;
 		case ISBN:
 			Identifier isbn = new Identifier("isbn", "");
-			newProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.ISBN.getName(), "", isbn);			
-			break;		
+			newProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.ISBN.getName(), "", isbn);
+			break;
 		case LANGUAGE:
 			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.LANGUAGE.getName(), "");
-			break;					
+			break;
 		case COVER:
 			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), null, null);
 			break;
@@ -354,7 +355,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 				}
 			}
 		}
-		
+
 		if(create && result.isEmpty() && newProperty != null) {
 			result.add(newProperty);
 		}
