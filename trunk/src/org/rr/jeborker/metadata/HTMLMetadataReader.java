@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -21,11 +22,11 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 class HTMLMetadataReader implements IMetadataReader {
 
 	private IResourceHandler ebookResourceHandler;
-	
+
 	HTMLMetadataReader(IResourceHandler resource) {
 		this.ebookResourceHandler = resource;
 	}
-	
+
 	@Override
 	public List<IResourceHandler> getEbookResource() {
 		return Collections.singletonList(this.ebookResourceHandler);
@@ -44,7 +45,7 @@ class HTMLMetadataReader implements IMetadataReader {
 		}
 		return Collections.emptyList();
 	}
-	
+
 	/**
 	 * Extracts the head of the html document. Supports only reading the header and not the whole html file.
 	 * @throws IOException
@@ -57,7 +58,7 @@ class HTMLMetadataReader implements IMetadataReader {
 			final String body = "<body>";
 			int len;
 			int bodyIndex = -1;
-			String charset = "UTF-8";
+			String charset = Charsets.UTF_8.name();
 			while((len = contentInputStream.read(buf)) != -1) {
 				String html = new String(buf, 0, len, charset);
 				if(html.indexOf('\ufffd') != -1) {
@@ -70,12 +71,12 @@ class HTMLMetadataReader implements IMetadataReader {
 					}
 				}
 				content.append(html);
-				
+
 				if((bodyIndex = StringUtils.find(content, body, content.length() - len - body.length(), UtilConstants.COMPARE_TEXT)) != -1) {
 					break;
 				}
 			}
-			
+
 			if(bodyIndex != -1) {
 				String metadata = content.toString().substring(0, bodyIndex);
 				metadata = StringUtils.replace(metadata, new String[] {"<html>"}, "", UtilConstants.COMPARE_TEXT);
@@ -87,19 +88,19 @@ class HTMLMetadataReader implements IMetadataReader {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Extracts the meta data from the given <code>content</code>.
 	 * @param content The html content containing some meta data.
 	 * @param bodyIndex The index of the body tag.
-	 * @return The extracted meta data. Never returns <code>null</code>. 
+	 * @return The extracted meta data. Never returns <code>null</code>.
 	 * @throws IOException
 	 */
 	private List<MetadataProperty> extractMetadata(final String content) throws IOException {
 		final List<MetadataProperty> result = new ArrayList<MetadataProperty>();
 		final HtmlCleaner cleaner = new HtmlCleaner();
 		final TagNode rootNode = cleaner.clean(new StringReader(content));
-		
+
 		//add meta tags
 		final TagNode[] metaElements = rootNode.getElementsByName("meta", true);
 		for (int i = 0; i < metaElements.length; i++) {
@@ -115,7 +116,7 @@ class HTMLMetadataReader implements IMetadataReader {
 			}
 			result.add(new MetadataProperty(metaName, metaContent));
 		}
-		
+
 		//add title tag
 		final TagNode[] titleElements = rootNode.getElementsByName("title", true);
 		for (int i = 0; i < titleElements.length; i++) {
