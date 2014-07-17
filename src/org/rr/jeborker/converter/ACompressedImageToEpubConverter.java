@@ -15,6 +15,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Spine;
 import nl.siegmann.epublib.epub.EpubWriter;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -26,35 +27,35 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 /**
- * A converter for image archives to epub 
+ * A converter for image archives to epub
  */
 abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 	protected IResourceHandler comicBookResource;
-	
+
 	private ConverterPreferenceController converterPreferenceController;
-	
+
 	private ArrayList<IResourceHandler> tempFiles = new ArrayList<IResourceHandler>();
-	
+
 	public ACompressedImageToEpubConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
 	}
-	
+
 	@Override
 	public IResourceHandler convert() throws IOException {
 		final ConverterPreferenceController converterPreferenceController = getConverterPreferenceController();
 		if(!converterPreferenceController.isConfirmed()) {
 			return null;
 		}
-		
+
 		final List<String> compressedImageEntries = listEntries(this.comicBookResource);
 		if(compressedImageEntries == null || compressedImageEntries.isEmpty()) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "The Comic book archive " + comicBookResource.getName() + " is empty.");
 			return null;
-		}		
+		}
 		final Book epub = this.createEpub(compressedImageEntries);
 		final EpubWriter writer = new EpubWriter();
-		
+
 		IResourceHandler targetEpubResource = ResourceHandlerFactory.getUniqueResourceHandler(this.comicBookResource, "epub");
 		OutputStream contentOutputStream = targetEpubResource.getContentOutputStream(false);
 		try {
@@ -63,17 +64,17 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			contentOutputStream.flush();
 			contentOutputStream.close();
 		}
-		
+
 		deleteTemporaryFiles();
 		ConverterUtils.transferMetadata(this.comicBookResource, targetEpubResource);
-		
+
 		return targetEpubResource;
 	}
-	
+
 	private Book createEpub(List<String> cbzEntries) throws IOException {
 		final Book epub = new Book();
 		final Spine spine = new Spine();
-		
+
 		List<Resource> resources = new ArrayList<Resource>(cbzEntries.size());
 		for(int i = 0; i < cbzEntries.size(); i++) {
 			final String cbzEntry = cbzEntries.get(i);
@@ -84,12 +85,12 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 					final InputStream imageIn = convertedImageInputStream.get(j);
 					final String cbzHrefEntry = createHrefEntry(cbzEntry, epub, j);
 					final Resource imageResource = new Resource(imageIn, cbzHrefEntry);
-					
-					resources.add(imageResource);	
+
+					resources.add(imageResource);
 					epub.addResource(imageResource);
-					
+
 					this.attachSpineEntry(epub, spine, imageResource);
-					
+
 					//the first image from the cbz is the cover image.
 					if(i == 0) {
 						epub.setCoverImage(imageResource);
@@ -100,10 +101,10 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		epub.setSpine(spine);
 		return epub;
 	}
-	
+
 	/**
 	 * Creates a xhtml doc for the given image and add it as spine to the given epub.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void attachSpineEntry(final Book epub, final Spine spine, final Resource imageResource) throws IOException {
 		String imageName = imageResource.getHref();
@@ -115,14 +116,14 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			InputStream spineTemplateIn = ACompressedImageToEpubConverter.class.getResourceAsStream("CbzToEpubSpineImageTemplate");
 			String spineTemplate = IOUtils.toString(spineTemplateIn);
 			String spineDoc = MessageFormat.format(spineTemplate, new Object[] {imageResource.getHref()});
-			spineResource.setData(spineDoc.getBytes("UTF-8"));
+			spineResource.setData(spineDoc.getBytes(Charsets.UTF_8));
 			spine.addResource(spineResource);
 			epub.addResource(spineResource);
 		}
 	}
-	
+
 	/**
-	 * Takes the given InputStream with image data and does the desired image conversion if necessary. 
+	 * Takes the given InputStream with image data and does the desired image conversion if necessary.
 	 * @return The converted image(s). If no conversion is necessary, the original input stream is returned.
 	 */
 	private List<InputStream> getConvertedImageInputStream(InputStream imageIn, String imageName) throws IOException {
@@ -133,7 +134,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			for(BufferedImage image : processImageModifications) {
 				String mime = imageName.indexOf('.') != -1 ? "image/" + imageName.substring(imageName.lastIndexOf('.') + 1) : "image/jpeg";
 				byte[] imageBytes = ImageUtils.getImageBytes(image, mime);
-				
+
 				//copy the converted data to HD because we possibly have not enough memory for the whole boo.
 				IResourceHandler temporaryResource = ResourceHandlerFactory.getTemporaryResource(mime.substring(mime.indexOf('/') + 1));
 				tempFiles.add(temporaryResource);
@@ -145,22 +146,22 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			return Collections.singletonList(imageIn);
 		}
 	}
-	
+
 	/**
-	 * Tells if some image conversion is needed. 
+	 * Tells if some image conversion is needed.
 	 */
 	private boolean isImageConversion() {
 		ConverterPreferenceController controller = getConverterPreferenceController();
-		return 	controller.isLandscapePageRotate() || 
-				controller.isLandscapePageSplit() || 
+		return 	controller.isLandscapePageRotate() ||
+				controller.isLandscapePageSplit() ||
 				(controller.getImageSize() != null && controller.getImageSize().intValue() < 99);
 	}
-	
+
 	/**
 	 * Creates a href entry for the given archive entry.
 	 * @param cbzEntry The archive entry name
 	 * @param epub The {@link Book} instance to be created.
-	 * @param index The index of the href with the same name 
+	 * @param index The index of the href with the same name
 	 * @return The desired href entry.
 	 */
 	private String createHrefEntry(final String cbzEntry, final Book epub, final int index) {
@@ -187,13 +188,13 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 					href = href + index + "_";
 				}
 			}
-			
+
 			return href;
 		} catch(Exception e) {
 			return cbzEntry;
 		}
 	}
-	
+
 	private void deleteTemporaryFiles() {
 		for(IResourceHandler tempFile : tempFiles) {
 			try {
@@ -206,7 +207,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 
 	protected abstract InputStream getCompressionEntryStream(IResourceHandler resourceHandler, String entry);
-	
+
 	protected abstract List<String> listEntries(IResourceHandler cbzResource);
 
 	/**
@@ -218,11 +219,11 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		if(this.converterPreferenceController == null) {
 			this.converterPreferenceController = this.createConverterPreferenceController();
 		}
-		
+
 		if(!this.converterPreferenceController.hasShown()) {
 			this.converterPreferenceController.showPreferenceDialog();
 		}
-		
+
 		return this.converterPreferenceController;
 	}
 
