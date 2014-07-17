@@ -272,7 +272,7 @@ class MainView extends JFrame {
 
 	private JButton removeMetadataButton;
 
-	private JRButton saveMetadataButton;
+	private JButton saveMetadataButton;
 
 	private JPanel sortPanel;
 
@@ -550,7 +550,7 @@ class MainView extends JFrame {
 				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
 				propertySheet.addToolbarComponent(removeMetadataButton);
 
-				saveMetadataButton = new JRButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
+				saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
 				saveMetadataButton.setText("");
 				new EnablePropertyChangeHighlighterSupport(saveMetadataButton, Color.RED, 3);
 
