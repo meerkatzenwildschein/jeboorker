@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.Charsets;
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
@@ -32,19 +33,19 @@ import org.w3c.dom.Node;
 class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMetadataReader {
 
 	private IResourceHandler ebookResource;
-	
+
 	private PDFDocument pdfDoc;
 
 	PDFCommonMetadataReader(final IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
 		this.pdfDoc = PDFDocument.getPDFCommonDocumentInstance(PDFDocument.ITEXT, ebookResource);
 	}
-	
+
 	@Override
 	public List<IResourceHandler> getEbookResource() {
 		return Collections.singletonList(this.ebookResource);
-	}	
-	
+	}
+
 	@Override
 	public List<MetadataProperty> readMetaData() {
 		try {
@@ -59,7 +60,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	                this.addSchemaProperties(result, xmpSchema);
 				}
 			}
-			
+
 			final Map<String, String> pdfInfo = getInfo();
 			if(pdfInfo != null) {
 				for (Entry<String, String> entry : pdfInfo.entrySet()) {
@@ -85,7 +86,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			} else {
 				LoggerFactory.logWarning(this, "Could not get metadata from " + ebookResource, new RuntimeException("dumpstack"));
 			}
-			
+
 			try {
 				byte[] fetchThumbnail = fetchXMPThumbnail(ebookResource);
 				if(fetchThumbnail == null) {
@@ -96,15 +97,15 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				}
 			} catch (Exception e) {
 				LoggerFactory.logWarning(this.getClass(), "Could not read cover for pdf " + ebookResource, e);
-			}			
-			
+			}
+
 			return result;
 		} catch (Throwable e) {
 			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for pdf " + ebookResource, e);
 		}
 		return new ArrayList<MetadataProperty>(0);
 	}
-	
+
 	private byte[] getXmpMetadata() {
 		try {
 			return pdfDoc.getXMPMetadata();
@@ -113,7 +114,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		}
 		return null;
 	}
-	
+
 	private Map<String, String> getInfo() {
 		try {
 			return pdfDoc.getInfo();
@@ -121,13 +122,13 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			LoggerFactory.logWarning(this.getClass(), "Could not read info metadata for pdf " + ebookResource, e);
 		}
 		return null;
-	}	
-	
+	}
+
 	private void addSchemaProperties(final ArrayList<MetadataProperty> result, final XMPSchema schema) throws IOException {
 		if(schema == null) {
 			return;
 		}
-		
+
 		final Element schemaElement = schema.getElement();
 		final List<Element> schemaChildren = getChildren(schemaElement);
 		for (Element schemaChild : schemaChildren) {
@@ -221,7 +222,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			}
 		}
 	}
-	
+
 	/**
 	 * Fetches the thumbnail from the xmp metadata.
 	 * @param pdfReader The reader instance to be used to read the XMP data
@@ -234,12 +235,12 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		}
 		final byte[] xmpMetadataBytes = pdfDoc.getXMPMetadata();
 		byte[] result = null;
-		
+
 		if(XMPUtils.isValidXMP(xmpMetadataBytes)) {
 			final Document document = getDocument(xmpMetadataBytes, ebookResource);
 			final XMPMetadata xmp = new XMPMetadata(document);
 			final XMPSchemaBasic xmpBasicSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
-			
+
 			if(xmpBasicSchema != null) {
 				//Thumbnails could have xap: or xmp: namespace in the BasicSchema.
 				Thumbnail thumbnail = xmpBasicSchema.getThumbnail(null, "xap");
@@ -247,7 +248,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 					thumbnail = xmpBasicSchema.getThumbnail(null, "xmp");
 				}
 				if (thumbnail != null) {
-					String image = thumbnail.getImage();					
+					String image = thumbnail.getImage();
 					byte[] decodeBase64 = Base64.decode(image);
 					if(decodeBase64!=null && decodeBase64.length > 5) {
 						result = decodeBase64;
@@ -256,16 +257,16 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			}
 		}
 		return result;
-	}		
-	
+	}
+
 	@Override
 	public String getPlainMetaData() {
 		try {
 			final byte[] xmpMetadataBytes = pdfDoc.getXMPMetadata();
 			if(xmpMetadataBytes != null && xmpMetadataBytes.length > 0) {
-				String xml = new String(xmpMetadataBytes, "UTF-8");
+				String xml = new String(xmpMetadataBytes, Charsets.UTF_8);
 				xml = new HTMLEntityConverter(xml, -1).decodeEntities();
-				
+
 				return xml;
 			} else {
 				LoggerFactory.logInfo(this, "Could not get plain metadata for " + ebookResource, null);
@@ -273,7 +274,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get plain metadata for " + ebookResource, e);
 		}
-		
+
 		return null;
 	}
 
@@ -292,15 +293,15 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		result.add(new MetadataProperty("Description", ""));
 		result.add(new MetadataProperty("ModDate", "", Date.class));
 		result.add(new MetadataProperty("CreationDate", "", Date.class));
-		result.add(new MetadataProperty("SourceModified", "", Date.class));		
+		result.add(new MetadataProperty("SourceModified", "", Date.class));
 		return result;
 	}
-	
+
 	@Override
 	public String getPlainMetaDataMime() {
 		return "text/xml";
 	}
-	
+
 	private List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
@@ -309,28 +310,28 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		} else {
 			metadataProperties = readMetaData();
 		}
-		
+
 		MetadataProperty authorProperty = null;
 		for (MetadataProperty property : metadataProperties) {
 			if(property.getName().equalsIgnoreCase("Author")) {
 				result.add(property);
 				authorProperty = property;
-			} 
+			}
 		}
-		
+
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {
 			authorProperty = new MetadataProperty("Author", "");
 			result.add(authorProperty);
-		} 
+		}
 		return Collections.unmodifiableList(result);
-	}	
-	
+	}
+
 	@Override
 	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
 		final String search;
 		final String name;
-		
+
 		switch(type) {
 			case GENRE:
 				search = "subject";
@@ -339,15 +340,15 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			case TITLE:
 				search = "title";
 				name = "Title";
-				break;	
+				break;
 			case SERIES_NAME:
 				search = "seriesname";
 				name = "seriesname";
-				break;		
+				break;
 			case RATING:
 				search = "rating";
 				name = "Rating";
-				break;					
+				break;
 			case AUTHOR:
 				return this.getAuthorMetaData(create, props);
 			case AGE_SUGGESTION:
@@ -373,7 +374,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			default:
 				return null;
 		}
-		
+
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
 		if(props != null) {
@@ -381,18 +382,18 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		} else {
 			metadataProperties = readMetaData();
 		}
-		
+
 		for (MetadataProperty property : metadataProperties) {
 			if(property.getName().equalsIgnoreCase(search)) {
 				result.add(property);
 			}
 		}
-		
+
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {
 			result.add(new MetadataProperty(name, ""));
-		} 
+		}
 		return Collections.unmodifiableList(result);
 	}
-	
+
 }
