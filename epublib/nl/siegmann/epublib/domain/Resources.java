@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.Charsets;
+
 import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.StringUtil;
@@ -16,15 +18,12 @@ import nl.siegmann.epublib.util.StringUtil;
 /**
  * All the resources that make up the book.
  * XHTML files, images and epub xml documents must be here.
- * 
+ *
  * @author paul
  *
  */
 public class Resources implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2450876953383871451L;
 	private static final String IMAGE_PREFIX = "image_";
 	private static final String ITEM_PREFIX = "item_";
@@ -34,9 +33,9 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Adds a resource to the resources.
-	 * 
+	 *
 	 * Fixes the resources id and href if necessary.
-	 * 
+	 *
 	 * @param resource
 	 * @return
 	 */
@@ -49,7 +48,7 @@ public class Resources implements Serializable {
 
 	/**
 	 * Checks the id of the given resource and changes to a unique identifier if it isn't one already.
-	 * 
+	 *
 	 * @param resource
 	 */
 	public void fixResourceId(Resource resource) {
@@ -72,7 +71,7 @@ public class Resources implements Serializable {
 
 	/**
 	 * Check if the id is a valid identifier. if not: prepend with valid identifier
-	 * 
+	 *
 	 * @param resource
 	 * @return
 	 */
@@ -95,7 +94,7 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Creates a new resource id that is guarenteed to be unique for this set of Resources
-	 * 
+	 *
 	 * @param resource
 	 * @return
 	 */
@@ -119,7 +118,7 @@ public class Resources implements Serializable {
 
 	/**
 	 * Whether the map of resources already contains a resource with the given id.
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -137,7 +136,7 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Gets the resource with the given id.
-	 * 
+	 *
 	 * @param id
 	 * @return null if not found
 	 */
@@ -155,7 +154,7 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Remove the resource with the given href.
-	 * 
+	 *
 	 * @param href
 	 * @return the removed resource, null if not found
 	 */
@@ -205,7 +204,7 @@ public class Resources implements Serializable {
 	/**
 	 * The resources that make up this book.
 	 * Resources can be xhtml pages, images, xml documents, etc.
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<String, Resource> getResourceMap() {
@@ -231,7 +230,7 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Sets the collection of Resources to the given collection of resources
-	 * 
+	 *
 	 * @param resources
 	 */
 	public void set(Collection<Resource> resources) {
@@ -241,7 +240,7 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Adds all resources from the given Collection of resources to the existing collection.
-	 * 
+	 *
 	 * @param resources
 	 */
 	public void addAll(Collection<Resource> resources) {
@@ -253,7 +252,7 @@ public class Resources implements Serializable {
 
 	/**
 	 * Sets the collection of Resources to the given collection of resources
-	 * 
+	 *
 	 * @param resources A map with as keys the resources href and as values the Resources
 	 */
 	public void set(Map<String, Resource> resources) {
@@ -262,9 +261,9 @@ public class Resources implements Serializable {
 	
 	
 	/**
-	 * First tries to find a resource with as id the given idOrHref, if that 
+	 * First tries to find a resource with as id the given idOrHref, if that
 	 * fails it tries to find one with the idOrHref as href.
-	 * 
+	 *
 	 * @param idOrHref
 	 * @return
 	 */
@@ -280,7 +279,7 @@ public class Resources implements Serializable {
 	/**
 	 * Gets the resource with the given href.
 	 * If the given href contains a fragmentId then that fragment id will be ignored.
-	 * 
+	 *
 	 * @param href
 	 * @return null if not found.
 	 */
@@ -292,8 +291,8 @@ public class Resources implements Serializable {
 		Resource result = resources.get(href);
 		if(result == null && href.contains("%")) {
 			try {
-				//Do a try with URL decoding the href entry. 
-				result = resources.get(URLDecoder.decode(href, "UTF-8"));
+				//Do a try with URL decoding the href entry.
+				result = resources.get(URLDecoder.decode(href, Charsets.UTF_8.name()));
 			} catch (Exception e) {
 				//just a quiet try.
 			}
@@ -303,9 +302,9 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Gets the first resource (random order) with the give mediatype.
-	 * 
+	 *
 	 * Useful for looking up the table of contents as it's supposed to be the only resource with NCX mediatype.
-	 * 
+	 *
 	 * @param mediaType
 	 * @return
 	 */
@@ -315,9 +314,9 @@ public class Resources implements Serializable {
 	
 	/**
 	 * Gets the first resource (random order) with the give mediatype.
-	 * 
+	 *
 	 * Useful for looking up the table of contents as it's supposed to be the only resource with NCX mediatype.
-	 * 
+	 *
 	 * @param mediaType
 	 * @return
 	 */
@@ -332,7 +331,7 @@ public class Resources implements Serializable {
 
 	/**
 	 * All resources that have the given MediaType.
-	 * 
+	 *
 	 * @param mediaType
 	 * @return
 	 */
@@ -351,7 +350,7 @@ public class Resources implements Serializable {
 
 	/**
 	 * All Resources that match any of the given list of MediaTypes
-	 * 
+	 *
 	 * @param mediaTypes
 	 * @return
 	 */
@@ -361,7 +360,7 @@ public class Resources implements Serializable {
 			return result;
 		}
 		
-		// this is the fastest way of doing this according to 
+		// this is the fastest way of doing this according to
 		// http://stackoverflow.com/questions/1128723/in-java-how-can-i-test-if-an-array-contains-a-certain-value
 		List<MediaType> mediaTypesList = Arrays.asList(mediaTypes);
 		for (Resource resource: getAll()) {
