@@ -31,6 +31,7 @@ import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
 import nl.siegmann.epublib.util.StringUtil;
 
+import org.apache.commons.io.Charsets;
 import org.rr.commons.log.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,7 +40,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Reads the opf package document as defined by namespace http://www.idpf.org/2007/opf
- *  
+ *
  * @author paul
  *
  */
@@ -77,13 +78,13 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		for(Resource resource : all) {
 			resource.setPackageHref(packageHref);
 			result.add(resource);
-		}	
+		}
 		return result;
 	}
 	
 	/**
 	 * Reads the manifest containing the resource ids, hrefs and mediatypes.
-	 *  
+	 *
 	 * @param packageDocument
 	 * @param packageHref
 	 * @param epubReader
@@ -117,7 +118,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 				resource = findHrefResource(href, resources);
 				if(resource != null) {
 					resources.remove(resource.getHref());
-					resource.setHref(href);					
+					resource.setHref(href);
 				}
 
 				if(resource == null) {
@@ -134,17 +135,17 @@ public class PackageDocumentReader extends PackageDocumentBase {
 			idMapping.put(id, resource.getId());
 		}
 		return result;
-	}	
+	}
 
 	private static Resource findHrefResource(String href, final Resources resources) {
-		//Possibly any charset could be used to store file names in zip files. 
+		//Possibly any charset could be used to store file names in zip files.
 		try {
 			final boolean urlEncoded = href.indexOf('%') != -1;
 			final SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
-			final String compareHref = urlEncoded ? URLDecoder.decode(href, "UTF-8") : href;
+			final String compareHref = urlEncoded ? URLDecoder.decode(href, Charsets.UTF_8.name()) : href;
 			final Collection<Resource> allResources = resources.getAll();
 			
-			//try charset encodings for wrong encoded content.opf 
+			//try charset encodings for wrong encoded content.opf
 			for(Charset c : availableCharsets.values()) {
 				String newEncodedHref = new String(href.getBytes(), c);
 				if(resources.containsByHref(newEncodedHref)) {
@@ -158,7 +159,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 					} catch (UnsupportedEncodingException e) {
 					}
 				}
-			}	
+			}
 			
 			//try charset encodings for zip file entries.
 			for(Resource resource : allResources) {
@@ -186,7 +187,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	/**
 	 * Reads the book's guide.
 	 * Here some more attempts are made at finding the cover page.
-	 * 
+	 *
 	 * @param packageDocument
 	 * @param epubReader
 	 * @param book
@@ -235,7 +236,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 
 	/**
 	 * Reads the document's spine, containing all sections in reading order.
-	 * 
+	 *
 	 * @param packageDocument
 	 * @param epubReader
 	 * @param book
@@ -283,7 +284,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	/**
 	 * Creates a spine out of all resources in the resources.
 	 * The generated spine consists of all XHTML pages in order of their href.
-	 * 
+	 *
 	 * @param resources
 	 * @return
 	 */
@@ -306,10 +307,10 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	
 	/**
 	 * The spine tag should contain a 'toc' attribute with as value the resource id of the table of contents resource.
-	 * 
+	 *
 	 * Here we try several ways of finding this table of contents resource.
 	 * We try the given attribute value, some often-used ones and finally look through all resources for the first resource with the table of contents mimetype.
-	 * 
+	 *
 	 * @param spineElement
 	 * @param resourcesById
 	 * @return
@@ -349,7 +350,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	/**
 	 * Find all resources that have something to do with the coverpage and the cover image.
 	 * Search the meta tags and the guide references
-	 * 
+	 *
 	 * @param packageDocument
 	 * @return
 	 */
