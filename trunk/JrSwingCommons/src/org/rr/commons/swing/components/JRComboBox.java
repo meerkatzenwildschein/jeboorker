@@ -28,7 +28,7 @@ public class JRComboBox<E> extends JComboBox<E> {
 	// Setting the JComboBox wide
 	public void setWide(boolean wide) {
 		this.wide = wide;
-		widestLengh = getWidestItemWidth();
+		this.widestLengh = getWidestItemWidth();
 
 	}
 

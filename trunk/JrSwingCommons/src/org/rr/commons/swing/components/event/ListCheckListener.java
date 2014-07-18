@@ -1,14 +1,11 @@
-package org.japura.gui.calendar.components;
+package org.rr.commons.swing.components.event;
 
-import javax.swing.JLabel;
-
-import org.japura.gui.calendar.Calendar;
-import org.japura.gui.calendar.CalendarComponent;
-import org.japura.gui.calendar.CalendarComponentType;
+import java.util.EventListener;
 
 /**
+ * Listener for the ListCheckModel
  * <P>
- * Copyright (C) 2011 Carlos Eduardo Leite de Andrade
+ * Copyright (C) 2010 Carlos Eduardo Leite de Andrade
  * <P>
  * This library is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,23 +26,10 @@ import org.japura.gui.calendar.CalendarComponentType;
  * 
  * @author Carlos Eduardo Leite de Andrade
  */
-public class MonthLabel extends JLabel implements CalendarComponent{
+public interface ListCheckListener<T> extends EventListener{
 
-  private static final long serialVersionUID = -5714363821897711769L;
-  private Calendar calendar;
+  public void removeCheck(ListEvent<T> event);
 
-  public MonthLabel(Calendar calendar) {
-	this.calendar = calendar;
-  }
-
-  @Override
-  public Calendar getCalendar() {
-	return calendar;
-  }
-
-  @Override
-  public CalendarComponentType getType() {
-	return CalendarComponentType.MONTH_LABEL;
-  }
+  public void addCheck(ListEvent<T> event);
 
 }
