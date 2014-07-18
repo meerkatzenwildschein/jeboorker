@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -9,13 +8,8 @@ import javax.swing.SwingUtilities;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.swing.components.tree.TreeUtil;
-import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
-import org.rr.jeborker.app.preferences.APreferenceStore;
-import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
