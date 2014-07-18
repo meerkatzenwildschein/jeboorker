@@ -1,7 +1,7 @@
 package org.rr.jeborker.app.preferences;
 
 
-/***
+/**
  * {@link PreferenceStoreFactory} allows to access the different preference store implementations.
  */
 public class PreferenceStoreFactory {
@@ -14,7 +14,7 @@ public class PreferenceStoreFactory {
 		
 		public int getDefaultType();
 		
-	}	
+	}
 	
 	public static enum PREFERENCE_KEYS implements PreferenceKey {
 		DELETE_EBOOK_AFTER_IMPORT {
@@ -116,7 +116,7 @@ public class PreferenceStoreFactory {
 				return SYSTEM_STORE;
 			}
 		}
-	}	
+	}
 
 	public static final int DB_STORE = 0;
 	
@@ -133,7 +133,7 @@ public class PreferenceStoreFactory {
 	private static final DummyPreferenceStore DUMMY_STORE_INSTANCE = new DummyPreferenceStore();
 	
 	/**
-	 * @return a dummy preference store implementation. 
+	 * @return a dummy preference store implementation.
 	 */
 	public static APreferenceStore getDummyPreferenceStore() {
 		return DUMMY_STORE_INSTANCE;

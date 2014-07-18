@@ -1,58 +1,56 @@
 package org.rr.jeborker.gui;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JList;
+import javax.swing.JPanel;
 
-import org.japura.gui.CheckComboBox;
-import org.japura.gui.event.ListCheckListener;
-import org.japura.gui.event.ListEvent;
-import org.japura.gui.model.DefaultListCheckModel;
-import org.japura.gui.model.ListCheckModel;
-import org.japura.gui.renderer.CheckListRenderer;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.components.JRCheckBoxComboBox;
+import org.rr.commons.swing.components.event.ListCheckListener;
+import org.rr.commons.swing.components.event.ListEvent;
+import org.rr.commons.swing.components.model.DefaultJRCheckBoxComboBoxModel;
+import org.rr.commons.swing.components.model.JRCheckBoxComboBoxModel;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.ViewField;
 import org.rr.jeborker.gui.additional.EbookPropertyItemFieldComperator;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
-public class SortColumnComponentController {
+class SortColumnComponent extends JPanel {
 
-	private final CheckComboBox<Field> comboBox;
+	private final JRCheckBoxComboBox<Field> comboBox = new JRCheckBoxComboBox<Field>();
 
 	private static EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();
 
 	private ArrayList<Field> internalCheckList = new ArrayList<Field>();
 
-	public SortColumnComponentController(final CheckComboBox<Field> comboBox) {
-		this.comboBox = comboBox;
-		this.initialize(comboBox);
+	public SortColumnComponent() {
+		this.initialize();
 	}
 
-	private void initialize(final CheckComboBox<Field> comboBox) {
-		final DefaultListCheckModel<Field> sortColumnComboBoxModel = this.initModel();
+	private void initialize() {
+		setLayout(new BorderLayout());
+		add(comboBox, BorderLayout.CENTER);
+		
+		JRCheckBoxComboBoxModel<Field> sortColumnComboBoxModel = initModel();
 		initSortAction(sortColumnComboBoxModel);
 		initClosedViewValue();
-		initRenderer();
-		comboBox.setModel(sortColumnComboBoxModel);
-		restoreProperties();
+		comboBox.setCheckBoxComboBoxModel(sortColumnComboBoxModel);
 	}
-
+	
 	/**
 	 * Initialize the combobox actions to be triggered on a selection change.
 	 * @param sortColumnComboBoxModel The model where the selections are triggered.
 	 */
-	private void initSortAction(DefaultListCheckModel<Field> sortColumnComboBoxModel) {
+	private void initSortAction(JRCheckBoxComboBoxModel<Field> sortColumnComboBoxModel) {
 		sortColumnComboBoxModel.addListCheckListener(new ListCheckListener<Field>() {
 
 			@Override
@@ -76,39 +74,12 @@ public class SortColumnComponentController {
 	}
 
 	/**
-	 * Initialize the renderer which is able to show the field names.
-	 * @param filterFieldSelection The combobox instance where the renderer should be applied to.
-	 */
-	private void initRenderer() {
-		//renderer setup for showing the name annotation for the fields.
-		comboBox.setRenderer(new CheckListRenderer() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String getText(Object value) {
-				ViewField annotation = ((Field) value).getAnnotation(ViewField.class);
-				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
-				if(localizedName != null) {
-					return localizedName;
-				} else {
-					return annotation.name();
-				}
-			}
-
-			@Override
-			public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-				return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			}
-		});
-	}
-
-	/**
 	 * Setup the value which is shown if the combobox is closed.
 	 *
 	 * @param filterFieldSelection The combobox to be setup.
 	 */
 	private void initClosedViewValue() {
-		comboBox.setTextFor(CheckComboBox.MULTIPLE, new CharSequence() {
+		comboBox.setTextFor(JRCheckBoxComboBox.CheckState.MULTIPLE, new CharSequence() {
 
 			@Override
 			public CharSequence subSequence(int start, int end) {
@@ -148,17 +119,27 @@ public class SortColumnComponentController {
 	 * Initializes and set the data model to the combobox.
 	 * @return The created model.
 	 */
-	private DefaultListCheckModel<Field> initModel() {
+	private JRCheckBoxComboBoxModel<Field> initModel() {
 		//get fields to be displayed in the combobox
 		final List<Field> listEntries = ReflectionUtils.getFieldsByAnnotation(ViewField.class, EbookPropertyItem.class);
 
 		//sort the fields to the DBViewField.orderPriority()
 		Collections.sort(listEntries, ebookPropertyItemFieldComperator);
 
-		final DefaultListCheckModel<Field> sortColumnComboBoxModel = new DefaultListCheckModel<Field>();
-		for (Field field : listEntries) {
-			sortColumnComboBoxModel.addElement(field);
-		}
+		final DefaultJRCheckBoxComboBoxModel<Field> sortColumnComboBoxModel = new DefaultJRCheckBoxComboBoxModel<Field>(listEntries, null) {
+
+			@Override
+			public String getLabel(int index) {
+				Field value = getValueAt(index);
+				ViewField annotation = value.getAnnotation(ViewField.class);
+				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
+				if(localizedName != null) {
+					return localizedName;
+				} else {
+					return annotation.name();
+				}
+			}
+		};
 		return sortColumnComboBoxModel;
 	}
 
@@ -167,7 +148,7 @@ public class SortColumnComponentController {
 	 * @return The checked fields. Never returns <code>null</code>.
 	 */
 	public List<Field> getSelectedFields() {
-		final List<Field> checkeds = comboBox.getModel().getCheckeds();
+		final List<Field> checkeds = comboBox.getCheckBoxComboBoxModel().getCheckedValues();
 		//sort the fields to the DBViewField.orderPriority()
 		Collections.sort(checkeds, ebookPropertyItemFieldComperator);
 		final ArrayList<Field> result = new ArrayList<Field>(checkeds.size());
@@ -181,19 +162,17 @@ public class SortColumnComponentController {
 	 * Reads the order columns from the preferences to the combobox model.
 	 */
 	private void readOrderColumnsFromPreferences() {
-		//preferences to table model
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final String entryString = preferenceStore.getGenericEntryAsString("sortColumnFields");
-		if(entryString!=null && entryString.length() > 0) {
+		if (entryString != null && entryString.length() > 0) {
 			final List<String> splitted = ListUtils.split(entryString, ",", -1);
-			final ListCheckModel<Field> model = comboBox.getModel();
+			final JRCheckBoxComboBoxModel<Field> model = comboBox.getCheckBoxComboBoxModel();
 			final int modelSize = model.getSize();
 
 			for (String split : splitted) {
 				for (int j = 0; j < modelSize; j++) {
-					// the split functions returns always the String.intern() instances.
-					if(model.getElementAt(j).getName().equals(split)) {
-						model.addCheck((Field)model.getElementAt(j));
+					if(model.getValueAt(j).getName().equals(split)) {
+						model.addCheck((Field)model.getValueAt(j));
 						break;
 					}
 				}
@@ -211,11 +190,7 @@ public class SortColumnComponentController {
 		}
 	}
 
-	public void dispose() {
-		this.storeProperties();
-	}
-
-	void storeProperties() {
+	void storeApplicationProperties() {
 		//store the sort order properties.
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<Field> selectedFields = getSelectedFields();
@@ -232,7 +207,7 @@ public class SortColumnComponentController {
 	/**
 	 * Restores the order fields and put them to view and model.
 	 */
-	void restoreProperties() {
+	void restoreApplicationProperties() {
 		this.readOrderColumnsFromPreferences();
 	}
 

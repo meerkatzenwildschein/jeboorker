@@ -105,7 +105,7 @@ public class MainTreeController {
 				((JRTree) selectedComponent).scrollPathToVisibleVertical(lastExpandedRow, true);
 			}
 			if(controller.getSelectedEbookPropertyItemRows().length > 0) {
-				mainWindow.mainTable.clearSelection();
+				mainWindow.clearMainTableSelection();
 			}
 		}
 	}

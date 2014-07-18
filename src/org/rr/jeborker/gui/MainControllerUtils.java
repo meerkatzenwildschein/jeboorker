@@ -29,87 +29,6 @@ import com.l2fprod.common.propertysheet.Property;
 class MainControllerUtils {
 	
 	/**
-	 * Writes the application properties to the preference file
-	 */
-	static void storeApplicationProperties(MainView mainWindow) {
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		preferenceStore.addGenericEntryAsNumber("mainWindowSizeWidth", mainWindow.getSize().width);
-		preferenceStore.addGenericEntryAsNumber("mainWindowSizeHeight", mainWindow.getSize().height);
-		preferenceStore.addGenericEntryAsNumber("mainWindowLocationX", mainWindow.getLocation().x);
-		preferenceStore.addGenericEntryAsNumber("mainWindowLocationY", mainWindow.getLocation().y);
-		preferenceStore.addGenericEntryAsNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainWindow.mainSplitPane.getDividerLocation()));
-		preferenceStore.addGenericEntryAsNumber("lastRowCount", Integer.valueOf(mainWindow.mainTable.getRowCount()));
-		preferenceStore.addGenericEntryAsNumber("descriptionDividerLocation", Integer.valueOf(mainWindow.propertySheet.getDescriptionDividerLocation()));
-		preferenceStore.addGenericEntryAsNumber("treeMainTableDividerLocation", Integer.valueOf(mainWindow.treeMainTableSplitPane.getDividerLocation()));
-		preferenceStore.addGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(mainWindow.propertySheetImageSplitPane.getDividerLocation()));
-		preferenceStore.addGenericEntryAsString("basePathTreeSelection", TreeUtil.getExpansionStates(mainWindow.basePathTree));
-		preferenceStore.addGenericEntryAsString("fileSystemTreeSelection", TreeUtil.getExpansionStates(mainWindow.fileSystemTree));
-	}
-	
-	/**
-	 * Restores the application properties 
-	 */
-	static void restoreApplicationProperties(MainView mainWindow) {
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		
-		//restore the window size from the preferences.
-		Number mainWindowSizeWidth = preferenceStore.getGenericEntryAsNumber("mainWindowSizeWidth");
-		Number mainWindowSizeHeight = preferenceStore.getGenericEntryAsNumber("mainWindowSizeHeight");
-		if(mainWindowSizeWidth!=null && mainWindowSizeHeight!=null) {
-			mainWindow.setSize(mainWindowSizeWidth.intValue(), mainWindowSizeHeight.intValue());
-		}
-		
-		//restore window location
-		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
-		if(entryAsScreenLocation != null) {
-			mainWindow.setLocation(entryAsScreenLocation);
-		}
-		
-		//restore the divider location at the main window
-		final Number mainWindowDividerLocation = preferenceStore.getGenericEntryAsNumber("mainWindowDividerLocation");
-		if(mainWindowDividerLocation != null) {
-			int add = 0;
-			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
-				//however, the splitpane has a difference of 9 between setting and getting the location.				
-				add = -9;
-			}
-			mainWindow.mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
-		}
-		
-		//restore the divider location at the main window
-		final Number treeMainTableDividerLocation = preferenceStore.getGenericEntryAsNumber("treeMainTableDividerLocation");
-		if(treeMainTableDividerLocation != null) {
-			int add = 0;
-			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
-				//however, the splitpane has a difference of 9 between setting and getting the location.				
-//				add = 9;
-			}
-			mainWindow.treeMainTableSplitPane.setDividerLocation(treeMainTableDividerLocation.intValue() + add);
-		}
-		
-		//restore the divider location in the property sheet 
-		final Number descriptionDividerLocation = preferenceStore.getGenericEntryAsNumber("descriptionDividerLocation");
-		if(descriptionDividerLocation != null) {
-			mainWindow.propertySheet.setDescriptionDividerLocation(descriptionDividerLocation.intValue());
-		}
-		
-		final Number propertySheetImageSplitPaneDividerLocation = preferenceStore.getGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
-		if (propertySheetImageSplitPaneDividerLocation != null) {
-			mainWindow.propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
-		}
-		
-		final String basePathTreeSelection = preferenceStore.getGenericEntryAsString("basePathTreeSelection");
-		if(basePathTreeSelection != null) {
-			TreeUtil.restoreExpanstionState(mainWindow.basePathTree, basePathTreeSelection);
-		}
-		
-		final String fileSystemTreeSelection = preferenceStore.getGenericEntryAsString("fileSystemTreeSelection");
-		if(fileSystemTreeSelection != null) {
-			TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, fileSystemTreeSelection);
-		}
-	}
-	
-	/**
 	 * Writes the given l2fprod sheet properties as metadata to the ebook.
 	 * @param properties The properties to be written.
 	 */
@@ -139,7 +58,7 @@ class MainControllerUtils {
 					}
 					
 					for (EbookPropertyItem item : selectedEbookPropertyItems) {
-						EbookPropertyItemUtils.refreshEbookPropertyItem(item, item.getResourceHandler(), false);		
+						EbookPropertyItemUtils.refreshEbookPropertyItem(item, item.getResourceHandler(), false);
 						DefaultDBManager.getInstance().updateObject(item);
 					}
 					SwingUtilities.invokeLater(new Runnable() {
