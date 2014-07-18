@@ -80,7 +80,6 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.japura.gui.CheckComboBox;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 import org.rr.commons.log.LoggerFactory;
@@ -89,11 +88,13 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.JRCheckBoxComboBox;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.components.JRTable;
 import org.rr.commons.swing.components.button.JMenuButton;
 import org.rr.commons.swing.components.container.ShadowPanel;
 import org.rr.commons.swing.components.tree.JRTree;
+import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.swing.components.util.EnablePropertyChangeHighlighterSupport;
 import org.rr.commons.swing.dnd.DragAndDropUtils;
 import org.rr.commons.swing.dnd.FileTransferable;
@@ -277,7 +278,7 @@ class MainView extends JFrame {
 
 	private JLabel sortLabel;
 
-	CheckComboBox<Field> sortColumnComboBox;
+	SortColumnComponent sortColumnComponent;
 
 	JToggleButton sortOrderAscButton;
 
@@ -297,7 +298,7 @@ class MainView extends JFrame {
 
 	JComboBox<String> filterField;
 
-	CheckComboBox<Field> filterFieldSelection;
+	JRCheckBoxComboBox<Field> filterFieldSelection;
 
 	private BasicComboBoxEditor comboboxEditor;
 
@@ -399,13 +400,13 @@ class MainView extends JFrame {
 				gbc_sortLabel.gridy = 0;
 				sortPanel.add(sortLabel, gbc_sortLabel);
 
-				sortColumnComboBox = new CheckComboBox<Field>();
-				sortColumnComboBox.setPreferredSize(new Dimension(0, 25));
+				sortColumnComponent = new SortColumnComponent();
+				sortColumnComponent.setPreferredSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
 				gbc_sortColumnComboBox.fill = GridBagConstraints.BOTH;
 				gbc_sortColumnComboBox.gridx = 3;
 				gbc_sortColumnComboBox.gridy = 0;
-				sortPanel.add(sortColumnComboBox, gbc_sortColumnComboBox);
+				sortPanel.add(sortColumnComponent, gbc_sortColumnComboBox);
 
 				final Icon ascOrderIcon =  new ImageIcon(MainView.class.getResource("resources/sort_asc.gif"));
 				final Icon descOrderIcon = new ImageIcon(MainView.class.getResource("resources/sort_desc.gif"));
@@ -706,7 +707,9 @@ class MainView extends JFrame {
 		gbc_lblSearch.gridy = 0;
 		filterPanel.add(lblSearch, gbc_lblSearch);
 
-		filterFieldSelection = new CheckComboBox<Field>();
+		filterFieldSelection = new JRCheckBoxComboBox<Field>();
+		filterFieldSelection.setPopupHeight(100);
+		filterFieldSelection.setMinPopupWidth(200);
 		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
 		filterFieldSelection.setPreferredSize(filterFieldSelectionSize);
 		filterFieldSelection.setMinimumSize(filterFieldSelectionSize);
@@ -1695,5 +1698,89 @@ class MainView extends JFrame {
 			imageViewer.setImageViewerResource(null);
 		}
 	}
-
+	
+	/**
+	 * Clears the selection on the main table.
+	 */
+	public void clearMainTableSelection() {
+		mainTable.clearSelection();
+	}
+	
+	/**
+	 * Writes the application properties to the preference file
+	 */
+	void storeApplicationProperties() {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsNumber("mainWindowSizeWidth", getSize().width);
+		preferenceStore.addGenericEntryAsNumber("mainWindowSizeHeight", getSize().height);
+		preferenceStore.addGenericEntryAsNumber("mainWindowLocationX", getLocation().x);
+		preferenceStore.addGenericEntryAsNumber("mainWindowLocationY", getLocation().y);
+		preferenceStore.addGenericEntryAsNumber("mainWindowDividerLocation", CommonUtils.toNumber(mainSplitPane.getDividerLocation()));
+		preferenceStore.addGenericEntryAsNumber("lastRowCount", Integer.valueOf(mainTable.getRowCount()));
+		preferenceStore.addGenericEntryAsNumber("descriptionDividerLocation", Integer.valueOf(propertySheet.getDescriptionDividerLocation()));
+		preferenceStore.addGenericEntryAsNumber("treeMainTableDividerLocation", Integer.valueOf(treeMainTableSplitPane.getDividerLocation()));
+		preferenceStore.addGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(propertySheetImageSplitPane.getDividerLocation()));
+		preferenceStore.addGenericEntryAsString("basePathTreeSelection", TreeUtil.getExpansionStates(basePathTree));
+		preferenceStore.addGenericEntryAsString("fileSystemTreeSelection", TreeUtil.getExpansionStates(fileSystemTree));
+		sortColumnComponent.storeApplicationProperties();
+	}
+	
+	/**
+	 * Restores the application properties
+	 */
+	void restoreApplicationProperties() {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		
+		//restore the window size from the preferences.
+		Number mainWindowSizeWidth = preferenceStore.getGenericEntryAsNumber("mainWindowSizeWidth");
+		Number mainWindowSizeHeight = preferenceStore.getGenericEntryAsNumber("mainWindowSizeHeight");
+		if(mainWindowSizeWidth!=null && mainWindowSizeHeight!=null) {
+			setSize(mainWindowSizeWidth.intValue(), mainWindowSizeHeight.intValue());
+		}
+		
+		//restore window location
+		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
+		if(entryAsScreenLocation != null) {
+			setLocation(entryAsScreenLocation);
+		}
+		
+		//restore the divider location at the main window
+		final Number mainWindowDividerLocation = preferenceStore.getGenericEntryAsNumber("mainWindowDividerLocation");
+		if(mainWindowDividerLocation != null) {
+			int add = 0;
+			if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
+				//however, the splitpane has a difference of 9 between setting and getting the location.
+				add = -9;
+			}
+			mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
+		}
+		
+		//restore the divider location at the main window
+		final Number treeMainTableDividerLocation = preferenceStore.getGenericEntryAsNumber("treeMainTableDividerLocation");
+		if(treeMainTableDividerLocation != null) {
+			treeMainTableSplitPane.setDividerLocation(treeMainTableDividerLocation.intValue());
+		}
+		
+		//restore the divider location in the property sheet
+		final Number descriptionDividerLocation = preferenceStore.getGenericEntryAsNumber("descriptionDividerLocation");
+		if(descriptionDividerLocation != null) {
+			propertySheet.setDescriptionDividerLocation(descriptionDividerLocation.intValue());
+		}
+		
+		final Number propertySheetImageSplitPaneDividerLocation = preferenceStore.getGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
+		if (propertySheetImageSplitPaneDividerLocation != null) {
+			propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
+		}
+		
+		final String basePathTreeSelection = preferenceStore.getGenericEntryAsString("basePathTreeSelection");
+		if(basePathTreeSelection != null) {
+			TreeUtil.restoreExpanstionState(basePathTree, basePathTreeSelection);
+		}
+		
+		final String fileSystemTreeSelection = preferenceStore.getGenericEntryAsString("fileSystemTreeSelection");
+		if(fileSystemTreeSelection != null) {
+			TreeUtil.restoreExpanstionState(fileSystemTree, fileSystemTreeSelection);
+		}
+		sortColumnComponent.restoreApplicationProperties();
+	}
 }

@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.gui.FilterPanelController;
+import org.rr.jeborker.gui.FilterPanelView;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -28,7 +28,7 @@ class SearchAction extends AbstractAction {
 	
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final FilterPanelController filterPanelController = getFilterPanelController(controller, e);
+		final FilterPanelView filterPanelController = getFilterPanelController(controller, e);
 		final String filterText = filterPanelController.getFilterText();
 
 		monitorStart(filterText);
@@ -79,11 +79,11 @@ class SearchAction extends AbstractAction {
 		}
 	}
 	
-	private FilterPanelController getFilterPanelController(MainController controller, ActionEvent e) {
-		FilterPanelController filterPanelController = controller.getFilterPanelController();
+	private FilterPanelView getFilterPanelController(MainController controller, ActionEvent e) {
+		FilterPanelView filterPanelController = controller.getFilterPanelController();
 		if(filterPanelController == null) {
-			if(e.getSource() instanceof FilterPanelController) {
-				filterPanelController = (FilterPanelController) e.getSource();
+			if(e.getSource() instanceof FilterPanelView) {
+				filterPanelController = (FilterPanelView) e.getSource();
 			}
 		}
 		return filterPanelController;

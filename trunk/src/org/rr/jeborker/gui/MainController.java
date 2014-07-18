@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -70,17 +71,12 @@ public class MainController {
 	/**
 	 * The controller for the SortColumn combobox.
 	 */
-	private static SortColumnComponentController sortColumnComponentController;
-
-	/**
-	 * The controller for the SortColumn combobox.
-	 */
 	private static SortOrderComponentController sortOrderComponentController;
 
 	/**
 	 * The filter panel controller.
 	 */
-	private static FilterPanelController filterPanelController;
+	private static FilterPanelView filterPanelController;
 
 	/**
 	 * No public instantiation. The {@link #getController()} method is
@@ -114,15 +110,6 @@ public class MainController {
 		return controller;
 	}
 
-
-	/**
-	 * Gets the controller for the sort column Combobox. Thats these combobox where the column
-	 * could be selected which should be used for the ebook item order.
-	 */
-	public SortColumnComponentController getSortColumnComponentController() {
-		return sortColumnComponentController;
-	}
-
 	/**
 	 * Gets the controller for the sort column Combobox. Thats these combobox where the order
 	 * could be selected which should be used for the ebook items.
@@ -134,7 +121,7 @@ public class MainController {
 	/**
 	 * Gets the controller which handles the filter panel functions.
 	 */
-	public FilterPanelController getFilterPanelController() {
+	public FilterPanelView getFilterPanelController() {
 		return filterPanelController;
 	}
 
@@ -202,7 +189,7 @@ public class MainController {
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.restore"));
 		splashScreen.setLoadingValue(80);
 
-		MainControllerUtils.restoreApplicationProperties(mainWindow);
+		mainWindow.restoreApplicationProperties();
 		MainMenuBarController.getController().restoreProperties();
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -257,9 +244,8 @@ public class MainController {
 	 * Initialize the controllers for the different parts uf the application window.
 	 */
 	private void initSubController() {
-		sortColumnComponentController = new SortColumnComponentController(mainWindow.sortColumnComboBox);
 		sortOrderComponentController = new SortOrderComponentController(mainWindow.sortOrderAscButton, mainWindow.sortOrderDescButton);
-		filterPanelController = new FilterPanelController();
+		filterPanelController = new FilterPanelView();
 		treeController = new MainTreeController(mainWindow.basePathTree, mainWindow.fileSystemTree);
 	}
 
@@ -559,12 +545,16 @@ public class MainController {
 		}
 		return new int[0];
 	}
+	
+	public List<Field> getSelectedSortColumnFields() {
+		return mainWindow.sortColumnComponent.getSelectedFields();
+	}
 
 	/**
 	 * Clears the selection on the main table.
 	 */
 	public void clearSelection() {
-		mainWindow.mainTable.clearSelection();
+		mainWindow.clearMainTableSelection();
 	}
 
 	/**
@@ -662,8 +652,7 @@ public class MainController {
 
 	public void dispose() {
 		//Writes the application properties to the preference file
-		MainControllerUtils.storeApplicationProperties(mainWindow);
-		getSortColumnComponentController().dispose();
+		mainWindow.storeApplicationProperties();
 		getSortOrderComponentController().dispose();
 		getFilterPanelController().dispose();
 		MainMenuBarController.getController().dispose();
