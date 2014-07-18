@@ -1,20 +1,58 @@
 package org.rr.jeborker.gui;
 
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-public class MainMonitor {
+import org.rr.commons.log.LoggerFactory;
+import org.rr.jeborker.Jeboorker;
 
+public class MainMonitor {
+	
+	private static final int DEFAULT_CLEAN_TIMEOUT = 5000;
+
+	private static MainMonitor instance;
+	
+	private static int clearTimeout = -1;
+	
 	private JProgressBar progressbar;
 
 	private int started = 0;
 
 	private boolean isEnabled;
 
-	private static MainMonitor instance;
 
 	private MainMonitor(JProgressBar progressbar) {
 		this.progressbar = progressbar;
+		startMessageCleanerThread();
+	}
+	
+	private void startMessageCleanerThread() {
+		Jeboorker.APPLICATION_THREAD_POOL.submit(new Callable<Void>() {
+
+			@Override
+			public Void call() throws Exception {
+				while(true) {
+					if(clearTimeout == -1) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							LoggerFactory.getLogger().log(Level.WARNING, "Sleep InterruptedException", e);
+						}
+					} else {
+						try {
+							Thread.sleep(clearTimeout);
+							setMessage("");
+							clearTimeout = -1;
+						} catch (InterruptedException e) {
+							LoggerFactory.getLogger().log(Level.WARNING, "Sleep InterruptedException", e);
+						}
+					}
+				}
+			}
+		});
 	}
 
 	static MainMonitor getInstance(JProgressBar progressbar) {
@@ -82,6 +120,7 @@ public class MainMonitor {
 					progressbar.setString(message != null ? message : "");
 					progressbar.setStringPainted(true);
 					progressbar.setToolTipText(message != null ? message : "");
+					clearTimeout = DEFAULT_CLEAN_TIMEOUT;
 				}
 			});
 		}

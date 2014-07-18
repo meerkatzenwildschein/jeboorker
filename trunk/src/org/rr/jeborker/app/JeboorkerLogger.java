@@ -81,7 +81,7 @@ public class JeboorkerLogger extends Handler {
 			try {
 				MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null && !thrownCause.isEmpty() ? " (" + thrownCause+ ")" : ""));
 			} catch(Exception e) {
-				
+				e.printStackTrace();
 			}
 		}
 	}
@@ -124,7 +124,7 @@ public class JeboorkerLogger extends Handler {
 				raf.seek(LOG_FILE.length() - bytesToRead);
 				raf.read(tail, 0, bytesToRead);
 				
-				return new StringBuilder(new String(intro)).append("\n...\n").append(new String(tail)).toString(); 
+				return new StringBuilder(new String(intro)).append("\n...\n").append(new String(tail)).toString();
 			} catch (Exception e) {
 				LoggerFactory.log(Level.WARNING, JeboorkerLogger.class, "Failed to read bytes from log file " + LOG_FILE, e);
 			}
