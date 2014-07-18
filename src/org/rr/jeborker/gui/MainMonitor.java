@@ -23,7 +23,6 @@ public class MainMonitor {
 
 	private boolean isEnabled;
 
-
 	private MainMonitor(JProgressBar progressbar) {
 		this.progressbar = progressbar;
 		startMessageCleanerThread();
