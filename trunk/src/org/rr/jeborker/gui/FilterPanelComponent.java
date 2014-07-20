@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.border.EmptyBorder;
@@ -73,7 +75,10 @@ public class FilterPanelComponent extends JPanel {
 	}
 
 	private void initialize() {
-		setLayout(new MigLayout("insets 0 0 0 "));
+		setLayout(new MigLayout("insets 0 5 0 0"));
+		
+		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
+		add(lblSearch, "w 55!");
 		
 		filterFieldSelection.setPopupHeight(100);
 		filterFieldSelection.setMinPopupWidth(200);
@@ -90,8 +95,11 @@ public class FilterPanelComponent extends JPanel {
 		filterField.setEditor(comboboxEditor);
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		this.add(filterFieldSelection, "");
-		this.add(filterField, "w 100%");
+		add(filterFieldSelection, "");
+		add(filterField, "w 100%");
+		
+		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
+		add(searchButton);
 	}
 	
 	public void initListeners() {
