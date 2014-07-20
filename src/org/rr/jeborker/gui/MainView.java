@@ -346,30 +346,15 @@ class MainView extends JFrame {
 		gbc_mainSplitPane.gridy = 0;
 		contentPane.add(mainSplitPane, gbc_mainSplitPane);
 
-		JPanel propertyContentPanel = new JPanel();
-		GridBagLayout gbl_propertyContentPanel = new GridBagLayout();
-		gbl_propertyContentPanel.columnWidths = new int[]{0};
-		gbl_propertyContentPanel.rowHeights = new int[]{25, 0, 0};
-		gbl_propertyContentPanel.columnWeights = new double[]{1.0};
-		gbl_propertyContentPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		propertyContentPanel.setLayout(gbl_propertyContentPanel);
+		JPanel propertyContentPanel = new JPanel(new MigLayout());
 		mainSplitPane.setLeftComponent(propertyContentPanel);
 
 			sortColumnComponent = new SortColumnComponent();
-			GridBagConstraints gbc_sortPanel = new GridBagConstraints();
-			gbc_sortPanel.insets = new Insets(5, 0, 5, 0);
-			gbc_sortPanel.fill = GridBagConstraints.BOTH;
-			gbc_sortPanel.gridx = 0;
-			gbc_sortPanel.gridy = 0;
-			propertyContentPanel.add(sortColumnComponent, gbc_sortPanel);
+			propertyContentPanel.add(sortColumnComponent, "h 25!, w 100%, wrap");
 
 			treeMainTableSplitPane = new JSplitPane();
 			treeMainTableSplitPane.setDividerLocation(220);
-			GridBagConstraints gbc_treeMainTableSplitPane = new GridBagConstraints();
-			gbc_treeMainTableSplitPane.fill = GridBagConstraints.BOTH;
-			gbc_treeMainTableSplitPane.gridx = 0;
-			gbc_treeMainTableSplitPane.gridy = 1;
-			propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
+			propertyContentPanel.add(treeMainTableSplitPane, "h 100%, w 100%");
 
 			createMainTable();
 			
