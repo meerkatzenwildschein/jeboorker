@@ -74,6 +74,8 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import net.miginfocom.swing.MigLayout;
+
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 import org.rr.commons.log.LoggerFactory;
@@ -528,48 +530,28 @@ class MainView extends JFrame {
 			mainSplitPane.setDividerLocation(getSize().width - 220);
 
 			
-		JPanel filterPanel = createFilterPanel();
+		filterFieldComponent = new FilterPanelComponent();
 		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
 		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
 		gbc_searchPanel.anchor = GridBagConstraints.NORTH;
 		gbc_searchPanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_searchPanel.gridx = 0;
 		gbc_searchPanel.gridy = 1;
-		contentPane.add(filterPanel, gbc_searchPanel);
+		contentPane.add(filterFieldComponent, gbc_searchPanel);
 
-		JPanel statusPanel = new JPanel();
+		JPanel statusPanel = new JPanel(new MigLayout("insets 0 5 0 0"));
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
 		gbc_statusPanel.insets = new Insets(0, 3, 3, 3);
 		gbc_statusPanel.fill = GridBagConstraints.BOTH;
 		gbc_statusPanel.gridx = 0;
 		gbc_statusPanel.gridy = 2;
 		contentPane.add(statusPanel, gbc_statusPanel);
-		GridBagLayout gbl_statusPanel = new GridBagLayout();
-		gbl_statusPanel.columnWidths = new int[]{0, 0, 0};
-		gbl_statusPanel.rowHeights = new int[]{14, 0};
-		gbl_statusPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gbl_statusPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		statusPanel.setLayout(gbl_statusPanel);
 
-		JLabel label = new JLabel(Bundle.getString("EborkerMainView.status"));
-		Dimension statusLabelSize = new Dimension(55, label.getPreferredSize().height);
-		label.setPreferredSize(statusLabelSize);
-		label.setMinimumSize(statusLabelSize);
-		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.anchor = GridBagConstraints.WEST;
-		gbc_label.fill = GridBagConstraints.NONE;
-		gbc_label.gridx = 0;
-		gbc_label.gridy = 0;
-		statusPanel.add(label, gbc_label);
+		JLabel statusLabel = new JLabel(Bundle.getString("EborkerMainView.status"));
+		statusPanel.add(statusLabel, "w 55!");
 
 		progressBar = new JProgressBar();
-		GridBagConstraints gbc_progressBar = new GridBagConstraints();
-		gbc_progressBar.weighty = 1.0;
-		gbc_progressBar.weightx = 1.0;
-		gbc_progressBar.fill = GridBagConstraints.HORIZONTAL;
-		gbc_progressBar.gridx = 1;
-		gbc_progressBar.gridy = 0;
-		statusPanel.add(progressBar, gbc_progressBar);
+		statusPanel.add(progressBar, "w 100%");
 
 		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
@@ -618,48 +600,6 @@ class MainView extends JFrame {
 		
 		filterFieldComponent.initListeners();
 		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
-	}
-
-	private JPanel createFilterPanel() {
-		JPanel filterPanel = new JPanel();
-
-		GridBagLayout gbl_searchPanel = new GridBagLayout();
-		gbl_searchPanel.columnWidths = new int[] { 0, 80, 0, 0, 0 };
-		gbl_searchPanel.rowHeights = new int[] { 0, 0 };
-		gbl_searchPanel.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
-		gbl_searchPanel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		filterPanel.setLayout(gbl_searchPanel);
-
-		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
-		Dimension lblSearchSize = new Dimension(55, lblSearch.getPreferredSize().height);
-		lblSearch.setPreferredSize(lblSearchSize);
-		lblSearch.setMinimumSize(lblSearchSize);
-		GridBagConstraints gbc_lblSearch = new GridBagConstraints();
-		gbc_lblSearch.anchor = GridBagConstraints.EAST;
-		gbc_lblSearch.gridx = 0;
-		gbc_lblSearch.gridy = 0;
-		filterPanel.add(lblSearch, gbc_lblSearch);
-
-		filterFieldComponent = new FilterPanelComponent();
-		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
-		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 0;
-		gbc_comboBox.gridwidth = 2;
-		gbc_comboBox.weightx = 1.0;
-		filterPanel.add(filterFieldComponent, gbc_comboBox);
-
-		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
-		searchButton.setPreferredSize(new Dimension(27, 27));
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.weightx = 0;
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 3;
-		gbc_textField.gridy = 0;
-		filterPanel.add(searchButton, gbc_textField);
-
-		return filterPanel;
 	}
 
 	private void createMainTable() {
