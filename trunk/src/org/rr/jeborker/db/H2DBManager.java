@@ -126,9 +126,13 @@ class H2DBManager extends DefaultDBManager {
 			} else {
 				sql.append(" WHERE ");
 			}
-			sql.append(where.getStatement()).append(' ');
-			appendOrderFields(orderFields, sql);
-			sql.append(orderDirection.toString());
+			try {
+				sql.append(where.getStatement()).append(' ');
+			} catch(IllegalStateException e) {
+				sql.append("true = true ");
+				LoggerFactory.getLogger().log(Level.INFO, "No Where clause", e);
+			}
+			appendOrderFields(orderFields, orderDirection, sql);
 System.out.println(sql);
 			Dao<T, T> createDao = DaoManager.createDao(getConnectionPool(), cls);
 			GenericRawResults<T> queryRaw = createDao.queryRaw(sql.toString(), new RawRowMapperImpl<T, T>(new TableInfo<T, T>(getConnectionPool(),
@@ -151,13 +155,13 @@ System.out.println(sql);
 		return localResult.getRowCount();
 	}
 
-	private void appendOrderFields(List<Field> orderFields, StringBuilder sql) {
+	private void appendOrderFields(List<Field> orderFields, OrderDirection orderDirection, StringBuilder sql) {
 		if (!orderFields.isEmpty()) {
 			sql.append("ORDER BY ");
 			for (Field orderField : orderFields) {
-				sql.append("A.").append(orderField.getName()).append(",");
+				sql.append("A.").append(orderField.getName()).append(" ").append(orderDirection.getDirectionString()).append(", ");
 			}
-			sql.setLength(sql.length() - 1);
+			sql.setLength(sql.length() - 2);
 		}
 		sql.append(' ');
 	}
@@ -199,7 +203,7 @@ System.out.println(sql);
 				}
 			}
 			if(localSQL.length() > orString.length() && localSQL.substring(localSQL.length() - orString.length(), localSQL.length()).equals(orString)) {
-				localSQL.setLength(localSQL.length() - orString.length());				
+				localSQL.setLength(localSQL.length() - orString.length());
 			}
 
 			localSQL.append(") ");

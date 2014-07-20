@@ -10,7 +10,6 @@ import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.gui.FilterPanelView;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -28,8 +27,7 @@ class SearchAction extends AbstractAction {
 	
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final FilterPanelView filterPanelController = getFilterPanelController(controller, e);
-		final String filterText = filterPanelController.getFilterText();
+		final String filterText = controller.getFilterText();
 
 		monitorStart(filterText);
 		try {
@@ -40,14 +38,14 @@ class SearchAction extends AbstractAction {
 				@Override
 				public String getIdentifier() {
 					return QUERY_IDENTIFER;
-				}	
+				}
 				
 				@Override
 				public void appendKeyword(List<String> keywords) {
 					for (String filterValue : filterValues) {
 						if(!StringUtils.toString(filterValue).trim().isEmpty()) {
-							filterPanelController.enableFilterColor(true);
-							List<Field> selectedFilterFields = filterPanelController.getSelectedFilterFields();
+							controller.setFilterColorEnabled(true);
+							List<Field> selectedFilterFields = controller.getSelectedFilterFields();
 							if(!selectedFilterFields.isEmpty()) {
 								for (int i = 0; i < selectedFilterFields.size(); i++) {
 									Field field = selectedFilterFields.get(i);
@@ -58,14 +56,14 @@ class SearchAction extends AbstractAction {
 								keywords.add(filterValue);
 							}
 						} else {
-							filterPanelController.enableFilterColor(false);
+							controller.setFilterColorEnabled(false);
 						}
 					}
 				}
 			});
 
 			controller.refreshTable();
-			filterPanelController.addFilterFieldSearch(filterText);
+			controller.addFilterFieldSearch(filterText);
 		} finally {
 			SwingUtilities.invokeLater(new Runnable() {
 				
@@ -77,16 +75,6 @@ class SearchAction extends AbstractAction {
 			});
 
 		}
-	}
-	
-	private FilterPanelView getFilterPanelController(MainController controller, ActionEvent e) {
-		FilterPanelView filterPanelController = controller.getFilterPanelController();
-		if(filterPanelController == null) {
-			if(e.getSource() instanceof FilterPanelView) {
-				filterPanelController = (FilterPanelView) e.getSource();
-			}
-		}
-		return filterPanelController;
 	}
 	
 	private void monitorStart(String filterText) {
@@ -101,8 +89,8 @@ class SearchAction extends AbstractAction {
 		if(progressMonitor!=null) {
 			if(filterText!=null && filterText.length() > 0) {
 				progressMonitor.monitorProgressStop(
-						Bundle.getFormattedString("SearchAction.message.finish", filterText) + 
-						" / " + 
+						Bundle.getFormattedString("SearchAction.message.finish", filterText) +
+						" / " +
 						Bundle.getFormattedString("SearchAction.message.count", String.valueOf(entries))
 				);
 			} else {

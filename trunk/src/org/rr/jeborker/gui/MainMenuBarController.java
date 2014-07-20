@@ -39,10 +39,6 @@ public class MainMenuBarController {
 		return controller;
 	}
 
-	public void dispose() {
-		this.storeProperties();
-	}
-
 	/**
 	 * Get the menu view which is a {@link JMenuBar} instance.
 	 * @return The menu view.
@@ -99,7 +95,7 @@ public class MainMenuBarController {
 	    return result;
 	}
 
-	private void storeProperties() {
+	void storeProperties() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
 		if(hiddenBasePathEntries.isEmpty()) {

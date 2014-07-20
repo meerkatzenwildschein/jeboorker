@@ -42,14 +42,11 @@ import java.util.logging.Level;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -63,7 +60,6 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
@@ -72,8 +68,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
-import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultTreeSelectionModel;
@@ -88,7 +82,6 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.swing.components.JRCheckBoxComboBox;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.components.JRTable;
 import org.rr.commons.swing.components.button.JMenuButton;
@@ -124,7 +117,6 @@ import org.rr.jeborker.gui.cell.EbookTableCellEditor;
 import org.rr.jeborker.gui.cell.EbookTableCellRenderer;
 import org.rr.jeborker.gui.cell.FileSystemTreeCellEditor;
 import org.rr.jeborker.gui.cell.FileSystemTreeCellRenderer;
-import org.rr.jeborker.gui.cell.FilterFieldComboboxEditor;
 import org.rr.jeborker.gui.cell.MultiListPropertyEditor;
 import org.rr.jeborker.gui.cell.MultiListPropertyRenderer;
 import org.rr.jeborker.gui.cell.StarRatingPropertyEditor;
@@ -276,13 +268,9 @@ class MainView extends JFrame {
 
 	private JPanel sortPanel;
 
-	private JLabel sortLabel;
-
 	SortColumnComponent sortColumnComponent;
-
-	JToggleButton sortOrderAscButton;
-
-	JToggleButton sortOrderDescButton;
+	
+	private FilterPanelComponent filterFieldComponent;
 
 	JSplitPane treeMainTableSplitPane;
 
@@ -295,13 +283,7 @@ class MainView extends JFrame {
 	private JTabbedPane treeTabbedPane;
 
 	private JPanel buttonPanel;
-
-	JComboBox<String> filterField;
-
-	JRCheckBoxComboBox<Field> filterFieldSelection;
-
-	private BasicComboBoxEditor comboboxEditor;
-
+	
 	private MainController controller;
 
 	/**
@@ -309,10 +291,6 @@ class MainView extends JFrame {
 	 */
 	public MainView(MainController controller) {
 		this.controller = controller;
-		initialize();
-		initListeners();
-		initializeGlobalKeystrokes();
-		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
 
 	private void initializeGlobalKeystrokes() {
@@ -332,7 +310,7 @@ class MainView extends JFrame {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	void initialize() {
 		this.setTitle(Jeboorker.APP + " " + Jeboorker.VERSION);
 		this.setIconImage(ImageResourceBundle.getResourceAsImageIcon("logo_16.png").getImage());
 		this.setBounds(100, 100, 792, 622);
@@ -348,7 +326,7 @@ class MainView extends JFrame {
 
 		JPanel contentPane = new JPanel();
 		contentPane.setOpaque(true);
-
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{489};
 		gridBagLayout.rowHeights = new int[]{350, 25, 30};
@@ -391,47 +369,14 @@ class MainView extends JFrame {
 				gbl_sortPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 				sortPanel.setLayout(gbl_sortPanel);
 
-				sortLabel = new JLabel(Bundle.getString("EborkerMainView.sortby"));
-				GridBagConstraints gbc_sortLabel = new GridBagConstraints();
-				gbc_sortLabel.fill = GridBagConstraints.VERTICAL;
-				gbc_sortLabel.anchor = GridBagConstraints.WEST;
-				gbc_sortLabel.insets = new Insets(0, 5, 0, 5);
-				gbc_sortLabel.gridx = 0;
-				gbc_sortLabel.gridy = 0;
-				sortPanel.add(sortLabel, gbc_sortLabel);
-
 				sortColumnComponent = new SortColumnComponent();
 				sortColumnComponent.setPreferredSize(new Dimension(0, 25));
 				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
 				gbc_sortColumnComboBox.fill = GridBagConstraints.BOTH;
-				gbc_sortColumnComboBox.gridx = 3;
+				gbc_sortColumnComboBox.gridx = 0;
+				gbc_sortColumnComboBox.gridwidth = 4;
 				gbc_sortColumnComboBox.gridy = 0;
 				sortPanel.add(sortColumnComponent, gbc_sortColumnComboBox);
-
-				final Icon ascOrderIcon =  new ImageIcon(MainView.class.getResource("resources/sort_asc.gif"));
-				final Icon descOrderIcon = new ImageIcon(MainView.class.getResource("resources/sort_desc.gif"));
-
-				sortOrderAscButton = new JToggleButton();
-				sortOrderAscButton.setIcon(ascOrderIcon);
-				sortOrderAscButton.setPreferredSize(new Dimension(0, 25));
-				sortOrderAscButton.setMinimumSize(new Dimension(0, 25));
-				GridBagConstraints gbc_sortOrderAscButton = new GridBagConstraints();
-				gbc_sortOrderAscButton.fill = GridBagConstraints.BOTH;
-				gbc_sortOrderAscButton.insets = new Insets(0, 0, 0, 5);
-				gbc_sortOrderAscButton.gridx = 1;
-				gbc_sortOrderAscButton.gridy = 0;
-				sortPanel.add(sortOrderAscButton, gbc_sortOrderAscButton);
-
-				sortOrderDescButton = new JToggleButton();
-				sortOrderDescButton.setIcon(descOrderIcon);
-				sortOrderDescButton.setPreferredSize(new Dimension(0, 25));
-				sortOrderDescButton.setMinimumSize(new Dimension(0, 25));
-				GridBagConstraints gbc_sortOrderDescButton = new GridBagConstraints();
-				gbc_sortOrderDescButton.fill = GridBagConstraints.BOTH;
-				gbc_sortOrderDescButton.insets = new Insets(0, 0, 0, 5);
-				gbc_sortOrderDescButton.gridx = 2;
-				gbc_sortOrderDescButton.gridy = 0;
-				sortPanel.add(sortOrderDescButton, gbc_sortOrderDescButton);
 
 				treeMainTableSplitPane = new JSplitPane();
 				treeMainTableSplitPane.setDividerLocation(220);
@@ -442,7 +387,7 @@ class MainView extends JFrame {
 				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
 
 				createMainTable();
-
+				
 				mainTableScrollPane = new JRScrollPane();
 				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
@@ -645,12 +590,14 @@ class MainView extends JFrame {
 
 		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
+		
+		initializeGlobalKeystrokes();
 	}
 
 	/**
 	 * Attach all needed listeners to the view
 	 */
-	private void initListeners() {
+	void initListeners() {
 		mainTable.getSelectionModel().addListSelectionListener(new PropertySheetListSelectionListener());
 		mainTable.addMouseListener(new MainTablePopupMouseListener());
 
@@ -685,6 +632,9 @@ class MainView extends JFrame {
 				}
 			}
 		});
+		
+		filterFieldComponent.initListeners();
+		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
 
 	private JPanel createFilterPanel() {
@@ -707,31 +657,15 @@ class MainView extends JFrame {
 		gbc_lblSearch.gridy = 0;
 		filterPanel.add(lblSearch, gbc_lblSearch);
 
-		filterFieldSelection = new JRCheckBoxComboBox<Field>();
-		filterFieldSelection.setPopupHeight(100);
-		filterFieldSelection.setMinPopupWidth(200);
-		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
-		filterFieldSelection.setPreferredSize(filterFieldSelectionSize);
-		filterFieldSelection.setMinimumSize(filterFieldSelectionSize);
+		filterFieldComponent = new FilterPanelComponent();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.fill = GridBagConstraints.NONE;
+		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
-		filterPanel.add(filterFieldSelection, gbc_comboBox);
-
-		filterField = new JComboBox<String>();
-		filterField.setModel(new DefaultComboBoxModel<String>());
-		filterField.setEditable(true);
-		filterField.setEditor(comboboxEditor = new FilterFieldComboboxEditor());
-		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
-		GridBagConstraints gbc_searchField = new GridBagConstraints();
-		gbc_searchField.insets = new Insets(0, 0, 0, 5);
-		gbc_searchField.weightx = 1.0;
-		gbc_searchField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_searchField.gridx = 2;
-		gbc_searchField.gridy = 0;
-		filterPanel.add(filterField, gbc_searchField);
+		gbc_comboBox.gridwidth = 2;
+		gbc_comboBox.weightx = 1.0;
+		filterPanel.add(filterFieldComponent, gbc_comboBox);
 
 		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
 		searchButton.setPreferredSize(new Dimension(27, 27));
@@ -1506,20 +1440,11 @@ class MainView extends JFrame {
 		}
 		return null;
 	}
-
 	/**
 	 * Tells the text filter field to display it self in and active filter color.
 	 */
-	public void enableFilterColor(boolean enable) {
-		if (enable) {
-			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getSelectionBackgroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getSelectionForegroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor().brighter());
-		} else {
-			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
-		}
+	public void setFilterColorEnabled(boolean enable) {
+		filterFieldComponent.enableFilterColor(enable);
 	}
 
 	public void refreshUI() {
@@ -1722,13 +1647,15 @@ class MainView extends JFrame {
 		preferenceStore.addGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(propertySheetImageSplitPane.getDividerLocation()));
 		preferenceStore.addGenericEntryAsString("basePathTreeSelection", TreeUtil.getExpansionStates(basePathTree));
 		preferenceStore.addGenericEntryAsString("fileSystemTreeSelection", TreeUtil.getExpansionStates(fileSystemTree));
+		
 		sortColumnComponent.storeApplicationProperties();
+		filterFieldComponent.storeApplicationHistory();
 	}
 	
 	/**
 	 * Restores the application properties
 	 */
-	void restoreApplicationProperties() {
+	void restoreComponentProperties() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		
 		//restore the window size from the preferences.
@@ -1781,6 +1708,20 @@ class MainView extends JFrame {
 		if(fileSystemTreeSelection != null) {
 			TreeUtil.restoreExpanstionState(fileSystemTree, fileSystemTreeSelection);
 		}
-		sortColumnComponent.restoreApplicationProperties();
+		
+		filterFieldComponent.restoreComponentProperties();
+		sortColumnComponent.restoreComponentProperties();
+	}
+
+	public List<Field> getSelectedFilterFields() {
+		return filterFieldComponent.getSelectedFilterFields();
+	}
+
+	public String getFilterText() {
+		return filterFieldComponent.getFilterText();
+	}
+
+	public void addFilterFieldSearch(String filterText) {
+		filterFieldComponent.addFilterFieldSearch(filterText);
 	}
 }

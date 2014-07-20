@@ -66,7 +66,7 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 				
 				JPanel panel = new JPanel(new MigLayout());
 				panel.setOpaque(false);
-				JScrollPane scrollPane = new JScrollPane(panel);
+				JScrollPane scrollPane = new JRScrollPane(panel);
 				
 				JRCheckBoxComboBoxModel<E> model = getJRCheckBoxComboBoxModel();
 				for (int i = 0; i < model.getSize(); i++) {

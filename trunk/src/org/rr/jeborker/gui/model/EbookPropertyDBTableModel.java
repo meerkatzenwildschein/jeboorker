@@ -108,7 +108,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			case 0:
 				return String.class;
 			}
-		return String.class;	
+		return String.class;
 	}
 
 	@Override
@@ -183,12 +183,12 @@ public class EbookPropertyDBTableModel implements TableModel {
 		} catch(IndexOutOfBoundsException ex) {
 			LoggerFactory.logInfo(this, "", ex);
 			return null;
-		}		
+		}
 	}
 	
 	/**
 	 * Loads the {@link EbookPropertyItem} element at the given index from the database
-	 * and set this instance as current one.  
+	 * and set this instance as current one.
 	 * @param rowIndex Index of {@link EbookPropertyItem} to be reloaded.
 	 */
 	public void reloadEbookPropertyItemAt(int rowIndex) {
@@ -281,7 +281,7 @@ public class EbookPropertyDBTableModel implements TableModel {
                 ((TableModelListener)listeners[i+1]).tableChanged(e);
             }
         }
-    } 
+    }
     
     /**
      * Notifies all listeners that rows in the range
@@ -297,7 +297,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     public void fireTableRowsInserted(int firstRow, int lastRow) {
         fireTableChanged(new TableModelEvent(this, firstRow, lastRow,
                              TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-    }   
+    }
     
     /**
      * Notifies all listeners that rows in the range
@@ -312,7 +312,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     public void fireTableRowsDeleted(int firstRow, int lastRow) {
         fireTableChanged(new TableModelEvent(this, firstRow, lastRow,
                              TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-    }    
+    }
 
     /**
      * Get the {@link EbookPropertyItem}s to be handled by this model.
@@ -391,7 +391,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     		}
     		if(isInsert) {
         		final int ins = this.allItems.size() - 1;
-    	    	fireTableRowsInserted(ins, ins);    			
+    	    	fireTableRowsInserted(ins, ins);
     		}
     	} else {
     		this.allItems = new InsertElementList<EbookPropertyItem>(this.allItems, item, row);
@@ -400,7 +400,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     }
     
 	public boolean removeRow(final EbookPropertyItem item) {
-		final Iterator<EbookPropertyItem> iterator = this.allItems.iterator();	
+		final Iterator<EbookPropertyItem> iterator = this.allItems.iterator();
 		boolean removed = false;
 		for (int i = 0; iterator.hasNext(); i++) {
 			final EbookPropertyItem toRemove = iterator.next();
@@ -420,7 +420,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 			}
 		}
 		return removed;
-	} 
+	}
 
     /**
      * @return <code>true</code> if a refresh is needed and <code>false</code> otherwise.
@@ -447,9 +447,9 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 * Set the order by columns to the table model. To apply the new order
 	 * invoke the {@link #setDirty()} method or directly do a
 	 * <code>MainController.getController().refreshTable(true);</code>
-	 * 
-	 * @param orderByColumns Order columns to be set to the model. 
-	 * Previously set order columns will be removed. 
+	 *
+	 * @param orderByColumns Order columns to be set to the model.
+	 * Previously set order columns will be removed.
 	 */
 	public void setOrderByColumns(List<Field> orderByColumns) {
 		this.orderByColumns.clear();
@@ -500,7 +500,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	/**
 	 * Removes a {@link EbookPropertyDBTableModelQuery} which was previously added with the
 	 * {@link #addWhereCondition(EbookPropertyDBTableModelQuery)} method.
-	 * @param identifier The identifier of the {@link EbookPropertyDBTableModelQuery} instance to be removed. 
+	 * @param identifier The identifier of the {@link EbookPropertyDBTableModelQuery} instance to be removed.
 	 * the {@link EbookPropertyDBTableModelQuery#getIdentifier()} method is used to identify the {@link EbookPropertyDBTableModelQuery}
 	 * which gets removed.
 	 * @return <code>true</code> if a condition was removed and <code>false</code> otherwise.

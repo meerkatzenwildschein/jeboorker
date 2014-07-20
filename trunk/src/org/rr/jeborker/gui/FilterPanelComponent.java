@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
@@ -8,8 +9,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
+import javax.swing.text.JTextComponent;
 
+import net.miginfocom.swing.MigLayout;
+
+import org.rr.commons.swing.SwingUtils;
+import org.rr.commons.swing.components.JRCheckBoxComboBox;
 import org.rr.commons.swing.components.model.DefaultJRCheckBoxComboBoxModel;
 import org.rr.commons.swing.components.model.JRCheckBoxComboBoxModel;
 import org.rr.commons.utils.ListUtils;
@@ -20,16 +32,23 @@ import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.ViewField;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.action.ApplicationAction;
 import org.rr.jeborker.gui.additional.EbookPropertyItemFieldComperator;
+import org.rr.jeborker.gui.cell.FilterFieldComboboxEditor;
 
-public class FilterPanelView {
-
-	private static MainView view;
+public class FilterPanelComponent extends JPanel {
 
 	private static EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();
+	
+	private final JRCheckBoxComboBox<Field> filterFieldSelection = new JRCheckBoxComboBox<Field>();
+	
+	private final JComboBox<String> filterField = new JComboBox<String>();
+	
+	private final BasicComboBoxEditor comboboxEditor = new FilterFieldComboboxEditor();
+	
+	private final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
 
-	FilterPanelView() {
-		view = MainController.getController().mainWindow;
+	FilterPanelComponent() {
 		initialize();
 	}
 
@@ -39,22 +58,44 @@ public class FilterPanelView {
 	private class FilterFieldActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, null).invokeAction(e);
+			getSearchAction().invokeAction(e);
+		}
+		
+		public ApplicationAction getNonThreadingSearchAction() {
+			ApplicationAction action = getSearchAction();
+			action.putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE);
+			return action;
+		}
+		
+		public ApplicationAction getSearchAction() {
+			return ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, null);
 		}
 	}
 
 	private void initialize() {
-		final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
-		final String latestSearch = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString(
-				"FilterPanelControllerCurrentFilter");
-
+		setLayout(new MigLayout("insets 0 0 0 "));
+		
+		filterFieldSelection.setPopupHeight(100);
+		filterFieldSelection.setMinPopupWidth(200);
+		
+		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
+		filterFieldSelection.setPreferredSize(filterFieldSelectionSize);
+		filterFieldSelection.setMinimumSize(filterFieldSelectionSize);
+		
 		JRCheckBoxComboBoxModel<Field> sortColumnComboBoxModel = this.initFieldSelectionModel();
-		view.filterFieldSelection.setCheckBoxComboBoxModel(sortColumnComboBoxModel);
+		filterFieldSelection.setCheckBoxComboBoxModel(sortColumnComboBoxModel);
+		
+		filterField.setModel(new DefaultComboBoxModel<String>());
+		filterField.setEditable(true);
+		filterField.setEditor(comboboxEditor);
+		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		this.restoreFilterHistory();
-		view.filterField.getEditor().setItem(latestSearch);
-		filterFieldActionListener.actionPerformed(new ActionEvent(this, 0, "initialize"));
-		view.filterField.getEditor().addActionListener(filterFieldActionListener);
+		this.add(filterFieldSelection, "");
+		this.add(filterField, "w 100%");
+	}
+	
+	public void initListeners() {
+		filterField.getEditor().addActionListener(filterFieldActionListener);
 	}
 
 	/**
@@ -63,14 +104,7 @@ public class FilterPanelView {
 	 * @return The text from the filter/search field. Never returns <code>null</code>.
 	 */
 	public String getFilterText() {
-		return StringUtils.toString(view.filterField.getEditor().getItem());
-	}
-
-	/**
-	 * Tells the text filter field to display it self in and active filter color.
-	 */
-	public void enableFilterColor(boolean enable) {
-		view.enableFilterColor(enable);
+		return StringUtils.toString(filterField.getEditor().getItem());
 	}
 
 	/**
@@ -79,7 +113,7 @@ public class FilterPanelView {
 	 * @return The fields to be filtered. Never returns null.
 	 */
 	public List<Field> getSelectedFilterFields() {
-		JRCheckBoxComboBoxModel<Field> model = view.filterFieldSelection.getCheckBoxComboBoxModel();
+		JRCheckBoxComboBoxModel<Field> model = filterFieldSelection.getCheckBoxComboBoxModel();
 		List<Field> checkeds = model.getCheckedValues();
 		return checkeds;
 	}
@@ -111,7 +145,7 @@ public class FilterPanelView {
 		// sort the fields to the DBViewField.orderPriority()
 		Collections.sort(listEntries, ebookPropertyItemFieldComperator);
 
-		final JRCheckBoxComboBoxModel<Field> sortColumnComboBoxModel = new DefaultJRCheckBoxComboBoxModel<Field>(listEntries, null) {
+		final JRCheckBoxComboBoxModel<Field> filterFieldColumnComboBoxModel = new DefaultJRCheckBoxComboBoxModel<Field>(listEntries, null) {
 
 			@Override
 			public String getLabel(int index) {
@@ -125,7 +159,7 @@ public class FilterPanelView {
 				}
 			}
 		};
-		return sortColumnComboBoxModel;
+		return filterFieldColumnComboBoxModel;
 	}
 
 	/**
@@ -136,7 +170,7 @@ public class FilterPanelView {
 	 */
 	public void addFilterFieldSearch(final String searchExpression) {
 		if (searchExpression != null && searchExpression.length() > 0) {
-			MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) view.filterField.getModel();
+			MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
 			model.insertElementAt(searchExpression, 0);
 			if (model.getSize() > 10) {
 				model.removeElementAt(model.getSize() - 1);
@@ -152,7 +186,7 @@ public class FilterPanelView {
 	 *            The currently selected filter expression.
 	 */
 	private void removeDuplicateElementsFromFilterModel(final String selectedExpression) {
-		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) view.filterField.getModel();
+		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
 		HashSet<String> entries = new HashSet<String>(model.getSize());
 		for (int i = 0; i < model.getSize(); i++) {
 			String elementAt = (String) model.getElementAt(i);
@@ -164,20 +198,36 @@ public class FilterPanelView {
 		}
 		model.setSelectedItem(selectedExpression);
 	}
-
-	public void dispose() {
-		this.storeFilterHistory();
+	
+	/**
+	 * Tells the text filter field to display it self in and active filter color.
+	 */
+	public void enableFilterColor(boolean enable) {
+		if (enable) {
+			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getSelectionBackgroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getSelectionForegroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor().brighter());
+		} else {
+			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
+			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
+		}
 	}
 
 	/**
 	 * Stores the filter history in a comma separated list to the preference store.
 	 *
-	 * @see #restoreFilterHistory()
+	 * @see #restoreComponentProperties()
 	 */
+	void storeApplicationHistory() {
+		storeFileHistory();
+		storeFilterHistory();
+	}
+
 	private void storeFilterHistory() {
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) view.filterField.getModel();
-		final StringBuilder modelEntries = new StringBuilder();
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
+		StringBuilder modelEntries = new StringBuilder();
 		for (int i = 0; i < model.getSize(); i++) {
 			String elementAt = StringUtils.replace(StringUtils.toString(model.getElementAt(i)), ",", "");
 			if (modelEntries.length() > 0) {
@@ -186,19 +236,23 @@ public class FilterPanelView {
 			modelEntries.append(elementAt);
 		}
 		preferenceStore.addGenericEntryAsString("FilterPanelControllerEntries", modelEntries.toString());
-		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
 		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
 	}
 
 	/**
 	 * Restore the previously stored filter history.
 	 *
-	 * @see #storeFilterHistory()
+	 * @see #storeApplicationHistory()
 	 */
+	void restoreComponentProperties() {
+		restoreFilterHistory();
+		restoreFileHistory();
+	}
+
 	private void restoreFilterHistory() {
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		{
-			final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) view.filterField.getModel();
+			final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
 			String filterEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerEntries");
 			if (filterEntries != null && filterEntries.length() > 0) {
 				List<String> split = ListUtils.split(filterEntries, ",");
@@ -206,13 +260,13 @@ public class FilterPanelView {
 					model.addElement(string);
 				}
 			}
-			view.filterField.updateUI();
+			filterField.updateUI();
 		}
 
 		{ // restore the filter field selection
 			String filterFieldSelectionEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection");
 			List<String> splitted = ListUtils.split(filterFieldSelectionEntries, ",");
-			final JRCheckBoxComboBoxModel<Field> model = view.filterFieldSelection.getCheckBoxComboBoxModel();
+			final JRCheckBoxComboBoxModel<Field> model = filterFieldSelection.getCheckBoxComboBoxModel();
 			final int modelSize = model.getSize();
 
 			for (String split : splitted) {
@@ -224,5 +278,17 @@ public class FilterPanelView {
 				}
 			}
 		}
+	}
+	
+	private void storeFileHistory() {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
+	}
+
+	private void restoreFileHistory() {
+		String latestSearch = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString(
+				"FilterPanelControllerCurrentFilter");
+		comboboxEditor.setItem(latestSearch);
+		filterFieldActionListener.getNonThreadingSearchAction().invokeAction(new ActionEvent(this, 0, "initialize"));
 	}
 }
