@@ -1,14 +1,10 @@
 package org.rr.jeborker.gui;
 
 import java.awt.AWTEvent;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -148,6 +144,8 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 
 
 class MainView extends JFrame {
+	
+	private static final long serialVersionUID = 6837919427429399376L;
 
 	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
 
@@ -244,8 +242,6 @@ class MainView extends JFrame {
 		}
 	}
 
-	private static final long serialVersionUID = 6837919427429399376L;
-
 	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
 	JRTable mainTable;
@@ -324,27 +320,15 @@ class MainView extends JFrame {
 
 		this.setGlassPane(new ShadowPanel());
 
-		JPanel contentPane = new JPanel();
+		JPanel contentPane = new JPanel(new MigLayout("insets 3 5 3 5")); // T, L, B, R.
 		contentPane.setOpaque(true);
-		
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{489};
-		gridBagLayout.rowHeights = new int[]{350, 25, 30};
-		gridBagLayout.columnWeights = new double[]{1.0};
-		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 4.9E-324};
-		contentPane.setLayout(gridBagLayout);
 
 		mainSplitPane = new JSplitPane();
 		mainSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		mainSplitPane.setOneTouchExpandable(true);
 		mainSplitPane.setResizeWeight(0.9);
 
-		GridBagConstraints gbc_mainSplitPane = new GridBagConstraints();
-		gbc_mainSplitPane.insets = new Insets(0, 3, 5, 0);
-		gbc_mainSplitPane.fill = GridBagConstraints.BOTH;
-		gbc_mainSplitPane.gridx = 0;
-		gbc_mainSplitPane.gridy = 0;
-		contentPane.add(mainSplitPane, gbc_mainSplitPane);
+		contentPane.add(mainSplitPane, "w 100%, h 100%, wrap");
 
 		JPanel propertyContentPanel = new JPanel(new MigLayout("insets 0 0 0 0"));
 		mainSplitPane.setLeftComponent(propertyContentPanel);
@@ -441,13 +425,7 @@ class MainView extends JFrame {
 			treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
 			treeMainTableSplitPane.setOneTouchExpandable(true);
 
-			JPanel sheetPanel = new JPanel();
-			GridBagLayout gbl_sheetPanel = new GridBagLayout();
-			gbl_sheetPanel.columnWidths = new int[]{0, 0};
-			gbl_sheetPanel.rowHeights = new int[]{0, 0};
-			gbl_sheetPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-			gbl_sheetPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-			sheetPanel.setLayout(gbl_sheetPanel);
+			JPanel sheetPanel = new JPanel(new MigLayout("insets 0 0 0 0"));
 
 			propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
 			propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
@@ -488,26 +466,17 @@ class MainView extends JFrame {
 	        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, MultiListPropertyEditor.class);
 	        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(java.util.List.class, MultiListPropertyRenderer.class);
 
-			GridBagConstraints gbc_propertySheet = new GridBagConstraints();
-			gbc_propertySheet.fill = GridBagConstraints.BOTH;
-			gbc_propertySheet.gridx = 0;
-			gbc_propertySheet.gridy = 0;
-			sheetPanel.add(propertySheet, gbc_propertySheet);
+			sheetPanel.add(propertySheet, "w 100%, h 100%");
 
 			propertySheetImageSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 			propertySheetImageSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
 			propertySheetImageSplitPane.setOneTouchExpandable(true);
 			mainSplitPane.setRightComponent(propertySheetImageSplitPane);
 
-			JPanel imageViewerPanel = new JPanel();
+			JPanel imageViewerPanel = new JPanel(new MigLayout("insets 0 0 0 0"));
 			imageViewerPanel.setBorder(new EmptyBorder(3,3,3,3));
-			imageViewerPanel.setLayout(new BorderLayout());
 			imageViewer = new SimpleImageViewer();
-			GridBagConstraints gbc_imageViewer = new GridBagConstraints();
-			gbc_imageViewer.fill = GridBagConstraints.BOTH;
-			gbc_imageViewer.gridx = 0;
-			gbc_imageViewer.gridy = 1;
-			imageViewerPanel.add(imageViewer, BorderLayout.CENTER);
+			imageViewerPanel.add(imageViewer, "w 100%, h 100%");
 			propertySheetImageSplitPane.setRightComponent(imageViewerPanel);
 			propertySheetImageSplitPane.setLeftComponent(sheetPanel);
 			propertySheetImageSplitPane.setDividerLocation(getSize().height / 2);
@@ -516,21 +485,10 @@ class MainView extends JFrame {
 
 			
 		filterFieldComponent = new FilterPanelComponent();
-		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
-		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
-		gbc_searchPanel.anchor = GridBagConstraints.NORTH;
-		gbc_searchPanel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_searchPanel.gridx = 0;
-		gbc_searchPanel.gridy = 1;
-		contentPane.add(filterFieldComponent, gbc_searchPanel);
+		contentPane.add(filterFieldComponent, "w 100%, wrap");
 
 		JPanel statusPanel = new JPanel(new MigLayout("insets 0 5 0 0"));
-		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
-		gbc_statusPanel.insets = new Insets(0, 3, 3, 3);
-		gbc_statusPanel.fill = GridBagConstraints.BOTH;
-		gbc_statusPanel.gridx = 0;
-		gbc_statusPanel.gridy = 2;
-		contentPane.add(statusPanel, gbc_statusPanel);
+		contentPane.add(statusPanel, "w 100%, wrap");
 
 		JLabel statusLabel = new JLabel(Bundle.getString("EborkerMainView.status"));
 		statusPanel.add(statusLabel, "w 55!");
@@ -712,26 +670,14 @@ class MainView extends JFrame {
 	private JComponent createFileSystemTree() {
 		final String fileSystemTreeName = "FileSystemTree";
 
-		JPanel fileSystemTreePanel = new JPanel();
+		JPanel fileSystemTreePanel = new JPanel(new MigLayout("insets 3 0 0 0")); // T, L, B, R.
 		fileSystemTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		fileSystemTreePanel.setOpaque(true);
-
-		GridBagLayout gbl_fileSystemTreePanel = new GridBagLayout();
-		gbl_fileSystemTreePanel.columnWidths = new int[]{76, 0};
-		gbl_fileSystemTreePanel.rowHeights = new int[]{25, 0, 0};
-		gbl_fileSystemTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_fileSystemTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		fileSystemTreePanel.setLayout(gbl_fileSystemTreePanel);
 
 		buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
 
-		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
-		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
-		gbc_buttonPanel.gridx = 0;
-		gbc_buttonPanel.gridy = 0;
-		fileSystemTreePanel.add(buttonPanel, gbc_buttonPanel);
+		fileSystemTreePanel.add(buttonPanel, "w 100%, wrap");
 		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3, true));
 
 		Dimension buttonDimension = new Dimension(28, 28);
@@ -803,12 +749,8 @@ class MainView extends JFrame {
 		JRScrollPane treeScroller = new JRScrollPane(fileSystemTree);
 		treeScroller.setOpaque(false);
 		treeScroller.getViewport().setOpaque(false);
-		GridBagConstraints gbc_treeScroller = new GridBagConstraints();
-		gbc_treeScroller.fill = GridBagConstraints.BOTH;
-		gbc_treeScroller.anchor = GridBagConstraints.NORTHWEST;
-		gbc_treeScroller.gridx = 0;
-		gbc_treeScroller.gridy = 1;
-		fileSystemTreePanel.add(treeScroller, gbc_treeScroller);
+
+		fileSystemTreePanel.add(treeScroller, "w 100%, h 100%");
 
 		fileSystemTree.setRootVisible(false);
 		fileSystemTree.setRowHeight(25);
@@ -928,26 +870,14 @@ class MainView extends JFrame {
 	private JComponent createBasePathTree() {
 		final String basePathTreeName = "BasePathTree";
 
-		JPanel basePathTreePanel = new JPanel();
+		JPanel basePathTreePanel = new JPanel(new MigLayout("insets 3 0 0 0")); // T, L, B, R.
 		basePathTreePanel.setBackground(SwingUtils.getBackgroundColor());
 		basePathTreePanel.setOpaque(true);
-
-		GridBagLayout gbl_basePathTreePanel = new GridBagLayout();
-		gbl_basePathTreePanel.columnWidths = new int[]{76, 0};
-		gbl_basePathTreePanel.rowHeights = new int[]{25, 0, 0};
-		gbl_basePathTreePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_basePathTreePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		basePathTreePanel.setLayout(gbl_basePathTreePanel);
 
 		buttonPanel = new JPanel();
 		buttonPanel.setOpaque(false);
 
-		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		gbc_buttonPanel.insets = new Insets(3, 0, 3, 0);
-		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
-		gbc_buttonPanel.gridx = 0;
-		gbc_buttonPanel.gridy = 0;
-		basePathTreePanel.add(buttonPanel, gbc_buttonPanel);
+		basePathTreePanel.add(buttonPanel, "w 100%, wrap");
 		buttonPanel.setLayout(new EqualsLayout(EqualsLayout.RIGHT, 3, true));
 
 		Dimension buttonDimension = new Dimension(28, 28);
@@ -982,12 +912,7 @@ class MainView extends JFrame {
 		JRScrollPane basePathTreeScroller = new JRScrollPane(basePathTree);
 		basePathTreeScroller.setOpaque(false);
 		basePathTreeScroller.getViewport().setOpaque(false);
-		GridBagConstraints gbc_basePathTreeScroller = new GridBagConstraints();
-		gbc_basePathTreeScroller.fill = GridBagConstraints.BOTH;
-		gbc_basePathTreeScroller.anchor = GridBagConstraints.WEST;
-		gbc_basePathTreeScroller.gridx = 0;
-		gbc_basePathTreeScroller.gridy = 1;
-		basePathTreePanel.add(basePathTreeScroller, gbc_basePathTreeScroller);
+		basePathTreePanel.add(basePathTreeScroller, "w 100%, h 100%");
 
 		basePathTree.setRootVisible(false);
 		basePathTree.setRowHeight(25);
@@ -1098,10 +1023,6 @@ class MainView extends JFrame {
 			}
 		});
 
-		GridBagConstraints gbc_tree = new GridBagConstraints();
-		gbc_tree.fill = GridBagConstraints.BOTH;
-		gbc_tree.gridx = 0;
-		gbc_tree.gridy = 0;
 		return basePathTreePanel;
 	}
 
