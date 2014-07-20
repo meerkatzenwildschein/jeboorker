@@ -17,10 +17,14 @@ public class OrderDirection {
 	}
 	
 	public String toString() {
-		if(direction==DIRECTION_ASC) {
+		if(direction == DIRECTION_ASC) {
 			return "asc";
 		} else {
 			return "desc";
 		}
+	}
+	
+	public String getDirectionString() {
+		return toString();
 	}
 }

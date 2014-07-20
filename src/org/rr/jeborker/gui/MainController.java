@@ -69,16 +69,6 @@ public class MainController {
 	private static MainTreeController treeController;
 
 	/**
-	 * The controller for the SortColumn combobox.
-	 */
-	private static SortOrderComponentController sortOrderComponentController;
-
-	/**
-	 * The filter panel controller.
-	 */
-	private static FilterPanelView filterPanelController;
-
-	/**
 	 * No public instantiation. The {@link #getController()} method is
 	 * used for creating a new {@link MainController} instance because
 	 * the {@link MainController} is a singleton.
@@ -108,21 +98,6 @@ public class MainController {
 			}
 		}
 		return controller;
-	}
-
-	/**
-	 * Gets the controller for the sort column Combobox. Thats these combobox where the order
-	 * could be selected which should be used for the ebook items.
-	 */
-	public SortOrderComponentController getSortOrderComponentController() {
-		return sortOrderComponentController;
-	}
-
-	/**
-	 * Gets the controller which handles the filter panel functions.
-	 */
-	public FilterPanelView getFilterPanelController() {
-		return filterPanelController;
 	}
 
 	/**
@@ -180,6 +155,8 @@ public class MainController {
 		splashScreen.setLoadingValue(35);
 
 		mainWindow = new MainView(this);
+		mainWindow.initialize();
+		mainWindow.initListeners();
 
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.init"));
 		splashScreen.setLoadingValue(60);
@@ -189,7 +166,7 @@ public class MainController {
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.restore"));
 		splashScreen.setLoadingValue(80);
 
-		mainWindow.restoreApplicationProperties();
+		mainWindow.restoreComponentProperties();
 		MainMenuBarController.getController().restoreProperties();
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -241,14 +218,12 @@ public class MainController {
 	}
 
 	/**
-	 * Initialize the controllers for the different parts uf the application window.
+	 * Initialize the controllers for the different parts of the application window.
 	 */
 	private void initSubController() {
-		sortOrderComponentController = new SortOrderComponentController(mainWindow.sortOrderAscButton, mainWindow.sortOrderDescButton);
-		filterPanelController = new FilterPanelView();
 		treeController = new MainTreeController(mainWindow.basePathTree, mainWindow.fileSystemTree);
 	}
-
+	
 	/**
 	 * Saves/Writes the metadata properties if something has changed.
 	 */
@@ -297,7 +272,9 @@ public class MainController {
 		}
 
 		mainWindow.mainTable.tableChanged(new TableModelEvent(model));
-		mainWindow.mainTableScrollPane.getVerticalScrollBar().setValue(0);
+		if(mainWindow.mainTableScrollPane != null) {
+			mainWindow.mainTableScrollPane.getVerticalScrollBar().setValue(0);
+		}
 	}
 
 	/**
@@ -651,11 +628,8 @@ public class MainController {
 	}
 
 	public void dispose() {
-		//Writes the application properties to the preference file
 		mainWindow.storeApplicationProperties();
-		getSortOrderComponentController().dispose();
-		getFilterPanelController().dispose();
-		MainMenuBarController.getController().dispose();
+		MainMenuBarController.getController().storeProperties();
 	}
 
 	/**
@@ -687,13 +661,21 @@ public class MainController {
 		return mainWindow.showMessageBox(message, title, option, showAgainKey, defaultValue, isConfirmDialog);
 	}
 
-	/**
-	 * Refresh some UI components. Should be invoked after changing the look and feel.
-	 */
-	public void refreshUI() {
-		if(mainWindow != null) {
-			mainWindow.refreshUI();
-		}
+	public List<Field> getSelectedFilterFields() {
+		return mainWindow.getSelectedFilterFields();
 	}
+	
+	public void setFilterColorEnabled(boolean enabled) {
+		mainWindow.setFilterColorEnabled(enabled);
+	}
+
+	public String getFilterText() {
+		return mainWindow.getFilterText();
+	}
+
+	public void addFilterFieldSearch(String filterText) {
+		mainWindow.addFilterFieldSearch(filterText);
+	}
+	
 }
 
