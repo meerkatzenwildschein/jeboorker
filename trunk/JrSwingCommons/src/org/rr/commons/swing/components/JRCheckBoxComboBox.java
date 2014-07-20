@@ -109,7 +109,11 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 		});
 		this.setRenderer(new ListCellRenderer<E>() {
 
-			JLabel label = new JLabel();
+			JLabel label;
+			{
+				label = new JLabel();
+				label.setBorder(new EmptyBorder(0, 2, 0, 0));
+			}
 			
 			@Override
 			public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
