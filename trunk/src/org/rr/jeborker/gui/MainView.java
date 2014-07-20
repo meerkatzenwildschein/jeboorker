@@ -346,7 +346,7 @@ class MainView extends JFrame {
 		gbc_mainSplitPane.gridy = 0;
 		contentPane.add(mainSplitPane, gbc_mainSplitPane);
 
-		JPanel propertyContentPanel = new JPanel(new MigLayout());
+		JPanel propertyContentPanel = new JPanel(new MigLayout("insets 0 0 0 0"));
 		mainSplitPane.setLeftComponent(propertyContentPanel);
 
 			sortColumnComponent = new SortColumnComponent();
