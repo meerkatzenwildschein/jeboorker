@@ -524,7 +524,7 @@ public class MainController {
 	}
 	
 	public List<Field> getSelectedSortColumnFields() {
-		return mainWindow.sortColumnComponent.getSelectedFields();
+		return mainWindow.getSortColumnSelectedFields();
 	}
 
 	/**

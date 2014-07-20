@@ -266,9 +266,7 @@ class MainView extends JFrame {
 
 	private JButton saveMetadataButton;
 
-	private JPanel sortPanel;
-
-	SortColumnComponent sortColumnComponent;
+	private SortColumnComponent sortColumnComponent;
 	
 	private FilterPanelComponent filterFieldComponent;
 
@@ -355,196 +353,181 @@ class MainView extends JFrame {
 		propertyContentPanel.setLayout(gbl_propertyContentPanel);
 		mainSplitPane.setLeftComponent(propertyContentPanel);
 
-				sortPanel = new JPanel();
-				GridBagConstraints gbc_sortPanel = new GridBagConstraints();
-				gbc_sortPanel.insets = new Insets(5, 0, 5, 0);
-				gbc_sortPanel.fill = GridBagConstraints.BOTH;
-				gbc_sortPanel.gridx = 0;
-				gbc_sortPanel.gridy = 0;
-				propertyContentPanel.add(sortPanel, gbc_sortPanel);
-				GridBagLayout gbl_sortPanel = new GridBagLayout();
-				gbl_sortPanel.columnWidths = new int[]{110, 30, 30, 1, 0};
-				gbl_sortPanel.rowHeights = new int[]{25, 0};
-				gbl_sortPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-				gbl_sortPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-				sortPanel.setLayout(gbl_sortPanel);
+			sortColumnComponent = new SortColumnComponent();
+			GridBagConstraints gbc_sortPanel = new GridBagConstraints();
+			gbc_sortPanel.insets = new Insets(5, 0, 5, 0);
+			gbc_sortPanel.fill = GridBagConstraints.BOTH;
+			gbc_sortPanel.gridx = 0;
+			gbc_sortPanel.gridy = 0;
+			propertyContentPanel.add(sortColumnComponent, gbc_sortPanel);
 
-				sortColumnComponent = new SortColumnComponent();
-				sortColumnComponent.setPreferredSize(new Dimension(0, 25));
-				GridBagConstraints gbc_sortColumnComboBox = new GridBagConstraints();
-				gbc_sortColumnComboBox.fill = GridBagConstraints.BOTH;
-				gbc_sortColumnComboBox.gridx = 0;
-				gbc_sortColumnComboBox.gridwidth = 4;
-				gbc_sortColumnComboBox.gridy = 0;
-				sortPanel.add(sortColumnComponent, gbc_sortColumnComboBox);
+			treeMainTableSplitPane = new JSplitPane();
+			treeMainTableSplitPane.setDividerLocation(220);
+			GridBagConstraints gbc_treeMainTableSplitPane = new GridBagConstraints();
+			gbc_treeMainTableSplitPane.fill = GridBagConstraints.BOTH;
+			gbc_treeMainTableSplitPane.gridx = 0;
+			gbc_treeMainTableSplitPane.gridy = 1;
+			propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
 
-				treeMainTableSplitPane = new JSplitPane();
-				treeMainTableSplitPane.setDividerLocation(220);
-				GridBagConstraints gbc_treeMainTableSplitPane = new GridBagConstraints();
-				gbc_treeMainTableSplitPane.fill = GridBagConstraints.BOTH;
-				gbc_treeMainTableSplitPane.gridx = 0;
-				gbc_treeMainTableSplitPane.gridy = 1;
-				propertyContentPanel.add(treeMainTableSplitPane, gbc_treeMainTableSplitPane);
+			createMainTable();
+			
+			mainTableScrollPane = new JRScrollPane();
+			treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
+			mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
 
-				createMainTable();
-				
-				mainTableScrollPane = new JRScrollPane();
-				treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
-				mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
+				@Override
+				protected void processMouseEvent(final MouseEvent e, final JXLayer<? extends JRTable> l) {
+					if(preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED)) {
+						transferFocusOnClick(e, l);
 
-					@Override
-					protected void processMouseEvent(final MouseEvent e, final JXLayer<? extends JRTable> l) {
-						if(preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.MAIN_TABLE_AUTO_SAVE_METADATA_ENABLED)) {
-							transferFocusOnClick(e, l);
+						//save meta data and dispatch the mouse event to the jtable so it changes the selection
+						if(saveMetadataButton.isEnabled()) {
+							if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getSource() == mainTable ) {
+								SwingUtilities.invokeLater(new Runnable() {
+									public void run() {
+										ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null)
+										.invokeAction(null, new Runnable() {
+											public void run() {
+												SwingUtilities.invokeLater(new Runnable() {
 
-							//save meta data and dispatch the mouse event to the jtable so it changes the selection
-							if(saveMetadataButton.isEnabled()) {
-								if(e.getID() == MouseEvent.MOUSE_PRESSED && e.getSource() == mainTable ) {
-									SwingUtilities.invokeLater(new Runnable() {
-										public void run() {
-											ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null)
-											.invokeAction(null, new Runnable() {
-												public void run() {
-													SwingUtilities.invokeLater(new Runnable() {
-
-														@Override
-														public void run() {
-															MouseEvent click = new MouseEvent((Component) e.getSource(), MouseEvent.MOUSE_CLICKED, e.getWhen(),
-																	e.getModifiers(), e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(),
-																	e.getClickCount(), e.isPopupTrigger(), e.getButton());
-															for(MouseListener ml: l.getView().getMouseListeners()){
-															    ml.mousePressed(click);
-															    ml.mouseReleased(click);
-															    ml.mouseClicked(click);
-															}
+													@Override
+													public void run() {
+														MouseEvent click = new MouseEvent((Component) e.getSource(), MouseEvent.MOUSE_CLICKED, e.getWhen(),
+																e.getModifiers(), e.getX(), e.getY(), e.getXOnScreen(), e.getYOnScreen(),
+																e.getClickCount(), e.isPopupTrigger(), e.getButton());
+														for(MouseListener ml: l.getView().getMouseListeners()){
+														    ml.mousePressed(click);
+														    ml.mouseReleased(click);
+														    ml.mouseClicked(click);
 														}
-													});
-												}
-											});
-										}
-									});
+													}
+												});
+											}
+										});
+									}
+								});
 
-								}
-								e.consume();
 							}
+							e.consume();
 						}
 					}
+				}
 
-					private void transferFocusOnClick(final MouseEvent e, final JXLayer<? extends JRTable> l) {
-						if(e.getID() != MouseEvent.MOUSE_DRAGGED && e.getID() != MouseEvent.MOUSE_MOVED
-								&& e.getID() != MouseEvent.MOUSE_ENTERED && e.getID() != MouseEvent.MOUSE_EXITED) {
-							//transfer the focus cause that the edit mode in the meta data sheet
-							l.getView().requestFocus();
-						}
+				private void transferFocusOnClick(final MouseEvent e, final JXLayer<? extends JRTable> l) {
+					if(e.getID() != MouseEvent.MOUSE_DRAGGED && e.getID() != MouseEvent.MOUSE_MOVED
+							&& e.getID() != MouseEvent.MOUSE_ENTERED && e.getID() != MouseEvent.MOUSE_EXITED) {
+						//transfer the focus cause that the edit mode in the meta data sheet
+						l.getView().requestFocus();
 					}
+				}
 
-					public long getLayerEventMask() {
-						//fix for mouse wheel scrolling @see https://www.java.net//node/696371
-						return AWTEvent.MOUSE_EVENT_MASK;
+				public long getLayerEventMask() {
+					//fix for mouse wheel scrolling @see https://www.java.net//node/696371
+					return AWTEvent.MOUSE_EVENT_MASK;
+				}
+			});
+			mainTableScrollPane.setViewportView(mainTableLayer);
+
+			treeTabbedPane = new JTabbedPane();
+			treeTabbedPane.setDropTarget(new DropTarget(treeTabbedPane, new DropTargetAdapter() {
+
+				@Override
+				public void dragOver(DropTargetDragEvent dtde) {
+					Point location = dtde.getLocation();
+					int indexAtLocation = treeTabbedPane.indexAtLocation(location.x, location.y);
+					if(indexAtLocation >= 0) {
+						treeTabbedPane.setSelectedIndex(indexAtLocation);
 					}
-				});
-				mainTableScrollPane.setViewportView(mainTableLayer);
+				}
 
-				treeTabbedPane = new JTabbedPane();
-				treeTabbedPane.setDropTarget(new DropTarget(treeTabbedPane, new DropTargetAdapter() {
+				@Override
+				public void drop(DropTargetDropEvent dtde) {
+				}
+			}));
 
-					@Override
-					public void dragOver(DropTargetDragEvent dtde) {
-						Point location = dtde.getLocation();
-						int indexAtLocation = treeTabbedPane.indexAtLocation(location.x, location.y);
-						if(indexAtLocation >= 0) {
-							treeTabbedPane.setSelectedIndex(indexAtLocation);
-						}
-					}
+			JComponent basePathTreeComp = createBasePathTree();
+			treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
 
-					@Override
-					public void drop(DropTargetDropEvent dtde) {
-					}
-				}));
+			JComponent fileSystemTreeComp = createFileSystemTree();
+			treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
 
-				JComponent basePathTreeComp = createBasePathTree();
-				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
+			treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
+			treeMainTableSplitPane.setOneTouchExpandable(true);
 
-				JComponent fileSystemTreeComp = createFileSystemTree();
-				treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
+			JPanel sheetPanel = new JPanel();
+			GridBagLayout gbl_sheetPanel = new GridBagLayout();
+			gbl_sheetPanel.columnWidths = new int[]{0, 0};
+			gbl_sheetPanel.rowHeights = new int[]{0, 0};
+			gbl_sheetPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_sheetPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+			sheetPanel.setLayout(gbl_sheetPanel);
 
-				treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
-				treeMainTableSplitPane.setOneTouchExpandable(true);
+			propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
+			propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
+			propertySheet.setDescriptionVisible(true);
+			propertySheet.setShowCategoryButton(false);
 
-				JPanel sheetPanel = new JPanel();
-				GridBagLayout gbl_sheetPanel = new GridBagLayout();
-				gbl_sheetPanel.columnWidths = new int[]{0, 0};
-				gbl_sheetPanel.rowHeights = new int[]{0, 0};
-				gbl_sheetPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-				gbl_sheetPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-				sheetPanel.setLayout(gbl_sheetPanel);
+			addMetadataButton = new JMenuButton();
+			addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
+			addMetadataButton.setText("");
+			addMetadataButton.setWidth(50);
+			EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
+			addMetadataButton.setListModel(emptyListModel);
+			propertySheet.addToolbarComponent(addMetadataButton);
 
-				propertySheet = new PropertySheetPanel(new EbookSheetPropertyModel());
-				propertySheet.setMode(PropertySheet.VIEW_AS_FLAT_LIST);
-				propertySheet.setDescriptionVisible(true);
-				propertySheet.setShowCategoryButton(false);
+			removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
+			propertySheet.addToolbarComponent(removeMetadataButton);
 
-				addMetadataButton = new JMenuButton();
-				addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
-				addMetadataButton.setText("");
-				addMetadataButton.setWidth(50);
-				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
-				addMetadataButton.setListModel(emptyListModel);
-				propertySheet.addToolbarComponent(addMetadataButton);
+			saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
+			saveMetadataButton.setText("");
+			new EnablePropertyChangeHighlighterSupport(saveMetadataButton, Color.RED, 3);
 
-				removeMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_METADATA_ENTRY_ACTION, null));
-				propertySheet.addToolbarComponent(removeMetadataButton);
+			propertySheet.addToolbarComponent(saveMetadataButton);
 
-				saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
-				saveMetadataButton.setText("");
-				new EnablePropertyChangeHighlighterSupport(saveMetadataButton, Color.RED, 3);
+			((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>) null, DefaultPropertyRenderer.class);
+			((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor((Class<?>) null, DefaultPropertyCellEditor.class);
+			((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(String.class, DefaultPropertyRenderer.class);
+			((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(String.class, DefaultPropertyCellEditor.class);
 
-				propertySheet.addToolbarComponent(saveMetadataButton);
+			DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
+	        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());
+	        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(Date.class, calendarDatePropertyRenderer);
 
-				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer((Class<?>) null, DefaultPropertyRenderer.class);
-				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor((Class<?>) null, DefaultPropertyCellEditor.class);
-				((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(String.class, DefaultPropertyRenderer.class);
-				((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(String.class, DefaultPropertyCellEditor.class);
+	        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("rating", StarRatingPropertyEditor.class);
+	        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("rating", StarRatingPropertyRenderer.class);
+	        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("calibre:rating", StarRatingPropertyEditor.class);
+	        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("calibre:rating", StarRatingPropertyRenderer.class);
 
-				DatePropertyCellRenderer calendarDatePropertyRenderer = new DatePropertyCellRenderer(((SimpleDateFormat) SimpleDateFormat.getDateInstance()).toPattern());
-		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(Date.class, new DatePropertyCellEditor());
-		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(Date.class, calendarDatePropertyRenderer);
+	        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, MultiListPropertyEditor.class);
+	        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(java.util.List.class, MultiListPropertyRenderer.class);
 
-		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("rating", StarRatingPropertyEditor.class);
-		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("rating", StarRatingPropertyRenderer.class);
-		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor("calibre:rating", StarRatingPropertyEditor.class);
-		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer("calibre:rating", StarRatingPropertyRenderer.class);
+			GridBagConstraints gbc_propertySheet = new GridBagConstraints();
+			gbc_propertySheet.fill = GridBagConstraints.BOTH;
+			gbc_propertySheet.gridx = 0;
+			gbc_propertySheet.gridy = 0;
+			sheetPanel.add(propertySheet, gbc_propertySheet);
 
-		        ((PropertyEditorRegistry)propertySheet.getEditorFactory()).registerEditor(java.util.List.class, MultiListPropertyEditor.class);
-		        ((PropertyRendererRegistry)propertySheet.getRendererFactory()).registerRenderer(java.util.List.class, MultiListPropertyRenderer.class);
+			propertySheetImageSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+			propertySheetImageSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			propertySheetImageSplitPane.setOneTouchExpandable(true);
+			mainSplitPane.setRightComponent(propertySheetImageSplitPane);
 
-				GridBagConstraints gbc_propertySheet = new GridBagConstraints();
-				gbc_propertySheet.fill = GridBagConstraints.BOTH;
-				gbc_propertySheet.gridx = 0;
-				gbc_propertySheet.gridy = 0;
-				sheetPanel.add(propertySheet, gbc_propertySheet);
+			JPanel imageViewerPanel = new JPanel();
+			imageViewerPanel.setBorder(new EmptyBorder(3,3,3,3));
+			imageViewerPanel.setLayout(new BorderLayout());
+			imageViewer = new SimpleImageViewer();
+			GridBagConstraints gbc_imageViewer = new GridBagConstraints();
+			gbc_imageViewer.fill = GridBagConstraints.BOTH;
+			gbc_imageViewer.gridx = 0;
+			gbc_imageViewer.gridy = 1;
+			imageViewerPanel.add(imageViewer, BorderLayout.CENTER);
+			propertySheetImageSplitPane.setRightComponent(imageViewerPanel);
+			propertySheetImageSplitPane.setLeftComponent(sheetPanel);
+			propertySheetImageSplitPane.setDividerLocation(getSize().height / 2);
 
-				propertySheetImageSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-				propertySheetImageSplitPane.setAlignmentX(Component.RIGHT_ALIGNMENT);
-				propertySheetImageSplitPane.setOneTouchExpandable(true);
-				mainSplitPane.setRightComponent(propertySheetImageSplitPane);
+			mainSplitPane.setDividerLocation(getSize().width - 220);
 
-				JPanel imageViewerPanel = new JPanel();
-				imageViewerPanel.setBorder(new EmptyBorder(3,3,3,3));
-				imageViewerPanel.setLayout(new BorderLayout());
-				imageViewer = new SimpleImageViewer();
-				GridBagConstraints gbc_imageViewer = new GridBagConstraints();
-				gbc_imageViewer.fill = GridBagConstraints.BOTH;
-				gbc_imageViewer.gridx = 0;
-				gbc_imageViewer.gridy = 1;
-				imageViewerPanel.add(imageViewer, BorderLayout.CENTER);
-				propertySheetImageSplitPane.setRightComponent(imageViewerPanel);
-				propertySheetImageSplitPane.setLeftComponent(sheetPanel);
-				propertySheetImageSplitPane.setDividerLocation(getSize().height / 2);
-
-				mainSplitPane.setDividerLocation(getSize().width - 220);
-
-
+			
 		JPanel filterPanel = createFilterPanel();
 		GridBagConstraints gbc_searchPanel = new GridBagConstraints();
 		gbc_searchPanel.insets = new Insets(0, 3, 5, 3);
@@ -1723,5 +1706,9 @@ class MainView extends JFrame {
 
 	public void addFilterFieldSearch(String filterText) {
 		filterFieldComponent.addFilterFieldSearch(filterText);
+	}
+
+	public List<Field> getSortColumnSelectedFields() {
+		return sortColumnComponent.getSelectedFields();
 	}
 }
