@@ -64,7 +64,7 @@ class SaveMetadataAction extends AbstractAction {
 			final MainMonitor progressMonitor = controller.getProgressMonitor();
 			progressMonitor.monitorProgressStart(Bundle.getString("SaveMetadataAction.message"));
 			try {
-				controller.saveProperties(-1, -1); //save selected properties
+				controller.saveMetadataProperties(-1, -1); //save selected properties
 				action.setEnabled(false);
 			} catch(Exception ex) {
 				LoggerFactory.getLogger().log(Level.WARNING, "Saving metadata has failed.", ex);

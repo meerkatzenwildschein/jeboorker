@@ -227,12 +227,11 @@ public class MainController {
 	/**
 	 * Saves/Writes the metadata properties if something has changed.
 	 */
-	public void saveProperties(int minSelectionIndex, int maxSelectionIndex) {
+	public void saveMetadataProperties(int minSelectionIndex, int maxSelectionIndex) {
 		final EbookSheetPropertyModel sheetModel = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
 		final List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
 		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
 		if(getEbookSheetPropertyModel().isChanged()) {
-			//write properties
 			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
 			EbookPropertyDBTableModel tableModel = getTableModel();
 			int rowCount = tableModel.getRowCount();
