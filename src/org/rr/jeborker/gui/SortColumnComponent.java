@@ -83,8 +83,8 @@ class SortColumnComponent extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				sortOrderDescButton.setSelected(false);
 				sortOrderAscButton.setSelected(true);
-				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
-				MainController.getController().refreshTable();
+				MainController.getController().getEbookTableHandler().getModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_ASC));
+				MainController.getController().getEbookTableHandler().refreshTable();
 			}
 		});
 		
@@ -95,7 +95,7 @@ class SortColumnComponent extends JPanel {
 				sortOrderAscButton.setSelected(false);
 				sortOrderDescButton.setSelected(true);
 				MainController.getController().getTableModel().setOrderDirection(new OrderDirection(OrderDirection.DIRECTION_DESC));
-				MainController.getController().refreshTable();
+				MainController.getController().getEbookTableHandler().refreshTable();
 			}
 		});
 		
@@ -127,7 +127,7 @@ class SortColumnComponent extends JPanel {
 			private void changed(ListEvent<Field> event) {
 				final EbookPropertyDBTableModel tableModel = MainController.getController().getTableModel();
 				tableModel.setOrderByColumns(internalCheckList);
-				MainController.getController().refreshTable();
+				MainController.getController().getEbookTableHandler().refreshTable();
 			}
 		});
 	}

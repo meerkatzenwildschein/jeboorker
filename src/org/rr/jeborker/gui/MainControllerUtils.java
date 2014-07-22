@@ -80,7 +80,7 @@ class MainControllerUtils {
 		final ArrayList<MetadataProperty> target = new ArrayList<MetadataProperty>();
 		for (Property property : properties) {
 			
-			final EbookSheetPropertyModel model = MainController.getController().getPropertySheetModel();
+			final EbookSheetPropertyModel model = MainController.getController().getPropertySheetHandler().getModel();
 			List<MetadataProperty> metadataProperties = model.getMetadataProperties(property);
 			for (MetadataProperty metadataProperty : metadataProperties) {
 				target.add(metadataProperty);

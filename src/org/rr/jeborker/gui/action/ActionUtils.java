@@ -179,7 +179,7 @@ public class ActionUtils {
 		} catch (Exception ex) {
 			LoggerFactory.log(Level.WARNING, ActionUtils.class, "Path " + path, ex);
 		} finally {
-			controller.refreshTable();
+			controller.getEbookTableHandler().refreshTable();
 		}
 	}
 	

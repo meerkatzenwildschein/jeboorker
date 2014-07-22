@@ -102,6 +102,10 @@ public class MainController {
 		return mainWindow.getEbookTableHandler();
 	}
 
+	public MainViewPropertySheetHandler getPropertySheetHandler() {
+		return mainWindow.getPropertySheetHandler();
+	}
+	
 	/**
 	 * Gets the controller which handles the preference dialog.
 	 */
@@ -211,22 +215,11 @@ public class MainController {
 		}.execute();
 	}
 	
-	public EbookSheetPropertyModel getPropertySheetModel() {
-		return mainWindow.getPropertySheetHandler().getPropertySheetModel();
-	}
-	
-	/**
-	 * Refresh the whole table.
-	 */
-	public void refreshTable() {
-		mainWindow.getEbookTableHandler().refreshTable();
-	}
-
 	public void refreshTableItem(int[] selectedRows, boolean refreshMetadataSheet) {
 		mainWindow.getEbookTableHandler().refreshTableItem(selectedRows);
 
 		if(refreshMetadataSheet) {
-			refreshSheetProperties();
+			getPropertySheetHandler().refreshSheetProperties();
 		}
 	}
 
@@ -253,7 +246,7 @@ public class MainController {
 			for (int i = 0; i < rows.length; i++) {
 				for (int j = 0; j < selectedEbookPropertyItemRows.length; j++) {
 					if(refreshMetadataSheet && selectedEbookPropertyItemRows[j] == rows[i]) {
-						refreshSheetProperties();
+						getPropertySheetHandler().refreshSheetProperties();
 					}
 				}
 			}
@@ -293,7 +286,7 @@ public class MainController {
 		Property selectedMetadataProperty = getSelectedMetadataProperty();
 		if(selectedMetadataProperty!=null) {
 			if(selectedMetadataProperty.isEditable()) {
-				PropertySheetTableModel model = getPropertySheetModel();
+				PropertySheetTableModel model = getPropertySheetHandler().getModel();
 				model.removeProperty(selectedMetadataProperty);
 			}
 		}
@@ -329,7 +322,7 @@ public class MainController {
 	 * @param rating The rating value.
 	 */
 	public void setRatingToSelectedEntry(int rating) {
-		final EbookSheetPropertyModel model = getPropertySheetModel();
+		final EbookSheetPropertyModel model = getPropertySheetHandler().getModel();
 		final Property ratingProperty = model.getRatingProperty();
 		final int ratingIdx = model.getRatingIndex();
 
@@ -361,10 +354,10 @@ public class MainController {
 	 * Saves/Writes the metadata properties if something has changed.
 	 */
 	public void saveMetadataProperties(int minSelectionIndex, int maxSelectionIndex) {
-		EbookSheetPropertyModel sheetModel = getPropertySheetModel();
+		EbookSheetPropertyModel sheetModel = getPropertySheetHandler().getModel();
 		List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
 		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
-		if(getPropertySheetModel().isChanged()) {
+		if(getPropertySheetHandler().getModel().isChanged()) {
 			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
 			EbookPropertyDBTableModel tableModel = getTableModel();
 			int rowCount = tableModel.getRowCount();
@@ -399,7 +392,7 @@ public class MainController {
 		if(preferenceStore.isBasePathVisible(item.getBasePath())) {
 			TableModel model = getTableModel();
 			if (model instanceof EbookPropertyDBTableModel) {
-				clearSelection();
+				getEbookTableHandler().clearSelection();
 				((EbookPropertyDBTableModel) model).addRow(item, row);
 				mainWindow.getEbookTableHandler().stopEdit();
 			}
@@ -427,13 +420,6 @@ public class MainController {
 	
 	public List<Field> getSelectedSortColumnFields() {
 		return mainWindow.getSortColumnSelectedFields();
-	}
-
-	/**
-	 * Clears the selection on the main table.
-	 */
-	public void clearSelection() {
-		mainWindow.clearMainTableSelection();
 	}
 
 	/**
@@ -539,13 +525,6 @@ public class MainController {
 	 */
 	public JFrame getMainWindow() {
 		return mainWindow;
-	}
-
-	/**
-	 * Rereads the metadata properties and set them to the sheet.
-	 */
-	public void refreshSheetProperties() {
-		mainWindow.refreshSheetProperties();
 	}
 
 	/**

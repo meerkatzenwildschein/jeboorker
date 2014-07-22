@@ -77,7 +77,7 @@ class RemoveBasePathAction extends AbstractAction {
 					
 					@Override
 					public void run() {
-						MainController.getController().refreshTable();
+						MainController.getController().getEbookTableHandler().refreshTable();
 						MainController.getController().getMainTreeHandler().refreshBasePathTree();
 					}
 				});
@@ -120,7 +120,7 @@ class RemoveBasePathAction extends AbstractAction {
 			
 			@Override
 			public void run() {
-				controller.refreshTable();
+				controller.getEbookTableHandler().refreshTable();
 			}
 		});
 	}

@@ -81,7 +81,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	
 	private void setupCoverMetadataToModel(byte[] content, String imageFileName, List<EbookPropertyItem> items) {
 		final MainController controller = MainController.getController();
-		final EbookSheetPropertyModel model = controller.getPropertySheetModel();
+		final EbookSheetPropertyModel model = controller.getPropertySheetHandler().getModel();
 		final IMetadataReader metadataReader = model.getMetadataReader();
 		
 		boolean isNewCoverProperty = false;

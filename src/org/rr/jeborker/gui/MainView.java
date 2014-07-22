@@ -509,7 +509,7 @@ class MainView extends JFrame {
 		initializeGlobalKeystrokes();
 		
 		treeComponentHandler = new MainViewTreeComponentHandler(basePathTree, fileSystemTree, this);
-		propertySheetHandler = new MainViewPropertySheetHandler(propertySheet);
+		propertySheetHandler = new MainViewPropertySheetHandler(propertySheet, this);
 		ebookTableHandler = new MainViewEbookTableComponentHandler(mainTable, mainTableScrollPane);
 	}
 
@@ -947,12 +947,12 @@ class MainView extends JFrame {
 						if(cellEditorValue instanceof FileSystemNode) {
 							setPathFilter(((FileSystemNode)cellEditorValue).getName());
 							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(filterTreePath);
-							MainController.getController().refreshTable();
+							MainController.getController().getEbookTableHandler().refreshTable();
 						} else {
 							boolean remove = MainController.getController().getTableModel().removeWhereCondition(QUERY_IDENTIFER);
 							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(null);
 							if(remove) {
-								MainController.getController().refreshTable();
+								MainController.getController().getEbookTableHandler().refreshTable();
 							}
 						}
 					}
@@ -1280,6 +1280,7 @@ class MainView extends JFrame {
 		}
 		return null;
 	}
+	
 	/**
 	 * Tells the text filter field to display it self in and active filter color.
 	 */
@@ -1317,7 +1318,7 @@ class MainView extends JFrame {
 	 */
 	public void setSelectedMetadataProperty(final Property property) {
 		if(property != null) {
-			final EbookSheetPropertyModel model = getPropertySheetHandler().getPropertySheetModel();
+			final EbookSheetPropertyModel model = getPropertySheetHandler().getModel();
 			final int rowCount = model.getRowCount();
 
 			for (int i = 0; i < rowCount; i++) {
@@ -1341,39 +1342,23 @@ class MainView extends JFrame {
 	 */
 	public void refreshSheetProperties() {
 		try {
-			if(mainTable.getSelectedRowCount() >= 1) {
-				final int rowCount = mainTable.getRowCount();
-				final int[] selectedRows = mainTable.getSelectedRows();
-				final int[] modelRowsIndex = new int[selectedRows.length];
-				final List<EbookPropertyItem> items = new ArrayList<EbookPropertyItem>(selectedRows.length);
-				for (int i = 0; i < selectedRows.length; i++) {
-					if(mainTable.getRowSorter() != null) {
-						modelRowsIndex[i] = mainTable.getRowSorter().convertRowIndexToModel(selectedRows[i]);
-					} else {
-						modelRowsIndex[i] = selectedRows[i];
-					}
-					if(modelRowsIndex[i] < rowCount) {
-						items.add(((EbookPropertyDBTableModel)mainTable.getModel()).getEbookPropertyItemAt(modelRowsIndex[i]));
-					}
-				}
-
-				PropertySheetTableModel oldModel = propertySheet.getModel();
-				oldModel.dispose();
+			if(MainViewSelectionUtils.isMainTableSelection()) {
+				List<EbookPropertyItem> items = getEbookTableHandler().getSelectedEbookPropertyItems();
 
 				if(items.size() > 1) {
 					//multiple selection
-					final EbookSheetPropertyMultiSelectionModel model = new EbookSheetPropertyMultiSelectionModel();
-					propertySheet.setModel(model);
+					EbookSheetPropertyMultiSelectionModel model = new EbookSheetPropertyMultiSelectionModel();
+					getPropertySheetHandler().setModel(model);
 
 					model.loadProperties(items);
 
-					setImage(null, null);
+					clearImage();
 					EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
 					addMetadataButton.setListModel(emptyListModel);
 				} else if (items.size() == 1) {
 					//single selection
-					final EbookSheetPropertyModel model = new EbookSheetPropertyModel();
-					propertySheet.setModel(model);
+					EbookSheetPropertyModel model = new EbookSheetPropertyModel();
+					getPropertySheetHandler().setModel(model);
 
 					if(items.get(0) != null) {
 						EbookPropertyItem ebookPropertyItem = items.get(0);
@@ -1382,7 +1367,7 @@ class MainView extends JFrame {
 						if(cover != null && cover.length > 0) {
 							setImage(cover, ebookPropertyItem);
 						} else {
-							setImage(null, null);
+							clearImage();
 						}
 
 						IMetadataReader reader = model.getMetadataReader();
@@ -1395,14 +1380,21 @@ class MainView extends JFrame {
 				}
 			} else {
 				//no selection
-				propertySheet.setModel(new EbookSheetPropertyMultiSelectionModel());
-				setImage(null, null);
+				getPropertySheetHandler().setModel(new EbookSheetPropertyMultiSelectionModel());
+				clearImage();
 				EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
 				addMetadataButton.setListModel(emptyListModel);
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
 		}
+	}
+	
+	/**
+	 * Clears the image in the image viewer.
+	 */
+	private void clearImage() {
+		setImage(null, null);
 	}
 
 	/**
@@ -1434,13 +1426,6 @@ class MainView extends JFrame {
 		} else {
 			imageViewer.setImageViewerResource(null);
 		}
-	}
-	
-	/**
-	 * Clears the selection on the main table.
-	 */
-	public void clearMainTableSelection() {
-		mainTable.clearSelection();
 	}
 	
 	/**
