@@ -64,7 +64,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 						if(content != null) {
 							setupCoverMetadataToModel(content, imageFileName, items);
 						}
-						MainController.getController().setImageViewerResource(dialogResult);			
+						MainController.getController().setImageViewerResource(dialogResult);
 					}
 				}
 			} else {
@@ -81,7 +81,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 	
 	private void setupCoverMetadataToModel(byte[] content, String imageFileName, List<EbookPropertyItem> items) {
 		final MainController controller = MainController.getController();
-		final EbookSheetPropertyModel model = controller.getEbookSheetPropertyModel();
+		final EbookSheetPropertyModel model = controller.getPropertySheetModel();
 		final IMetadataReader metadataReader = model.getMetadataReader();
 		
 		boolean isNewCoverProperty = false;
@@ -107,7 +107,7 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 			model.setChanged(true);
 		} else {
 			LoggerFactory.getLogger().log(Level.INFO, "Seems tehere is no cover support for " + resourceHandler);
-		}		
+		}
 	}
 	
 	@Override
@@ -130,6 +130,6 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 
 	public void setDialogResult(IResourceHandler dialogResult) {
 		this.dialogResult = dialogResult;
-	}	
+	}
 
 }

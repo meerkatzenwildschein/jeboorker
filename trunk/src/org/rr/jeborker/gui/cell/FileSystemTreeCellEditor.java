@@ -30,7 +30,7 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 				if (editingNode != null) {
 					IResourceHandler resourceHandler = editingNode.getResource().getParentResource();
 					if (resourceHandler != null) {
-						MainController.getController().refreshFileSystemTreeEntry(resourceHandler);
+						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(resourceHandler);
 					}
 				}
 			}
@@ -75,7 +75,7 @@ public class FileSystemTreeCellEditor extends DefaultTreeCellEditor {
 
 	/**
 	 * This is invoked if a <code>TreeCellEditor</code> is not supplied in the constructor. It returns a <code>TextField</code> editor.
-	 * 
+	 *
 	 * @return a new <code>TextField</code> editor
 	 */
 	protected TreeCellEditor createTreeCellEditor() {

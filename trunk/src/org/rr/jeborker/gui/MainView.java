@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
@@ -244,21 +245,21 @@ class MainView extends JFrame {
 
 	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
-	JRTable mainTable;
+	private JRTable mainTable;
 
 	private JXLayer<JRTable> mainTableLayer;
 
-	JProgressBar progressBar;
+	private JProgressBar progressBar;
 
-	JSplitPane mainSplitPane;
+	private JSplitPane mainSplitPane;
 
-	JSplitPane propertySheetImageSplitPane;
+	private JSplitPane propertySheetImageSplitPane;
 
-	SimpleImageViewer imageViewer;
+	private SimpleImageViewer imageViewer;
 
-	PropertySheetPanel propertySheet;
+	private PropertySheetPanel propertySheet;
 
-	JMenuButton addMetadataButton;
+	private JMenuButton addMetadataButton;
 
 	private JButton removeMetadataButton;
 
@@ -268,17 +269,23 @@ class MainView extends JFrame {
 	
 	private FilterPanelComponent filterFieldComponent;
 
-	JSplitPane treeMainTableSplitPane;
+	private JSplitPane treeMainTableSplitPane;
 
-	JRTree basePathTree;
+	private JRTree basePathTree;
 
-	JRTree fileSystemTree;
+	private JRTree fileSystemTree;
 
-	JRScrollPane mainTableScrollPane;
+	private JRScrollPane mainTableScrollPane;
 
 	private JTabbedPane treeTabbedPane;
 
 	private JPanel buttonPanel;
+	
+	private MainViewTreeComponentHandler treeComponentHandler;
+	
+	private MainViewPropertySheetHandler propertySheetHandler;
+	
+	private MainViewEbookTableComponentHandler ebookTableHandler;
 	
 	private MainController controller;
 
@@ -500,6 +507,10 @@ class MainView extends JFrame {
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 		
 		initializeGlobalKeystrokes();
+		
+		treeComponentHandler = new MainViewTreeComponentHandler(basePathTree, fileSystemTree, this);
+		propertySheetHandler = new MainViewPropertySheetHandler(propertySheet);
+		ebookTableHandler = new MainViewEbookTableComponentHandler(mainTable, mainTableScrollPane);
 	}
 
 	/**
@@ -518,16 +529,16 @@ class MainView extends JFrame {
 			public void propertyChange(PropertyChangeEvent e) {
 				if("value".equals(e.getPropertyName())) {
 					//sheet has been edited
-					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(getEbookTableHandler().getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
 				}
 			}
 		});
 
-		propertySheet.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		getPropertySheetHandler().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if(!e.getValueIsAdjusting()) {
-					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_SELECTION_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+					EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_SELECTION_CHANGE, new ApplicationEvent(getEbookTableHandler().getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
 				}
 			}
 		});
@@ -536,7 +547,7 @@ class MainView extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if(!e.getValueIsAdjusting()) {
-					EventManager.fireEvent(EventManager.EVENT_TYPES.EBOOK_ITEM_SELECTION_CHANGE, new ApplicationEvent(getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+					EventManager.fireEvent(EventManager.EVENT_TYPES.EBOOK_ITEM_SELECTION_CHANGE, new ApplicationEvent(getEbookTableHandler().getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
 				}
 			}
 		});
@@ -827,7 +838,7 @@ class MainView extends JFrame {
              * Create a new Transferable that is used to drag files from jeboorker to a native application.
              */
             protected Transferable createTransferable(JComponent c) {
-            	List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeController().getSelectedTreeItems();
+            	List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeHandler().getSelectedTreeItems();
 		        final List<URI> uriList = new ArrayList<URI>(selectedTreeItems.size());
 		        final List<String> files = new ArrayList<String>(selectedTreeItems.size());
 
@@ -1052,7 +1063,7 @@ class MainView extends JFrame {
         TreePath selPath = basePathTree.getPathForLocation((int)location.getX(), (int)location.getY());
         if(selPath.getLastPathComponent() instanceof FileSystemNode) {
 	        final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
-	        List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
+	        List<IResourceHandler> items = controller.getMainTreeHandler().getSelectedTreeItems();
 
 			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
 			menu.add(new JMenuItem(action));
@@ -1086,7 +1097,7 @@ class MainView extends JFrame {
 
 	private JPopupMenu createFileSystemTreePopupMenu(final TreePath selPath) {
 		final MainController controller = MainController.getController();
-		final List<IResourceHandler> items = controller.getMainTreeController().getSelectedTreeItems();
+		final List<IResourceHandler> items = controller.getMainTreeHandler().getSelectedTreeItems();
 		final FileSystemNode pathNode = (FileSystemNode) selPath.getLastPathComponent();
 		final JPopupMenu menu = new JPopupMenu();
 
@@ -1284,34 +1295,6 @@ class MainView extends JFrame {
 	}
 
 	/**
-	 * Gets all selected items from the main table.
-	 * @return The selected items. Never returns <code>null</code>.
-	 */
-	public List<EbookPropertyItem> getSelectedEbookPropertyItems() {
-		final int[] selectedRows = getSelectedEbookPropertyItemRows();
-		final ArrayList<EbookPropertyItem> result = new ArrayList<EbookPropertyItem>(selectedRows.length);
-		for (int i = 0; i < selectedRows.length; i++) {
-			EbookPropertyItem valueAt = (EbookPropertyItem) controller.getTableModel().getValueAt(selectedRows[i], 0);
-			result.add(valueAt);
-		}
-
-		return result;
-	}
-
-	/**
-	 * Gets all selected rows from the main table.
-	 * @return all selected rows or an empty array if no row is selected. Never returns <code>null</code>.
-	 */
-	public int[] getSelectedEbookPropertyItemRows() {
-		if (mainTable != null) {
-			final int[] selectedRows = mainTable.getSelectedRows();
-			return selectedRows;
-		} else {
-			return new int[0];
-		}
-	}
-
-	/**
 	 * Get the currently selected metadata property from the metadata sheet.
 	 * @return The desired {@link Property} instance or <code>null</code> if no selection is made.
 	 */
@@ -1334,7 +1317,7 @@ class MainView extends JFrame {
 	 */
 	public void setSelectedMetadataProperty(final Property property) {
 		if(property != null) {
-			final EbookSheetPropertyModel model = (EbookSheetPropertyModel) propertySheet.getModel();
+			final EbookSheetPropertyModel model = getPropertySheetHandler().getPropertySheetModel();
 			final int rowCount = model.getRowCount();
 
 			for (int i = 0; i < rowCount; i++) {
@@ -1557,4 +1540,54 @@ class MainView extends JFrame {
 	public List<Field> getSortColumnSelectedFields() {
 		return sortColumnComponent.getSelectedFields();
 	}
+
+	public MainViewTreeComponentHandler getTreeComponentHandler() {
+		return treeComponentHandler;
+	}
+
+	public MainViewPropertySheetHandler getPropertySheetHandler() {
+		return propertySheetHandler;
+	}
+
+	/**
+	 * Sets the image which is provided by the given {@link IResourceHandler} to the
+	 * image viewer in the main view.
+	 * @param imageResource The {@link IResourceHandler} instance providing the image
+	 * data to be displayed. <code>null</code>if no image should be displayed.
+	 */
+	public void setImageViewerResource(IResourceHandler imageResource) {
+		imageViewer.setImageViewerResource(imageResource);
+	}
+	
+	/**
+	 * Gets the {@link IResourceHandler} for the image which is displayed in the image viewer.
+	 * @return The desired {@link IResourceHandler} or <code>null</code>.
+	 */
+	public IResourceHandler getImageViewerResource() {
+		return imageViewer.getImageResource();
+	}
+
+	/**
+	 * Gets the {@link BufferedImage} for the image which is displayed in the image viewer.
+	 * @return The desired {@link BufferedImage} or <code>null</code>.
+	 */
+	public BufferedImage getImageViewerImage() {
+		return imageViewer.getImage();
+	}
+
+	/**
+	 * Gets the progress indicator.
+	 * @return The desired monitor instance of <code>null</code> if the monitor is not ready to use.
+	 */
+	public MainMonitor getProgressMonitor() {
+		if(progressBar != null) {
+			return MainMonitor.getInstance(progressBar);
+		}
+		return null;
+	}
+
+	public MainViewEbookTableComponentHandler getEbookTableHandler() {
+		return ebookTableHandler;
+	}
+	
 }

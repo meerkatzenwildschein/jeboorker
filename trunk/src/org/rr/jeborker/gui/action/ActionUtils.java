@@ -57,14 +57,14 @@ public class ActionUtils {
 			LoggerFactory.logWarning(ActionUtils.class, "Database shutdown failed.", e1);
 		}
 		
-		System.exit(0);		
+		System.exit(0);
 	}
 
 	/**
 	 * Refreshes the entries for the given handler.
 	 * @param resourceLoader The handler of the entry to be refreshed.
 	 */
-	static void refreshEntry(final IResourceHandler resourceLoader) {	
+	static void refreshEntry(final IResourceHandler resourceLoader) {
 		final List<EbookPropertyItem> items = EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceLoader);
 		Iterator<EbookPropertyItem> iterator = items.iterator();
 		if(iterator.hasNext()) {
@@ -75,7 +75,7 @@ public class ActionUtils {
 				
 				@Override
 				public void run() {
-					MainController.getController().refreshFileSystemTreeEntry(resourceLoader);
+					MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(resourceLoader);
 				}
 			});
 		}
@@ -108,7 +108,7 @@ public class ActionUtils {
 					@Override
 					public void run() {
 						MainController.getController().refreshTableSelectedItem(true);
-						MainController.getController().refreshFileSystemTreeEntry(refreshResourceHandler);
+						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(refreshResourceHandler);
 					}
 				});
 			} else {
@@ -118,9 +118,9 @@ public class ActionUtils {
 					public void run() {
 						int row = MainController.getController().getTableModel().searchRow(item);
 						MainController.getController().refreshTableItem(new int[] {row}, false);
-						MainController.getController().refreshFileSystemTreeEntry(refreshResourceHandler);
+						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(refreshResourceHandler);
 					}
-				});				
+				});
 			}
 		}
 	}
@@ -131,28 +131,28 @@ public class ActionUtils {
 	 * @return <code>true</code> if the given item is selected in the view and false otherwise.
 	 */
 	private static boolean isSelectedItem(final EbookPropertyItem item) {
-		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();	
+		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		for(EbookPropertyItem selected : selectedEbookPropertyItems) {
 			if(item.equals(selected)) {
 				return true;
 			}
 		}
 		return false;
-	}	
+	}
 	
 	/**
 	 * Toggles the visibility of the given base path entry. If it's visible
-	 * it's set to hide an other way round. 
+	 * it's set to hide an other way round.
 	 * @param path The path to be toggled.
 	 */
 	public static void toggleBasePathVisibility(String path) {
 		final boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 		setBasePathVisibility(path, !isShow);
-	}	
+	}
 	
 	/**
-	 * Sets the visibility of the given base path. 
-	 * @param path path which visibility should be set. 
+	 * Sets the visibility of the given base path.
+	 * @param path path which visibility should be set.
 	 * @param show <code>true</code> if the base path should be shown and <code>false</code> for hide it.
 	 */
 	public static void setBasePathVisibility(final String path, boolean show) {
@@ -189,7 +189,7 @@ public class ActionUtils {
 	 */
 	public static void addEbookPropertyItem(final EbookPropertyItem item) {
 		addEbookPropertyItem(item, -1);
-	}	
+	}
 	
 	/**
 	 * Adds the given item to the database and to the ui.
@@ -207,7 +207,7 @@ public class ActionUtils {
 				MainController.getController().addEbookPropertyItem(item, row);
 			}
 		});
-	}		
+	}
 	
 	/**
 	 * Deletes the given item from the database and the view.
@@ -224,14 +224,14 @@ public class ActionUtils {
 			@Override
 			public void run() {
 				boolean removed = controller.removeEbookPropertyItem(item);
-				controller.refreshFileSystemTreeEntry(item.getResourceHandler());
+				controller.getMainTreeHandler().refreshFileSystemTreeEntry(item.getResourceHandler());
 				if(!removed) {
 					DefaultDBManager.getInstance().deleteObject(item);
 				}
 				progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleted", item.getFileName()));
 			}
 		});
-	}	
+	}
 	
 	/**
 	 * Tells if this {@link AResourceHandler} instance file format is an image.
@@ -250,7 +250,7 @@ public class ActionUtils {
 		final String extension = resource.getFileExtension();
 		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.contains("," + extension))) {
 			return true;
-		}		
+		}
 		
 		final String mime = resource.getMimeType(force);
 		if(mime == null || mime.length() == 0) {
@@ -267,7 +267,7 @@ public class ActionUtils {
 	
 	/**
 	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
-	 * The files will be copied and the {@link EbookPropertyItem}s will be created. 
+	 * The files will be copied and the {@link EbookPropertyItem}s will be created.
 	 * @param deleteAnyway Deletes the resource after a successful import in any case.
 	 * @return A list of all imported (target) file resources.
 	 */
@@ -281,24 +281,24 @@ public class ActionUtils {
 				if(success) {
 					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
 					ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-					MainController.getController().refreshFileSystemTreeEntry(targetRecourceDirectory);
+					MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
 					importedResources.add(targetResource);
 					
 					if(delete) {
 						sourceResource.delete();
-						MainController.getController().getMainTreeController().removeDeletedTreeItems();
+						MainController.getController().getMainTreeHandler().removeDeletedTreeItems();
 					}
 				}
 			} else {
 				if(!ActionUtils.isSupportedEbookFormat(sourceResource, true)) {
 					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
 				} else if(sourceResource.exists()){
-					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");	                				
+					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");
 				} else {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");	                				
+					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");
 				}
 			}
 		}
 		return importedResources;
-	}	
+	}
 }

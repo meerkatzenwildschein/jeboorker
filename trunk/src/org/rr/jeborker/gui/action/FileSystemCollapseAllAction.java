@@ -23,7 +23,7 @@ public class FileSystemCollapseAllAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		MainController controller = MainController.getController();
-		controller.getMainTreeController().collapseAllTreeNodes(treeName);
+		controller.getMainTreeHandler().collapseAllTreeNodes(treeName);
 	}
 
 }

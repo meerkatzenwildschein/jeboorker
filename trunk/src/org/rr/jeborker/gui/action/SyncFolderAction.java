@@ -45,7 +45,7 @@ public class SyncFolderAction extends AbstractAction {
 		List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
 		if(selectedEbookPropertyItems.size() == 1) {
 			IResourceHandler resource = selectedEbookPropertyItems.get(0).getResourceHandler();
-			controller.getMainTreeController().addExpandedTreeItems(Arrays.asList(resource));
+			controller.getMainTreeHandler().addExpandedTreeItems(Arrays.asList(resource));
 		}
 	}
 	

@@ -62,11 +62,11 @@ class RefreshBasePathAction extends AbstractAction {
 					if(ResourceHandlerFactory.getResourceHandler(basePath).isDirectoryResource()) {
 						doRefreshBasePath(basePath, e, controller.getProgressMonitor());
 					}
-				}				
+				}
 			} else if(path != null && path.length() > 0) {
 				if(!ResourceHandlerFactory.getResourceHandler(path).isDirectoryResource()) {
 					messageFinished = "The folder " + path + " did not exists.";
-				} else {			
+				} else {
 					doRefreshBasePath(path, e, controller.getProgressMonitor());
 				}
 			}
@@ -152,10 +152,10 @@ class RefreshBasePathAction extends AbstractAction {
 	private void reloadBasePathTree(final Collection<String> pathElements, final Collection<String> oldPathElements) {
 		for(String newPathElement : pathElements) {
 			if(!oldPathElements.contains(newPathElement)) {
-				MainController.getController().refreshBasePathTree();
+				MainController.getController().getMainTreeHandler().refreshBasePathTree();
 				break;
 			}
 		}
-	}	
+	}
 	
 }
