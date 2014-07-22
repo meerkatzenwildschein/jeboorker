@@ -38,7 +38,7 @@ class RemoveBasePathAction extends AbstractAction {
 			putValue(Action.NAME, text);
 		}
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("remove_16.png"));
-		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("remove_22.png"));		
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("remove_22.png"));
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ class RemoveBasePathAction extends AbstractAction {
 				removeBasePathEntries(basePath, true);
 				preferenceStore.removeBasePath(basePath);
 				MainMenuBarController.getController().removeBasePathMenuEntry(basePath);
-			}			
+			}
 		} else {
 			final String name = (String) getValue(Action.NAME);
 			removeBasePathEntries(name, true);
@@ -71,14 +71,14 @@ class RemoveBasePathAction extends AbstractAction {
 				LoggerFactory.logWarning(RemoveBasePathAction.class, "Error while removing ebooks from catalog", ex);
 			}
 		} finally {
-			progressMonitor.monitorProgressStop();	
+			progressMonitor.monitorProgressStop();
 			if(refreshTable) {
 				SwingUtilities.invokeLater(new Runnable() {
 					
 					@Override
 					public void run() {
 						MainController.getController().refreshTable();
-						MainController.getController().refreshBasePathTree();
+						MainController.getController().getMainTreeHandler().refreshBasePathTree();
 					}
 				});
 			}
@@ -122,7 +122,7 @@ class RemoveBasePathAction extends AbstractAction {
 			public void run() {
 				controller.refreshTable();
 			}
-		});		
+		});
 	}
 	
 }

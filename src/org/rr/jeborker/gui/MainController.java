@@ -14,17 +14,12 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
@@ -38,10 +33,8 @@ import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
-import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
-import org.rr.jeborker.gui.model.FileSystemTreeModel;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
@@ -54,7 +47,7 @@ public class MainController {
 
 	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
-	MainView mainWindow;
+	private MainView mainWindow;
 
 	private JSplashScreen splashScreen;
 
@@ -62,11 +55,6 @@ public class MainController {
 	 * The controller singleton.
 	 */
 	private static MainController controller;
-
-	/**
-	 * Controller for the file system and base path tree.
-	 */
-	private static MainTreeController treeController;
 
 	/**
 	 * No public instantiation. The {@link #getController()} method is
@@ -101,10 +89,17 @@ public class MainController {
 	}
 
 	/**
-	 * Gets the controller which handles the base path and file system tree.
+	 * Gets the handler which handles the base path and file system tree.
 	 */
-	public MainTreeController getMainTreeController() {
-		return treeController;
+	public MainViewTreeComponentHandler getMainTreeHandler() {
+		return mainWindow.getTreeComponentHandler();
+	}
+
+	/**
+	 * Gets the handler which handles the main table
+	 */
+	public MainViewEbookTableComponentHandler getEbookTableHandler() {
+		return mainWindow.getEbookTableHandler();
 	}
 
 	/**
@@ -156,12 +151,11 @@ public class MainController {
 
 		mainWindow = new MainView(this);
 		mainWindow.initialize();
-		mainWindow.initListeners();
-
+		
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.init"));
 		splashScreen.setLoadingValue(60);
-
-		initSubController();
+		
+		mainWindow.initListeners();
 
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.restore"));
 		splashScreen.setLoadingValue(80);
@@ -207,7 +201,7 @@ public class MainController {
 			@Override
 			protected void done() {
 				try {
-					mainWindow.mainTable.setModel(ebookPropertyDBTableModel);
+					mainWindow.getEbookTableHandler().setModel(ebookPropertyDBTableModel);
 				} finally {
 					getMainWindow().getGlassPane().setVisible(false);
 					LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms until data model loaded");
@@ -216,129 +210,20 @@ public class MainController {
 			}
 		}.execute();
 	}
-
-	/**
-	 * Initialize the controllers for the different parts of the application window.
-	 */
-	private void initSubController() {
-		treeController = new MainTreeController(mainWindow.basePathTree, mainWindow.fileSystemTree);
+	
+	public EbookSheetPropertyModel getPropertySheetModel() {
+		return mainWindow.getPropertySheetHandler().getPropertySheetModel();
 	}
 	
-	/**
-	 * Saves/Writes the metadata properties if something has changed.
-	 */
-	public void saveMetadataProperties(int minSelectionIndex, int maxSelectionIndex) {
-		final EbookSheetPropertyModel sheetModel = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
-		final List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
-		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
-		if(getEbookSheetPropertyModel().isChanged()) {
-			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
-			EbookPropertyDBTableModel tableModel = getTableModel();
-			int rowCount = tableModel.getRowCount();
-
-			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
-				tableModel.reloadEbookPropertyItemAt(minSelectionIndex);
-			}
-
-			if(maxSelectionIndex >= 0 && maxSelectionIndex != minSelectionIndex && maxSelectionIndex < rowCount) {
-				tableModel.reloadEbookPropertyItemAt(maxSelectionIndex);
-			}
-
-			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
-				int[] selectedRows = mainWindow.mainTable.getSelectedRows();
-				for (int selectedRow : selectedRows) {
-					tableModel.reloadEbookPropertyItemAt(selectedRow);
-				}
-			}
-			refreshTableSelectedItem(false);
-
-			//a repaint does a refresh to all visible table rows.
-			mainWindow.mainTable.repaint();
-		}
-	}
-
 	/**
 	 * Refresh the whole table.
 	 */
 	public void refreshTable() {
-		final EbookPropertyDBTableModel model = getTableModel();
-		if(model instanceof EbookPropertyDBTableModel) {
-			((EbookPropertyDBTableModel)model).setDirty();
-		}
-
-		if(mainWindow.mainTable.isEditing()) {
-			mainWindow.mainTable.stopEdit();
-		}
-
-		mainWindow.mainTable.tableChanged(new TableModelEvent(model));
-		if(mainWindow.mainTableScrollPane != null) {
-			mainWindow.mainTableScrollPane.getVerticalScrollBar().setValue(0);
-		}
+		mainWindow.getEbookTableHandler().refreshTable();
 	}
 
-	/**
-	 * Refresh the Tree for the base path's.
-	 */
-	public void refreshBasePathTree() {
-		final TreeSelectionModel selectionModel = mainWindow.basePathTree.getSelectionModel();
-		final TreePath selectionPath = mainWindow.basePathTree.getSelectionPath();
-
-		final String expansionStates = TreeUtil.getExpansionStates(mainWindow.basePathTree);
-		final BasePathTreeModel basePathTreeModel = (BasePathTreeModel) mainWindow.basePathTree.getModel();
-		mainWindow.basePathTree.stopEditing();
-		((BasePathTreeModel)basePathTreeModel).reload();
-
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				TreeUtil.restoreExpanstionState(mainWindow.basePathTree, expansionStates);
-				selectionModel.setSelectionPath(selectionPath);
-			}
-		});
-	}
-
-	/**
-	 * Refresh the Tree for the file system. Only the node and it child's for the given {@link IResourceHandler} will be refreshed.
-	 */
-	public void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh) {
-		final TreeModel fileSystemTreeModel = mainWindow.fileSystemTree.getModel();
-		final TreeModel basePathTreeModel = mainWindow.basePathTree.getModel();
-
-		if(fileSystemTreeModel instanceof FileSystemTreeModel) {
-			if(!resourceToRefresh.exists() || resourceToRefresh.isFileResource()) {
-				resourceToRefresh = resourceToRefresh.getParentResource();
-			}
-			final String expansionStates = TreeUtil.getExpansionStates(mainWindow.fileSystemTree);
-			mainWindow.fileSystemTree.stopEditing();
-			((FileSystemTreeModel) fileSystemTreeModel).reload(resourceToRefresh);
-			((BasePathTreeModel) basePathTreeModel).reload(resourceToRefresh);
-
-			SwingUtilities.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					TreeUtil.restoreExpanstionState(mainWindow.fileSystemTree, expansionStates);
-				}
-			});
-		}
-	}
-
-	public void refreshTableItem(final int[] selectedRows, final boolean refreshMetadataSheet) {
-		final EbookPropertyDBTableModel model = getTableModel();
-		if(selectedRows==null || selectedRows.length == 0) {
-			return;
-		} else {
-			int editingRow = mainWindow.mainTable.getEditingRow();
-			for (int i = 0; i < selectedRows.length; i++) {
-				if(editingRow != -1 && editingRow == selectedRows[i]) {
-					mainWindow.mainTable.stopEdit();
-				}
-
-				model.reloadEbookPropertyItemAt(selectedRows[i]);
-				mainWindow.mainTable.tableChanged(new TableModelEvent(model, selectedRows[i]));
-			}
-		}
+	public void refreshTableItem(int[] selectedRows, boolean refreshMetadataSheet) {
+		mainWindow.getEbookTableHandler().refreshTableItem(selectedRows);
 
 		if(refreshMetadataSheet) {
 			refreshSheetProperties();
@@ -359,19 +244,13 @@ public class MainController {
 	 * @param refreshMetadataSheet do also refresh the metadata sheet.
 	 */
 	public void refreshTableRows(final int[] rows, boolean refreshMetadataSheet) {
-		final EbookPropertyDBTableModel model = getTableModel();
-		if(rows==null || rows.length==0) {
+		if (rows == null || rows.length == 0) {
 			return;
 		} else {
-			int editingRow = mainWindow.mainTable.getEditingRow();
+			mainWindow.getEbookTableHandler().refreshTableRows(rows);
+
 			int[] selectedEbookPropertyItemRows = getSelectedEbookPropertyItemRows();
 			for (int i = 0; i < rows.length; i++) {
-				if(editingRow != -1 && editingRow == rows[i]) {
-					mainWindow.mainTable.editingStopped(null);
-				}
-				model.reloadEbookPropertyItemAt(rows[i]);
-				mainWindow.mainTable.tableChanged(new TableModelEvent(model, rows[i]));
-
 				for (int j = 0; j < selectedEbookPropertyItemRows.length; j++) {
 					if(refreshMetadataSheet && selectedEbookPropertyItemRows[j] == rows[i]) {
 						refreshSheetProperties();
@@ -388,7 +267,7 @@ public class MainController {
 	 * data to be displayed. <code>null</code>if no image should be displayed.
 	 */
 	public void setImageViewerResource(IResourceHandler imageResource) {
-		mainWindow.imageViewer.setImageViewerResource(imageResource);
+		mainWindow.setImageViewerResource(imageResource);
 	}
 
 	/**
@@ -396,7 +275,7 @@ public class MainController {
 	 * @return The desired {@link IResourceHandler} or <code>null</code>.
 	 */
 	public IResourceHandler getImageViewerResource() {
-		return mainWindow.imageViewer.getImageResource();
+		return mainWindow.getImageViewerResource();
 	}
 
 	/**
@@ -404,7 +283,7 @@ public class MainController {
 	 * @return The desired {@link BufferedImage} or <code>null</code>.
 	 */
 	public BufferedImage getImageViewerImage() {
-		return mainWindow.imageViewer.getImage();
+		return mainWindow.getImageViewerImage();
 	}
 
 	/**
@@ -414,7 +293,7 @@ public class MainController {
 		Property selectedMetadataProperty = getSelectedMetadataProperty();
 		if(selectedMetadataProperty!=null) {
 			if(selectedMetadataProperty.isEditable()) {
-				PropertySheetTableModel model = getEbookSheetPropertyModel();
+				PropertySheetTableModel model = getPropertySheetModel();
 				model.removeProperty(selectedMetadataProperty);
 			}
 		}
@@ -425,7 +304,7 @@ public class MainController {
 	 * @param property The property to be added.
 	 */
 	public void addMetadataProperty(Property property) {
-		mainWindow.propertySheet.addProperty(property);
+		mainWindow.getPropertySheetHandler().addMetadataProperty(property);
 		EventManager.fireEvent(EventManager.EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE, new ApplicationEvent(controller.getSelectedEbookPropertyItems(), property, property));
 	}
 
@@ -450,12 +329,12 @@ public class MainController {
 	 * @param rating The rating value.
 	 */
 	public void setRatingToSelectedEntry(int rating) {
-		final EbookSheetPropertyModel model = getEbookSheetPropertyModel();
+		final EbookSheetPropertyModel model = getPropertySheetModel();
 		final Property ratingProperty = model.getRatingProperty();
 		final int ratingIdx = model.getRatingIndex();
 
 		if(ratingIdx >= 0) {
-			mainWindow.propertySheet.getSelectionModel().setSelectionInterval(ratingIdx, ratingIdx);
+			mainWindow.getPropertySheetHandler().getSelectionModel().setSelectionInterval(ratingIdx, ratingIdx);
 		}
 
 		if(ratingProperty != null) {
@@ -477,14 +356,38 @@ public class MainController {
 			}
 		}
 	}
-
+	
 	/**
-	 * Gets the model for the metadata sheet.
-	 * @return The metadata sheet model.
+	 * Saves/Writes the metadata properties if something has changed.
 	 */
-	public EbookSheetPropertyModel getEbookSheetPropertyModel() {
-		final EbookSheetPropertyModel model = (EbookSheetPropertyModel) mainWindow.propertySheet.getModel();
-		return model;
+	public void saveMetadataProperties(int minSelectionIndex, int maxSelectionIndex) {
+		EbookSheetPropertyModel sheetModel = getPropertySheetModel();
+		List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
+		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
+		if(getPropertySheetModel().isChanged()) {
+			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
+			EbookPropertyDBTableModel tableModel = getTableModel();
+			int rowCount = tableModel.getRowCount();
+
+			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
+				tableModel.reloadEbookPropertyItemAt(minSelectionIndex);
+			}
+
+			if(maxSelectionIndex >= 0 && maxSelectionIndex != minSelectionIndex && maxSelectionIndex < rowCount) {
+				tableModel.reloadEbookPropertyItemAt(maxSelectionIndex);
+			}
+
+			if(minSelectionIndex < 0 || maxSelectionIndex < 0) {
+				int[] selectedRows = mainWindow.getEbookTableHandler().getSelectedRows();
+				for (int selectedRow : selectedRows) {
+					tableModel.reloadEbookPropertyItemAt(selectedRow);
+				}
+			}
+			refreshTableSelectedItem(false);
+
+			//a repaint does a refresh to all visible table rows.
+			mainWindow.getEbookTableHandler().repaint();
+		}
 	}
 
 	/**
@@ -498,7 +401,7 @@ public class MainController {
 			if (model instanceof EbookPropertyDBTableModel) {
 				clearSelection();
 				((EbookPropertyDBTableModel) model).addRow(item, row);
-				mainWindow.mainTable.stopEdit();
+				mainWindow.getEbookTableHandler().stopEdit();
 			}
 		}
 	}
@@ -508,7 +411,7 @@ public class MainController {
 	 * @return The selected items. Never returns <code>null</code>.
 	 */
 	public List<EbookPropertyItem> getSelectedEbookPropertyItems() {
-		return mainWindow.getSelectedEbookPropertyItems();
+		return mainWindow.getEbookTableHandler().getSelectedEbookPropertyItems();
 	}
 
 	/**
@@ -517,7 +420,7 @@ public class MainController {
 	 */
 	public int[] getSelectedEbookPropertyItemRows() {
 		if(mainWindow != null) {
-			return mainWindow.getSelectedEbookPropertyItemRows();
+			return mainWindow.getEbookTableHandler().getSelectedEbookPropertyItemRows();
 		}
 		return new int[0];
 	}
@@ -541,10 +444,9 @@ public class MainController {
 	public boolean removeEbookPropertyItem(EbookPropertyItem item) {
 		TableModel model = getTableModel();
 		if(model instanceof EbookPropertyDBTableModel) {
-			mainWindow.mainTable.clearSelection();
-			mainWindow.mainTable.editingStopped(new ChangeEvent(this));
-			boolean result = ((EbookPropertyDBTableModel)model).removeRow(item);
-			return result;
+			mainWindow.getEbookTableHandler().clearSelection();
+			mainWindow.getEbookTableHandler().editingStopped(new ChangeEvent(this));
+			return ((EbookPropertyDBTableModel)model).removeRow(item);
 		}
 		return false;
 	}
@@ -554,7 +456,7 @@ public class MainController {
 	 * @return The desired model. <code>null</code> if the model is not initialized.
 	 */
 	public EbookPropertyDBTableModel getTableModel() {
-		return (EbookPropertyDBTableModel) mainWindow.mainTable.getModel();
+		return mainWindow.getEbookTableHandler().getModel();
 	}
 
 	/**
@@ -562,8 +464,8 @@ public class MainController {
 	 * @return The desired monitor instance of <code>null</code> if the monitor is not ready to use.
 	 */
 	public MainMonitor getProgressMonitor() {
-		if(mainWindow != null && mainWindow.progressBar != null) {
-			return MainMonitor.getInstance(mainWindow.progressBar);
+		if(mainWindow != null) {
+			return mainWindow.getProgressMonitor();
 		}
 		return null;
 	}
@@ -667,7 +569,7 @@ public class MainController {
 	public void setFilterColorEnabled(boolean enabled) {
 		mainWindow.setFilterColorEnabled(enabled);
 	}
-
+	
 	public String getFilterText() {
 		return mainWindow.getFilterText();
 	}

@@ -45,7 +45,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 		if(!visible) {
 			controller.close();
 		}
-	}	
+	}
 
 	private void initialize() {
 		if(!isInitialized) {
@@ -58,7 +58,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	}
 	
 	/**
-	 * Create and add the image resize slider. 
+	 * Create and add the image resize slider.
 	 */
 	private void createImageSizeEntries(final String generalCategory) {
 		if(isShowImageSizeEntry()) {
@@ -68,20 +68,20 @@ class ConverterPreferenceView extends JPreferenceDialog {
 			if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
 				reduceValue.setPaintTicks(true);
 				reduceValue.setPaintLabels(true);
-				reduceValue.setSnapToTicks(true);				
-			} 
+				reduceValue.setSnapToTicks(true);
+			}
 			reduceValue.setValue(100);
 			reduceValue.setMinimumSize(new Dimension(220, 45));
 			String reduceImageQualityLabel = Bundle.getString("ConverterPreferenceView.pref.reduceImageQuality");
 			PreferenceEntry reduceImageQualityItem = new PreferenceEntry(REDUCE_IMAGE_SIZE_PREFERENCE_NAME, reduceImageQualityLabel, reduceValue, generalCategory);
-			addPreferenceEntry(reduceImageQualityItem);			
+			addPreferenceEntry(reduceImageQualityItem);
 		}
 	}
 
 	/**
-	 * Create and add the combobox which provides the components for landscape format images. 
-	 * The combobox provides options like rotate or split. The manga checkbox for the 
-	 * split option is also added here. 
+	 * Create and add the combobox which provides the components for landscape format images.
+	 * The combobox provides options like rotate or split. The manga checkbox for the
+	 * split option is also added here.
 	 */
 	private void createLandscapePageEntries(final String generalCategory) {
 		if(isShowLandscapePageEntries()) {
@@ -145,7 +145,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	 */
 	private static boolean isManga() {
 		boolean result = false;
-		List<MetadataProperty> allMetaData = MainController.getController().getEbookSheetPropertyModel().getAllMetaData();
+		List<MetadataProperty> allMetaData = MainController.getController().getPropertySheetModel().getAllMetaData();
 		for(MetadataProperty metadata : allMetaData) {
 			String name = metadata.getName();
 			if(name.toLowerCase().contains("manga")) {

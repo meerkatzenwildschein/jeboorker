@@ -30,7 +30,7 @@ public class FileSystemImportAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		final MainController controller = MainController.getController();
-		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
+		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeHandler().getSelectedTreeItems();
 		final IResourceHandler targetRecourceDirectory = ResourceHandlerFactory.getResourceHandler(targetFolder);
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final String targetBasePath = preferenceStore.getBasePathFor(targetRecourceDirectory);

@@ -160,7 +160,7 @@ public class FileWatchService {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, basePathForFile);
 						DefaultDBManager.getInstance().storeObject(item);
 						ActionUtils.addEbookPropertyItem(item);
-						MainController.getController().refreshFileSystemTreeEntry(basePathForFile);
+						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(basePathForFile);
 						LoggerFactory.getLogger().log(Level.INFO, "add " + resource);
 					}
 				}
@@ -180,7 +180,7 @@ public class FileWatchService {
 							@Override
 							public void run() {
 								boolean removed = controller.removeEbookPropertyItem(item);
-								controller.refreshFileSystemTreeEntry(item.getResourceHandler());
+								controller.getMainTreeHandler().refreshFileSystemTreeEntry(item.getResourceHandler());
 								if(!removed) {
 									DefaultDBManager.getInstance().deleteObject(item);
 								}

@@ -49,7 +49,7 @@ class RenameFileAction extends AbstractAction {
 			if (!selectedEbookPropertyItems.isEmpty()) {
 				renameFiles = openRenameFileDialogWithEbookPropertyItems(selectedEbookPropertyItems);
 			} else {
-				List<IResourceHandler> selectedEbookPropertyResources = controller.getMainTreeController().getSelectedTreeItems();
+				List<IResourceHandler> selectedEbookPropertyResources = controller.getMainTreeHandler().getSelectedTreeItems();
 				renameFiles = openRenameFileDialogWithIResources(selectedEbookPropertyResources);
 			}
 		} else {
@@ -101,7 +101,7 @@ class RenameFileAction extends AbstractAction {
 				}
 				MainController.getController().refreshTableSelectedItem(true);
 				for(IResourceHandler toRefresh : toRefreshInFileSystemTree) {
-					MainController.getController().refreshFileSystemTreeEntry(toRefresh);
+					MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(toRefresh);
 				}
 			}
 		});

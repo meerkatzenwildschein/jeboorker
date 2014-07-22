@@ -120,7 +120,7 @@ class MainViewMenuUtils {
 		final MainController controller = MainController.getController();
 		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
 		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeController().getSelectedTreeItems();
+		final List<IResourceHandler> selectedTreeItems = controller.getMainTreeHandler().getSelectedTreeItems();
 		final String name = Bundle.getString("MainMenuBarController.copyToSubMenu");
 		final JMenu copyToSubMenu = new JMenu(SwingUtils.removeMnemonicMarker(name));
 

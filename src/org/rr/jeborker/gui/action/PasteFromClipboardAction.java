@@ -76,7 +76,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 						for(IResourceHandler source : sourceFiles) {
 							IResourceHandler targetFileResource = targetRecourceDirectory.addPathStatement(source.getName());
 							source.copyTo(targetFileResource, false);
-							controller.refreshFileSystemTreeEntry(targetRecourceDirectory);
+							controller.getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
 						}
 					}
 				}

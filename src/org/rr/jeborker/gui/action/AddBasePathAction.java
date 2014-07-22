@@ -61,7 +61,7 @@ class AddBasePathAction extends AbstractAction {
 			final List<File> directorySelections = controller.getDirectorySelection();
 			for (File directorySelection : directorySelections) {
 				IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceHandler(directorySelection);
-				addBasePath(controller, selectedDirectory, selectedDirectory.toString());				
+				addBasePath(controller, selectedDirectory, selectedDirectory.toString());
 			}
 		}
 		System.gc();
@@ -83,16 +83,16 @@ class AddBasePathAction extends AbstractAction {
 				}
 			} catch(Throwable t) {
 				LoggerFactory.log(Level.WARNING, this, "Adding " + path + " has failed", t);
-			} 
+			}
 			controller.getProgressMonitor().monitorProgressStop(messageFinished);
 			
 			controller.refreshTable();
-			controller.refreshBasePathTree();
+			controller.getMainTreeHandler().refreshBasePathTree();
 		}
 	}
 	
 	/**
-	 * Tests if the first path is part of the second or the second path is part of the first 
+	 * Tests if the first path is part of the second or the second path is part of the first
 	 * @param existing A list of path to be compared
 	 * @param path The path to be compared with the list
 	 * @return <code>true</code> if the path match to another or <code>false</code> otherwise.
