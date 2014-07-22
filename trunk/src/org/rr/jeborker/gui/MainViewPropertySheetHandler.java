@@ -10,9 +10,12 @@ import com.l2fprod.common.propertysheet.PropertySheetPanel;
 public class MainViewPropertySheetHandler {
 
 	private PropertySheetPanel propertySheet;
+	
+	private MainView mainView;
 
-	public MainViewPropertySheetHandler(PropertySheetPanel propertySheet) {
+	public MainViewPropertySheetHandler(PropertySheetPanel propertySheet, MainView mainView) {
 		this.propertySheet = propertySheet;
+		this.mainView = mainView;
 	}
 
 	/**
@@ -27,8 +30,23 @@ public class MainViewPropertySheetHandler {
 		return propertySheet.getSelectionModel();
 	}
 	
-	public EbookSheetPropertyModel getPropertySheetModel() {
+	public EbookSheetPropertyModel getModel() {
 		return (EbookSheetPropertyModel) propertySheet.getModel();
 	}
+	
+	public void setModel(EbookSheetPropertyModel model) {
+		EbookSheetPropertyModel oldModel = getModel();
+		if(oldModel != null) {
+			oldModel.dispose();
+		}
+		propertySheet.setModel(model);
+	}
 
+	/**
+	 * Rereads the metadata properties and set them to the sheet.
+	 */
+	public void refreshSheetProperties() {
+		mainView.refreshSheetProperties();
+	}
+	
 }

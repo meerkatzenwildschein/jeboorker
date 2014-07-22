@@ -73,7 +73,7 @@ class RefreshBasePathAction extends AbstractAction {
 		} catch (Throwable ex) {
 			LoggerFactory.log(Level.WARNING, this, "Path " + path, ex);
 		} finally {
-			controller.refreshTable();
+			controller.getEbookTableHandler().refreshTable();
 			controller.getProgressMonitor().monitorProgressStop(messageFinished);
 		}
 		System.gc();
@@ -84,7 +84,7 @@ class RefreshBasePathAction extends AbstractAction {
 		removeDeletedFiles(resourceLoader);
 		refreshEbookFiles(resourceLoader);
 		
-		MainController.getController().refreshTable();
+		MainController.getController().getEbookTableHandler().refreshTable();
 	}
 	
 	/**

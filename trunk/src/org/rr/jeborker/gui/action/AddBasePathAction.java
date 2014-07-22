@@ -53,7 +53,7 @@ class AddBasePathAction extends AbstractAction {
 		final MainController controller = MainController.getController();
 		String path = this.path;
 		
-		controller.clearSelection();
+		controller.getEbookTableHandler().clearSelection();
 		if(this.path != null && this.path.length() > 0) {
 			IResourceHandler selectedDirectory = ResourceHandlerFactory.getResourceHandler(path);
 			addBasePath(controller, selectedDirectory, path);
@@ -86,7 +86,7 @@ class AddBasePathAction extends AbstractAction {
 			}
 			controller.getProgressMonitor().monitorProgressStop(messageFinished);
 			
-			controller.refreshTable();
+			controller.getEbookTableHandler().refreshTable();
 			controller.getMainTreeHandler().refreshBasePathTree();
 		}
 	}
