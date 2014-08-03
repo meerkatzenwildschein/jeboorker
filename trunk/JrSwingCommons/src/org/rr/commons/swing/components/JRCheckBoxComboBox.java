@@ -37,8 +37,6 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 
 	private JRCheckBoxComboBoxModel<E> model;
 	
-	private int popupHeight = 300;
-	
 	private int minPopupWidth = -1;
 
 	public JRCheckBoxComboBox() {
@@ -59,6 +57,9 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 			}
 
 			private void preparePopup(JPopupMenu popup) {
+				JRCheckBoxComboBoxModel<E> model = getJRCheckBoxComboBoxModel();
+				int popupHeight = model.getSize() * 10;
+				
 				popup.removeAll();
 				popup.setPopupSize(getSize().width, popupHeight);
 				popup.setLightWeightPopupEnabled(false);
@@ -68,7 +69,6 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 				panel.setOpaque(false);
 				JScrollPane scrollPane = new JRScrollPane(panel);
 				
-				JRCheckBoxComboBoxModel<E> model = getJRCheckBoxComboBoxModel();
 				for (int i = 0; i < model.getSize(); i++) {
 					String label = model.getLabel(i);
 					boolean checked = model.isChecked(i);
@@ -178,14 +178,6 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 		} else if(checkState == CheckState.MULTIPLE) {
 			textForMultiple = text;
 		}
-	}
-
-	public int getPopupHeight() {
-		return popupHeight;
-	}
-
-	public void setPopupHeight(int popupHeight) {
-		this.popupHeight = popupHeight;
 	}
 
 	public int getMinPopupWidth() {
