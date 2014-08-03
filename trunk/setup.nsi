@@ -137,7 +137,7 @@ Section -Main SEC0000
     File lib\jpa.jar
     File lib\ormlite-core-4.48.jar
     File lib\ormlite-jdbc-4.48.jar
-    File lib\weblaf-1.27.jar
+    File lib\weblaf-1.28.jar
     File lib\commons-codec-1.6.jar
     File lib\jpushbullet.jar
     File lib\gson-2.2.4.jar
