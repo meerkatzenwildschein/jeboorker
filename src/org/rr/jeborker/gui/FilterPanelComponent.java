@@ -80,7 +80,6 @@ public class FilterPanelComponent extends JPanel {
 		JLabel lblSearch = new JLabel(Bundle.getString("FilterPanelView.label.search"));
 		add(lblSearch, "w 55!");
 		
-		filterFieldSelection.setPopupHeight(100);
 		filterFieldSelection.setMinPopupWidth(200);
 		
 		Dimension filterFieldSelectionSize = new Dimension(80, filterFieldSelection.getPreferredSize().height);
