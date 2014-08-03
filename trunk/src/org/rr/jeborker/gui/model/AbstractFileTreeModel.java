@@ -1,5 +1,8 @@
 package org.rr.jeborker.gui.model;
 
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.PaintEvent;
 import java.util.logging.Level;
 
 import javax.swing.JTree;
@@ -26,7 +29,7 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 		}
 
 		if(node instanceof FileSystemNode) {
-			((FileSystemNode)node).reset();
+			((FileSystemNode) node).reset();
 		}
 
 		try {
@@ -37,6 +40,22 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 		} catch(Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Reload node " + node + " failed.", e);
 		}
+		
+		forceTreeUpdateUI();
+	}
+
+	/**
+	 * Sometimes there are calculation errors for the renderer component when removing a node which cause some dots
+	 * at the end of the label instead of showing the complete text. This hack forces the tree to repaint it ui.
+	 */
+	private void forceTreeUpdateUI() {
+		int rowHeight = tree.getRowHeight();
+		tree.updateUI();
+		tree.setRowHeight(rowHeight);
+		tree.treeDidChange();
+		tree.invalidate();
+		tree.validate();
+		tree.repaint();
 	}
 
 	/**
