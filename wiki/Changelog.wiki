@@ -1,4 +1,11 @@
 #labels Featured
+== v0.4.4 (2014-08-03)==
+  * Pushbullet support. Now it's possible to send ebooks with pushbullet to one or more devices.
+  * Sometimes changes are not detected in the metadata sheet and the save button did got get enabled.
+  * CBR and CBZ support for pdf scissors which is now simply named doc scissors.
+  * Combobox with Checkboxes rewritten because it works not with Web L&F.
+  * New Web L&F 1.28
+  * Many minor changes and improvements
 == v0.4.3 (2014-07-05)==
   * Update to Jmupdf 0.5.0
   * Default "import" location always available as a registered base path.
