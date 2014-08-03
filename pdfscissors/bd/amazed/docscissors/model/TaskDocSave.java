@@ -119,7 +119,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 
 			@Override
 			public void run() {
-				controller.refreshTable();
+				controller.getEbookTableHandler().refreshTable();
 			}
 		});
 
