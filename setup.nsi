@@ -141,6 +141,7 @@ Section -Main SEC0000
     File lib\commons-codec-1.6.jar
     File lib\jpushbullet.jar
     File lib\gson-2.2.4.jar
+    File lib\miglayout-4.0.jar
 
     RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
