@@ -1,8 +1,5 @@
 package org.rr.jeborker.gui.model;
 
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.PaintEvent;
 import java.util.logging.Level;
 
 import javax.swing.JTree;
