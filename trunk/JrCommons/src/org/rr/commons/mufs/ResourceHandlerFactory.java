@@ -156,7 +156,11 @@ public class ResourceHandlerFactory {
 	 * @return The desired {@link IResourceHandler}. Please note that not all kind of {@link IResourceHandler} shall support this.
 	 */
 	public static IResourceHandler getResourceHandler(IResourceHandler parent, String file) {
-		return getResourceHandler(parent.getResourceString() + "/" + file);
+		String parentResourceString = parent.getResourceString();
+		if(!parentResourceString.endsWith("/")) {
+			parentResourceString += "/";
+		}
+		return getResourceHandler(parentResourceString + file);
 	}
 
 	/**
