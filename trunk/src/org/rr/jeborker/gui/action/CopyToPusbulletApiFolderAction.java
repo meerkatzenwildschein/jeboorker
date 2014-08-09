@@ -17,6 +17,7 @@ import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.swing.dialogs.JListSelectionDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtilsTest;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
@@ -142,14 +143,18 @@ public class CopyToPusbulletApiFolderAction extends AbstractAction {
 	private List<Integer> fetchSelectedDeviceIndices() {
 		APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String joinedIndices = dbPreferenceStore.getGenericEntryAsString(PUSHBULLED_DEVICE_SELECTION_KEY);
-		List<String> splitIndiceStrings = ListUtils.split(joinedIndices, ";");
-		return new TransformValueList<String, Integer>(splitIndiceStrings) {
+		if(!StringUtils.isEmpty(joinedIndices)) {
+			List<String> splitIndiceStrings = ListUtils.split(joinedIndices, ";");
+			return new TransformValueList<String, Integer>(splitIndiceStrings) {
 
-			@Override
-			public Integer transform(String value) {
-				return Integer.valueOf(value);
-			}
-		};
+				@Override
+				public Integer transform(String value) {
+					return Integer.valueOf(value);
+				}
+			};
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	private String askForApiKey() {

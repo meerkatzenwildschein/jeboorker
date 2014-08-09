@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -1005,6 +1006,9 @@ class MainView extends JFrame {
 					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
 					basePathTree.startEditingAtPath(dropRow);
 				} catch (Exception e) {
+					try {
+						LoggerFactory.getLogger().log(Level.WARNING, "Failed to import " + ResourceHandlerFactory.getResourceHandler(info.getTransferable()) + " to " + lastPathPathResource, e);
+					} catch (Exception e1) {}
 					return false;
 				}
                 return true;

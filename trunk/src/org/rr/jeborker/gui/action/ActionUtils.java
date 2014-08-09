@@ -1,6 +1,5 @@
 package org.rr.jeborker.gui.action;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import javax.swing.SwingUtilities;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
@@ -271,34 +271,45 @@ public class ActionUtils {
 	 * @param deleteAnyway Deletes the resource after a successful import in any case.
 	 * @return A list of all imported (target) file resources.
 	 */
-	public static List<IResourceHandler> importEbookResources(int dropRow, String basePath, IResourceHandler targetRecourceDirectory,
-			final List<IResourceHandler> sourceResourcesToTransfer, boolean delete) throws IOException {
-		ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
-		for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
-			IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory.toString() + File.separator + sourceResource.getName());
-			if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
-				boolean success = sourceResource.copyTo(targetResource, false);
-				if(success) {
-					EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
-					ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-					MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
-					importedResources.add(targetResource);
-					
-					if(delete) {
-						sourceResource.delete();
-						MainController.getController().getMainTreeHandler().removeDeletedTreeItems();
+	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
+			final List<IResourceHandler> sourceResourcesToTransfer, final boolean delete) throws IOException {
+		final ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
+		FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
+						IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory, sourceResource.getName());
+						if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
+							boolean success = sourceResource.copyTo(targetResource, false);
+							if(success) {
+								EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
+								ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
+								MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
+								importedResources.add(targetResource);
+								
+								if(delete) {
+									sourceResource.delete();
+									MainController.getController().getMainTreeHandler().removeDeletedTreeItems();
+								}
+							}
+						} else {
+							if(!ActionUtils.isSupportedEbookFormat(sourceResource, true)) {
+								LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
+							} else if(sourceResource.exists()){
+								LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");
+							} else {
+								LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");
+							}
+						}
 					}
-				}
-			} else {
-				if(!ActionUtils.isSupportedEbookFormat(sourceResource, true)) {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
-				} else if(sourceResource.exists()){
-					LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");
-				} else {
-					LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");
+				} catch(IOException e) {
+					throw new RuntimeException(e);
 				}
 			}
-		}
+		});
+
 		return importedResources;
 	}
 }
