@@ -295,7 +295,7 @@ public class EbookPropertyDBTableModel implements TableModel {
      *
      */
     public void fireTableRowsInserted(int firstRow, int lastRow) {
-        fireTableChanged(new TableModelEvent(this, firstRow, lastRow,
+        fireTableChanged(new TableModelEvent(this, firstRow, lastRow + 1,
                              TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
     }
     
