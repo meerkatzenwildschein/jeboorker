@@ -9,6 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -57,8 +58,14 @@ class MainViewMenuUtils {
 
 			@Override
 			public void afterAction() {
-				((BasePathTreeModel) basePathTree.getModel()).reload(pathNodeResource);
-				((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNodeResource);
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						((BasePathTreeModel) basePathTree.getModel()).reload(pathNodeResource);
+						((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNodeResource);
+					}
+				});
 			}
 
 		});
