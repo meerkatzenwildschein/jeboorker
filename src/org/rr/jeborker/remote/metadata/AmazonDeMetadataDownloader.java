@@ -3,6 +3,7 @@ package org.rr.jeborker.remote.metadata;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -225,18 +226,24 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		public List<String> getAuthors() {
 			ArrayList<String> result = new ArrayList<String>(1);
 			try {
-				///s/ref=ntt_athr_dp_sr_1?_encoding=UTF8&field-author=Olivier%20Peru&search-alias=books-de&sort=relevancerank
 				if(getDocument() != null) {
 					{
 						Elements h1Authors = getDocument().getElementsByClass("parseasinTitle");
 						if(!h1Authors.isEmpty()) {
 							Elements siblingElements = h1Authors.first().siblingElements();
 							for(Element sibling : siblingElements) {
-								if("a".equalsIgnoreCase(sibling.tagName())) {
-									String author = sibling.ownText();
-									Element nextSibling = (Element) sibling.nextSibling().nextSibling();
-									if(nextSibling.text().equalsIgnoreCase(authorMarker)) {
-										result.add(author);
+								if("span".equals(sibling.tagName())) {
+									Elements aElements = sibling.getElementsByTag("a");
+									for(Element aElement : aElements) {
+										String href = aElement.attr("href"); ///s/ref=ntt_athr_dp_sr_1?_encoding=UTF8&field-author=Olivier%20Peru&search-alias=books-de&sort=relevancerank
+										int authorIdx = href.indexOf("field-author");
+										if(authorIdx != -1) {
+											Element nextElementSibling = aElement.nextElementSibling();
+											if(nextElementSibling != null && nextElementSibling.text().contains(authorMarker)) {
+												String author = href.substring(authorIdx + 13, href.indexOf("&", authorIdx));
+												result.add(URLDecoder.decode(author, "UTF-8"));
+											}
+										}
 									}
 								}
 							}
