@@ -1,4 +1,9 @@
 #labels Featured
+== v0.4.5 (2014-08-12)==
+  * Pushbullet protocoll has changed a little which cause it's no longer working
+  * Bug with Drag and Drop which sometimes fails.
+  * Ebook is not shown after import if the book list is empty
+  * Amazon has changed it's site so the metadata downloader no longer find the author.
 == v0.4.4 (2014-08-03)==
   * Pushbullet support. Now it's possible to send ebooks with pushbullet to one or more devices.
   * Sometimes changes are not detected in the metadata sheet and the save button did got get enabled.
