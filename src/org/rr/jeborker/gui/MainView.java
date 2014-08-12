@@ -26,7 +26,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -1072,6 +1071,7 @@ class MainView extends JFrame {
 			Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.PASTE_FROM_CLIPBOARD_ACTION, pathNode.getResource().toString());
 			menu.add(new JMenuItem(action));
 
+			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(items));
 			menu.add(MainViewMenuUtils.createNewFolderMenuItem(basePathTree, fileSystemTree, pathNode));
 			menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
 
