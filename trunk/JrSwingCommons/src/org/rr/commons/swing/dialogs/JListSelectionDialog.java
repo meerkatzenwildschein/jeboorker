@@ -90,8 +90,10 @@ public class JListSelectionDialog<E> extends BaseDialog {
 
 	@Override
 	public void setVisible(boolean b) {
-		initialize();
-		setupSelection();
+		if(b) {
+			initialize();
+			setupSelection();
+		}
 		super.setVisible(b);
 	}
 
