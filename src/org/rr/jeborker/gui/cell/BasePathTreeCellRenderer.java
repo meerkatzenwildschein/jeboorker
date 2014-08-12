@@ -131,7 +131,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 								ActionUtils.setBasePathVisibility(basePath, !isVisible);
 							}
 						}
-
+						
 						((DefaultTreeModel)tree.getModel()).reload((TreeNode) selectionPath.getLastPathComponent());
 					}
 				}

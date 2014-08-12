@@ -13,7 +13,7 @@ import org.rr.commons.mufs.IResourceHandler;
 public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 
 	JTree tree;
-
+	
 	public AbstractFileTreeModel(JTree tree, TreeNode root) {
 		super(root);
 		this.tree = tree;
@@ -47,12 +47,22 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 	 */
 	private void forceTreeUpdateUI() {
 		int rowHeight = tree.getRowHeight();
-		tree.updateUI();
-		tree.setRowHeight(rowHeight);
-		tree.treeDidChange();
-		tree.invalidate();
-		tree.validate();
-		tree.repaint();
+		try {
+			try {
+				if (rowHeight != -1) {
+					tree.updateUI();
+				}
+			} catch (Exception e) {
+				LoggerFactory.getLogger().log(Level.WARNING, "Failed to refresh tree", e);
+			}
+			tree.invalidate();
+			tree.validate();
+			tree.repaint();
+		} finally {
+			if (rowHeight != -1) {
+				tree.setRowHeight(rowHeight);
+			}
+		}
 	}
 
 	/**
