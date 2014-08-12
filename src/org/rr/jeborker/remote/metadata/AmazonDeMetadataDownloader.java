@@ -227,22 +227,20 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			ArrayList<String> result = new ArrayList<String>(1);
 			try {
 				if(getDocument() != null) {
-					{
-						Elements h1Authors = getDocument().getElementsByClass("parseasinTitle");
-						if(!h1Authors.isEmpty()) {
-							Elements siblingElements = h1Authors.first().siblingElements();
-							for(Element sibling : siblingElements) {
-								if("span".equals(sibling.tagName())) {
-									Elements aElements = sibling.getElementsByTag("a");
-									for(Element aElement : aElements) {
-										String href = aElement.attr("href"); ///s/ref=ntt_athr_dp_sr_1?_encoding=UTF8&field-author=Olivier%20Peru&search-alias=books-de&sort=relevancerank
-										int authorIdx = href.indexOf("field-author");
-										if(authorIdx != -1) {
-											Element nextElementSibling = aElement.nextElementSibling();
-											if(nextElementSibling != null && nextElementSibling.text().contains(authorMarker)) {
-												String author = href.substring(authorIdx + 13, href.indexOf("&", authorIdx));
-												result.add(URLDecoder.decode(author, "UTF-8"));
-											}
+					Elements h1Authors = getDocument().getElementsByClass("parseasinTitle");
+					if(!h1Authors.isEmpty()) {
+						Elements siblingElements = h1Authors.first().siblingElements();
+						for(Element sibling : siblingElements) {
+							if("span".equals(sibling.tagName())) {
+								Elements aElements = sibling.getElementsByTag("a");
+								for(Element aElement : aElements) {
+									String href = aElement.attr("href"); ///s/ref=ntt_athr_dp_sr_1?_encoding=UTF8&field-author=Olivier%20Peru&search-alias=books-de&sort=relevancerank
+									int authorIdx = href.indexOf("field-author");
+									if(authorIdx != -1) {
+										Element nextElementSibling = aElement.nextElementSibling();
+										if(nextElementSibling != null && nextElementSibling.text().contains(authorMarker)) {
+											String author = href.substring(authorIdx + 13, href.indexOf("&", authorIdx));
+											result.add(URLDecoder.decode(author, "UTF-8"));
 										}
 									}
 								}
