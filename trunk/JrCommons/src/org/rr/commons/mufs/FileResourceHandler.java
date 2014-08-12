@@ -73,8 +73,8 @@ class FileResourceHandler extends AResourceHandler {
 	}
 	
 	/**
-	 * Gets the file which is set to this {@link FileResourceHandler} instance. 
-	 * 
+	 * Gets the file which is set to this {@link FileResourceHandler} instance.
+	 *
 	 * @return The desired file or <code>null</code> if no file was set.
 	 */
 	File getFile() {
@@ -87,13 +87,13 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	void setFile(File file) {
 		this.file = file;
-	}	
+	}
 	
 
 	@Override
 	public void refresh() {
 		super.refresh();
-	}	
+	}
 
 	/**
 	 * Tests if the given resource is a valid file system file.
@@ -115,7 +115,7 @@ class FileResourceHandler extends AResourceHandler {
 			} else if (new File(resource).exists()) {
 				return true;
 			} else if (Pattern.matches("^[a-zA-Z]:\\\\.*", resource)){
-				//windows pattern match .. 
+				//windows pattern match ..
 				/*
 				c:
 				c:\
@@ -135,7 +135,7 @@ class FileResourceHandler extends AResourceHandler {
 				C:\abc\\
 				C:\abc\ab%g
 				C:\abc\aabc.txt\
-				C:\abc\aabc.txt\ab	*/			
+				C:\abc\aabc.txt\ab	*/
 				return true;
 			}
 			return false;
@@ -147,7 +147,7 @@ class FileResourceHandler extends AResourceHandler {
 	/**
 	 * Creates a new {@link FileResourceHandler} instance for the given
 	 * resource.
-	 * 
+	 *
 	 * @param resource The resource to be loaded.
 	 */
 	@Override
@@ -172,13 +172,19 @@ class FileResourceHandler extends AResourceHandler {
 	}
 	
 	public String getResourceString() {
-		return this.resource;
+		if(this.isDirectoryResource()) {
+			//normalize that a directory resource is always returned with a trailing slash / backslash
+			if(!resource.endsWith("/") && !resource.endsWith("\\") && !resource.endsWith(File.separator)) {
+				return resource + File.separator;
+			}
+		}
+		return resource;
 	}
 
 	/**
 	 * Reads the file specified for this {@link FileResourceHandler} instance into
 	 * a byte[].
-	 * 
+	 *
 	 * @return The byte content of the file.
 	 */
 	@Override
@@ -197,7 +203,7 @@ class FileResourceHandler extends AResourceHandler {
 
 	/**
 	 * Creates a new {@link BufferedInputStream} for the file specified for this {@link FileResourceHandler} instance.
-	 * 
+	 *
 	 * @return The desired {@link InputStream}.
 	 */
 	@Override
@@ -214,7 +220,7 @@ class FileResourceHandler extends AResourceHandler {
 
 	/**
 	 * Creates a new {@link BufferedOutputStream} for the file specified for this {@link FileResourceHandler} instance.
-	 * 
+	 *
 	 * @param append Tells if the data written to the {@link OutputStream} is appended to the file or the file is overwritten.
 	 * @return The desired {@link OutputStream}
 	 */
@@ -245,7 +251,7 @@ class FileResourceHandler extends AResourceHandler {
 
 	@Override
 	public IResourceHandler getParentResource() {
-		//must not be synchronized because it's not intendant if the 
+		//must not be synchronized because it's not intendant if the
 		//cached parent FileResourceLoader is overwritten by another invokement
 		//at the nearly same time.
 		File parentFile = this.file.getParentFile();
@@ -275,7 +281,7 @@ class FileResourceHandler extends AResourceHandler {
 	 * Deletes the file handled with this {@link FileResourceHandler} instance.
 	 * @return <code>true</code> if and only if the file or directory is
      *          successfully deleted; <code>false</code> otherwise
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Override
 	public void delete() throws IOException {
@@ -291,7 +297,7 @@ class FileResourceHandler extends AResourceHandler {
 			throw new IOException("could not delete resource " + String.valueOf(this.file));
 		} else {
 			//no need to delete this later. It's already done.
-			ResourceHandlerFactory.removeTemporaryResource(this);			
+			ResourceHandlerFactory.removeTemporaryResource(this);
 		}
 		this.isDirectory = null;
 	}
@@ -306,7 +312,7 @@ class FileResourceHandler extends AResourceHandler {
 			e.printStackTrace();
 		}
 		return !exists();
-	}	
+	}
 
 	public String toString() {
 		return this.getResourceString();
@@ -322,8 +328,8 @@ class FileResourceHandler extends AResourceHandler {
 						return false;
 					} else if(((FileResourceHandler)loader).file.isHidden()) {
 						return false;
-					} 
-				} 
+					}
+				}
 				return true;
 			}
 		});
@@ -331,9 +337,9 @@ class FileResourceHandler extends AResourceHandler {
 
 	/**
 	 * Lists all files and folders which are children of this {@link IResourceHandler} instance.
-	 * 
+	 *
 	 * @return all child {@link IResourceHandler} instances.
-	 */	
+	 */
 	@Override
 	public IResourceHandler[] listResources(final ResourceNameFilter filter) throws IOException {
 		final ArrayList<IResourceHandler> resourceResult = new ArrayList<IResourceHandler>();
@@ -355,19 +361,19 @@ class FileResourceHandler extends AResourceHandler {
 				//attach the accepted resource loader to the result list.
 				resourceResult.add(listDirectoryResources[i]);
 			}
-		}		
+		}
 		
 		IResourceHandler[] sortedFileResourceHandlers = ResourceHandlerUtils.sortResourceHandlers(resourceResult.toArray(new IResourceHandler[resourceResult.size()]), ResourceHandlerUtils.SORT_BY_NAME, true);
 		
-		return sortedFileResourceHandlers;		
+		return sortedFileResourceHandlers;
 	}
 
 	/**
 	 * Lists all {@link File}s which are children of this {@link IResourceHandler} instance
 	 * and which are directories.
-	 * 
+	 *
 	 * @return all child {@link IResourceHandler} instances.
-	 */	
+	 */
 	@Override
 	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) {
 		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
@@ -423,7 +429,7 @@ class FileResourceHandler extends AResourceHandler {
 
 	/**
 	 * Gets the list of shown (i.e. not hidden) files.
-	 *  
+	 *
 	 * @param showHidden <code>true</code> if hidden files should be also shown and <code>false</code> otherwise.
 	 * @return All these {@link IResourceHandler} which have this {@link IResourceHandler} as parent.
 	 * @throws IOException
@@ -440,10 +446,10 @@ class FileResourceHandler extends AResourceHandler {
 				if(files[i].isFile()) {
 					resultResources.add(ResourceHandlerFactory.getResourceHandler(files[i]));
 				}
-			}		
+			}
 			return resultResources.toArray(new IResourceHandler[resultResources.size()]);
 		}
-	}	
+	}
 
 	/**
 	 * Tells if the {@link File} hanlded by this {@link IResourceHandler} instance
@@ -482,7 +488,7 @@ class FileResourceHandler extends AResourceHandler {
 	public String getName() {
 		final String fileName = this.file.getName();
 		
-		//Drive a Win32ShellFolder returns an empty String. 
+		//Drive a Win32ShellFolder returns an empty String.
 		if(fileName.length()==0) {
 			return this.toString();
 		}
@@ -490,7 +496,7 @@ class FileResourceHandler extends AResourceHandler {
 	}
 
 	/**
-	 * Sets some local fields to <code>null</code>. It's not really importand 
+	 * Sets some local fields to <code>null</code>. It's not really importand
 	 * that the dispose is invoked to this {@link FileResourceHandler} instance.
 	 */
 	@Override
@@ -591,7 +597,7 @@ class FileResourceHandler extends AResourceHandler {
 	
 	/**
 	 * Fast copy using nio. The apache {@link FileUtils} did this not.
-	 * 
+	 *
 	 * @param sourceFile source file
 	 * @param destFile target file
 	 * @param overwrite <code>true</code> if overwriting exiting target.
@@ -602,7 +608,7 @@ class FileResourceHandler extends AResourceHandler {
 		long position = 0;
 		if(!overwrite && destFile.exists()) {
 			return false;
-		} 
+		}
 		
 		if (!destFile.exists()) {
 			destFile.createNewFile();
@@ -646,7 +652,7 @@ class FileResourceHandler extends AResourceHandler {
 	}
 	
 	/**
-	 * @return <code>false</code> in any case because this is a local resource handler. 
+	 * @return <code>false</code> in any case because this is a local resource handler.
 	 */
 	public boolean isRemoteResource() {
 		return false;
@@ -691,7 +697,7 @@ class FileResourceHandler extends AResourceHandler {
      * The default implementation gets information from the ShellFolder class.
      *
      * @return the file name as it would be displayed by a native file chooser
-     */	
+     */
 	@Override
 	public String getSystemDisplayName() {
 		synchronized(fileSystemViewInstance) {
