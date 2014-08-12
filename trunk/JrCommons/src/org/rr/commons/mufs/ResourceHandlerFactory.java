@@ -157,7 +157,7 @@ public class ResourceHandlerFactory {
 	 */
 	public static IResourceHandler getResourceHandler(IResourceHandler parent, String file) {
 		String parentResourceString = parent.getResourceString();
-		if(!parentResourceString.endsWith("/")) {
+		if(!parentResourceString.endsWith("/") && !parentResourceString.endsWith("\\")) {
 			parentResourceString += "/";
 		}
 		return getResourceHandler(parentResourceString + file);
