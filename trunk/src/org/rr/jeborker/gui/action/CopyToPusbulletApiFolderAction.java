@@ -17,7 +17,6 @@ import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.swing.dialogs.JListSelectionDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.StringUtilsTest;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
