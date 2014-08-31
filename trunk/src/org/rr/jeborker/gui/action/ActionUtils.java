@@ -285,9 +285,10 @@ public class ActionUtils {
 				FileRefreshBackground.setDisabled(true);
 				MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 				try {
+					progressMonitor.monitorProgressStart("Start file copy");
 					for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
 						IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory, sourceResource.getName());
-						progressMonitor.monitorProgressStart(Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), targetResource.getName()));
+						progressMonitor.setMessage(Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), targetResource.getName()));
 						if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
 							if(delete) {
 								sourceResource.moveTo(targetResource, false);
@@ -317,7 +318,13 @@ public class ActionUtils {
 				} catch (IOException e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to copy file " + basePath + " to " + targetRecourceDirectory, e);
 				} finally {
-					removeDeletedFileFromModel(importedResources);
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							removeDeletedFileFromModel(importedResources);
+						}
+					});
 					
 					progressMonitor.monitorProgressStop();
 					FileRefreshBackground.setDisabled(false);
