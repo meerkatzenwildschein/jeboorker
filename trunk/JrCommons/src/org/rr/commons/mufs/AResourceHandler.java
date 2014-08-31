@@ -24,7 +24,7 @@ import org.rr.commons.log.LoggerFactory;
  * It's not attendant to extends this class for creating new {@link IResourceHandler} types
  * but the {@link IResourceHandler} interface must be implemented.
  */
-abstract class AResourceHandler implements IResourceHandler, Comparable<IResourceHandler> {
+abstract class AResourceHandler implements IResourceHandler {
 
 	private static final HashMap<String, Pattern> FILE_EXTENSION_PATTERNS = new HashMap<String, Pattern>() {
 		{
@@ -487,11 +487,13 @@ abstract class AResourceHandler implements IResourceHandler, Comparable<IResourc
 			return false;
 		}
 		try {
+			boolean result;
 			if(isDirectoryResource()) {
-				return listResources(null).length == 0;
+				result = listResources(null).length == 0;
 			} else {
-				return size() == 0;
+				result = size() == 0;
 			}
+			return result;
 		} catch(Exception e) {
 			return false;
 		}
