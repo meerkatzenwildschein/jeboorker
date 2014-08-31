@@ -36,7 +36,7 @@ public class MetadataDownloadController {
 	
 	private MetadataDownloadView createView() {
 		this.metadataDownloadView = new MetadataDownloadView(this, mainWindow);
-		this.restorePropeties();
+		this.restoreProperties();
 		return this.metadataDownloadView;
 	}
 
@@ -62,7 +62,7 @@ public class MetadataDownloadController {
 		preferenceStore.addGenericEntryAsNumber("matadataDownloadDialogSearchProviderIndex", getView().getSearchProviderIndex());
 	}
 
-	private void restorePropeties() {
+	private void restoreProperties() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		
 		//restore the window size from the preferences.
