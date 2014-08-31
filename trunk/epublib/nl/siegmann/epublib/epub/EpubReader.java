@@ -18,14 +18,14 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
-import nl.siegmann.epublib.util.StringUtil;
 
+import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Reads an epub file.
- * 
+ *
  * @author paul
  *
  */
@@ -36,7 +36,7 @@ public class EpubReader {
 	
 	public Book readEpub(InputStream in, String name) throws IOException {
 		return readEpub(in, Constants.ENCODING, name);
-	}	
+	}
 	
 	public Book readEpub(ZipInputStream in, String name) throws IOException {
 		return readEpub(in, Constants.ENCODING, name);
@@ -44,7 +44,7 @@ public class EpubReader {
 	
 	/**
 	 * Read epub from inputstream
-	 * 
+	 *
 	 * @param in the inputstream from which to read the epub
 	 * @param encoding the encoding to use for the html files within the epub
 	 * @return
@@ -52,11 +52,11 @@ public class EpubReader {
 	 */
 	public Book readEpub(InputStream in, String name, String encoding) throws IOException {
 		return readEpub(new ZipInputStream(in), encoding);
-	}	
+	}
 	
 	/**
 	 * Reads this EPUB without loading all resources into memory.
-	 * 
+	 *
 	 * @param name the file to load
 	 * @param encoding the encoding for XHTML files
 	 * @param lazyLoadedTypes a list of the MediaType to load lazily
@@ -79,10 +79,10 @@ public class EpubReader {
 
 	/**
 	 * Reads this EPUB without loading any resources into memory.
-	 * 
+	 *
 	 * @param fileName the file to load
 	 * @param encoding the encoding for XHTML files
-	 * 
+	 *
 	 * @return
 	 * @throws IOException
 	 */
@@ -107,7 +107,7 @@ public class EpubReader {
 		result.setUnlistedResources(unlistedResources);
 		result = postProcessBook(result);
 		return result;
-	}	
+	}
 
 	private Book postProcessBook(Book book) {
 		if (bookProcessor != null) {
@@ -123,7 +123,7 @@ public class EpubReader {
 	private Resources processUnlistedResources(Book book, Resources allResources) {
 		Resources result = new Resources();
 		Resources resources = book.getResources();
-		Collection<Resource> allResourcesCollection = allResources.getAll(); 
+		Collection<Resource> allResourcesCollection = allResources.getAll();
 		for (Resource resource : allResourcesCollection) {
 			if( !resources.containsByHref(resource.getHref()) ) {
 				resource.setPackageHref(null);
@@ -163,7 +163,7 @@ public class EpubReader {
 		} catch (Exception e) {
 			log.log(Level.WARNING, e.getMessage() + " META-INF/container.xml for epub " + book.getName(), e);
 		}
-		if(StringUtil.isBlank(result)) {
+		if(StringUtils.isEmpty(result)) {
 			result = defaultResult;
 		}
 		return result;
@@ -174,7 +174,7 @@ public class EpubReader {
 	}
 	
 	private Resources readLazyResources( String name, String defaultHtmlEncoding,
-			List<MediaType> lazyLoadedTypes) throws IOException {		
+			List<MediaType> lazyLoadedTypes) throws IOException {
 				
 		ZipInputStream in = new ZipInputStream(new FileInputStream(name));
 		
@@ -185,13 +185,13 @@ public class EpubReader {
 			}
 			
 			String href = zipEntry.getName();
-			MediaType mediaType = MediatypeService.determineMediaType(href);			
+			MediaType mediaType = MediatypeService.determineMediaType(href);
 			
 			Resource resource;
 			
 			if ( lazyLoadedTypes.contains(mediaType) ) {
-				resource = new Resource(name, zipEntry.getSize(), href);								
-			} else {			
+				resource = new Resource(name, zipEntry.getSize(), href);
+			} else {
 				resource = new Resource( in, href );
 			}
 			
@@ -202,7 +202,7 @@ public class EpubReader {
 		}
 		
 		return result;
-	}	
+	}
 
 	private Resources readResources(ZipInputStream in, String defaultHtmlEncoding) throws IOException {
 		try {

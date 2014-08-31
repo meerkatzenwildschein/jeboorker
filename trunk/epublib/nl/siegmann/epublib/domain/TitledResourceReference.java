@@ -2,13 +2,14 @@ package nl.siegmann.epublib.domain;
 
 import java.io.Serializable;
 
+import org.rr.commons.utils.StringUtils;
+
 import nl.siegmann.epublib.Constants;
-import nl.siegmann.epublib.util.StringUtil;
 
 public class TitledResourceReference extends ResourceReference implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3918155020095190080L;
 	private String fragmentId;
@@ -47,11 +48,11 @@ public class TitledResourceReference extends ResourceReference implements Serial
 
 	/**
 	 * If the fragmentId is blank it returns the resource href, otherwise it returns the resource href + '#' + the fragmentId.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getCompleteHref() {
-		if (StringUtil.isBlank(fragmentId)) {
+		if (StringUtils.isEmpty(fragmentId)) {
 			return resource.getHref();
 		} else {
 			return resource.getHref() + Constants.FRAGMENT_SEPARATOR_CHAR + fragmentId;
@@ -65,7 +66,7 @@ public class TitledResourceReference extends ResourceReference implements Serial
 
 	/**
 	 * Sets the resource to the given resource and sets the fragmentId to null.
-	 * 
+	 *
 	 */
 	public void setResource(Resource resource) {
 		setResource(resource, null);

@@ -9,12 +9,13 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import nl.siegmann.epublib.service.MediatypeService;
-import nl.siegmann.epublib.util.StringUtil;
+
+import org.rr.commons.utils.StringUtils;
 
 /**
  * A Book's collection of Metadata.
  * In the future it should contain all Dublin Core attributes, for now it contains a set of often-used ones.
- * 
+ *
  * @author paul
  *
  */
@@ -51,7 +52,7 @@ public class Metadata implements Serializable {
 
 	/**
 	 * Metadata properties not hard-coded like the author, title, etc.
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<QName, String> getOtherProperties() {
@@ -134,7 +135,7 @@ public class Metadata implements Serializable {
 	/**
 	 * Gets the first non-blank title of the book.
 	 * Will return "" if no title found.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getFirstTitle() {
@@ -142,7 +143,7 @@ public class Metadata implements Serializable {
 			return "";
 		}
 		for (String title: titles) {
-			if (StringUtil.isNotBlank(title)) {
+			if (StringUtils.isNotEmpty(title)) {
 				return title;
 			}
 		}

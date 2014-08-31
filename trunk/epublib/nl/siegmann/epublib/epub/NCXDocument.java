@@ -20,8 +20,8 @@ import nl.siegmann.epublib.domain.TOCReference;
 import nl.siegmann.epublib.domain.TableOfContents;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
-import nl.siegmann.epublib.util.StringUtil;
 
+import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,7 +30,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 /**
  * Writes the ncx document as defined by namespace http://www.daisy.org/z3986/2005/ncx/
- * 
+ *
  * @author paul
  *
  */
@@ -121,8 +121,8 @@ public class NCXDocument {
 	private static TOCReference readTOCReference(Element navpointElement, Book book) {
 		String label = readNavLabel(navpointElement);
 		String reference = readNavReference(navpointElement);
-		String href = StringUtil.substringBefore(reference, Constants.FRAGMENT_SEPARATOR_CHAR);
-		String fragmentId = StringUtil.substringAfter(reference, Constants.FRAGMENT_SEPARATOR_CHAR);
+		String href = StringUtils.substringBefore(reference, Constants.FRAGMENT_SEPARATOR_CHAR);
+		String fragmentId = StringUtils.substringAfter(reference, Constants.FRAGMENT_SEPARATOR_CHAR);
 		Resource resource = book.getResources().getByHref(href);
 		if (resource == null) {
 			log.warning((book.getName() != null ? book.getName() : "Resource") + " with href " + href + " in NCX document not found");
@@ -166,15 +166,15 @@ public class NCXDocument {
 
 	/**
 	 * Generates a resource containing an xml document containing the table of contents of the book in ncx format.
-	 * 
+	 *
 	 * @param epubWriter
 	 * @param book
 	 * @return
 	 * @
 	 * @throws FactoryConfigurationError
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 */
 	public static void write(XmlSerializer xmlSerializer, Book book) throws IllegalArgumentException, IllegalStateException, IOException {
 		write(xmlSerializer, book.getMetadata().getIdentifiers(), book.getTitle(), book.getMetadata().getAuthors(), book.getTableOfContents());
@@ -189,7 +189,7 @@ public class NCXDocument {
 		write(out, identifiers, title, authors, tableOfContents);
 		Resource resource = new Resource(NCX_ITEM_ID, data.toByteArray(), DEFAULT_NCX_HREF, MediatypeService.NCX);
 		return resource;
-	}	
+	}
 	
 	public static void write(XmlSerializer serializer, List<Identifier> identifiers, String title, List<Author> authors, TableOfContents tableOfContents) throws IllegalArgumentException, IllegalStateException, IOException {
 		serializer.startDocument(Constants.ENCODING, false);
@@ -214,7 +214,7 @@ public class NCXDocument {
 		serializer.startTag(NAMESPACE_NCX, NCXTags.docTitle);
 		serializer.startTag(NAMESPACE_NCX, NCXTags.text);
 		// write the first title
-		serializer.text(StringUtil.defaultIfNull(title));
+		serializer.text(StringUtils.defaultIfNull(title));
 		serializer.endTag(NAMESPACE_NCX, NCXTags.text);
 		serializer.endTag(NAMESPACE_NCX, NCXTags.docTitle);
 		

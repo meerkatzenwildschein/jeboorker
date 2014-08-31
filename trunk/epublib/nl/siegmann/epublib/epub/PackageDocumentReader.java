@@ -29,10 +29,10 @@ import nl.siegmann.epublib.domain.Spine;
 import nl.siegmann.epublib.domain.SpineReference;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
-import nl.siegmann.epublib.util.StringUtil;
 
 import org.apache.commons.io.Charsets;
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -204,10 +204,10 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		for (int i = 0; i < guideReferences.getLength(); i++) {
 			Element referenceElement = (Element) guideReferences.item(i);
 			String resourceHref = DOMUtil.getAttribute(referenceElement, NAMESPACE_OPF, OPFAttributes.href);
-			if (StringUtil.isBlank(resourceHref)) {
+			if (StringUtils.isEmpty(resourceHref)) {
 				continue;
 			}
-			String guideHref = StringUtil.substringBefore(resourceHref, Constants.FRAGMENT_SEPARATOR_CHAR);
+			String guideHref = StringUtils.substringBefore(resourceHref, Constants.FRAGMENT_SEPARATOR_CHAR);
 			Resource resource = resources.getByHref(guideHref);
 			if (resource == null) {
 				resource = findHrefResource(guideHref, resources);
@@ -220,7 +220,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 
 			}
 			String type = DOMUtil.getAttribute(referenceElement, NAMESPACE_OPF, OPFAttributes.type);
-			if (StringUtil.isBlank(type)) {
+			if (StringUtils.isEmpty(type)) {
 				log.warning("Guide is referencing resource with href " + resourceHref + " which is missing the 'type' attribute");
 				continue;
 			}
@@ -228,7 +228,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 			if (GuideReference.COVER.equalsIgnoreCase(type)) {
 				continue; // cover is handled elsewhere
 			}
-			GuideReference reference = new GuideReference(resource, type, title, StringUtil.substringAfter(resourceHref, Constants.FRAGMENT_SEPARATOR_CHAR));
+			GuideReference reference = new GuideReference(resource, type, title, StringUtils.substringAfter(resourceHref, Constants.FRAGMENT_SEPARATOR_CHAR));
 			guide.addReference(reference);
 		}
 	}
@@ -257,7 +257,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		for(int i = 0; i < spineNodes.getLength(); i++) {
 			Element spineItem = (Element) spineNodes.item(i);
 			String itemref = DOMUtil.getAttribute(spineItem, NAMESPACE_OPF, OPFAttributes.idref);
-			if(StringUtil.isBlank(itemref)) {
+			if(StringUtils.isEmpty(itemref)) {
 				log.warning("itemref with missing or empty idref"); // XXX
 				continue;
 			}
@@ -318,7 +318,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	private static Resource findTableOfContentsResource(Element spineElement, Resources resources) {
 		String tocResourceId = DOMUtil.getAttribute(spineElement, NAMESPACE_OPF, OPFAttributes.toc);
 		Resource tocResource = null;
-		if (StringUtil.isNotBlank(tocResourceId)) {
+		if (StringUtils.isNotEmpty(tocResourceId)) {
 			tocResource = resources.getByIdOrHref(tocResourceId);
 		}
 		
@@ -364,11 +364,11 @@ public class PackageDocumentReader extends PackageDocumentBase {
 											OPFTags.meta, OPFAttributes.name, OPFValues.meta_cover,
 											OPFAttributes.content);
 
-		if (StringUtil.isNotBlank(coverResourceId)) {
+		if (StringUtils.isNotEmpty(coverResourceId)) {
 			String coverHref = DOMUtil.getFindAttributeValue(packageDocument, NAMESPACE_OPF,
 					OPFTags.item, OPFAttributes.id, coverResourceId,
 					OPFAttributes.href);
-			if (StringUtil.isNotBlank(coverHref)) {
+			if (StringUtils.isNotEmpty(coverHref)) {
 				result.add(coverHref);
 			} else {
 				result.add(coverResourceId); // maybe there was a cover href put in the cover id attribute
@@ -378,7 +378,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		String coverHref = DOMUtil.getFindAttributeValue(packageDocument, NAMESPACE_OPF,
 											OPFTags.reference, OPFAttributes.type, OPFValues.reference_cover,
 											OPFAttributes.href);
-		if (StringUtil.isNotBlank(coverHref)) {
+		if (StringUtils.isNotEmpty(coverHref)) {
 			result.add(coverHref);
 		}
 		return result;

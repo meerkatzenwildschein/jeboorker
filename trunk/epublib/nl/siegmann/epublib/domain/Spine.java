@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import nl.siegmann.epublib.util.StringUtil;
+import org.rr.commons.utils.StringUtils;
+
 
 /**
  * The spine sections are the sections of the book in the order in which the book should be read.
- * 
+ *
  * This contrasts with the Table of Contents sections which is an index into the Book's sections.
  *
  * @see nl.siegmann.epublib.domain.TableOfContents
- * 
+ *
  * @author paul
  *
  */
 public class Spine implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3878483958947357246L;
 	private Resource tocResource;
@@ -32,7 +33,7 @@ public class Spine implements Serializable {
 	
 	/**
 	 * Creates a spine out of all the resources in the table of contents.
-	 * 
+	 *
 	 * @param tableOfContents
 	 */
 	public Spine(TableOfContents tableOfContents) {
@@ -61,7 +62,7 @@ public class Spine implements Serializable {
 	/**
 	 * Gets the resource at the given index.
 	 * Null if not found.
-	 * 
+	 *
 	 * @param index
 	 * @return
 	 */
@@ -74,14 +75,14 @@ public class Spine implements Serializable {
 	
 	/**
 	 * Finds the first resource that has the given resourceId.
-	 * 
+	 *
 	 * Null if not found.
-	 * 
+	 *
 	 * @param resourceId
 	 * @return
 	 */
 	public int findFirstResourceById(String resourceId) {
-		if (StringUtil.isBlank(resourceId)) {
+		if (StringUtils.isEmpty(resourceId)) {
 			return -1;
 		}
 		
@@ -96,7 +97,7 @@ public class Spine implements Serializable {
 	
 	/**
 	 * Adds the given spineReference to the spine references and returns it.
-	 * 
+	 *
 	 * @param spineReference
 	 * @return
 	 */
@@ -110,7 +111,7 @@ public class Spine implements Serializable {
 
 	/**
 	 * Adds the given resource to the spine references and returns it.
-	 * 
+	 *
 	 * @param spineReference
 	 * @return
 	 */
@@ -120,7 +121,7 @@ public class Spine implements Serializable {
 
 	/**
 	 * The number of elements in the spine.
-	 * 
+	 *
 	 * @return
 	 */
 	public int size() {
@@ -131,7 +132,7 @@ public class Spine implements Serializable {
 	 * As per the epub file format the spine officially maintains a reference to the Table of Contents.
 	 * The epubwriter will look for it here first, followed by some clever tricks to find it elsewhere if not found.
 	 * Put it here to be sure of the expected behaviours.
-	 * 
+	 *
 	 * @param tocResource
 	 */
 	public void setTocResource(Resource tocResource) {
@@ -141,7 +142,7 @@ public class Spine implements Serializable {
 	/**
 	 * The resource containing the XML for the tableOfContents.
 	 * When saving an epub file this resource needs to be in this place.
-	 * 
+	 *
 	 * @return
 	 */
 	public Resource getTocResource() {
@@ -150,10 +151,10 @@ public class Spine implements Serializable {
 
 	/**
 	 * The position within the spine of the given resource.
-	 * 
+	 *
 	 * @param currentResource
 	 * @return something &lt; 0 if not found.
-	 * 
+	 *
 	 */
 	public int getResourceIndex(Resource currentResource) {
 		if (currentResource == null) {
@@ -164,13 +165,13 @@ public class Spine implements Serializable {
 
 	/**
 	 * The first position within the spine of a resource with the given href.
-	 * 
+	 *
 	 * @return something &lt; 0 if not found.
-	 * 
+	 *
 	 */
 	public int getResourceIndex(String resourceHref) {
 		int result = -1;
-		if (StringUtil.isBlank(resourceHref)) {
+		if (StringUtils.isEmpty(resourceHref)) {
 			return result;
 		}
 		for (int i = 0; i < spineReferences.size(); i++) {

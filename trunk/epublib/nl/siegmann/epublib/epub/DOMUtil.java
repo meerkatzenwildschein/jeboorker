@@ -3,8 +3,7 @@ package nl.siegmann.epublib.epub;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.siegmann.epublib.util.StringUtil;
-
+import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -13,7 +12,7 @@ import org.w3c.dom.Text;
 
 /**
  * Utility methods for working with the DOM.
- * 
+ *
  * @author paul
  *
  */
@@ -23,7 +22,7 @@ class DOMUtil {
 	
 	/**
 	 * First tries to get the attribute value by doing an getAttributeNS on the element, if that gets an empty element it does a getAttribute without namespace.
-	 * 
+	 *
 	 * @param element
 	 * @param namespace
 	 * @param attribute
@@ -31,7 +30,7 @@ class DOMUtil {
 	 */
 	public static String getAttribute(Element element, String namespace, String attribute) {
 		String result = element.getAttributeNS(namespace, attribute);
-		if (StringUtil.isEmpty(result)) {
+		if (StringUtils.isEmpty(result)) {
 			result = element.getAttribute(attribute);
 		}
 		return result;
@@ -39,7 +38,7 @@ class DOMUtil {
 	
 	/**
 	 * Gets all descendant elements of the given parentElement with the given namespace and tagname and returns their text child as a list of String.
-	 * 
+	 *
 	 * @param parentElement
 	 * @param namespace
 	 * @param tagname
@@ -57,7 +56,7 @@ class DOMUtil {
 	/**
 	 * Finds in the current document the first element with the given namespace and elementName and with the given findAttributeName and findAttributeValue.
 	 * It then returns the value of the given resultAttributeName.
-	 * 
+	 *
 	 * @param document
 	 * @param namespace
 	 * @param elementName
@@ -70,8 +69,8 @@ class DOMUtil {
 		NodeList metaTags = document.getElementsByTagNameNS(namespace, elementName);
 		for(int i = 0; i < metaTags.getLength(); i++) {
 			Element metaElement = (Element) metaTags.item(i);
-			if(findAttributeValue.equalsIgnoreCase(metaElement.getAttribute(findAttributeName)) 
-				&& StringUtil.isNotBlank(metaElement.getAttribute(resultAttributeName))) {
+			if(findAttributeValue.equalsIgnoreCase(metaElement.getAttribute(findAttributeName))
+				&& StringUtils.isNotEmpty(metaElement.getAttribute(resultAttributeName))) {
 				return metaElement.getAttribute(resultAttributeName);
 			}
 		}
@@ -80,7 +79,7 @@ class DOMUtil {
 
 	/**
 	 * Gets the first element that is a child of the parentElement and has the given namespace and tagName
-	 * 
+	 *
 	 * @param parentElement
 	 * @param namespace
 	 * @param tagName
@@ -97,11 +96,11 @@ class DOMUtil {
 	/**
 	 * The contents of all Text nodes that are children of the given parentElement.
 	 * The result is trim()-ed.
-	 * 
+	 *
 	 * The reason for this more complicated procedure instead of just returning the data of the firstChild is that
 	 * when the text is Chinese characters then on Android each Characater is represented in the DOM as
 	 * an individual Text node.
-	 * 
+	 *
 	 * @param parentElement
 	 * @return
 	 */
