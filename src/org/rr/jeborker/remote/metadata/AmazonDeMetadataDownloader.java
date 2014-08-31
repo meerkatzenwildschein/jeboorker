@@ -143,6 +143,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	private byte[] loadAmazonSearchPage(final String encodesSearchPhrase, final int page) throws IOException {
 		//http://www.amazon.de/s/ref=nb_sb_noss_1?field-keywords=die+orks&rh=n%3A186606
 		final String urlString = amazonURL + "/s/ref=nb_sb_noss_1?ie=UTF8&field-keywords=" + encodesSearchPhrase + "&page=" + page + "&rh=n%3A186606";
+		LoggerFactory.getLogger(this).log(Level.INFO, "Loading... " + urlString);
 		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(urlString);
 		final byte[] content = resourceLoader.getContent();
 		return content;
@@ -171,6 +172,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 				public byte[] call() throws Exception {
 					if(thumbnailImageURL != null) {
 						try {
+							LoggerFactory.getLogger(this).log(Level.INFO, "Loading... " + thumbnailImageURL);
 							IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(thumbnailImageURL);
 							return resourceHandler.getContent();
 						} catch(Exception e) {
