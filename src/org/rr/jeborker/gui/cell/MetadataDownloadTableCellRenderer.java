@@ -31,6 +31,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.VerticalLayout;
 import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
@@ -44,17 +45,23 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private static final int LEFT_WIDTH = 80;
 	
+	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
+	
 	private JLabel imagelabel;
 	
 	private JPanel mainPanel;
 	
 	private JCheckBox imageCheck;
 	
-	private HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
+	private Map<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 	
 	private MetadataDownloadEntry editingEntry;
 	
-	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
+	private List<JCheckBox> checkboxCache = new ArrayList<JCheckBox>();
+	
+	private List<JLabel> labelCache = new ArrayList<JLabel>();
+	
+	private List<JPanel> panelCache = new ArrayList<JPanel>();
 	
 	public MetadataDownloadTableCellRenderer(boolean coverSupport) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -132,7 +139,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	 * @return The number of components that was created and added.
 	 */
 	private int addMetadataComponentEntries(MetadataDownloadEntry entry, boolean isEditing) {
-		int result = 0;
+		int componentCount = 0;
 		mainPanel.removeAll();
 		if(isEditing) {
 			//create a new one because the old is used as result.
@@ -141,59 +148,56 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		}
 		
 		for(String author : entry.getAuthors()) {
-			JComponent metadataEntryAuthorView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.author"), author, IMetadataReader.METADATA_TYPES.AUTHOR);
+			JComponent metadataEntryAuthorView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.author"), author, componentCount, IMetadataReader.METADATA_TYPES.AUTHOR);
 			mainPanel.add(metadataEntryAuthorView);
-			result++;
+			componentCount++;
 		}
 		
 		if(!StringUtils.isEmpty(entry.getTitle())) {
-			JComponent metadataEntryTitleView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.title"), entry.getTitle(), IMetadataReader.METADATA_TYPES.TITLE);
+			JComponent metadataEntryTitleView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.title"), entry.getTitle(), componentCount, IMetadataReader.METADATA_TYPES.TITLE);
 			mainPanel.add(metadataEntryTitleView);
-			result++;
+			componentCount++;
 		}
 		
 		if(!StringUtils.isEmpty(entry.getAgeSuggestion())) {
-			JComponent metadataEntryAgeSuggestionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.ageSuggestion"), entry.getAgeSuggestion(), IMetadataReader.METADATA_TYPES.AGE_SUGGESTION);
+			JComponent metadataEntryAgeSuggestionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.ageSuggestion"), entry.getAgeSuggestion(), componentCount, IMetadataReader.METADATA_TYPES.AGE_SUGGESTION);
 			mainPanel.add(metadataEntryAgeSuggestionView);
-			result++;
+			componentCount++;
 		}
 		
 		//no isbn 10 if isbn 13 is available
 		if(!StringUtils.isEmpty(entry.getIsbn13())) {
-			JComponent metadataEntryISBN13View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn13"), entry.getIsbn13(), IMetadataReader.METADATA_TYPES.ISBN);
+			JComponent metadataEntryISBN13View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn13"), entry.getIsbn13(), componentCount, IMetadataReader.METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN13View);
-			result++;
+			componentCount++;
 		} else if(!StringUtils.isEmpty(entry.getIsbn10())) {
-			JComponent metadataEntryISBN10View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn10"), entry.getIsbn10(), IMetadataReader.METADATA_TYPES.ISBN);
+			JComponent metadataEntryISBN10View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn10"), entry.getIsbn10(), componentCount, IMetadataReader.METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN10View);
-			result++;
+			componentCount++;
 		}
 		
 		if(!StringUtils.isEmpty(entry.getLanguage())) {
-			JComponent metadataEntryLanguageView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.language"), entry.getLanguage(), IMetadataReader.METADATA_TYPES.LANGUAGE);
+			JComponent metadataEntryLanguageView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.language"), entry.getLanguage(), componentCount, IMetadataReader.METADATA_TYPES.LANGUAGE);
 			mainPanel.add(metadataEntryLanguageView);
-			result++;
+			componentCount++;
 		}
 		
 		if(!StringUtils.isEmpty(entry.getDescription())) {
-			JComponent metadataEntryDescriptionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.description"), entry.getDescription(), IMetadataReader.METADATA_TYPES.DESCRIPTION);
+			JComponent metadataEntryDescriptionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.description"), entry.getDescription(), componentCount, IMetadataReader.METADATA_TYPES.DESCRIPTION);
 			mainPanel.add(metadataEntryDescriptionView);
-			result++;
+			componentCount++;
 		}
 		
-		return result;
+		return componentCount;
 	}
 	
-	private JComponent getMetadataEntryViewPanel(final String labelText, final String value, final IMetadataReader.METADATA_TYPES type) {
-		JPanel panel = new JPanel();
-		panel.setOpaque(true);
-		panel.setLayout(new BorderLayout(3, 0));
+	private JComponent getMetadataEntryViewPanel(String labelText, final String value, int index, IMetadataReader.METADATA_TYPES type) {
+		JPanel panel = getOrCreatePanel(index);
 		
-		JLabel lblValue = new JLabel("<html><b>" + labelText + "</b>: " + value + "</html>");
-		lblValue.setOpaque(true);
-		panel.add(lblValue, BorderLayout.CENTER);
+		JLabel valueLabel = getOrCreateLabel("<html><b>" + labelText + "</b>: " + value + "</html>", index);
+		panel.add(valueLabel, BorderLayout.CENTER);
 		
-		final JCheckBox check = new JCheckBox();
+		final JCheckBox check = getOrCreateCheckbox(index);
 		check.setSelected(true);
 		panel.add(check, BorderLayout.WEST);
 		
@@ -223,6 +227,36 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		return panel;
 	}
 	
+	private JPanel getOrCreatePanel(int index) {
+		JPanel panel = ListUtils.get(panelCache, index);
+		if(panel == null) {
+			panel = new JPanel();
+			panel.setOpaque(true);
+			panel.setLayout(new BorderLayout(3, 0));
+			ListUtils.set(panelCache, panel, index);
+		}
+		return panel;
+	}
+	
+	private JCheckBox getOrCreateCheckbox(int index) {
+		JCheckBox check = ListUtils.get(checkboxCache, index);
+		if(check == null) {
+			check = new JCheckBox();
+			ListUtils.set(checkboxCache, check, index);
+		}
+		return check;
+	}
+	
+	private JLabel getOrCreateLabel(String text, int index) {
+		JLabel label = ListUtils.get(labelCache, index);
+		if(label == null) {
+			label = new JLabel();
+			label.setOpaque(true);
+			ListUtils.set(labelCache, label, index);
+		}
+		label.setText(text);
+		return label;
+	}
 
 	/**
 	 * Gets the thumbnail image to be displayed in the renderer.
@@ -268,7 +302,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	/**
 	 * Get the values for the editing component.
 	 */
-	HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
+	Map<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
 		return editingValues;
 	}
 	

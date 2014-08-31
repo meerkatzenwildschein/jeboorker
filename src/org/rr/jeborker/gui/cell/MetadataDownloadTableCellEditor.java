@@ -3,7 +3,6 @@ package org.rr.jeborker.gui.cell;
 import java.awt.Component;
 import java.io.Serializable;
 import java.util.EventObject;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,7 +24,7 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	private MetadataDownloadEntry editingEntry;
 
 
-	private HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>> editingValues;
+	private Map<METADATA_TYPES, List<Entry<JCheckBox, String>>> editingValues;
 	
 	public MetadataDownloadTableCellEditor(MetadataDownloadTableCellRenderer renderer) {
 		super();
@@ -37,14 +36,14 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	 */
 	public MetadataDownloadEntry getEditorMetadataDownloadEntry() {
 		return editingEntry;
-	}	
+	}
 	
 	/**
 	 * Get the values for the editing component.
 	 */
-	public HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
+	public Map<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
 		return editingValues;
-	}	
+	}
 
 	@Override
 	public boolean isCellEditable(EventObject anEvent) {
@@ -83,7 +82,7 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	
 	/**
 	 * Tells if the user has selected the cover image checkbox for set/replace
-	 * the cover of the ebook file with the downloaded one. 
+	 * the cover of the ebook file with the downloaded one.
 	 */
 	public boolean isCoverImageChecked() {
 		return renderer.isCoverImageChecked();
@@ -92,6 +91,6 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	@Override
 	public Object getCellEditorValue() {
 		return this.editingValues;
-	}	
+	}
 
 }
