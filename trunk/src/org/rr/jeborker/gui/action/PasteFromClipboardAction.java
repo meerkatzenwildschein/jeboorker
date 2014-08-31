@@ -13,18 +13,13 @@ import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.jeborker.app.BasePathList;
-import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -121,31 +116,9 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 			throws UnsupportedFlavorException, IOException, ClassNotFoundException {
 		boolean deleteSourceFiles = true;
 		List<IResourceHandler> sourceFiles = ResourceHandlerFactory.getResourceHandler(transferable);
-		List<IResourceHandler> importEbookResources = ActionUtils.importEbookResources(dropRow, basePath, targetRecourceDirectory, sourceFiles, deleteSourceFiles);
-		removeDeletedFileFromModel(importEbookResources);
+		ActionUtils.importEbookResources(dropRow, basePath, targetRecourceDirectory, sourceFiles, deleteSourceFiles);
 	}
 
-	 /**
-	  * Removes the deleted files from model if they're located in a base path and no longer exists
-	  */
-	private static void removeDeletedFileFromModel(List<IResourceHandler> movedEbookResources) {
-		final DefaultDBManager db = DefaultDBManager.getInstance();
-		final BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
-		List<EbookPropertyItem> movedEbooks = new TransformValueList<IResourceHandler, EbookPropertyItem>(movedEbookResources) {
 
-			@Override
-			public EbookPropertyItem transform(IResourceHandler resource) {
-				if(!resource.exists() && basePathList.getBasePathForFile(resource) != null) {
-					List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resource);
-					for(EbookPropertyItem item : ebookPropertyItems) {
-						db.deleteObject(item);
-						LoggerFactory.getLogger().log(Level.INFO, "Removed deleted ebook " + resource);
-					}
-				}
-				return null;
-			}
-		};
-		FileRefreshBackground.getInstance().addEbooks(movedEbooks);
-	}
 
 }
