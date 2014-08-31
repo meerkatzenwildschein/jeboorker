@@ -12,6 +12,7 @@ import org.rr.commons.collection.WrapperList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
@@ -112,7 +113,7 @@ public class BasePathList extends WrapperList<String> {
 	}
 
 	/**
-	 * Tests if the given file / path have a valid base path.
+	 * Tests if the given file / path starts with a valid base path.
 	 * @return <code>true</code> if a base path could be found for the given path or <code>false</code> otherwise.
 	 */
 	public boolean containsBasePathFor(final String path) {
@@ -125,4 +126,31 @@ public class BasePathList extends WrapperList<String> {
 		return false;
 	}
 
+	/**
+	 * Provides a contains method with taking under account that a directory path statement can end with a path separator or not.
+	 *
+	 * @param path
+	 *            The path to be tested if it is contained by {@link BasePathList} or not.
+	 * @return <code>true</code> if the given path is in the {@link BasePathList} and <code>false</code> otherwise.
+	 */
+	@Override
+	public boolean contains(Object path) {
+		String c = StringUtils.toString(path);
+		if (StringUtils.isEmpty(c)) {
+			return false;
+		}
+
+		for (String s : toWrap) {
+			if (StringUtils.equals(s, c)) {
+				return true;
+			} else {
+				IResourceHandler first = ResourceHandlerFactory.getResourceHandler(c);
+				IResourceHandler second = ResourceHandlerFactory.getResourceHandler(s);
+				if (first != null && second != null && StringUtils.equals(first.getResourceString(), second.getResourceString())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
