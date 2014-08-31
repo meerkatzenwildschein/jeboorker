@@ -30,25 +30,8 @@ public class MetadataDownloadProviderFactory {
 			public MetadataDownloader getMetadataDownloader() {
 				return new AmazonDeMetadataDownloader();
 			}
-		},
-		AMAZON_COM {
-
-			@Override
-			public String getName() {
-				return "Amazon.com";
-			}
-			
-			@Override
-			public String toString() {
-				return getName();
-			}
-	
-			@Override
-			public MetadataDownloader getMetadataDownloader() {
-				return new AmazonComMetadataDownloader();
-			}
-		}		
-	}	
+		}
+	}
 
 	private static final List<String> DOWNLOADER_NAMES = new ArrayList<String>() {{
 		for(DOWNLOADER_TYPES type: DOWNLOADER_TYPES.values()) {
@@ -67,12 +50,12 @@ public class MetadataDownloadProviderFactory {
 			if(type.getName().equals(name)) {
 				return type.getMetadataDownloader();
 			}
-		}		
+		}
 		return null;
 	}
 	
 	/**
-	 * Get the names of all available downloaders. With one of these names 
+	 * Get the names of all available downloaders. With one of these names
 	 * the desired {@link MetadataDownloader} instance could be fetched with
 	 * the {@link #getDownloader(String)} method.
 	 */
