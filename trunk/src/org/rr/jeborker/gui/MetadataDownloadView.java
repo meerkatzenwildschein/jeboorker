@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -27,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.collection.TransformValueList;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.components.JRTable;
@@ -337,7 +339,11 @@ class MetadataDownloadView extends AbstractDialogView {
 	 * Set the given index to the search provider combobox.
 	 */
 	void setSearchProviderIndex(int index) {
-		this.searchProviderCombobox.setSelectedIndex(index);
+		try  {
+			this.searchProviderCombobox.setSelectedIndex(index);
+		} catch(Exception e) {
+			LoggerFactory.getLogger().log(Level.WARNING, "Failed to set search provider " + index, e);
+		}
 	}
 
 	@Override
