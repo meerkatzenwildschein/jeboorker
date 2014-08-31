@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-import nl.siegmann.epublib.util.StringUtil;
+import org.rr.commons.utils.StringUtils;
+
 
 /**
  * A Book's identifier.
- * 
+ *
  * Defaults to a random UUID and scheme "UUID"
- * 
+ *
  * @author paul
  *
  */
@@ -45,7 +46,7 @@ public class Identifier implements Serializable {
 	/**
 	 * The first identifier for which the bookId is true is made the bookId identifier.
 	 * If no identifier has bookId == true then the first bookId identifier is written as the primary.
-	 * 
+	 *
 	 * @param identifiers
 	 * @return
 	 */
@@ -90,10 +91,10 @@ public class Identifier implements Serializable {
 
 	/**
 	 * This bookId property allows the book creator to add multiple ids and tell the epubwriter which one to write out as the bookId.
-	 *  
+	 *
 	 * The Dublin Core metadata spec allows multiple identifiers for a Book.
 	 * The epub spec requires exactly one identifier to be marked as the book id.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isBookId() {
@@ -101,19 +102,19 @@ public class Identifier implements Serializable {
 	}
 
 	public int hashCode() {
-		return StringUtil.defaultIfNull(scheme).hashCode() ^ StringUtil.defaultIfNull(value).hashCode();
+		return StringUtils.defaultIfNull(scheme).hashCode() ^ StringUtils.defaultIfNull(value).hashCode();
 	}
 	
 	public boolean equals(Object otherIdentifier) {
 		if(! (otherIdentifier instanceof Identifier)) {
 			return false;
 		}
-		return StringUtil.equals(scheme, ((Identifier) otherIdentifier).scheme)
-		&& StringUtil.equals(value, ((Identifier) otherIdentifier).value);
+		return StringUtils.equals(scheme, ((Identifier) otherIdentifier).scheme)
+		&& StringUtils.equals(value, ((Identifier) otherIdentifier).value);
 	}
 	
 	public String toString() {
-		if (StringUtil.isBlank(scheme)) {
+		if (StringUtils.isEmpty(scheme)) {
 			return "" + value;
 		}
 		return "" + scheme + ":" + value;

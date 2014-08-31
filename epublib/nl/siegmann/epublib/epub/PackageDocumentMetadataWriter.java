@@ -11,8 +11,8 @@ import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Date;
 import nl.siegmann.epublib.domain.Identifier;
 import nl.siegmann.epublib.domain.Meta;
-import nl.siegmann.epublib.util.StringUtil;
 
+import org.rr.commons.utils.StringUtils;
 import org.xmlpull.v1.XmlSerializer;
 
 public class PackageDocumentMetadataWriter extends PackageDocumentBase {
@@ -20,12 +20,12 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 	
 	/**
 	 * Writes the book's metadata.
-	 * 
+	 *
 	 * @param book
 	 * @param serializer
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 * @
 	 */
 	public static void writeMetaData(Book book, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException  {
@@ -70,7 +70,7 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 		}
 
 		// write language
-		if(StringUtil.isNotBlank(book.getMetadata().getLanguage())) {
+		if(StringUtils.isNotEmpty(book.getMetadata().getLanguage())) {
 			serializer.startTag(NAMESPACE_DUBLIN_CORE, "language");
 			serializer.text(book.getMetadata().getLanguage());
 			serializer.endTag(NAMESPACE_DUBLIN_CORE, "language");
@@ -99,7 +99,7 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 		}
 
 		// write coverimage
-		if(book.getCoverImage() != null || coverMeta != null) { 
+		if(book.getCoverImage() != null || coverMeta != null) {
 			serializer.startTag(NAMESPACE_OPF, OPFTags.meta);
 			serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.name, OPFValues.meta_cover);
 			if(book.getCoverImage() != null) {
@@ -135,7 +135,7 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 	
 	private static void writeSimpleMetdataElements(String tagName, List<String> values, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException {
 		for(String value: values) {
-			if (StringUtil.isBlank(value)) {
+			if (StringUtils.isEmpty(value)) {
 				continue;
 			}
 			serializer.startTag(NAMESPACE_DUBLIN_CORE, tagName);
@@ -149,12 +149,12 @@ public class PackageDocumentMetadataWriter extends PackageDocumentBase {
 	 * Writes out the complete list of Identifiers to the package document.
 	 * The first identifier for which the bookId is true is made the bookId identifier.
 	 * If no identifier has bookId == true then the first bookId identifier is written as the primary.
-	 * 
+	 *
 	 * @param identifiers
 	 * @param serializer
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 */
 	private static void writeIdentifiers(List<Identifier> identifiers, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException  {
 		Identifier bookIdIdentifier = Identifier.getBookIdIdentifier(identifiers);

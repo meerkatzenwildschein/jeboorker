@@ -14,8 +14,8 @@ import nl.siegmann.epublib.domain.Identifier;
 import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Resources;
-import nl.siegmann.epublib.util.StringUtil;
 
+import org.rr.commons.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,9 +23,9 @@ import org.w3c.dom.NodeList;
 
 /**
  * Reads the package document metadata.
- * 
+ *
  * In its own separate class because the PackageDocumentReader became a bit large and unwieldy.
- * 
+ *
  * @author paul
  *
  */
@@ -73,11 +73,11 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 			Node metaNode = metaTags.item(i);
 			Node name = metaNode.getAttributes().getNamedItem(OPFAttributes.name);
 			Node content = metaNode.getAttributes().getNamedItem(OPFAttributes.content);
-			if (name != null && content != null) { 
+			if (name != null && content != null) {
 				String nameAttributeValue = name.getNodeValue();
 				String contentAttributeValue = content.getNodeValue();
 				result.add(new Meta(nameAttributeValue, contentAttributeValue));
-			} 
+			}
 		}
 		
 		return result;
@@ -100,11 +100,11 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 				String nodeValue = property.getNodeValue();
 				String textContent = metaNode.getTextContent();
 				result.put(new QName(nodeValue), textContent);
-			} 
+			}
 		}
 		
 		return result;
-	}	
+	}
 
 
 	private static String getBookIdId(Document document) {
@@ -157,7 +157,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 
 	private static Author createAuthor(Element authorElement) {
 		String authorString = DOMUtil.getTextChildrenContent(authorElement);
-		if (StringUtil.isBlank(authorString)) {
+		if (StringUtils.isEmpty(authorString)) {
 			return null;
 		}
 		int spacePos = authorString.lastIndexOf(' ');
@@ -184,7 +184,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 			Element identifierElement = (Element) identifierElements.item(i);
 			String schemeName = identifierElement.getAttributeNS(NAMESPACE_OPF, DCAttributes.scheme);
 			String identifierValue = DOMUtil.getTextChildrenContent(identifierElement);
-			if (StringUtil.isBlank(identifierValue)) {
+			if (StringUtils.isEmpty(identifierValue)) {
 				continue;
 			}
 			Identifier identifier = new Identifier(schemeName, identifierValue);

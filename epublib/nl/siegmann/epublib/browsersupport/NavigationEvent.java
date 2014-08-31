@@ -2,13 +2,14 @@ package nl.siegmann.epublib.browsersupport;
 
 import java.util.EventObject;
 
+import org.rr.commons.utils.StringUtils;
+
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
-import nl.siegmann.epublib.util.StringUtil;
 
 /**
  * Used to tell NavigationEventListener just what kind of navigation action the user just did.
- * 
+ *
  * @author paul
  *
  */
@@ -39,7 +40,7 @@ public class NavigationEvent extends EventObject {
 
 	/**
 	 * The previous position within the section.
-	 * 
+	 *
 	 * @return
 	 */
 	public int getOldSectionPos() {
@@ -96,7 +97,7 @@ public class NavigationEvent extends EventObject {
 	}
 
 	public boolean isFragmentChanged() {
-		return StringUtil.equals(getOldFragmentId(), getCurrentFragmentId());
+		return StringUtils.equals(getOldFragmentId(), getCurrentFragmentId());
 	}
 
 	public Resource getOldResource() {
@@ -134,7 +135,7 @@ public class NavigationEvent extends EventObject {
 	}
 	
 	public String toString() {
-		return StringUtil.toString(
+		return StringUtils.toString(
 				"oldSectionPos", oldSectionPos,
 				"oldResource", oldResource,
 				"oldBook", oldBook,

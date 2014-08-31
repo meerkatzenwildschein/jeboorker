@@ -2,11 +2,12 @@ package nl.siegmann.epublib.domain;
 
 import java.io.Serializable;
 
-import nl.siegmann.epublib.util.StringUtil;
+import org.rr.commons.utils.StringUtils;
+
 
 /**
  * Represents one of the authors of the book
- * 
+ *
  * @author paul
  *
  */
@@ -51,7 +52,7 @@ public class Author implements Serializable {
 	}
 	
 	public int hashCode() {
-		return StringUtil.hashCode(firstname, lastname);
+		return StringUtils.hashCode(firstname, lastname);
 	}
 	
 	
@@ -60,8 +61,8 @@ public class Author implements Serializable {
 			return false;
 		}
 		Author other = (Author) authorObject;
-		return StringUtil.equals(firstname, other.firstname)
-		 && StringUtil.equals(lastname, other.lastname);
+		return StringUtils.equals(firstname, other.firstname)
+		 && StringUtils.equals(lastname, other.lastname);
 	}
 
 	public Relator setRole(String code) {

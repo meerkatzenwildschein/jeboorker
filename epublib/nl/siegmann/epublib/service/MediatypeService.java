@@ -3,13 +3,14 @@ package nl.siegmann.epublib.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.rr.commons.utils.StringUtils;
+
 import nl.siegmann.epublib.domain.MediaType;
-import nl.siegmann.epublib.util.StringUtil;
 
 
 /**
  * Manages mediatypes that are used by epubs
- * 
+ *
  * @author paul
  *
  */
@@ -60,7 +61,7 @@ public class MediatypeService {
 	/**
 	 * Gets the MediaType based on the file extension.
 	 * Null of no matching extension found.
-	 * 
+	 *
 	 * @param filename
 	 * @return
 	 */
@@ -68,7 +69,7 @@ public class MediatypeService {
 		for(int i = 0; i < mediatypes.length; i++) {
 			MediaType mediatype = mediatypes[i];
 			for(String extension: mediatype.getExtensions()) {
-				if(StringUtil.endsWithIgnoreCase(filename, extension)) {
+				if(StringUtils.endsWithIgnoreCase(filename, extension)) {
 					return mediatype;
 				}
 			}

@@ -14,21 +14,19 @@ import java.util.zip.ZipInputStream;
 import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.IOUtil;
-import nl.siegmann.epublib.util.StringUtil;
 import nl.siegmann.epublib.util.commons.io.XmlStreamReader;
+
+import org.rr.commons.utils.StringUtils;
 
 /**
  * Represents a resource that is part of the epub.
  * A resource can be a html file, image, xml, etc.
- * 
+ *
  * @author paul
  *
  */
 public class Resource implements Serializable {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1043946707835004037L;
 	private String id;
 	private String title;
@@ -47,9 +45,9 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Creates an empty Resource with the given href.
-	 * 
+	 *
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * @param href The location of the resource within the epub. Example: "chapter1.html".
 	 */
 	public Resource(String href) {
@@ -59,9 +57,9 @@ public class Resource implements Serializable {
 	/**
 	 * Creates a Resource with the given data and MediaType.
 	 * The href will be automatically generated.
-	 * 
+	 *
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * @param data The Resource's contents
 	 * @param mediaType The MediaType of the Resource
 	 */
@@ -72,11 +70,11 @@ public class Resource implements Serializable {
 	/**
 	 * Creates a resource with the given data at the specified href.
 	 * The MediaType will be determined based on the href extension.
-	 * 
+	 *
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
-	 * 
+	 *
 	 * @param data The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "chapter1.html".
 	 */
@@ -87,11 +85,11 @@ public class Resource implements Serializable {
 	/**
 	 * Creates a resource with the given data at the specified href.
 	 * The MediaType will be determined based on the href extension.
-	 * 
+	 *
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
-	 * 
+	 *
 	 * @param data The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "chapter1.html".
 	 */
@@ -104,7 +102,7 @@ public class Resource implements Serializable {
 	 * Creates a resource with the data from the given Reader at the specified href.
 	 * The MediaType will be determined based on the href extension.
 	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
-	 *  
+	 *
 	 * @param in The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "cover.jpg".
 	 */
@@ -116,15 +114,15 @@ public class Resource implements Serializable {
 	 * Creates a resource with the data from the given InputStream at the specified href.
 	 * The MediaType will be determined based on the href extension.
 	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
-	 * 
+	 *
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * It is recommended to us the
 	 * @see nl.siegmann.epublib.domain.Resource.Resource(Reader, String)
 	 * method for creating textual (html/css/etc) resources to prevent encoding problems.
 	 * Use this method only for binary Resources like images, fonts, etc.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param in The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "cover.jpg".
 	 */
@@ -137,15 +135,15 @@ public class Resource implements Serializable {
 	 * Creates a resource with the data from the given InputStream at the specified href.
 	 * The MediaType will be determined based on the href extension.
 	 * @see nl.siegmann.epublib.service.MediatypeService.determineMediaType(String)
-	 * 
+	 *
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * It is recommended to us the
 	 * @see nl.siegmann.epublib.domain.Resource.Resource(Reader, String)
 	 * method for creating textual (html/css/etc) resources to prevent encoding problems.
 	 * Use this method only for binary Resources like images, fonts, etc.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param in The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "cover.jpg".
 	 */
@@ -157,9 +155,9 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Creates a Lazy resource, by not actually loading the data for this entry.
-	 * 
+	 *
 	 * The data will be loaded on the first call to getData()
-	 * 
+	 *
 	 * @param fileName the fileName for the epub we're created from.
 	 * @param size the size of this resource.
 	 * @param href The resource's href within the epub.
@@ -173,7 +171,7 @@ public class Resource implements Serializable {
 	/**
 	 * Creates a resource with the given id, data, mediatype at the specified href.
 	 * Assumes that if the data is of a text type (html/css/etc) then the encoding will be UTF-8
-	 * 
+	 *
 	 * @param id The id of the Resource. Internal use only. Will be auto-generated if it has a null-value.
 	 * @param data The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "chapter1.html".
@@ -186,7 +184,7 @@ public class Resource implements Serializable {
 	/**
 	 * Creates a resource with the given id, data, mediatype at the specified href.
 	 * If the data is of a text type (html/css/etc) then it will use the given inputEncoding.
-	 * 
+	 *
 	 * @param id The id of the Resource. Internal use only. Will be auto-generated if it has a null-value.
 	 * @param data The Resource's contents
 	 * @param href The location of the resource within the epub. Example: "chapter1.html".
@@ -211,20 +209,20 @@ public class Resource implements Serializable {
 	
 	private void resetInputStream() {
 		if(in.markSupported()) {
-			//go to the begin of the InputStream 
+			//go to the begin of the InputStream
 			try {
 				in.reset();
 			} catch (IOException e) {
 				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "InputStream reset for resource " + this.fileName + " has failed.", e);
 			}
-		}		
+		}
 	}
 	
 	/**
 	 * Gets the contents of the Resource as an InputStream.
-	 * 
+	 *
 	 * @return The contents of the Resource.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public InputStream getInputStream() throws IOException {
@@ -237,11 +235,11 @@ public class Resource implements Serializable {
 
 	/**
 	 * The contents of the resource as a byte[]
-	 * 
-	 * If this resource was lazy-loaded and the data was not yet loaded, 
+	 *
+	 * If this resource was lazy-loaded and the data was not yet loaded,
 	 * it will be loaded into memory at this point.
 	 *  This included opening the zip file, so expect a first load to be slow.
-	 * 
+	 *
 	 * @return The contents of the resource
 	 */
 	public byte[] getData() throws IOException {
@@ -264,7 +262,7 @@ public class Resource implements Serializable {
 					
 					if ( zipEntry.getName().endsWith(this.href)) {
 						this.data = IOUtil.toByteArray(zipIn);
-					}				
+					}
 				}
 				
 				zipIn.close();
@@ -276,7 +274,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Tells this resource to release its cached data.
-	 * 
+	 *
 	 * If this resource was not lazy-loaded, this is a no-op.
 	 */
 	public void close() {
@@ -288,7 +286,7 @@ public class Resource implements Serializable {
 	/**
 	 * Sets the data of the Resource.
 	 * If the data is a of a different type then the original data then make sure to change the MediaType.
-	 * 
+	 *
 	 * @param data
 	 */
 	public void setData(byte[] data) {
@@ -298,7 +296,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Returns if the data for this resource has been loaded into memory.
-	 * 
+	 *
 	 * @return true if data was loaded.
 	 */
 	public boolean isInitialized() {
@@ -307,7 +305,7 @@ public class Resource implements Serializable {
 
 	/**
 	 * Returns the size of this resource in bytes.
-	 * 
+	 *
 	 * @return the size.
 	 */
 	public long getSize() {
@@ -320,7 +318,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * If the title is found by scanning the underlying html document then it is cached here.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getTitle() {
@@ -329,7 +327,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Sets the Resource's id: Make sure it is unique and a valid identifier.
-	 * 
+	 *
 	 * @param id
 	 */
 	public void setId(String id) {
@@ -338,7 +336,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * The resources Id.
-	 * 
+	 *
 	 * Must be both unique within all the resources of this book and a valid identifier.
 	 * @return
 	 */
@@ -348,11 +346,11 @@ public class Resource implements Serializable {
 
 	/**
 	 * The location of the resource within the contents folder of the epub file.
-	 * 
+	 *
 	 * Example:<br/>
 	 * images/cover.jpg<br/>
 	 * content/chapter1.xhtml<br/>
-	 * 
+	 *
 	 * @return
 	 */
 	public String getHref() {
@@ -361,7 +359,7 @@ public class Resource implements Serializable {
 
 	/**
 	 * Sets the Resource's href.
-	 * 
+	 *
 	 * @param href
 	 */
 	public void setHref(String href) {
@@ -371,7 +369,7 @@ public class Resource implements Serializable {
 	/**
 	 * The character encoding of the resource.
 	 * Is allowed to be null for non-text resources like images.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getInputEncoding() {
@@ -380,7 +378,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Sets the Resource's input character encoding.
-	 * 
+	 *
 	 * @param encoding
 	 */
 	public void setInputEncoding(String encoding) {
@@ -389,9 +387,9 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Gets the contents of the Resource as Reader.
-	 * 
+	 *
 	 * Does all sorts of smart things (courtesy of apache commons io XMLStreamREader) to handle encodings, byte order markers, etc.
-	 * 
+	 *
 	 * @param resource
 	 * @return
 	 * @throws IOException
@@ -402,7 +400,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Gets the hashCode of the Resource's href.
-	 * 
+	 *
 	 */
 	public int hashCode() {
 		return href.hashCode();
@@ -410,7 +408,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Checks to see of the given resourceObject is a resource and whether its href is equal to this one.
-	 * 
+	 *
 	 */
 	public boolean equals(Object resourceObject) {
 		if (! (resourceObject instanceof Resource)) {
@@ -421,7 +419,7 @@ public class Resource implements Serializable {
 	
 	/**
 	 * This resource's mediaType.
-	 * 
+	 *
 	 * @return
 	 */
 	public MediaType getMediaType() {
@@ -437,7 +435,7 @@ public class Resource implements Serializable {
 	}
 
 	public String toString() {
-		return StringUtil.toString("id", id,
+		return StringUtils.toString("id", id,
 				"title", title,
 				"encoding", inputEncoding,
 				"mediaType", mediaType,
@@ -455,10 +453,10 @@ public class Resource implements Serializable {
 	
 	/**
 	 * Strips off the package prefixes up to the href of the packageHref.
-	 * 
+	 *
 	 * Example:
 	 * If the packageHref is "OEBPS/content.opf" then a resource href like "OEBPS/foo/bar.html" will be turned into "foo/bar.html"
-	 * 
+	 *
 	 * @param packageHref
 	 * @param resourcesByHref
 	 * @return
@@ -469,7 +467,7 @@ public class Resource implements Serializable {
 			return this.href;
 		}
 		String packagePath = packageHref.substring(0, lastSlashPos + 1);
-		if (StringUtil.isNotBlank(this.href) || this.href.length() > lastSlashPos) {
+		if (StringUtils.isNotEmpty(this.href) || this.href.length() > lastSlashPos) {
 			if (this.href.startsWith(packagePath)) {
 				// fix only entries within the given packageHref. The entry could be
 				// destroyed in the case that the ref is not in the given package.

@@ -18,14 +18,14 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Spine;
 import nl.siegmann.epublib.domain.SpineReference;
 import nl.siegmann.epublib.service.MediatypeService;
-import nl.siegmann.epublib.util.StringUtil;
 
+import org.rr.commons.utils.StringUtils;
 import org.xmlpull.v1.XmlSerializer;
 
 
 /**
  * Writes the opf package document as defined by namespace http://www.idpf.org/2007/opf
- *  
+ *
  * @author paul
  *
  */
@@ -59,13 +59,13 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 
 	/**
 	 * Writes the package's spine.
-	 * 
+	 *
 	 * @param book
 	 * @param epubWriter
 	 * @param serializer
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 * @throws XMLStreamException
 	 */
 	private static void writeSpine(Book book, EpubWriter epubWriter, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException {
@@ -117,9 +117,9 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 	 * Writes a resources as an item element
 	 * @param resource
 	 * @param serializer
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 * @throws XMLStreamException
 	 */
 	private static void writeItem(Book book, Resource resource, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException {
@@ -128,11 +128,11 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 				&& book.getSpine().getTocResource() != null)) {
 			return;
 		}
-		if(StringUtil.isBlank(resource.getId())) {
+		if(StringUtils.isEmpty(resource.getId())) {
 			log.warning("resource id must not be empty (href: " + resource.getHref() + ", mediatype:" + resource.getMediaType() + ")");
 			return;
 		}
-		if(StringUtil.isBlank(resource.getHref())) {
+		if(StringUtils.isEmpty(resource.getHref())) {
 			log.warning("resource href must not be empty (id: " + resource.getId() + ", mediatype:" + resource.getMediaType() + ")");
 			return;
 		}
@@ -149,9 +149,9 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 
 	/**
 	 * List all spine references
-	 * @throws IOException 
-	 * @throws IllegalStateException 
-	 * @throws IllegalArgumentException 
+	 * @throws IOException
+	 * @throws IllegalStateException
+	 * @throws IllegalArgumentException
 	 */
 	private static void writeSpineItems(Spine spine, XmlSerializer serializer) throws IllegalArgumentException, IllegalStateException, IOException {
 		for(SpineReference spineReference: spine.getSpineReferences()) {
@@ -192,7 +192,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 		serializer.startTag(NAMESPACE_OPF, OPFTags.reference);
 		serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.type, reference.getType());
 		serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.href, reference.getCompleteHref());
-		if (StringUtil.isNotBlank(reference.getTitle())) {
+		if (StringUtils.isNotEmpty(reference.getTitle())) {
 			serializer.attribute(EpubWriter.EMPTY_NAMESPACE_PREFIX, OPFAttributes.title, reference.getTitle());
 		}
 		serializer.endTag(NAMESPACE_OPF, OPFTags.reference);
