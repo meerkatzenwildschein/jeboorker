@@ -2,6 +2,7 @@ package org.rr.jeborker.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -148,6 +149,7 @@ public class MainController {
 		final String lookAndFeel = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL)
 				.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.LOOK_AND_FEEL);
 
+		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		SwingUtils.setLookAndFeel(lookAndFeel);
 
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.opendb"));

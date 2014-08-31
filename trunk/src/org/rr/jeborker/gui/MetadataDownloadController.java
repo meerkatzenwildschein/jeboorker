@@ -24,20 +24,25 @@ public class MetadataDownloadController {
 	static MetadataDownloadController getInstance(JFrame mainWindow) {
 		MetadataDownloadController controller = new MetadataDownloadController(mainWindow);
 		return controller;
-	}		
+	}
 
 	/**
 	 * Shows the dialog to the user and wait until the user has confirm or aborted the dialog.
 	 */
 	public void showDialog() {
-		MetadataDownloadView view = getView();
+		MetadataDownloadView view = createView();
 		view.setVisible(true);
+	}
+	
+	private MetadataDownloadView createView() {
+		this.metadataDownloadView = new MetadataDownloadView(this, mainWindow);
+		this.restorePropeties();
+		return this.metadataDownloadView;
 	}
 
 	private MetadataDownloadView getView() {
 		if(metadataDownloadView == null) {
-			this.metadataDownloadView = new MetadataDownloadView(this, mainWindow);
-			this.restorePropeties();
+			return createView();
 		}
 		return metadataDownloadView;
 	}
@@ -46,8 +51,7 @@ public class MetadataDownloadController {
 		storeProperties();
 		metadataDownloadView.setVisible(false);
 		metadataDownloadView.dispose();
-		metadataDownloadView = null;
-	}		
+	}
 
 	private void storeProperties() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
@@ -72,18 +76,18 @@ public class MetadataDownloadController {
 		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("matadataDownloadDialogLocationX", "matadataDownloadDialogLocationY");
 		if(entryAsScreenLocation != null) {
 			getView().setLocation(entryAsScreenLocation);
-		}		
+		}
 		
 		//restore search provider index.
 		Number serachProviderIndex = preferenceStore.getGenericEntryAsNumber("matadataDownloadDialogSearchProviderIndex");
 		if(serachProviderIndex != null) {
 			getView().setSearchProviderIndex(serachProviderIndex.intValue());
-		}		
-	}	
+		}
+	}
 	
 	/**
 	 * Tells if the user has confirmed the metadata download dialog.
-	 * @return <code>true</code> if the user has confirmed the dialog and <code>false</code> if 
+	 * @return <code>true</code> if the user has confirmed the dialog and <code>false</code> if
 	 * he hits abort or just closed the dialog.
 	 */
 	public boolean isConfirmed() {
@@ -92,7 +96,7 @@ public class MetadataDownloadController {
 	
 	/**
 	 * Get the downloaded metadata values for the given type.
-	 * @return A list with the downloaded values for the given type. Each list entry 
+	 * @return A list with the downloaded values for the given type. Each list entry
 	 *     is a {@link Entry} with the checkbox boolean value as <code>key</code> and the
 	 *     text with the <code>value</code>.
 	 */
@@ -121,6 +125,6 @@ public class MetadataDownloadController {
 	 */
 	public byte[] getCoverImage() {
 		return getView().getCoverImage();
-	}	
+	}
 	
 }

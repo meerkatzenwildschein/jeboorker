@@ -48,7 +48,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private JPanel mainPanel;
 	
-	private JCheckBox imageCheck = new JCheckBox();
+	private JCheckBox imageCheck;
 	
 	private HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 	
@@ -63,7 +63,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		
+
 		imagelabel = new JLabel();
 		imagelabel.setOpaque(false);
 		imagelabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -102,7 +102,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		final Component tableCellComponent = this.getTableCellComponent(table, (MetadataDownloadEntry) value, isSelected, hasFocus, row, column);
 		return tableCellComponent;
-	}	
+	}
 
 	Component getTableCellComponent(JTable table, MetadataDownloadEntry entry, boolean isSelected, boolean hasFocus, int row, final int column) {
 		final int addEntryLabels = this.addMetadataComponentEntries(entry, isSelected);
@@ -122,14 +122,14 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		for(Component c : allComponents) {
 			RendererUtils.setColor(c, isSelected);
 		}
-		RendererUtils.setColor(this, isSelected);	
+		RendererUtils.setColor(this, isSelected);
 		return this;
 	}
 	
 	/**
 	 * Add a component for each valid value in the {@link MetadataDownloadEntry}. In common author and title
 	 * are two of the values to be present and created.
-	 * @return The number of components that was created and added. 
+	 * @return The number of components that was created and added.
 	 */
 	private int addMetadataComponentEntries(MetadataDownloadEntry entry, boolean isEditing) {
 		int result = 0;
@@ -158,7 +158,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 			result++;
 		}
 		
-		//no isbn 10 if isbn 13 is available 
+		//no isbn 10 if isbn 13 is available
 		if(!StringUtils.isEmpty(entry.getIsbn13())) {
 			JComponent metadataEntryISBN13View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn13"), entry.getIsbn13(), IMetadataReader.METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN13View);
@@ -260,7 +260,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 				}
 			} catch (Exception e) {
 				LoggerFactory.logInfo(this, "Could not render thumbnail", e);
-			} 
+			}
 		}
 		return null;
 	}
@@ -281,7 +281,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	/**
 	 * Tells if the user has selected the cover image checkbox for set/replace
-	 * the cover of the ebook file with the downloaded one. 
+	 * the cover of the ebook file with the downloaded one.
 	 */
 	boolean isCoverImageChecked() {
 		return this.imageCheck.isSelected();
