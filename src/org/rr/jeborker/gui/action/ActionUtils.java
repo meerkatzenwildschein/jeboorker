@@ -10,9 +10,12 @@ import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.JeboorkerConstants;
@@ -274,23 +277,30 @@ public class ActionUtils {
 	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
 			final List<IResourceHandler> sourceResourcesToTransfer, final boolean delete) throws IOException {
 		final ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
-		FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
+		
+		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
 			
 			@Override
 			public void run() {
+				FileRefreshBackground.setDisabled(true);
+				MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 				try {
 					for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
 						IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory, sourceResource.getName());
+						progressMonitor.monitorProgressStart(Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), targetResource.getName()));
 						if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
-							boolean success = sourceResource.copyTo(targetResource, false);
-							if(success) {
+							if(delete) {
+								sourceResource.moveTo(targetResource, false);
+							} else {
+								sourceResource.copyTo(targetResource, false);
+							}
+							if(targetResource.exists()) {
 								EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
 								ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
 								MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
 								importedResources.add(targetResource);
 								
 								if(delete) {
-									sourceResource.delete();
 									MainController.getController().getMainTreeHandler().removeDeletedTreeItems();
 								}
 							}
@@ -304,12 +314,40 @@ public class ActionUtils {
 							}
 						}
 					}
-				} catch(IOException e) {
-					throw new RuntimeException(e);
+				} catch (IOException e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to copy file " + basePath + " to " + targetRecourceDirectory, e);
+				} finally {
+					removeDeletedFileFromModel(importedResources);
+					
+					progressMonitor.monitorProgressStop();
+					FileRefreshBackground.setDisabled(false);
 				}
 			}
 		});
-
+		
 		return importedResources;
+	}
+	
+	 /**
+	  * Removes the deleted files from model if they're located in a base path and no longer exists
+	  */
+	private static void removeDeletedFileFromModel(List<IResourceHandler> movedEbookResources) {
+		final DefaultDBManager db = DefaultDBManager.getInstance();
+		final BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
+		List<EbookPropertyItem> movedEbooks = new TransformValueList<IResourceHandler, EbookPropertyItem>(movedEbookResources) {
+
+			@Override
+			public EbookPropertyItem transform(IResourceHandler resource) {
+				if(!resource.exists() && basePathList.getBasePathForFile(resource) != null) {
+					List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resource);
+					for(EbookPropertyItem item : ebookPropertyItems) {
+						db.deleteObject(item);
+						LoggerFactory.getLogger().log(Level.INFO, "Removed deleted ebook " + resource);
+					}
+				}
+				return null;
+			}
+		};
+		FileRefreshBackground.getInstance().addEbooks(movedEbooks);
 	}
 }

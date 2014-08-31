@@ -18,6 +18,7 @@ import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.action.ActionFactory;
@@ -74,7 +75,7 @@ public class FileRefreshBackground {
 	}
 	
 	/**
-	 * Starts the given {@link Runnable} and takes sure that the background refresh is disabled while running. 
+	 * Starts the given {@link Runnable} and takes sure that the background refresh is disabled while running.
 	 * @param run The {@link Runnable} to be started while no file refresh will be detected.
 	 */
 	public static void runWithDisabledRefresh(Runnable run) {
@@ -105,7 +106,7 @@ public class FileRefreshBackground {
 							List<EbookPropertyItem> processedItems = new ArrayList<EbookPropertyItem>();
 							Iterator<EbookPropertyItem> itemsIter = items.iterator();
 							while(itemsIter.hasNext()) {
-								ebookPropertyItem = itemsIter.next();						
+								ebookPropertyItem = itemsIter.next();
 								if(ebookPropertyItem != null) {
 									this.processItem(ebookPropertyItem);
 									processedItems.add(ebookPropertyItem);
@@ -128,30 +129,55 @@ public class FileRefreshBackground {
 		 * Handle these items which are added with the {@link FileRefreshBackground#addEbook(EbookPropertyItem)} method.
 		 */
 		private void processItem(EbookPropertyItem ebookPropertyItem) {
-			final IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
+			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
 			deleteOldTempFile(resourceHandler);
 			
+			if(!isManagedItem(resourceHandler)) {
+				LoggerFactory.getLogger(this).log(Level.INFO, resourceHandler + " is not a managed resource and will not be refreshed.");
+				return;
+			}
+			
 			if (!resourceHandler.exists()) {
-				// ebook file has been deleted
-				EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
-				if(reloadedItem != null) {
-					ActionUtils.removeEbookPropertyItem(ebookPropertyItem);
-					LoggerFactory.getLogger(this).log(Level.INFO, "Removed deleted entry " + ebookPropertyItem.getResourceHandler().getName());
-				}
+				handleDeletedItem(ebookPropertyItem);
 			} else if (isRefreshNeeded(ebookPropertyItem, resourceHandler)) {
-				// ebook file has been changed until the last time.
-				EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
-				if(reloadedItem != null && isRefreshNeeded(reloadedItem, resourceHandler)) {
-					ApplicationAction refreshAction = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString());
-					refreshAction.putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE);
-					refreshAction.invokeAction();
-					LoggerFactory.getLogger(this).log(Level.INFO, "Changed entry " + ebookPropertyItem.getResourceHandler().getName() + " refreshed.");
-				}
+				handleRefreshItem(ebookPropertyItem, resourceHandler);
+			}
+		}
+
+		/**
+		 * Handle an ebook file that has been changed until the last time.
+		 * @param ebookPropertyItem The ebook file to process.
+		 * @param resourceHandler
+		 */
+		private void handleRefreshItem(EbookPropertyItem ebookPropertyItem, IResourceHandler resourceHandler) {
+			EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
+			if(isRefreshNeeded(reloadedItem, resourceHandler)) {
+				ApplicationAction refreshAction = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString());
+				refreshAction.putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE);
+				refreshAction.invokeAction();
+				LoggerFactory.getLogger(this).log(Level.INFO, "Changed entry " + ebookPropertyItem.getResourceHandler().getName() + " refreshed.");
+			}
+		}
+
+		/**
+		 * Handle an ebook file that has been deleted.
+		 * @param ebookPropertyItem The ebook file to process.
+		 */
+		private void handleDeletedItem(EbookPropertyItem ebookPropertyItem) {
+			EbookPropertyItem reloadedItem = EbookPropertyItemUtils.reloadEbookPropertyItem(ebookPropertyItem);
+			if(reloadedItem != null) {
+				ActionUtils.removeEbookPropertyItem(ebookPropertyItem);
+				LoggerFactory.getLogger(this).log(Level.INFO, "Removed deleted entry " + ebookPropertyItem.getResourceHandler().getName());
 			}
 		}
 		
+		private boolean isManagedItem(IResourceHandler resourceHandler) {
+			return PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath().containsBasePathFor(resourceHandler.getResourceString());
+		}
+		
 		private boolean isRefreshNeeded(EbookPropertyItem ebookPropertyItem, IResourceHandler resourceHandler) {
-			if(ebookPropertyItem.getTimestamp() > 0l && ebookPropertyItem.getTimestamp() < resourceHandler.getModifiedAt().getTime()) {
+			if (ebookPropertyItem != null && ebookPropertyItem.getTimestamp() > 0l
+					&& ebookPropertyItem.getTimestamp() < resourceHandler.getModifiedAt().getTime()) {
 				return true;
 			}
 			return false;
@@ -161,7 +187,7 @@ public class FileRefreshBackground {
 		 * Test if the given temp file is old and moves it to the trash if it is.
 		 * @param tmpFile The file to be deleted.
 		 */
-		private void deleteOldTempFile(final IResourceHandler ebook) {
+		private void deleteOldTempFile(IResourceHandler ebook) {
 			final List<IResourceHandler> tmpFiles = ResourceHandlerFactory.getExistingUniqueResourceHandler(ebook, "tmp");
 			for(IResourceHandler tmpFile : tmpFiles) {
 				if (tmpFile.exists()) {
