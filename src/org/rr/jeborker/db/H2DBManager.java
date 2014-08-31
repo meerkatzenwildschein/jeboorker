@@ -133,9 +133,12 @@ class H2DBManager extends DefaultDBManager {
 				LoggerFactory.getLogger().log(Level.INFO, "No Where clause", e);
 			}
 			appendOrderFields(orderFields, orderDirection, sql);
-System.out.println(sql);
+
+			String sqlString = sql.toString();
+			LoggerFactory.getLogger(this).log(Level.INFO, sqlString);
+			
 			Dao<T, T> createDao = DaoManager.createDao(getConnectionPool(), cls);
-			GenericRawResults<T> queryRaw = createDao.queryRaw(sql.toString(), new RawRowMapperImpl<T, T>(new TableInfo<T, T>(getConnectionPool(),
+			GenericRawResults<T> queryRaw = createDao.queryRaw(sqlString, new RawRowMapperImpl<T, T>(new TableInfo<T, T>(getConnectionPool(),
 					(BaseDaoImpl<T, T>) createDao, cls)), new String[0]);
 
 			Iterator<T> iterator = queryRaw.closeableIterator();
