@@ -11,6 +11,9 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -99,10 +102,10 @@ class FileResourceHandler extends AResourceHandler {
 	 * Tests if the given resource is a valid file system file.
 	 */
 	@Override
-	public boolean isValidResource(final String resource) {
-		if(resource.startsWith(FILE_URL)) {
+	public boolean isValidResource(final String resourceString) {
+		if(resourceString.startsWith(FILE_URL)) {
 			try {
-				URLDecoder.decode(resource, "UTF-8");
+				URLDecoder.decode(resourceString, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				return false;
 			}
@@ -110,38 +113,54 @@ class FileResourceHandler extends AResourceHandler {
 		}
 		
 		try {
-			if(resource.startsWith("/") && resource.indexOf("//")==-1 && resource.indexOf("\\\\")==-1 && !resource.startsWith("\\")) {
+			if(isUnixFilePath(resourceString)) {
 				return true;
-			} else if (new File(resource).exists()) {
+			} else if (isWindowsFilePath(resourceString)) {
 				return true;
-			} else if (Pattern.matches("^[a-zA-Z]:\\\\.*", resource)){
-				//windows pattern match ..
-				/*
-				c:
-				c:\
-				c:\nv6vsa76A5v
-				c:\nv6vsa76A5v\
-				c:\nv6vsa76A5v\hvsdav
-				c:\nv6vsa76A5v\hvsdav\hvsdav\hvsdav\hvsdav\
-				c:\nv6vsa76A5v\hvsdav\hvsdav\hvsdav\hvsdav\web.config
-				C:\abc\aabc6675bnvs.thgcsdcbsd
-				d:\folder1\folder1\web.config
-				d:\folder1\folder1\1.txt
-
-				Not Accept
-				C
-				C::
-				C:\\
-				C:\abc\\
-				C:\abc\ab%g
-				C:\abc\aabc.txt\
-				C:\abc\aabc.txt\ab	*/
+			} else if (new File(resourceString).exists()) {
 				return true;
 			}
 			return false;
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	/**
+	 * Test if the given resource string match to a unix file- or file system path.
+	 * @param resourceString A resource string to be tested if it look like a unix path
+	 * @return <code>true</code> if the given resourceString is a unix path or <code>false</code> otherwise.
+	 */
+	private boolean isUnixFilePath(String resourceString) {
+		return resourceString.startsWith("/") && resourceString.indexOf("//")==-1 && resourceString.indexOf("\\\\")==-1 && !resourceString.startsWith("\\");
+	}
+	
+	/**
+	 * Tells if the given resource string matches to a valid windows path or file name.
+	 * @param resourceString The resource string to be tested. Following examples matches with <code>true</code>.
+	 *	c:
+	 *	c:\
+	 *	c:\nv6vsa76A5v
+	 *	c:\nv6vsa76A5v\
+	 *	c:\nv6vsa76A5v\hvsdav
+	 *	c:\nv6vsa76A5v\hvsdav\hvsdav\hvsdav\hvsdav\
+	 *	c:\nv6vsa76A5v\hvsdav\hvsdav\hvsdav\hvsdav\web.config
+	 *	C:\abc\aabc6675bnvs.thgcsdcbsd
+	 *	d:\folder1\folder1\web.config
+	 *	d:\folder1\folder1\1.txt
+	 *
+	 *	Not Accept
+	 *	C
+	 *	C::
+	 *	C:\\
+	 *	C:\abc\\
+	 *	C:\abc\ab%g
+	 *	C:\abc\aabc.txt\
+	 *	C:\abc\aabc.txt\ab
+	 * @return <code>true</code> if the given resource matches to a windows file and <code>false</code> otherwise.
+	 */
+	private boolean isWindowsFilePath(String resourceString) {
+		return Pattern.matches("^[a-zA-Z]:\\\\.*", resourceString);
 	}
 
 	/**
@@ -277,7 +296,7 @@ class FileResourceHandler extends AResourceHandler {
 
 	@Override
 	public boolean mkdirs() {
-		this.isDirectory = null;
+		resetIsDirectoryEvaluation();
 		return this.file.mkdirs();
 		
 	}
@@ -290,20 +309,23 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public void delete() throws IOException {
-		boolean success;
-		if(this.isFileResource()) {
-			success = this.file.delete();
+		if(this.isFileResource() && this.exists()) {
+			Path path = Paths.get(file.getAbsolutePath());
+			Files.delete(path);
 		} else {
 			FileUtils.deleteDirectory(this.file);
-			success = !this.exists();
 		}
 		
-		if(!success) {
+		if(this.exists()) {
 			throw new IOException("could not delete resource " + String.valueOf(this.file));
-		} else {
-			//no need to delete this later. It's already done.
-			ResourceHandlerFactory.removeTemporaryResource(this);
 		}
+		
+		//no need to delete this later. It's already done.
+		ResourceHandlerFactory.removeTemporaryResource(this);
+		resetIsDirectoryEvaluation();
+	}
+
+	private void resetIsDirectoryEvaluation() {
 		this.isDirectory = null;
 	}
 	
@@ -501,7 +523,7 @@ class FileResourceHandler extends AResourceHandler {
 	}
 
 	/**
-	 * Sets some local fields to <code>null</code>. It's not really importand
+	 * Sets some local fields to <code>null</code>. It's not really important
 	 * that the dispose is invoked to this {@link FileResourceHandler} instance.
 	 */
 	@Override
@@ -554,23 +576,24 @@ class FileResourceHandler extends AResourceHandler {
 			} else {
 				throw new IOException("could not copy the directory "+this.getResourceString()+" over the file " + targetRecourceLoader.getResourceString());
 			}
-		} else {
-			//perform a slow stream copy.
-			OutputStream contentOutputStream = null;
-			try {
-				contentOutputStream = targetRecourceLoader.getContentOutputStream(false);
-				IOUtils.write(this.getContent(), contentOutputStream);
-				return true;
-			} finally {
-				IOUtils.closeQuietly(contentOutputStream);
-			}
 		}
+		
+		//perform a slow stream copy.
+		OutputStream contentOutputStream = null;
+		try {
+			contentOutputStream = targetRecourceLoader.getContentOutputStream(false);
+			IOUtils.write(this.getContent(), contentOutputStream);
+			return true;
+		} finally {
+			IOUtils.closeQuietly(contentOutputStream);
+		}
+		
 	}
 
 
 	@Override
 	public void moveTo(IResourceHandler targetRecourceLoader, boolean overwrite) throws IOException {
-		this.isDirectory = null;
+		resetIsDirectoryEvaluation();
 		
 		if(targetRecourceLoader instanceof FileResourceHandler) {
 			if(this.equals(targetRecourceLoader)) {
@@ -590,14 +613,12 @@ class FileResourceHandler extends AResourceHandler {
 				}
 				FileUtils.moveFile(this.file, ((FileResourceHandler) targetRecourceLoader).file);
 				return;
-			} else {
-				super.moveTo(targetRecourceLoader, overwrite);
-				return;
 			}
-		} else {
 			super.moveTo(targetRecourceLoader, overwrite);
 			return;
 		}
+		super.moveTo(targetRecourceLoader, overwrite);
+		return;
 	}
 	
 	/**
@@ -609,7 +630,6 @@ class FileResourceHandler extends AResourceHandler {
 	 * @throws IOException
 	 */
 	public boolean nioCopyFile(File sourceFile, File destFile, boolean overwrite) throws IOException {
-		//start position of the file data to copy
 		long position = 0;
 		if(!overwrite && destFile.exists()) {
 			return false;
@@ -720,7 +740,6 @@ class FileResourceHandler extends AResourceHandler {
 			return ResourceHandlerFactory.getResourceHandler(fileSystemViewInstance.createNewFolder(this.file));
 		}
 	}
-
 
 	@Override
 	public File toFile() {
