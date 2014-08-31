@@ -56,7 +56,7 @@ class MetadataDownloadView extends AbstractDialogView {
 
 	private boolean hasCoverWriterSupport = true;
 
-	private HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
+	private Map<METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
 
 	private byte[] coverImage;
 
