@@ -119,6 +119,4 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		ActionUtils.importEbookResources(dropRow, basePath, targetRecourceDirectory, sourceFiles, deleteSourceFiles);
 	}
 
-
-
 }
