@@ -40,7 +40,7 @@ class FileResourceHandler extends AResourceHandler {
 	/**
 	 * The resource String parsed into a file.
 	 */
-	private String resource;
+	private String resourceString;
 	
 	/**
 	 * the file to be handled with this {@link FileResourceHandler} instance.
@@ -69,7 +69,7 @@ class FileResourceHandler extends AResourceHandler {
 	FileResourceHandler(File f) {
 		super();
 		this.setFile(f);
-		this.resource  = f.getPath();
+		this.resourceString  = f.getPath();
 	}
 	
 	/**
@@ -148,13 +148,13 @@ class FileResourceHandler extends AResourceHandler {
 	 * Creates a new {@link FileResourceHandler} instance for the given
 	 * resource.
 	 *
-	 * @param resource The resource to be loaded.
+	 * @param resourceString The resource to be loaded.
 	 */
 	@Override
-	public IResourceHandler createInstance(final String resource) {
+	public IResourceHandler createInstance(String resourceString) {
 		final FileResourceHandler result = new FileResourceHandler();
-		if(resource.startsWith(FILE_URL)) {
-			String fileUrlResource = resource.substring(FILE_URL.length());
+		if(resourceString.startsWith(FILE_URL)) {
+			String fileUrlResource = resourceString.substring(FILE_URL.length());
 			if(fileUrlResource.indexOf('%') != -1) {
 				try {
 					fileUrlResource = URLDecoder.decode(fileUrlResource, "UTF-8");
@@ -164,21 +164,26 @@ class FileResourceHandler extends AResourceHandler {
 			}
 			result.setFile(new File(fileUrlResource));
 		} else {
-			result.setFile(new File(resource));
+			result.setFile(new File(resourceString));
 		}
-		result.resource = resource;
 		
+		result.resourceString = normalizeDirectoryResourceString(resourceString, result.file);
 		return result;
 	}
-	
-	public String getResourceString() {
-		if(this.isDirectoryResource()) {
+
+
+	private String normalizeDirectoryResourceString(String resource, File file) {
+		if(file.isDirectory()) {
 			//normalize that a directory resource is always returned with a trailing slash / backslash
 			if(!resource.endsWith("/") && !resource.endsWith("\\") && !resource.endsWith(File.separator)) {
-				return resource + File.separator;
+				resource = resource + File.separator;
 			}
 		}
 		return resource;
+	}
+	
+	public String getResourceString() {
+		return resourceString;
 	}
 
 	/**
