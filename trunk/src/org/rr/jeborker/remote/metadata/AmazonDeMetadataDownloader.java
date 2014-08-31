@@ -33,13 +33,13 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 
 	private ExecutorService pool = Jeboorker.APPLICATION_THREAD_POOL;
 
-	protected String amazonURL = "http://www.amazon.de";
+	private String amazonURL = "http://www.amazon.de";
 
-	protected String ageSuggestionMarker = "Vom Hersteller empfohlenes Alter:";
+	private String ageSuggestionMarker = "Vom Hersteller empfohlenes Alter:";
 
-	protected String languageMarker = "Sprache:";
+	private String languageMarker = "Sprache:";
 
-	protected String authorMarker = "(Autor)";
+	private String authorMarker = "(Autor)";
 
 	@Override
 	public List<MetadataDownloadEntry> search(String searchTerm) {
@@ -141,8 +141,9 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	 * Loads the amazon search page html bytes for the given page number.
 	 */
 	private byte[] loadAmazonSearchPage(final String encodesSearchPhrase, final int page) throws IOException {
-		//http://www.amazon.de/s/ref=nb_sb_noss_1?field-keywords=die+orks&rh=n%3A186606
-		final String urlString = amazonURL + "/s/ref=nb_sb_noss_1?ie=UTF8&field-keywords=" + encodesSearchPhrase + "&page=" + page + "&rh=n%3A186606";
+		//http://www.amazon.de /s/ref=nb_sb_noss_1?field-keywords=die+orks&rh=n%3A186606
+		//http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=Terry+Pratchett
+		final String urlString = getAmazonURL() + "/s/ref=nb_sb_noss?url=search-alias%3Daps&ie=UTF8&field-keywords=" + encodesSearchPhrase + "&page=" + page;
 		LoggerFactory.getLogger(this).log(Level.INFO, "Loading... " + urlString);
 		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(urlString);
 		final byte[] content = resourceLoader.getContent();
@@ -240,7 +241,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 									int authorIdx = href.indexOf("field-author");
 									if(authorIdx != -1) {
 										Element nextElementSibling = aElement.nextElementSibling();
-										if(nextElementSibling != null && nextElementSibling.text().contains(authorMarker)) {
+										if(nextElementSibling != null && nextElementSibling.text().contains(getAuthorMarker())) {
 											String author = href.substring(authorIdx + 13, href.indexOf("&", authorIdx));
 											result.add(URLDecoder.decode(author, "UTF-8"));
 										}
@@ -284,12 +285,12 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 
 		@Override
 		public String getAgeSuggestion() {
-			return getProductInformationValue(ageSuggestionMarker);
+			return getProductInformationValue(getAgeSuggestionMarker());
 		}
 
 		@Override
 		public String getLanguage() {
-			return getProductInformationValue(languageMarker);
+			return getProductInformationValue(getLanguageMarker());
 		}
 
 		@Override
@@ -365,6 +366,22 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 			return false;
 		}
 
+	}
+
+	public String getAmazonURL() {
+		return amazonURL;
+	}
+
+	public String getLanguageMarker() {
+		return languageMarker;
+	}
+
+	public String getAuthorMarker() {
+		return authorMarker;
+	}
+
+	public String getAgeSuggestionMarker() {
+		return ageSuggestionMarker;
 	}
 
 }
