@@ -1216,10 +1216,15 @@ public final class StringUtils implements Serializable {
      * @return <code>true</code> if the string is empty or <code>false</code> otherwise.
      */
     public static boolean isEmpty(CharSequence text) {
-    	if(text == null || text.toString().trim().length() == 0) {
-    		return true;
-    	}
-    	return false;
+		if (text == null) {
+			return true;
+		}
+		for (int i = 0; i < text.length(); i++) {
+			if (! Character.isWhitespace(text.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
     }
 
     /**
