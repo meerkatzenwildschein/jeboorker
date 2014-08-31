@@ -53,8 +53,9 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public ResourceHandlerInputStream getContentInputStream() throws IOException {
+		ResourceHandlerInputStream result;
 		if(this.url.getProtocol().equals("http")) {
-			return new ResourceHandlerInputStream(this, new HttpInputStream(this.url));
+			result = new ResourceHandlerInputStream(this, new HttpInputStream(this.url));
 		} else {
 			URLConnection connection = this.url.openConnection();
 			if(connection instanceof HttpURLConnection) {
@@ -63,10 +64,10 @@ public class URLResourceHandler extends AResourceHandler {
 			}
 			connection.connect();
 			InputStream inputStream = connection.getInputStream();
-			ResourceHandlerInputStream in = new ResourceHandlerInputStream(this, inputStream);
+			result = new ResourceHandlerInputStream(this, inputStream);
 			inStream.add(inputStream);
-			return in;
 		}
+		return result;
 	}
 
 	@Override
@@ -114,7 +115,7 @@ public class URLResourceHandler extends AResourceHandler {
 	@Override
 	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) throws IOException {
 		return new IResourceHandler[0];
-	}	
+	}
 
 	@Override
 	public IResourceHandler[] listFileResources() throws IOException {
