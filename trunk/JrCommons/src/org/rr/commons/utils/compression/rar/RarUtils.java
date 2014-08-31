@@ -27,7 +27,7 @@ public class RarUtils {
 	private static String rarExecFolder;
 	
 	/**
-	 * Set the folder where the rar executables could be found. 
+	 * Set the folder where the rar executables could be found.
 	 */
 	public static void setRarExecFolder(String rarExecF) {
 		rarExecFolder = rarExecF;
@@ -38,26 +38,26 @@ public class RarUtils {
 	 * @param rarFileHandler The rar file in the file system.
 	 * @param path qualified rar path of the entry to be extracted.
 	 * @return The desired extracted entries.
-	 */	
+	 */
 	public static List<CompressedDataEntry> extract(IResourceHandler rarFileHandler, FileEntryFilter rarFileFilter) {
 		ArrayList<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
 		List<String> list = list(rarFileHandler, rarFileFilter);
 		for(String entry : list) {
 			result.add(extract(rarFileHandler, entry));
 		}
-		return result;		
+		return result;
 	}
 	
 	/**
 	 * Extracts one entry from a rar file.
 	 * @param rarFileHandler The rar file in the file system.
 	 * @param name qualified rar path of the entry to be extracted.
-	 * @return The desired extracted entry. Never returns <code>null</code> but the 
+	 * @return The desired extracted entry. Never returns <code>null</code> but the
 	 * result {@link TrueZipDataEntry} would return no bytes if the rar entry did not exists.
 	 */
 	public static CompressedDataEntry extract(IResourceHandler rarFileHandler, String name) {
 		return new LazyRarDataEntry(rarFileHandler, name);
-	}	
+	}
 	
 	/**
 	 * List all entries of the rar file.
@@ -96,7 +96,7 @@ public class RarUtils {
 	
 	/**
 	 * List all entries of the rar file allowed by the given {@link ZipFileFilter} instance.
-	 */	
+	 */
 	public static List<String> list(final IResourceHandler rarFileHandler, final FileEntryFilter rarFileFilter) {
 		final List<String> result = new ArrayList<String>();
 		final CommandLine cl = new CommandLine(getUnRarExecutable());
@@ -132,7 +132,7 @@ public class RarUtils {
 		
 		//apply filter
 		return processFileEntryFilter(result, rarFileFilter);
-	}		
+	}
 	
 	/**
 	 * Add / Replace the an entry with the given name and given data
@@ -147,7 +147,7 @@ public class RarUtils {
 			//rar archive path
 			if(name.indexOf('/') != -1) {
 				String path = name.substring(0, name.lastIndexOf('/'));
-				cl.addArgument("-ap\"" + path + "\"", false); 
+				cl.addArgument("-ap\"" + path + "\"", false);
 				name = name.substring(name.lastIndexOf('/') + 1);
 			} else {
 				cl.addArgument("-ap");
@@ -160,24 +160,25 @@ public class RarUtils {
 			
 			cl.addArgument("-ep"); //do not use the fs path
 			
-			String rarFilePath = rarFileHandler.toFile().getPath();
-			cl.addArgument(rarFilePath); //rar archive
+			String rarFilePath = rarFileHandler.toFile().getAbsolutePath();
+			cl.addArgument(StringUtils.quote(rarFilePath, '"'), false); //rar archive
 			
 			//create a copy of the entry that should be added to the rar.
 			in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
 			FileUtils.copyInputStreamToFile(data, in);
 			
-			cl.addArgument(in.getPath()); //entry to add
+			cl.addArgument(StringUtils.quote(in.getAbsolutePath(), '"'), false); //entry to add
 			
 			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
 				
 				@Override
 				public void onStandardOutput(String msg) {
-//					System.out.println(msg);
+					LoggerFactory.getLogger(this).log(Level.INFO, msg);
 				}
 				
 				@Override
 				public void onStandardError(String msg) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, msg);
 				}
 			}, ExecuteWatchdog.INFINITE_TIMEOUT);
 			
