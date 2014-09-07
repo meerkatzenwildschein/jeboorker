@@ -677,7 +677,7 @@ class MainView extends JFrame {
 		    }
 		});
 	}
-
+	
 	private JComponent createFileSystemTree() {
 		final String fileSystemTreeName = "FileSystemTree";
 
@@ -702,7 +702,8 @@ class MainView extends JFrame {
 		buttonPanel.add(collapseButton);
 
 		fileSystemTree = new JRTree();
-		fileSystemTree.setShowsRootHandles(true);
+		setupTree(fileSystemTree);
+		
 		fileSystemTree.setName(fileSystemTreeName);
 		fileSystemTree.setSelectionModel(new DefaultTreeSelectionModel());
 		if(Jeboorker.isRuntime) {
@@ -907,7 +908,7 @@ class MainView extends JFrame {
 		buttonPanel.add(collapseButton);
 
 		basePathTree = new JRTree();
-		basePathTree.setShowsRootHandles(true);
+		setupTree(basePathTree);
 		basePathTree.setName(basePathTreeName);
 		if(Jeboorker.isRuntime) {
 			basePathTree.setModel(new BasePathTreeModel(basePathTree));
@@ -1038,6 +1039,12 @@ class MainView extends JFrame {
 		});
 
 		return basePathTreePanel;
+	}
+
+	private void setupTree(JRTree tree) {
+		tree.setLargeModel(true);
+		tree.setRowHeight(0);
+		tree.setShowsRootHandles(true);
 	}
 
 	/**
