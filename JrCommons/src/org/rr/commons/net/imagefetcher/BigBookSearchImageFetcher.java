@@ -6,7 +6,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.CommonUtils;
@@ -17,20 +19,22 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 	private int page = 0;
 
 	/**
-	 * Perform a google image search and returns the result. 
+	 * Perform a google image search and returns the result.
 	 * @param searchTerm The search phrase for the search.
 	 * @param page The page number starting with 1.
-	 * 
+	 *
 	 * @return All images found by the search.
 	 * @throws IOException
-	 * 
+	 *
 	 * @see https://developers.google.com/image-search/v1/jsondevguide#json_snippets_java
 	 */
 	private  List<IImageFetcherEntry> searchImages(String searchTerm, int page) throws IOException {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
 		
-		//http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=katze+tod&ItemPage=1		
-		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler("http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=" + encodesSearchPhrase + "&ItemPage=" + page);
+		//http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=katze+tod&ItemPage=1
+		String urlString = "http://bigbooksearch.com/query.php?SearchIndex=books&Keywords=" + encodesSearchPhrase + "&ItemPage=" + page;
+		LoggerFactory.getLogger(this).log(Level.INFO, "Loading... " + urlString);
+		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(urlString);
 		try {
 			final byte[] content = resourceLoader.getContent();
 			final String contentString = new String(content);
@@ -55,10 +59,10 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 			return Collections.emptyList();
 		}
 		return searchImages(getSearchTerm(), ++page);
-	}	
+	}
 	
 	/**
-	 * The implementation for one image search result entry. 
+	 * The implementation for one image search result entry.
 	 */
 	private static class BingImageFetcherEntry extends AImageFetcherEntry {
 		
@@ -74,7 +78,7 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 				return getImageURL();
 			} catch (Exception e) {
 				return null;
-			} 
+			}
 		}
 
 		@Override
@@ -84,7 +88,7 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 				return new URL(imageSourceURL);
 			} catch (Exception e) {
 				return null;
-			} 
+			}
 		}
 
 		@Override
@@ -130,7 +134,7 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 			int parameterEndIndex = html.indexOf("'", parameterStartIndex);
 			String value = html.substring(parameterStartIndex, parameterEndIndex);
 			return value;
-		}			
+		}
 	}
 
 }
