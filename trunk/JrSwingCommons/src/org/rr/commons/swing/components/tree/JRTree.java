@@ -32,7 +32,8 @@ public class JRTree extends JTree {
 
 	public JRTree() {
 		super();
-
+		this.setLargeModel(true);
+		
 		this.addMouseListener(new ToggleExpandOnDoubleClickMouseListener());
 		this.getSelectionModel().addTreeSelectionListener(new RepaintChangeListener());
 
@@ -55,7 +56,6 @@ public class JRTree extends JTree {
 				surroundingScrollPane.addMouseWheelListener(autoMoveHorizontalMouseListener);
 			}
 		});
-
 	}
 
 	/**

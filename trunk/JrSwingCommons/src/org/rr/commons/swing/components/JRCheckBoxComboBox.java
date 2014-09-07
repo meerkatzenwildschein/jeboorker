@@ -20,10 +20,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import net.miginfocom.swing.MigLayout;
+
 import org.rr.commons.swing.components.model.DefaultJRCheckBoxComboBoxModel;
 import org.rr.commons.swing.components.model.JRCheckBoxComboBoxModel;
-
-import net.miginfocom.swing.MigLayout;
 
 public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 
@@ -139,10 +139,6 @@ public class JRCheckBoxComboBox<E> extends JRComboBox<E> {
 			model = new DefaultJRCheckBoxComboBoxModel<E>(new ArrayList<E>(), null);
 		}
 		return model;
-	}
-
-	public void setModel(JRCheckBoxComboBoxModel<E> aModel) {
-		throw new UnsupportedOperationException("setModel is not supported. Use setCheckBoxComboBoxModel instead.");
 	}
 	
 	public void setCheckBoxComboBoxModel(JRCheckBoxComboBoxModel<E> aModel) {
