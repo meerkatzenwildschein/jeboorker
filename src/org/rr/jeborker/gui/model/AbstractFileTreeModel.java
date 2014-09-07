@@ -11,6 +11,8 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 
 public abstract class AbstractFileTreeModel extends DefaultTreeModel {
+	
+	long latestUpdate = System.currentTimeMillis();
 
 	JTree tree;
 	
@@ -36,32 +38,6 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "NullPointer for node " + node);
 		} catch(Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Reload node " + node + " failed.", e);
-		}
-		
-		forceTreeUpdateUI();
-	}
-
-	/**
-	 * Sometimes there are calculation errors for the renderer component when removing a node which cause some dots
-	 * at the end of the label instead of showing the complete text. This hack forces the tree to repaint it ui.
-	 */
-	private void forceTreeUpdateUI() {
-		int rowHeight = tree.getRowHeight();
-		try {
-			try {
-				if (rowHeight != -1) {
-					tree.updateUI();
-				}
-			} catch (Exception e) {
-				LoggerFactory.getLogger().log(Level.WARNING, "Failed to refresh tree", e);
-			}
-			tree.invalidate();
-			tree.validate();
-			tree.repaint();
-		} finally {
-			if (rowHeight != -1) {
-				tree.setRowHeight(rowHeight);
-			}
 		}
 	}
 
