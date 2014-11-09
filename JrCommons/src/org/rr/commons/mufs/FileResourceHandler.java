@@ -212,7 +212,7 @@ class FileResourceHandler extends AResourceHandler {
 	 * @return The byte content of the file.
 	 */
 	@Override
-	public byte[] getContent() throws IOException {
+	public synchronized byte[] getContent() throws IOException {
 		try {
 			this.cleanHeapIfNeeded(this.file.length());
 			return FileUtils.readFileToByteArray(this.file);
