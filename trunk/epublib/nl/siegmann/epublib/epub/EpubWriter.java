@@ -21,13 +21,13 @@ import org.xmlpull.v1.XmlSerializer;
 
 /**
  * Generates an epub file. Not thread-safe, single use object.
- * 
+ *
  * @author paul
  *
  */
 public class EpubWriter {
 	
-	private final static Logger log = Logger.getLogger(EpubWriter.class.getName()); 
+	private final static Logger log = Logger.getLogger(EpubWriter.class.getName());
 	
 	// package
 	static final String EMPTY_NAMESPACE_PREFIX = "";
@@ -84,7 +84,7 @@ public class EpubWriter {
 		}
 		for(Resource resource: book.getUnlistedResources().getAll()) {
 			writeResource(resource, resultStream, true);
-		}		
+		}
 	}
 	
 	private void writeResource(Resource resource, ZipOutputStream resultStream) throws IOException {
@@ -93,7 +93,7 @@ public class EpubWriter {
 
 	/**
 	 * Writes the resource to the resultStream.
-	 * 
+	 *
 	 * @param resource
 	 * @param resultStream
 	 * @throws IOException
@@ -130,7 +130,7 @@ public class EpubWriter {
 
 	/**
 	 * Writes the META-INF/container.xml file.
-	 * 
+	 *
 	 * @param resultStream
 	 * @throws IOException
 	 */
@@ -148,7 +148,7 @@ public class EpubWriter {
 
 	/**
 	 * Stores the mimetype as an uncompressed file in the ZipOutputStream.
-	 * 
+	 *
 	 * @param resultStream
 	 * @throws IOException
 	 */
@@ -187,5 +187,5 @@ public class EpubWriter {
 		CRC32 crc = new CRC32();
 		crc.update(data);
 		return crc.getValue();
-	}	
+	}
 }

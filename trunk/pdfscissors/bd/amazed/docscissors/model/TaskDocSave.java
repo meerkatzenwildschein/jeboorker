@@ -128,7 +128,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 	private void addToDatabase(IResourceHandler resource, IResourceHandler baseFolder) {
 		final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
 		DefaultDBManager.getInstance().storeObject(item);
-		ActionUtils.addEbookPropertyItem(item);
+		ActionUtils.addAndStoreEbookPropertyItem(item);
 	}
 
 	private void debug(String string) {

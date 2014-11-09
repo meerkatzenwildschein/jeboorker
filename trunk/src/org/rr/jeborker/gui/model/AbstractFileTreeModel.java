@@ -12,8 +12,6 @@ import org.rr.commons.mufs.IResourceHandler;
 
 public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 	
-	long latestUpdate = System.currentTimeMillis();
-
 	JTree tree;
 	
 	public AbstractFileTreeModel(JTree tree, TreeNode root) {
