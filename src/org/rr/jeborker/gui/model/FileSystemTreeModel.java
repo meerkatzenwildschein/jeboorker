@@ -109,6 +109,24 @@ public class FileSystemTreeModel extends AbstractFileTreeModel {
 			}
 		}
 	}
+	
+	/**
+	 * Remove all deleted files from the model.
+	 */
+	public List<FileSystemNode> getDeletedFileNodes() {
+		int rows = tree.getRowCount();
+		ArrayList<FileSystemNode> nodesToRemove = new ArrayList<FileSystemNode>();
+		for(int i = 0; i< rows; i++) {
+			Object aNode = tree.getPathForRow(i).getLastPathComponent();
+			if(aNode instanceof FileSystemNode) {
+				FileSystemNode fsNode = (FileSystemNode) aNode;
+				if(!fsNode.getResource().exists()) {
+					nodesToRemove.add(fsNode);
+				}
+			}
+		}
+		return nodesToRemove;
+	}
 
 	/**
 	 * Get some special folder to be shown at the root file levels.

@@ -82,7 +82,7 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 	@Override
 	public void finalizeAction(int count) {
 		if(newEbookPropertyItem != null) {
-			ActionUtils.addEbookPropertyItem(newEbookPropertyItem, row + 1 + count);
+			ActionUtils.addAndStoreEbookPropertyItem(newEbookPropertyItem, row + 1 + count);
 		}
 	}
 

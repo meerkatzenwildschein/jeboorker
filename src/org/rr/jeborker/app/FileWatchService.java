@@ -159,7 +159,7 @@ public class FileWatchService {
 					if( basePathForFile != null && resource.exists() && ActionUtils.isSupportedEbookFormat(resource, true) ) {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, basePathForFile);
 						DefaultDBManager.getInstance().storeObject(item);
-						ActionUtils.addEbookPropertyItem(item);
+						ActionUtils.addAndStoreEbookPropertyItem(item);
 						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(basePathForFile);
 						LoggerFactory.getLogger().log(Level.INFO, "add " + resource);
 					}

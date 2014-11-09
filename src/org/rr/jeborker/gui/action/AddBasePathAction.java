@@ -129,7 +129,7 @@ class AddBasePathAction extends AbstractAction {
 				if(resource.isFileResource() && ActionUtils.isSupportedEbookFormat(resource, true)) {
 					try {
 						final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
-						ActionUtils.addEbookPropertyItem(item);
+						ActionUtils.addAndStoreEbookPropertyItem(item);
 						path.add(resource.getParentResource().toString());
 						return true;
 					} catch(Throwable e) {
