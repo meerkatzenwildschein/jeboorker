@@ -477,7 +477,7 @@ public class JImageDownloadDialog extends JDialog {
 							}
 						}
 					};
-					ThreadUtils.loop(imageFetcherEntries, each, 8);
+					ThreadUtils.loopAndWait(imageFetcherEntries, each, 8);
 				} catch (Exception e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Images could not be retrieved.", e);
 				}
