@@ -32,7 +32,7 @@ class InputStreamResourceHandler extends AResourceHandler {
 	}
 
 	/**
-	 * Delete is not supported at {@link InputStream}. 
+	 * Delete is not supported at {@link InputStream}.
 	 * @return <code>false</code> in any case.
 	 */
 	@Override
@@ -42,7 +42,7 @@ class InputStreamResourceHandler extends AResourceHandler {
 	@Override
 	public boolean moveToTrash() throws IOException {
 		return ResourceHandlerUtils.moveToTrash(this);
-	}		
+	}
 
 	@Override
 	public void dispose() {
@@ -56,7 +56,7 @@ class InputStreamResourceHandler extends AResourceHandler {
 	}
 
 	@Override
-	public byte[] getContent() throws IOException {
+	public synchronized byte[] getContent() throws IOException {
 		byte[] byteArray = IOUtils.toByteArray(this.inputStream);
 		this.inputStream.reset();
 		return byteArray;
@@ -101,7 +101,7 @@ class InputStreamResourceHandler extends AResourceHandler {
 	@Override
 	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) {
 		return new IResourceHandler[0];
-	}	
+	}
 
 	@Override
 	public IResourceHandler[] listFileResources() {
@@ -146,18 +146,18 @@ class InputStreamResourceHandler extends AResourceHandler {
 	}
 	
 	/**
-	 * @return <code>false</code> in any case because it could not be surly determined if the 
+	 * @return <code>false</code> in any case because it could not be surly determined if the
 	 * {@link InputStream} handled by this {@link InputStreamResourceHandler} instance
-	 * is a local one or not.  
-	 */	
+	 * is a local one or not.
+	 */
 	public boolean isRemoteResource() {
 		return false;
 	}
 
 	/**
-	 * The {@link InputStreamResourceHandler} could not created by the user. 
+	 * The {@link InputStreamResourceHandler} could not created by the user.
 	 * The {@link InputStreamResourceHandler} is only be used internally to provide
-	 * some data which are for example be fetched from the database. 
+	 * some data which are for example be fetched from the database.
 	 */
 	@Override
 	public RESOURCE_HANDLER_USER_TYPES getType() {

@@ -272,7 +272,7 @@ abstract class AResourceHandler implements IResourceHandler {
 	 * @return The content of the resource.
 	 */
 	@Override
-	public byte[] getContent() throws IOException {
+	public synchronized byte[] getContent() throws IOException {
 		InputStream contentInputStream = this.getContentInputStream();
 		byte[] byteArray = IOUtils.toByteArray(contentInputStream);
 		IOUtils.closeQuietly(contentInputStream);

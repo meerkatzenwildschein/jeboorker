@@ -16,7 +16,7 @@ import org.rr.commons.utils.ReflectionUtils;
 
 /**
  * Encapsulates an Iterator and provide it's data with a list
- * interface. The iterator content is only be copied if needed (lazy). 
+ * interface. The iterator content is only be copied if needed (lazy).
  */
 public class IteratorList<E> implements ICloseableList<E> {
 	
@@ -89,15 +89,15 @@ public class IteratorList<E> implements ICloseableList<E> {
 		int indexOf = list.indexOf(o);
 		if(list.indexOf(o)!=-1) {
 			return indexOf;
-		} 
+		}
 		
 		while(iterator.hasNext()) {
 			E next = iterator.next();
 			list.add(next);
 			if(o==null && next==null) {
-				return list.size()-1; 
+				return list.size()-1;
 			} else if(o!=null && o.equals(next)) {
-				return list.size()-1; 
+				return list.size()-1;
 			}
 		}
 		return -1;
@@ -214,7 +214,7 @@ public class IteratorList<E> implements ICloseableList<E> {
 					closeMethod.invoke(this.iterator, new Object[0]);
 				} catch (Exception e) {
 					LoggerFactory.log(Level.WARNING, this, "Can not close Iterator", e);
-				} 
+				}
 			}
 		}
 	}
