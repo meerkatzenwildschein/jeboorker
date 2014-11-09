@@ -10,10 +10,11 @@ import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
-import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
@@ -190,8 +191,8 @@ public class ActionUtils {
 	 * Adds the given item to the database and to the ui.
 	 * @param item The item to be added.
 	 */
-	public static void addEbookPropertyItem(final EbookPropertyItem item) {
-		addEbookPropertyItem(item, -1);
+	public static void addAndStoreEbookPropertyItem(EbookPropertyItem item) {
+		addAndStoreEbookPropertyItem(item, -1);
 	}
 	
 	/**
@@ -199,10 +200,26 @@ public class ActionUtils {
 	 * @param item The item to be added.
 	 * @param row The row where the item should be added to.
 	 */
-	public static void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
+	public static void addAndStoreEbookPropertyItem(EbookPropertyItem item, int row) {
 		MainController.getController().getProgressMonitor().setMessage(Bundle.getFormattedString("AddBasePathAction.add", item.getFileName()));
+		storeEbookPropertyItem(item);
+		addEbookPropertyItem(item, row);
+	}
+
+	/**
+	 * Stores the given {@link EbookPropertyItem} in the database.
+	 * @param item The database item to be stored.
+	 */
+	private static void storeEbookPropertyItem(EbookPropertyItem item) {
 		DefaultDBManager.getInstance().storeObject(item);
-		
+	}
+	
+	/**
+	 * Adds the given {@link EbookPropertyItem} to the ui model.
+	 * @param item The item to be added.
+	 * @param row The row where the item should be added. Can be -1 if it should be attached somewhere.
+	 */
+	private static void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
@@ -211,6 +228,7 @@ public class ActionUtils {
 			}
 		});
 	}
+	
 	
 	/**
 	 * Deletes the given item from the database and the view.
@@ -247,16 +265,33 @@ public class ActionUtils {
 			return false;
 		}
 		
-		//user file formats with basic/empty reader support
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		final String supportedBasicTypes = preferenceStore.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.BASIC_FILE_TYPES);
-		final String extension = resource.getFileExtension();
-		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.contains("," + extension))) {
+		if(isSupportedEbookFormatExtension(resource)) {
 			return true;
 		}
 		
+		if(isSupportedEbookFormatMime(resource, force)) {
+			return true;
+		}
+	
+		return false;
+	}
+	
+	/**
+	 * user file formats with basic/empty reader support
+	 */
+	private static boolean isSupportedEbookFormatExtension(IResourceHandler resource) {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		String supportedBasicTypes = preferenceStore.getEntryAsString(PreferenceStoreFactory.PREFERENCE_KEYS.BASIC_FILE_TYPES);
+		String extension = resource.getFileExtension();
+		if(!extension.isEmpty() && (supportedBasicTypes.startsWith(extension) || supportedBasicTypes.contains("," + extension))) {
+			return true;
+		}
+		return false;
+	}
+	
+	private static boolean isSupportedEbookFormatMime(IResourceHandler resource, boolean force) {
 		final String mime = resource.getMimeType(force);
-		if(mime == null || mime.length() == 0) {
+		if(StringUtils.isEmpty(mime)) {
 			return false;
 		}
 		
@@ -275,7 +310,7 @@ public class ActionUtils {
 	 * @return A list of all imported (target) file resources.
 	 */
 	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
-			final List<IResourceHandler> sourceResourcesToTransfer, final boolean delete) throws IOException {
+			final List<IResourceHandler> sourceResourcesToTransfer, final boolean move) throws IOException {
 		final ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
 		
 		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
@@ -283,26 +318,32 @@ public class ActionUtils {
 			@Override
 			public void run() {
 				FileRefreshBackground.setDisabled(true);
-				MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+				MainController controller = MainController.getController();
+				MainMonitor progressMonitor = controller.getProgressMonitor();
 				try {
 					progressMonitor.monitorProgressStart("Start file copy");
 					for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
 						IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory, sourceResource.getName());
 						progressMonitor.setMessage(Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), targetResource.getName()));
-						if(sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists()) {
-							if(delete) {
-								sourceResource.moveTo(targetResource, false);
-							} else {
-								sourceResource.copyTo(targetResource, false);
-							}
-							if(targetResource.exists()) {
+						if(isImportAllowed(sourceResource, targetResource)) {
+							boolean transferSuccess = transferFile(sourceResource, targetResource, move);
+							if(transferSuccess) {
 								EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
-								ActionUtils.addEbookPropertyItem(newItem, dropRow + 1);
-								MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
+								
+								List<EbookPropertyItem> sourceItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(sourceResource);
+								if(ListUtils.isNotEmpty(sourceItems)) {
+									ActionUtils.storeEbookPropertyItem(newItem);
+									for(EbookPropertyItem sourceItem : sourceItems) {
+										controller.removeEbookPropertyItem(sourceItem);
+									}
+								} else {
+									ActionUtils.addAndStoreEbookPropertyItem(newItem, dropRow + 1);
+								}
+								controller.getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
 								importedResources.add(targetResource);
 								
-								if(delete) {
-									MainController.getController().getMainTreeHandler().removeDeletedTreeItems();
+								if(move) {
+									refreshResourceParents(sourceResourcesToTransfer);
 								}
 							}
 						} else {
@@ -322,7 +363,8 @@ public class ActionUtils {
 						
 						@Override
 						public void run() {
-							removeDeletedFileFromModel(importedResources);
+							removeDeletedFileFromModelAndDatabase(importedResources);
+							removeDeletedFileFromModelAndDatabase(sourceResourcesToTransfer);
 						}
 					});
 					
@@ -335,26 +377,45 @@ public class ActionUtils {
 		return importedResources;
 	}
 	
-	 /**
-	  * Removes the deleted files from model if they're located in a base path and no longer exists
-	  */
-	private static void removeDeletedFileFromModel(List<IResourceHandler> movedEbookResources) {
-		final DefaultDBManager db = DefaultDBManager.getInstance();
-		final BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
-		List<EbookPropertyItem> movedEbooks = new TransformValueList<IResourceHandler, EbookPropertyItem>(movedEbookResources) {
-
-			@Override
-			public EbookPropertyItem transform(IResourceHandler resource) {
-				if(!resource.exists() && basePathList.getBasePathForFile(resource) != null) {
-					List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resource);
-					for(EbookPropertyItem item : ebookPropertyItems) {
-						db.deleteObject(item);
-						LoggerFactory.getLogger().log(Level.INFO, "Removed deleted ebook " + resource);
-					}
-				}
-				return null;
+	private static void refreshResourceParents(List<IResourceHandler> resources) {
+		List<IResourceHandler> alreadyRefreshedParents = new ArrayList<IResourceHandler>(resources.size());
+		for (IResourceHandler resourceHandler : resources) {
+			IResourceHandler parentResource = resourceHandler.getParentResource();
+			if(!alreadyRefreshedParents.contains(parentResource)) {
+				MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(parentResource);
+				alreadyRefreshedParents.add(parentResource);
 			}
-		};
-		FileRefreshBackground.getInstance().addEbooks(movedEbooks);
+		}
+	}
+	
+	private static boolean transferFile(IResourceHandler sourceResource, IResourceHandler targetResource, boolean move) throws IOException {
+		if(move) {
+			sourceResource.moveTo(targetResource, false);
+		} else {
+			sourceResource.copyTo(targetResource, false);
+		}
+		return targetResource.exists();
+	}
+	
+	private static boolean isImportAllowed(IResourceHandler sourceResource, IResourceHandler targetResource) {
+		return sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists();
+	}
+
+	/**
+	 * Removes the deleted files from model and database if they're located in a base path and no longer exists
+	 */
+	private static void removeDeletedFileFromModelAndDatabase(List<IResourceHandler> movedEbookResources) {
+		DefaultDBManager db = DefaultDBManager.getInstance();
+		BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
+		for (IResourceHandler resource : movedEbookResources) {
+			List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resource);
+			for (EbookPropertyItem item : ebookPropertyItems) {
+				if (!resource.exists() && basePathList.getBasePathForFile(resource) != null) {
+					db.deleteObject(item);
+					FileRefreshBackground.getInstance().addEbook(item);
+					LoggerFactory.getLogger().log(Level.INFO, "Removed deleted ebook " + resource);
+				}
+			}
+		}
 	}
 }
