@@ -278,7 +278,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 			
 			try {
 				final byte[] coverData = coverThumbnail;
-				if(coverData!=null) {
+				if (coverData != null) {
 					final IResourceHandler virtualImageResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("TableCellRendererImageData", coverData);
 					final IImageProvider imageProvider = ImageProviderFactory.getImageProvider(virtualImageResourceLoader);
 					final BufferedImage image = imageProvider.getImage();

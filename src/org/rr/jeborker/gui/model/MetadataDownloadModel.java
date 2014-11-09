@@ -1,9 +1,12 @@
 package org.rr.jeborker.gui.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.rr.commons.utils.ThreadUtils;
+import org.rr.commons.utils.ThreadUtils.RunnableImpl;
 import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
 import org.rr.jeborker.remote.metadata.MetadataDownloader;
 
@@ -22,16 +25,19 @@ public class MetadataDownloadModel extends AbstractTableModel {
 
 	/**
 	 * Invokes the {@link MetadataDownloader} and provide it's entries with this {@link MetadataDownloadModel}
-	 * instance. This method blocks as long as all data for the model is loaded. 
-	 * 
+	 * instance. This method blocks as long as all data for the model is loaded.
+	 *
 	 * This Method isn't be invoked automatically by the {@link MetadataDownloadModel} instance.
 	 */
 	public void loadSearchResult() {
-		this.searchEntries = this.downloader.search(this.searchPhrase);
-		for(MetadataDownloadEntry searchEntry : this.searchEntries) {
-			searchEntry.getThumbnailImageBytes(); //lazy loading
-			searchEntry.getDescription(); //lazy loading
-		}
+		this.searchEntries = Collections.synchronizedList(this.downloader.search(this.searchPhrase));
+		ThreadUtils.loopAndWait(searchEntries, new RunnableImpl<MetadataDownloadEntry>() {
+
+			@Override
+			public void run(MetadataDownloadEntry searchEntry) {
+				searchEntry.getThumbnailImageBytes(); //lazy loading
+				searchEntry.getDescription(); //lazy loading
+			}}, 10);
 	}
 	
 	@Override
