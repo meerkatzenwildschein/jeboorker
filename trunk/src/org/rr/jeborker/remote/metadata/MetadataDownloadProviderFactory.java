@@ -14,11 +14,11 @@ public class MetadataDownloadProviderFactory {
 	}
 	
 	public static enum DOWNLOADER_TYPES implements DownloaderType {
-		AMAZON_DE {
+		DNB {
 
 			@Override
 			public String getName() {
-				return "Amazon.de";
+				return "Katalog der deutschen Nationalbibliothek";
 			}
 			
 			@Override
@@ -28,7 +28,7 @@ public class MetadataDownloadProviderFactory {
 	
 			@Override
 			public MetadataDownloader getMetadataDownloader() {
-				return new AmazonDeMetadataDownloader();
+				return new DNBMetadataDownloader();
 			}
 		}
 	}

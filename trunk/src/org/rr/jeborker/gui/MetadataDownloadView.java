@@ -258,6 +258,8 @@ class MetadataDownloadView extends AbstractDialogView {
 		gbc_panel2.gridx = 0;
 		gbc_panel2.gridy = 2;
 		getContentPane().add(bottomPanel, gbc_panel2);
+		
+//		getRootPane().setDefaultButton(searchButton);
 	}
 
 	public int getActionResult() {
