@@ -22,15 +22,15 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Creates a <code>String</code> that consists of a number of substrings
 	 * in an array.
-	 * 
+	 *
 	 * @param values
 	 *            A n'th-dimensional array that contains the substrings to be
 	 *            joined.
 	 * @param delimiter
 	 *            The character(s) used to separate the substrings in the
-	 *            returned <code>String</code>. If this parameter is null, 
+	 *            returned <code>String</code>. If this parameter is null,
 	 *            the <i>,</i> character will be used as delimiter char.
-	 *            
+	 *
 	 * @return The processed <code>String</code>.
 	 * @see #split(String, String, int, int)
 	 */
@@ -44,7 +44,7 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Creates a zero-based, one-dimensional array containing a specified number
 	 * of substrings. per default, binary comperation is used without any result limit.
-	 * 
+	 *
 	 * @param text
 	 *            A <code>String</code> containing substrings and delimiters.
 	 *            If expression is a zero-length string(""), Split returns an
@@ -54,7 +54,7 @@ public final class ListUtils implements Serializable {
 	 *            If this parameter is null, the whole String will be returned within an
 	 *            array with a size of 1.
 	 *            </ul>
-	 * @return The splitted <code>String</code> array. All result 
+	 * @return The splitted <code>String</code> array. All result
 	 * @see #join(Object[], String)
 	 */
 	public static List<String> split(final String text, final String delimiter) {
@@ -64,7 +64,7 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Creates a zero-based, one-dimensional array containing a specified number
 	 * of substrings.
-	 * 
+	 *
 	 * @param text
 	 *            A <code>String</code> containing substrings and delimiters.
 	 *            If expression is a zero-length string(""), Split returns an
@@ -84,7 +84,7 @@ public final class ListUtils implements Serializable {
 	 *            <li>1 = vbTextCompare - Perform a textual comparison (case
 	 *            insensitive)</li>
 	 *            </ul>
-	 * @return The splitted <code>String</code> array. All result 
+	 * @return The splitted <code>String</code> array. All result
 	 * @see #join(Object[], String)
 	 */
 	public static List<String> split(final String text, final String delimiter, final int limit, final int compare) {
@@ -141,7 +141,7 @@ public final class ListUtils implements Serializable {
 	/**
 	 * convenience method and does the same as the <code>{@link #split(String, String, int, int)}</code> but
 	 * with UtilConstants.COMPARE_BINARY as compare parameter.
-	 * 
+	 *
 	 * @see ##split(String, String, int, int)
 	 */
 	public static List<String> split(final String text, final String delimiter, final int limit) {
@@ -178,7 +178,7 @@ public final class ListUtils implements Serializable {
 		}
 		
 		return result;
-	}	
+	}
 	
 	/**
 	 * Splits the given <code>text</code> into a string array where each
@@ -188,12 +188,12 @@ public final class ListUtils implements Serializable {
 	 * <br><br>
 	 * <pre><code>
 	 * chunkSplit("teststring", 3)
-	 * returns: String[] {"tes", "tst","rin","g  "}  
+	 * returns: String[] {"tes", "tst","rin","g  "}
 	 * </code></pre>
-	 * 
+	 *
 	 * @param text The string to be splitted
 	 * @param length The length of each string in the result.
-	 * @return A string array where each string has the given length. 
+	 * @return A string array where each string has the given length.
 	 */
 	public static List<String> chunkSplit(final String text, int length) {
 		if(text==null || text.length()==0) {
@@ -234,7 +234,7 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Dos the same as the filter(String[], String, boolean, int, boolean)
 	 * method but uses VBConstants.SEARCH_DEFAULT per default for the searchType parameter.
-	 * 
+	 *
 	 * @see #filter(String[], String, boolean, int, boolean)
 	 * @return The filtered array.
 	 */
@@ -245,10 +245,10 @@ public final class ListUtils implements Serializable {
 	/**
 	 * The Filter function returns a zero-based array that contains a subset of
 	 * a <code>String</code> array based on a filter criteria.
-	 * 
+	 *
 	 * @param values
 	 *            A one-dimensional array of <code>String</code>s to be
-	 *            searched. The data type of this array specifies the 
+	 *            searched. The data type of this array specifies the
 	 *            array data type for the result.
 	 * @param match
 	 *            The <code>Object</code> to search for. This can also be an array. Each value of the array
@@ -277,7 +277,7 @@ public final class ListUtils implements Serializable {
 	 * 			  <LI>1 = VBConstants.SEARCH_REGEXP - use the value specified in the parameter named <code>match</code> as regular expression.</LI>
 	 * 			  <LI>2 = VBConstants.SEARCH_LIKE - use the value specified in the parameter named <code>match</code> like the LIKE operator.</LI>
 	 * 			  </UL>
-	 * 
+	 *
 	*  			  Using VBConstants.SEARCH_REGEXP or VBConstants.SEARCH_LIKE,
 	 *            the <code>toString()</code> method on the given
 	 *            object value will be used for regexp. or like matching.
@@ -360,17 +360,17 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Merges the two array given with the arguments <code>first</code> and
 	 * <code>second</code>.
-	 * 
+	 *
 	 * @param first
 	 *            An array to be merged with the array given with the parameter
-	 *            <code>second</code>. The data type of the first array specifies the 
+	 *            <code>second</code>. The data type of the first array specifies the
 	 *            array data type for the result.
 	 * @param second
 	 *            An array to be merged with the array given with the parameter
 	 *            <code>first</code>.
 	 * @return The merged array. Never will return null.
-	 * 
-	 * @throws RuntimeException if the array given with the first parameter is not an instance of the array given with the second parameter. 
+	 *
+	 * @throws RuntimeException if the array given with the first parameter is not an instance of the array given with the second parameter.
 	 */
 	public static <T>List<T> union(final List<T> first, final List<T> second) {
 		//handle null values
@@ -389,10 +389,10 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Determine all entries existing in both given arrays and creates a new
 	 * array which contains all duplicate entries.
-	 * 
+	 *
 	 * @param first
 	 *            A one dimensional array to be searched for entries exiting in the array given
-	 *            with the <code>second</code> parameter. The data type of the first array specifies the 
+	 *            with the <code>second</code> parameter. The data type of the first array specifies the
 	 *            array data type for the result.
 	 * @param second
 	 *            A one dimensional array to be searched for entries exiting in the array given
@@ -404,7 +404,7 @@ public final class ListUtils implements Serializable {
 	 *            <li>0 = VBConstants.vbBinaryCompare - Perform a binary comparison (case sensitive)</li>
 	 *            <li>1 = VBConstants.vbTextCompare - Perform a textual comparison (case insensitive)</li>
 	 *            </ul>
-	 * 
+	 *
 	 * @return A new array containing all duplicate entries.
 	 */
 	public static <T>List<T> duplicates(final List<T> first, final List<T> second, final int compare) {
@@ -444,8 +444,8 @@ public final class ListUtils implements Serializable {
 	}
 	
 	/**
-	 * Searches for duplicate entries within the given array. 
-	 * 
+	 * Searches for duplicate entries within the given array.
+	 *
 	 * @param values The array which should be searched for duplicates.
 	 * @param compare
 	 *            Specifies the string comparison to use.
@@ -465,7 +465,7 @@ public final class ListUtils implements Serializable {
 			}
 		}
 		
-		//if there're more than two duplicate values, there will be some more than only one entry. 
+		//if there're more than two duplicate values, there will be some more than only one entry.
 		result = distinct(result, compare);
 		
 		return result;
@@ -475,10 +475,10 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Determine all entries that did not existing in both given arrays and
 	 * creates a new one which contains all non redundant entries.
-	 * 
+	 *
 	 * @param first
 	 *            A one dimensional array to be searched for entries not exiting in the array given
-	 *            with the <code>second</code> parameter. The data type of the first array specifies the 
+	 *            with the <code>second</code> parameter. The data type of the first array specifies the
 	 *            array data type for the result.
 	 * @param second
 	 *            A one dimensional array to be searched for entries not exiting in the array given
@@ -503,7 +503,7 @@ public final class ListUtils implements Serializable {
 		arrayList=copyDifference(first, arrayList, duplicateArray, compare);
 		arrayList=copyDifference(second, arrayList, duplicateArray, compare);
 
-		//create the result array 
+		//create the result array
 		return arrayList;
 	}
 	
@@ -539,12 +539,12 @@ public final class ListUtils implements Serializable {
 	}
 
 	/**
-	 * Returns the index of the first occurrence of a value in a n'th-dimensional Array specified with the <code>values</code> parameter. 
-	 * If the search value is found in a n'th dimension of the <code>values</code> array, the position for the array which contains 
-	 * the value, in the first dimension is returned.  
+	 * Returns the index of the first occurrence of a value in a n'th-dimensional Array specified with the <code>values</code> parameter.
+	 * If the search value is found in a n'th dimension of the <code>values</code> array, the position for the array which contains
+	 * the value, in the first dimension is returned.
 	 * <br><br>
 	 * This method is using the search type <code>VBConstants.SEARCH_DEFAULT</code>.
-	 * 
+	 *
 	 * @param values The array to be searched for the desired value.
 	 * @param match The <code>Object</code> to be searched.
 	 * @param compare
@@ -553,7 +553,7 @@ public final class ListUtils implements Serializable {
 	 *            <li>0 = VBConstants.vbBinaryCompare - Perform a binary comparison (case sensitive)</li>
 	 *            <li>1 = VBConstants.vbTextCompare - Perform a textual comparison (case insensitive)</li>
 	 *            </ul>
-	 *            
+	 *
 	 * @return The index for the found <code>match</code> in the <code>values</code> array.
 	 */
 	public static int indexOf(final List<Object> values, final Object match, final int compare) {
@@ -561,10 +561,10 @@ public final class ListUtils implements Serializable {
 	}
 	
 	/**
-	 * Returns the index of the first occurrence of a value in a n'th-dimensional Array specified with the <code>values</code> parameter. 
-	 * If the search value is found in a n'th dimension of the <code>values</code> array, the position for the array which contains 
-	 * the value, in the first dimension is returned.  
-	 * 
+	 * Returns the index of the first occurrence of a value in a n'th-dimensional Array specified with the <code>values</code> parameter.
+	 * If the search value is found in a n'th dimension of the <code>values</code> array, the position for the array which contains
+	 * the value, in the first dimension is returned.
+	 *
 	 * @param values The array to be searched for the desired value.
 	 * @param match The <code>Object</code> to be searched.
 	 * @param compare
@@ -581,12 +581,12 @@ public final class ListUtils implements Serializable {
 	 * 			  <LI>1 = VBConstants.SEARCH_REGEXP - use the value specified in the parameter named <code>match</code> as regular expression.</LI>
 	 * 			  <LI>2 = VBConstants.SEARCH_LIKE - use the value specified in the parameter named <code>match</code> like the LIKE operator.</LI>
 	 * 			  </UL>
-	 * 
+	 *
 	 *  			  Using VBConstants.SEARCH_REGEXP or VBConstants.SEARCH_LIKE,
 	 *            the <code>toString()</code> method on the given
 	 *            object value will be used for regexp. or like matching.
-	 *            
-	 *            
+	 *
+	 *
 	 * @return The index for the found <code>match</code> in the <code>values</code> array.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -665,7 +665,7 @@ public final class ListUtils implements Serializable {
 									//could happens if the Comparable is generic and the class types did not match.
 									if (next.equals(processFilterValue[i]) || next == processFilterValue[i]) {
 										return j;
-									}		
+									}
 									canCompareTo = false;
 								}
 							} else {
@@ -675,7 +675,7 @@ public final class ListUtils implements Serializable {
 							}
 						}
 					}
-				} 
+				}
 			} // end inner loop
 		} // end outer loop
 		return -1;
@@ -686,7 +686,7 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Removes all repetioned entries from the array specified with the <code>values</code>
 	 * parameter.
-	 * 
+	 *
 	 * @param values The array where duplicated entries should be removed.
 	 * @param compare
 	 *            Specifies the string comparison to use.
@@ -723,16 +723,16 @@ public final class ListUtils implements Serializable {
 	 * <br><br>
 	 * If the start or end parameter ist out of range, the range will be resized
 	 * to a valid value. No <code>ArrayIndexOutOfRange</code> exception is thrown.
-	 * 
+	 *
 	 * @param values The array to be extracted.
 	 * @param start The start position.
 	 * @param end The end position.
-	 * @return A new array instance with the same type as the array specified 
-	 * 	with the <code>values</code> parameter which contains all values between 
+	 * @return A new array instance with the same type as the array specified
+	 * 	with the <code>values</code> parameter which contains all values between
 	 * 	<code>start</code> and <code>end</code>.
 	 */
 	public static <T>List<T> extract(final List<T> values, int start, int end) {
-		//create the resized array 
+		//create the resized array
 		List<T> result = new ArrayList<T>(end);
 		for(int i = start; i < values.size() && i < end; i++) {
 			result.add(values.get(i));
@@ -742,8 +742,8 @@ public final class ListUtils implements Serializable {
 	
 	/**
 	 * Search for the value specified with the <code>match</code> parameter and
-	 * return the position for the first found occurrence or -1 if no match was found. 
-	 * 
+	 * return the position for the first found occurrence or -1 if no match was found.
+	 *
 	 * @param values The array to be searched.
 	 * @param match The value to be searched in the array. This can be also an array with values to be searched.
 	 * @param compare
@@ -760,11 +760,11 @@ public final class ListUtils implements Serializable {
 	 * 			  <LI>1 = VBConstants.SEARCH_REGEXP - use the value specified in the parameter named <code>match</code> as regular expression.</LI>
 	 * 			  <LI>2 = VBConstants.SEARCH_LIKE - use the value specified in the parameter named <code>match</code> like the LIKE operator.</LI>
 	 * 			  </UL>
-	 * 
+	 *
 	 *  			  Using VBConstants.SEARCH_REGEXP or VBConstants.SEARCH_LIKE,
 	 *            the <code>toString()</code> method on the given
 	 *            object value will be used for regexp. or like matching.
-	 *            
+	 *
 	 * @return The index of the first found occurrence or -1 if no match was found.
 	 */
 	public static boolean exists(final List<?> values, final Object match, final int compare, final int searchType) {
@@ -794,7 +794,7 @@ public final class ListUtils implements Serializable {
 	 * Get a value from the given {@link List}.
 	 * @param values The list containing the values where a value should be returned from.
 	 * @param idx The index of the value to be returned in the given list.
-	 * @return The value from the index or <code>null</code> if the list is smaller than the 
+	 * @return The value from the index or <code>null</code> if the list is smaller than the
 	 * index requires.
 	 */
 	public static <T>T get(final List<T> values, int idx) {
@@ -805,7 +805,7 @@ public final class ListUtils implements Serializable {
 	}
 
 	/**
-	 * gets the first entry from the given list. If the list is <code>null</code> 
+	 * gets the first entry from the given list. If the list is <code>null</code>
 	 * or empty <code>null</code> is returned.
 	 * @param object The list where the first entry should be fetched from.
 	 * @return The desired list entry or <code>null</code>.
@@ -821,7 +821,7 @@ public final class ListUtils implements Serializable {
 	 * Creates a String from the given string list with indices for the split points.
 	 * This list can be converted into a List very fast by using the {@link #fromIndexString(String, char)}
 	 * method.
-	 * 
+	 *
 	 * @param list The list to be converted into a String.
 	 * @param separator The separator char that must not be contained by the strings in the given list.
 	 * @return The desired String.
@@ -851,8 +851,8 @@ public final class ListUtils implements Serializable {
 	/**
 	 * Creates a List from the given string. This String must have the split indices at the front.
 	 * Use {@link #toIndexedString(List, char)} to create those string.
-	 * 
-	 * @param indexString The index string to be parsed. 
+	 *
+	 * @param indexString The index string to be parsed.
 	 * @param separator The separator which separated the entries.
 	 * @return The desired list
 	 * @see #toIndexedString(List, char)
@@ -881,4 +881,11 @@ public final class ListUtils implements Serializable {
 		return list;
 	}
 
+	public static boolean isNotEmpty(List<?> l) {
+		return !isEmpty(l);
+	}
+	
+	public static boolean isEmpty(List<?> l) {
+		return l == null || l.isEmpty();
+	}
 }
