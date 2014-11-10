@@ -31,12 +31,13 @@ public class MetadataDownloadModel extends AbstractTableModel {
 	 */
 	public void loadSearchResult() {
 		this.searchEntries = Collections.synchronizedList(this.downloader.search(this.searchPhrase));
-		ThreadUtils.loopAndWait(searchEntries, new RunnableImpl<MetadataDownloadEntry>() {
+		ThreadUtils.loopAndWait(searchEntries, new RunnableImpl<MetadataDownloadEntry, Void>() {
 
 			@Override
-			public void run(MetadataDownloadEntry searchEntry) {
+			public Void run(MetadataDownloadEntry searchEntry) {
 				searchEntry.getThumbnailImageBytes(); //lazy loading
 				searchEntry.getDescription(); //lazy loading
+				return null;
 			}}, 10);
 	}
 	
