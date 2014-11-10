@@ -11,16 +11,16 @@ public class ThreadUtils {
 
 	private static final Object MUTEX = new Object();
 	
-	public static <T> void loopAndWait(final Iterable<T> l, final RunnableImpl<T> each, final int maxThreads) {
-		loopAndWait(l.iterator(), each, maxThreads);
+	public static <S,T> List<T> loopAndWait(final Iterable<S> l, final RunnableImpl<S,T> each, final int maxThreads) {
+		return loopAndWait(l.iterator(), each, maxThreads);
 	}
 	
-	public static <T> void loopAndWait(final Iterator<T> l, final RunnableImpl<T> each, final int maxThreads) {
-		loopAndWait(new IteratorList<T>(l, -1), each, maxThreads);
+	public static <S,T> List<T> loopAndWait(final Iterator<S> l, final RunnableImpl<S,T> each, final int maxThreads) {
+		return loopAndWait(new IteratorList<S>(l, -1), each, maxThreads);
 	}
 	
-	public static <T> void loopAndWait(final List<T> l, final RunnableImpl<T> each, int maxThreads) {
-		loop(l, each, maxThreads, true);
+	public static <S,T> List<T> loopAndWait(final List<S> l, final RunnableImpl<S,T> each, int maxThreads) {
+		return loop(l, each, maxThreads, true);
 	}
 	
 	/**
@@ -31,8 +31,9 @@ public class ThreadUtils {
 	 * @param each The {@link RunnableImpl} implementation which is executed with each list entry.
 	 * @param maxThreads Maximum number of Threads to be executed to run the {@link RunnableImpl} implementations.
 	 */
-	private static <S> void loop(final List<S> l, final RunnableImpl<S> each, int maxThreads, boolean wait) {
+	private static <S, T> List<T> loop(final List<S> l, final RunnableImpl<S, T> each, int maxThreads, boolean wait) {
 		final Thread[] slots = new Thread[maxThreads];
+		final List<T> results = Collections.synchronizedList(new ArrayList<T>(l.size()));
 		final List<S> working = Collections.synchronizedList(new ArrayList<S>(l));
 		while(!working.isEmpty()) {
 			//thread slot searching and execution must be synchronized.
@@ -53,7 +54,7 @@ public class ThreadUtils {
 								}
 								
 								if(entry != null) {
-									each.run(entry);
+									results.add(each.run(entry));
 								}
 								slots[slot] = null;
 							}
@@ -83,6 +84,7 @@ public class ThreadUtils {
 				}
 			}
 		}
+		return results;
 	}
 	
 	private static boolean containsOnlyNull(Object[] values) {
@@ -94,8 +96,8 @@ public class ThreadUtils {
 		return true;
 	}
 	
-	public static abstract class RunnableImpl<T> {
-		public abstract void run(T entry);
+	public static abstract class RunnableImpl<S, T> {
+		public abstract T run(S entry);
 	}
 
 }
