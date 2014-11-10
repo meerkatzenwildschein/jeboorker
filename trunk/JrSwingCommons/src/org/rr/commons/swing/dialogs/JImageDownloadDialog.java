@@ -49,7 +49,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -61,14 +60,14 @@ import org.rr.commons.net.imagefetcher.IImageFetcher;
 import org.rr.commons.net.imagefetcher.IImageFetcherEntry;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
-import org.rr.commons.utils.ThreadUtils;
-import org.rr.pm.image.IImageProvider;
-import org.rr.pm.image.ImageProviderFactory;
-import org.rr.pm.image.ImageUtils;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.components.container.ShadowPanel;
 import org.rr.commons.swing.layout.EqualsLayout;
+import org.rr.commons.utils.ThreadUtils;
+import org.rr.pm.image.IImageProvider;
+import org.rr.pm.image.ImageProviderFactory;
+import org.rr.pm.image.ImageUtils;
 
 public class JImageDownloadDialog extends JDialog {
 	
@@ -144,19 +143,19 @@ public class JImageDownloadDialog extends JDialog {
 		}
 		this.setTitle(Bundle.getString("ImageDownloadDialog.title"));
 		this.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-		this.setGlassPane(new ShadowPanel());	
+		this.setGlassPane(new ShadowPanel());
 		getGlassPane().setVisible(false);
 		
-	    ((JComponent)getContentPane()).registerKeyboardAction(cancelAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);		
+	    ((JComponent)getContentPane()).registerKeyboardAction(cancelAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
-		//workaround for a swing bug. The first time, the editor is used, the 
+		//workaround for a swing bug. The first time, the editor is used, the
 		//ui color instance draws the wrong color but have the right rgb values.
 		Color color;
 		color = SwingUtils.getSelectionForegroundColor();
-		selectedFgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
+		selectedFgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
 		
 		color = SwingUtils.getSelectionBackgroundColor();
-		selectedBgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());		
+		selectedBgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
 		
 		color = SwingUtils.getBackgroundColor();
 		bgColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
@@ -212,7 +211,7 @@ public class JImageDownloadDialog extends JDialog {
 						startSearch();
 					}
 				}
-			});		
+			});
 			
 			JButton searchButton = new JButton(new SearchAction());
 			searchButton.setMargin(new Insets(0, 8, 0, 8));
@@ -277,13 +276,13 @@ public class JImageDownloadDialog extends JDialog {
 	}
 	
 	/**
-	 * Closes and disposes this {@link JImageDownloadDialog} instance. 
+	 * Closes and disposes this {@link JImageDownloadDialog} instance.
 	 * @param selectedImage The image to be set as result.
 	 */
 	private void closeDialog(IResourceHandler selectedImage) {
 		this.selectedImage = selectedImage;
 		setVisible(false);
-		dispose();			
+		dispose();
 	}
 	
     public void setVisible(boolean b) {
@@ -291,7 +290,7 @@ public class JImageDownloadDialog extends JDialog {
     		startSearch();
     	}
         super.setVisible(b);
-    }	
+    }
 	
 	private void startSearch() {
 		getGlassPane().setVisible(true);
@@ -420,7 +419,7 @@ public class JImageDownloadDialog extends JDialog {
 				if(table.getSelectedColumn() == column) {
 					setBackground(selectedBgColor);
 					sizeLabel.setForeground(selectedFgColor);
-					imageLabel.setForeground(selectedFgColor);					
+					imageLabel.setForeground(selectedFgColor);
 				} else {
 					setBackground(bgColor);
 					sizeLabel.setForeground(fgColor);
@@ -466,15 +465,16 @@ public class JImageDownloadDialog extends JDialog {
 					final List<IImageFetcherEntry> imageFetcherEntries = this.createImageFetcherEntries(imageFetcher);
 					
 					thumbnailEntries.addAll(imageFetcherEntries);
-					ThreadUtils.RunnableImpl<IImageFetcherEntry> each = new ThreadUtils.RunnableImpl<IImageFetcherEntry>() {
+					ThreadUtils.RunnableImpl<IImageFetcherEntry, Void> each = new ThreadUtils.RunnableImpl<IImageFetcherEntry, Void>() {
 						
 						@Override
-						public void run(IImageFetcherEntry entry) {
+						public Void run(IImageFetcherEntry entry) {
 							try {
 								createThumbnail(entry);
 							} catch (IOException e) {
 								LoggerFactory.getLogger(this).log(Level.INFO, "Failed fetching " + entry.getImageURL(), e);
 							}
+							return null;
 						}
 					};
 					ThreadUtils.loopAndWait(imageFetcherEntries, each, 8);
@@ -486,7 +486,7 @@ public class JImageDownloadDialog extends JDialog {
 			private List<IImageFetcherEntry> createImageFetcherEntries(final IImageFetcher imageFetcher) {
 				final int max = getMaxDisplayedThumbnails();
 				final Iterator<IImageFetcherEntry> entriesIterator = imageFetcher.getEntriesIterator();
-				List<IImageFetcherEntry> imageFetcherEntries = new ArrayList<IImageFetcherEntry>(max);				
+				List<IImageFetcherEntry> imageFetcherEntries = new ArrayList<IImageFetcherEntry>(max);
 				while(true) {
 					try {
 						for(int i = 0; i < max; i++) {

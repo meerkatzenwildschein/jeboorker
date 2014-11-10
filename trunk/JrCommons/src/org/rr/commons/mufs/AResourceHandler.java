@@ -302,7 +302,7 @@ abstract class AResourceHandler implements IResourceHandler {
 	 * @return The content of the resource.
 	 */
 	@Override
-	public byte[] getContent(int length) throws IOException {
+	public synchronized byte[] getContent(int length) throws IOException {
 		final InputStream contentInputStream = this.getContentInputStream();
 		final ByteArrayOutputStream output = new ByteArrayOutputStream(length);
 		ResourceHandlerUtils.copy(contentInputStream, output, length);
@@ -310,7 +310,7 @@ abstract class AResourceHandler implements IResourceHandler {
 		return output.toByteArray();
 	}
 
-	public void setContent(byte[] content) throws IOException {
+	public synchronized void setContent(byte[] content) throws IOException {
 		OutputStream contentOutputStream = this.getContentOutputStream(false);
 		IOUtils.write(content, contentOutputStream);
 		IOUtils.closeQuietly(contentOutputStream);
