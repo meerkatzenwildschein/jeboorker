@@ -30,6 +30,23 @@ public class MetadataDownloadProviderFactory {
 			public MetadataDownloader getMetadataDownloader() {
 				return new DNBMetadataDownloader();
 			}
+		},
+		GOOGLE_BOOKS_DE {
+			
+			@Override
+			public String getName() {
+				return "Google Books Germany";
+			}
+			
+			@Override
+			public String toString() {
+				return getName();
+			}
+			
+			@Override
+			public MetadataDownloader getMetadataDownloader() {
+				return new GoogleBooksDeMetadataDownloader();
+			}
 		}
 	}
 
