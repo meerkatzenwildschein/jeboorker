@@ -30,6 +30,7 @@ public class ThreadUtils {
 	 * @param l The list to be looped.
 	 * @param each The {@link RunnableImpl} implementation which is executed with each list entry.
 	 * @param maxThreads Maximum number of Threads to be executed to run the {@link RunnableImpl} implementations.
+	 * @return A list of results for each RunnableImpl in the same order than given with <code>each</code>.
 	 */
 	private static <S, T> List<T> loop(final List<S> l, final RunnableImpl<S, T> each, int maxThreads, boolean wait) {
 		final Thread[] slots = new Thread[maxThreads];
@@ -54,7 +55,8 @@ public class ThreadUtils {
 								}
 								
 								if(entry != null) {
-									results.add(each.run(entry));
+									int index = l.indexOf(entry);
+									ListUtils.set(results, each.run(entry), index);
 								}
 								slots[slot] = null;
 							}
@@ -73,14 +75,14 @@ public class ThreadUtils {
 					} catch (InterruptedException e) {
 					}
 				}
-				
-				if(wait) {
-					while(!containsOnlyNull(slots)) {
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-						}
-					}
+			}
+		}
+		
+		if(wait) {
+			while(!containsOnlyNull(slots)) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
 				}
 			}
 		}
