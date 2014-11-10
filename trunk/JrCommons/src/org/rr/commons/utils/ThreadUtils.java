@@ -11,11 +11,11 @@ public class ThreadUtils {
 
 	private static final Object MUTEX = new Object();
 	
-	public static <T> void loop(final Iterable<T> l, final RunnableImpl<T> each, final int maxThreads) {
-		loop(l.iterator(), each, maxThreads);
+	public static <T> void loopAndWait(final Iterable<T> l, final RunnableImpl<T> each, final int maxThreads) {
+		loopAndWait(l.iterator(), each, maxThreads);
 	}
 	
-	public static <T> void loop(final Iterator<T> l, final RunnableImpl<T> each, final int maxThreads) {
+	public static <T> void loopAndWait(final Iterator<T> l, final RunnableImpl<T> each, final int maxThreads) {
 		loopAndWait(new IteratorList<T>(l, -1), each, maxThreads);
 	}
 	
@@ -31,9 +31,9 @@ public class ThreadUtils {
 	 * @param each The {@link RunnableImpl} implementation which is executed with each list entry.
 	 * @param maxThreads Maximum number of Threads to be executed to run the {@link RunnableImpl} implementations.
 	 */
-	private static <T> void loop(final List<T> l, final RunnableImpl<T> each, int maxThreads, boolean wait) {
+	private static <S> void loop(final List<S> l, final RunnableImpl<S> each, int maxThreads, boolean wait) {
 		final Thread[] slots = new Thread[maxThreads];
-		final List<T> working = Collections.synchronizedList(new ArrayList<T>(l));
+		final List<S> working = Collections.synchronizedList(new ArrayList<S>(l));
 		while(!working.isEmpty()) {
 			//thread slot searching and execution must be synchronized.
 			synchronized(MUTEX) {
@@ -46,7 +46,7 @@ public class ThreadUtils {
 							
 							@Override
 							public void run() {
-								T entry = null;
+								S entry = null;
 								try {
 									entry = working.remove(0);
 								} catch(IndexOutOfBoundsException e) {
