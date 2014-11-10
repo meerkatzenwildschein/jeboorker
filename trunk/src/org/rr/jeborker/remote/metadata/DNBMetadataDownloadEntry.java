@@ -119,6 +119,7 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 		if (isbn != null) {
 			String imageUrl = "http://vlb.de/GetBlob.aspx?strIsbn=" + isbn + "&size=" + size;
 			try {
+				LoggerFactory.getLogger(this).log(Level.INFO, "Downloading " + imageUrl);
 				if (largeImageData == null && size.equals(IMAGE_SIZE_L)) {
 					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
 					return largeImageData = resourceHandler.getContent();
