@@ -37,8 +37,6 @@ public class Jeboorker {
 	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
 			60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
 
-	public static boolean isRuntime = false;
-
 	public static final String VERSION = "0.4.6";
 
 	public static final String APP = "Jeboorker";
@@ -53,8 +51,6 @@ public class Jeboorker {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		isRuntime = true;
-
 		//setup the logger
 		LoggerFactory.addHandler(new JeboorkerLogger());
 
