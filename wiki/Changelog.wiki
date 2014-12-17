@@ -1,4 +1,11 @@
 #labels Featured
+== v0.4.6 (2014-12-17)==
+  * New meta data downloader source DNB and Google books.
+  * Amazon meta data downloader removed because it no longer works.
+  * Fix the sometimes no longer shown eyes
+  * cbr files with cruel characters in it's file names now also supported
+  * Metadata downloader no longer creates new checkbox instances for the renderer component which confuse Web L&F
+  * Smaller timeout for metadata download no longer cause long waiting dialogs.
 == v0.4.5 (2014-08-12)==
   * Pushbullet protocoll has changed a little which cause it's no longer working
   * Bug with Drag and Drop which sometimes fails.
