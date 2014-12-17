@@ -21,7 +21,6 @@ import org.rr.commons.collection.ICloseableList;
 import org.rr.commons.collection.InsertElementList;
 import org.rr.commons.collection.ReplacementElementList;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.db.DBUtils;
 import org.rr.jeborker.db.DefaultDBManager;
@@ -292,7 +291,6 @@ public class EbookPropertyDBTableModel implements TableModel {
      *
      * @see TableModelEvent
      * @see EventListenerList
-     *
      */
     public void fireTableRowsInserted(int firstRow, int lastRow) {
         fireTableChanged(new TableModelEvent(this, firstRow, lastRow + 1,
