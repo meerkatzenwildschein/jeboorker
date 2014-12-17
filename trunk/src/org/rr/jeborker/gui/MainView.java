@@ -706,32 +706,30 @@ class MainView extends JFrame {
 		
 		fileSystemTree.setName(fileSystemTreeName);
 		fileSystemTree.setSelectionModel(new DefaultTreeSelectionModel());
-		if(Jeboorker.isRuntime) {
-			FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
-			fileSystemTree.setModel(fileSystemTreeModel);
-			fileSystemTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
-			fileSystemTree.setEditable(true);
-			FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
-			fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
-			fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
-			if(((DefaultMutableTreeNode) fileSystemTreeModel.getRoot()).getChildCount() == 1) {
-				fileSystemTree.addTreeExpansionListener(new TreeExpansionListener() {
+		FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
+		fileSystemTree.setModel(fileSystemTreeModel);
+		fileSystemTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
+		fileSystemTree.setEditable(true);
+		FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
+		fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
+		fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
+		if(((DefaultMutableTreeNode) fileSystemTreeModel.getRoot()).getChildCount() == 1) {
+			fileSystemTree.addTreeExpansionListener(new TreeExpansionListener() {
 
-					@Override
-					public void treeExpanded(TreeExpansionEvent event) {
-					}
+				@Override
+				public void treeExpanded(TreeExpansionEvent event) {
+				}
 
-					@Override
-					public void treeCollapsed(TreeExpansionEvent event) {
-						TreePath path = event.getPath();
-						if(path.getPathCount() == 2) {
-							fileSystemTree.expandPath(event.getPath());
-						}
+				@Override
+				public void treeCollapsed(TreeExpansionEvent event) {
+					TreePath path = event.getPath();
+					if(path.getPathCount() == 2) {
+						fileSystemTree.expandPath(event.getPath());
 					}
-				});
-				//row 0 should always be expanded.
-				fileSystemTree.expandRow(0);
-			}
+				}
+			});
+			//row 0 should always be expanded.
+			fileSystemTree.expandRow(0);
 		}
 		fileSystemTree.registerKeyboardAction(new ActionListener() {
 
@@ -910,17 +908,15 @@ class MainView extends JFrame {
 		basePathTree = new JRTree();
 		setupTree(basePathTree);
 		basePathTree.setName(basePathTreeName);
-		if(Jeboorker.isRuntime) {
-			basePathTree.setModel(new BasePathTreeModel(basePathTree));
-			basePathTree.setEditable(true);
-			BasePathTreeCellRenderer basePathTreeCellRenderer = new BasePathTreeCellRenderer(basePathTree);
-			basePathTree.setCellRenderer(basePathTreeCellRenderer);
-			basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
-			basePathTree.setToggleExpandOnDoubleClick(true);
-			basePathTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
-			basePathTree.setRepaintAllOnChange(true);
-			basePathTree.setEditable(true);
-		}
+		basePathTree.setModel(new BasePathTreeModel(basePathTree));
+		basePathTree.setEditable(true);
+		BasePathTreeCellRenderer basePathTreeCellRenderer = new BasePathTreeCellRenderer(basePathTree);
+		basePathTree.setCellRenderer(basePathTreeCellRenderer);
+		basePathTree.setCellEditor(new BasePathTreeCellEditor(basePathTree));
+		basePathTree.setToggleExpandOnDoubleClick(true);
+		basePathTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
+		basePathTree.setRepaintAllOnChange(true);
+		basePathTree.setEditable(true);
 		JRScrollPane basePathTreeScroller = new JRScrollPane(basePathTree);
 		basePathTreeScroller.setOpaque(false);
 		basePathTreeScroller.getViewport().setOpaque(false);

@@ -322,27 +322,23 @@ public class EbookPropertyDBTableModel implements TableModel {
      */
     private List<EbookPropertyItem> getEbookItems() {
     	//NO BREAKPOINT HERE!
-    	if(Jeboorker.isRuntime) {
-    		if(emptyModel) {
-    			this.allItems = Collections.emptyList();
-    		} else if(isDirty() || dbItems == null) {
-	    		this.dirty = false;
-	    		Where<EbookPropertyItem, EbookPropertyItem> whereConditions = prepareQuery();
-	    		List<String> keywords = prepareKeywords();
-	    		ICloseableList<EbookPropertyItem> items = DefaultDBManager.getInstance().queryFullTextSearch(EbookPropertyItem.class, whereConditions, keywords, getOrderByColumns(), getOrderDirection());
-	    		clearVolatileConditions();
-	    		
-	    		if(this.dbItems != null) {
-	    			this.dbItems.close();
-	    		}
-	    		this.dbItems = items;
-	    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
-	    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
-	    	}
-	    	return this.allItems;
-    	} else {
-    		return null;
+		if(emptyModel) {
+			this.allItems = Collections.emptyList();
+		} else if(isDirty() || dbItems == null) {
+    		this.dirty = false;
+    		Where<EbookPropertyItem, EbookPropertyItem> whereConditions = prepareQuery();
+    		List<String> keywords = prepareKeywords();
+    		ICloseableList<EbookPropertyItem> items = DefaultDBManager.getInstance().queryFullTextSearch(EbookPropertyItem.class, whereConditions, keywords, getOrderByColumns(), getOrderDirection());
+    		clearVolatileConditions();
+    		
+    		if(this.dbItems != null) {
+    			this.dbItems.close();
+    		}
+    		this.dbItems = items;
+    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
+    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
     	}
+    	return this.allItems;
     }
     
     private List<String> prepareKeywords() {
