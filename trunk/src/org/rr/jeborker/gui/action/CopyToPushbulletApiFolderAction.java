@@ -36,7 +36,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 	 */
 	private static final String PUSHBULLET_API_KEY = "pushBulletApiKey";
 
-	private static final String PUSHBULLED_DEVICE_SELECTION_KEY = "pushBulletDeviceSelection";
+	private static final String PUSHBULLET_DEVICE_SELECTION_KEY = "pushBulletDeviceSelection";
 
 	//source file to copy
 	String source;
@@ -76,7 +76,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 			PushbulletClient client = new PushbulletClient(pushBulletApiKey);
 			List<String> targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
 			for (String targetDeviceIdentifier : targetDeviceIdentifiers) {
-				doUpload(client, targetDeviceIdentifier, resource);
+				uploadResource(client, targetDeviceIdentifier, resource);
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 		return pushBulletApiKey;
 	}
 	
-	private void doUpload(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws IOException {
+	private void uploadResource(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws IOException {
 		String name = resource.getName();
 		if(containsAnyNonAsciiChars(name)) {
 			String newName = createNonAsciiCharFreeString(name, "_");			
@@ -166,13 +166,13 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 	private void storeSelectedDeviceIndices(List<Integer> indices) {
 		APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String joinedIndices = ListUtils.join(indices, ";");
-		dbPreferenceStore.addGenericEntryAsString(PUSHBULLED_DEVICE_SELECTION_KEY, joinedIndices);
+		dbPreferenceStore.addGenericEntryAsString(PUSHBULLET_DEVICE_SELECTION_KEY, joinedIndices);
 	}
 
 	private List<Integer> fetchSelectedDeviceIndices() {
 		APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		String joinedIndices = dbPreferenceStore.getGenericEntryAsString(PUSHBULLED_DEVICE_SELECTION_KEY);
-		if(!StringUtils.isEmpty(joinedIndices)) {
+		String joinedIndices = dbPreferenceStore.getGenericEntryAsString(PUSHBULLET_DEVICE_SELECTION_KEY);
+		if(StringUtils.isNotEmpty(joinedIndices)) {
 			List<String> splitIndiceStrings = ListUtils.split(joinedIndices, ";");
 			return new TransformValueList<String, Integer>(splitIndiceStrings) {
 
