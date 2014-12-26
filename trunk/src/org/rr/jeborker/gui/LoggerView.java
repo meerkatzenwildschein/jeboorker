@@ -41,7 +41,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			StringSelection stringSelection = new StringSelection( textArea.getText() );
+			StringSelection stringSelection = new StringSelection( contentTextArea.getText() );
 		    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		    clipboard.setContents(stringSelection, LoggerView.this );				
 		}
@@ -49,10 +49,9 @@ class LoggerView extends JDialog implements ClipboardOwner {
 	
 	private LoggerController logMonitorController;
 	
-	private JButton btnCopy;
-	private JTextArea textArea;
-	private JButton btnClose;
-	private JRScrollPane scrollPane;
+	private JButton copyButton;
+	private JTextArea contentTextArea;
+	private JButton closeButton;
 	private JPanel bottomPanel;
 	
 	LoggerView(JFrame mainWindow, LoggerController logMonitorController) {
@@ -77,7 +76,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
-		scrollPane = new JRScrollPane();
+		JRScrollPane scrollPane = new JRScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.insets = new Insets(5, 0, 0, 0);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -85,11 +84,11 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		gbc_scrollPane.gridy = 0;
 		getContentPane().add(scrollPane, gbc_scrollPane);
 		
-		textArea = new JTextArea();
-		textArea.setMargin(new Insets(3, 3, 3, 3));
-		scrollPane.setViewportView(textArea);
-		textArea.setEditable(false);
-		textArea.setOpaque(false);
+		contentTextArea = new JTextArea();
+		contentTextArea.setMargin(new Insets(3, 3, 3, 3));
+		scrollPane.setViewportView(contentTextArea);
+		contentTextArea.setEditable(false);
+		contentTextArea.setOpaque(false);
 		
 		bottomPanel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -100,13 +99,13 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		getContentPane().add(bottomPanel, gbc_panel);
 		bottomPanel.setLayout(new EqualsLayout(3));
 		
-		btnCopy = new JButton(Bundle.getString("LogMonitorView.copy"));
-		bottomPanel.add(btnCopy);
+		copyButton = new JButton(Bundle.getString("LogMonitorView.copy"));
+		bottomPanel.add(copyButton);
 		
-		btnClose = new JButton(Bundle.getString("LogMonitorView.close"));
-		bottomPanel.add(btnClose);
-		btnClose.addActionListener(closeAction);
-		btnCopy.addActionListener(copyClipboardAction);
+		closeButton = new JButton(Bundle.getString("LogMonitorView.close"));
+		bottomPanel.add(closeButton);
+		closeButton.addActionListener(closeAction);
+		copyButton.addActionListener(copyClipboardAction);
 		
 		this.addWindowListener(new WindowAdapter() {
 			
@@ -121,7 +120,7 @@ class LoggerView extends JDialog implements ClipboardOwner {
 			}
 			
 			private void setLogText() {
-				textArea.setText(JeboorkerLogger.getLogFilePrint());
+				contentTextArea.setText(JeboorkerLogger.getLogFilePrint());
 			}
 			
 			@Override
@@ -132,13 +131,11 @@ class LoggerView extends JDialog implements ClipboardOwner {
 		});
 	}
 
-	@Override
 	/**
 	 * Empty implementation of the ClipboardOwner interface.
 	 */
+	@Override
 	public void lostOwnership(Clipboard aClipboard, Transferable aContents) {
-		// do nothing
 	}
-	
 	
 }
