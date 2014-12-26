@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +9,9 @@ import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFrame;
 
+import org.apache.commons.io.FileUtils;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -52,7 +55,7 @@ public class CopyToPusbulletApiFolderAction extends AbstractAction {
         	String message = Bundle.getFormattedString("CopyToPushbulletAction.uploading", resource.getName());
         	MainController.getController().getProgressMonitor().monitorProgressStart(message);
 
-			doUpload(resource);
+			initUpload(resource);
 		} catch (Throwable ex) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Upload failed", ex);
 		} finally {
@@ -61,13 +64,24 @@ public class CopyToPusbulletApiFolderAction extends AbstractAction {
 	}
 
 	/**
-	 * Uploads the given {@link IResourceHandler} to the desired bushbullet device.
+	 * Uploads the given {@link IResourceHandler} to the desired pushbullet device.
 	 * @param resource The resource to be uploaded.
 	 * @throws IOException
 	 * @throws IllegalStateException
-	 *
 	 */
-	private void doUpload(IResourceHandler resource) throws IllegalStateException, IOException {
+	private void initUpload(IResourceHandler resource) throws IllegalStateException, IOException {
+		String pushBulletApiKey = getApiKey();
+
+		if(StringUtils.isNotEmpty(pushBulletApiKey)) {
+			PushbulletClient client = new PushbulletClient(pushBulletApiKey);
+			List<String> targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
+			for (String targetDeviceIdentifier : targetDeviceIdentifiers) {
+				doUpload(client, targetDeviceIdentifier, resource);
+			}
+		}
+	}
+
+	private String getApiKey() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String pushBulletApiKey = preferenceStore.getGenericEntryAsString(PUSHBULLET_API_KEY);
 		if(StringUtils.isEmpty(pushBulletApiKey)) {
@@ -76,14 +90,30 @@ public class CopyToPusbulletApiFolderAction extends AbstractAction {
 				preferenceStore.addGenericEntryAsString(PUSHBULLET_API_KEY, pushBulletApiKey);
 			}
 		}
-
-		if(StringUtils.isNotEmpty(pushBulletApiKey)) {
-			PushbulletClient client = new PushbulletClient(pushBulletApiKey);
-			List<String> targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
-			for (String targetDeviceIdentifier : targetDeviceIdentifiers) {
-				client.sendFile(targetDeviceIdentifier, resource.toFile());
+		return pushBulletApiKey;
+	}
+	
+	private void doUpload(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws IOException {
+		String name = resource.getName();
+		if(containsAnyNonAsciiChars(name)) {
+			String newName = createNonAsciiCharFreeString(name, "_");			
+			IResourceHandler newResourceHandler = ResourceHandlerFactory.getResourceHandler(new File(FileUtils.getTempDirectory(), newName));
+			try {
+				resource.copyTo(newResourceHandler, true);
+				client.sendFile(targetDeviceIdentifier, newResourceHandler.toFile());
+			} finally {
+				newResourceHandler.delete();
 			}
 		}
+	}
+
+	private String createNonAsciiCharFreeString(String name, String replacement) {
+		String newName = name.replaceAll("[^\\x00-\\x7F]", replacement);
+		return newName;
+	}
+
+	private boolean containsAnyNonAsciiChars(String name) {
+		return name.matches("^.*[^\\x00-\\x7F].*$");
 	}
 
 	/**
@@ -157,8 +187,8 @@ public class CopyToPusbulletApiFolderAction extends AbstractAction {
 	}
 
 	private String askForApiKey() {
-		MainController controller = MainController.getController();
-		return DesktopUtils.showInputDialog(controller.getMainWindow(), Bundle.getString("CopyToPushbulletAction.apikey.dialog.text"),
+		JFrame mainWindow = MainController.getController().getMainWindow();
+		return DesktopUtils.showInputDialog(mainWindow, Bundle.getString("CopyToPushbulletAction.apikey.dialog.text"),
 				Bundle.getString("CopyToPushbulletAction.apikey.dialog.title"), null);
 	}
 
