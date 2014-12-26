@@ -30,8 +30,8 @@ public class BasePathTreeModel extends AbstractFileTreeModel {
 
 	private TreePath filterTreePath;
 
-	public BasePathTreeModel(JTree tree) {
-		super(tree, new DefaultMutableTreeNode("root"));
+	public BasePathTreeModel() {
+		super(new DefaultMutableTreeNode("root"));
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.init();
 	}
@@ -70,7 +70,7 @@ public class BasePathTreeModel extends AbstractFileTreeModel {
 		}
 	}
 
-	public TreePath restoreExpanstionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments) {
+	public TreePath restoreExpansionState(JTree tree, IResourceHandler resourceHandler, List<String> fullPathSegments) {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final String basePathFor = preferenceStore.getBasePathFor(resourceHandler);
 		final int segments = ResourceHandlerFactory.getResourceHandler(basePathFor).getPathSegments().size()  - 1;
