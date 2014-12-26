@@ -63,20 +63,20 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 		for(EbookPropertyItem ebookItem : ebookPropertyItems) {
 			IResourceHandler resourceHandler = ebookItem.getResourceHandler();
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			final List<MetadataProperty> allMetaData = reader.readMetaData();
+			final List<MetadataProperty> allMetadata = reader.readMetadata();
 			final List<MetadataProperty> newMetadata = new ArrayList<MetadataProperty>();
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			
 			boolean change = false;
 			for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
-				List<MetadataProperty> availableMetadata = new ArrayList<MetadataProperty>(reader.getMetadataByType(false, allMetaData, type));
+				List<MetadataProperty> availableMetadata = new ArrayList<MetadataProperty>(reader.getMetadataByType(false, allMetadata, type));
 				List<String> downloadedValues = metadataDownloadController.getFilteredValues(type);
 				for(int i = 0; i < downloadedValues.size(); i++) {
 					String downloadedValue = downloadedValues.get(i);
-					change = setMetadataValue(downloadedValue, availableMetadata, allMetaData, newMetadata, reader, type, i);
+					change = setMetadataValue(downloadedValue, availableMetadata, allMetadata, newMetadata, reader, type, i);
 				}
 			}
-			newMetadata.addAll(allMetaData);
+			newMetadata.addAll(allMetadata);
 			
 			byte[] coverImage = transferCoverImageMetadata(metadataDownloadController, reader, newMetadata);
 			
@@ -90,7 +90,7 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 		}
 	}
 	
-	private boolean setMetadataValue(String value, List<MetadataProperty> availableMetadata, final List<MetadataProperty> allMetaData, final List<MetadataProperty> newMetadata, final IMetadataReader reader, IMetadataReader.METADATA_TYPES type, int num) {
+	private boolean setMetadataValue(String value, List<MetadataProperty> availableMetadata, final List<MetadataProperty> allMetadata, final List<MetadataProperty> newMetadata, final IMetadataReader reader, IMetadataReader.METADATA_TYPES type, int num) {
 		boolean result = false;
 		if(!availableMetadata.isEmpty()) {
 			//set the value to the existing ones.
@@ -98,7 +98,7 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 			availableMetadata.removeAll(sameMetadata);
 			for(MetadataProperty same : sameMetadata) {
 				same.setValue(value, 0);
-				allMetaData.remove(same);
+				allMetadata.remove(same);
 				newMetadata.add(same);
 				result = true;
 			}
@@ -122,14 +122,14 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 	 *     there is no cover or the cover checkbox in the gui wasn't checked.
 	 */
 	private byte[] transferCoverImageMetadata(final MetadataDownloadController metadataDownloadController, final IMetadataReader reader,
-			final List<MetadataProperty> readMetaData) {
+			final List<MetadataProperty> readMetadata) {
 		byte[] coverImage = metadataDownloadController.getCoverImage();
 		if(coverImage != null) {
-			List<MetadataProperty> coverMetadataList = reader.getMetadataByType(true, readMetaData, IMetadataReader.METADATA_TYPES.COVER);
+			List<MetadataProperty> coverMetadataList = reader.getMetadataByType(true, readMetadata, IMetadataReader.METADATA_TYPES.COVER);
 			if(!coverMetadataList.isEmpty()) {
 				MetadataProperty metadataProperty = coverMetadataList.get(0);
-				if(!readMetaData.contains(metadataProperty)) {
-					readMetaData.add(metadataProperty);
+				if(!readMetadata.contains(metadataProperty)) {
+					readMetadata.add(metadataProperty);
 				}
 				metadataProperty.setValue(coverImage, 0);
 			}

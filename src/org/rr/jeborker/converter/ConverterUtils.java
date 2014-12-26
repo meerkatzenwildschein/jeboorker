@@ -21,12 +21,12 @@ class ConverterUtils {
 	static void transferMetadata(final IResourceHandler sourceResource, final IResourceHandler targetResource) {
 		IMetadataReader sourceReader = MetadataHandlerFactory.getReader(sourceResource);
 		IMetadataReader targetReader = MetadataHandlerFactory.getReader(targetResource);
-		List<MetadataProperty> sourceMetaData = sourceReader.readMetaData();
-		List<MetadataProperty> targetMetaData = new ArrayList<MetadataProperty>(sourceMetaData.size());
+		List<MetadataProperty> sourceMetadata = sourceReader.readMetadata();
+		List<MetadataProperty> targetMetadata = new ArrayList<MetadataProperty>(sourceMetadata.size());
 
 		for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
-			List<MetadataProperty> sourceMetadataByType = sourceReader.getMetadataByType(false, sourceMetaData, type);
-			List<MetadataProperty> targetMetadataByType = targetReader.getMetadataByType(true, targetMetaData, type);
+			List<MetadataProperty> sourceMetadataByType = sourceReader.getMetadataByType(false, sourceMetadata, type);
+			List<MetadataProperty> targetMetadataByType = targetReader.getMetadataByType(true, targetMetadata, type);
 
 			if(!sourceMetadataByType.isEmpty()) {
 				MetadataProperty sourceMetadataProperty = sourceMetadataByType.get(0);
@@ -34,12 +34,12 @@ class ConverterUtils {
 				targetMetadataProperty.setPropertyClass(sourceMetadataProperty.getPropertyClass());
 				targetMetadataProperty.setValues(sourceMetadataProperty.getValues());
 
-				targetMetaData.add(targetMetadataProperty);
+				targetMetadata.add(targetMetadataProperty);
 			}
 		}
 
 		IMetadataWriter writer = MetadataHandlerFactory.getWriter(targetResource);
-		writer.writeMetadata(targetMetaData);
+		writer.writeMetadata(targetMetadata);
 	}
 
 	/**

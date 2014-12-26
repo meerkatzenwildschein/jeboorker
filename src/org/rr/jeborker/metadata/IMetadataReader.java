@@ -236,13 +236,13 @@ public interface IMetadataReader {
 	 * Read the metadata from the given {@link IResourceHandler}.
 	 * @return The {@link MetaData} for the given {@link IResourceHandler}. 
 	 */
-	public List<MetadataProperty> readMetaData(); 
+	public List<MetadataProperty> readMetadata(); 
 	
 	/**
 	 * Gets a list of supported metadata entries.
 	 * @return All supported metadata entries.
 	 */
-	public List<MetadataProperty> getSupportedMetaData();
+	public List<MetadataProperty> getSupportedMetadata();
 	
 	/**
 	 * Sets the {@link EbookPropertyItem} properties from the given {@link MetadataProperty}.
@@ -255,13 +255,13 @@ public interface IMetadataReader {
 	 * Get the plain and editable metadata.
 	 * @return The desired metadata or <code>null</code> if the metadata couldn't be fetched.
 	 */
-	public String getPlainMetaData();
+	public String getPlainMetadata();
 	
 	/**
-	 * The mime type of the metadata returned by the {@link #getPlainMetaData()} method.
+	 * The mime type of the metadata returned by the {@link #getPlainMetadata()} method.
 	 * @return The mimetype of the metadata.
 	 */
-	public String getPlainMetaDataMime();
+	public String getPlainMetadataMime();
 	
 	/**
 	 * Get the the metadata entries by it's type.

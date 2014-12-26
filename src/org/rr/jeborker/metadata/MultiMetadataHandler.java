@@ -26,18 +26,18 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {	
+	public List<MetadataProperty> readMetadata() {	
 		//read and collect metadata from the ebook resources
 		final HashMap<METADATA_TYPES, List<MetadataProperty>> metadata = new HashMap<IMetadataReader.METADATA_TYPES, List<MetadataProperty>>();
 		for (int i = 0; i < ebookResourceHandler.size(); i++) {
 			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			final List<MetadataProperty> readMetaData = reader.readMetaData();
+			final List<MetadataProperty> readMetadata = reader.readMetadata();
 
 			//collect all metadata separated by it's type (author, title, etc.)
 			for(METADATA_TYPES type : METADATA_TYPES.values()) {
 				List<MetadataProperty> typeMetadata = metadata.containsKey(type) ? metadata.get(type) : new ArrayList<MetadataProperty>();
-				typeMetadata.addAll(reader.getMetadataByType(true, readMetaData, type));
+				typeMetadata.addAll(reader.getMetadataByType(true, readMetadata, type));
 				metadata.put(type, typeMetadata);				
 			}
 		}
@@ -70,7 +70,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public List<MetadataProperty> getSupportedMetaData() {
+	public List<MetadataProperty> getSupportedMetadata() {
 		return Collections.emptyList();
 	}
 
@@ -86,12 +86,12 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public String getPlainMetaData() {
+	public String getPlainMetadata() {
 		return null;
 	}
 
 	@Override
-	public String getPlainMetaDataMime() {
+	public String getPlainMetadataMime() {
 		return null;
 	}
 
@@ -139,7 +139,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			final List<MetadataProperty> readMetaData = new ArrayList<MetadataProperty>(reader.readMetaData());
+			final List<MetadataProperty> readMetadata = new ArrayList<MetadataProperty>(reader.readMetadata());
 			
 			boolean change = false;
 			for(METADATA_TYPES type : METADATA_TYPES.values()) {
@@ -147,19 +147,19 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 					if(type.getName().equals(prop.getName()) && !prop.getValues().isEmpty()) {
 						final Object value = prop.getValues().get(0);
 						final boolean createNew = !StringUtils.toString(value).isEmpty();
-						final List<MetadataProperty> metadataByType = reader.getMetadataByType(createNew, readMetaData, type);
+						final List<MetadataProperty> metadataByType = reader.getMetadataByType(createNew, readMetadata, type);
 						
 						if(!metadataByType.isEmpty()) {
 							final MultiMetadataPropertyDelegate metadataProperty = new MultiMetadataPropertyDelegate(metadataByType);
 							
 							Object oldValue = metadataProperty.getValues().isEmpty() ? null : metadataProperty.getValues().get(0);
 							if(value != null && !value.equals(oldValue)) {
-								if(!StringUtils.toString(value).isEmpty() && !readMetaData.contains(metadataProperty.getFirstMetadataProperty())) {
+								if(!StringUtils.toString(value).isEmpty() && !readMetadata.contains(metadataProperty.getFirstMetadataProperty())) {
 									//add if not already exists.
-									readMetaData.add(metadataProperty.getFirstMetadataProperty());
+									readMetadata.add(metadataProperty.getFirstMetadataProperty());
 								} else if(StringUtils.toString(value).isEmpty()) {
 									//remove empty metadata entries
-									readMetaData.remove(metadataProperty.getFirstMetadataProperty());
+									readMetadata.remove(metadataProperty.getFirstMetadataProperty());
 								}
 								metadataProperty.setValue(value, 0);
 								change = true;
@@ -171,7 +171,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 			
 			if(change) {
 				try {
-					writer.writeMetadata(readMetaData);
+					writer.writeMetadata(readMetadata);
 				} catch (Exception e) {
 					LoggerFactory.getLogger().log(Level.WARNING, "Writing metadata to " + resourceHandler + " has failed.", e);
 				}

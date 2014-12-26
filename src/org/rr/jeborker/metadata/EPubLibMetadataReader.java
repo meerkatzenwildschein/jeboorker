@@ -33,7 +33,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {
+	public List<MetadataProperty> readMetadata() {
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 
 		try {
@@ -233,7 +233,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public List<MetadataProperty> getSupportedMetaData() {
+	public List<MetadataProperty> getSupportedMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
 		Author author = new Author("");
 		author.setRelator(Relator.AUTHOR);
@@ -289,7 +289,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public String getPlainMetaData() {
+	public String getPlainMetadata() {
 		try {
 			final byte[] containerXmlData = getContainerOPF(getEbookResource().get(0));
 			return new String(containerXmlData, Charsets.UTF_8);
@@ -300,7 +300,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public String getPlainMetaDataMime() {
+	public String getPlainMetadataMime() {
 		return "text/xml";
 	}
 

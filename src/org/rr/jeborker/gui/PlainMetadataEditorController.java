@@ -50,11 +50,11 @@ public class PlainMetadataEditorController {
 
 	public void showXMLMetadataDialog() {
 		PlainMetadataEditorView view = getView();
-		view.editor.setContentType(reader.getPlainMetaDataMime());
-		String plainMetaData = reader.getPlainMetaData();
-		view.editor.setText(plainMetaData);
-		if(reader.getPlainMetaDataMime().contains("/xml")) {
-			toggleFolds(plainMetaData);
+		view.editor.setContentType(reader.getPlainMetadataMime());
+		String plainMetadata = reader.getPlainMetadata();
+		view.editor.setText(plainMetadata);
+		if(reader.getPlainMetadataMime().contains("/xml")) {
+			toggleFolds(plainMetadata);
 		}
 		view.setVisible(true);
 	}
@@ -104,7 +104,7 @@ public class PlainMetadataEditorController {
 		if(xmlMetadataView==null) {
 			JFrame mainWindow = MainController.getController().getMainWindow();
 			try {
-				xmlMetadataView = new PlainMetadataEditorView(mainWindow, reader.getPlainMetaDataMime());
+				xmlMetadataView = new PlainMetadataEditorView(mainWindow, reader.getPlainMetadataMime());
 			} catch (IOException e) {
 				LoggerFactory.logWarning(this, "could not create XML editor component for " + reader.getEbookResource(), e);
 			}

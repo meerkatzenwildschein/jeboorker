@@ -33,7 +33,7 @@ class HTMLMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {
+	public List<MetadataProperty> readMetadata() {
 		try {
 			final String htmlHead = getHTMLHead();
 			if(!htmlHead.isEmpty()) {
@@ -128,7 +128,7 @@ class HTMLMetadataReader implements IMetadataReader {
 
 
 	@Override
-	public List<MetadataProperty> getSupportedMetaData() {
+	public List<MetadataProperty> getSupportedMetadata() {
 		return Collections.emptyList();
 	}
 
@@ -143,7 +143,7 @@ class HTMLMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public String getPlainMetaData() {
+	public String getPlainMetadata() {
 		try {
 			final String htmlHead = getHTMLHead();
 			return htmlHead;
@@ -154,7 +154,7 @@ class HTMLMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public String getPlainMetaDataMime() {
+	public String getPlainMetadataMime() {
 		return "text/html";
 	}
 

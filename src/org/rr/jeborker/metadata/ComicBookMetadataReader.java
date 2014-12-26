@@ -41,7 +41,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {
+	public List<MetadataProperty> readMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
 		try {
 			final ComicBookDocument document = getDocument();
@@ -74,7 +74,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> getSupportedMetaData() {
+	public List<MetadataProperty> getSupportedMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
 		for(COMICBOOK_METADATA_TYPES type : COMICBOOK_METADATA_TYPES.values()) {
 			MetadataProperty metadataProperty = createMetadataProperty(type, "");
@@ -97,12 +97,12 @@ class ComicBookMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public String getPlainMetaData() {
+	public String getPlainMetadata() {
 		return new String(doc.getComicInfoXml());
 	}
 
 	@Override
-	public String getPlainMetaDataMime() {
+	public String getPlainMetadataMime() {
 		return "text/xml";
 	}
 

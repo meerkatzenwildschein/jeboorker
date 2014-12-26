@@ -20,12 +20,12 @@ public class EmptyMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {
+	public List<MetadataProperty> readMetadata() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<MetadataProperty> getSupportedMetaData() {
+	public List<MetadataProperty> getSupportedMetadata() {
 		return Collections.emptyList();
 	}
 
@@ -34,12 +34,12 @@ public class EmptyMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public String getPlainMetaData() {
+	public String getPlainMetadata() {
 		return "";
 	}
 
 	@Override
-	public String getPlainMetaDataMime() {
+	public String getPlainMetadataMime() {
 		return null;
 	}
 

@@ -40,7 +40,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 	public void writeMetadata(List<MetadataProperty> props) {
 		try {
 			final PDFCommonMetadataReader reader = (PDFCommonMetadataReader) MetadataHandlerFactory.getReader(ebookResource);
-			final List<MetadataProperty> readMetaData = reader.readMetaData();
+			final List<MetadataProperty> readMetadata = reader.readMetadata();
 
 			byte[] fetchXMPThumbnail = reader.fetchXMPThumbnail(ebookResource);
 			HashMap<String, String> info = new HashMap<String, String>();
@@ -48,7 +48,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 
 			// flag wich tells if xmp meta data where really be created.
 			// so no empty xmp doc will be inserted.
-			boolean xmpMetadataSet = countXMPMetadataProperties(readMetaData) != countXMPMetadataProperties(props);
+			boolean xmpMetadataSet = countXMPMetadataProperties(readMetadata) != countXMPMetadataProperties(props);
 			for (MetadataProperty metadataProperty : props) {
 				final String name = metadataProperty.getName();
 				final List<Object> value = metadataProperty.getValues();

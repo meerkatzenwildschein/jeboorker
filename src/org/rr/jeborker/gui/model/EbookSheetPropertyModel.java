@@ -32,7 +32,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	private IResourceHandler resourceHandler;
 
-	protected List<MetadataProperty> allMetaData;
+	protected List<MetadataProperty> allMetadata;
 
 	public boolean isChanged() {
 		List<Property> properties = this.getProperties();
@@ -56,7 +56,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
-			allMetaData.add(metadataProperty);
+			allMetadata.add(metadataProperty);
 		}
 		changed = true;
 	}
@@ -69,7 +69,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
-			allMetaData.add(metadataProperty);
+			allMetadata.add(metadataProperty);
 		}
 		changed = true;
 	}
@@ -80,7 +80,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		super.removeProperty(property);
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
-			allMetaData.remove(metadataProperty);
+			allMetadata.remove(metadataProperty);
 		}
 		changed = true;
 	}
@@ -112,7 +112,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @return The desired property or <code>null</code> if no cover property exists.
 	 */
 	public Property getCoverProperty() {
-		List<MetadataProperty> allMetadata = getAllMetaData();
+		List<MetadataProperty> allMetadata = getAllMetadata();
 		for(MetadataProperty metadata : allMetadata) {
 			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(metadata.getName())) {
 				final DefaultProperty coverProperty = new DefaultProperty();
@@ -203,8 +203,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		return Collections.emptyList();
 	}
 
-	public List<MetadataProperty> getAllMetaData() {
-		return allMetaData;
+	public List<MetadataProperty> getAllMetadata() {
+		return allMetadata;
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public byte[] getCover() {
 		IMetadataReader metadataReader = getMetadataReader();
 		if(metadataReader != null) {
-			List<MetadataProperty> metadataByType = metadataReader.getMetadataByType(false, allMetaData, IMetadataReader.METADATA_TYPES.COVER);
+			List<MetadataProperty> metadataByType = metadataReader.getMetadataByType(false, allMetadata, IMetadataReader.METADATA_TYPES.COVER);
 			if(metadataByType != null && !metadataByType.isEmpty()) {
 				MetadataProperty metadataProperty = metadataByType.get(0);
 				if(metadataProperty.getValues() != null && !metadataProperty.getValues().isEmpty()) {
@@ -264,18 +264,18 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 */
 	protected List<Property> setupMetadata(final List<EbookPropertyItem> items, final IMetadataReader reader) {
 		final ArrayList<Property> result = new ArrayList<Property>(items.size() + 1);
-		final List<MetadataProperty> allMetaData = new ArrayList<MetadataProperty>(this.allMetaData = reader.readMetaData());
+		final List<MetadataProperty> allMetadata = new ArrayList<MetadataProperty>(this.allMetadata = reader.readMetadata());
 
-		for (int i = 0; i < allMetaData.size(); i++) {
-			final MetadataProperty metadataProperty = allMetaData.get(i);
+		for (int i = 0; i < allMetadata.size(); i++) {
+			final MetadataProperty metadataProperty = allMetadata.get(i);
 			final List<Object> values = metadataProperty.getValues();
 			if(values.size() == 1) {
 				//find properties with the same name and value to merge them in the sheet view.
-				List<MetadataProperty> mergedProperties = MetadataUtils.getSameProperties(metadataProperty, allMetaData);
+				List<MetadataProperty> mergedProperties = MetadataUtils.getSameProperties(metadataProperty, allMetadata);
 				if(mergedProperties.size() > 1) {
 					EbookSheetProperty property = new MultipleEbookSheetProperty(mergedProperties, items);
 					result.add(property);
-					allMetaData.removeAll(mergedProperties);
+					allMetadata.removeAll(mergedProperties);
 					i--;
 				} else {
 					Property property = createProperty(metadataProperty, items, 0);
