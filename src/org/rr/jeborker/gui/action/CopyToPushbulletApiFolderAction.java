@@ -29,7 +29,7 @@ import com.shakethat.jpushbullet.PushbulletClient;
 import com.shakethat.jpushbullet.net.Devices;
 import com.shakethat.jpushbullet.net.Extras;
 
-public class CopyToPusbulletApiFolderAction extends AbstractAction {
+public class CopyToPushbulletApiFolderAction extends AbstractAction {
 
 	/**
 	 * The name where the api key is stored in the database.
@@ -41,7 +41,7 @@ public class CopyToPusbulletApiFolderAction extends AbstractAction {
 	//source file to copy
 	String source;
 
-	CopyToPusbulletApiFolderAction(String text) {
+	CopyToPushbulletApiFolderAction(String text) {
 		this.source = text;
 		putValue(Action.NAME, Bundle.getString("CopyToPushbulletAction.name"));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("pushbullet_16.png"));
