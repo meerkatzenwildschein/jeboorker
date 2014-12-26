@@ -23,14 +23,11 @@ public class FileSystemTreeModel extends AbstractFileTreeModel {
 
 	private static final long serialVersionUID = -456216843620742653L;
 
-	private JTree tree;
-
 	private DefaultMutableTreeNode root;
 
-	public FileSystemTreeModel(JTree tree) {
-		super(tree, new DefaultMutableTreeNode("root"));
+	public FileSystemTreeModel() {
+		super(new DefaultMutableTreeNode("root"));
 		this.root = (DefaultMutableTreeNode) getRoot();
-		this.tree = tree;
 		init();
 	}
 
@@ -79,30 +76,6 @@ public class FileSystemTreeModel extends AbstractFileTreeModel {
 		for(TreeModelListener treeModelListener : treeModelListeners) {
 			removeTreeModelListener(treeModelListener);
 		}
-	}
-
-	public TreePath restoreExpansionState(JTree tree, List<String> fullPathSegments) {
-		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);
-		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
-		return lastExpandedRow;
-	}
-	
-	/**
-	 * Remove all deleted files from the model.
-	 */
-	public List<FileSystemNode> getDeletedFileNodes() {
-		int rows = tree.getRowCount();
-		ArrayList<FileSystemNode> nodesToRemove = new ArrayList<FileSystemNode>();
-		for(int i = 0; i< rows; i++) {
-			Object aNode = tree.getPathForRow(i).getLastPathComponent();
-			if(aNode instanceof FileSystemNode) {
-				FileSystemNode fsNode = (FileSystemNode) aNode;
-				if(!fsNode.getResource().exists()) {
-					nodesToRemove.add(fsNode);
-				}
-			}
-		}
-		return nodesToRemove;
 	}
 
 	/**

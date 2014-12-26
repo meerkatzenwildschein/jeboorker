@@ -62,8 +62,8 @@ class MainViewMenuUtils {
 					
 					@Override
 					public void run() {
-						((BasePathTreeModel) basePathTree.getModel()).reload(pathNodeResource);
-						((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNodeResource);
+						((BasePathTreeModel) basePathTree.getModel()).reload(pathNodeResource, basePathTree.getPathForRows());
+						((FileSystemTreeModel) fileSystemTree.getModel()).reload(pathNodeResource, fileSystemTree.getPathForRows());
 					}
 				});
 			}

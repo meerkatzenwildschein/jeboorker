@@ -89,9 +89,9 @@ public class MainViewTreeComponentHandler {
 
 			TreePath lastExpandedRow = null;
 			if(model instanceof FileSystemTreeModel) {
-				lastExpandedRow = ((FileSystemTreeModel) model).restoreExpansionState((JTree) selectedComponent, fullPathSegments);
+				lastExpandedRow = restoreExpansionState(selectedComponent, fullPathSegments);
 			} else if(model instanceof BasePathTreeModel) {
-				lastExpandedRow = ((BasePathTreeModel) model).restoreExpanstionState((JTree) selectedComponent, resourceHandler, fullPathSegments);
+				lastExpandedRow = ((BasePathTreeModel) model).restoreExpansionState((JTree) selectedComponent, resourceHandler, fullPathSegments);
 			}
 
 			if(lastExpandedRow != null) {
@@ -102,6 +102,12 @@ public class MainViewTreeComponentHandler {
 			}
 		}
 	}
+	
+	public TreePath restoreExpansionState(JTree tree, List<String> fullPathSegments) {
+		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);
+		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
+		return lastExpandedRow;
+	}	
 
 	/**
 	 * Collapse all tree nodes in the tree with the given name.
@@ -159,8 +165,8 @@ public class MainViewTreeComponentHandler {
 			}
 			final String expansionStates = TreeUtil.getExpansionStates(fileSystemTree);
 			fileSystemTree.stopEditing();
-			((FileSystemTreeModel) fileSystemTreeModel).reload(resourceToRefresh);
-			((BasePathTreeModel) basePathTreeModel).reload(resourceToRefresh);
+			((FileSystemTreeModel) fileSystemTreeModel).reload(resourceToRefresh, fileSystemTree.getPathForRows());
+			((BasePathTreeModel) basePathTreeModel).reload(resourceToRefresh, basePathTree.getPathForRows());
 
 			SwingUtilities.invokeLater(new Runnable() {
 
