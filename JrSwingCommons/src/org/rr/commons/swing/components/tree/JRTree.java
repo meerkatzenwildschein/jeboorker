@@ -7,7 +7,9 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -256,6 +258,19 @@ public class JRTree extends JTree {
             }
         }
         return -1;
+    }
+    
+    /**
+     * Returns a TreePath for each visible row in the tree. 
+     * @return All TreePath elements for each visible row.
+     */
+    public List<TreePath> getPathForRows() {
+    	int rowCount = getRowCount();
+    	List<TreePath> resultPath = new ArrayList<>(rowCount);
+    	for(int i = 0; i < rowCount; i++) {
+    		resultPath.add(getPathForRow(i));
+    	}
+    	return resultPath;
     }
 
     /** Expands all the nodes in this tree. */
