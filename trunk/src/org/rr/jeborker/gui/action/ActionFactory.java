@@ -315,7 +315,7 @@ public class ActionFactory {
 
 			@Override
 			public Class<? extends Action> getActionClass() {
-				return CopyToPusbulletApiFolderAction.class;
+				return CopyToPushbulletApiFolderAction.class;
 			}
 
 			@Override
