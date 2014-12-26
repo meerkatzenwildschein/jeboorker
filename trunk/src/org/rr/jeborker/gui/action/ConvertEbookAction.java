@@ -34,11 +34,8 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 	ConvertEbookAction(String text) {
 		this.book = text;
 		this.bookResourceHandler = ResourceHandlerFactory.getResourceHandler(book);
-//		String name = Bundle.getString("OpenFileAction.name");
-//		putValue(Action.NAME, SwingUtils.removeMnemonicMarker(name));
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));
 		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("convert_16.png"));		
-//		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 	
 	@Override
