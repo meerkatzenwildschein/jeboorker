@@ -14,9 +14,9 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 
 	private static final long serialVersionUID = 661585601885502869L;
 
-	private List<MetadataProperty> supportedMetadata = null;
+	private List<MetadataProperty> supportedMetadata;
 
-	private List<Action> actionsForMetadataProperties = null;
+	private List<Action> actionsForMetadataProperties;
 
 	private List<MetadataProperty> currentMetadata;
 
