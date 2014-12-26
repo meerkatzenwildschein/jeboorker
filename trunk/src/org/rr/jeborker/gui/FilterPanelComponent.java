@@ -42,9 +42,9 @@ public class FilterPanelComponent extends JPanel {
 
 	private static EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();
 	
-	private final JRCheckBoxComboBox<Field> filterFieldSelection = new JRCheckBoxComboBox<Field>();
+	private final JRCheckBoxComboBox<Field> filterFieldSelection = new JRCheckBoxComboBox<>();
 	
-	private final JComboBox<String> filterField = new JComboBox<String>();
+	private final JComboBox<String> filterField = new JComboBox<>();
 	
 	private final BasicComboBoxEditor comboboxEditor = new FilterFieldComboboxEditor();
 	
@@ -228,9 +228,16 @@ public class FilterPanelComponent extends JPanel {
 	 */
 	void storeApplicationHistory() {
 		storeFileHistory();
+		
 		storeFilterHistory();
+		storeFilterSelection();
 	}
 
+	private void storeFilterSelection() {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
+	}
+	
 	private void storeFilterHistory() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
@@ -243,7 +250,11 @@ public class FilterPanelComponent extends JPanel {
 			modelEntries.append(elementAt);
 		}
 		preferenceStore.addGenericEntryAsString("FilterPanelControllerEntries", modelEntries.toString());
-		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection", ListUtils.join(getSelectedFilterFieldNames(), ","));
+	}
+
+	private void storeFileHistory() {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
 	}
 
 	/**
@@ -253,45 +264,42 @@ public class FilterPanelComponent extends JPanel {
 	 */
 	void restoreComponentProperties() {
 		restoreFilterHistory();
+		restoreFilterSelection();
+
 		restoreFileHistory();
 	}
 
 	private void restoreFilterHistory() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		{
-			final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
-			String filterEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerEntries");
-			if (filterEntries != null && filterEntries.length() > 0) {
-				List<String> split = ListUtils.split(filterEntries, ",");
-				for (String string : split) {
-					model.addElement(string);
-				}
+		final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
+		String filterEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerEntries");
+		if (filterEntries != null && filterEntries.length() > 0) {
+			List<String> split = ListUtils.split(filterEntries, ",");
+			for (String string : split) {
+				model.addElement(string);
 			}
-			filterField.updateUI();
 		}
+		filterField.updateUI();
 
-		{ // restore the filter field selection
-			String filterFieldSelectionEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection");
-			List<String> splitted = ListUtils.split(filterFieldSelectionEntries, ",");
-			final JRCheckBoxComboBoxModel<Field> model = filterFieldSelection.getCheckBoxComboBoxModel();
-			final int modelSize = model.getSize();
+	}
 
-			for (String split : splitted) {
-				for (int j = 0; j < modelSize; j++) {
-					if (model.getValueAt(j).getName().equals(split)) {
-						model.addCheck((Field) model.getValueAt(j));
-						break;
-					}
+	private void restoreFilterSelection() {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		String filterFieldSelectionEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerCurrentFilterFieldSelection");
+		List<String> splitted = ListUtils.split(filterFieldSelectionEntries, ",");
+		final JRCheckBoxComboBoxModel<Field> model = filterFieldSelection.getCheckBoxComboBoxModel();
+		final int modelSize = model.getSize();
+
+		for (String split : splitted) {
+			for (int j = 0; j < modelSize; j++) {
+				if (model.getValueAt(j).getName().equals(split)) {
+					model.addCheck((Field) model.getValueAt(j));
+					break;
 				}
 			}
 		}
 	}
 	
-	private void storeFileHistory() {
-		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		preferenceStore.addGenericEntryAsString("FilterPanelControllerCurrentFilter", getFilterText());
-	}
-
 	private void restoreFileHistory() {
 		String latestSearch = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString(
 				"FilterPanelControllerCurrentFilter");
