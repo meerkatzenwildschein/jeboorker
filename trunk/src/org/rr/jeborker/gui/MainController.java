@@ -338,11 +338,11 @@ public class MainController {
 			List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
 			for (EbookPropertyItem item : selectedEbookPropertyItems) {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceHandler(item.getFile()));
-				List<MetadataProperty> metadataByType = reader.getMetadataByType(true, model.getAllMetaData(), METADATA_TYPES.RATING);
+				List<MetadataProperty> metadataByType = reader.getMetadataByType(true, model.getAllMetadata(), METADATA_TYPES.RATING);
 				if(!metadataByType.isEmpty()) {
-					MetadataProperty ratingMetaData = metadataByType.get(0);
+					MetadataProperty ratingMetadata = metadataByType.get(0);
 
-					final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetaData, Collections.singletonList(item), 0);
+					final Property createProperty = EbookSheetPropertyModel.createProperty(ratingMetadata, Collections.singletonList(item), 0);
 					createProperty.setValue(rating);
 					this.addMetadataProperty(createProperty);
 				} else {
@@ -357,7 +357,7 @@ public class MainController {
 	 */
 	public void saveMetadataProperties(int minSelectionIndex, int maxSelectionIndex) {
 		EbookSheetPropertyModel sheetModel = getPropertySheetHandler().getModel();
-		List<MetadataProperty> sheetProperties = sheetModel.getAllMetaData();
+		List<MetadataProperty> sheetProperties = sheetModel.getAllMetadata();
 		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
 		if(getPropertySheetHandler().getModel().isChanged()) {
 			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);

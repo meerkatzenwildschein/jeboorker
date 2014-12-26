@@ -14,7 +14,7 @@ public interface IMetadataWriter {
 	
 	/**
 	 * Stores the given metadata. This can be for example some xml previously
-	 * read with the {@link IMetadataReader#getPlainMetaData()} method.
+	 * read with the {@link IMetadataReader#getPlainMetadata()} method.
 	 * @param plainMetadata The data to be stored to the ebook.
 	 */
 	public void storePlainMetadata(byte[] plainMetadata);

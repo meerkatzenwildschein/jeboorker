@@ -14,31 +14,31 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 
 	private static final long serialVersionUID = 661585601885502869L;
 
-	private List<MetadataProperty> supportedMetaData = null;
+	private List<MetadataProperty> supportedMetadata = null;
 
 	private List<Action> actionsForMetadataProperties = null;
 
-	private List<MetadataProperty> currentMetaData;
+	private List<MetadataProperty> currentMetadata;
 
 	private final EbookPropertyItem item;
 
-	public MetadataAddListModel(final List<MetadataProperty> supportedMetaData, final List<MetadataProperty> currentMetaData, final EbookPropertyItem item) {
+	public MetadataAddListModel(final List<MetadataProperty> supportedMetadata, final List<MetadataProperty> currentMetadata, final EbookPropertyItem item) {
 		this.item = item;
-		this.currentMetaData = currentMetaData;
-		this.supportedMetaData = supportedMetaData;
+		this.currentMetadata = currentMetadata;
+		this.supportedMetadata = supportedMetadata;
 	}
 
 	@Override
 	public int getSize() {
-		if(supportedMetaData == null || actionsForMetadataProperties == null) {
+		if(supportedMetadata == null || actionsForMetadataProperties == null) {
 			initialize();
 		}
-		return supportedMetaData.size();
+		return supportedMetadata.size();
 	}
 
 	@Override
 	public Action getElementAt(int index) {
-		if(supportedMetaData == null || actionsForMetadataProperties == null) {
+		if(supportedMetadata == null || actionsForMetadataProperties == null) {
 			initialize();
 		}
 		return actionsForMetadataProperties.get(index);
@@ -47,8 +47,8 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 	private void initialize() {
 		//remove those metadata from the button list which are already in use and only be single ones.
 		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
-		for (MetadataProperty supportedProperty : supportedMetaData) {
-			for (MetadataProperty currentMetadataProperty : currentMetaData) {
+		for (MetadataProperty supportedProperty : supportedMetadata) {
+			for (MetadataProperty currentMetadataProperty : currentMetadata) {
 				if(supportedProperty.getName().equals(currentMetadataProperty.getName())) {
 					if(supportedProperty.isSingle()) {
 						toRemove.add(supportedProperty);
@@ -56,7 +56,7 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 				}
 			}
 		}
-		supportedMetaData.removeAll(toRemove);
-		actionsForMetadataProperties = ActionFactory.getAddMetadataActions(supportedMetaData, item, null);
+		supportedMetadata.removeAll(toRemove);
+		actionsForMetadataProperties = ActionFactory.getAddMetadataActions(supportedMetadata, item, null);
 	}
 }

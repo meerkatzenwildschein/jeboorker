@@ -20,13 +20,13 @@ public class MetadataUtils {
 	/**
 	 * searches for all metadata properties matching to the given one and returns them.
 	 * @param ref The ref to be searched. This one is in the result list in any case.
-	 * @param allMetaData The metadata list to be searched.
+	 * @param allMetadata The metadata list to be searched.
 	 * @return The list with all metadata instances matching with the given one (including the reference one).
 	 *     Never returns <code>null</code>.
 	 */
-	public static List<MetadataProperty> getSameProperties(MetadataProperty ref, List<MetadataProperty> allMetaData) {
+	public static List<MetadataProperty> getSameProperties(MetadataProperty ref, List<MetadataProperty> allMetadata) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(3);
-		for (MetadataProperty metadataProperty : allMetaData) {
+		for (MetadataProperty metadataProperty : allMetadata) {
 			if(comparePropertiesForMerge(metadataProperty, ref)) {
 				result.add(metadataProperty);
 			}
@@ -79,7 +79,7 @@ public class MetadataUtils {
 			throw new IllegalArgumentException("Can't copy metadata from " + source + " to " + target);
 		}
 		IMetadataReader sourceReader = MetadataHandlerFactory.getReader(source);
-		List<MetadataProperty> metadata = sourceReader.readMetaData();
+		List<MetadataProperty> metadata = sourceReader.readMetadata();
 
 		MetadataUtils.refreshPageNumberMetadata(sourceReader, metadata, target);
 

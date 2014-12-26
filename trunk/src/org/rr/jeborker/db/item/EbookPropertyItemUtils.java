@@ -98,7 +98,7 @@ public class EbookPropertyItemUtils {
 
 		IMetadataReader reader = MetadataHandlerFactory.getReader(resource);
 		if(reader != null) {
-			final List<MetadataProperty> metadataProperties = reader.readMetaData();
+			final List<MetadataProperty> metadataProperties = reader.readMetadata();
 			reader.fillEbookPropertyItem(metadataProperties, item);
 			if(refreshCover) {
 				boolean refreshed = false;

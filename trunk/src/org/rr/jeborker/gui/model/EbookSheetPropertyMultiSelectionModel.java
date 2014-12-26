@@ -27,8 +27,8 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 		}
 		
 		reader = MetadataHandlerFactory.getReader(ebookResourceHandlers);
-		allMetaData = new ArrayList<MetadataProperty>(METADATA_TYPES.values().length);
-		final ArrayList<Property> result = new ArrayList<Property>(allMetaData.size());
+		allMetadata = new ArrayList<MetadataProperty>(METADATA_TYPES.values().length);
+		final ArrayList<Property> result = new ArrayList<Property>(allMetadata.size());
 		
 		for(METADATA_TYPES type : METADATA_TYPES.values()) {
 			List<MetadataProperty> l = Collections.emptyList();
@@ -36,7 +36,7 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 			if(!metadataByType.isEmpty()) {
 				MetadataProperty metadataProperty = metadataByType.get(0);
 				if(metadataProperty != null) {
-					allMetaData.add(metadataProperty);
+					allMetadata.add(metadataProperty);
 				}
 			
 				Property property = createProperty(metadataProperty, items, type);

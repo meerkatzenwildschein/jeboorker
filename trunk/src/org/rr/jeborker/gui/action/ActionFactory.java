@@ -47,7 +47,7 @@ public class ActionFactory {
 		 * Tells if the action is able to handle multiple selections.
 		 * @return <code>true</code> if multi select is supported and <code>false</code> otherwise.
 		 */
-		boolean hasMultiSelectionSupport();
+		boolean hasMultipleSelectionSupport();
 	}
 
 	public static enum COMMON_ACTION_TYPES {
@@ -76,7 +76,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -98,7 +98,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -127,7 +127,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -155,7 +155,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return false;
 			}
 		},
@@ -177,7 +177,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return false;
 			}
 		}, SAVE_COVER_TO_CLIPBOARD_ACTION {
@@ -198,7 +198,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return false;
 			}
 		},
@@ -220,7 +220,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -242,7 +242,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -264,7 +264,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -286,7 +286,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -308,7 +308,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},COPY_TO_PUSHBULLET_ACTION {
@@ -329,7 +329,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -351,7 +351,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -373,7 +373,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		},
@@ -396,7 +396,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return false;
 			}
 		},
@@ -418,7 +418,7 @@ public class ActionFactory {
 			}
 
 			@Override
-			public boolean hasMultiSelectionSupport() {
+			public boolean hasMultipleSelectionSupport() {
 				return true;
 			}
 		}
@@ -554,7 +554,7 @@ public class ActionFactory {
 			}
 		}
 
-		if(!type.hasMultiSelectionSupport() && resourceHandlers.size() > 1) {
+		if(!type.hasMultipleSelectionSupport() && resourceHandlers.size() > 1) {
 			canHandle = false;
 		}
 
@@ -595,7 +595,7 @@ public class ActionFactory {
 			}
 		}
 
-		if(!type.hasMultiSelectionSupport() && items.size() > 1) {
+		if(!type.hasMultipleSelectionSupport() && items.size() > 1) {
 			canHandle = false;
 		}
 

@@ -47,7 +47,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	@Override
-	public List<MetadataProperty> readMetaData() {
+	public List<MetadataProperty> readMetadata() {
 		try {
 			final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
 			final byte[] xmpMetadataBytes = getXmpMetadata();
@@ -260,7 +260,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	@Override
-	public String getPlainMetaData() {
+	public String getPlainMetadata() {
 		try {
 			final byte[] xmpMetadataBytes = pdfDoc.getXMPMetadata();
 			if(xmpMetadataBytes != null && xmpMetadataBytes.length > 0) {
@@ -279,7 +279,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	@Override
-	public List<MetadataProperty> getSupportedMetaData() {
+	public List<MetadataProperty> getSupportedMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
 		result.add(new MetadataProperty("Author", ""));
 		result.add(new MetadataProperty("Title", ""));
@@ -298,17 +298,17 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	@Override
-	public String getPlainMetaDataMime() {
+	public String getPlainMetadataMime() {
 		return "text/xml";
 	}
 
-	private List<MetadataProperty> getAuthorMetaData(boolean create, List<MetadataProperty> props) {
+	private List<MetadataProperty> getAuthorMetadata(boolean create, List<MetadataProperty> props) {
 		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
 		final List<MetadataProperty> metadataProperties;
 		if(props != null) {
 			metadataProperties = props;
 		} else {
-			metadataProperties = readMetaData();
+			metadataProperties = readMetadata();
 		}
 
 		MetadataProperty authorProperty = null;
@@ -350,7 +350,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				name = "Rating";
 				break;
 			case AUTHOR:
-				return this.getAuthorMetaData(create, props);
+				return this.getAuthorMetadata(create, props);
 			case AGE_SUGGESTION:
 				search = "agesuggestion";
 				name = "AgeSuggestion";
@@ -380,7 +380,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		if(props != null) {
 			metadataProperties = props;
 		} else {
-			metadataProperties = readMetaData();
+			metadataProperties = readMetadata();
 		}
 
 		for (MetadataProperty property : metadataProperties) {

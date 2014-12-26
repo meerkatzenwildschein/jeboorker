@@ -145,8 +145,8 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	 */
 	private static boolean isManga() {
 		boolean result = false;
-		List<MetadataProperty> allMetaData = MainController.getController().getPropertySheetHandler().getModel().getAllMetaData();
-		for(MetadataProperty metadata : allMetaData) {
+		List<MetadataProperty> allMetadata = MainController.getController().getPropertySheetHandler().getModel().getAllMetadata();
+		for(MetadataProperty metadata : allMetadata) {
 			String name = metadata.getName();
 			if(name.toLowerCase().contains("manga")) {
 				String mangaValue = metadata.getValueAsString();

@@ -1379,8 +1379,8 @@ class MainView extends JFrame {
 
 						IMetadataReader reader = model.getMetadataReader();
 						if(reader != null) {
-							List<MetadataProperty> allMetaData = model.getAllMetaData();
-							MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetaData(), allMetaData, ebookPropertyItem);
+							List<MetadataProperty> allMetadata = model.getAllMetadata();
+							MetadataAddListModel metadataAddListModel = new MetadataAddListModel(reader.getSupportedMetadata(), allMetadata, ebookPropertyItem);
 							addMetadataButton.setListModel(metadataAddListModel);
 						}
 					}
