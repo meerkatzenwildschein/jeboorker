@@ -29,13 +29,13 @@ public class ResourceHandlerFactory {
 
 	private static IResourceHandler userHome = null;
 
-	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<IResourceHandler>();
+	private static final ArrayList<IResourceHandler> temporaryResourceLoader = new ArrayList<>();
 
 	private static final Thread shutdownThread = new Thread(new Runnable() {
 		@Override
 		public void run() {
 			//stores all loaded which could not be deleted.
-			final ArrayList<IResourceHandler> newTemporaryResourceLoader = new ArrayList<IResourceHandler>();
+			final ArrayList<IResourceHandler> newTemporaryResourceLoader = new ArrayList<>();
 			IResourceHandler resourceHandler = null;
 			for (int i = 0; i < temporaryResourceLoader.size(); i++) {
 				try {
@@ -244,7 +244,7 @@ public class ResourceHandlerFactory {
 		}
 
 		int extensionNum = 0;
-		List<IResourceHandler> resultList = new ArrayList<IResourceHandler>();
+		List<IResourceHandler> resultList = new ArrayList<>();
 		IResourceHandler result = null;
 		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : "") + "." + extension)).exists() ) {
 			resultList.add(result);
@@ -274,7 +274,7 @@ public class ResourceHandlerFactory {
 				ByteArrayInputStream in = (ByteArrayInputStream) t.getTransferData(new DataFlavor("text/uri-list"));
 				String data = IOUtils.toString(in);
 				String[] uriList = data.split("\n");
-				transferedFiles = new ArrayList<Object>(uriList.length - 1);
+				transferedFiles = new ArrayList<>(uriList.length - 1);
 				for(int i = 0; i < uriList.length; i++) {
 					if(uriList[i].equals("copy") || uriList[i].equals("move")) {
 						continue;
@@ -284,7 +284,7 @@ public class ResourceHandlerFactory {
 			} catch (UnsupportedFlavorException e) {
 			}
 		}
-		ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+		ArrayList<IResourceHandler> result = new ArrayList<>();
 
 		for(Object file : transferedFiles) {
 			if(file instanceof File) {
@@ -399,7 +399,7 @@ public class ResourceHandlerFactory {
 	 */
 	private static List<Object> getFileList(String data, int invalid) {
 		int invalidCount = 0;
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		data = data.replace("\r", "");
 		List<String> splitData = ListUtils.split(data, '\n');
 		for (String splitDataItem : splitData) {

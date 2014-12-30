@@ -12,17 +12,17 @@ public class ConverterFactory {
 
 	public static List<IEBookConverter> getConverter(IResourceHandler resource) {
 		if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ.getMime().equals(resource.getMimeType(true))) {
-			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
+			ArrayList<IEBookConverter> result = new ArrayList<>();
 			result.add(new CbzToEpubConverter(resource));
 			result.add(new CbzToPdfConverter(resource));
 			return result;
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR.getMime().equals(resource.getMimeType(true))) {
-			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
+			ArrayList<IEBookConverter> result = new ArrayList<>();
 			result.add(new CbrToEpubConverter(resource));
 			result.add(new CbrToPdfConverter(resource));
 			return result;
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime().equals(resource.getMimeType(true))) {
-			ArrayList<IEBookConverter> result = new ArrayList<IEBookConverter>();
+			ArrayList<IEBookConverter> result = new ArrayList<>();
 			result.add(new PdfToCBZConverter(resource));
 			result.add(new PdfToPdfConverter(resource));
 			return result;

@@ -226,7 +226,7 @@ public class ImageUtils {
 	 */
 	public static List<BufferedImage> splitHorizontal(BufferedImage image, int parts) {
 		if(parts > 1) {
-			ArrayList<BufferedImage> result = new ArrayList<BufferedImage>(parts);
+			ArrayList<BufferedImage> result = new ArrayList<>(parts);
 			int width = image.getWidth();
 			int height = image.getHeight();
 			int each = width / parts;

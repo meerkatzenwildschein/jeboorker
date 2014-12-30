@@ -76,7 +76,7 @@ public class WeakList<T> extends AbstractList<T> {
 	 * with those of this list.
 	 */
 	public List<T> hardList() {
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 
 		for (int i = 0; i < size(); i++) {
 			T tmp = get(i);

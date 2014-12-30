@@ -34,7 +34,7 @@ public class SearchIndex {
 	
 	private static final Pattern REMOVE_ACCENT_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}+"); 
 	
-	private List<ResourceSearchIndex> resourceSearchIndexes = new ArrayList<ResourceSearchIndex>();
+	private List<ResourceSearchIndex> resourceSearchIndexes = new ArrayList<>();
 	private Book book;
 	
 	public SearchIndex() {
@@ -81,7 +81,7 @@ public class SearchIndex {
 	}
 	
 	private static List<ResourceSearchIndex> createSearchIndex(Book book) {
-		List<ResourceSearchIndex> result = new ArrayList<ResourceSearchIndex>();
+		List<ResourceSearchIndex> result = new ArrayList<>();
 		if (book == null) {
 			return result;
 		}
@@ -202,7 +202,7 @@ public class SearchIndex {
 	}
 	
 	protected static List<SearchResult> doSearch(String searchTerm, String content, Resource resource) {
-		List<SearchResult> result = new ArrayList<SearchResult>();
+		List<SearchResult> result = new ArrayList<>();
 		int findPos = content.indexOf(searchTerm);
 		while(findPos >= 0) {
 			SearchResult searchResult = new SearchResult(findPos, searchTerm, resource);

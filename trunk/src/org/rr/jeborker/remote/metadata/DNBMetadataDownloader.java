@@ -49,7 +49,7 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<MetadataDownloadEntry> getMetadataDownloadEntries(List<byte[]> metadataHtmlContent) throws IOException {
-		List<MetadataDownloadEntry> result = new ArrayList<MetadataDownloadEntry>(metadataHtmlContent.size());
+		List<MetadataDownloadEntry> result = new ArrayList<>(metadataHtmlContent.size());
 		for (byte[] html : metadataHtmlContent) {
 			if (html != null) {
 				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), "UTF-8", MAIN_URL);
@@ -77,7 +77,7 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 	}
 
 	private Set<String> getSearchResultLinks(List<Document> htmlDocs) {
-		Set<String> allLinks = new LinkedHashSet<String>();
+		Set<String> allLinks = new LinkedHashSet<>();
 		for (Document document : htmlDocs) {
 			allLinks.addAll(getSearchResultLinks(document));
 		}
@@ -86,7 +86,7 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 
 	private List<String> getSearchResultLinks(Document doc) {
 		String id = "recordLink_";
-		List<String> links = new ArrayList<String>(ENTRIES_TO_FETCH);
+		List<String> links = new ArrayList<>(ENTRIES_TO_FETCH);
 		for (int i = 0; i < ENTRIES_TO_FETCH; i++) {
 			Element recordLink = doc.getElementById(id + i);
 			if (recordLink != null) {
@@ -100,7 +100,7 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<Document> getDocuments(List<byte[]> content) throws IOException {
-		List<Document> documents = new ArrayList<Document>(content.size());
+		List<Document> documents = new ArrayList<>(content.size());
 		for (byte[] bs : content) {
 			documents.add(Jsoup.parse(new ByteArrayInputStream(bs), "UTF-8", MAIN_URL));
 		}
@@ -109,7 +109,7 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 
 	private List<URL> getSearchPageUrls(String searchTerm) throws UnsupportedEncodingException, MalformedURLException {
 		String encodesSearchPhrase = URLEncoder.encode(searchTerm, Charsets.UTF_8.name());
-		List<URL> urls = new ArrayList<URL>(PAGES_TO_LOAD);
+		List<URL> urls = new ArrayList<>(PAGES_TO_LOAD);
 		for (int i = 0; i < PAGES_TO_LOAD; i++) {
 			String position = "&currentPosition=" + (i * 10);
 			urls.add(new URL(QUERY_URL_PART + encodesSearchPhrase + "&method=simpleSearch" + position));

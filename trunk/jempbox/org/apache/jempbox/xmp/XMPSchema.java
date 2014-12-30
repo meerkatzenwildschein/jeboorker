@@ -418,7 +418,7 @@ public class XMPSchema
             if (bagList.getLength() > 0)
             {
                 Element bag = (Element) bagList.item(0);
-                retval = new ArrayList<String>();
+                retval = new ArrayList<>();
                 NodeList items = bag.getElementsByTagName("rdf:li");
                 for (int i = 0; i < items.getLength(); i++)
                 {
@@ -595,7 +595,7 @@ public class XMPSchema
             if (bagList.getLength() > 0)
             {
                 Element bag = (Element) bagList.item(0);
-                retval = new ArrayList<String>();
+                retval = new ArrayList<>();
                 NodeList items = bag.getElementsByTagName("rdf:li");
                 for (int i = 0; i < items.getLength(); i++)
                 {
@@ -628,7 +628,7 @@ public class XMPSchema
             if (bagList.getLength() > 0)
             {
                 Element bag = (Element) bagList.item(0);
-                retval = new ArrayList<ResourceEvent>();
+                retval = new ArrayList<>();
                 NodeList items = bag.getElementsByTagName("rdf:li");
                 for (int i = 0; i < items.getLength(); i++)
                 {
@@ -691,7 +691,7 @@ public class XMPSchema
         List<Calendar> retval = null;
         if (strings != null)
         {
-            retval = new ArrayList<Calendar>();
+            retval = new ArrayList<>();
             for (int i = 0; i < strings.size(); i++)
             {
                 retval.add(DateConverter.toCalendar(strings.get(i)));
@@ -1002,7 +1002,7 @@ public class XMPSchema
      */
     public List<String> getLanguagePropertyLanguages(String propertyName)
     {
-        List<String> retval = new ArrayList<String>();
+        List<String> retval = new ArrayList<>();
 
         NodeList nodes = schema.getElementsByTagName(propertyName);
         if (nodes.getLength() > 0)

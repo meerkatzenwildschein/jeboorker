@@ -57,7 +57,7 @@ class Fold {
 
 		range = getEnd() - getStart();
 
-		children = new ArrayList<Fold>();
+		children = new ArrayList<>();
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Fold {
 	}
 
 	public void remove(int start, int end) {
-		List<Fold> temp = new ArrayList<Fold>(children);
+		List<Fold> temp = new ArrayList<>(children);
 		for (int i = 0; i < temp.size(); i++) {
 			Fold f = (Fold) temp.get(i);
 
@@ -133,7 +133,7 @@ class Fold {
 	}
 
 	public void update() {
-		List<Fold> folds = new ArrayList<Fold>(children);
+		List<Fold> folds = new ArrayList<>(children);
 		for (int i = 0; i < folds.size(); i++) {
 			Fold fold = (Fold) folds.get(i);
 

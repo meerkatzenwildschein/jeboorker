@@ -17,9 +17,9 @@ public class URLResourceHandler extends AResourceHandler {
 	
 	URL url;
 	
-	ArrayList<InputStream> inStream = new ArrayList<InputStream>(2);
+	ArrayList<InputStream> inStream = new ArrayList<>(2);
 	
-	ArrayList<OutputStream> outStream = new ArrayList<OutputStream>(2);
+	ArrayList<OutputStream> outStream = new ArrayList<>(2);
 	
 	URLResourceHandler() {
 		super();

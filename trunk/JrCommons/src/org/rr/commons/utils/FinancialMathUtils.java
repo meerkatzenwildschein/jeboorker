@@ -124,8 +124,8 @@ public final class FinancialMathUtils implements Serializable {
 	 */
 	public static double npv(double rate, double[] values) {
 
-		List<Double> positiveValues = new ArrayList<Double>(values.length);
-		List<Double> negativeValues = new ArrayList<Double>(values.length);
+		List<Double> positiveValues = new ArrayList<>(values.length);
+		List<Double> negativeValues = new ArrayList<>(values.length);
 
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] < 0) {
@@ -201,8 +201,8 @@ public final class FinancialMathUtils implements Serializable {
 	 */
 	public static double mirr(double[] values, double finance_rate, double reinvest_rate) {
 
-		List<Double> positiveValues = new ArrayList<Double>(values.length);
-		List<Double> negativeValues = new ArrayList<Double>(values.length);
+		List<Double> positiveValues = new ArrayList<>(values.length);
+		List<Double> negativeValues = new ArrayList<>(values.length);
 
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] < 0) {

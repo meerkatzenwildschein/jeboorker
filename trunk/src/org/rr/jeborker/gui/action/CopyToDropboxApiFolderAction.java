@@ -79,7 +79,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
         WebAuthSession session = new WebAuthSession(appKey, ACCESS_TYPE);
         WebAuthInfo authInfo = session.getAuthInfo();
         RequestTokenPair pair = authInfo.requestTokenPair;
-        mDBApi = new DropboxAPI<WebAuthSession>(session);
+        mDBApi = new DropboxAPI<>(session);
         InputStream inputStream = resource.getContentInputStream();
         @SuppressWarnings("unused") Entry newEntry;
 

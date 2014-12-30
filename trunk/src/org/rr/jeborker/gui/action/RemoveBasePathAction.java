@@ -93,7 +93,7 @@ class RemoveBasePathAction extends AbstractAction {
 	static ArrayList<EbookPropertyItem> getItemsByBasePath(final String basePath) {
 		final String normalizedPath = StringUtils.replace(basePath, File.separator, "");
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
-		final ArrayList<EbookPropertyItem> toRemove = new ArrayList<EbookPropertyItem>();
+		final ArrayList<EbookPropertyItem> toRemove = new ArrayList<>();
 		final Iterable<EbookPropertyItem> items = defaultDBManager.getItems(EbookPropertyItem.class);
 		for (EbookPropertyItem item : items) {
 			if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(normalizedPath)) {

@@ -46,7 +46,7 @@ public class MetadataAddListModel extends AbstractListModel<Action> {
 
 	private void initialize() {
 		//remove those metadata from the button list which are already in use and only be single ones.
-		final ArrayList<MetadataProperty> toRemove = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> toRemove = new ArrayList<>();
 		for (MetadataProperty supportedProperty : supportedMetadata) {
 			for (MetadataProperty currentMetadataProperty : currentMetadata) {
 				if(supportedProperty.getName().equals(currentMetadataProperty.getName())) {

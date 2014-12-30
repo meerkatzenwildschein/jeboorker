@@ -111,7 +111,7 @@ public class NamespaceContextMap extends HashMap<String,String> implements Names
 			throw new IllegalArgumentException("Namespace URI cannot be null.");
 		}
 
-		List<String> prefixes = new ArrayList<String>();
+		List<String> prefixes = new ArrayList<>();
 		
 		for ( String prefix : keySet()) {
 			if (get(prefix).equals(namespaceURI)) {

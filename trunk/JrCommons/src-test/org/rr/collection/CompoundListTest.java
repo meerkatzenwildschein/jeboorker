@@ -13,8 +13,8 @@ public class CompoundListTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		first = new ArrayList<String>();
-		second = new ArrayList<String>();
+		first = new ArrayList<>();
+		second = new ArrayList<>();
 		
 		first.add("null");
 		first.add("eins");
@@ -27,13 +27,13 @@ public class CompoundListTest extends TestCase {
 	}
 
 	public void test1() {
-		CompoundList<String> l = new CompoundList<String>(first, second);
+		CompoundList<String> l = new CompoundList<>(first, second);
 		assertEquals(7, l.size());
 		assertEquals("vier", l.get(4));
 	}
 	
 	public void testAddWithIndex() {
-		CompoundList<String> l = new CompoundList<String>(first, second);
+		CompoundList<String> l = new CompoundList<>(first, second);
 		l.add(0, "p0");
 		l.add(5, "p5");
 		l.add(4, "p4");

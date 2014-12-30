@@ -22,7 +22,7 @@ import org.rr.jeborker.gui.MainMenuBarController;
 
 public abstract class APreferenceStore {
 
-	private final ListenerList<JeboorkerPreferenceListener> preferenceChangeListener = new ListenerList<JeboorkerPreferenceListener>();
+	private final ListenerList<JeboorkerPreferenceListener> preferenceChangeListener = new ListenerList<>();
 
 	private final String BASE_PATH = "basePath";
 

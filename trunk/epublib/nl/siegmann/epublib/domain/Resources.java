@@ -336,7 +336,7 @@ public class Resources implements Serializable {
 	 * @return
 	 */
 	public List<Resource> getResourcesByMediaType(MediaType mediaType) {
-		List<Resource> result = new ArrayList<Resource>();
+		List<Resource> result = new ArrayList<>();
 		if (mediaType == null) {
 			return result;
 		}
@@ -355,7 +355,7 @@ public class Resources implements Serializable {
 	 * @return
 	 */
 	public List<Resource> getResourcesByMediaTypes(MediaType[] mediaTypes) {
-		List<Resource> result = new ArrayList<Resource>();
+		List<Resource> result = new ArrayList<>();
 		if (mediaTypes == null) {
 			return result;
 		}

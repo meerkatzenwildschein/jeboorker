@@ -18,9 +18,9 @@ public class FTPConnectionManager {
 	
 	private final URL url;
 	
-	private final Vector<FTPClient> inPoolconnections = new Vector<FTPClient>();
+	private final Vector<FTPClient> inPoolconnections = new Vector<>();
 	
-	private final Vector<FTPClient> inUseConnections = new Vector<FTPClient>();
+	private final Vector<FTPClient> inUseConnections = new Vector<>();
 	
 	/**
 	 * specifies the maxmimal number of connection to be established to one host.
@@ -61,7 +61,7 @@ public class FTPConnectionManager {
 	 */
 	public synchronized FTPClient getRegisteredConnection() throws UnknownHostException, ResourceHandlerException {
 		FTPClient result = null;
-		ArrayList<Exception> failcount = new ArrayList<Exception>();
+		ArrayList<Exception> failcount = new ArrayList<>();
 		
 		while(true) {
 			//return an existing connection from the pool

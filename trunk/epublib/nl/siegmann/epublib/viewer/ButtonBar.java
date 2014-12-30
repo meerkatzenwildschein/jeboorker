@@ -24,7 +24,7 @@ class ButtonBar extends JPanel {
 	private JButton nextChapterButton = ViewerUtil.createButton("chapter-next", ">>");
 	private JButton endButton = ViewerUtil.createButton("chapter-last", ">|");
 	private ContentPane chapterPane;
-	private final ValueHolder<Navigator> navigatorHolder = new ValueHolder<Navigator>();
+	private final ValueHolder<Navigator> navigatorHolder = new ValueHolder<>();
 	
 	public ButtonBar(Navigator navigator, ContentPane chapterPane) {
 		super(new GridLayout(0, 4));

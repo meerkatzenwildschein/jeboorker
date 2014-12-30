@@ -24,7 +24,7 @@ public class IteratorList<E> implements ICloseableList<E> {
 	
 	private int size;
 	
-	private List<E> list = new ArrayList<E>();
+	private List<E> list = new ArrayList<>();
 	
 	private boolean completlyCopied = false;
 	

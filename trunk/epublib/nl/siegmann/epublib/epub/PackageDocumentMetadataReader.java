@@ -66,7 +66,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 	
 
 	private static List<Meta> readNameContentMetaElements(Element metadataElement) {
-		List<Meta> result = new ArrayList<Meta>();
+		List<Meta> result = new ArrayList<>();
 		
 		NodeList metaTags = metadataElement.getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.meta);
 		for (int i = 0; i < metaTags.getLength(); i++) {
@@ -126,7 +126,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 	
 	private static List<Author> readAuthors(String authorTag, Element metadataElement) {
 		NodeList elements = metadataElement.getElementsByTagNameNS(NAMESPACE_DUBLIN_CORE, authorTag);
-		List<Author> result = new ArrayList<Author>(elements.getLength());
+		List<Author> result = new ArrayList<>(elements.getLength());
 		for(int i = 0; i < elements.getLength(); i++) {
 			Element authorElement = (Element) elements.item(i);
 			Author author = createAuthor(authorElement);
@@ -140,7 +140,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 
 	private static List<Date> readDates(Element metadataElement) {
 		NodeList elements = metadataElement.getElementsByTagNameNS(NAMESPACE_DUBLIN_CORE, DCTags.date);
-		List<Date> result = new ArrayList<Date>(elements.getLength());
+		List<Date> result = new ArrayList<>(elements.getLength());
 		for(int i = 0; i < elements.getLength(); i++) {
 			Element dateElement = (Element) elements.item(i);
 			Date date;
@@ -179,7 +179,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 			return new ArrayList<Identifier>();
 		}
 		String bookIdId = getBookIdId(metadataElement.getOwnerDocument());
-		List<Identifier> result = new ArrayList<Identifier>(identifierElements.getLength());
+		List<Identifier> result = new ArrayList<>(identifierElements.getLength());
 		for(int i = 0; i < identifierElements.getLength(); i++) {
 			Element identifierElement = (Element) identifierElements.item(i);
 			String schemeName = identifierElement.getAttributeNS(NAMESPACE_OPF, DCAttributes.scheme);

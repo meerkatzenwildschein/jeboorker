@@ -46,7 +46,7 @@ public class BasePathTreeModel extends AbstractFileTreeModel {
 
 	private void init() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		final List<String> basePath = new ArrayList<String>(preferenceStore.getBasePath());
+		final List<String> basePath = new ArrayList<>(preferenceStore.getBasePath());
 
 		for(String path : basePath) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);

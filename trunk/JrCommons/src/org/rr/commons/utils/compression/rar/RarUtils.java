@@ -40,7 +40,7 @@ public class RarUtils {
 	 * @return The desired extracted entries.
 	 */
 	public static List<CompressedDataEntry> extract(IResourceHandler rarFileHandler, FileEntryFilter rarFileFilter) {
-		ArrayList<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
+		ArrayList<CompressedDataEntry> result = new ArrayList<>();
 		List<String> list = list(rarFileHandler, rarFileFilter);
 		for(String entry : list) {
 			result.add(extract(rarFileHandler, entry));
@@ -71,7 +71,7 @@ public class RarUtils {
 		//need to sort previous because the dir path is always directly before
 		//the file entry.
 		Collections.sort(files);
-		ArrayList<String> toRemove = new ArrayList<String>();
+		ArrayList<String> toRemove = new ArrayList<>();
 		for(int i = 0; i < files.size(); i++) {
 			String current = files.get(i);
 			if(files.size() > i + 1) {
@@ -85,7 +85,7 @@ public class RarUtils {
 	}
 	
 	private static List<String> processFileEntryFilter(List<String> files, FileEntryFilter filter) {
-		ArrayList<String> result = new ArrayList<String>(files.size());
+		ArrayList<String> result = new ArrayList<>(files.size());
 		for(String file: files) {
 			if(filter.accept(file, file.getBytes())) {
 				result.add(file);
@@ -98,7 +98,7 @@ public class RarUtils {
 	 * List all entries of the rar file allowed by the given {@link ZipFileFilter} instance.
 	 */
 	public static List<String> list(final IResourceHandler rarFileHandler, final FileEntryFilter rarFileFilter) {
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		final CommandLine cl = new CommandLine(getUnRarExecutable());
 		
 		cl.addArgument("vb");

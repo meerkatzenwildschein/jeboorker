@@ -84,7 +84,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 
 		List<Author> authors = metadata.getAuthors();
 		for (Author author : authors) {
-			EpubLibMetadataProperty<Author> epubLibMetadataProperty = new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName() , (author.getFirstname() + " " + author.getLastname()).trim(), author);
+			EpubLibMetadataProperty<Author> epubLibMetadataProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.AUTHOR.getName() , (author.getFirstname() + " " + author.getLastname()).trim(), author);
 			result.add(epubLibMetadataProperty);
 		}
 
@@ -146,11 +146,11 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		for (Identifier identifier : identifiers) {
 			EpubLibMetadataProperty<Identifier> epubLibMetadataProperty;
 			if("uuid".equalsIgnoreCase(identifier.getScheme())) {
-				epubLibMetadataProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.UUID.getName(), identifier.getValue(), identifier);
+				epubLibMetadataProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.UUID.getName(), identifier.getValue(), identifier);
 			} else if("isbn".equalsIgnoreCase(identifier.getScheme())) {
-				epubLibMetadataProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.ISBN.getName(), identifier.getValue(), identifier);
+				epubLibMetadataProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.ISBN.getName(), identifier.getValue(), identifier);
 			} else {
-				epubLibMetadataProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.IDENTIFIER.getName(), identifier.getValue(), identifier);
+				epubLibMetadataProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.IDENTIFIER.getName(), identifier.getValue(), identifier);
 			}
 			result.add(epubLibMetadataProperty);
 		}
@@ -234,7 +234,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 
 	@Override
 	public List<MetadataProperty> getSupportedMetadata() {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		Author author = new Author("");
 		author.setRelator(Relator.AUTHOR);
 		result.add(new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName(), "", author));
@@ -311,43 +311,43 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		case AUTHOR:
 			Author author = new Author("");
 			author.setRelator(Relator.AUTHOR);
-			newProperty = new EpubLibMetadataProperty<Author>(EPUB_METADATA_TYPES.AUTHOR.getName(), "", author);
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.AUTHOR.getName(), "", author);
 			break;
 		case TITLE:
-			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.TITLE.getName(), "");
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.TITLE.getName(), "");
 			break;
 		case GENRE:
-			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.SUBJECT.getName(), "");
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.SUBJECT.getName(), "");
 			break;
 		case SERIES_NAME:
 			Meta seriesName = new Meta(EPUB_METADATA_TYPES.CALIBRE_SERIES.getName(), "");
-			newProperty = new EpubLibMetadataProperty<Meta>(seriesName.getName(), "", seriesName);
+			newProperty = new EpubLibMetadataProperty<>(seriesName.getName(), "", seriesName);
 			break;
 		case RATING:
 			Meta ratingName = new Meta(EPUB_METADATA_TYPES.CALIBRE_RATING.getName(), "");
-			newProperty = new EpubLibMetadataProperty<Meta>(ratingName.getName(), "", ratingName);
+			newProperty = new EpubLibMetadataProperty<>(ratingName.getName(), "", ratingName);
 			break;
 		case AGE_SUGGESTION:
 			Meta ageSuggestionName = new Meta(EPUB_METADATA_TYPES.JB_AGE_SUGGESTION.getName(), "");
-			newProperty = new EpubLibMetadataProperty<Meta>(ageSuggestionName.getName(), "", ageSuggestionName);
+			newProperty = new EpubLibMetadataProperty<>(ageSuggestionName.getName(), "", ageSuggestionName);
 			break;
 		case DESCRIPTION:
-			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.DESCRIPTION.getName(), "");
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.DESCRIPTION.getName(), "");
 			break;
 		case ISBN:
 			Identifier isbn = new Identifier("isbn", "");
-			newProperty = new EpubLibMetadataProperty<Identifier>(EPUB_METADATA_TYPES.ISBN.getName(), "", isbn);
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.ISBN.getName(), "", isbn);
 			break;
 		case LANGUAGE:
-			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.LANGUAGE.getName(), "");
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.LANGUAGE.getName(), "");
 			break;
 		case COVER:
-			newProperty = new EpubLibMetadataProperty<Void>(EPUB_METADATA_TYPES.COVER.getName(), null, null);
+			newProperty = new EpubLibMetadataProperty<>(EPUB_METADATA_TYPES.COVER.getName(), null, null);
 			break;
 		default: newProperty = null;
 		}
 
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		if(newProperty != null) {
 			for(MetadataProperty prop : props) {
 				if(prop.getName().equalsIgnoreCase(newProperty.getName())) {

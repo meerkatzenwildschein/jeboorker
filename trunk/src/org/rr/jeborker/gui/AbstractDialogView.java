@@ -65,7 +65,7 @@ public abstract class AbstractDialogView extends JDialog {
 	 */
 	protected JPanel createBottomButtonPanel() {
 		int bottomButtonCount = getBottomButtonCount();
-		buttons = new ArrayList<JButton>(bottomButtonCount);
+		buttons = new ArrayList<>(bottomButtonCount);
 
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new EqualsLayout(3));

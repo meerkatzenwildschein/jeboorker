@@ -46,7 +46,7 @@ class DOMUtil {
 	 */
 	public static List<String> getElementsTextChild(Element parentElement, String namespace, String tagname) {
 		NodeList elements = parentElement.getElementsByTagNameNS(namespace, tagname);
-		List<String> result = new ArrayList<String>(elements.getLength());
+		List<String> result = new ArrayList<>(elements.getLength());
 		for(int i = 0; i < elements.getLength(); i++) {
 			result.add(getTextChildrenContent((Element) elements.item(i)));
 		}

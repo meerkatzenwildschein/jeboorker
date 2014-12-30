@@ -53,7 +53,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	 * @return List with {@link MetadataProperty}. Never returns <code>null</code>.
 	 */
 	protected List<MetadataProperty> createMetadataProperties(final HashMap<METADATA_TYPES, List<MetadataProperty>> metadata) {
-		final List<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final List<MetadataProperty> result = new ArrayList<>();
         for (Map.Entry<METADATA_TYPES, List<MetadataProperty>> entry : metadata.entrySet()) {
             final METADATA_TYPES metadataType = entry.getKey();
             final List<MetadataProperty> metadataValues = entry.getValue();
@@ -97,7 +97,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 
 	@Override
 	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
-		List<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		List<MetadataProperty> result = new ArrayList<>();
 		for(MetadataProperty prop : props) {
 			if(prop.getName().equals(type.getName())) {
 				result.add(prop);
@@ -105,7 +105,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 		}
 		
 		if(create && result.isEmpty() && isSupportedMultiMetadata(type)) {
-			MultiMetadataProperty multiMetadataProperty = new MultiMetadataProperty(type.getName(), new ArrayList<Object>(Collections.singleton(null)));
+			MultiMetadataProperty multiMetadataProperty = new MultiMetadataProperty(type.getName(), new ArrayList<>(Collections.singleton(null)));
 			result.add(multiMetadataProperty);
 		}
 		
@@ -139,7 +139,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
-			final List<MetadataProperty> readMetadata = new ArrayList<MetadataProperty>(reader.readMetadata());
+			final List<MetadataProperty> readMetadata = new ArrayList<>(reader.readMetadata());
 			
 			boolean change = false;
 			for(METADATA_TYPES type : METADATA_TYPES.values()) {

@@ -34,7 +34,7 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class SortColumnComponent extends JPanel {
 
-	private final JRCheckBoxComboBox<Field> orderFieldComboBox = new JRCheckBoxComboBox<Field>();
+	private final JRCheckBoxComboBox<Field> orderFieldComboBox = new JRCheckBoxComboBox<>();
 	
 	private JToggleButton sortOrderAscButton;
 	
@@ -44,7 +44,7 @@ class SortColumnComponent extends JPanel {
 
 	private final EbookPropertyItemFieldComperator ebookPropertyItemFieldComperator = new EbookPropertyItemFieldComperator();;
 
-	private final ArrayList<Field> internalCheckList = new ArrayList<Field>();
+	private final ArrayList<Field> internalCheckList = new ArrayList<>();
 
 	public SortColumnComponent() {
 		this.initialize();
@@ -210,7 +210,7 @@ class SortColumnComponent extends JPanel {
 		final List<Field> checkeds = orderFieldComboBox.getCheckBoxComboBoxModel().getCheckedValues();
 		//sort the fields to the DBViewField.orderPriority()
 		Collections.sort(checkeds, ebookPropertyItemFieldComperator);
-		final ArrayList<Field> result = new ArrayList<Field>(checkeds.size());
+		final ArrayList<Field> result = new ArrayList<>(checkeds.size());
 		for (Field field : checkeds) {
 			result.add(field);
 		}

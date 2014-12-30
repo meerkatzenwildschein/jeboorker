@@ -10,7 +10,7 @@ import org.rr.commons.collection.TransformValueList;
 public class TransformListTest extends TestCase {
 
 	public void test() {
-		ArrayList<Boolean> listWithBoolean = new ArrayList<Boolean>();
+		ArrayList<Boolean> listWithBoolean = new ArrayList<>();
 		listWithBoolean.add(Boolean.TRUE);
 		listWithBoolean.add(Boolean.FALSE);
 		listWithBoolean.add(Boolean.TRUE);

@@ -48,7 +48,7 @@ public class MetadataProperty implements Cloneable {
 	
 	MetadataProperty(String name, Object value) {
 		this.name = name;
-		this.values = new ArrayList<Object>(1);
+		this.values = new ArrayList<>(1);
 		if(value instanceof String) {
 			value = StringUtils.trim((String)value); 
 		}
@@ -57,7 +57,7 @@ public class MetadataProperty implements Cloneable {
 	
 	MetadataProperty(String name, Object value, Class<?> propertyClass) {
 		this.name = name != null ? name.intern() : null;
-		this.values = new ArrayList<Object>(1);
+		this.values = new ArrayList<>(1);
 		this.values.add(value);
 		this.propertyClass = propertyClass;
 	}	
@@ -109,7 +109,7 @@ public class MetadataProperty implements Cloneable {
 			this.values.clear();
 			this.values.addAll(newValues);
 		} else {
-			this.values = new ArrayList<Object>(newValues);
+			this.values = new ArrayList<>(newValues);
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class MetadataProperty implements Cloneable {
 	void addValidValues(List<String> values) {
 		if(values != null) {
 			if(validValues == null) {
-				validValues = new ArrayList<String>(values);
+				validValues = new ArrayList<>(values);
 			} else {
 				validValues.addAll(values);
 			}
@@ -187,7 +187,7 @@ public class MetadataProperty implements Cloneable {
 	 * Creates a new {@link MetadataProperty} instance with the data of this {@link MetadataProperty}.
 	 */
 	public MetadataProperty clone() {
-		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, new ArrayList<Object>(this.values));
+		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, new ArrayList<>(this.values));
 		newMetadataProperty.propertyClass = this.propertyClass;
 		newMetadataProperty.propertyEditorClass = this.propertyEditorClass;
 		newMetadataProperty.propertyRendererClass = this.propertyRendererClass;

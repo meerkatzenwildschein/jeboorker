@@ -118,8 +118,8 @@ public class FileWatchService {
 	        	try {
 	        		WatchKey watchKey = watchService.take();
 
-	        		final List<EbookPropertyItem> changedEbooks = new ArrayList<EbookPropertyItem>();
-	        		final List<IResourceHandler> addedResources = new ArrayList<IResourceHandler>();
+	        		final List<EbookPropertyItem> changedEbooks = new ArrayList<>();
+	        		final List<IResourceHandler> addedResources = new ArrayList<>();
 		            for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
 		            	if(!FileRefreshBackground.isDisabled()) {
 			            	final Path fullPath = ((Path)watchKey.watchable()).resolve((Path)watchEvent.context());

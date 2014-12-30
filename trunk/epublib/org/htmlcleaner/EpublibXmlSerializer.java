@@ -41,10 +41,10 @@ public class EpublibXmlSerializer extends SimpleXmlSerializer {
         String tagPrefix = Utils.getXmlNSPrefix(tagName);
         if (tagPrefix != null) {
             if (nsAware) {
-                definedNSPrefixes = new HashSet<String>();
+                definedNSPrefixes = new HashSet<>();
                 tagNode.collectNamespacePrefixesOnPath(definedNSPrefixes);
                 if ( !definedNSPrefixes.contains(tagPrefix) ) {
-                    additionalNSDeclNeeded = new TreeSet<String>();
+                    additionalNSDeclNeeded = new TreeSet<>();
                     additionalNSDeclNeeded.add(tagPrefix);
                 }
             } else {
@@ -67,12 +67,12 @@ public class EpublibXmlSerializer extends SimpleXmlSerializer {
                     // collect used namespace prefixes in attributes in order to explicitly define
                     // ns declaration if needed; otherwise it would be ill-formed xml
                     if (definedNSPrefixes == null) {
-                        definedNSPrefixes = new HashSet<String>();
+                        definedNSPrefixes = new HashSet<>();
                         tagNode.collectNamespacePrefixesOnPath(definedNSPrefixes);
                     }
                     if ( !definedNSPrefixes.contains(attPrefix) ) {
                         if (additionalNSDeclNeeded == null) {
-                            additionalNSDeclNeeded = new TreeSet<String>();
+                            additionalNSDeclNeeded = new TreeSet<>();
                         }
                         additionalNSDeclNeeded.add(attPrefix);
                     }

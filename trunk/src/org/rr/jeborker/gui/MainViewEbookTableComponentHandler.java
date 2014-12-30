@@ -116,7 +116,7 @@ public class MainViewEbookTableComponentHandler {
 	 */
 	public List<EbookPropertyItem> getSelectedEbookPropertyItems() {
 		final int[] selectedRows = getSelectedRows();
-		final ArrayList<EbookPropertyItem> result = new ArrayList<EbookPropertyItem>(selectedRows.length);
+		final ArrayList<EbookPropertyItem> result = new ArrayList<>(selectedRows.length);
 		for (int i = 0; i < selectedRows.length; i++) {
 			EbookPropertyItem valueAt = (EbookPropertyItem) getModel().getValueAt(selectedRows[i], 0);
 			result.add(valueAt);

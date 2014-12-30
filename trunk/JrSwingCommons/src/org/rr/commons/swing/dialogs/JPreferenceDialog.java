@@ -190,7 +190,7 @@ public class JPreferenceDialog extends JDialog {
 		if(!isInitialized) {
 			isInitialized = true;
 			final List<String> categories = getPreferenceCategories();
-			final ArrayList<JPanel> generalPanels = new ArrayList<JPanel>(categories.size());
+			final ArrayList<JPanel> generalPanels = new ArrayList<>(categories.size());
 			getContentPane().setLayout(new BorderLayout());
 			((JComponent)getContentPane()).registerKeyboardAction(abortAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -303,7 +303,7 @@ public class JPreferenceDialog extends JDialog {
 	 * Get a list of existing categories. Empty/null categories are contained as empty {@link String} category.
 	 */
 	private List<String> getPreferenceCategories() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for(PreferenceEntry preferenceEntry : preferenceEntries.values()) {
 			String category = StringUtils.toString(preferenceEntry.getCategory());
 			if(!result.contains(category)) {

@@ -23,7 +23,7 @@ public class FilterList<T> extends WrapperList<T> {
 	}
 	
 	private void doFilter() {
-		List<T> toRemove = new ArrayList<T>();
+		List<T> toRemove = new ArrayList<>();
 		for(T t : toWrap) {
 			if(filter.isFiltered(t)) {
 				toRemove.add(t);

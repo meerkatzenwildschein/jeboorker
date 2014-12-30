@@ -64,7 +64,7 @@ class RenameFileAction extends AbstractAction {
 
 			@Override
 			public void run() {
-				LinkedList<IResourceHandler> toRefreshInFileSystemTree = new LinkedList<IResourceHandler>();
+				LinkedList<IResourceHandler> toRefreshInFileSystemTree = new LinkedList<>();
 				for (Entry<EbookPropertyItem, IResourceHandler> toRename : renameFiles) {
 					EbookPropertyItem source = toRename.getKey();
 					IResourceHandler sourceResourceHandler = source.getResourceHandler();

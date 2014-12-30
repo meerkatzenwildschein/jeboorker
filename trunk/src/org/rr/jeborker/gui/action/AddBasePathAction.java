@@ -121,7 +121,7 @@ class AddBasePathAction extends AbstractAction {
 	 * @param baseFolder The folder where the ebook search should be started.
 	 */
 	static int readEbookFilesToDB(final IResourceHandler baseFolder) {
-		final HashSet<String> path = new HashSet<String>();
+		final HashSet<String> path = new HashSet<>();
 		int count = ResourceHandlerUtils.readAllFilesFromBasePath(baseFolder, new ResourceNameFilter() {
 			
 			@Override

@@ -232,7 +232,7 @@ abstract class AResourceHandler implements IResourceHandler {
 		List<IResourceHandler> listDirectoryResources = Arrays.asList(this.listDirectoryResources());
 
 		//create the result containing both, directories and files with the right size, so the list must ne be resized while copying into it.
-		ArrayList<IResourceHandler> resultFileResources = new ArrayList<IResourceHandler>(listFileResources.size()+listDirectoryResources.size());
+		ArrayList<IResourceHandler> resultFileResources = new ArrayList<>(listFileResources.size()+listDirectoryResources.size());
 
 		//loop directory resources
 		for (int i = 0; i < listDirectoryResources.size(); i++) {

@@ -57,11 +57,11 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private MetadataDownloadEntry editingEntry;
 	
-	private List<JCheckBox> checkboxCache = new ArrayList<JCheckBox>();
+	private List<JCheckBox> checkboxCache = new ArrayList<>();
 	
-	private List<JLabel> labelCache = new ArrayList<JLabel>();
+	private List<JLabel> labelCache = new ArrayList<>();
 	
-	private List<JPanel> panelCache = new ArrayList<JPanel>();
+	private List<JPanel> panelCache = new ArrayList<>();
 	
 	public MetadataDownloadTableCellRenderer(boolean coverSupport) {
 		GridBagLayout gridBagLayout = new GridBagLayout();

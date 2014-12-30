@@ -57,7 +57,7 @@ public class PropertySheetTableModel extends AbstractTableModel implements Prope
   public PropertySheetTableModel() {
     model = new ArrayList();
     publishedModel = new ArrayList();
-    properties = new ArrayList<Property>();
+    properties = new ArrayList<>();
     mode = PropertySheet.VIEW_AS_FLAT_LIST;
     sortingCategories = false;
     sortingProperties = false;

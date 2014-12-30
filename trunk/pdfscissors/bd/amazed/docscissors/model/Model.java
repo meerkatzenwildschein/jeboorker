@@ -28,14 +28,14 @@ public class Model {
 	private Vector<PageGroup> pageGroups;
 
 	private Model() {
-		modelListeners = new java.util.Vector<ModelListener>();
+		modelListeners = new java.util.Vector<>();
 		reset();
 	}
 
 
 	private void reset() {
 		zoomFactor = 1;
-		pageGroups = new Vector<PageGroup>();
+		pageGroups = new Vector<>();
 	}
 
 

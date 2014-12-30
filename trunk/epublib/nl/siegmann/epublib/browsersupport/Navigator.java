@@ -29,7 +29,7 @@ public class Navigator implements Serializable {
 	private int currentPagePos;
 	private String currentFragmentId;
 	
-	private List<NavigationEventListener> eventListeners = new ArrayList<NavigationEventListener>();
+	private List<NavigationEventListener> eventListeners = new ArrayList<>();
 	
 	public Navigator() {
 		this(null);

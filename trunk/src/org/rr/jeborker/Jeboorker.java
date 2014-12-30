@@ -137,7 +137,7 @@ public class Jeboorker {
 
 	private static void setupClasspath() {
 		final String appFolder = getAppFolder();
-		final Set<String> jarFileSet = new HashSet<String>();
+		final Set<String> jarFileSet = new HashSet<>();
 
 		try {
 			addPath(new File(appFolder + File.separator + "lib/"), jarFileSet);

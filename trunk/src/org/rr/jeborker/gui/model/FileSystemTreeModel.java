@@ -82,7 +82,7 @@ public class FileSystemTreeModel extends AbstractFileTreeModel {
 	 * Get some special folder to be shown at the root file levels.
 	 */
 	private List<File> getSpecialFolders() {
-		final ArrayList<File> result = new ArrayList<File>();
+		final ArrayList<File> result = new ArrayList<>();
 		final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
 
 		File defaultDirectory = fileSystemView.getDefaultDirectory();

@@ -103,7 +103,7 @@ public class NCXDocument {
 		if(navpoints == null) {
 			return new ArrayList<TOCReference>();
 		}
-		List<TOCReference> result = new ArrayList<TOCReference>(navpoints.getLength());
+		List<TOCReference> result = new ArrayList<>(navpoints.getLength());
 		for(int i = 0; i < navpoints.getLength(); i++) {
 			Node node = navpoints.item(i);
 			if (node.getNodeType() != Document.ELEMENT_NODE) {

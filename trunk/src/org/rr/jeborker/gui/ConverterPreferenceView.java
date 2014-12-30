@@ -85,7 +85,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	 */
 	private void createLandscapePageEntries(final String generalCategory) {
 		if(isShowLandscapePageEntries()) {
-			final JComboBox<String> landscapeFormatCombobox = new JComboBox<String>();
+			final JComboBox<String> landscapeFormatCombobox = new JComboBox<>();
 			final JRCheckBox isMangaCheckBox = new JRCheckBox();
 			isMangaCheckBox.setEnabled(false);
 			

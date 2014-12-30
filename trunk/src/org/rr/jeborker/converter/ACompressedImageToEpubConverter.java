@@ -35,7 +35,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 	private ConverterPreferenceController converterPreferenceController;
 
-	private ArrayList<IResourceHandler> tempFiles = new ArrayList<IResourceHandler>();
+	private ArrayList<IResourceHandler> tempFiles = new ArrayList<>();
 
 	public ACompressedImageToEpubConverter(IResourceHandler comicBookResource) {
 		this.comicBookResource = comicBookResource;
@@ -75,7 +75,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		final Book epub = new Book();
 		final Spine spine = new Spine();
 
-		List<Resource> resources = new ArrayList<Resource>(cbzEntries.size());
+		List<Resource> resources = new ArrayList<>(cbzEntries.size());
 		for(int i = 0; i < cbzEntries.size(); i++) {
 			final String cbzEntry = cbzEntries.get(i);
 			if(ConverterUtils.isImageFileName(cbzEntry)) {
@@ -128,7 +128,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 	 */
 	private List<InputStream> getConvertedImageInputStream(InputStream imageIn, String imageName) throws IOException {
 		if(isImageConversion()) {
-			ArrayList<InputStream> result = new ArrayList<InputStream>();
+			ArrayList<InputStream> result = new ArrayList<>();
 			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceHandler(imageIn));
 			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(imageProvider.getImage(), getConverterPreferenceController());
 			for(BufferedImage image : processImageModifications) {

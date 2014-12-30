@@ -35,8 +35,8 @@ public class CopyToClipboardAction extends AbstractAction implements ClipboardOw
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final MainController controller = MainController.getController();
-		final ArrayList<String> files = new ArrayList<String>();
-		final ArrayList<URI> uriList = new ArrayList<URI>();
+		final ArrayList<String> files = new ArrayList<>();
+		final ArrayList<URI> uriList = new ArrayList<>();
 
 		List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
 		if(!selectedEbookPropertyItems.isEmpty()) {

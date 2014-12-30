@@ -40,7 +40,7 @@ class MainControllerUtils {
 					
 					//now the data was written, it's time to refresh the database entry
 					final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
-					final List<IResourceHandler> selectedEbookResources = new ArrayList<IResourceHandler>();
+					final List<IResourceHandler> selectedEbookResources = new ArrayList<>();
 					for(EbookPropertyItem selectedEbookPropertyItem : selectedEbookPropertyItems) {
 						selectedEbookResources.add(selectedEbookPropertyItem.getResourceHandler());
 					}
@@ -77,7 +77,7 @@ class MainControllerUtils {
 	 * @return The desired {@link MetadataProperty}
 	 */
 	static ArrayList<MetadataProperty> createMetadataProperties(final List<Property> properties) {
-		final ArrayList<MetadataProperty> target = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> target = new ArrayList<>();
 		for (Property property : properties) {
 			
 			final EbookSheetPropertyModel model = MainController.getController().getPropertySheetHandler().getModel();

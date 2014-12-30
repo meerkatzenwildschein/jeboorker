@@ -23,7 +23,7 @@ public class TreeUtil {
 	}
 
 	private static List<TreePath> getExpandedNodeNames(JTree tree) {
-		List<TreePath> result = new ArrayList<TreePath>();
+		List<TreePath> result = new ArrayList<>();
 		int rowCount = tree.getRowCount();
 		for (int i = 0; i < rowCount; i++) {
 			TreePath rowPath = tree.getPathForRow(i);

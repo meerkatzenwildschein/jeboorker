@@ -9,7 +9,7 @@ public class ComicBookDocument {
 
 	private final HashMap<String, Object> info = new HashMap<String, Object>();
 
-	private final List<ComicBookPageInfo> pages = new ArrayList<ComicBookPageInfo>();
+	private final List<ComicBookPageInfo> pages = new ArrayList<>();
 
 	private List<String> archiveEntries;
 

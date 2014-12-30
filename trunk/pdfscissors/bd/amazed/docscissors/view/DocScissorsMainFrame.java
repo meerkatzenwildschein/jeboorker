@@ -113,8 +113,8 @@ public class DocScissorsMainFrame extends JFrame implements ModelListener {
 
 	public DocScissorsMainFrame() {
 		super();
-		modelRegisteredListeners = new Vector<ModelListener>();
-		openFileDependendComponents = new Vector<Component>();
+		modelRegisteredListeners = new Vector<>();
+		openFileDependendComponents = new Vector<>();
 		initialize();
 		PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).restoreWindowLocationAndSize(MAIN_FRAME_KEY, this);
 		registerComponentsToModel();
@@ -229,7 +229,7 @@ public class DocScissorsMainFrame extends JFrame implements ModelListener {
 
 	private JList<PageGroup> getPageGroupList() {
 		if (pageGroupList == null) {
-			pageGroupList = new JList<PageGroup>();
+			pageGroupList = new JList<>();
 			pageGroupList.setMinimumSize(new Dimension(200,100));
 			openFileDependendComponents.add(pageGroupList);
 			pageGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -715,7 +715,7 @@ public class DocScissorsMainFrame extends JFrame implements ModelListener {
 	 */
 	private JComboBox<String> getPageSelectionCombo() {
 		if (pageSelectionCombo == null) {
-			pageSelectionCombo = new JComboBox<String>();
+			pageSelectionCombo = new JComboBox<>();
 			openFileDependendComponents.add(pageSelectionCombo);
 			pageSelectionCombo.setEditable(true);
 

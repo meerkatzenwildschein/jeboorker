@@ -25,8 +25,8 @@ public class CursableCollection<E,A> implements Collection<E> {
 	}
 	
 	public CursableCollection(int initialCapacity, int maxCapacity) { 
-		this.list = new ArrayList<E>(initialCapacity);
-		this.attachment = new ArrayList<A>(initialCapacity);
+		this.list = new ArrayList<>(initialCapacity);
+		this.attachment = new ArrayList<>(initialCapacity);
 		this.maxCapacity = maxCapacity;
 	}
 	

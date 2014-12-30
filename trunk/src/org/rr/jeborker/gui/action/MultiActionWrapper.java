@@ -69,7 +69,7 @@ class MultiActionWrapper extends AbstractAction {
 			doOnce = null;
 		}
 		
-		List<Action> actions = new ArrayList<Action>(size);
+		List<Action> actions = new ArrayList<>(size);
 		actions.add(this.doActionAt(firstActionInstance, e, 0, size));
 		
 		//create an action instance for all the other handlers. 

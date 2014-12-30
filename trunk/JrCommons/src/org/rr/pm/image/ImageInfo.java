@@ -204,7 +204,7 @@ public class ImageInfo {
 
 	private void addComment(String s) {
 		if (comments == null) {
-			comments = new Vector<String>();
+			comments = new Vector<>();
 		}
 		comments.addElement(s);
 	}

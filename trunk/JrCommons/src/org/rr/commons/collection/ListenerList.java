@@ -17,7 +17,7 @@ public class ListenerList<L extends EventListener> implements Serializable, Iter
 	private final CopyOnWriteArrayList<L> listeners;
 
 	public ListenerList() {
-		listeners = new CopyOnWriteArrayList<L>();
+		listeners = new CopyOnWriteArrayList<>();
 	}
 
 	public void addListener(L listener) {

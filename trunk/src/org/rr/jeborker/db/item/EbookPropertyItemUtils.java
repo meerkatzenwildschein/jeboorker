@@ -251,7 +251,7 @@ public class EbookPropertyItemUtils {
 		final BasePathList basePathList = PreferenceStoreFactory.getDummyPreferenceStore().getBasePath();
 		String indexedString;
 		if(oldPathElements != null && !oldPathElements.isEmpty()) {
-			final HashSet<String> allElements = new HashSet<String>(path.size());
+			final HashSet<String> allElements = new HashSet<>(path.size());
 			for(String oldPathElement : oldPathElements) {
 				if(basePathList.containsBasePathFor(oldPathElement)) {
 					allElements.add(oldPathElement);

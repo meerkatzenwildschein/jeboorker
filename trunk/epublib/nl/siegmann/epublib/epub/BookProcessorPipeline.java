@@ -48,14 +48,14 @@ public class BookProcessorPipeline implements BookProcessor {
 
 	public void addBookProcessor(BookProcessor bookProcessor) {
 		if (this.bookProcessors == null) {
-			bookProcessors = new ArrayList<BookProcessor>();
+			bookProcessors = new ArrayList<>();
 		}
 		this.bookProcessors.add(bookProcessor);
 	}
 
 	public void addBookProcessors(Collection<BookProcessor> bookProcessors) {
 		if (this.bookProcessors == null) {
-			this.bookProcessors = new ArrayList<BookProcessor>();
+			this.bookProcessors = new ArrayList<>();
 		}
 		this.bookProcessors.addAll(bookProcessors);
 	}

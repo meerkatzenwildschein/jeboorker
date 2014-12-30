@@ -87,7 +87,7 @@ public class TableOfContentsPane extends JPanel implements NavigationEventListen
 		}
 		Collection<DefaultMutableTreeNode> treeNodes = href2treeNode.get(resource.getHref());
 		if (treeNodes == null) {
-			treeNodes = new ArrayList<DefaultMutableTreeNode>();
+			treeNodes = new ArrayList<>();
 			href2treeNode.put(resource.getHref(), treeNodes);
 		}
 		treeNodes.add(treeNode);

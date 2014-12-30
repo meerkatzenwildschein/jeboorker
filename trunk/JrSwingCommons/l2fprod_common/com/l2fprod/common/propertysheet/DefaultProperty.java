@@ -39,7 +39,7 @@ public class DefaultProperty extends AbstractProperty {
   private boolean editable = true;
   private String category;
   private Property parent;
-  private List<Property> subProperties = new ArrayList<Property>();
+  private List<Property> subProperties = new ArrayList<>();
   private boolean isDeletable = true;
   private String diplayDescriptionName;
 

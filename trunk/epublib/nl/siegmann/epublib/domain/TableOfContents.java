@@ -185,7 +185,7 @@ public class TableOfContents implements Serializable {
 
 	public TOCReference addTOCReference(TOCReference tocReference) {
 		if (tocReferences == null) {
-			tocReferences = new ArrayList<TOCReference>();
+			tocReferences = new ArrayList<>();
 		}
 		tocReferences.add(tocReference);
 		return tocReference;
@@ -197,8 +197,8 @@ public class TableOfContents implements Serializable {
 	 * @return
 	 */
 	public List<Resource> getAllUniqueResources() {
-		Set<String> uniqueHrefs = new HashSet<String>();
-		List<Resource> result = new ArrayList<Resource>();
+		Set<String> uniqueHrefs = new HashSet<>();
+		List<Resource> result = new ArrayList<>();
 		getAllUniqueResources(uniqueHrefs, result, tocReferences);
 		return result;
 	}

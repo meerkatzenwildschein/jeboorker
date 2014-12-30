@@ -30,7 +30,7 @@ public class Rect implements Cloneable {
 
 	private static Font font;
 
-	protected Vector<RectChangeListener> listeners = new Vector<RectChangeListener>();
+	protected Vector<RectChangeListener> listeners = new Vector<>();
 	private UIHandler uiHandler;
 
 	/**

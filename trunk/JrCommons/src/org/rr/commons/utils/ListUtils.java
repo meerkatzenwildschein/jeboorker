@@ -159,7 +159,7 @@ public final class ListUtils implements Serializable {
 			return Collections.emptyList();
 		}
 		
-		ArrayList<String> result = new ArrayList<String>(StringUtils.occurrence(text, String.valueOf(separator), UtilConstants.COMPARE_BINARY) + 1);
+		ArrayList<String> result = new ArrayList<>(StringUtils.occurrence(text, String.valueOf(separator), UtilConstants.COMPARE_BINARY) + 1);
 		int last = 0;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
@@ -204,7 +204,7 @@ public final class ListUtils implements Serializable {
 			throw new RuntimeException("length for chunk splitting must be larger than 0 - given value is: '" + length+"'");
 		}
 		
-		List<String> result = new ArrayList<String>( (int)MathUtils.roundUp((double)text.length()/(double)length, 0) );
+		List<String> result = new ArrayList<>( (int)MathUtils.roundUp((double)text.length()/(double)length, 0) );
 		StringBuilder buffer = new StringBuilder(length);
 		for (int i = 1; i <= text.length(); i++) {
 			buffer.append(text.charAt(i-1));
@@ -222,7 +222,7 @@ public final class ListUtils implements Serializable {
 	}
 	
 	public static <T>List<T> filter(List<T> values, final List<?> match, final boolean include, final int compare, final int searchType) {
-		ArrayList<T> result = new ArrayList<T>(values.size());
+		ArrayList<T> result = new ArrayList<>(values.size());
 			for (Object o : match) {
 			List<T> filtered = filter(values, o, include, compare, searchType);
 			result.addAll(filtered);
@@ -303,7 +303,7 @@ public final class ListUtils implements Serializable {
 			processFilterValue = new Object[] {match};
 		}
 		
-		ArrayList<T> result = new ArrayList<T>();
+		ArrayList<T> result = new ArrayList<>();
 		//loop all filter values
 		for (int i = 0; i < processFilterValue.length; i++) {
 			//loop each entry of the input array
@@ -417,7 +417,7 @@ public final class ListUtils implements Serializable {
 			return duplicates(first, compare);
 		}
 		
-		ArrayList<T> arrayList = new ArrayList<T>();
+		ArrayList<T> arrayList = new ArrayList<>();
 		for (T firstNext : first) {
 			int count = 0;
 
@@ -456,7 +456,7 @@ public final class ListUtils implements Serializable {
 	 * @return An array with the type of the array given with the values parameter containing all duplicate entries (but only one of the duplicate entries).
 	 */
 	public static <T>List<T> duplicates(final List<T> values, final int compare) {
-		List<T> result = new ArrayList<T>(values.size());
+		List<T> result = new ArrayList<>(values.size());
 		Iterator<T> iterator = values.iterator();
 		for (int i = 0; iterator.hasNext(); i++) {
 			T next = iterator.next();
@@ -497,7 +497,7 @@ public final class ListUtils implements Serializable {
 			throw new RuntimeException("Mode not supported");
 		}
 		
-		List<T> arrayList = new ArrayList<T>();
+		List<T> arrayList = new ArrayList<>();
 		List<T> duplicateArray = duplicates(first, second, compare);
 
 		arrayList=copyDifference(first, arrayList, duplicateArray, compare);
@@ -699,7 +699,7 @@ public final class ListUtils implements Serializable {
 	 * @return A new created array without any duplicated entries.
 	 */
 	public static <T>List<T> distinct(final List<T> values, final int compare) {
-		final ArrayList<T> result = new ArrayList<T>(values.size());
+		final ArrayList<T> result = new ArrayList<>(values.size());
 		final Iterator<T> iterator = values.iterator();
 
 		for (int i = 0; iterator.hasNext(); i++) {
@@ -733,7 +733,7 @@ public final class ListUtils implements Serializable {
 	 */
 	public static <T>List<T> extract(final List<T> values, int start, int end) {
 		//create the resized array
-		List<T> result = new ArrayList<T>(end);
+		List<T> result = new ArrayList<>(end);
 		for(int i = start; i < values.size() && i < end; i++) {
 			result.add(values.get(i));
 		}
@@ -858,7 +858,7 @@ public final class ListUtils implements Serializable {
 	 * @see #toIndexedString(List, char)
 	 */
 	public static List<String> fromIndexString(final String indexedListString, final char separator) {
-		final ArrayList<String> list = new ArrayList<String>();
+		final ArrayList<String> list = new ArrayList<>();
 		final char EOL = '\n'; // end of list marker
 		final int length = indexedListString.length();
 		final int indexEnd = indexedListString.indexOf(EOL) + 1; // end of the index area

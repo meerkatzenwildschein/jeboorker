@@ -38,7 +38,7 @@ public class NavigationHistory implements NavigationEventListener {
 	}
 	
 	private long lastUpdateTime = 0;
-	private List<Location> locations = new ArrayList<Location>();
+	private List<Location> locations = new ArrayList<>();
 	private Navigator navigator;
 	private int currentPos = -1;
 	private int currentSize = 0;
@@ -64,7 +64,7 @@ public class NavigationHistory implements NavigationEventListener {
 		if (book == null) {
 			return;
 		}
-		locations = new ArrayList<Location>();
+		locations = new ArrayList<>();
 		currentPos = -1;
 		currentSize = 0;
 		if (navigator.getCurrentResource() != null) {

@@ -325,7 +325,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		}
 		
 		offers = ListUtils.distinct(offers);
-		List<String> toRemove = new ArrayList<String>();
+		List<String> toRemove = new ArrayList<>();
 		toRemove.add(filename);
 		
 		int nameWhiteSpaces = StringUtils.occurrence(name, " ", UtilConstants.COMPARE_BINARY);
@@ -336,7 +336,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		}
 		offers.removeAll(toRemove);
 		
-		List<String> toAdd = new ArrayList<String>(offers.size());
+		List<String> toAdd = new ArrayList<>(offers.size());
 		for(int i = 0; i < offers.size(); i++) {
 			String offer = offers.get(i);
 			if(offer.contains(" - ")) {

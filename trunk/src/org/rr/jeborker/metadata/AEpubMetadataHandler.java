@@ -380,7 +380,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 
 		boolean lazy = false;
 
-		List<String> lazyEntries = new ArrayList<String>();
+		List<String> lazyEntries = new ArrayList<>();
 
 		List<byte[]> lazyRawEntries = new ArrayList<byte[]>();
 

@@ -59,7 +59,7 @@ public class SpotLightUI extends AbstractBufferedLayerUI<JComponent> {
     /**
      * Clip list.
      */
-    private ArrayList<Shape> clipList = new ArrayList<Shape>();
+    private ArrayList<Shape> clipList = new ArrayList<>();
 
     /**
      * Overlay color for the non-matching items.

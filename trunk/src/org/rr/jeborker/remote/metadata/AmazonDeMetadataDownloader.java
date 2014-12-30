@@ -43,7 +43,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 
 	@Override
 	public List<MetadataDownloadEntry> search(String searchTerm) {
-		final ArrayList<MetadataDownloadEntry> result = new ArrayList<MetadataDownloadEntry>();
+		final ArrayList<MetadataDownloadEntry> result = new ArrayList<>();
 		try {
 			List<Future<Elements>> fetchAmazonSearchPageDivElements = fetchAmazonSearchPageDivElements(searchTerm);
 			Iterator<Future<Elements>> fetchAmazonSearchPageDivElementsIterator = fetchAmazonSearchPageDivElements.iterator();
@@ -227,7 +227,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 
 		@Override
 		public List<String> getAuthors() {
-			ArrayList<String> result = new ArrayList<String>(1);
+			ArrayList<String> result = new ArrayList<>(1);
 			try {
 				if(getDocument() != null) {
 					Elements h1Authors = getDocument().getElementsByClass("parseasinTitle");

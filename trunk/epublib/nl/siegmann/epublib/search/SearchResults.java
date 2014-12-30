@@ -26,7 +26,7 @@ public class SearchResults {
 		this.hits = hits;
 	}
 	private Book book;
-	private List<SearchResult> hits = new ArrayList<SearchResult>();
+	private List<SearchResult> hits = new ArrayList<>();
 	public boolean isEmpty() {
 		return hits.isEmpty();
 	}
