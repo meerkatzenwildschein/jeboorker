@@ -49,7 +49,7 @@ public class JMultiButton extends JButton implements MouseListener {
 	/**
 	 * A list of all of the actions available on the button.
 	 */
-	private LinkedList<Action> actions = new LinkedList<Action>();
+	private LinkedList<Action> actions = new LinkedList<>();
 	/**
 	 * The action currently selected
 	 */

@@ -263,8 +263,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @param resourceLoader The {@link IResourceHandler} providing the ebook data.
 	 */
 	protected List<Property> setupMetadata(final List<EbookPropertyItem> items, final IMetadataReader reader) {
-		final ArrayList<Property> result = new ArrayList<Property>(items.size() + 1);
-		final List<MetadataProperty> allMetadata = new ArrayList<MetadataProperty>(this.allMetadata = reader.readMetadata());
+		final ArrayList<Property> result = new ArrayList<>(items.size() + 1);
+		final List<MetadataProperty> allMetadata = new ArrayList<>(this.allMetadata = reader.readMetadata());
 
 		for (int i = 0; i < allMetadata.size(); i++) {
 			final MetadataProperty metadataProperty = allMetadata.get(i);
@@ -405,7 +405,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 
 		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
-		final List<IResourceHandler> result = new ArrayList<IResourceHandler>(selectedEbookPropertyItems.size());
+		final List<IResourceHandler> result = new ArrayList<>(selectedEbookPropertyItems.size());
 		for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
 			result.add(ebookPropertyItem.getResourceHandler());
 		}

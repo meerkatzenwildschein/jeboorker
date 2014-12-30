@@ -62,7 +62,7 @@ public class GoogleBooksDeDownloadMetadataEntry implements MetadataDownloadEntry
 	@Override
 	public List<String> getAuthors() {
 		if(authors == null) {
-			authors = new ArrayList<String>();
+			authors = new ArrayList<>();
 			Element authorElement = getValueElement("Autoren");
 			if(authorElement != null) {
 				Elements links = authorElement.getElementsByTag("a");

@@ -174,7 +174,7 @@ class MetadataDownloadView extends AbstractDialogView {
 		gbl_searchPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		searchPanel.setLayout(gbl_searchPanel);
 
-		searchProviderCombobox = new JComboBox<String>(new DefaultComboBoxModel<String>(MetadataDownloadProviderFactory.getDownloaderNames().toArray(new String[0])));
+		searchProviderCombobox = new JComboBox<String>(new DefaultComboBoxModel<>(MetadataDownloadProviderFactory.getDownloaderNames().toArray(new String[0])));
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;

@@ -62,7 +62,7 @@ public class SwingUtils {
 	 *         contained by the given <code>{@link Window}</code>.
 	 */
 	public static Component[] getAllComponents(Class<? extends Component> className, Window window) {
-		final ArrayList<Component> comps = new ArrayList<Component>();
+		final ArrayList<Component> comps = new ArrayList<>();
 
 		comps.addAll(getAllComponentsRecursive(window, new Class[] {className}, null));
 
@@ -116,7 +116,7 @@ public class SwingUtils {
 		// No ArrayList, just create a new one.
 		if (recursive == null) {
 			// recursive = new Object[0];
-			recursive = new ArrayList<Component>(100);
+			recursive = new ArrayList<>(100);
 		}
 
 		// No Container, nothing to do.

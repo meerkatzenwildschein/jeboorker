@@ -11,7 +11,7 @@ public class FileTransferable implements Transferable
 	   private List<String> fileList ;
 
 	   public FileTransferable(List<String> files) {
-	      fileList = new LinkedList<String>(files);
+	      fileList = new LinkedList<>(files);
 	   }
 
 	   // Returns an object which represents the data to be transferred.

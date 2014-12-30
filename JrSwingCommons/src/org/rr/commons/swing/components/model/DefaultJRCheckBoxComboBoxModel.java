@@ -12,7 +12,7 @@ import org.rr.commons.utils.ListUtils;
 
 public class DefaultJRCheckBoxComboBoxModel<E> implements JRCheckBoxComboBoxModel<E> {
 
-	private Set<Integer> checks = new HashSet<Integer>();
+	private Set<Integer> checks = new HashSet<>();
 
 	private List<E> values;
 
@@ -24,7 +24,7 @@ public class DefaultJRCheckBoxComboBoxModel<E> implements JRCheckBoxComboBoxMode
 		this.values = values;
 		this.labels = labels;
 		if(this.labels == null) {
-			this.labels = new ArrayList<String>();
+			this.labels = new ArrayList<>();
 		}
 	}
 
@@ -67,7 +67,7 @@ public class DefaultJRCheckBoxComboBoxModel<E> implements JRCheckBoxComboBoxMode
 	}
 
 	public List<E> getCheckedValues() {
-		ArrayList<E> result = new ArrayList<E>(checks.size());
+		ArrayList<E> result = new ArrayList<>(checks.size());
 		for (Integer check : checks) {
 			result.add(getValueAt(check.intValue()));
 		}
@@ -84,14 +84,14 @@ public class DefaultJRCheckBoxComboBoxModel<E> implements JRCheckBoxComboBoxMode
 
 	private void fireListCheckListenerAdded(E value) {
 		for (ListCheckListener<E> listener : listeners) {
-			ListEvent<E> listEvent = new ListEvent<E>(this, Collections.singletonList(value));
+			ListEvent<E> listEvent = new ListEvent<>(this, Collections.singletonList(value));
 			listener.addCheck(listEvent);
 		}
 	}
 	
 	private void fireListCheckListenerRemoved(E value) {
 		for (ListCheckListener<E> listener : listeners) {
-			ListEvent<E> listEvent = new ListEvent<E>(this, Collections.singletonList(value));
+			ListEvent<E> listEvent = new ListEvent<>(this, Collections.singletonList(value));
 			listener.removeCheck(listEvent);
 		}
 	}

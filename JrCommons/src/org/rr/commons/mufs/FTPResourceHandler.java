@@ -430,7 +430,7 @@ public class FTPResourceHandler extends AResourceHandler {
 			FTPClient connection = this.getConnection();
 			try {
 				final FTPFile[] listDirectories = connection.listFiles(getURLPath(this.ftpURL));
-				ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+				ArrayList<IResourceHandler> result = new ArrayList<>();
 				for (int i = 0; i < listDirectories.length; i++) {
 					if (listDirectories[i].isDirectory() && !listDirectories[i].getName().equals(".") && !listDirectories[i].getName().equals("..")) {
 						FTPResourceHandler newResourceHandler = new FTPResourceHandler(addURLPath(this.ftpURL, listDirectories[i].getName()), this,
@@ -458,7 +458,7 @@ public class FTPResourceHandler extends AResourceHandler {
 			try {
 				final FTPFile[] listDirectories = connection.listFiles(getURLPath(this.ftpURL));
 
-				ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+				ArrayList<IResourceHandler> result = new ArrayList<>();
 				for (int i = 0; i < listDirectories.length; i++) {
 					if (listDirectories[i].isFile()) {
 						FTPResourceHandler newResourceHandler = new FTPResourceHandler(addURLPath(this.ftpURL, listDirectories[i].getName()), this,
@@ -477,7 +477,7 @@ public class FTPResourceHandler extends AResourceHandler {
 
 	@Override
 	public boolean mkdirs() throws IOException {
-		ArrayList<FTPResourceHandler> hierarchy = new ArrayList<FTPResourceHandler>();
+		ArrayList<FTPResourceHandler> hierarchy = new ArrayList<>();
 		FTPResourceHandler parent = (FTPResourceHandler) this.getParentResource();
 		while (parent != null) {
 			hierarchy.add(parent);

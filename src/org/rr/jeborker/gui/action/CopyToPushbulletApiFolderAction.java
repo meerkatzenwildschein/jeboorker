@@ -126,7 +126,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 	private List<String> askForTargetDeviceIdentifier(PushbulletClient client) throws IllegalStateException, IOException {
 		final List<Devices> devices = client.getDevices().getDevices();
 
-		JListSelectionDialog<String> dialog = new JListSelectionDialog<String>(MainController.getController().getMainWindow());
+		JListSelectionDialog<String> dialog = new JListSelectionDialog<>(MainController.getController().getMainWindow());
 		dialog.centerOnScreen();
 		dialog.setSelectedIndices(fetchSelectedDeviceIndices());
 		dialog.setValues(new JListSelectionDialog.DataModel<String>() {

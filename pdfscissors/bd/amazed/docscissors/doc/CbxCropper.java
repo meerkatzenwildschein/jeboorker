@@ -81,7 +81,7 @@ public class CbxCropper extends DocumentCropper {
 		ComicBookReader reader = new ComicBookReader(docInfo.getOriginalFile());
 		ComicBookDocument doc = reader.getDocument();
 		List<String> imageNames = doc.getImageNames();
-		Set<String> usedImageNames = new HashSet<String>();
+		Set<String> usedImageNames = new HashSet<>();
 
 		for(int i = 0; i < imageNames.size(); i++) {
 			String imageName = imageNames.get(i);

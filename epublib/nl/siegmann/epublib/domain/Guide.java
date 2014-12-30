@@ -24,7 +24,7 @@ public class Guide implements Serializable {
 
 	public static final String DEFAULT_COVER_TITLE = GuideReference.COVER;
 	
-	private List<GuideReference> references = new ArrayList<GuideReference>();
+	private List<GuideReference> references = new ArrayList<>();
 	private static final int COVERPAGE_NOT_FOUND = -1;
 	private static final int COVERPAGE_UNITIALIZED = -2;
 	
@@ -112,7 +112,7 @@ public class Guide implements Serializable {
 	 * @return
 	 */
 	public List<GuideReference> getGuideReferencesByType(String referenceTypeName) {
-		List<GuideReference> result = new ArrayList<GuideReference>();
+		List<GuideReference> result = new ArrayList<>();
 		for (GuideReference guideReference: references) {
 			if (referenceTypeName.equalsIgnoreCase(guideReference.getType())) {
 				result.add(guideReference);

@@ -25,7 +25,7 @@ public class MetadataUtils {
 	 *     Never returns <code>null</code>.
 	 */
 	public static List<MetadataProperty> getSameProperties(MetadataProperty ref, List<MetadataProperty> allMetadata) {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(3);
+		final ArrayList<MetadataProperty> result = new ArrayList<>(3);
 		for (MetadataProperty metadataProperty : allMetadata) {
 			if(comparePropertiesForMerge(metadataProperty, ref)) {
 				result.add(metadataProperty);

@@ -23,12 +23,12 @@ public class HtmlSplitter {
 
 	private XMLEventFactory xmlEventFactory = XMLEventFactory.newInstance();
 	private XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
-	private List<XMLEvent> headerElements = new ArrayList<XMLEvent>();
-	private List<XMLEvent> footerElements = new ArrayList<XMLEvent>();
+	private List<XMLEvent> headerElements = new ArrayList<>();
+	private List<XMLEvent> footerElements = new ArrayList<>();
 	private int footerCloseTagLength;
-	private List<XMLEvent> elementStack = new ArrayList<XMLEvent>();
+	private List<XMLEvent> elementStack = new ArrayList<>();
 	private StringWriter currentDoc = new StringWriter();
-	private List<XMLEvent> currentXmlEvents = new ArrayList<XMLEvent>();
+	private List<XMLEvent> currentXmlEvents = new ArrayList<>();
 	private XMLEventWriter out;
 	private int maxLength = 300000; // 300K, the max length of a chapter of an epub document
 	private List<List<XMLEvent>> result = new ArrayList<List<XMLEvent>>();
@@ -51,7 +51,7 @@ public class HtmlSplitter {
 		this.footerElements = getFooterElements();
 		footerCloseTagLength = calculateTotalTagStringLength(footerElements);
 		this.maxLength = (int) ((float) maxLength * 0.9);
-		currentXmlEvents = new ArrayList<XMLEvent>();
+		currentXmlEvents = new ArrayList<>();
 		currentXmlEvents.addAll(headerElements);
 		currentXmlEvents.addAll(elementStack);
 		out = xmlOutputFactory.createXMLEventWriter(currentDoc);
@@ -85,7 +85,7 @@ public class HtmlSplitter {
 			out.add(stackXmlEvent);
 		}
 		
-		currentXmlEvents = new ArrayList<XMLEvent>();
+		currentXmlEvents = new ArrayList<>();
 		currentXmlEvents.addAll(headerElements);
 		currentXmlEvents.addAll(elementStack);
 	}
@@ -123,7 +123,7 @@ public class HtmlSplitter {
 	}
 
 	private List<XMLEvent> getHeaderElements(XMLEventReader reader) throws XMLStreamException {
-		List<XMLEvent> result = new ArrayList<XMLEvent>();
+		List<XMLEvent> result = new ArrayList<>();
 		XMLEvent event = reader.nextEvent();
 		while(event != null && (!isBodyStartElement(event))) {
 			result.add(event);
@@ -138,7 +138,7 @@ public class HtmlSplitter {
 	}
 
 	private List<XMLEvent> getFooterElements() throws XMLStreamException {
-		List<XMLEvent> result = new ArrayList<XMLEvent>();
+		List<XMLEvent> result = new ArrayList<>();
 		result.add(xmlEventFactory.createEndElement("", null, "body"));
 		result.add(xmlEventFactory.createEndElement("", null, "html"));
 		result.add(xmlEventFactory.createEndDocument());

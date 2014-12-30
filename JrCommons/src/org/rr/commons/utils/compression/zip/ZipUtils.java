@@ -39,7 +39,7 @@ public class ZipUtils {
 		ZipInputStream jar = null;
 		try {
 			jar = new org.rr.commons.utils.compression.zip.ZipInputStream(zipData, zipDataFileNameEncoding);
-			final ArrayList<String> result = new ArrayList<String>();
+			final ArrayList<String> result = new ArrayList<>();
 			
 			ZipEntry nextEntry;
 			while ((nextEntry = jar.getNextEntry()) != null) {
@@ -73,7 +73,7 @@ public class ZipUtils {
 		org.rr.commons.utils.compression.zip.ZipInputStream zipIn = null;
 		try {
 			zipIn = new org.rr.commons.utils.compression.zip.ZipInputStream(zipData, zipDataFileNameEncoding);
-			final ArrayList<CompressedDataEntry> result = new ArrayList<CompressedDataEntry>();
+			final ArrayList<CompressedDataEntry> result = new ArrayList<>();
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final byte[] readBuff = new byte[4096];

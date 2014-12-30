@@ -80,7 +80,7 @@ public class ImageWebSearchFetcherFactory implements IImageFetcherFactory {
 	 * @return All available fetcher names.
 	 */
 	public List<String> getFetcherNames() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for (FETCHER_TYPES type : FETCHER_TYPES.values()) {
 			result.add(type.getName());
 		}

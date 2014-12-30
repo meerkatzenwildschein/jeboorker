@@ -71,7 +71,7 @@ public class ResourceHandlerUtils {
 	 * @return The resource hierarchy.
 	 */
 	public static IResourceHandler[] getResourceHierarchy(final IResourceHandler resourceHandler) {
-		ArrayList<IResourceHandler> hierarchy = new ArrayList<IResourceHandler>();
+		ArrayList<IResourceHandler> hierarchy = new ArrayList<>();
 		IResourceHandler parent = resourceHandler;
 		while(parent!=null) {
 			hierarchy.add(parent);
@@ -97,8 +97,8 @@ public class ResourceHandlerUtils {
 		}
 
 		//split into folders and files to be sorted separately.
-		final ArrayList<IResourceHandler> directoryResourceHandler = new ArrayList<IResourceHandler>();
-		final ArrayList<IResourceHandler> fileResourceHandler = new ArrayList<IResourceHandler>();
+		final ArrayList<IResourceHandler> directoryResourceHandler = new ArrayList<>();
+		final ArrayList<IResourceHandler> fileResourceHandler = new ArrayList<>();
 
 		for (int i = 0; i < resourceHandlers.length; i++) {
 			if(resourceHandlers[i].isDirectoryResource()) {
@@ -302,7 +302,7 @@ public class ResourceHandlerUtils {
 	public static IResourceHandler[] getFileSystemRoots() {
 		//attach all drives
 		File[] roots = File.listRoots();
-		final ArrayList<IResourceHandler> resultRoots = new ArrayList<IResourceHandler>(roots.length+1);
+		final ArrayList<IResourceHandler> resultRoots = new ArrayList<>(roots.length+1);
 		for (int i = 0; i < roots.length; i++) {
 			resultRoots.add(ResourceHandlerFactory.getResourceHandler(roots[i]));
 		}
@@ -631,7 +631,7 @@ public class ResourceHandlerUtils {
 	 * @return All external drives. never returns <code>null</code>.
 	 */
 	public static List<IResourceHandler> getExternalDriveResources() {
-		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+		final ArrayList<IResourceHandler> result = new ArrayList<>();
 		if(CommonUtils.isLinux()) {
 			try {
 				CommandLine cl = CommandLine.parse("/bin/df");

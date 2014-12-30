@@ -17,8 +17,8 @@ public class PageGroup {
 	public static final int GROUP_TYPE_ALL = 1;
 	public static final int GROUP_TYPE_INDIVIDUAL = 2;
 
-	private java.util.Vector<Integer> pages = new Vector<Integer>();
-	private ArrayList<Rect> rects = new ArrayList<Rect>();
+	private java.util.Vector<Integer> pages = new Vector<>();
+	private ArrayList<Rect> rects = new ArrayList<>();
 	private String name;
 	private BufferedImage stackImage;
 
@@ -39,7 +39,7 @@ public class PageGroup {
 	}
 
 	public ArrayList<Rectangle> getRectangles() {
-		ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
+		ArrayList<Rectangle> rectangles = new ArrayList<>();
 		for (Rect rect : rects) {
 			rectangles.add(rect.getRectangleBound()); // TODO rename rect by CropCell or something
 		}
@@ -60,13 +60,13 @@ public class PageGroup {
 		for (int i = 1; i <= pageCount; i++ ) {
 			allPages.addPage(i);
 		}
-		Vector<PageGroup> pageGroups = new Vector<PageGroup>();
+		Vector<PageGroup> pageGroups = new Vector<>();
 		pageGroups.add(allPages);
 		return pageGroups;
 	}
 
 	public static Vector<PageGroup> createGroupForIndividualPage(int pageCount) {
-		Vector<PageGroup> pageGroups = new Vector<PageGroup>(pageCount);
+		Vector<PageGroup> pageGroups = new Vector<>(pageCount);
 		for (int i = 1; i <= pageCount; i++ ) {
 			PageGroup group = new PageGroup(Bundle.getString("PageGroup.Page") + " " + i);
 			group.addPage(i);
@@ -86,7 +86,7 @@ public class PageGroup {
 				oddPages.addPage(i);
 			}
 		}
-		Vector<PageGroup> pageGroups = new Vector<PageGroup>();
+		Vector<PageGroup> pageGroups = new Vector<>();
 		pageGroups.add(oddPages);
 		pageGroups.add(evenPages);
 		return pageGroups;

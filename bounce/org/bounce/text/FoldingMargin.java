@@ -319,7 +319,7 @@ public abstract class FoldingMargin extends JComponent {
 			int startIndex = getNextFoldIndex(fold.getStart());
 
 			if (startIndex != -1) {
-				List<Fold> oldFolds = new ArrayList<Fold>(folds);
+				List<Fold> oldFolds = new ArrayList<>(folds);
 
 				for (int i = startIndex; i < oldFolds.size(); i++) {
 					Fold f = (Fold) oldFolds.get(i);
@@ -456,7 +456,7 @@ public abstract class FoldingMargin extends JComponent {
 	private void updateFolds() {
 		if (isVisible()) {
 			List<Fold> folds = getFolds();
-			List<Fold> oldFolds = new ArrayList<Fold>(folds);
+			List<Fold> oldFolds = new ArrayList<>(folds);
 
 			// Update the folds, to make sure no line has been deleted.
 			for (Fold fold : oldFolds) {

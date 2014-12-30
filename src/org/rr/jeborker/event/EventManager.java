@@ -13,7 +13,7 @@ public class EventManager {
 		EBOOK_ITEM_SELECTION_CHANGE, METADATA_SHEET_SELECTION_CHANGE, METADATA_SHEET_CONTENT_CHANGE
 	}
  
-	private static WeakList<ApplicationEventListener> weakListenerList = new WeakList<ApplicationEventListener>();
+	private static WeakList<ApplicationEventListener> weakListenerList = new WeakList<>();
 	
 	private static List<ApplicationEventListener> listenerList = Collections.synchronizedList(new ArrayList<ApplicationEventListener>());
 	

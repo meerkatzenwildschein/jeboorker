@@ -10,7 +10,7 @@ abstract class AArchiveHandler implements IArchiveHandler {
 	
 	protected IResourceHandler resource;
 	
-	protected List<String> archiveEntries = new ArrayList<String>();
+	protected List<String> archiveEntries = new ArrayList<>();
 	
 	protected byte[] comicInfoXmlContent = null;
 	

@@ -65,9 +65,9 @@ public class EbookPropertyDBTableModel implements TableModel {
     
     private List<EbookPropertyItem> allItems;
     
-    private final List<EbookPropertyDBTableModelQuery> whereConditions = new ArrayList<EbookPropertyDBTableModelQuery>();
+    private final List<EbookPropertyDBTableModelQuery> whereConditions = new ArrayList<>();
 
-    private final List<Field> orderByColumns = new ArrayList<Field>();
+    private final List<Field> orderByColumns = new ArrayList<>();
     
     private OrderDirection orderDirection = null;
     
@@ -200,7 +200,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 				if(item != null) {
 					EbookPropertyItem dbItem = item;
 					if(dbItem.getFile().equals(modelItem.getFile())) {
-						this.allItems = new ReplacementElementList<EbookPropertyItem>(ebookItems, rowIndex, dbItem);
+						this.allItems = new ReplacementElementList<>(ebookItems, rowIndex, dbItem);
 					}
 				}
 			}
@@ -333,14 +333,14 @@ public class EbookPropertyDBTableModel implements TableModel {
     			this.dbItems.close();
     		}
     		this.dbItems = items;
-    		List<EbookPropertyItem> addedItems = new ArrayList<EbookPropertyItem>();
-    		this.allItems = new CompoundList<EbookPropertyItem>(dbItems, addedItems);
+    		List<EbookPropertyItem> addedItems = new ArrayList<>();
+    		this.allItems = new CompoundList<>(dbItems, addedItems);
     	}
     	return this.allItems;
     }
     
     private List<String> prepareKeywords() {
-    	ArrayList<String> result = new ArrayList<String>();
+    	ArrayList<String> result = new ArrayList<>();
     	for(EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
     		whereCondition.appendKeyword(result);
     	}
@@ -348,7 +348,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     }
     
     private Where<EbookPropertyItem, EbookPropertyItem> prepareQuery() {
-    	List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<EbookPropertyDBTableModelQuery>();
+    	List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<>();
     	Where<EbookPropertyItem, EbookPropertyItem> where = DefaultDBManager.getInstance().getQueryBuilder(EbookPropertyItem.class).where();
     	for(EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
     		try {
@@ -380,7 +380,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     			isInsert = this.allItems.add(item);
     		} catch (java.lang.UnsupportedOperationException e) {
     			//not allowed to add
-    			this.allItems = new CompoundList<EbookPropertyItem>(this.allItems, new ArrayList<EbookPropertyItem>(Arrays.asList(item)));
+    			this.allItems = new CompoundList<EbookPropertyItem>(this.allItems, new ArrayList<>(Arrays.asList(item)));
     			isInsert = true;
     		}
     		if(isInsert) {
@@ -388,7 +388,7 @@ public class EbookPropertyDBTableModel implements TableModel {
     	    	fireTableRowsInserted(ins, ins);
     		}
     	} else {
-    		this.allItems = new InsertElementList<EbookPropertyItem>(this.allItems, item, row);
+    		this.allItems = new InsertElementList<>(this.allItems, item, row);
     		fireTableRowsInserted(row, row);
     	}
     }
@@ -402,7 +402,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 				if(toRemove!=null && toRemove.equals(item)) {
 					DefaultDBManager.getInstance().deleteObject(toRemove);
 					if(!isDirty()) {
-						this.allItems = new BlindElementList<EbookPropertyItem>(this.allItems, i);
+						this.allItems = new BlindElementList<>(this.allItems, i);
 						fireTableRowsDeleted(i, i);
 					}
 					removed = true;

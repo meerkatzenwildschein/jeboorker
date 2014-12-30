@@ -25,13 +25,13 @@ public class BlindElementListTest extends TestCase {
 	
 	public void testList() {
 		BlindElementList<String> insertList;
-		insertList = new BlindElementList<String>(defaultList, 0);
+		insertList = new BlindElementList<>(defaultList, 0);
 		assertEquals(defaultList.get(1), insertList.get(0));
 		
-		insertList = new BlindElementList<String>(defaultList, 5);
+		insertList = new BlindElementList<>(defaultList, 5);
 		assertEquals(defaultList.get(6), insertList.get(5));
 		
-		insertList = new BlindElementList<String>(defaultList, 7);
+		insertList = new BlindElementList<>(defaultList, 7);
 		assertEquals(defaultList.size() - 1, insertList.size());
 
 		printList(insertList);		

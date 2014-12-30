@@ -60,7 +60,7 @@ public class HHCParser {
 	 * <ul> ... </ul> <!-- child elements -->
 	 */
 	private static List<TOCReference> processUlNode(Node ulNode, Resources resources) {
-		List<TOCReference> result = new ArrayList<TOCReference>();
+		List<TOCReference> result = new ArrayList<>();
 		NodeList children = ulNode.getChildNodes();
 		for(int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
@@ -81,7 +81,7 @@ public class HHCParser {
 
 	
 	private static List<TOCReference> processLiNode(Node liNode, Resources resources) {
-		List<TOCReference> result = new ArrayList<TOCReference>();
+		List<TOCReference> result = new ArrayList<>();
 		NodeList children = liNode.getChildNodes();
 		for(int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);

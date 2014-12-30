@@ -16,7 +16,7 @@ public abstract class WrapperList<T> implements List<T> {
 	protected List<T> toWrap;
 	
 	public WrapperList() {
-		this.toWrap = new ArrayList<T>();
+		this.toWrap = new ArrayList<>();
 	}
 	
 	public WrapperList(List<T> toWrap) {

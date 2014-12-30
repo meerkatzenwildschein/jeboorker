@@ -52,7 +52,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<MetadataDownloadEntry> getMetadataDownloadEntries(List<byte[]> metadataHtmlContent) throws IOException {
-		List<MetadataDownloadEntry> result = new ArrayList<MetadataDownloadEntry>(metadataHtmlContent.size());
+		List<MetadataDownloadEntry> result = new ArrayList<>(metadataHtmlContent.size());
 		for (byte[] html : metadataHtmlContent) {
 			if (html != null) {
 				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), PAGE_CHARSET, MAIN_URL);
@@ -82,7 +82,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private Set<String> getSearchResultLinks(List<Document> htmlDocs) {
-		Set<String> allLinks = new LinkedHashSet<String>();
+		Set<String> allLinks = new LinkedHashSet<>();
 		for (Document document : htmlDocs) {
 			allLinks.addAll(getSearchResultLinks(document));
 		}
@@ -90,7 +90,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<String> getSearchResultLinks(Document doc) {
-		List<String> links = new ArrayList<String>(ENTRIES_TO_FETCH);
+		List<String> links = new ArrayList<>(ENTRIES_TO_FETCH);
 		Elements headlines = doc.getElementsByTag("h3");
 		for (Element headline : headlines) {
 			Element link = headline.child(0);
@@ -105,7 +105,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<Document> getDocuments(List<byte[]> content) throws IOException {
-		List<Document> documents = new ArrayList<Document>(content.size());
+		List<Document> documents = new ArrayList<>(content.size());
 		for (byte[] bs : content) {
 			documents.add(Jsoup.parse(new ByteArrayInputStream(bs), PAGE_CHARSET, MAIN_URL));
 		}
@@ -114,7 +114,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 
 	private List<URL> getSearchPageUrls(String searchTerm) throws UnsupportedEncodingException, MalformedURLException {
 		String encodesSearchPhrase = URLEncoder.encode(searchTerm, Charsets.UTF_8.name());
-		List<URL> urls = new ArrayList<URL>(PAGES_TO_LOAD);
+		List<URL> urls = new ArrayList<>(PAGES_TO_LOAD);
 		for (int i = 0; i < PAGES_TO_LOAD; i++) {
 			String position = "&start=" + (i * 10);
 			urls.add(new URL(QUERY_URL_PART + encodesSearchPhrase + position));

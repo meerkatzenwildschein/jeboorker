@@ -16,7 +16,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 
 class GoogleImageFetcher extends AImageFetcher {
 	
-	private HashSet<URL> alreadyFetchedUrls = new HashSet<URL>();
+	private HashSet<URL> alreadyFetchedUrls = new HashSet<>();
 	
 	private int page = 0;
 	
@@ -44,7 +44,7 @@ class GoogleImageFetcher extends AImageFetcher {
 				if("200".equals(json.get("responseStatus").toString())) {
 					final JSONObject responseData = json.getJSONObject("responseData");
 					final JSONArray results = responseData.getJSONArray("results");
-					final ArrayList<IImageFetcherEntry> result = new ArrayList<IImageFetcherEntry>(results.length());
+					final ArrayList<IImageFetcherEntry> result = new ArrayList<>(results.length());
 					
 					for(int i=0; i < results.length(); i++) {
 						JSONObject entry = results.getJSONObject(i);

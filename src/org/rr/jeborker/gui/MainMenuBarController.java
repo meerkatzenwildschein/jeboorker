@@ -84,7 +84,7 @@ public class MainMenuBarController {
 			return Collections.emptyList();
 		}
 
-		final ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<>();
 	    for (Map.Entry<String, Boolean> entry : showHideBasePathToggleStatus.entrySet()) {
 	        String basePath = entry.getKey();
 	        Boolean isSHow = entry.getValue();
@@ -115,7 +115,7 @@ public class MainMenuBarController {
 			for(String basePath : split) {
 				if(!path.contains(basePath)) {
 					//there is no base path for the hidden path
-					ArrayList<String> s = new ArrayList<String>(split);
+					ArrayList<String> s = new ArrayList<>(split);
 					boolean remove = s.remove(basePath);
 					if(remove) {
 						preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(s, String.valueOf(File.pathSeparatorChar)));

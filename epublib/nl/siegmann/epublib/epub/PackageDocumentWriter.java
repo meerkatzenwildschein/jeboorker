@@ -102,7 +102,7 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 	}
 
 	private static List<Resource> getAllResourcesSortById(Book book) {
-		List<Resource> allResources = new ArrayList<Resource>(book.getResources().getAll());
+		List<Resource> allResources = new ArrayList<>(book.getResources().getAll());
 		Collections.sort(allResources, new Comparator<Resource>() {
 
 			@Override

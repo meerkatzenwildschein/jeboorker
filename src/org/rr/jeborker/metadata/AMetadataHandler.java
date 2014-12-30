@@ -36,7 +36,7 @@ abstract class AMetadataHandler {
 	 */
 	protected List<Element> getChildren(Element e) {
 		final NodeList allElements = e.getElementsByTagName("*");
-		final ArrayList<Element> result = new ArrayList<Element>(allElements.getLength());
+		final ArrayList<Element> result = new ArrayList<>(allElements.getLength());
 		int length = allElements.getLength();
 		for (int i = 0; i < length; i++) {
 			Element item = (Element) allElements.item(i);

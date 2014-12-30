@@ -42,7 +42,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 
 	@Override
 	public List<MetadataProperty> readMetadata() {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		try {
 			final ComicBookDocument document = getDocument();
 
@@ -75,7 +75,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 
 	@Override
 	public List<MetadataProperty> getSupportedMetadata() {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		for(COMICBOOK_METADATA_TYPES type : COMICBOOK_METADATA_TYPES.values()) {
 			MetadataProperty metadataProperty = createMetadataProperty(type, "");
 			result.add(metadataProperty);
@@ -143,7 +143,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 		default: newProperty = null;
 		}
 
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		if(newProperty != null) {
 			for(MetadataProperty prop : props) {
 				if(prop.getName().equalsIgnoreCase(newProperty.getName())) {
@@ -860,7 +860,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 				return null;
 			}
 		},BLACK_AND_WHITE {
-			List<String> validValues = new ArrayList<String>(Arrays.asList(new String[] {YeyNoType.UNKNOWN, YeyNoType.NO, YeyNoType.YES}));
+			List<String> validValues = new ArrayList<>(Arrays.asList(new String[] {YeyNoType.UNKNOWN, YeyNoType.NO, YeyNoType.YES}));
 
 			public String getName() {
 				return "BlackAndWhite";
@@ -886,7 +886,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 				return DatePropertyCellRenderer.class;
 			}
 		},MANGA {
-			List<String> validValues = new ArrayList<String>(Arrays.asList(new String[] {YeyNoType.UNKNOWN, YeyNoType.NO, YeyNoType.YES}));
+			List<String> validValues = new ArrayList<>(Arrays.asList(new String[] {YeyNoType.UNKNOWN, YeyNoType.NO, YeyNoType.YES}));
 
 			public String getName() {
 				return "Manga";

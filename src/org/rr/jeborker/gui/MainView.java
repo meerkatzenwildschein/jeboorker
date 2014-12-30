@@ -652,8 +652,8 @@ class MainView extends JFrame {
 		    protected Transferable createTransferable(JComponent c) {
 		        final JTable list = (JTable) c;
 		        final int[] selectedRows = list.getSelectedRows();
-		        final List<URI> uriList = new ArrayList<URI>();
-		        final List<String> files = new ArrayList<String>();
+		        final List<URI> uriList = new ArrayList<>();
+		        final List<String> files = new ArrayList<>();
 
 		        for (int i = 0; i < selectedRows.length; i++) {
 		        	EbookPropertyItem val = (EbookPropertyItem) mainTable.getModel().getValueAt(selectedRows[i], 0);
@@ -838,8 +838,8 @@ class MainView extends JFrame {
              */
             protected Transferable createTransferable(JComponent c) {
             	List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeHandler().getSelectedTreeItems();
-		        final List<URI> uriList = new ArrayList<URI>(selectedTreeItems.size());
-		        final List<String> files = new ArrayList<String>(selectedTreeItems.size());
+		        final List<URI> uriList = new ArrayList<>(selectedTreeItems.size());
+		        final List<String> files = new ArrayList<>(selectedTreeItems.size());
 
 				for (int i = 0; i < selectedTreeItems.size(); i++) {
 					IResourceHandler selectedTreeItem = selectedTreeItems.get(i);

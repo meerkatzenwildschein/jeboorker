@@ -64,12 +64,12 @@ class ShowMetadataDownloadDialogAction extends AbstractAction {
 			IResourceHandler resourceHandler = ebookItem.getResourceHandler();
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
 			final List<MetadataProperty> allMetadata = reader.readMetadata();
-			final List<MetadataProperty> newMetadata = new ArrayList<MetadataProperty>();
+			final List<MetadataProperty> newMetadata = new ArrayList<>();
 			final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 			
 			boolean change = false;
 			for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
-				List<MetadataProperty> availableMetadata = new ArrayList<MetadataProperty>(reader.getMetadataByType(false, allMetadata, type));
+				List<MetadataProperty> availableMetadata = new ArrayList<>(reader.getMetadataByType(false, allMetadata, type));
 				List<String> downloadedValues = metadataDownloadController.getFilteredValues(type);
 				for(int i = 0; i < downloadedValues.size(); i++) {
 					String downloadedValue = downloadedValues.get(i);

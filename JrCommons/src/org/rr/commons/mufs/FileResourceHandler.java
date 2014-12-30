@@ -369,7 +369,7 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public IResourceHandler[] listResources(final ResourceNameFilter filter) throws IOException {
-		final ArrayList<IResourceHandler> resourceResult = new ArrayList<IResourceHandler>();
+		final ArrayList<IResourceHandler> resourceResult = new ArrayList<>();
 		IResourceHandler[] listFileResources = this.listFileResources();
 		IResourceHandler[] listDirectoryResources = this.listDirectoryResources();
 		for (int i = 0; i < listFileResources.length; i++) {
@@ -403,7 +403,7 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public IResourceHandler[] listDirectoryResources(ResourceNameFilter filter) {
-		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+		final ArrayList<IResourceHandler> result = new ArrayList<>();
 		
 		synchronized(fileSystemViewInstance) {
 			File[] files = FileResourceHandler.fileSystemViewInstance.getFiles(this.file, false);
@@ -431,7 +431,7 @@ class FileResourceHandler extends AResourceHandler {
 	 */
 	@Override
 	public IResourceHandler[] listFileResources() {
-		final ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>();
+		final ArrayList<IResourceHandler> result = new ArrayList<>();
 
 		synchronized(fileSystemViewInstance) {
 //			File[] files = this.file.listFiles();
@@ -468,7 +468,7 @@ class FileResourceHandler extends AResourceHandler {
 		}
 		synchronized(fileSystemViewInstance) {
 			File[] files = fileSystemViewInstance.getFiles(this.file, !showHidden);
-			List<IResourceHandler> resultResources = new ArrayList<IResourceHandler>(files.length);
+			List<IResourceHandler> resultResources = new ArrayList<>(files.length);
 			for (int i = 0; i < files.length; i++) {
 				if(files[i].isFile()) {
 					resultResources.add(ResourceHandlerFactory.getResourceHandler(files[i]));

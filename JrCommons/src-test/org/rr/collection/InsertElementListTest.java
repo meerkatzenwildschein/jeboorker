@@ -24,19 +24,19 @@ public class InsertElementListTest extends TestCase {
 	
 	public void testList1() {
 		String insertValue = "99";
-		InsertElementList<String> insertList = new InsertElementList<String>(defaultList, insertValue, 0);
+		InsertElementList<String> insertList = new InsertElementList<>(defaultList, insertValue, 0);
 		assertEquals(insertValue, insertList.get(0));
 		
-		insertList = new InsertElementList<String>(defaultList, insertValue, 1);
+		insertList = new InsertElementList<>(defaultList, insertValue, 1);
 		assertEquals(insertValue, insertList.get(1));
 		
-		insertList = new InsertElementList<String>(defaultList, insertValue, 8);
+		insertList = new InsertElementList<>(defaultList, insertValue, 8);
 		assertEquals(insertValue, insertList.get(8));
 	}
 	
 	public void testAdd() {
 		String insertValue = "insertValue";
-		InsertElementList<String> insertList = new InsertElementList<String>(defaultList, insertValue, 3);
+		InsertElementList<String> insertList = new InsertElementList<>(defaultList, insertValue, 3);
 		insertList.add(insertValue);
 		assertEquals(insertValue, insertList.get(insertList.size()-1));
 		

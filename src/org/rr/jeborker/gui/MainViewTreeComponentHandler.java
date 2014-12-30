@@ -46,7 +46,7 @@ public class MainViewTreeComponentHandler {
 		if(selectedTreeComponent != null) {
 			TreePath[] selectionPaths = ((JTree)selectedTreeComponent).getSelectionPaths();
 			if(selectionPaths != null) {
-				ArrayList<IResourceHandler> result = new ArrayList<IResourceHandler>(selectionPaths.length);
+				ArrayList<IResourceHandler> result = new ArrayList<>(selectionPaths.length);
 				if(selectionPaths != null) {
 					for(TreePath selectionPath : selectionPaths) {
 						TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
@@ -71,7 +71,7 @@ public class MainViewTreeComponentHandler {
 			TreeModel model = ((JTree) selectedComponent).getModel();
 
 			List<String> pathSegments = resourceHandler.getPathSegments();
-			List<String> fullPathSegments = new ArrayList<String>(pathSegments.size());
+			List<String> fullPathSegments = new ArrayList<>(pathSegments.size());
 			for(int i = 0; i < pathSegments.size(); i++) {
 				if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
 					List<String> extract = ListUtils.extract(pathSegments, 0, i + 1);

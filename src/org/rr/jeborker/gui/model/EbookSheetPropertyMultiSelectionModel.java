@@ -17,7 +17,7 @@ import com.l2fprod.common.propertysheet.Property;
 public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyModel {
 	
 	public void loadProperties(List<EbookPropertyItem> items) {
-		final List<IResourceHandler> ebookResourceHandlers = new ArrayList<IResourceHandler>(items.size());
+		final List<IResourceHandler> ebookResourceHandlers = new ArrayList<>(items.size());
 		for (int i = 0; i < items.size(); i++) {
 			EbookPropertyItem ebookPropertyItem = items.get(i);
 			if(ebookPropertyItem != null && ebookPropertyItem.getFile() != null) {
@@ -27,8 +27,8 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 		}
 		
 		reader = MetadataHandlerFactory.getReader(ebookResourceHandlers);
-		allMetadata = new ArrayList<MetadataProperty>(METADATA_TYPES.values().length);
-		final ArrayList<Property> result = new ArrayList<Property>(allMetadata.size());
+		allMetadata = new ArrayList<>(METADATA_TYPES.values().length);
+		final ArrayList<Property> result = new ArrayList<>(allMetadata.size());
 		
 		for(METADATA_TYPES type : METADATA_TYPES.values()) {
 			List<MetadataProperty> l = Collections.emptyList();

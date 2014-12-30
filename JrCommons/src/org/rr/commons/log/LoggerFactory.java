@@ -11,7 +11,7 @@ public class LoggerFactory {
 	
 	private static final boolean DEBUG = true;
 	
-	private static final HashSet<Handler> LOGGERS = new HashSet<Handler>();
+	private static final HashSet<Handler> LOGGERS = new HashSet<>();
 	
 	private static final Logger LOGGER = Logger.getLogger("global").getParent();
 

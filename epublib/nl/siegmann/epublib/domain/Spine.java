@@ -45,7 +45,7 @@ public class Spine implements Serializable {
 	}
 
 	public static List<SpineReference> createSpineReferences(Collection<Resource> resources) {
-		List<SpineReference> result = new ArrayList<SpineReference>(resources.size());
+		List<SpineReference> result = new ArrayList<>(resources.size());
 		for (Resource resource: resources) {
 			result.add(new SpineReference(resource));
 		}
@@ -103,7 +103,7 @@ public class Spine implements Serializable {
 	 */
 	public SpineReference addSpineReference(SpineReference spineReference) {
 		if (spineReferences == null) {
-			this.spineReferences = new ArrayList<SpineReference>();
+			this.spineReferences = new ArrayList<>();
 		}
 		spineReferences.add(spineReference);
 		return spineReference;

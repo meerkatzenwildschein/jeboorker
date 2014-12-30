@@ -147,7 +147,7 @@ class EbookSheetProperty extends DefaultProperty {
 		if(propertyIndex >= 0) {
 			List<String> validValues = metadataProperty.getValidValues();
 			if(!validValues.isEmpty()) {
-				ArrayList<Object> values = new ArrayList<Object>();
+				ArrayList<Object> values = new ArrayList<>();
 				values.add(metadataProperty.getValues().get(propertyIndex));
 				values.addAll(validValues);
 				return values;

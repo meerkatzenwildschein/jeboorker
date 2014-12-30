@@ -23,8 +23,8 @@ public class UIHandler {
 	private Vector<UIHandlerListener> listeners;
 
 	public UIHandler() {
-		rects = new ArrayList<Rect>();
-		listeners = new Vector<UIHandlerListener>();
+		rects = new ArrayList<>();
+		listeners = new Vector<>();
 		reset();
 	}
 

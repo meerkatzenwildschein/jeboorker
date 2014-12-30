@@ -26,7 +26,7 @@ public class SectionHrefSanityCheckBookProcessor implements BookProcessor {
 	}
 
 	private static List<SpineReference> checkSpineReferences(Spine spine) {
-		List<SpineReference> result = new ArrayList<SpineReference>(spine.size());
+		List<SpineReference> result = new ArrayList<>(spine.size());
 		Resource previousResource = null;
 		for(SpineReference spineReference: spine.getSpineReferences()) {
 			if(spineReference.getResource() == null

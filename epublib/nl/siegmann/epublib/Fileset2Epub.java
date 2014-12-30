@@ -32,11 +32,11 @@ public class Fileset2Epub {
 		String xslFile = "";
 		String coverImage = "";
 		String title = "";
-		List<String> authorNames = new ArrayList<String>();
+		List<String> authorNames = new ArrayList<>();
 		String type = "";
 		String isbn = "";
 		String inputEncoding = Constants.ENCODING;
-		List<String> bookProcessorClassNames = new ArrayList<String>();
+		List<String> bookProcessorClassNames = new ArrayList<>();
 		
 		for(int i = 0; i < args.length; i++) {
 			if(args[i].equalsIgnoreCase("--in")) {
@@ -91,7 +91,7 @@ public class Fileset2Epub {
 		}
 		
 		if(StringUtils.isNotBlank(title)) {
-			List<String> titles = new ArrayList<String>();
+			List<String> titles = new ArrayList<>();
 			titles.add(title);
 			book.getMetadata().setTitles(titles);
 		}
@@ -115,7 +115,7 @@ public class Fileset2Epub {
 		if(authorNames == null || authorNames.isEmpty()) {
 			return;
 		}
-		List<Author> authorObjects = new ArrayList<Author>();
+		List<Author> authorObjects = new ArrayList<>();
 		for(String authorName: authorNames) {
 			String[] authorNameParts = authorName.split(",");
 			Author authorObject = null;
@@ -131,7 +131,7 @@ public class Fileset2Epub {
 
 
 	private static List<BookProcessor> createBookProcessors(List<String> bookProcessorNames) {
-		List<BookProcessor> result = new ArrayList<BookProcessor>(bookProcessorNames.size());
+		List<BookProcessor> result = new ArrayList<>(bookProcessorNames.size());
 		for (String bookProcessorName: bookProcessorNames) {
 			BookProcessor bookProcessor = null;
 			try {

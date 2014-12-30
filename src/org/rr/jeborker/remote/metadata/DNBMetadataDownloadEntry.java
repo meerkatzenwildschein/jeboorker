@@ -144,7 +144,7 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 	@Override
 	public List<String> getAuthors() {
 		if (authors == null) {
-			List<String> evaluatedAuthors = new ArrayList<String>();
+			List<String> evaluatedAuthors = new ArrayList<>();
 			Element e = getTag("Person(en)");
 			if (e != null) {
 				Elements authorLinks = e.getElementsByTag("a");

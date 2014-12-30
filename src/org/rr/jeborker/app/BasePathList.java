@@ -20,7 +20,7 @@ public class BasePathList extends WrapperList<String> {
 
 	private static String importBasePath;
 
-	private final List<String> stickyBasePath = new ArrayList<String>();
+	private final List<String> stickyBasePath = new ArrayList<>();
 
 	public BasePathList(List<String> basePaths) {
 		super(Collections.<String>emptyList());
@@ -43,7 +43,7 @@ public class BasePathList extends WrapperList<String> {
 	 * @param basePaths The base paths which should be initially contained by this {@link BasePathList} instance.
 	 */
 	private void init(List<String> basePaths) {
-		super.toWrap = new CompoundList<String>(basePaths != null ? basePaths : super.toWrap, stickyBasePath,
+		super.toWrap = new CompoundList<>(basePaths != null ? basePaths : super.toWrap, stickyBasePath,
 				CompoundList.ADD_TO_FIRST);
 		Collections.sort(toWrap);
 		stickyBasePath.add(getImportBasePath());

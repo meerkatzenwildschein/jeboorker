@@ -111,7 +111,7 @@ public class MetadataDownloadController {
 	 */
 	public List<String> getFilteredValues(IMetadataReader.METADATA_TYPES type) {
 		List<Entry<Boolean, String>> values = getValues(type);
-		ArrayList<String> result = new ArrayList<String>(values.size());
+		ArrayList<String> result = new ArrayList<>(values.size());
 		for(Entry<Boolean, String> value : values) {
 			if(value.getKey().booleanValue()) {
 				result.add(value.getValue());

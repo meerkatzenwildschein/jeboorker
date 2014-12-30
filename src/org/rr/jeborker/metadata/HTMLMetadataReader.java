@@ -97,7 +97,7 @@ class HTMLMetadataReader implements IMetadataReader {
 	 * @throws IOException
 	 */
 	private List<MetadataProperty> extractMetadata(final String content) throws IOException {
-		final List<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final List<MetadataProperty> result = new ArrayList<>();
 		final HtmlCleaner cleaner = new HtmlCleaner();
 		final TagNode rootNode = cleaner.clean(new StringReader(content));
 

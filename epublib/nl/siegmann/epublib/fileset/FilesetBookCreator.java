@@ -66,7 +66,7 @@ public class FilesetBookCreator {
 	 */
 	public static Book createBookFromDirectory(FileObject rootDirectory, String encoding) throws IOException {
 		Book result = new Book();
-		List<TOCReference> sections = new ArrayList<TOCReference>();
+		List<TOCReference> sections = new ArrayList<>();
 		Resources resources = new Resources();
 		processDirectory(rootDirectory, rootDirectory, sections, resources, encoding);
 		result.setResources(resources);
@@ -105,7 +105,7 @@ public class FilesetBookCreator {
 	private static void processSubdirectory(FileObject rootDir, FileObject file,
 			List<TOCReference> sections, Resources resources, String inputEncoding)
 			throws IOException {
-		List<TOCReference> childTOCReferences = new ArrayList<TOCReference>();
+		List<TOCReference> childTOCReferences = new ArrayList<>();
 		processDirectory(rootDir, file, childTOCReferences, resources, inputEncoding);
 		if(! childTOCReferences.isEmpty()) {
 			String sectionName = file.getName().getBaseName();

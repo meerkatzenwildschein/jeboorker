@@ -14,7 +14,7 @@ import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 class MyParserCallback extends ParserCallback {
 	private ParserCallback parserCallback;
-	private List<String> stylesheetHrefs = new ArrayList<String>();
+	private List<String> stylesheetHrefs = new ArrayList<>();
 	
 	public MyParserCallback(ParserCallback parserCallback) {
 		this.parserCallback = parserCallback;

@@ -71,7 +71,7 @@ class PDFMetadataProperty extends MetadataProperty {
 	public List<Object> getValues() {
 		boolean isDate = ReflectionUtils.equals(getPropertyClass(), Date.class);
 		if (childs != null && childs.size() > 0) {
-			final ArrayList<Object> result = new ArrayList<Object>(childs.size()); 
+			final ArrayList<Object> result = new ArrayList<>(childs.size()); 
 			for (PDFMetadataProperty child : childs) {
 				Object childValue = child.getValues().get(0);
 				if(isDate && !(childValue instanceof Date)) {
@@ -147,7 +147,7 @@ class PDFMetadataProperty extends MetadataProperty {
 	public void addChild(PDFMetadataProperty property) {
 		if(this.childs==null) {
 			//mostly there is only one entry.
-			this.childs = new ArrayList<PDFMetadataProperty>(1);
+			this.childs = new ArrayList<>(1);
 		}
 		this.childs.add(property);
 	}

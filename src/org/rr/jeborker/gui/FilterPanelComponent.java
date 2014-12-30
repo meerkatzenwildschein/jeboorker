@@ -132,7 +132,7 @@ public class FilterPanelComponent extends JPanel {
 	 */
 	public List<String> getSelectedFilterFieldNames() {
 		List<Field> selectedFilterFields = getSelectedFilterFields();
-		ArrayList<String> result = new ArrayList<String>(selectedFilterFields.size());
+		ArrayList<String> result = new ArrayList<>(selectedFilterFields.size());
 		for (Field field : selectedFilterFields) {
 			result.add(field.getName());
 		}
@@ -194,7 +194,7 @@ public class FilterPanelComponent extends JPanel {
 	 */
 	private void removeDuplicateElementsFromFilterModel(final String selectedExpression) {
 		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
-		HashSet<String> entries = new HashSet<String>(model.getSize());
+		HashSet<String> entries = new HashSet<>(model.getSize());
 		for (int i = 0; i < model.getSize(); i++) {
 			String elementAt = (String) model.getElementAt(i);
 			if (entries.contains(elementAt)) {

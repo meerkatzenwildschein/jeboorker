@@ -658,7 +658,7 @@ public class XMPMetadata
     		return new ArrayList<XMPSchema>();
     	}
         NodeList schemaList = xmpDocument.getElementsByTagName("rdf:Description");
-        List<XMPSchema> retval = new ArrayList<XMPSchema>(schemaList.getLength());
+        List<XMPSchema> retval = new ArrayList<>(schemaList.getLength());
         for (int i = 0; i < schemaList.getLength(); i++)
         {
             Element schema = (Element) schemaList.item(i);
@@ -723,7 +723,7 @@ public class XMPMetadata
     {
 
         List<XMPSchema> l = getSchemas();
-        List<XMPSchema> result = new LinkedList<XMPSchema>();
+        List<XMPSchema> result = new LinkedList<>();
 
         Class<?> schemaClass = nsMappings.get(namespaceURI);
         if (schemaClass == null)

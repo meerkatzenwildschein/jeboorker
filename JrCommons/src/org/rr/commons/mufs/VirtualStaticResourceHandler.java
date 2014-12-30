@@ -122,7 +122,7 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 			return new IResourceHandler[0];
 		}
 		
-		ArrayList<IResourceHandler> directoryChilds = new ArrayList<IResourceHandler>();
+		ArrayList<IResourceHandler> directoryChilds = new ArrayList<>();
 		for (int i = 0; i < children.length; i++) {
 			if(children[i].isDirectoryResource()) {
 				if(filter != null && filter.accept(children[i])) {
@@ -141,7 +141,7 @@ public class VirtualStaticResourceHandler extends AResourceHandler{
 			return new IResourceHandler[0];
 		}
 		
-		ArrayList<IResourceHandler> directoryChilds = new ArrayList<IResourceHandler>();
+		ArrayList<IResourceHandler> directoryChilds = new ArrayList<>();
 		for (int i = 0; i < children.length; i++) {
 			if(children[i].isFileResource()) {
 				directoryChilds.add(children[i]);

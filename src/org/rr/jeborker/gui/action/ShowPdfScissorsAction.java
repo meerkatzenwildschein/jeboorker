@@ -59,7 +59,7 @@ class ShowPdfScissorsAction extends AbstractAction {
 
 	private void openOptionDialog(final MainController controller, final DocScissorsMainFrame scissors, final IResourceHandler resourceHandler) {
 		JPreferenceDialog preference = new JPreferenceDialog(controller.getMainWindow());
-		JRComboBox<String> pageGroupTypeCombobox = new JRComboBox<String>();
+		JRComboBox<String> pageGroupTypeCombobox = new JRComboBox<>();
 		pageGroupTypeCombobox.setModel(new DefaultComboBoxModel<String>(new String[] {
 				Bundle.getString("ShowPdfScissorsAction.pageGroupType.all"),
 				Bundle.getString("ShowPdfScissorsAction.pageGroupType.oddAndEven"),

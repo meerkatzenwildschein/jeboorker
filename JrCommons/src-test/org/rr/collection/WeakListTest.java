@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 public class WeakListTest extends TestCase {
 
 	public void testWeakness() {
-		WeakList<Object> testList = new WeakList<Object>();
+		WeakList<Object> testList = new WeakList<>();
 		for (int i = 0; i < 50; i++) {
 			testList.add(new Object());
 		}

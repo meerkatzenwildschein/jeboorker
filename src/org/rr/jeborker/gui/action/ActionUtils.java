@@ -311,7 +311,7 @@ public class ActionUtils {
 	 */
 	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
 			final List<IResourceHandler> sourceResourcesToTransfer, final boolean move) throws IOException {
-		final ArrayList<IResourceHandler> importedResources = new ArrayList<IResourceHandler>();
+		final ArrayList<IResourceHandler> importedResources = new ArrayList<>();
 		
 		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
 			
@@ -378,7 +378,7 @@ public class ActionUtils {
 	}
 	
 	private static void refreshResourceParents(List<IResourceHandler> resources) {
-		List<IResourceHandler> alreadyRefreshedParents = new ArrayList<IResourceHandler>(resources.size());
+		List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(resources.size());
 		for (IResourceHandler resourceHandler : resources) {
 			IResourceHandler parentResource = resourceHandler.getParentResource();
 			if(!alreadyRefreshedParents.contains(parentResource)) {

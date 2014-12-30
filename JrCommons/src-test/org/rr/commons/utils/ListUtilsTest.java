@@ -31,7 +31,7 @@ public class ListUtilsTest extends TestCase {
 	}
 	
 	public void testSet() {
-		ArrayList<String> l = new ArrayList<String>();
+		ArrayList<String> l = new ArrayList<>();
 		l.add("1");
 		
 		ListUtils.set(l, "1new", 0);
@@ -59,7 +59,7 @@ public class ListUtilsTest extends TestCase {
 	
 	public void testIndexedToString() {
 		long currentTimeMillis;
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for(int i = 0; i < 100; i++) {
 			list.add("/home/user/ebooks/test/folder name with spaces/some book with a name.epub" + i);
 		}

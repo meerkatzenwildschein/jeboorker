@@ -23,7 +23,7 @@ public class DefaultBookProcessorPipeline extends BookProcessorPipeline {
 	}
 
 	private static List<BookProcessor> createDefaultBookProcessors() {
-		List<BookProcessor> result = new ArrayList<BookProcessor>();
+		List<BookProcessor> result = new ArrayList<>();
 		result.addAll(Arrays.asList(new BookProcessor[] {
 			new SectionHrefSanityCheckBookProcessor(),
 			new HtmlCleanerBookProcessor(),

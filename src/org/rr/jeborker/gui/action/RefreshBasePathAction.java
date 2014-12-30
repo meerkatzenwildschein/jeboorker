@@ -108,7 +108,7 @@ class RefreshBasePathAction extends AbstractAction {
 	 */
 	private void refreshEbookFiles(final IResourceHandler basePath) {
 		final DefaultDBManager db = DefaultDBManager.getInstance();
-		final HashSet<String> path = new HashSet<String>();
+		final HashSet<String> path = new HashSet<>();
 		final Collection<String> oldPathElements = EbookPropertyItemUtils.fetchPathElements();
 		ResourceHandlerUtils.readAllFilesFromBasePath(basePath, new ResourceNameFilter() {
 			

@@ -486,7 +486,7 @@ public class JImageDownloadDialog extends JDialog {
 			private List<IImageFetcherEntry> createImageFetcherEntries(final IImageFetcher imageFetcher) {
 				final int max = getMaxDisplayedThumbnails();
 				final Iterator<IImageFetcherEntry> entriesIterator = imageFetcher.getEntriesIterator();
-				List<IImageFetcherEntry> imageFetcherEntries = new ArrayList<IImageFetcherEntry>(max);
+				List<IImageFetcherEntry> imageFetcherEntries = new ArrayList<>(max);
 				while(true) {
 					try {
 						for(int i = 0; i < max; i++) {

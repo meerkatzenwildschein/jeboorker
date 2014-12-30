@@ -10,7 +10,7 @@ public class LruListTest extends TestCase {
 
 	public void testList1() {
 		int len = 5;
-		LruList<String> l = new LruList<String>(len);
+		LruList<String> l = new LruList<>(len);
 		for(int i=0; i < 8; i++) {
 			l.add(String.valueOf(i+"val"));
 		}

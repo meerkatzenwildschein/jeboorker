@@ -49,7 +49,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	@Override
 	public List<MetadataProperty> readMetadata() {
 		try {
-			final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+			final ArrayList<MetadataProperty> result = new ArrayList<>();
 			final byte[] xmpMetadataBytes = getXmpMetadata();
 			if(xmpMetadataBytes != null) {
 				final Document document = getDocument(xmpMetadataBytes, ebookResource);
@@ -180,8 +180,8 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	@Override
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		item.clearMetadata();
-		List<MetadataProperty> authorMetadataProperty = new ArrayList<MetadataProperty>(2);
-		List<MetadataProperty> creatorMetadataProperty = new ArrayList<MetadataProperty>(2);
+		List<MetadataProperty> authorMetadataProperty = new ArrayList<>(2);
+		List<MetadataProperty> creatorMetadataProperty = new ArrayList<>(2);
 		for (MetadataProperty metadataProperty : metadataProperties) {
 			final String name = metadataProperty.getName().toLowerCase();
 			if(name.equals("title")) {
@@ -280,7 +280,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 
 	@Override
 	public List<MetadataProperty> getSupportedMetadata() {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>();
+		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		result.add(new MetadataProperty("Author", ""));
 		result.add(new MetadataProperty("Title", ""));
 		result.add(new MetadataProperty("Creator", ""));
@@ -303,7 +303,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	private List<MetadataProperty> getAuthorMetadata(boolean create, List<MetadataProperty> props) {
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final ArrayList<MetadataProperty> result = new ArrayList<>(2);
 		final List<MetadataProperty> metadataProperties;
 		if(props != null) {
 			metadataProperties = props;
@@ -375,7 +375,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				return null;
 		}
 
-		final ArrayList<MetadataProperty> result = new ArrayList<MetadataProperty>(2);
+		final ArrayList<MetadataProperty> result = new ArrayList<>(2);
 		final List<MetadataProperty> metadataProperties;
 		if(props != null) {
 			metadataProperties = props;

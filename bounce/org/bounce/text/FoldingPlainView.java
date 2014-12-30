@@ -1241,7 +1241,7 @@ public class FoldingPlainView extends PlainView {
 	     * Creates and returns a SegmentCache.
 	     */
 	    public SegmentCache() {
-	        segments = new ArrayList<Segment>(11);
+	        segments = new ArrayList<>(11);
 	    }
 
 	    /**

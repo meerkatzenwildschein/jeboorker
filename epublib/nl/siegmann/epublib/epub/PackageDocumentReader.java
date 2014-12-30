@@ -253,7 +253,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		Spine result = new Spine();
 		result.setTocResource(findTableOfContentsResource(spineElement, resources));
 		NodeList spineNodes = packageDocument.getElementsByTagNameNS(NAMESPACE_OPF, OPFTags.itemref);
-		List<SpineReference> spineReferences = new ArrayList<SpineReference>(spineNodes.getLength());
+		List<SpineReference> spineReferences = new ArrayList<>(spineNodes.getLength());
 		for(int i = 0; i < spineNodes.getLength(); i++) {
 			Element spineItem = (Element) spineNodes.item(i);
 			String itemref = DOMUtil.getAttribute(spineItem, NAMESPACE_OPF, OPFAttributes.idref);
@@ -290,7 +290,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	 */
 	private static Spine generateSpineFromResources(Resources resources) {
 		Spine result = new Spine();
-		List<String> resourceHrefs = new ArrayList<String>();
+		List<String> resourceHrefs = new ArrayList<>();
 		resourceHrefs.addAll(resources.getAllHrefs());
 		Collections.sort(resourceHrefs, String.CASE_INSENSITIVE_ORDER);
 		for (String resourceHref: resourceHrefs) {
@@ -357,7 +357,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 	// package
 	static Set<String> findCoverHrefs(Document packageDocument) {
 		
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		
 		// try and find a meta tag with name = 'cover' and a non-blank id
 		String coverResourceId = DOMUtil.getFindAttributeValue(packageDocument, NAMESPACE_OPF,

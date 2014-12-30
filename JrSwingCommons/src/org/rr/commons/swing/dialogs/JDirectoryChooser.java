@@ -55,7 +55,7 @@ public class JDirectoryChooser extends Component {
 
 	private static final long serialVersionUID = 5358634581899478319L;
 
-	private final List<File> selectedDirectory = new ArrayList<File>();
+	private final List<File> selectedDirectory = new ArrayList<>();
 
 	private Action abortAction = null;
 
@@ -445,7 +445,7 @@ public class JDirectoryChooser extends Component {
         // No ArrayList, just create a new one.
         if (recursive == null) {
             // recursive = new Object[0];
-            recursive = new ArrayList<Component>(100);
+            recursive = new ArrayList<>(100);
         }
 
         // No Container, nothing to do.
@@ -975,7 +975,7 @@ public class JDirectoryChooser extends Component {
 				}
 		
 				if(lastNode!=null) {
-					ArrayList<IFolderNode> result = new ArrayList<IFolderNode>();
+					ArrayList<IFolderNode> result = new ArrayList<>();
 					IFolderNode parent = lastNode;
 					while (parent!=null) {
 						result.add(parent);
@@ -1160,7 +1160,7 @@ public class JDirectoryChooser extends Component {
 				private IFolderNode[] getChildren() {
 					if(this.subFolders==null) {
 						File[] subFiles = fileSystemViewInstance.getFiles(this.folder, true);
-						ArrayList<File> processedSubFolders = new ArrayList<File>();
+						ArrayList<File> processedSubFolders = new ArrayList<>();
 						for (int i = 0; i < subFiles.length; i++) {
 							if(subFiles[i].isDirectory()) {
 								processedSubFolders.add(subFiles[i]);
@@ -1334,13 +1334,13 @@ public class JDirectoryChooser extends Component {
 					//take shure taht tzhe children are loaded
 					this.getChildCount();
 					
-					ArrayList<File> newSubFolders = new ArrayList<File>(this.subFolders.length + 1);
+					ArrayList<File> newSubFolders = new ArrayList<>(this.subFolders.length + 1);
 					newSubFolders.addAll(Arrays.asList(this.subFolders));
 					newSubFolders.add(newFolder);
 					this.subFolders = newSubFolders.toArray(new File[newSubFolders.size()]);
 //					this.subFolders = (File[]) VBValueListFunctions.append(this.subFolders, newFolder);
 					
-					ArrayList<IFolderNode> result = new ArrayList<IFolderNode>(this.childFolderNodes.length + 1);
+					ArrayList<IFolderNode> result = new ArrayList<>(this.childFolderNodes.length + 1);
 					result.addAll(Arrays.asList(this.childFolderNodes));
 					result.add(new FolderNode(newFolder, this));
 					this.childFolderNodes = result.toArray(new IFolderNode[result.size()]);
@@ -1375,7 +1375,7 @@ public class JDirectoryChooser extends Component {
 		 */
 		public List<File> getSelectionFolderPath() {
 			final TreePath[] treePath = this.getSelectionPaths();
-			final ArrayList<File> result = new ArrayList<File>();
+			final ArrayList<File> result = new ArrayList<>();
 			if(treePath==null) {
 				return null;
 			}

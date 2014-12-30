@@ -40,7 +40,7 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 			final String contentString = new String(content);
 			if(contentString.indexOf("<img id='item-") != -1) {
 				final String[] splited = contentString.split("<img id='item-");
-				final ArrayList<IImageFetcherEntry> result = new ArrayList<IImageFetcherEntry>(splited.length-1);
+				final ArrayList<IImageFetcherEntry> result = new ArrayList<>(splited.length-1);
 				for (int i = 1; i < splited.length; i++) {
 					IImageFetcherEntry image = new BingImageFetcherEntry(splited[i]);
 					result.add(image);

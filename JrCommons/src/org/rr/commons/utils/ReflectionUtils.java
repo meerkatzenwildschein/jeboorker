@@ -105,7 +105,7 @@ public class ReflectionUtils implements Serializable {
 	public static List<Field> getFieldsByAnnotation(final Class annotationClass, final Class<?> itemClass) {
 		//get fields to be displayed in the combobox
 		final List<Field> fields = ReflectionUtils.getFields(itemClass, ReflectionUtils.VISIBILITY_VISIBLE_ALL);
-		final ArrayList<Field> listEntries = new ArrayList<Field>(fields.size());
+		final ArrayList<Field> listEntries = new ArrayList<>(fields.size());
 		for (Field field : fields) {
 			Object dbViewFieldAnnotation = field.getAnnotation(annotationClass);
 			if(dbViewFieldAnnotation!=null) {
@@ -401,7 +401,7 @@ public class ReflectionUtils implements Serializable {
 	 */
 	public static Field[] getFieldsWithGetter(final Class<?> clazz, final Class<?>[] allowedTypes) {
 		final List<Field> fields = getFields(clazz, VISIBILITY_VISIBLE_ALL);
-		final ArrayList<Field> result = new ArrayList<Field>(fields.size());
+		final ArrayList<Field> result = new ArrayList<>(fields.size());
 		for (Field field : result) {
 			boolean isAllowedType = true;
 			if(allowedTypes!=null) {
@@ -462,7 +462,7 @@ public class ReflectionUtils implements Serializable {
 			return cachedFields;
 		}
 		
-		List<Field> fields = new ArrayList<Field>(0);
+		List<Field> fields = new ArrayList<>(0);
 		Class<?> superclass = clazz.getSuperclass();
 		
 		try {
@@ -502,7 +502,7 @@ public class ReflectionUtils implements Serializable {
 			return new ArrayList<Method>(0);
 		}
 		
-		List<Method> methods = new ArrayList<Method>();
+		List<Method> methods = new ArrayList<>();
 		Class<?> superclass = clazz.getSuperclass();
 		
 		try {
@@ -538,10 +538,10 @@ public class ReflectionUtils implements Serializable {
 	 * which did not provides a <code>getName()</code> method.
 	 */
 	private static <T>List<T> distinct(final List<T> values, final int compare) {
-		List<T> result = new ArrayList<T>(values.size());
+		List<T> result = new ArrayList<>(values.size());
 		
 		try {
-			ArrayList<String> names = new ArrayList<String>(values.size());
+			ArrayList<String> names = new ArrayList<>(values.size());
 			for (Object value : values) {
 				//getting the name using a cast is much faster than using the reflection api
 				if (value instanceof Method) {
@@ -949,7 +949,7 @@ public class ReflectionUtils implements Serializable {
 		HashMap<String, Method> getterMethodsMap = new HashMap<String, Method>();
 		
 		//all the setter methods are stored here available in the target class
-		ArrayList<Method> setterMethods = new ArrayList<Method>(methods.length);
+		ArrayList<Method> setterMethods = new ArrayList<>(methods.length);
 		
 		
 		//assign getter and setter to the array lists
@@ -1004,7 +1004,7 @@ public class ReflectionUtils implements Serializable {
      */
     public static List<Class<?>> getClassesForPackage(final String packagename) throws ClassNotFoundException {
         // This will hold a list of directories matching the packagename. There may be more than one if a package is split over multiple jars/paths
-        ArrayList<File> directories = new ArrayList<File>();
+        ArrayList<File> directories = new ArrayList<>();
         try {
             ClassLoader cld = Thread.currentThread().getContextClassLoader();
             if (cld == null) {

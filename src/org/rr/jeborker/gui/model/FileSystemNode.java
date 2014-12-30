@@ -90,7 +90,7 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	private List<FileSystemNode> createChildren() {
 		if(childNodes == null) {
 			final List<IResourceHandler> childResources = getChildResources();
-			childNodes = new ArrayList<FileSystemNode>(childResources.size());
+			childNodes = new ArrayList<>(childResources.size());
 			for(int i = 0; i < childResources.size(); i++) {
 				IResourceHandler resource = childResources.get(i);
 				childNodes.add(new FileSystemNode(resource, this, showFiles));
@@ -126,8 +126,8 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	private List<IResourceHandler> getChildResources() {
 		if(subFolders == null) {
 			try {
-				final ArrayList<IResourceHandler> subFolder = new ArrayList<IResourceHandler>();
-				final ArrayList<IResourceHandler> subFiles = new ArrayList<IResourceHandler>();
+				final ArrayList<IResourceHandler> subFolder = new ArrayList<>();
+				final ArrayList<IResourceHandler> subFiles = new ArrayList<>();
 				pathResource.listResources(new ResourceNameFilter() {
 					
 					@Override
@@ -144,12 +144,12 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 						return false;
 					}
 				});
-				subFolders = new ArrayList<IResourceHandler>();
+				subFolders = new ArrayList<>();
 				subFolders.addAll(subFolder);
 				subFolders.addAll(subFiles);
 			} catch (IOException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to list " + pathResource, e);
-				subFolders = new ArrayList<IResourceHandler>(0);
+				subFolders = new ArrayList<>(0);
 			}		
 		} 
 		return subFolders;

@@ -584,7 +584,7 @@ public class ActionFactory {
 	 * @return The desired action instance. Never returns <code>null</code>.
 	 */
 	public static ApplicationAction getActionForItems(final DYNAMIC_ACTION_TYPES type, final List<EbookPropertyItem> items, int[] refreshRowsAfter, ActionCallback callback) {
-		final ArrayList<IResourceHandler> resourceHandlers = new ArrayList<IResourceHandler>(items.size());
+		final ArrayList<IResourceHandler> resourceHandlers = new ArrayList<>(items.size());
 
 		//create the resource handle list.
 		boolean canHandle = true;
@@ -621,7 +621,7 @@ public class ActionFactory {
 	 * @return The actions for adding a metadata entry. Never returns <code>null</code>.
 	 */
 	public static List<Action> getAddMetadataActions(List<MetadataProperty> properties, EbookPropertyItem item, ActionCallback callback) {
-		final ArrayList<Action> result = new ArrayList<Action>();
+		final ArrayList<Action> result = new ArrayList<>();
 		for (MetadataProperty property : properties) {
 			AddMetadataAction addMetadataAction = new AddMetadataAction(property, item);
 			if(!property.isEditable()) {

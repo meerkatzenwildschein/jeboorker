@@ -103,7 +103,7 @@ public class FileRefreshBackground {
 					EbookPropertyItem ebookPropertyItem = null;
 					try {
 						synchronized (items) {
-							List<EbookPropertyItem> processedItems = new ArrayList<EbookPropertyItem>();
+							List<EbookPropertyItem> processedItems = new ArrayList<>();
 							Iterator<EbookPropertyItem> itemsIter = items.iterator();
 							while(itemsIter.hasNext()) {
 								ebookPropertyItem = itemsIter.next();
