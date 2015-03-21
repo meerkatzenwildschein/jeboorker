@@ -52,7 +52,7 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 			Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 			Transferable contents = c.getContents(this);
 			try {
-				//Using only the imageDataFlavor cause sometimes thw following exception with java > 1.7
+				//Using only the imageDataFlavor cause sometimes the following exception with java > 1.7
 				//java.io.IOException: Owner failed to convert data 
 				IOException ex = null;
 				DataFlavor[] transferDataFlavors = contents.getTransferDataFlavors();
