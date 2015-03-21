@@ -34,13 +34,13 @@ public abstract class APreferenceStore {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	protected abstract String getEntryFromImpl(final String key);
+	protected abstract String getEntryFromImpl(String key);
 
-	protected abstract void addEntryToImpl(final String key, final String value);
+	protected abstract void addEntryToImpl(String key, String value);
 
-	protected abstract void deleteEntryFromImpl(final String key);
+	protected abstract void deleteEntryFromImpl(String key);
 
-	public void addBasePath(final String path) {
+	public void addBasePath(String path) {
 		String basePath = getGenericEntryAsString(BASE_PATH);
 		if (basePath.length() == 0) {
 			basePath = path;
@@ -122,11 +122,11 @@ public abstract class APreferenceStore {
 	 * @param key The key to access the given value.
 	 * @param value The value which can be accessed with the given key.
 	 */
-	public void addGenericEntryAsString(final String key, final String value) {
+	public void addGenericEntryAsString(String key, String value) {
 		addEntryToImpl(key, value);
 	}
 
-	public void addEntryAsString(final PREFERENCE_KEYS key, final String value) {
+	public void addEntryAsString(PREFERENCE_KEYS key, String value) {
 		addGenericEntryAsString(key.getKey(), value);
 	}
 
@@ -135,7 +135,7 @@ public abstract class APreferenceStore {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public String getGenericEntryAsString(final String key, String defaultValue) {
+	public String getGenericEntryAsString(String key, String defaultValue) {
 		if(key != null) {
 			String result;
 			if((result = getEntryFromImpl(key)) != null) {
@@ -149,8 +149,8 @@ public abstract class APreferenceStore {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public String getGenericEntryAsString(final String key) {
-		return getGenericEntryAsString(key, "");
+	public String getGenericEntryAsString(String key) {
+		return getGenericEntryAsString(key, EMPTY);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public abstract class APreferenceStore {
 	 * @param key The key to access the given value.
 	 * @param value The value which can be accessed with the given key.
 	 */
-	public void addGenericEntryAsNumber(final String key, final Number value) {
+	public void addGenericEntryAsNumber(String key, Number value) {
 		addEntryToImpl(key, String.valueOf(value.doubleValue()));
 	}
 
@@ -167,7 +167,7 @@ public abstract class APreferenceStore {
 	 * @param key The key to access the value.
 	 * @return The desired value or <code>null</code> if the value wasn't stored.
 	 */
-	public Number getGenericEntryAsNumber(final String key) {
+	public Number getGenericEntryAsNumber(String key) {
 		String result = getEntryFromImpl(key);
 		if(result != null && result.length() > 0) {
 			return Double.valueOf(result);
@@ -176,11 +176,11 @@ public abstract class APreferenceStore {
 		}
 	}
 
-	public void addEntryAsBoolean(final PREFERENCE_KEYS key, final Boolean b) {
+	public void addEntryAsBoolean(PREFERENCE_KEYS key, Boolean b) {
 		addGenericEntryBoolean(key.getKey(), b);
 	}
 
-	private void addGenericEntryBoolean(final String key, final Boolean b) {
+	private void addGenericEntryBoolean(String key, Boolean b) {
 		addGenericEntryAsNumber(key, b.booleanValue() ? Integer.valueOf(1) : Integer.valueOf(0));
 	}
 
@@ -188,7 +188,7 @@ public abstract class APreferenceStore {
 	 * Get the given {@link PREFERENCE_KEYS} as string value.
 	 * @return The desired value. Never returns <code>null</code>.
 	 */
-	public String getEntryAsString(final PREFERENCE_KEYS key) {
+	public String getEntryAsString(PREFERENCE_KEYS key) {
 		final String preferenceEntry = getGenericEntryAsString(key.getKey(), null);
 		if(preferenceEntry != null) {
 			return preferenceEntry;
@@ -201,9 +201,9 @@ public abstract class APreferenceStore {
 	 * Get the given {@link PREFERENCE_KEYS} as boolean value.
 	 * @return The desired value. Never returns <code>null</code>.
 	 */
-	public Boolean getEntryAsBoolean(final PREFERENCE_KEYS key) {
-		final String defaultValueString = key.getDefaultValue();
-		final Boolean defaultValue = BooleanUtils.toBoolean(defaultValueString);
+	public Boolean getEntryAsBoolean(PREFERENCE_KEYS key) {
+		String defaultValueString = key.getDefaultValue();
+		Boolean defaultValue = BooleanUtils.toBoolean(defaultValueString);
 		return getEntryAsBoolean(key.getKey(), defaultValue);
 	}
 
@@ -224,7 +224,7 @@ public abstract class APreferenceStore {
 	 * @return The point where the window should be shown or <code>null</code> if
 	 * there is no previously stored location point or if the window is not located at the screen.
 	 */
-	public Point getGenericEntryAsScreenLocation(final String xKey, final String yKey) {
+	public Point getGenericEntryAsScreenLocation(String xKey, String yKey) {
 		String widthValue = getGenericEntryAsString(xKey);
 		String heightValue = getGenericEntryAsString(yKey);
 		Point location = new Point();
