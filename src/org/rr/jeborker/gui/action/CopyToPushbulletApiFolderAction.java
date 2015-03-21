@@ -77,16 +77,15 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	 * @throws IllegalStateException
 	 */
 	private void initUpload(final IResourceHandler resource) throws IllegalStateException, IOException {
-		String pushBulletApiKey = getApiKey();
+		final String pushBulletApiKey = getApiKey();
 
 		if(StringUtils.isNotEmpty(pushBulletApiKey)) {
-			final PushbulletClient client = new PushbulletClient(pushBulletApiKey);
-			
 			ThreadUtils.loopAndWait(targetDeviceIdentifiers, new ThreadUtils.RunnableImpl<String, Void>() {
 
 				@Override
 				public Void run(String targetDeviceIdentifier) {
 					try {
+						PushbulletClient client = new PushbulletClient(pushBulletApiKey);
 						uploadResource(client, targetDeviceIdentifier, resource);
 					} catch (IOException e) {
 						LoggerFactory.getLogger().log(Level.SEVERE, "Failed to uploaded file " + resource + " using pushbullet.", e);
@@ -119,6 +118,8 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 				}				
 			
 			}, MAX_UPLOAD_THREADS);
+		} else {
+			throw new IllegalStateException("No api key specified.");
 		}
 	}
 

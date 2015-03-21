@@ -22,8 +22,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import sun.applet.Main;
-
 import com.google.gson.Gson;
 import com.shakethat.jpushbullet.net.PushbulletDevice;
 
@@ -184,7 +182,7 @@ public class PushbulletClient {
 			entity.addPart("device_iden", new StringBody(iden));
 			entity.addPart("type", new StringBody("file"));
 			post.setEntity(entity);
-
+			
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
 			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -195,10 +193,5 @@ public class PushbulletClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		PushbulletClient pushbulletClient = new PushbulletClient("v1KUB7PgwO3XzcYPkSaT2ZUkpRHjMBADILujyZoCBwP9w");
-		System.out.println("test");
 	}
 }
