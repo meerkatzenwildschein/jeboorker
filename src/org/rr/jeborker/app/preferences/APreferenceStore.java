@@ -1,5 +1,6 @@
 package org.rr.jeborker.app.preferences;
 
+import static org.rr.commons.utils.BooleanUtils.not;
 import static org.rr.commons.utils.StringUtils.EMPTY;
 
 import java.awt.Dimension;
@@ -268,11 +269,16 @@ public abstract class APreferenceStore {
 		String suffix = System.getProperties().getProperty("application.suffix");
 		configDir += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : EMPTY) + File.separator;
 
-		if(!new File(configDir).exists()) {
-			new File(configDir).mkdirs();
-		}
+		makeConfigDirIfNotExists(configDir);
 
 		return configDir;
+	}
+
+	private static void makeConfigDirIfNotExists(String configDir) {
+		File configDirFile = new File(configDir);
+		if(not(configDirFile.exists())) {
+			configDirFile.mkdirs();
+		}
 	}
 
 	/**
