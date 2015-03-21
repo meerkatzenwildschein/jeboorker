@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="jempbox"/>
 	<classpathentry kind="src" path="epublib"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="pdfscissors"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
@@ -22,14 +23,18 @@
 	<classpathentry kind="lib" path="lib/jmupdf/jmupdf.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.4.1.jar" sourcepath="lib/commons-compress-1.4.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-exec-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb/javassist.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb/orient-commons-1.4.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb/orientdb-core-1.4.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb/orientdb-nativeos-1.4.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/orientdb/orientdb-object-1.4.0-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/platform-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/itext-5.jar" sourcepath="/itext"/>
+	<classpathentry kind="lib" path="lib/ormlite-core-4.48.jar"/>
+	<classpathentry kind="lib" path="lib/ormlite-jdbc-4.48.jar"/>
+	<classpathentry kind="lib" path="lib/weblaf-1.28.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-common-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-looks-2.5.3.jar"/>
+	<classpathentry kind="lib" path="lib/jpushbullet.jar"/>
+	<classpathentry kind="lib" path="lib/h2-1.3.175.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0-swing.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
