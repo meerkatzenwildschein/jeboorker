@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.MimeUtils;
 import org.rr.pm.image.ImageUtils;
 
 import com.jmupdf.exceptions.DocException;
@@ -20,7 +21,7 @@ class JMuPDFRenderer extends PDFRenderer {
 		BufferedImage image;
 		try {
 			image = renderPage(pageNumber);
-			byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
+			byte[] imageBytes = ImageUtils.getImageBytes(image, MimeUtils.MIME_JPEG);
 			return imageBytes;			
 		} catch (IOException e) {
 			LoggerFactory.getLogger().log(Level.INFO, "Failed to render image for " + getResourceHandler() , e);

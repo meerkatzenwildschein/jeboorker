@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.commons.utils.BooleanUtils.not;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -17,6 +19,7 @@ import javax.swing.JFileChooser;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -55,12 +58,12 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 				DataFlavor[] transferDataFlavors = contents.getTransferDataFlavors();
 				for(DataFlavor transferDataFlavor : transferDataFlavors) {
 					try {
-						if(!transferDataFlavor.getMimeType().startsWith("image/")) {
+						if(not(MimeUtils.isImageMime(transferDataFlavor.getMimeType()))) {
 							continue;
 						}
 						Object transferData = contents.getTransferData(transferDataFlavor);
 						if(transferData instanceof BufferedImage) {
-							byte[] encodeJpeg = ImageUtils.getImageBytes((BufferedImage) transferData, "image/jpeg");
+							byte[] encodeJpeg = ImageUtils.getImageBytes((BufferedImage) transferData, MimeUtils.MIME_JPEG);
 							image = new ByteArrayInputStream(encodeJpeg);
 							setDialogOption(JFileChooser.APPROVE_OPTION);
 							setDialogResult(ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg));
@@ -68,7 +71,7 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 							byte[] encodeJpeg = IOUtils.toByteArray((InputStream) transferData);
 							image = new ByteArrayInputStream(encodeJpeg);
 							IResourceHandler imageDataResourceHandler = ResourceHandlerFactory.getVirtualResourceHandler("cover.jpg", encodeJpeg);
-							if(imageDataResourceHandler.getMimeType(true).equals("image/jpeg")) {
+							if(imageDataResourceHandler.getMimeType(true).equals(MimeUtils.MIME_JPEG)) {
 								setDialogOption(JFileChooser.APPROVE_OPTION);
 								setDialogResult(imageDataResourceHandler);		
 								ex = null;
@@ -76,7 +79,7 @@ class SetCoverFromClipboardAction extends SetCoverFrom<ByteArrayInputStream> imp
 							} else {
 								IImageProvider imageProvider = ImageProviderFactory.getImageProvider(imageDataResourceHandler);
 								BufferedImage bufferedImage = imageProvider.getImage();
-								byte[] imageBytes = ImageUtils.getImageBytes(bufferedImage, "image/jpeg");
+								byte[] imageBytes = ImageUtils.getImageBytes(bufferedImage, MimeUtils.MIME_JPEG);
 								image = new ByteArrayInputStream(imageBytes);
 								
 								setDialogOption(JFileChooser.APPROVE_OPTION);

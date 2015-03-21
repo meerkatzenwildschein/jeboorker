@@ -12,6 +12,7 @@ import org.apache.jempbox.xmp.XMPSchema;
 import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.DateConversionUtils;
@@ -131,7 +132,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 			thumbnail = new Thumbnail(xmp);
 		}
 		
-		if(coverMimeType.equals("image/jpeg")) {
+		if(MimeUtils.isJpegMime(coverMimeType)) {
 			thumbnail.setImage(new String(Base64.encode(coverData)));
 			ImageInfo imageInfo = new ImageInfo(ResourceHandlerFactory.getVirtualResourceHandler("setCover", coverData));
 			thumbnail.setHeight(imageInfo.getHeight());
@@ -139,7 +140,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		} else {
 			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(coverResourceLoader);
 			BufferedImage image = imageProvider.getImage();
-			byte[] jpegCover = ImageUtils.getImageBytes(image, "image/jpeg");
+			byte[] jpegCover = ImageUtils.getImageBytes(image, MimeUtils.MIME_JPEG);
 			thumbnail.setImage(new String(Base64.encode(jpegCover)));
 			thumbnail.setHeight(image.getHeight());
 			thumbnail.setWidth(image.getWidth());

@@ -15,6 +15,7 @@ import org.apache.jempbox.xmp.Thumbnail;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.app.BasePathList;
@@ -140,7 +141,7 @@ public class EbookPropertyItemUtils {
 					//much faster cropping the thumbnail than the original sized cover image.
 					BufferedImage cropedImage = ImageUtils.crop(thumbnailImage);
 
-					byte[] thumbnailImageBytes = ImageUtils.getImageBytes(cropedImage, "image/jpeg");
+					byte[] thumbnailImageBytes = ImageUtils.getImageBytes(cropedImage, MimeUtils.MIME_JPEG);
 					if(thumbnailImageBytes != null) {
 						setCoverThumbnail(thumbnailImageBytes, item.getResourceHandler());
 					} else {

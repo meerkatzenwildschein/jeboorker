@@ -19,6 +19,7 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
@@ -132,7 +133,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceHandler(imageIn));
 			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(imageProvider.getImage(), getConverterPreferenceController());
 			for(BufferedImage image : processImageModifications) {
-				String mime = imageName.indexOf('.') != -1 ? "image/" + imageName.substring(imageName.lastIndexOf('.') + 1) : "image/jpeg";
+				String mime = MimeUtils.getImageMimeFromFileName(imageName, MimeUtils.MIME_JPEG);
 				byte[] imageBytes = ImageUtils.getImageBytes(image, mime);
 
 				//copy the converted data to HD because we possibly have not enough memory for the whole boo.

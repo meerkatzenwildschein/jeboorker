@@ -1,5 +1,7 @@
 package org.rr.commons.swing.dialogs;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -157,7 +159,7 @@ public class JPreferenceDialog extends JDialog {
 				return text;
 			}
 		}
-		return "";
+		return EMPTY;
 	}
 
 	/**

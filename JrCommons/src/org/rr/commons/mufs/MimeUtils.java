@@ -1,5 +1,6 @@
 package org.rr.commons.mufs;
 
+
 public class MimeUtils {
 
 	public static final String MIME_PDF = "application/pdf";
@@ -101,5 +102,38 @@ public class MimeUtils {
 
 	public static boolean isDocx(IResourceHandler resourceHandler, boolean force) {
 		return MIME_DOCX.equals(resourceHandler.getMimeType(force));
+	}
+	
+	public static boolean isImageMime(String mime) {
+		return mime.startsWith("image/");
+	}
+	
+	public static boolean isJpegMime(String mime) {
+		return MIME_JPEG.equals(mime); 
+	}
+	
+	/**
+	 * Evaluates the mime type from a file name with file name extension. Foe example a file named <code>picture.gif</code> will cause a
+	 * mime <code>image/gif</code>. If no mime could be detected, the given <code>defaultMime</code> is returned.
+	 * 
+	 * @param imageName The name of the image.
+	 * @param defaultMime The mime to be returned if no file extension could be detected.
+	 * @return A mime format string.
+	 */
+	public static String getImageMimeFromFileName(String imageName, String defaultMime) {
+		if(imageName == null) {
+			return defaultMime;
+		}
+		
+		imageName = imageName.toLowerCase();
+		if(imageName.endsWith(".jpg") || imageName.endsWith(".jpeg")) {
+			return MIME_JPEG;
+		} else if(imageName.endsWith(".gif")) {
+			return MIME_GIF;
+		} else if(imageName.endsWith(".png")) {
+			return MIME_PNG;
+		}
+		
+		return defaultMime;
 	}
 }

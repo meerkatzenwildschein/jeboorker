@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.MimeUtils;
 import org.rr.pm.image.ImageUtils;
 
 public abstract class PDFRenderer {
@@ -34,7 +35,7 @@ public abstract class PDFRenderer {
 	 */
 	public byte[] renderPagetoJpeg(int pageNumber) throws IOException {
 		BufferedImage image = renderPage(pageNumber);
-		byte[] imageBytes = ImageUtils.getImageBytes(image, "image/jpeg");
+		byte[] imageBytes = ImageUtils.getImageBytes(image, MimeUtils.MIME_JPEG);
 		return imageBytes;
 	}
 
