@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.BooleanUtils.not;
+
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -13,13 +15,14 @@ import javax.swing.JSlider;
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.utils.BooleanUtils;
-import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 class ConverterPreferenceView extends JPreferenceDialog {
 	
+	private static final long serialVersionUID = 6315443343060853996L;
+
 	static final String LANDSCAPE_FORMAT_PREFERENCE_NAME = "landscape";
 	
 	static final String IS_MANGA_PREFERENCE_NAME = "manga";
@@ -43,13 +46,13 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	public void setVisible(boolean visible) {
 		this.initialize();
 		super.setVisible(visible);
-		if(!visible) {
+		if(not(visible)) {
 			controller.close();
 		}
 	}
 
 	private void initialize() {
-		if(!isInitialized) {
+		if(not(isInitialized)) {
 			isInitialized = true;
 			setIconImage(ImageResourceBundle.getResourceAsImageIcon("preferences_16.png").getImage());
 			final String generalCategory = Bundle.getString("ConverterPreferenceView.tab.general");
@@ -148,8 +151,8 @@ class ConverterPreferenceView extends JPreferenceDialog {
 		boolean result = false;
 		List<MetadataProperty> allMetadata = MainController.getController().getPropertySheetHandler().getModel().getAllMetadata();
 		for(MetadataProperty metadata : allMetadata) {
-			String name = metadata.getName();
-			if(name.toLowerCase().contains("manga")) {
+			String name = metadata.getName().toLowerCase();
+			if(name.contains("manga")) {
 				String mangaValue = metadata.getValueAsString();
 				return BooleanUtils.toBoolean(mangaValue);
 			}
