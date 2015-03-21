@@ -30,7 +30,7 @@ import com.shakethat.jpushbullet.PushbulletClient;
 import com.shakethat.jpushbullet.net.Devices;
 import com.shakethat.jpushbullet.net.Extras;
 
-public class CopyToPushbulletApiFolderAction extends AbstractAction {
+public class CopyToPushbulletApiFolderAction extends AbstractAction implements IDoOnlyOnceAction<List<String>> {
 
 	private static final long serialVersionUID = -4631469476414229079L;
 	
@@ -45,6 +45,8 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 	private static final String PUSHBULLET_DEVICE_SELECTION_KEY = "pushBulletDeviceSelection";
 
 	String source;
+	
+	private List<String> targetDeviceIdentifiers;
 
 	CopyToPushbulletApiFolderAction(String text) {
 		this.source = text;
@@ -79,7 +81,6 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 
 		if(StringUtils.isNotEmpty(pushBulletApiKey)) {
 			final PushbulletClient client = new PushbulletClient(pushBulletApiKey);
-			List<String> targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
 			
 			ThreadUtils.loopAndWait(targetDeviceIdentifiers, new ThreadUtils.RunnableImpl<String, Void>() {
 
@@ -207,6 +208,26 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 		JFrame mainWindow = MainController.getController().getMainWindow();
 		return DesktopUtils.showInputDialog(mainWindow, Bundle.getString("CopyToPushbulletAction.apikey.dialog.text"),
 				Bundle.getString("CopyToPushbulletAction.apikey.dialog.title"), null);
+	}
+
+	@Override
+	public List<String> doOnce() {
+		PushbulletClient client = new PushbulletClient(getApiKey());
+		try {
+			return this.targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
+		} catch (IllegalStateException | IOException e) {
+			LoggerFactory.getLogger().log(Level.SEVERE, "Failed to connect to pushbullet service", e);
+		}
+		return null;
+	}
+
+	@Override
+	public void setDoOnceResult(List<String> targetDeviceIdentifiers) {
+		this.targetDeviceIdentifiers = targetDeviceIdentifiers;
+	}
+
+	@Override
+	public void prepareFor(int index, int size) {
 	}
 
 }
