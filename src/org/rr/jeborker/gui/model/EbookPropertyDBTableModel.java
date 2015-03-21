@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.model;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -180,7 +182,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 		try {
 			return ebookItems.get(rowIndex);
 		} catch(IndexOutOfBoundsException ex) {
-			LoggerFactory.logInfo(this, "", ex);
+			LoggerFactory.logInfo(this, EMPTY, ex);
 			return null;
 		}
 	}

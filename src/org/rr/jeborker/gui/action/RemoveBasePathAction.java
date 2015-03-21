@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -91,12 +93,12 @@ class RemoveBasePathAction extends AbstractAction {
 	 * @return A list over all items with a fitting base path. Never returns null.
 	 */
 	static ArrayList<EbookPropertyItem> getItemsByBasePath(final String basePath) {
-		final String normalizedPath = StringUtils.replace(basePath, File.separator, "");
+		final String normalizedPath = StringUtils.replace(basePath, File.separator, EMPTY);
 		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
 		final ArrayList<EbookPropertyItem> toRemove = new ArrayList<>();
 		final Iterable<EbookPropertyItem> items = defaultDBManager.getItems(EbookPropertyItem.class);
 		for (EbookPropertyItem item : items) {
-			if(StringUtils.replace(item.getBasePath(), File.separator, "").equals(normalizedPath)) {
+			if(StringUtils.replace(item.getBasePath(), File.separator, EMPTY).equals(normalizedPath)) {
 				toRemove.add(item);
 			}
 		}

@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -253,7 +255,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	 */
 	private static String getCoverFile(final Book epub, String desiredFileName, String fileExtension) throws IOException {
 		final Collection<Resource> resources = epub.getResources().getAll();
-		String path = "";
+		String path = EMPTY;
 		for(Resource resource : resources) {
 			if(resource.getMediaType() != null && resource.getMediaType().getName() != null && resource.getMediaType().getName().startsWith("image")) {
 				String hrefParent = new File(resource.getHref()).getParent();
@@ -270,7 +272,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 			public String toString() {
 				if(count == 0) {
 					count ++;
-					return "";
+					return EMPTY;
 				} 
 				return String.valueOf(count++);
 			}

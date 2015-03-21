@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Component;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +43,7 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
 
     public void setValue(Object value) {
         if (value == null || value.toString().length() == 0) {
-            setText("");
+            setText(EMPTY);
         } else if(value instanceof Date){
             setText(dateFormat.format((Date) value));
         } else if(value instanceof String) {

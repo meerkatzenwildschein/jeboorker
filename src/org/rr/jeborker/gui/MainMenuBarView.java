@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Component;
 import java.io.File;
 import java.util.HashMap;
@@ -87,7 +89,7 @@ class MainMenuBarView extends JMenuBar {
 		for (int i = 0; i < menuComponents.length; i++) {
 			if(menuComponents[i] instanceof JMenuItem) {
 				final String name = (String) ((JMenuItem)menuComponents[i]).getAction().getValue(Action.NAME);
-				if(StringUtils.replace(name, File.separator, "").equals(StringUtils.replace(path, File.separator, ""))) {
+				if(StringUtils.replace(name, File.separator, EMPTY).equals(StringUtils.replace(path, File.separator, EMPTY))) {
 					menu.remove((JMenuItem)menuComponents[i]);
 				}
 			}
@@ -221,7 +223,7 @@ class MainMenuBarView extends JMenuBar {
 
 				menueFile.add(new JSeparator());
 
-				final JMenuItem saveMetadataMenuEntry = new JMenuItem((ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, "")));
+				final JMenuItem saveMetadataMenuEntry = new JMenuItem((ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, EMPTY)));
 				saveMetadataMenuEntry.setAccelerator(MainViewMenuUtils.SAVE_KEY);
 				menueFile.add(saveMetadataMenuEntry);
 
@@ -246,10 +248,10 @@ class MainMenuBarView extends JMenuBar {
 						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, selectedResources.get(0).toString()));
 						openFileMenuEntry.setEnabled(true);
 					} else {
-						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, ""));
+						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, EMPTY));
 						openFolderMenuEntry.setEnabled(false);
 
-						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, ""));
+						openFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FILE_ACTION, EMPTY));
 						openFileMenuEntry.setEnabled(false);
 					}
 				}
@@ -268,7 +270,7 @@ class MainMenuBarView extends JMenuBar {
 					deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedTreeItems));
 					deleteFileMenuEntry.setEnabled(true);
 				} else {
-					deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, ""));
+					deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, EMPTY));
 					deleteFileMenuEntry.setEnabled(false);
 				}
 				deleteFileMenuEntry.setAccelerator(MainViewMenuUtils.DELETE_KEY);

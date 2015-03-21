@@ -1,5 +1,7 @@
 package org.rr.jeborker.app.preferences;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.prefs.Preferences;
 
 
@@ -9,7 +11,7 @@ class SystemPreferenceStore extends APreferenceStore {
 	
 	static {
 		String suffix = System.getProperties().getProperty("application.suffix");
-		APP_NODE = Preferences.userRoot().node("jeboorker" + (suffix != null ? "." + suffix : ""));
+		APP_NODE = Preferences.userRoot().node("jeboorker" + (suffix != null ? "." + suffix : EMPTY));
 	}
 
 	/**

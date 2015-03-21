@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Component;
 
 import javax.swing.JTextField;
@@ -25,7 +27,7 @@ public class FilterFieldComboboxEditor extends BasicComboBoxEditor {
      * @since 1.6
      */
     protected JTextField createEditorComponent() {
-        JTextField editor = new BorderlessTextField("", 9);
+        JTextField editor = new BorderlessTextField(EMPTY, 9);
         editor.setBorder(null);
         return editor;
     }    

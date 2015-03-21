@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
@@ -83,7 +85,7 @@ public class MandatorySelectionPropertyEditor extends AbstractPropertyEditor {
 			//the first one is the value which is stored to all selected ebooks.
 			Object selectedValue = viewList.remove(0);
 			viewList = ListUtils.distinct(viewList, UtilConstants.COMPARE_TEXT);
-			viewList.remove("");
+			viewList.remove(EMPTY);
 			viewList.remove(null);
 			Object[] values = viewList.toArray(new Object[viewList.size()]);
 			this.setAvailableValues(values);

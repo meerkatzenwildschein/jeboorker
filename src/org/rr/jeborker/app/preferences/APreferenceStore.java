@@ -1,5 +1,7 @@
 package org.rr.jeborker.app.preferences;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -263,7 +265,7 @@ public abstract class APreferenceStore {
 	public static String getConfigDirectory() {
 		String configDir = System.getProperties().getProperty("user.home");
 		String suffix = System.getProperties().getProperty("application.suffix");
-		configDir += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : "") + File.separator;
+		configDir += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : EMPTY) + File.separator;
 
 		if(!new File(configDir).exists()) {
 			new File(configDir).mkdirs();

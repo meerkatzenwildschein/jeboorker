@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,7 +91,7 @@ public class MetadataProperty implements Cloneable {
 			Object object = values.get(0);
 			return StringUtils.toString(object);
 		}
-		return "";
+		return EMPTY;
 	}
 	
 	/**

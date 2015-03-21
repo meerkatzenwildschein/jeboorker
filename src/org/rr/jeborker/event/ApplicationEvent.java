@@ -1,5 +1,7 @@
 package org.rr.jeborker.event;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.Arrays;
 import java.util.EventObject;
 import java.util.List;
@@ -15,7 +17,7 @@ public class ApplicationEvent extends EventObject {
 	private Property metadataProperty;
 	
 	public ApplicationEvent() {
-		super("");
+		super(EMPTY);
 	}
 	
 	public ApplicationEvent(List<EbookPropertyItem> items, Property metadataProperty, Object source) {

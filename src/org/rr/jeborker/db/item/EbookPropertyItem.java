@@ -1,5 +1,7 @@
 package org.rr.jeborker.db.item;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -225,7 +227,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		} else if(file!=null){
 			return file;
 		} else {
-			return "";
+			return EMPTY;
 		}
 	}	
 	

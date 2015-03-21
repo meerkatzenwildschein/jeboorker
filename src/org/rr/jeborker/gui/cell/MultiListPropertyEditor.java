@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
@@ -56,7 +58,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 			public void focusGained(FocusEvent e) {
 				String text = ((JTextField)combo.getEditor().getEditorComponent()).getText();
 				if(noChanges.equals(text) || clear.equals(text) || text == null) {
-					((JTextField)combo.getEditor().getEditorComponent()).setText("");
+					((JTextField)combo.getEditor().getEditorComponent()).setText(EMPTY);
 				} 
 			}
 
@@ -106,7 +108,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 			result = null;
 		} else if((editorInputChanged || selectionChanged) && selectedIndex == 1) {
 			//clear
-			result = "";
+			result = EMPTY;
 		} else {
 			result = ((JTextField)((JComboBox) editor).getEditor().getEditorComponent()).getText();
 		}
@@ -121,7 +123,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 		//the first one is the value which is stored to all selected ebooks.
 		Object selectedValue = viewList.remove(0);
 		viewList = ListUtils.distinct(viewList, UtilConstants.COMPARE_TEXT);
-		viewList.remove("");
+		viewList.remove(EMPTY);
 		viewList.remove(null);
 		viewList = new CompoundList(Arrays.asList(new Object[] {noChanges, clear}), viewList);
 		Object[] values = viewList.toArray(new Object[viewList.size()]);

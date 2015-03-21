@@ -1,5 +1,6 @@
 package org.rr.jeborker;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
 import it.sauronsoftware.junique.AlreadyLockedException;
 import it.sauronsoftware.junique.JUnique;
 import it.sauronsoftware.junique.MessageHandler;
@@ -102,7 +103,7 @@ public class Jeboorker {
 			}
 		} else {
 			// Sends arguments to the already active instance.
-			JUnique.sendMessage(Jeboorker.class.getName(), "");
+			JUnique.sendMessage(Jeboorker.class.getName(), EMPTY);
 
 			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + VERSION + " is already running.");
 		}

@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
@@ -441,7 +443,7 @@ class MainView extends JFrame {
 
 			addMetadataButton = new JMenuButton();
 			addMetadataButton.setIcon(new ImageIcon(Bundle.getResource("add_metadata_16.png")));
-			addMetadataButton.setText("");
+			addMetadataButton.setText(EMPTY);
 			addMetadataButton.setWidth(50);
 			EmptyListModel<Action> emptyListModel = EmptyListModel.getSharedInstance();
 			addMetadataButton.setListModel(emptyListModel);
@@ -451,7 +453,7 @@ class MainView extends JFrame {
 			propertySheet.addToolbarComponent(removeMetadataButton);
 
 			saveMetadataButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null));
-			saveMetadataButton.setText("");
+			saveMetadataButton.setText(EMPTY);
 			new EnablePropertyChangeHighlighterSupport(saveMetadataButton, Color.RED, 3);
 
 			propertySheet.addToolbarComponent(saveMetadataButton);
@@ -898,7 +900,7 @@ class MainView extends JFrame {
 
 		JButton addButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.ADD_BASE_PATH_ACTION, null));
 		addButton.setPreferredSize(buttonDimension);
-		addButton.setText("");
+		addButton.setText(EMPTY);
 		buttonPanel.add(addButton);
 
 		JButton collapseButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_COLLAPSE_ALL_ACTION, basePathTreeName));

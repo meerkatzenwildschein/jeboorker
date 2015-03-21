@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Component;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,7 +54,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 			this.date = (Date) value;
 			((JTextField) this.editor).setText(getAsText((Date) value));
 		} catch (Exception e) {
-			((JTextField) this.editor).setText("");
+			((JTextField) this.editor).setText(EMPTY);
 			LoggerFactory.log(Level.WARNING, this, "could not parse the entered value \""+String.valueOf(value)+"\"as Date.", e);
 		}
 	}
@@ -63,12 +65,11 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 	 * @return the chosen Date as String
 	 */
 	public String getAsText(Date date) {
-		if(date==null) {
-			return "";
+		if(date == null) {
+			return EMPTY;
 		}
 		DateFormat formatter = SimpleDateFormat.getDateInstance();
-		String s = formatter.format(date);
-		return s;
+		return formatter.format(date);
 	}	
 
 	/**
@@ -79,8 +80,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 	public String getAsText() {
 		Date date = (Date) getValue();
 		DateFormat formatter = SimpleDateFormat.getDateInstance();
-		String s = formatter.format(date);
-		return s;
+		return formatter.format(date);
 	}
 	
 	/**

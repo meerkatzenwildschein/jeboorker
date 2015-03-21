@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -281,19 +283,19 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	@Override
 	public List<MetadataProperty> getSupportedMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<>();
-		result.add(new MetadataProperty("Author", ""));
-		result.add(new MetadataProperty("Title", ""));
-		result.add(new MetadataProperty("Creator", ""));
-		result.add(new MetadataProperty("Subject", ""));
-		result.add(new MetadataProperty("Producer", ""));
-		result.add(new MetadataProperty("AgeSuggestion", ""));
-		result.add(new MetadataProperty("Rating", ""));
-		result.add(new MetadataProperty("SeriesIndex", ""));
-		result.add(new MetadataProperty("SeriesName", ""));
-		result.add(new MetadataProperty("Description", ""));
-		result.add(new MetadataProperty("ModDate", "", Date.class));
-		result.add(new MetadataProperty("CreationDate", "", Date.class));
-		result.add(new MetadataProperty("SourceModified", "", Date.class));
+		result.add(new MetadataProperty("Author", EMPTY));
+		result.add(new MetadataProperty("Title", EMPTY));
+		result.add(new MetadataProperty("Creator", EMPTY));
+		result.add(new MetadataProperty("Subject", EMPTY));
+		result.add(new MetadataProperty("Producer", EMPTY));
+		result.add(new MetadataProperty("AgeSuggestion", EMPTY));
+		result.add(new MetadataProperty("Rating", EMPTY));
+		result.add(new MetadataProperty("SeriesIndex", EMPTY));
+		result.add(new MetadataProperty("SeriesName", EMPTY));
+		result.add(new MetadataProperty("Description", EMPTY));
+		result.add(new MetadataProperty("ModDate", EMPTY, Date.class));
+		result.add(new MetadataProperty("CreationDate", EMPTY, Date.class));
+		result.add(new MetadataProperty("SourceModified", EMPTY, Date.class));
 		return result;
 	}
 
@@ -321,7 +323,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {
-			authorProperty = new MetadataProperty("Author", "");
+			authorProperty = new MetadataProperty("Author", EMPTY);
 			result.add(authorProperty);
 		}
 		return Collections.unmodifiableList(result);
@@ -391,7 +393,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 
 		//if the list is empty and a new property should be created, add a new, empty author property to the result.
 		if(create && result.isEmpty()) {
-			result.add(new MetadataProperty(name, ""));
+			result.add(new MetadataProperty(name, EMPTY));
 		}
 		return Collections.unmodifiableList(result);
 	}

@@ -1,5 +1,7 @@
 package org.rr.jeborker.remote.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -88,7 +90,7 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 
 	@Override
 	public String getIsbn13() {
-		if (getIsbn().replaceAll("-", "").length() == 13) {
+		if (getIsbn().replaceAll("-", EMPTY).length() == 13) {
 			return getIsbn();
 		}
 
@@ -97,7 +99,7 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 
 	@Override
 	public String getIsbn10() {
-		if (getIsbn().replaceAll("-", "").length() == 10) {
+		if (getIsbn().replaceAll("-", EMPTY).length() == 10) {
 			return getIsbn();
 		}
 

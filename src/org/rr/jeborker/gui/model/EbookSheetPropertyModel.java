@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.model;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,7 +78,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 	@Override
 	public void removeProperty(Property property) {
-		property.setValue("");
+		property.setValue(EMPTY);
 		super.removeProperty(property);
 		if(property instanceof EbookSheetProperty) {
 			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
@@ -174,7 +176,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				return displayName;
 			}
 		}
-		return "";
+		return EMPTY;
 	}
 
 	/**
@@ -247,7 +249,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		fileNameProperty.setEditable(false);
 		fileNameProperty.setDeletable(false);
 		fileNameProperty.setValue(resourceHandler);
-		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : "");
+		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : EMPTY);
 		properties.add(fileNameProperty);
 
 		Collections.sort(properties, PROPERTY_COMPARATOR);

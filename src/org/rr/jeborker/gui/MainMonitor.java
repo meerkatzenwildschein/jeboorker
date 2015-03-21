@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
@@ -43,7 +45,7 @@ public class MainMonitor {
 					} else {
 						try {
 							Thread.sleep(clearTimeout);
-							setMessage("");
+							setMessage(EMPTY);
 							clearTimeout = -1;
 						} catch (InterruptedException e) {
 							LoggerFactory.getLogger().log(Level.WARNING, "Sleep InterruptedException", e);
@@ -107,7 +109,7 @@ public class MainMonitor {
 	}
 
 	public void clearMessage() {
-		setMessage("");
+		setMessage(EMPTY);
 	}
 
 	public void setMessage(final String message) {
@@ -116,9 +118,9 @@ public class MainMonitor {
 
 				@Override
 				public void run() {
-					progressbar.setString(message != null ? message : "");
+					progressbar.setString(message != null ? message : EMPTY);
 					progressbar.setStringPainted(true);
-					progressbar.setToolTipText(message != null ? message : "");
+					progressbar.setToolTipText(message != null ? message : EMPTY);
 					clearTimeout = DEFAULT_CLEAN_TIMEOUT;
 				}
 			});

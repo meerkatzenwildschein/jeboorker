@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class SaveCoverToFileAction extends AbstractAction {
 		final IResourceHandler imageViewerResource = controller.getImageViewerResource();
 		final String fileExtension = ResourceHandlerUtils.getFileExtension(imageViewerResource);
 		
-		String filename = "cover" + (fileExtension != null ? fileExtension : "");
+		String filename = "cover" + (fileExtension != null ? fileExtension : EMPTY);
 		String dir = preferenceStore.getGenericEntryAsString(PATH_PREF_KEY);
 		IFileChooser c = FileChooserDialogFactory.getFileChooser();
 		if(dir != null) {

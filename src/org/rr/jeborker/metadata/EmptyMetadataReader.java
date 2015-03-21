@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class EmptyMetadataReader implements IMetadataReader {
 
 	@Override
 	public String getPlainMetadata() {
-		return "";
+		return EMPTY;
 	}
 
 	@Override

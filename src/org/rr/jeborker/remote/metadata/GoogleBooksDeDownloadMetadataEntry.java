@@ -1,5 +1,7 @@
 package org.rr.jeborker.remote.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +82,7 @@ public class GoogleBooksDeDownloadMetadataEntry implements MetadataDownloadEntry
 		if(isbnElement != null) {
 			List<String> isbns = ListUtils.split(isbnElement.text(), ",");
 			for (String isbn : isbns) {
-				if(isbn.replaceAll("-", "").length() == 10) {
+				if(isbn.replaceAll("-", EMPTY).length() == 10) {
 					isbn10 = isbn;
 				}
 			}
@@ -94,7 +96,7 @@ public class GoogleBooksDeDownloadMetadataEntry implements MetadataDownloadEntry
 		if(isbnElement != null) {
 			List<String> isbns = ListUtils.split(isbnElement.text(), ",");
 			for (String isbn : isbns) {
-				if(isbn.replaceAll("-", "").length() == 13) {
+				if(isbn.replaceAll("-", EMPTY).length() == 13) {
 					isbn13 = isbn;
 				}
 			}

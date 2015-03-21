@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -54,7 +56,7 @@ class SortColumnComponent extends JPanel {
 		setLayout(new MigLayout("insets 0 5 0 0")); // T, L, B, R.
 		
 		sortLabel = new JLabel(Bundle.getString("EborkerMainView.sortby"));
-		add(sortLabel, "");
+		add(sortLabel, EMPTY);
 		
 		initSortButtons();
 		add(sortOrderAscButton, "w 25!, h 25!");
@@ -191,7 +193,7 @@ class SortColumnComponent extends JPanel {
 			public String getLabel(int index) {
 				Field value = getValueAt(index);
 				ViewField annotation = value.getAnnotation(ViewField.class);
-				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
+				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", EMPTY).toLowerCase());
 				if(localizedName != null) {
 					return localizedName;
 				} else {

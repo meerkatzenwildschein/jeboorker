@@ -1,5 +1,7 @@
 package org.rr.jeborker.app;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -71,7 +73,7 @@ public class JeboorkerLogger extends Handler {
 	
 	private static void toMonitor(LogRecord record) {
 		if (record.getMessage() != null) {
-			String thrownCause = "";
+			String thrownCause = EMPTY;
 			if(record.getThrown() != null) {
 				thrownCause = record.getThrown().getMessage();
 				if(thrownCause != null && thrownCause.length() == 0) {
@@ -79,7 +81,7 @@ public class JeboorkerLogger extends Handler {
 				}
 			}
 			try {
-				MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null && !thrownCause.isEmpty() ? " (" + thrownCause+ ")" : ""));
+				MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null && !thrownCause.isEmpty() ? " (" + thrownCause+ ")" : EMPTY));
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

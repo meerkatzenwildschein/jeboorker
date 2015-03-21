@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -99,7 +101,7 @@ public class MainMenuBarController {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
 		if(hiddenBasePathEntries.isEmpty()) {
-			preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", "");
+			preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", EMPTY);
 		} else {
 			preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", ListUtils.join(hiddenBasePathEntries, String.valueOf(File.pathSeparatorChar)));
 		}

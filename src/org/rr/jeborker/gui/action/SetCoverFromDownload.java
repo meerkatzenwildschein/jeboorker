@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 
@@ -38,7 +40,7 @@ class SetCoverFromDownload extends SetCoverFrom<JImageDownloadDialog> implements
 			imageDownloadDialog = new JImageDownloadDialog(controller.getMainWindow(), ImageWebSearchFetcherFactory.getInstance());
 			
 			//default search phrase
-			String searchPhrase = "";
+			String searchPhrase = EMPTY;
 			EbookPropertyItem item = ListUtils.first(EbookPropertyItemUtils.getEbookPropertyItemByResource(resourceHandler));
 
 			//no author in the search term for now. Big Book Search did not like it.

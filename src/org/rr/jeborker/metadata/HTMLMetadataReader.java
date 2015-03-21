@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -79,14 +81,14 @@ class HTMLMetadataReader implements IMetadataReader {
 
 			if(bodyIndex != -1) {
 				String metadata = content.toString().substring(0, bodyIndex);
-				metadata = StringUtils.replace(metadata, new String[] {"<html>"}, "", UtilConstants.COMPARE_TEXT);
+				metadata = StringUtils.replace(metadata, new String[] {"<html>"}, EMPTY, UtilConstants.COMPARE_TEXT);
 				metadata = StringUtils.ltrim(metadata, '\r', '\n');
 				return metadata;
 			}
 		} finally {
 			IOUtils.closeQuietly(contentInputStream);
 		}
-		return "";
+		return EMPTY;
 	}
 
 	/**
@@ -150,7 +152,7 @@ class HTMLMetadataReader implements IMetadataReader {
 		} catch (IOException e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to read metadata for " + ebookResourceHandler, e);
 		}
-		return "";
+		return EMPTY;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -507,7 +509,7 @@ public class MainController {
 		if(name == null) {
 			return null;
 		}
-		String localized = StringUtils.replace(name.toLowerCase(), new String[] {"/", " ", ":"}, "");
+		String localized = StringUtils.replace(name.toLowerCase(), new String[] {"/", " ", ":"}, EMPTY);
 		localized = Bundle.getString(localized);
 		if(localized != null && localized.length() > 0) {
 			return StringUtils.capitalize(localized);

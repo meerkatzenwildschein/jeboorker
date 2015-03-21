@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -37,7 +39,7 @@ class PDFMetadataProperty extends MetadataProperty {
 	/**
 	 * The namespace like xap pdf or dc 
 	 */
-	private String namespace = "";
+	private String namespace = EMPTY;
 	
 	PDFMetadataProperty(final String tagName, final Object value, final String listElementName) {
 		super(tagName, value);

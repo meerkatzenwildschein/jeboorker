@@ -17,6 +17,8 @@
  */
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.List;
 
 import javax.swing.JTextField;
@@ -44,7 +46,7 @@ public class DefaultPropertyCellEditor extends AbstractPropertyEditor {
   
   public void setValue(Object value) {
     if (value == null) {
-      ((JTextComponent)editor).setText("");
+      ((JTextComponent)editor).setText(EMPTY);
     } else {
     	if(value instanceof List<?>) {
     		Object first = ListUtils.first((List<?>) value);

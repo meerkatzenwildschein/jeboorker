@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -54,7 +56,7 @@ public class Bundle {
             return "!" + key + "!";
         }
         if (arg == null){
-            arg = "";
+            arg = EMPTY;
         }
         
         return MessageFormat.format(format, new Object[] { arg });

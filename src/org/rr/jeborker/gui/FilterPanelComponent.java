@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -94,10 +96,10 @@ public class FilterPanelComponent extends JPanel {
 		filterField.setEditor(comboboxEditor);
 		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		add(filterFieldSelection, "");
+		add(filterFieldSelection, EMPTY);
 		add(filterField, "w 100%");
 		
-		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, ""));
+		JButton searchButton = new JButton(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SEARCH_ACTION, EMPTY));
 		add(searchButton);
 	}
 	
@@ -158,7 +160,7 @@ public class FilterPanelComponent extends JPanel {
 			public String getLabel(int index) {
 				Field value = getValueAt(index);
 				ViewField annotation = ((Field) value).getAnnotation(ViewField.class);
-				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", "").toLowerCase());
+				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", EMPTY).toLowerCase());
 				if (localizedName != null) {
 					return localizedName;
 				} else {
@@ -243,7 +245,7 @@ public class FilterPanelComponent extends JPanel {
 		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
 		StringBuilder modelEntries = new StringBuilder();
 		for (int i = 0; i < model.getSize(); i++) {
-			String elementAt = StringUtils.replace(StringUtils.toString(model.getElementAt(i)), ",", "");
+			String elementAt = StringUtils.replace(StringUtils.toString(model.getElementAt(i)), ",", EMPTY);
 			if (modelEntries.length() > 0) {
 				modelEntries.append(",");
 			}

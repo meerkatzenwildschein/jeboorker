@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -88,7 +90,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0,  Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
-		imageLabel = new JLabel("");
+		imageLabel = new JLabel(EMPTY);
 		imageLabel.setOpaque(false);
 		imageLabel.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_imageLabel = new GridBagConstraints();
@@ -98,7 +100,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		gbc_imageLabel.gridy = 1;
 		add(imageLabel, gbc_imageLabel);
 		
-		firstLineLabel = new JLabel("");
+		firstLineLabel = new JLabel(EMPTY);
 		firstLineLabel.setOpaque(false);
 		firstLineLabel.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_firstLineLabel = new GridBagConstraints();
@@ -108,7 +110,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		gbc_firstLineLabel.gridy = 1;
 		add(firstLineLabel, gbc_firstLineLabel);
 		
-		dataFormatLabel = new JLabel("");
+		dataFormatLabel = new JLabel(EMPTY);
 		dataFormatLabel.setOpaque(false);
 		dataFormatLabel.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_label = new GridBagConstraints();
@@ -136,7 +138,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		});
 		add(starRater, gbc_test);
 		
-		secondLineLabel = new JLabel("");
+		secondLineLabel = new JLabel(EMPTY);
 		secondLineLabel.setOpaque(false);
 		secondLineLabel.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_secondLineLabel = new GridBagConstraints();
@@ -147,7 +149,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		gbc_secondLineLabel.gridy = 2;
 		add(secondLineLabel, gbc_secondLineLabel);
 		
-		thirdLineLabel = new JLabel("");
+		thirdLineLabel = new JLabel(EMPTY);
 		thirdLineLabel.setOpaque(false);
 		thirdLineLabel.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_thirdLineLabel = new GridBagConstraints();
@@ -225,12 +227,12 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				secondLineLabel.setText(getAuthorAndOrderValues(item));
 				
 				//third line description
-				if(item!=null && item.getDescription() != null) {
+				if(item != null && item.getDescription() != null) {
 					//attach html for a multiline label but previously strip all possible html from the description.
-					String strippedDescription = cleanString(item != null ? item.getDescription() : "");
+					String strippedDescription = cleanString(item != null ? item.getDescription() : EMPTY);
 					thirdLineLabel.setText("<html>" + strippedDescription + "</html>");
 				} else {
-					thirdLineLabel.setText("");
+					thirdLineLabel.setText(EMPTY);
 				}
 				break;
 			case 1:
@@ -281,7 +283,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 			
 			try {
 				final byte[] coverData = coverThumbnail;
-				if(coverData!=null) {
+				if(coverData != null) {
 					final IResourceHandler virtualImageResourceLoader = ResourceHandlerFactory.getVirtualResourceHandler("TableCellRendererImageData", coverData);
 					final IImageProvider imageProvider = ImageProviderFactory.getImageProvider(virtualImageResourceLoader);
 					final BufferedImage image = imageProvider.getImage();
@@ -307,7 +309,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 * @return The dimension for the thumbnail.
 	 */
 	private Dimension getThumbnailDimension(final JTable table) {
-		if(thumbnailDimension==null) {
+		if(thumbnailDimension == null) {
 			thumbnailDimension = new Dimension((int) (table.getRowHeight()*0.7), table.getRowHeight());
 		}
 		return thumbnailDimension;
@@ -320,7 +322,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 */
 	private String getAuthorAndOrderValues(EbookPropertyItem item) {
 		if(item == null) {
-			return "";
+			return EMPTY;
 		}
 
 		final StringBuilder result = new StringBuilder();
@@ -397,12 +399,12 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 * @return The desired book title.
 	 */
 	private String getTitle(EbookPropertyItem item) {
-		if(item!=null && StringUtils.isEmpty(item.getTitle())) {
+		if(item != null && StringUtils.isEmpty(item.getTitle())) {
 			//if there is no title, just use the file name but without file extension
 			final String fileName = StringUtils.substringBefore(item.getFileName(), ".", false);
 			return fileName;
 		} else {
-			return cleanString(item != null ? item.getTitle() : "");
+			return cleanString(item != null ? item.getTitle() : EMPTY);
 		}
 	}
 	
@@ -412,8 +414,8 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 * @return
 	 */
 	private String cleanString(String toClean) {
-		if(toClean==null) {
-			return "";
+		if(toClean == null) {
+			return EMPTY;
 		}
 		if(toClean.indexOf('&')!=-1) {
 			toClean = new HTMLEntityConverter(toClean, HTMLEntityConverter.ENCODE_EIGHT_BIT_ASCII).decodeEntities();
@@ -446,7 +448,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				return mimeType;
 			}
 		}
-		return "";
+		return EMPTY;
 	}
 
 	/**

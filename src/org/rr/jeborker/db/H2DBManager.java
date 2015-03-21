@@ -1,5 +1,6 @@
 package org.rr.jeborker.db;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
 import static org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS.DATABASE_VERSION_KEY;
 
 import java.lang.reflect.Field;
@@ -44,7 +45,7 @@ class H2DBManager extends DefaultDBManager {
 
 			JdbcPooledConnectionSource connection = new JdbcPooledConnectionSource("jdbc:h2:" + configPath + "h2db;MULTI_THREADED=TRUE;TRACE_LEVEL_FILE=0");
 			connection.setUsername("sa");
-			connection.setPassword("");
+			connection.setPassword(EMPTY);
 			setConnectionPool(connection);
 
 			APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(DATABASE_VERSION_KEY);

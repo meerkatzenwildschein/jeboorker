@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -83,7 +85,7 @@ class MainViewMenuUtils {
 	}
 
 	static JMenuItem createRenameFileMenuItem() {
-		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, "");
+		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.RENAME_FILE_ACTION, EMPTY);
 		JMenuItem menuItem = new JMenuItem(action);
 		menuItem.setAccelerator(MainViewMenuUtils.RENAME_KEY);
 		return menuItem;

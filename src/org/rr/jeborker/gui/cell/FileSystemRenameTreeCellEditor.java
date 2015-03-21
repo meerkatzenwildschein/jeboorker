@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -120,7 +122,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 	private JPanel createEditorComponent() {
 		editorComponent = new JPanel();
 		editorComponent.setLayout(new BorderLayout());
-		textField = new JTextField("", 9) {
+		textField = new JTextField(EMPTY, 9) {
 
 			@Override
 			public void selectAll() {
@@ -310,7 +312,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 			 */
 			private String clean(String s) {
 				String result = s;
-				result = StringUtils.replace(s, "  ", "");
+				result = StringUtils.replace(s, "  ", EMPTY);
 				result = result.trim();
 				return result;
 			}			

@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.action;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
@@ -19,7 +21,7 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 	final IResourceHandler resourceHandler;
 	
 	EditPlainMetadataAction(final IResourceHandler handler) {
-		String additionalName = "";
+		String additionalName = EMPTY;
 		this.resourceHandler = handler;
 		if(handler != null) {
 			String handlerMimeType = handler.getMimeType(true);
@@ -55,7 +57,7 @@ class EditPlainMetadataAction extends RefreshAbstractAction {
 			controller.getProgressMonitor().monitorProgressStop(ex.getMessage());
 		} finally {
 			if(exception==null) {
-				controller.getProgressMonitor().monitorProgressStop("");
+				controller.getProgressMonitor().monitorProgressStop(EMPTY);
 			}
 		}
 		

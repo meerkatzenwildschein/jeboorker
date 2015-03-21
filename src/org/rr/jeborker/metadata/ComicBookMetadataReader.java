@@ -1,5 +1,7 @@
 package org.rr.jeborker.metadata;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +79,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 	public List<MetadataProperty> getSupportedMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		for(COMICBOOK_METADATA_TYPES type : COMICBOOK_METADATA_TYPES.values()) {
-			MetadataProperty metadataProperty = createMetadataProperty(type, "");
+			MetadataProperty metadataProperty = createMetadataProperty(type, EMPTY);
 			result.add(metadataProperty);
 		}
 		return result;
@@ -111,31 +113,31 @@ class ComicBookMetadataReader implements IMetadataReader {
 		MetadataProperty newProperty;
 		switch(type) {
 		case AUTHOR:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.WRITER.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.WRITER.getName(), EMPTY);
 			break;
 		case TITLE:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.TITLE.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.TITLE.getName(), EMPTY);
 			break;
 		case GENRE:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.GENRE.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.GENRE.getName(), EMPTY);
 			break;
 		case SERIES_NAME:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.SERIES.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.SERIES.getName(), EMPTY);
 			break;
 		case RATING:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.RATING.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.RATING.getName(), EMPTY);
 			break;
 		case AGE_SUGGESTION:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.AGE_SUGGESTION.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.AGE_SUGGESTION.getName(), EMPTY);
 			break;
 		case DESCRIPTION:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.SUMMARY.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.SUMMARY.getName(), EMPTY);
 			break;
 		case ISBN:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.ISBN.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.ISBN.getName(), EMPTY);
 			break;
 		case LANGUAGE:
-			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.LANGUAGE.getName(), "");
+			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.LANGUAGE.getName(), EMPTY);
 			break;
 		case COVER:
 			newProperty = new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), null);
