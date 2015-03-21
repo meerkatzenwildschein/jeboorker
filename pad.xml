@@ -46,7 +46,7 @@
 		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
 		<Program_OS_Support>Linux,Linux GPL,Win7 x32,Win7 x64,WinXP</Program_OS_Support>
 		<Program_Language>English,German</Program_Language>
-		<Program_Change_Info>The change log can be found at https://code.google.com/p/jeboorker/wiki/Changelog</Program_Change_Info>
+		<Program_Change_Info>The change log can be found at http://github.com/meerkatzenwildschein/jeboorker/wiki/Changelog</Program_Change_Info>
 		<Program_Specific_Category>Miscellaneous</Program_Specific_Category>
 		<Program_Category_Class>Home &amp; Hobby::Cataloging</Program_Category_Class>
 		<Program_Categories />
@@ -78,14 +78,14 @@
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
-			<Application_Info_URL>https://code.google.com/p/jeboorker/</Application_Info_URL>
+			<Application_Info_URL>http://github.com/meerkatzenwildschein/jeboorker</Application_Info_URL>
 			<Application_Order_URL />
-			<Application_Screenshot_URL>http://jeboorker.googlecode.com/svn/wiki/screenshot_main.jpg</Application_Screenshot_URL>
-			<Application_Icon_URL>http://code.google.com/p/jeboorker/logo?cct=1373817104</Application_Icon_URL>
-			<Application_XML_File_URL>http://jeboorker.googlecode.com/svn/trunk/pad.xml</Application_XML_File_URL>
+			<Application_Screenshot_URL>http://raw.githubusercontent.com/meerkatzenwildschein/jeboorker/master/doc/screenshots/screenshot_main.jpg</Application_Screenshot_URL>
+			<Application_Icon_URL>http://raw.githubusercontent.com/meerkatzenwildschein/jeboorker/master/src/org/rr/jeborker/gui/resources/logo_64.png</Application_Icon_URL>
+			<Application_XML_File_URL>http://raw.githubusercontent.com/meerkatzenwildschein/jeboorker/master/pad.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>https://code.google.com/p/jeboorker/wiki/Download?tm=2</Primary_Download_URL>
+			<Primary_Download_URL>http://github.com/meerkatzenwildschein/jeboorker/wiki/Download</Primary_Download_URL>
 			<Secondary_Download_URL />
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
