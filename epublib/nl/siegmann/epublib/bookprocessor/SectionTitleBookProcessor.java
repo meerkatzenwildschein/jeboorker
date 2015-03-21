@@ -14,7 +14,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.TOCReference;
 import nl.siegmann.epublib.epub.BookProcessor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.InputSource;
 
 public class SectionTitleBookProcessor implements BookProcessor {

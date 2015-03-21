@@ -14,8 +14,8 @@ import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A searchindex for searching through a book.
@@ -130,7 +130,7 @@ public class SearchIndex {
 			String text = scanner.next();
 			int closePos = text.indexOf('>');
 			String chunk = text.substring(closePos + 1).trim();
-			chunk = StringEscapeUtils.unescapeHtml(chunk);
+			chunk = StringEscapeUtils.unescapeHtml4(chunk);
 			chunk = cleanText(chunk);
 			result.append(chunk);
 		}

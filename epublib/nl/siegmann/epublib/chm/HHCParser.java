@@ -16,7 +16,7 @@ import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.domain.TOCReference;
 import nl.siegmann.epublib.util.ResourceUtil;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;

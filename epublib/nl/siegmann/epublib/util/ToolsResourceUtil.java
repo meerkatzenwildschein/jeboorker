@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * Various resource utility methods
@@ -55,9 +56,10 @@ public class ToolsResourceUtil {
 		}
 		Pattern h_tag = Pattern.compile("^h\\d\\s*", Pattern.CASE_INSENSITIVE);
 		String title = null;
+		Scanner scanner = null;
 		try {
 			Reader content = resource.getReader();
-			Scanner scanner = new Scanner(content);
+			scanner = new Scanner(content);
 			scanner.useDelimiter("<");
 			while(scanner.hasNext()) {
 				String text = scanner.next();
@@ -67,12 +69,14 @@ public class ToolsResourceUtil {
 					|| h_tag.matcher(tag).find()) {
 
 					title = text.substring(closePos + 1).trim();
-					title = StringEscapeUtils.unescapeHtml(title);
+					title = StringEscapeUtils.unescapeHtml4(title);
 					break;
 				}
 			}
 		} catch (IOException e) {
 			log.warning(e.getMessage());
+		} finally {
+			IOUtils.closeQuietly(scanner);
 		}
 		resource.setTitle(title);
 		return title;

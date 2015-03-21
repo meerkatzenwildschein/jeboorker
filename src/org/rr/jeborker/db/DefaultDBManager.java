@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.rr.commons.collection.ICloseableList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ReflectionUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.db.item.PreferenceItem;
@@ -198,7 +199,7 @@ public abstract class DefaultDBManager {
 		try {
 			Dao<T, T> createDao = DaoManager.createDao(connection, class1);
 			QueryBuilder<T, T> queryBuilder = createDao.queryBuilder();
-			queryBuilder.where().eq(field, StringEscapeUtils.escapeSql(value));
+			queryBuilder.where().eq(field, StringUtils.escapeSql(value));
 			List<T> query = createDao.query(queryBuilder.prepare());
 			return query;
 		} catch(Exception e) {

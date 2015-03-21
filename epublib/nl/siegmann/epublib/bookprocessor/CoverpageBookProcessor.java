@@ -22,8 +22,8 @@ import nl.siegmann.epublib.util.CollectionUtil;
 import nl.siegmann.epublib.util.ResourceUtil;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -168,7 +168,7 @@ public class CoverpageBookProcessor implements BookProcessor {
 	       		"\t</head>\n" +
 	       		"\t<body>\n" +
 	       		"\t\t<div id=\"cover-image\">\n" +
-	       		"\t\t\t<img src=\"" + StringEscapeUtils.escapeHtml(imageHref) + "\" alt=\"" + StringEscapeUtils.escapeHtml(title) + "\"/>\n" +
+	       		"\t\t\t<img src=\"" + StringEscapeUtils.escapeHtml4(imageHref) + "\" alt=\"" + StringEscapeUtils.escapeHtml4(title) + "\"/>\n" +
 	       		"\t\t</div>\n" +
 	       		"\t</body>\n" +
 	       		"</html>\n";

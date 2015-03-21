@@ -20,7 +20,7 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import nl.siegmann.epublib.fileset.FilesetBookCreator;
 import nl.siegmann.epublib.util.VFSUtil;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 
