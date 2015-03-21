@@ -1,0 +1,64 @@
+## v0.4.6 (2014-12-17) ##
+  * New meta data downloader source DNB and Google books.
+  * Amazon meta data downloader removed because it no longer works.
+  * Fix the sometimes no longer shown eyes
+  * cbr files with cruel characters in it's file names now also supported
+  * Metadata downloader no longer creates new checkbox instances for the renderer component which confuse Web L&F
+  * Smaller timeout for metadata download no longer cause long waiting dialogs.
+## v0.4.5 (2014-08-12) ##
+  * Pushbullet protocoll has changed a little which cause it's no longer working
+  * Bug with Drag and Drop which sometimes fails.
+  * Ebook is not shown after import if the book list is empty
+  * Amazon has changed it's site so the metadata downloader no longer find the author.
+  * Open folder in popup menu for base path tree
+  * Refresh a folder after deleting something for example did not always works well
+## v0.4.4 (2014-08-03) ##
+  * Pushbullet support. Now it's possible to send ebooks with pushbullet to one or more devices.
+  * Sometimes changes are not detected in the metadata sheet and the save button did got get enabled.
+  * CBR and CBZ support for pdf scissors which is now simply named doc scissors.
+  * Combobox with Checkboxes rewritten because it works not with Web L&F.
+  * New Web L&F 1.28
+  * Many minor changes and improvements
+## v0.4.3 (2014-07-05) ##
+  * Update to Jmupdf 0.5.0
+  * Default "import" location always available as a registered base path.
+  * New file renaming tool with pattern supports.
+  * New folder action allows to create folders
+  * pdfscissors no longer locks the origin pdf on windows
+  * pdfscissors now closing after save
+  * base path tree show visible sub entries no longer as grayed, invisible ones
+  * Many minor changes and improvements
+## v0.4.2 (2014-04-23) ##
+  * Bugfix for new Web L&F 1.27 library
+## v0.4.1 (2014-04-21) ##
+  * Deliver new Web L&F 1.27
+  * Sometimes a click into the library tree is not recognized with Web L&F **fixed**
+  * Startup is very slow if the clipboard contains something large **fixed**
+  * New folders will be recognized during runtime after a folder refresh now.
+  * Drag & Drop and Clipboard actions will delete the source file in any case and gets no longer be affected by the "delete source" property.
+  * Windows path separators make some problem with H2 queries. **fixed**
+## v0.4.0 (2014-04-05) ##
+  * Bugfix for new installations.
+## v0.3.9 (2014-30-03) ##
+  * Metadata downloader did not writes the cover image into the document if the document did not already have a cover (The cover downloader does).
+  * Exchanges the underlying database system. Now using H2 instead of OrientDB. I run into too many bugs with OrientDB to getting Jeboorker running stable.
+  * Implemented the great looking //Web Look and Feel// and made it as the default look and feel.
+## v0.3.8 (2013-11-25) ##
+  * HTML mata data reader is able to add common meta data like author or title to the Jeboorker index.
+  * Rename cell component rewritten because the old one did not works reliable.
+  * Rename cell component no longer allows to change file extension which makes it easier to navigate.
+  * Displaying expand symbols for base path root nodes no longer depending at the look and feel.
+  * Faster directory reading for the file system tree.
+## v0.3.7 (2013-07-28) ##
+  * Look and Feel support
+  * The main table is now striped slightly
+  * Minor performance improvements
+  * Save button is no longer toggled without making a real change in the meta data.
+## v0.3.6 (2013-06-23) ##
+  * Better suggestions for file renaming
+  * Empty meta data reader for unsupported file formats. Any file format can be added with the preferences dialog.
+  * The automatic save mechanism sets the selection to the clicked entry in the ebook list now.
+  * Added Folders get watched for changes.
+  * Sometimes, the underlying database creates duplicates **fixed**
+  * Read only HTML meta data support.
+  * Find action did not show up when the main table is scrolled down **fixed**.

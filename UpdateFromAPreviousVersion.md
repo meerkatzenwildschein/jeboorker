@@ -1,0 +1,2 @@
+# Update from a previous version #
+If you get some trouble with the newly installed version please delete the .jeboorker folder in your home folder. This will completely reset your Jeboorker installation. You have to add your ebook folders again.
