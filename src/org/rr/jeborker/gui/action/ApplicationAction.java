@@ -8,6 +8,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
@@ -75,9 +76,9 @@ public class ApplicationAction extends AbstractAction {
 
 	public void invokeAction(final ActionEvent e, final Runnable invokeLater) {
 		final Object noRealActionThreading = realAction.getValue(NON_THREADED_ACTION_KEY);
-		final boolean noRealActionThreadingValue = CommonUtils.toBoolean(noRealActionThreading, Boolean.FALSE);
+		final boolean noRealActionThreadingValue = BooleanUtils.toBoolean(noRealActionThreading, Boolean.FALSE);
 		final Object noAppActionThreading = this.getValue(NON_THREADED_ACTION_KEY);
-		final boolean noAppActionThreadingValue = CommonUtils.toBoolean(noAppActionThreading, Boolean.FALSE);
+		final boolean noAppActionThreadingValue = BooleanUtils.toBoolean(noAppActionThreading, Boolean.FALSE);
 		if(noRealActionThreadingValue || noAppActionThreadingValue) {
 			startAction();
 			try {

@@ -11,8 +11,10 @@ public final class StringUtils implements Serializable {
 
 	private static final long serialVersionUID = 1505813189815359975L;
 
+	public static final String EMPTY = "";
+	
 	private StringUtils() {}
-
+	
 	/**
 	 * An empty string array for public use.
 	 */

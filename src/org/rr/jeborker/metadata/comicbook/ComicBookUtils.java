@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata.comicbook;
 
+import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 
@@ -51,7 +52,7 @@ public class ComicBookUtils {
 		if(value instanceof Boolean) { 
 			return (Boolean) value;
 		} else {
-			return CommonUtils.toBoolean(value);
+			return BooleanUtils.toBoolean(value);
 		}
 	}	
 }

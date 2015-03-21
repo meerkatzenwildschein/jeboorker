@@ -30,6 +30,7 @@ import javax.swing.text.JTextComponent;
 
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
+import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
 
@@ -124,11 +125,11 @@ public class JPreferenceDialog extends JDialog {
 				return ((JCheckBox)component).isSelected();
 			} else if(component instanceof JTextComponent) {
 				String text = ((JTextComponent)component).getText();
-				Boolean booleanValue = CommonUtils.toBoolean(text);
+				Boolean booleanValue = BooleanUtils.toBoolean(text);
 				return booleanValue.booleanValue();
 			} else if(component instanceof JComboBox) {
 				String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
-				Boolean booleanValue = CommonUtils.toBoolean(text);
+				Boolean booleanValue = BooleanUtils.toBoolean(text);
 				return booleanValue.booleanValue();
 			}
 		}

@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.rr.commons.collection.ListenerList;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
@@ -202,7 +203,7 @@ public abstract class APreferenceStore {
 	 */
 	public Boolean getEntryAsBoolean(final PREFERENCE_KEYS key) {
 		final String defaultValueString = key.getDefaultValue();
-		final Boolean defaultValue = CommonUtils.toBoolean(defaultValueString);
+		final Boolean defaultValue = BooleanUtils.toBoolean(defaultValueString);
 		return getEntryAsBoolean(key.getKey(), defaultValue);
 	}
 

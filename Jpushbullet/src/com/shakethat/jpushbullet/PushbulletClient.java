@@ -27,34 +27,37 @@ import com.shakethat.jpushbullet.net.PushbulletDevice;
 
 public class PushbulletClient {
 
-	CredentialsProvider	credsProvider	= new BasicCredentialsProvider();
-	DefaultHttpClient	client;
-	Gson				gson;
+	CredentialsProvider credsProvider = new BasicCredentialsProvider();
+	DefaultHttpClient client;
+	Gson gson;
 
 	public PushbulletClient(String api_key) {
 		client = new DefaultHttpClient();
 		client.setCredentialsProvider(credsProvider);
 
-//		client = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
-		credsProvider.setCredentials(new AuthScope("api.pushbullet.com", 443), new UsernamePasswordCredentials(api_key,
-				null));
+		// client =
+		// HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+		credsProvider.setCredentials(new AuthScope("api.pushbullet.com", 443),
+				new UsernamePasswordCredentials(api_key, null));
 		gson = new Gson();
 	}
 
-	public PushbulletDevice getDevices() throws IllegalStateException, IOException {
+	public PushbulletDevice getDevices() throws IllegalStateException,
+			IOException {
 		HttpGet httpget = new HttpGet("https://api.pushbullet.com/api/devices");
 		HttpResponse response = client.execute(httpget);
 		StringBuffer result = new StringBuffer();
 		try {
 			System.out.println(response.getStatusLine());
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()))) {
 				for (String line; (line = br.readLine()) != null;) {
 					result.append(line);
 				}
 				br.close();
 			}
 		} finally {
-//			response.close();
+			// response.close();
 
 		}
 		return gson.fromJson(result.toString(), PushbulletDevice.class);
@@ -72,7 +75,8 @@ public class PushbulletClient {
 
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {
 				System.out.println(line);
@@ -94,7 +98,8 @@ public class PushbulletClient {
 
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {
 				System.out.println(line);
@@ -111,14 +116,15 @@ public class PushbulletClient {
 			nameValuePairs.add(new BasicNameValuePair("type", "list"));
 			nameValuePairs.add(new BasicNameValuePair("device_iden", iden));
 			nameValuePairs.add(new BasicNameValuePair("title", title));
-			for(String s : list) {
+			for (String s : list) {
 				nameValuePairs.add(new BasicNameValuePair("items", s));
 			}
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {
 				System.out.println(line);
@@ -135,14 +141,15 @@ public class PushbulletClient {
 			nameValuePairs.add(new BasicNameValuePair("type", "list"));
 			nameValuePairs.add(new BasicNameValuePair("device_iden", iden));
 			nameValuePairs.add(new BasicNameValuePair("title", title));
-			for(String s : list) {
+			for (String s : list) {
 				nameValuePairs.add(new BasicNameValuePair("items", s));
 			}
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {
 				System.out.println(line);
@@ -164,7 +171,8 @@ public class PushbulletClient {
 
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {
 				System.out.println(line);
@@ -174,7 +182,8 @@ public class PushbulletClient {
 		}
 	}
 
-	public void sendFile(String iden, File file) throws IllegalStateException, IOException {
+	public void sendFile(String iden, File file) throws IllegalStateException,
+			IOException {
 		HttpPost post = new HttpPost("https://api.pushbullet.com/api/pushes");
 		try {
 			MultipartEntity entity = new MultipartEntity();
@@ -182,10 +191,11 @@ public class PushbulletClient {
 			entity.addPart("device_iden", new StringBody(iden));
 			entity.addPart("type", new StringBody("file"));
 			post.setEntity(entity);
-			
+
 			HttpResponse response = client.execute(post);
 			System.out.println(response.getStatusLine());
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {
 				System.out.println(line);

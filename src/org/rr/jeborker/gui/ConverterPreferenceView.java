@@ -12,6 +12,7 @@ import javax.swing.JSlider;
 
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
+import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -150,7 +151,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 			String name = metadata.getName();
 			if(name.toLowerCase().contains("manga")) {
 				String mangaValue = metadata.getValueAsString();
-				return CommonUtils.toBoolean(mangaValue);
+				return BooleanUtils.toBoolean(mangaValue);
 			}
 		}
 		return result;
