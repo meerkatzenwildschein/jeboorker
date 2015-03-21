@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.h2.jdbc.JdbcResultSet;
 import org.h2.result.LocalResult;
 import org.rr.commons.collection.ICloseableList;

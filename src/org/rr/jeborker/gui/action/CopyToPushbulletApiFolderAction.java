@@ -20,6 +20,7 @@ import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.swing.dialogs.JListSelectionDialog;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.ThreadUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
@@ -31,6 +32,11 @@ import com.shakethat.jpushbullet.net.Extras;
 
 public class CopyToPushbulletApiFolderAction extends AbstractAction {
 
+	private static final long serialVersionUID = -4631469476414229079L;
+	
+	/** max number of threads which performs parallel pushbullet uploads */
+	private static final int MAX_UPLOAD_THREADS = 5;
+
 	/**
 	 * The name where the api key is stored in the database.
 	 */
@@ -38,7 +44,6 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 
 	private static final String PUSHBULLET_DEVICE_SELECTION_KEY = "pushBulletDeviceSelection";
 
-	//source file to copy
 	String source;
 
 	CopyToPushbulletApiFolderAction(String text) {
@@ -69,15 +74,50 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 	 * @throws IOException
 	 * @throws IllegalStateException
 	 */
-	private void initUpload(IResourceHandler resource) throws IllegalStateException, IOException {
+	private void initUpload(final IResourceHandler resource) throws IllegalStateException, IOException {
 		String pushBulletApiKey = getApiKey();
 
 		if(StringUtils.isNotEmpty(pushBulletApiKey)) {
-			PushbulletClient client = new PushbulletClient(pushBulletApiKey);
+			final PushbulletClient client = new PushbulletClient(pushBulletApiKey);
 			List<String> targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
-			for (String targetDeviceIdentifier : targetDeviceIdentifiers) {
-				uploadResource(client, targetDeviceIdentifier, resource);
-			}
+			
+			ThreadUtils.loopAndWait(targetDeviceIdentifiers, new ThreadUtils.RunnableImpl<String, Void>() {
+
+				@Override
+				public Void run(String targetDeviceIdentifier) {
+					try {
+						uploadResource(client, targetDeviceIdentifier, resource);
+					} catch (IOException e) {
+						LoggerFactory.getLogger().log(Level.SEVERE, "Failed to uploaded file " + resource + " using pushbullet.", e);
+					}
+					return null;
+				}
+				
+				private void uploadResource(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws IOException {
+					String name = resource.getName();
+					if(containsAnyNonAsciiChars(name)) {
+						String newName = createNonAsciiCharFreeString(name, "_");			
+						IResourceHandler newResourceHandler = ResourceHandlerFactory.getResourceHandler(new File(FileUtils.getTempDirectory(), newName));
+						try {
+							resource.copyTo(newResourceHandler, true);
+							client.sendFile(targetDeviceIdentifier, newResourceHandler.toFile());
+						} finally {
+							newResourceHandler.delete();
+						}
+					} else {
+						client.sendFile(targetDeviceIdentifier, resource.toFile());
+					}
+				}
+
+				private String createNonAsciiCharFreeString(String name, String replacement) {
+					return name.replaceAll("[^\\x00-\\x7F]", replacement);
+				}
+
+				private boolean containsAnyNonAsciiChars(String name) {
+					return name.matches("^.*[^\\x00-\\x7F].*$");
+				}				
+			
+			}, MAX_UPLOAD_THREADS);
 		}
 	}
 
@@ -93,29 +133,6 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction {
 		return pushBulletApiKey;
 	}
 	
-	private void uploadResource(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws IOException {
-		String name = resource.getName();
-		if(containsAnyNonAsciiChars(name)) {
-			String newName = createNonAsciiCharFreeString(name, "_");			
-			IResourceHandler newResourceHandler = ResourceHandlerFactory.getResourceHandler(new File(FileUtils.getTempDirectory(), newName));
-			try {
-				resource.copyTo(newResourceHandler, true);
-				client.sendFile(targetDeviceIdentifier, newResourceHandler.toFile());
-			} finally {
-				newResourceHandler.delete();
-			}
-		}
-	}
-
-	private String createNonAsciiCharFreeString(String name, String replacement) {
-		String newName = name.replaceAll("[^\\x00-\\x7F]", replacement);
-		return newName;
-	}
-
-	private boolean containsAnyNonAsciiChars(String name) {
-		return name.matches("^.*[^\\x00-\\x7F].*$");
-	}
-
 	/**
 	 * Opens a message dialog and ask the user to which device the ebook should be send to.
 	 * @param client The client which is needed to get the available devices.

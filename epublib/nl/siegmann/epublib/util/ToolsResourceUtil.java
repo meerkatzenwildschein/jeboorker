@@ -10,7 +10,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.service.MediatypeService;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Various resource utility methods
@@ -69,7 +69,7 @@ public class ToolsResourceUtil {
 					|| h_tag.matcher(tag).find()) {
 
 					title = text.substring(closePos + 1).trim();
-					title = StringEscapeUtils.unescapeHtml4(title);
+					title = StringEscapeUtils.unescapeHtml(title);
 					break;
 				}
 			}

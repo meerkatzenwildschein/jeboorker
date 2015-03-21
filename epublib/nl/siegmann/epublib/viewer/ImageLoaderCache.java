@@ -19,7 +19,7 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.util.CollectionUtil;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This class is a trick to get the JEditorKit to load its images from the epub file instead of from the given url.
