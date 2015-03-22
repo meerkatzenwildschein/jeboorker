@@ -113,7 +113,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<URL> getSearchPageUrls(String searchTerm) throws UnsupportedEncodingException, MalformedURLException {
-		String encodesSearchPhrase = URLEncoder.encode(searchTerm, Charsets.UTF_8.name());
+		String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtils.UTF_8);
 		List<URL> urls = new ArrayList<>(PAGES_TO_LOAD);
 		for (int i = 0; i < PAGES_TO_LOAD; i++) {
 			String position = "&start=" + (i * 10);

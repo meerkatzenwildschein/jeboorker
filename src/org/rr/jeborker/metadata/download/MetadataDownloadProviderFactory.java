@@ -31,6 +31,23 @@ public class MetadataDownloadProviderFactory {
 				return new DNBMetadataDownloader();
 			}
 		},
+		COMIC_BOOK_DB_COM {
+			
+			@Override
+			public String getName() {
+				return "comics.org";
+			}
+			
+			@Override
+			public String toString() {
+				return getName();
+			}
+			
+			@Override
+			public MetadataDownloader getMetadataDownloader() {
+				return new ComicsOrgDownloader();
+			}
+		},
 		GOOGLE_BOOKS_DE {
 			
 			@Override

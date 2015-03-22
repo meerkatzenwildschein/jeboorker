@@ -244,16 +244,18 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			final XMPSchemaBasic xmpBasicSchema = xmp.getBasicSchema(); //same as getXMPSchema("xap", xmp);
 
 			if(xmpBasicSchema != null) {
-				//Thumbnails could have xap: or xmp: namespace in the BasicSchema.
+				// Thumbnails could have xap: or xmp: namespace in the BasicSchema.
 				Thumbnail thumbnail = xmpBasicSchema.getThumbnail(null, "xap");
 				if(thumbnail == null) {
 					thumbnail = xmpBasicSchema.getThumbnail(null, "xmp");
 				}
 				if (thumbnail != null) {
 					String image = thumbnail.getImage();
-					byte[] decodeBase64 = Base64.decode(image);
-					if(decodeBase64!=null && decodeBase64.length > 5) {
-						result = decodeBase64;
+					if(image != null) {
+						byte[] decodeBase64 = Base64.decode(image);
+						if(decodeBase64 != null && decodeBase64.length > 5) {
+							result = decodeBase64;
+						}
 					}
 				}
 			}

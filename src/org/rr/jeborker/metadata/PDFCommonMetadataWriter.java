@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
@@ -140,10 +141,14 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		} else {
 			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(coverResourceLoader);
 			BufferedImage image = imageProvider.getImage();
-			byte[] jpegCover = ImageUtils.getImageBytes(image, MimeUtils.MIME_JPEG);
-			thumbnail.setImage(new String(Base64.encode(jpegCover)));
-			thumbnail.setHeight(image.getHeight());
-			thumbnail.setWidth(image.getWidth());
+			if(image != null) {
+				byte[] jpegCover = ImageUtils.getImageBytes(image, MimeUtils.MIME_JPEG);
+				thumbnail.setImage(new String(Base64.encode(jpegCover)));
+				thumbnail.setHeight(image.getHeight());
+				thumbnail.setWidth(image.getWidth());
+			} else {
+				LoggerFactory.log(Level.INFO, this, "Unknown image format");
+			}
 		}
 		thumbnail.setFormat(Thumbnail.FORMAT_JPEG);
 		xmpSchema.setThumbnail(thumbnail, "xap");

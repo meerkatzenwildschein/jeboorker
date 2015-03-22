@@ -9,26 +9,18 @@ import java.util.logging.Level;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.StringUtils;
 
-/**
- * {@link MetadataDownloader} implementation that loads metadata from the "Katalog der deutschen Nationalbibliothek".
- */
-public class DNBMetadataDownloader implements MetadataDownloader {
+public class ComicsOrgDownloader implements MetadataDownloader {
 
-	private static final String MAIN_URL = "http://portal.dnb.de";
-
-	private static final String QUERY_URL = MAIN_URL + "/opac.htm?query={0}&method=simpleSearch&currentPosition={1}";
-
-	private static final int ENTRIES_TO_FETCH = 30;
+	private static final String MAIN_URL = "http://www.comics.org";
 	
-	private static final int ENTRIES_PER_PAGE = 10;
-
-	private static final int PAGES_TO_LOAD = ENTRIES_TO_FETCH / ENTRIES_PER_PAGE;
-
+	private static final String QUERY_URL = MAIN_URL + "/searchNew/?q={0}&search_object=issue&page={1}";
+	
+	private static final int PAGES_TO_LOAD = 1;
+	
 	@Override
 	public List<MetadataDownloadEntry> search(String phrase) {
 		try {
@@ -43,41 +35,30 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 		}
 		return null;
 	}
-
+	
 	private List<MetadataDownloadEntry> getMetadataDownloadEntries(List<byte[]> metadataHtmlContent) throws IOException {
 		List<MetadataDownloadEntry> result = new ArrayList<>(metadataHtmlContent.size());
 		for (byte[] html : metadataHtmlContent) {
 			if (html != null) {
 				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), StringUtils.UTF_8, MAIN_URL);
-				Elements tags = htmlDoc.getElementsByTag("td");
-				result.add(new DNBMetadataDownloadEntry(htmlDoc, tags));
+				result.add(new ComicsOrgDownloadEntry(htmlDoc, MAIN_URL));
 			}
 		}
 		return result;
 	}
-
-	private List<String> findSearchResultLinks(List<Document> htmlDocs) {
-		List<String> allLinks = new ArrayList<>();
-		for (Document document : htmlDocs) {
-			allLinks.addAll(findSearchResultLinks(document));
-		}
-		return allLinks;
-	}
-
-	private List<String> findSearchResultLinks(Document doc) {
-		String id = "recordLink_";
-		List<String> links = new ArrayList<>(ENTRIES_TO_FETCH);
-		for (int i = 0; i < ENTRIES_TO_FETCH; i++) {
-			Element recordLink = doc.getElementById(id + i);
-			if (recordLink != null) {
-				String href = recordLink.attr("href");
-				if (href != null) {
-					links.add(href);
+	
+	private List<String> findSearchResultLinks(List<Document> docs) {
+		List<String> result = new ArrayList<>();
+		for (Document doc : docs) {
+			Elements links = doc.getElementsByTag("a");
+			for(int i = 0; i < links.size(); i++) {
+				String href = links.get(i).attr("href");
+				if(href.startsWith("/issue/")) {
+					result.add(href);
 				}
 			}
 		}
-		return links;
-	}
-
+		return result;
+	}	
 
 }

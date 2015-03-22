@@ -22,6 +22,7 @@ import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.Jeboorker;
 
 class AmazonDeMetadataDownloader implements MetadataDownloader {
@@ -71,7 +72,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 	 * @param searchTerm Value to be searched.
 	 */
 	private List<Future<Elements>> fetchAmazonSearchPageDivElements(final String searchTerm) throws IOException, InterruptedException {
-		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, Charsets.UTF_8.name());
+		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtils.UTF_8);
 		final List<Callable<Elements>> callables = new ArrayList<Callable<Elements>>(FETCH_PAGES);
 
 		for(int i = 0; i < FETCH_PAGES; i++) {
@@ -232,7 +233,7 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 										Element nextElementSibling = aElement.nextElementSibling();
 										if(nextElementSibling != null && nextElementSibling.text().contains(getAuthorMarker())) {
 											String author = href.substring(authorIdx + 13, href.indexOf("&", authorIdx));
-											result.add(URLDecoder.decode(author, "UTF-8"));
+											result.add(URLDecoder.decode(author, StringUtils.UTF_8));
 										}
 									}
 								}

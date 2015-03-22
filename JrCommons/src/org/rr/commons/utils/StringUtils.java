@@ -7,11 +7,15 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.Charsets;
+
 public final class StringUtils implements Serializable {
 
 	private static final long serialVersionUID = 1505813189815359975L;
 
 	public static final String EMPTY = "";
+	
+	public static final String UTF_8 = Charsets.UTF_8.name();
 	
 	private StringUtils() {}
 	
@@ -1757,5 +1761,25 @@ public final class StringUtils implements Serializable {
             return null;
         }
         return StringUtils.replace(str, "'", "''");
-    }	
+    }
+
+    /**
+     * Get the text between the first occurrence of <code>begin</code> and the <code>end</code> part including
+     * the begin and the end part.
+     * 
+     * @param text The text where a sub part should be extracted from
+     * @param begin The begin part in <code>text</code>.
+     * @param end The end part in <code>text</code>.
+     * @return The text part or <code>null</code> if <code>text</code> did not contain any matching part. 
+     */
+		public static String between(String text, String begin, String end) {
+			int beginIndex = text.indexOf(begin);
+			if(beginIndex != -1) {
+				int endIndex = text.indexOf(end, beginIndex + begin.length());
+				if(endIndex != -1) {
+					return text.substring(beginIndex, endIndex + end.length());
+				}
+			}
+			return null;
+		}	
 }
