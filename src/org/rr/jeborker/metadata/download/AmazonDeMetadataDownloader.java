@@ -22,7 +22,6 @@ import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.Base64;
 import org.rr.jeborker.Jeboorker;
 
 class AmazonDeMetadataDownloader implements MetadataDownloader {
@@ -155,8 +154,6 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		private final Future<Document> amazonDetailPageDocument;
 
 		private final Future<byte[]> thumbnailBytes;
-
-		private String base64EncodedThumbnail;
 
 		private final String title;
 

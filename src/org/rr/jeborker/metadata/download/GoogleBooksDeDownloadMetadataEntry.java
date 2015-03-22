@@ -14,7 +14,6 @@ import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.ListUtils;
 
 public class GoogleBooksDeDownloadMetadataEntry implements MetadataDownloadEntry {
