@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="epublib"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="pdfscissors"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_09"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-147.jar"/>
@@ -36,5 +35,6 @@
 	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar" sourcepath="lib/commons-lang-2.6-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Jpushbullet"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,4 +1,4 @@
-package org.rr.jeborker.remote.metadata;
+package org.rr.jeborker.metadata.download;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

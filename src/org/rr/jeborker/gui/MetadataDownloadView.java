@@ -41,10 +41,10 @@ import org.rr.jeborker.gui.model.MetadataDownloadModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
+import org.rr.jeborker.metadata.download.MetadataDownloadProviderFactory;
+import org.rr.jeborker.metadata.download.MetadataDownloader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
-import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
-import org.rr.jeborker.remote.metadata.MetadataDownloadProviderFactory;
-import org.rr.jeborker.remote.metadata.MetadataDownloader;
 
 class MetadataDownloadView extends AbstractDialogView {
 

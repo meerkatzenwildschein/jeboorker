@@ -1,4 +1,4 @@
-package org.rr.jeborker.remote.metadata;
+package org.rr.jeborker.metadata.download;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -19,22 +19,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rr.commons.collection.TransformValueSet;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtils;
 
 /**
  * {@link MetadataDownloader} implementation that loads metadata from the "Katalog der deutschen Nationalbibliothek".
  */
-public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
+public class DNBMetadataDownloader implements MetadataDownloader {
 
-	private static final String MAIN_URL = "http://www.google.de";
+	private static final String MAIN_URL = "http://portal.dnb.de";
 
-	private static final String QUERY_URL_PART = MAIN_URL + "/search?tbm=bks&q=";
+	private static final String QUERY_URL_PART = MAIN_URL + "/opac.htm?query=";
 
-	private static final int ENTRIES_TO_FETCH = 50;
+	private static final int ENTRIES_TO_FETCH = 30;
 
 	private static final int PAGES_TO_LOAD = ENTRIES_TO_FETCH / 10;
-	
-	private static final String PAGE_CHARSET = Charsets.ISO_8859_1.name();
 
 	@Override
 	public List<MetadataDownloadEntry> search(String phrase) {
@@ -55,11 +52,9 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 		List<MetadataDownloadEntry> result = new ArrayList<>(metadataHtmlContent.size());
 		for (byte[] html : metadataHtmlContent) {
 			if (html != null) {
-				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), PAGE_CHARSET, MAIN_URL);
-				GoogleBooksDeDownloadMetadataEntry entry = new GoogleBooksDeDownloadMetadataEntry(htmlDoc);
-				if(StringUtils.isNotEmpty(entry.getTitle())) {
-					result.add(entry);
-				}
+				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), "UTF-8", MAIN_URL);
+				Elements tags = htmlDoc.getElementsByTag("td");
+				result.add(new DNBMetadataDownloadEntry(htmlDoc, tags));
 			}
 		}
 		return result;
@@ -71,7 +66,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 			@Override
 			public URL transform(String link) {
 				try {
-					return new URL(link);
+					return new URL(MAIN_URL + link);
 				} catch (MalformedURLException e) {
 					LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed to create url for " + link, e);
 				}
@@ -90,13 +85,13 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<String> getSearchResultLinks(Document doc) {
+		String id = "recordLink_";
 		List<String> links = new ArrayList<>(ENTRIES_TO_FETCH);
-		Elements headlines = doc.getElementsByTag("h3");
-		for (Element headline : headlines) {
-			Element link = headline.child(0);
-			if(link.tagName().equals("a")) {
-				String href = link.attr("href");
-				if (href != null && href.contains("books.google.") && !href.contains("printsec=")) {
+		for (int i = 0; i < ENTRIES_TO_FETCH; i++) {
+			Element recordLink = doc.getElementById(id + i);
+			if (recordLink != null) {
+				String href = recordLink.attr("href");
+				if (href != null) {
 					links.add(href);
 				}
 			}
@@ -107,7 +102,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	private List<Document> getDocuments(List<byte[]> content) throws IOException {
 		List<Document> documents = new ArrayList<>(content.size());
 		for (byte[] bs : content) {
-			documents.add(Jsoup.parse(new ByteArrayInputStream(bs), PAGE_CHARSET, MAIN_URL));
+			documents.add(Jsoup.parse(new ByteArrayInputStream(bs), "UTF-8", MAIN_URL));
 		}
 		return documents;
 	}
@@ -116,10 +111,9 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 		String encodesSearchPhrase = URLEncoder.encode(searchTerm, Charsets.UTF_8.name());
 		List<URL> urls = new ArrayList<>(PAGES_TO_LOAD);
 		for (int i = 0; i < PAGES_TO_LOAD; i++) {
-			String position = "&start=" + (i * 10);
-			urls.add(new URL(QUERY_URL_PART + encodesSearchPhrase + position));
+			String position = "&currentPosition=" + (i * 10);
+			urls.add(new URL(QUERY_URL_PART + encodesSearchPhrase + "&method=simpleSearch" + position));
 		}
 		return urls;
 	}
-
 }

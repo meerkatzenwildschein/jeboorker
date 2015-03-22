@@ -14,7 +14,7 @@ import javax.swing.table.TableCellEditor;
 
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
-import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
+import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
 
 public class MetadataDownloadTableCellEditor implements TableCellEditor, Serializable {
 	

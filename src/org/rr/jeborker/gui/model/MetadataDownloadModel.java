@@ -7,8 +7,8 @@ import javax.swing.table.AbstractTableModel;
 
 import org.rr.commons.utils.ThreadUtils;
 import org.rr.commons.utils.ThreadUtils.RunnableImpl;
-import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
-import org.rr.jeborker.remote.metadata.MetadataDownloader;
+import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
+import org.rr.jeborker.metadata.download.MetadataDownloader;
 
 public class MetadataDownloadModel extends AbstractTableModel {
 

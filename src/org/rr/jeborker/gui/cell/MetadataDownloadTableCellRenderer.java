@@ -34,7 +34,7 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.remote.metadata.MetadataDownloadEntry;
+import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;

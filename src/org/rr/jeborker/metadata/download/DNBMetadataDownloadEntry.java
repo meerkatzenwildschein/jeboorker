@@ -1,4 +1,4 @@
-package org.rr.jeborker.remote.metadata;
+package org.rr.jeborker.metadata.download;
 
 import static org.rr.commons.utils.StringUtils.EMPTY;
 

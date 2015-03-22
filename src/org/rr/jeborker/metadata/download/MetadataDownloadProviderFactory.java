@@ -1,4 +1,4 @@
-package org.rr.jeborker.remote.metadata;
+package org.rr.jeborker.metadata.download;
 
 import java.util.ArrayList;
 import java.util.List;
