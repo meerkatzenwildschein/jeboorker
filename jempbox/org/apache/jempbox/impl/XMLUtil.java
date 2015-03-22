@@ -235,7 +235,8 @@ public class XMLUtil
      */
     public static String getStringValue( Element parent, String nodeName )
     {
-        return XMLUtil.getStringValue( XMLUtil.getElement( parent, nodeName ) );
+    	  Element element = XMLUtil.getElement( parent, nodeName );
+        return element != null ? XMLUtil.getStringValue( XMLUtil.getElement( parent, nodeName ) ) : null;
     }
     
     /**
