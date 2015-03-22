@@ -23,8 +23,6 @@ public interface MetadataDownloadEntry {
 	 */
 	public byte[] getThumbnailImageBytes();
 
-	public String getBase64EncodedThumbnailImage();
-	
 	/**
 	 * Get the cover image in the best possible image size.
 	 */

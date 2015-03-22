@@ -144,11 +144,6 @@ public class GoogleBooksDeDownloadMetadataEntry implements MetadataDownloadEntry
 	}
 
 	@Override
-	public String getBase64EncodedThumbnailImage() {
-		return Base64.encode(getThumbnailImageBytes());
-	}
-
-	@Override
 	public byte[] getCoverImage() {
 		return getThumbnailImageBytes();
 	}

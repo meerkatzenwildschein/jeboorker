@@ -27,9 +27,9 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 
 	private Document htmlDoc;
 
-	private byte[] thumbnailImageData = null;
+	private byte[] smallSizeImage = null;
 
-	private byte[] largeImageData = null;
+	private byte[] largeSizeImage = null;
 
 	private String isbn = null;
 
@@ -121,13 +121,20 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 		if (isbn != null) {
 			String imageUrl = "http://vlb.de/GetBlob.aspx?strIsbn=" + isbn + "&size=" + size;
 			try {
-				LoggerFactory.getLogger(this).log(Level.INFO, "Downloading " + imageUrl);
-				if (largeImageData == null && size.equals(IMAGE_SIZE_L)) {
-					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
-					return largeImageData = resourceHandler.getContent();
-				} else if (thumbnailImageData == null && size.equals(IMAGE_SIZE_S)) {
-					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
-					return thumbnailImageData = resourceHandler.getContent();
+				if (size.equals(IMAGE_SIZE_L)) {
+					if(largeSizeImage == null) {
+						LoggerFactory.getLogger(this).log(Level.INFO, "Downloading large image from " + imageUrl);
+						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
+						largeSizeImage = resourceHandler.getContent();
+					}
+					return largeSizeImage;
+				} else if (size.equals(IMAGE_SIZE_S)) {
+					if(smallSizeImage == null) {
+						LoggerFactory.getLogger(this).log(Level.INFO, "Downloading thumbnail image from " + imageUrl);
+						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
+						smallSizeImage = resourceHandler.getContent();
+					}
+					return smallSizeImage;
 				}
 			} catch (MalformedURLException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to create URL " + imageUrl, e);
@@ -135,12 +142,7 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to load URL " + imageUrl, e);
 			}
 		}
-		return size.equals(IMAGE_SIZE_L) ? largeImageData : thumbnailImageData;
-	}
-
-	@Override
-	public String getBase64EncodedThumbnailImage() {
-		return Base64.encode(getCoverImage(IMAGE_SIZE_S));
+		return null;
 	}
 
 	@Override

@@ -213,14 +213,6 @@ class AmazonDeMetadataDownloader implements MetadataDownloader {
 		}
 
 		@Override
-		public String getBase64EncodedThumbnailImage() {
-			if(base64EncodedThumbnail == null) {
-				base64EncodedThumbnail = Base64.encodeToString(getThumbnailImageBytes(), false);
-			}
-			return base64EncodedThumbnail;
-		}
-
-		@Override
 		public String getTitle() {
 			return this.title;
 		}
