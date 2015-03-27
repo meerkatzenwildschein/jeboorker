@@ -152,8 +152,8 @@ public final class DateUtils implements Serializable {
 		if (interval.equals("yyyy")) {
 			intervalNumber = Calendar.YEAR;
 			specifiedStringForDateFormat = "yyyy";
-			specifiedStringForParsing = "" + year1;
-			specifiedStringForParsing2 = "" + year2;
+			specifiedStringForParsing = String.valueOf(year1);
+			specifiedStringForParsing2 = String.valueOf(year2);
 			goInLoop = true;
 		} else if (interval.equals("m")) {
 			intervalNumber = Calendar.MONTH;

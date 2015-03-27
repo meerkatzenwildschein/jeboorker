@@ -1,5 +1,7 @@
 package org.rr.commons.utils;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -448,7 +450,7 @@ public class HTMLEntityConverter implements Serializable {
      */
     private static final String string(final int size, final char repeat) {
         if (size <= 0) {
-            return "";
+            return EMPTY;
         }
         final StringBuilder returnValue = new StringBuilder(size);
 

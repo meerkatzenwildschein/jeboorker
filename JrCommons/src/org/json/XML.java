@@ -24,7 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.Iterator;
+
+import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtilsTest;
 
 
 /**
@@ -233,7 +238,7 @@ public class XML {
                                 XML.stringToValue((String)token));
                         token = null;
                     } else {
-                        jsonobject.accumulate(string, "");
+                        jsonobject.accumulate(string, EMPTY);
                     }
 
 // Empty tag <.../>
@@ -245,7 +250,7 @@ public class XML {
                     if (jsonobject.length() > 0) {
                         context.accumulate(tagName, jsonobject);
                     } else {
-                        context.accumulate(tagName, "");
+                        context.accumulate(tagName, EMPTY);
                     }
                     return false;
 
@@ -271,7 +276,7 @@ public class XML {
                         } else if (token == LT) {
                             if (parse(x, jsonobject, tagName)) {
                                 if (jsonobject.length() == 0) {
-                                    context.accumulate(tagName, "");
+                                    context.accumulate(tagName, EMPTY);
                                 } else if (jsonobject.length() == 1 &&
                                        jsonobject.opt("content") != null) {
                                     context.accumulate(tagName, 
@@ -301,7 +306,7 @@ public class XML {
      * @return A simple JSON value.
      */
     public static Object stringToValue(String string) {
-        if ("".equals(string)) {
+        if (StringUtils.isEmpty(string)) {
             return string;
         }
         if ("true".equalsIgnoreCase(string)) {
@@ -419,7 +424,7 @@ public class XML {
                 key = keys.next().toString();
                 value = jo.opt(key);
                 if (value == null) {
-                    value = "";
+                    value = EMPTY;
                 }
                 if (value instanceof String) {
                     string = (String)value;

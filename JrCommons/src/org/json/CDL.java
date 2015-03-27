@@ -1,5 +1,7 @@
 package org.json;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 /*
 Copyright (c) 2002 JSON.org
 
@@ -79,7 +81,7 @@ public class CDL {
             return sb.toString();
         case ',':
             x.back();
-            return "";
+            return EMPTY;
         default:
             x.back();
             return x.nextTo(',');

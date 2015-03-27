@@ -1,5 +1,7 @@
 package org.rr.commons.net.imagefetcher;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -119,7 +121,7 @@ class BigBookSearchImageFetcher extends AImageFetcher {
 				imageTitle = converter.decodeEntities();
 				return imageTitle;
 			} catch (Exception e) {
-				return "";
+				return EMPTY;
 			}
 		}
 		

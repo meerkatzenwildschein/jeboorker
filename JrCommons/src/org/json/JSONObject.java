@@ -24,6 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -37,6 +39,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import org.rr.commons.utils.StringUtils;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -937,7 +941,7 @@ public class JSONObject {
      * @return      A string which is the value.
      */
     public String optString(String key) {
-        return this.optString(key, "");
+        return this.optString(key, EMPTY);
     }
 
 
@@ -970,11 +974,11 @@ public class JSONObject {
                 Method method = methods[i];
                 if (Modifier.isPublic(method.getModifiers())) {
                     String name = method.getName();
-                    String key = "";
+                    String key = EMPTY;
                     if (name.startsWith("get")) {
                         if ("getClass".equals(name) ||
                                 "getDeclaringClass".equals(name)) {
-                            key = "";
+                            key = EMPTY;
                         } else {
                             key = name.substring(3);
                         }
@@ -1165,7 +1169,7 @@ public class JSONObject {
                 return quote(string, sw).toString();
             } catch (IOException ignored) {
                 // will never happen - we are writing to a string writer
-                return "";
+                return EMPTY;
             }
         }
     }
@@ -1245,7 +1249,7 @@ public class JSONObject {
      */
     public static Object stringToValue(String string) {
         Double d;
-        if (string.equals("")) {
+        if (StringUtils.isEmpty(string)) {
             return string;
         }
         if (string.equalsIgnoreCase("true")) {
@@ -1466,7 +1470,7 @@ public class JSONObject {
              Package objectPackage = object.getClass().getPackage();
              String objectPackageName = objectPackage != null
                  ? objectPackage.getName()
-                 : "";
+                 : EMPTY;
              if (
                  objectPackageName.startsWith("java.") ||
                  objectPackageName.startsWith("javax.") ||

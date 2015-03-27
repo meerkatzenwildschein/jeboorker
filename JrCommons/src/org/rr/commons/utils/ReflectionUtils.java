@@ -1,5 +1,7 @@
 package org.rr.commons.utils;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -807,7 +809,7 @@ public class ReflectionUtils implements Serializable {
 	 * @return A key for the Field which can be used for the cache HashMap.
 	 */
 	private static String createFieldCacheKey(final Class<?> clazz, final String fieldName) {
-		String key = String.valueOf(fieldName) + (clazz!=null ? clazz.getName() : "");
+		String key = String.valueOf(fieldName) + (clazz!=null ? clazz.getName() : EMPTY);
 		return key;
 	}
 	
@@ -1054,7 +1056,7 @@ public class ReflectionUtils implements Serializable {
 	public static String getPackageName(Class<?> c) {
 		if(c==null) {
 			//return an empty string if no class is given.
-			return "";
+			return EMPTY;
 		}
 		
 		String fullyQualifiedName = c.getName();
@@ -1066,7 +1068,7 @@ public class ReflectionUtils implements Serializable {
 		
 		int lastDot = fullyQualifiedName.lastIndexOf('.');
 		if (lastDot == -1) {
-			return "";
+			return EMPTY;
 		}
 		return fullyQualifiedName.substring(0, lastDot);
 	}
@@ -1259,7 +1261,7 @@ public class ReflectionUtils implements Serializable {
     	}
     	try {
 	    	String versionProperty = System.getProperty( "java.version" );
-	    	String numString = StringUtils.replace(versionProperty, ".", "").substring(0,2);
+	    	String numString = StringUtils.replace(versionProperty, ".", EMPTY).substring(0,2);
 	    	javaVersion = CommonUtils.toNumber(numString).intValue();
 	    	return javaVersion;
     	} catch (Exception e) {

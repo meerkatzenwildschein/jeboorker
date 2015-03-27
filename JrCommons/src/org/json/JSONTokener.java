@@ -1,11 +1,15 @@
 package org.json;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+
+import org.rr.commons.utils.StringUtils;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -205,7 +209,7 @@ public class JSONTokener {
      */
      public String next(int n) throws JSONException {
          if (n == 0) {
-             return "";
+             return EMPTY;
          }
 
          char[] chars = new char[n];
@@ -383,7 +387,7 @@ public class JSONTokener {
         this.back();
 
         string = sb.toString().trim();
-        if ("".equals(string)) {
+        if (StringUtils.isEmpty(string)) {
             throw this.syntaxError("Missing value");
         }
         return JSONObject.stringToValue(string);

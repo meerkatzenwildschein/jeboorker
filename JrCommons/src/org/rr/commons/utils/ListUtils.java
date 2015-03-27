@@ -1,5 +1,7 @@
 package org.rr.commons.utils;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +38,7 @@ public final class ListUtils implements Serializable {
 	 */
 	public static String join(final List<? extends Object> values, final String delimiter) {
 		if(values==null || values.size() == 0) {
-			return "";
+			return EMPTY;
 		}
 		return ArrayUtils.join(values.toArray(new Object[values.size()]), delimiter);
 	}

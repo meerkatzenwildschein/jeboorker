@@ -1,5 +1,7 @@
 package org.rr.commons.utils;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -471,7 +473,7 @@ public class DateConversionUtils {
 			
 			public Date getDate(String dateString) {
 				final String saved = dateString;
-				dateString = StringUtils.replace(dateString, "'", "").substring(2);
+				dateString = StringUtils.replace(dateString, "'", EMPTY).substring(2);
 				if(dateString.indexOf('Z')!=-1) {
 					//D:200012181807Z
 					//D:20110427120924Z00'00'

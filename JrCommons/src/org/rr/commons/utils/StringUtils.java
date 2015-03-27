@@ -40,7 +40,7 @@ public final class StringUtils implements Serializable {
 
 		//If set to 0, an empty string ("") is returned
 		if (length==0) {
-			return "";
+			return EMPTY;
 		}
 
 		//If set to greater than or equal to the length of the string, the entire string is returned.
@@ -66,7 +66,7 @@ public final class StringUtils implements Serializable {
 
 		//If set to 0, an empty string ("") is returned.
 		if (length==0) {
-			return "";
+			return EMPTY;
 		}
 
 		//If set to greater than or equal to the length of the string, the entire string is returned.
@@ -92,11 +92,11 @@ public final class StringUtils implements Serializable {
 
 		//If set to 0, an empty string ("") is returned.
 		if (start==0) {
-			return "";
+			return EMPTY;
 		}
 
 	    if (text.length() < start-1) {
-	    	return "";
+	    	return EMPTY;
 	    } else if (text.length() < (start-1) + length) {
 	    	return text.substring(start-1);
 	    } else {
@@ -388,7 +388,7 @@ public final class StringUtils implements Serializable {
 		}
 
 		//looks like there is no other character excepting whitespaces in the string. Just cut them all by returning an empty string.
-		return "";
+		return EMPTY;
 	}
 
 	/**
@@ -440,7 +440,7 @@ public final class StringUtils implements Serializable {
 	 */
 	public static final String string(int size, char repeat) {
 		if (size<=0) {
-			return "";
+			return EMPTY;
 		}
 		StringBuilder returnValue = new StringBuilder(size);
 
@@ -678,7 +678,7 @@ public final class StringUtils implements Serializable {
 			throw new RuntimeException("ModeNotSupported");
 		}
 		if(text==null) {
-			return "";
+			return EMPTY;
 		}
 
 		if(openExclusion==null) {
@@ -770,7 +770,7 @@ public final class StringUtils implements Serializable {
      */
     public static String strip(String text1, String text2, boolean preserve, int compare) {
         if(text2 == null || text1 == null) {
-            return "";
+            return EMPTY;
         }
         StringBuilder result = new StringBuilder();
         for(int i = 0; i < text1.length(); i++) {
@@ -1055,7 +1055,7 @@ public final class StringUtils implements Serializable {
     	if (text1==null) {
     		return null;
     	} else if (search == null) {
-    		return "";
+    		return EMPTY;
     	}
 
     	// SHOULD BE EXACTLY THE SAME AS IN THE #substringBefore METHOD!!!
@@ -1075,7 +1075,7 @@ public final class StringUtils implements Serializable {
     	} // END EXAXTLY THE SAME
 
     	if(index==-1) {
-    		return "";
+    		return EMPTY;
     	}
 
     	return text1.substring(index+search.length());
@@ -1116,7 +1116,7 @@ public final class StringUtils implements Serializable {
     	if (text1==null) {
     		return null;
     	} else if (search == null) {
-    		return "";
+    		return EMPTY;
     	}
 
     	// SHOULD BE EXACTLY THE SAME AS IN THE #substringAfter METHOD!!!
@@ -1136,7 +1136,7 @@ public final class StringUtils implements Serializable {
     	} // END EXAXTLY THE SAME
 
     	if(index==-1) {
-    		return "";
+    		return EMPTY;
     	}
 
     	return text1.substring(0, index);
@@ -1155,7 +1155,7 @@ public final class StringUtils implements Serializable {
      */
     public static String toString(Object value) {
     	if(value==null) {
-    		return "";
+    		return EMPTY;
     	}
     	return String.valueOf(value);
     }
@@ -1172,7 +1172,7 @@ public final class StringUtils implements Serializable {
     		if(preserveNull) {
     			return null;
     		} else {
-    			return "";
+    			return EMPTY;
     		}
     	}
     	return String.valueOf(value);
@@ -1712,7 +1712,7 @@ public final class StringUtils implements Serializable {
 		}
 		int cPos = text.lastIndexOf(separator);
 		if (cPos < 0) {
-			return "";
+			return EMPTY;
 		}
 		return text.substring(cPos + 1);
 	}
@@ -1732,7 +1732,7 @@ public final class StringUtils implements Serializable {
 		}
 		int cPos = text.indexOf(c);
 		if (cPos < 0) {
-			return "";
+			return EMPTY;
 		}
 		return text.substring(cPos + 1);
 	}

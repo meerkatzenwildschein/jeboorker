@@ -1,5 +1,7 @@
 package org.rr.commons.utils;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.Serializable;
 
 public final class MathUtils implements Serializable {
@@ -241,7 +243,7 @@ public final class MathUtils implements Serializable {
 		} else if (type == TYPE_4) {
 			return type4Roemisch(number);
 		} else {
-			return "";
+			return EMPTY;
 		}
 
 	}
@@ -256,7 +258,7 @@ public final class MathUtils implements Serializable {
 	
 	//englisch
 	private static String type0Roemisch(double number) {
-		String result = "";
+		String result = EMPTY;
 
 		while (number > 0) {
 			if (number > 1000 || number == 1000) {
@@ -313,7 +315,7 @@ public final class MathUtils implements Serializable {
 	
 	//type terminus
 	private static String type1Roemisch(double number) {
-		String result = "";
+		String result = EMPTY;
 
 		while (number > 0) {
 			if (number > 1000 || number == 1000) {
@@ -381,7 +383,7 @@ public final class MathUtils implements Serializable {
 	 * @return The roman number as a text in the <code>TYPE_2</code>
 	 */
 	private static String type2Roemisch(double number) {
-		String result = "";
+		String result = EMPTY;
 
 		while (number > 0) {
 			if (number > 1000 || number == 1000) {
@@ -455,7 +457,7 @@ public final class MathUtils implements Serializable {
 	 * @return The roman number as a text in the <code>TYPE_3</code>
 	 */
 	private static String type3Roemisch(double number) {
-		String result = "";
+		String result = EMPTY;
 
 		while (number > 0) {
 			if (number > 1000 || number == 1000) {
@@ -535,7 +537,7 @@ public final class MathUtils implements Serializable {
 	 * @return The roman number as a text in the <code>TYPE_4</code>
 	 */
 	private static String type4Roemisch(double number) {
-		String result = "";
+		String result = EMPTY;
 		
 		while (number > 0) {
 			if (number > 1000 || number == 1000) {

@@ -1,5 +1,7 @@
 package org.rr.commons.mufs;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -594,7 +596,7 @@ public class FTPResourceHandler extends AResourceHandler {
 
 		String sourceString = source.toString();
 
-		String urlTrailer = "";
+		String urlTrailer = EMPTY;
 		if (sourceString.indexOf(';') != -1) {
 			int semikolonIndex = sourceString.indexOf(';');
 			urlTrailer = sourceString.substring(semikolonIndex);
@@ -620,7 +622,7 @@ public class FTPResourceHandler extends AResourceHandler {
 		String sourceString = source.toString();
 
 		// remove the trailing string behind the path if there is one.
-		String urlTrailer = "";
+		String urlTrailer = EMPTY;
 		if (sourceString.indexOf(';') != -1) {
 			int semikolonIndex = sourceString.indexOf(';');
 			urlTrailer = sourceString.substring(semikolonIndex);
@@ -742,7 +744,7 @@ public class FTPResourceHandler extends AResourceHandler {
 
 			if (listFiles != null) {
 				for (int i = 0; i < listFiles.length; i++) {
-					final String fileName = listFiles[i].getName().replaceAll("/", "");
+					final String fileName = listFiles[i].getName().replaceAll("/", EMPTY);
 					if (fileName.equals(this.getName())) {
 						this.ftpFile = listFiles[i];
 						break;

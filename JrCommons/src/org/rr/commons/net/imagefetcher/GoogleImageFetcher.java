@@ -1,5 +1,7 @@
 package org.rr.commons.net.imagefetcher;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -34,7 +36,7 @@ class GoogleImageFetcher extends AImageFetcher {
 		final String encodesSearchPhrase = URLEncoder.encode(searchTerm, "UTF-8");
 		final String ip = getExternalIP();
 		final int pageParameter = ((page -1) * getPageSize()) + 1; //always in page size steps.
-		final String urlString = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+encodesSearchPhrase+"&userip=" + ip + "&rsz=8" + (page <=1 ? "" : "&start=" + pageParameter);
+		final String urlString = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="+encodesSearchPhrase+"&userip=" + ip + "&rsz=8" + (page <=1 ? EMPTY : "&start=" + pageParameter);
 		
 		final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(urlString);
 		try {
@@ -126,7 +128,7 @@ class GoogleImageFetcher extends AImageFetcher {
 			try {
 				return jobj.getString("titleNoFormatting");
 			} catch (JSONException e) {
-				return "";
+				return EMPTY;
 			}
 		}
 	}

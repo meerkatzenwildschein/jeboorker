@@ -24,6 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.util.Iterator;
 
 
@@ -177,7 +179,7 @@ public class JSONML {
                             newjo.accumulate(attribute, XML.stringToValue((String)token));
                             token = null;
                         } else {
-                            newjo.accumulate(attribute, "");
+                            newjo.accumulate(attribute, EMPTY);
                         }
                     }
                     if (arrayForm && newjo.length() > 0) {

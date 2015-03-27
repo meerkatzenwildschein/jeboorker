@@ -1,5 +1,7 @@
 package org.rr.commons.mufs;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,7 +78,7 @@ abstract class AResourceHandler implements IResourceHandler {
 			}
 			return null;
 		} else if(this.isDirectoryResource()) {
-			this.mime = "";
+			this.mime = EMPTY;
 			return null;
 		}
 
@@ -142,7 +144,7 @@ abstract class AResourceHandler implements IResourceHandler {
 		try {
 			//test if a file extension was specified.
 			if(fileName.indexOf('.') == -1 || isDirectoryResource()) {
-				return "";
+				return EMPTY;
 			}
 
 			//test if the file ends with a default file extension. If the
@@ -153,15 +155,15 @@ abstract class AResourceHandler implements IResourceHandler {
 				final String mimeFormatPart =  mime.substring(mime.indexOf('/')+1);
 				if(mimeFormatPart.equals("jpg") || mimeFormatPart.equals("jpeg")) {
 					if(!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg")) {
-						return ""; //no jpeg extension. all after the dot belongs to the file name.
+						return EMPTY; //no jpeg extension. all after the dot belongs to the file name.
 					}
 				} else if(mimeFormatPart.equals("png")) {
 					if(!fileName.endsWith(".png")) {
-						return ""; //no png extension. all after the dot belongs to the file name.
+						return EMPTY; //no png extension. all after the dot belongs to the file name.
 					}
 				} else if(mimeFormatPart.equals("gif")) {
 					if(!fileName.endsWith(".gif")) {
-						return ""; //no gif extension. all after the dot belongs to the file name.
+						return EMPTY; //no gif extension. all after the dot belongs to the file name.
 					}
 				}
 			}
@@ -169,7 +171,7 @@ abstract class AResourceHandler implements IResourceHandler {
 			//return with the chars behind the last dot.
 			return fileName.substring(this.getName().lastIndexOf('.') + 1);
 		} catch (Exception e) {
-			return "";
+			return EMPTY;
 		}
 	}
 

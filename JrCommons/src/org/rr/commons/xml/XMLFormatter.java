@@ -22,6 +22,8 @@ package org.rr.commons.xml;
  * Last modified by $Author$
  * $Date$
  */
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
@@ -89,7 +91,7 @@ class XMLFormatter implements SimpleHandler {
 		if (openedElement) {
 			output.println(">");
 		} else {
-			output.println("");
+			output.println(EMPTY);
 		}
 		indent();
 		output.print("<" + name);
@@ -147,7 +149,7 @@ class XMLFormatter implements SimpleHandler {
 	 */
 	public void endElement(final StringBuilder name) {
 		if (cdataWritten) {
-			output.println("");
+			output.println(EMPTY);
 			for (int idx = 0; idx < (indentSpaces - 2); idx++) {
 				output.print(" ");
 			}

@@ -1,5 +1,7 @@
 package org.rr.commons.net.imagefetcher;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -28,7 +30,7 @@ abstract class AImageFetcher implements IImageFetcher {
 				final IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(service);
 				byte[] content = resourceLoader.getContent();
 				if(content != null) {
-					String ip = new String(content).replaceAll("[\\r\\n\\s]", "");
+					String ip = new String(content).replaceAll("[\\r\\n\\s]", EMPTY);
 					if(validate(ip)) {
 						return ip;
 					}

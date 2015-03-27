@@ -1,5 +1,7 @@
 package org.rr.commons.mufs;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -184,12 +186,12 @@ public class ResourceHandlerUtils {
 				if(source.getModifiedAt()!=null) {
 					s1 = SimpleDateFormat.getDateTimeInstance().format(source.getModifiedAt());
 				} else {
-					s1 = "";
+					s1 = EMPTY;
 				}
 				if(target.getModifiedAt()!=null) {
 					s2 = SimpleDateFormat.getDateTimeInstance().format(target.getModifiedAt());
 				} else {
-					s2 = "";
+					s2 = EMPTY;
 				}
 				break;
 			case SORT_BY_TYPE:
@@ -533,7 +535,7 @@ public class ResourceHandlerUtils {
 					int extensionNum = 0;
 					File trashInfo;
 
-					while( (trashInfo =  new File(trashInfoFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "")  + extension)).exists() ) {
+					while( (trashInfo =  new File(trashInfoFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : EMPTY)  + extension)).exists() ) {
 						extensionNum ++;
 					}
 
@@ -551,7 +553,7 @@ public class ResourceHandlerUtils {
 						resourceLoader.writeStringContent(trashInfoContent.toString(), System.getProperty("file.encoding"));
 					}
 
-					resourceHandler.moveTo(ResourceHandlerFactory.getResourceHandler(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : "") ), false);
+					resourceHandler.moveTo(ResourceHandlerFactory.getResourceHandler(trashFilesFolder.getPath() + "/" + resourceHandler.getName() + (extensionNum != 0 ? extensionNum : EMPTY) ), false);
 					return true;
 				}
 			}
@@ -698,10 +700,10 @@ public class ResourceHandlerUtils {
 		if(fileName == null) {
 			return null;
 		}
-		fileName = fileName.replaceAll("%", "");
-		fileName = fileName.replaceAll("/", "");
-		fileName = fileName.replaceAll("\\\\", "");
-		fileName = fileName.replaceAll(File.pathSeparator, "");
+		fileName = fileName.replaceAll("%", EMPTY);
+		fileName = fileName.replaceAll("/", EMPTY);
+		fileName = fileName.replaceAll("\\\\", EMPTY);
+		fileName = fileName.replaceAll(File.pathSeparator, EMPTY);
 		return fileName;
 	}
 }

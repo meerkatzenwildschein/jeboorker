@@ -24,6 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -542,7 +544,7 @@ public class JSONArray {
      * @return      A String value.
      */
     public String optString(int index) {
-        return this.optString(index, "");
+        return this.optString(index, EMPTY);
     }
 
 

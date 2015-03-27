@@ -4,6 +4,7 @@ import static java.util.Calendar.HOUR_OF_DAY;
 import static java.util.Calendar.MILLISECOND;
 import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.SECOND;
+import static org.rr.commons.utils.StringUtils.EMPTY;
 
 import java.text.DateFormat;
 import java.text.FieldPosition;
@@ -66,7 +67,7 @@ public class W3CDateFormat extends SimpleDateFormat {
                 /** "yyyy" */
                 YEAR("yyyy", false),
                 /** Automatically compute the right pattern to use */
-                AUTO("", true);
+                AUTO(EMPTY, true);
 
                 private final String pattern;
                 private final boolean includeTimeZone;

@@ -1,5 +1,7 @@
 package org.rr.commons.mufs;
 
+import static org.rr.commons.utils.StringUtils.EMPTY;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -223,7 +225,7 @@ public class ResourceHandlerFactory {
 
 		int extensionNum = 0;
 		IResourceHandler result = null;
-		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : "") + "." + extension)).exists() ) {
+		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : EMPTY) + "." + extension)).exists() ) {
 			extensionNum ++;
 		}
 		return result;
@@ -246,7 +248,7 @@ public class ResourceHandlerFactory {
 		int extensionNum = 0;
 		List<IResourceHandler> resultList = new ArrayList<>();
 		IResourceHandler result = null;
-		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : "") + "." + extension)).exists() ) {
+		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : EMPTY) + "." + extension)).exists() ) {
 			resultList.add(result);
 			extensionNum ++;
 		}
@@ -384,7 +386,7 @@ public class ResourceHandlerFactory {
 	 * @return The desired user home {@link IResourceHandler}
 	 */
 	public static IResourceHandler getUserHomeResourceLoader() {
-		if(userHome==null) {
+		if(userHome == null) {
 			String userHomeProp = System.getProperty("user.name");
 			userHome = getResourceHandler(userHomeProp);
 		}
@@ -400,7 +402,7 @@ public class ResourceHandlerFactory {
 	private static List<Object> getFileList(String data, int invalid) {
 		int invalidCount = 0;
 		ArrayList<Object> result = new ArrayList<>();
-		data = data.replace("\r", "");
+		data = data.replace("\r", EMPTY);
 		List<String> splitData = ListUtils.split(data, '\n');
 		for (String splitDataItem : splitData) {
 			if (!StringUtils.toString(splitDataItem).trim().isEmpty()) {
