@@ -123,7 +123,7 @@ class HTMLMetadataReader implements IMetadataReader {
 		final TagNode[] titleElements = rootNode.getElementsByName("title", true);
 		for (int i = 0; i < titleElements.length; i++) {
 			StringBuffer text = titleElements[i].getText();
-			result.add(new MetadataProperty(METADATA_TYPES.TITLE.getName(), text));
+			result.add(new MetadataProperty(COMMON_METADATA_TYPES.TITLE.getName(), text));
 		}
 		return result;
 	}
@@ -137,7 +137,7 @@ class HTMLMetadataReader implements IMetadataReader {
 	@Override
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		for(MetadataProperty metadataProperty : metadataProperties)
-		for(METADATA_TYPES type : METADATA_TYPES.values()) {
+		for(COMMON_METADATA_TYPES type : COMMON_METADATA_TYPES.values()) {
 			if(type.getName().equalsIgnoreCase(metadataProperty.getName())) {
 				type.fillItem(metadataProperty, item);
 			}
@@ -161,7 +161,7 @@ class HTMLMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, COMMON_METADATA_TYPES type) {
 		return Collections.emptyList();
 	}
 

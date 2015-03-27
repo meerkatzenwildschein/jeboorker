@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui;
 
+import static org.rr.commons.utils.BooleanUtils.not;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -40,13 +42,15 @@ import org.rr.jeborker.gui.cell.MetadataDownloadTableCellRenderer;
 import org.rr.jeborker.gui.model.MetadataDownloadModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
 import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
 import org.rr.jeborker.metadata.download.MetadataDownloadProviderFactory;
 import org.rr.jeborker.metadata.download.MetadataDownloader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
 class MetadataDownloadView extends AbstractDialogView {
+
+	private static final long serialVersionUID = -8695330707780422570L;
 
 	private static final int ABORT_BUTTON_INDEX = 0;
 
@@ -58,7 +62,7 @@ class MetadataDownloadView extends AbstractDialogView {
 
 	private boolean hasCoverWriterSupport = true;
 
-	private Map<METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
+	private Map<COMMON_METADATA_TYPES, List<Entry<JCheckBox, String>>> textValues;
 
 	private byte[] coverImage;
 
@@ -88,7 +92,7 @@ class MetadataDownloadView extends AbstractDialogView {
 					coverImage = editorMetadataDownloadEntry.getCoverImage();
 				}
 			} else {
-				textValues = new HashMap<METADATA_TYPES, List<Entry<JCheckBox, String>>>();
+				textValues = new HashMap<COMMON_METADATA_TYPES, List<Entry<JCheckBox, String>>>();
 			}
 
 			controller.close();
@@ -100,7 +104,7 @@ class MetadataDownloadView extends AbstractDialogView {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			final String selectedItem = (String) searchProviderCombobox.getSelectedItem();
-			final MetadataDownloader downloader = MetadataDownloadProviderFactory.getDownloader(selectedItem);
+			final MetadataDownloader downloader = MetadataDownloadProviderFactory.getDownloader(selectedItem, selectedEbookPropertyItems);
 			final MetadataDownloadModel model = new MetadataDownloadModel(downloader, searchTextField.getText());
 			final ShadowPanel shadowPanel = new ShadowPanel();
 
@@ -127,6 +131,8 @@ class MetadataDownloadView extends AbstractDialogView {
 		}
 	};
 
+	private final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+	
 	private JRScrollPane scrollPane;
 
 	private JRTable table;
@@ -140,17 +146,16 @@ class MetadataDownloadView extends AbstractDialogView {
 	private JLabel lblSearch;
 
 	private JComboBox<String> searchProviderCombobox;
-
+	
 	public MetadataDownloadView(MetadataDownloadController controller, JFrame mainWindow) {
 		super(mainWindow);
 		setModal(true);
 		this.controller = controller;
-		this.initialize();
+		initialize();
 	}
 
 	protected void initialize() {
 		super.initialize();
-		final List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
 		hasCoverWriterSupport = hasCoverWriterSupport(selectedEbookPropertyItems);
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -219,7 +224,7 @@ class MetadataDownloadView extends AbstractDialogView {
 
 		if(!selectedEbookPropertyItems.isEmpty()) {
 			String searchPhrase = (StringUtils.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
-			if(!searchPhrase.isEmpty()) {
+			if(StringUtils.isNotEmpty(searchPhrase)) {
 				searchTextField.setText(searchPhrase.trim());
 			} else {
 				String fileName = FilenameUtils.removeExtension(selectedEbookPropertyItems.get(0).getFileName());
@@ -258,8 +263,6 @@ class MetadataDownloadView extends AbstractDialogView {
 		gbc_panel2.gridx = 0;
 		gbc_panel2.gridy = 2;
 		getContentPane().add(bottomPanel, gbc_panel2);
-		
-//		getRootPane().setDefaultButton(searchButton);
 	}
 
 	public int getActionResult() {
@@ -289,7 +292,7 @@ class MetadataDownloadView extends AbstractDialogView {
 	 *     is a {@link Entry} with the checkbox boolean value as <code>key</code> and the
 	 *     text with the <code>value</code>.
 	 */
-	public List<Entry<Boolean, String>> getValues(IMetadataReader.METADATA_TYPES type) {
+	public List<Entry<Boolean, String>> getValues(IMetadataReader.COMMON_METADATA_TYPES type) {
 		List<Entry<JCheckBox, String>> list = textValues.get(type);
 		if(list != null) {
 			return new TransformValueList<Map.Entry<JCheckBox, String>, Map.Entry<Boolean,String>>(list) {
@@ -301,7 +304,7 @@ class MetadataDownloadView extends AbstractDialogView {
 						@Override
 						public Boolean getKey() {
 							JCheckBox checkbox = source.getKey();
-							if(checkbox == null || !checkbox.isSelected()) {
+							if(checkbox == null || not(checkbox.isSelected())) {
 								return Boolean.FALSE;
 							}
 							return Boolean.TRUE;

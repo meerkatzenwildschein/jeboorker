@@ -9,8 +9,10 @@ import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
 import java.util.Collections;
 import java.util.List;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ListUtils;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 
 public class MetadataHandlerFactory {
 	
@@ -18,10 +20,25 @@ public class MetadataHandlerFactory {
 	
 	/**
 	 * Gets a reader which supports multiple ebook resources.
-	 * @param resources The resources to be handled by the {@link IMetadataReader}.
+	 * @param items The items to be handled by the result {@link IMetadataReader}.
 	 * @return The desired {@link IMetadataReader} instance.
 	 */
-	public static IMetadataReader getReader(final List<IResourceHandler> resources) {
+	public static IMetadataReader getReaderForEbookPropertyItems(final List<EbookPropertyItem> items) {
+		return getReaderForIResourceHandlers(new TransformValueList<EbookPropertyItem, IResourceHandler>(items) {
+
+			@Override
+			public IResourceHandler transform(EbookPropertyItem source) {
+				return source.getResourceHandler();
+			}
+		});
+	}
+	
+	/**
+	 * Gets a reader which supports multiple ebook resources.
+	 * @param resources The resources to be handled by the result {@link IMetadataReader}.
+	 * @return The desired {@link IMetadataReader} instance.
+	 */
+	public static IMetadataReader getReaderForIResourceHandlers(final List<IResourceHandler> resources) {
 		IMetadataReader cachedReader = null;
 		if((cachedReader = getCachedReader(resources)) != null) {
 			return cachedReader;

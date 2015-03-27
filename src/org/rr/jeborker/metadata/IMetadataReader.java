@@ -25,10 +25,10 @@ public interface IMetadataReader {
 	}	
 	
 	/**
-	 * List of common metadata types that can be used with {@link IMetadataReader#getMetadataByType(boolean, List, METADATA_TYPES)}
+	 * List of common metadata types that can be used with {@link IMetadataReader#getMetadataByType(boolean, List, COMMON_METADATA_TYPES)}
 	 * to get some {@link MetadataProperty} from the reader instance.
 	 */
-	public static enum METADATA_TYPES implements MetadataEntryType {
+	public static enum COMMON_METADATA_TYPES implements MetadataEntryType {
 		AUTHOR {
 			public String getName() {
 				return "author";
@@ -271,6 +271,6 @@ public interface IMetadataReader {
 	 * @return A list of genre entries. Never returns <code>null</code> but the result list could also
 	 * 		be empty if the create parameter is <code>true</code>. 
 	 */
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type);
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, COMMON_METADATA_TYPES type);
 	
 }

@@ -7,10 +7,13 @@ import javax.swing.table.AbstractTableModel;
 
 import org.rr.commons.utils.ThreadUtils;
 import org.rr.commons.utils.ThreadUtils.RunnableImpl;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
 import org.rr.jeborker.metadata.download.MetadataDownloader;
 
 public class MetadataDownloadModel extends AbstractTableModel {
+
+	private static final long serialVersionUID = -8746789528889474186L;
 
 	private MetadataDownloader downloader;
 	
@@ -30,7 +33,7 @@ public class MetadataDownloadModel extends AbstractTableModel {
 	 * This Method isn't be invoked automatically by the {@link MetadataDownloadModel} instance.
 	 */
 	public void loadSearchResult() {
-		this.searchEntries = Collections.synchronizedList(this.downloader.search(this.searchPhrase));
+		searchEntries = Collections.synchronizedList(this.downloader.search(this.searchPhrase));
 		ThreadUtils.loopAndWait(searchEntries, new RunnableImpl<MetadataDownloadEntry, Void>() {
 
 			@Override

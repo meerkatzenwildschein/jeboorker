@@ -86,9 +86,9 @@ abstract class SetCoverFrom<T> extends RefreshAbstractAction implements IDoOnlyO
 		
 		boolean isNewCoverProperty = false;
 		List<MetadataProperty> allMetadata = model.getAllMetadata();
-		List<MetadataProperty> coverMetadata = metadataReader.getMetadataByType(false, allMetadata, IMetadataReader.METADATA_TYPES.COVER);
+		List<MetadataProperty> coverMetadata = metadataReader.getMetadataByType(false, allMetadata, IMetadataReader.COMMON_METADATA_TYPES.COVER);
 		if(coverMetadata.isEmpty()) {
-			coverMetadata = metadataReader.getMetadataByType(true, model.getAllMetadata(), IMetadataReader.METADATA_TYPES.COVER);
+			coverMetadata = metadataReader.getMetadataByType(true, model.getAllMetadata(), IMetadataReader.COMMON_METADATA_TYPES.COVER);
 			isNewCoverProperty = true;
 		}
 		

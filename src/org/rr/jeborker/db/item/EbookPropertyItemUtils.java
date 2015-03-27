@@ -103,7 +103,7 @@ public class EbookPropertyItemUtils {
 			reader.fillEbookPropertyItem(metadataProperties, item);
 			if(refreshCover) {
 				boolean refreshed = false;
-				List<MetadataProperty> metadataByType = reader.getMetadataByType(false, metadataProperties, IMetadataReader.METADATA_TYPES.COVER);
+				List<MetadataProperty> metadataByType = reader.getMetadataByType(false, metadataProperties, IMetadataReader.COMMON_METADATA_TYPES.COVER);
 				if(metadataByType != null && !metadataByType.isEmpty()) {
 					MetadataProperty metadataProperty = metadataByType.get(0);
 					if(metadataProperty.getValues() != null && !metadataProperty.getValues().isEmpty()) {

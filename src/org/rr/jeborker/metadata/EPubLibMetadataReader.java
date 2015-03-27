@@ -46,7 +46,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			final List<MetadataProperty> metadataList = this.createMetadataList(epub, metadata);
 			return metadataList;
 		} catch (Throwable e) {
-			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for epub " + ebookResourceHandler, e);
+			LoggerFactory.logWarning(getClass(), "Could not read metadata for epub " + ebookResourceHandler, e);
 		} finally {
 			ebookResourceHandler.dispose();
 		}
@@ -167,7 +167,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		List<Meta> otherMeta = metadata.getOtherMeta();
 		for(Meta meta : otherMeta) {
 			//no need to read the cover meta entry. It's already provided by the Reader and added later.
-			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(meta.getName())) {
+			if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(meta.getName())) {
 				continue;
 			}
 			result.add(new EpubLibMetadataProperty<Meta>(meta.getName(), meta.getContent(), meta));
@@ -307,7 +307,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	}
 
 	@Override
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, IMetadataReader.METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, IMetadataReader.COMMON_METADATA_TYPES type) {
 		MetadataProperty newProperty;
 		switch(type) {
 		case AUTHOR:

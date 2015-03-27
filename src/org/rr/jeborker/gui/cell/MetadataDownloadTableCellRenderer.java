@@ -53,7 +53,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	
 	private JCheckBox imageCheck;
 	
-	private Map<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
+	private Map<IMetadataReader.COMMON_METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> editingValues = new HashMap<IMetadataReader.COMMON_METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 	
 	private MetadataDownloadEntry editingEntry;
 	
@@ -143,47 +143,47 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		mainPanel.removeAll();
 		if(isEditing) {
 			//create a new one because the old is used as result.
-			editingValues = new HashMap<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
+			editingValues = new HashMap<IMetadataReader.COMMON_METADATA_TYPES, List<Map.Entry<JCheckBox, String>>>();
 			editingEntry = entry;
 		}
 		
 		for(String author : entry.getAuthors()) {
-			JComponent metadataEntryAuthorView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.author"), author, componentCount, IMetadataReader.METADATA_TYPES.AUTHOR);
+			JComponent metadataEntryAuthorView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.author"), author, componentCount, IMetadataReader.COMMON_METADATA_TYPES.AUTHOR);
 			mainPanel.add(metadataEntryAuthorView);
 			componentCount++;
 		}
 		
-		if(!StringUtils.isEmpty(entry.getTitle())) {
-			JComponent metadataEntryTitleView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.title"), entry.getTitle(), componentCount, IMetadataReader.METADATA_TYPES.TITLE);
+		if(StringUtils.isNotEmpty(entry.getTitle())) {
+			JComponent metadataEntryTitleView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.title"), entry.getTitle(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.TITLE);
 			mainPanel.add(metadataEntryTitleView);
 			componentCount++;
 		}
 		
-		if(!StringUtils.isEmpty(entry.getAgeSuggestion())) {
-			JComponent metadataEntryAgeSuggestionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.ageSuggestion"), entry.getAgeSuggestion(), componentCount, IMetadataReader.METADATA_TYPES.AGE_SUGGESTION);
+		if(StringUtils.isNotEmpty(entry.getAgeSuggestion())) {
+			JComponent metadataEntryAgeSuggestionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.ageSuggestion"), entry.getAgeSuggestion(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.AGE_SUGGESTION);
 			mainPanel.add(metadataEntryAgeSuggestionView);
 			componentCount++;
 		}
 		
 		//no isbn 10 if isbn 13 is available
-		if(!StringUtils.isEmpty(entry.getIsbn13())) {
-			JComponent metadataEntryISBN13View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn13"), entry.getIsbn13(), componentCount, IMetadataReader.METADATA_TYPES.ISBN);
+		if(StringUtils.isNotEmpty(entry.getIsbn13())) {
+			JComponent metadataEntryISBN13View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn13"), entry.getIsbn13(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN13View);
 			componentCount++;
-		} else if(!StringUtils.isEmpty(entry.getIsbn10())) {
-			JComponent metadataEntryISBN10View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn10"), entry.getIsbn10(), componentCount, IMetadataReader.METADATA_TYPES.ISBN);
+		} else if(StringUtils.isNotEmpty(entry.getIsbn10())) {
+			JComponent metadataEntryISBN10View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn10"), entry.getIsbn10(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN10View);
 			componentCount++;
 		}
 		
-		if(!StringUtils.isEmpty(entry.getLanguage())) {
-			JComponent metadataEntryLanguageView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.language"), entry.getLanguage(), componentCount, IMetadataReader.METADATA_TYPES.LANGUAGE);
+		if(StringUtils.isNotEmpty(entry.getLanguage())) {
+			JComponent metadataEntryLanguageView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.language"), entry.getLanguage(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.LANGUAGE);
 			mainPanel.add(metadataEntryLanguageView);
 			componentCount++;
 		}
 		
-		if(!StringUtils.isEmpty(entry.getDescription())) {
-			JComponent metadataEntryDescriptionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.description"), entry.getDescription(), componentCount, IMetadataReader.METADATA_TYPES.DESCRIPTION);
+		if(StringUtils.isNotEmpty(entry.getDescription())) {
+			JComponent metadataEntryDescriptionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.description"), entry.getDescription(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.DESCRIPTION);
 			mainPanel.add(metadataEntryDescriptionView);
 			componentCount++;
 		}
@@ -191,7 +191,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		return componentCount;
 	}
 	
-	private JComponent getMetadataEntryViewPanel(String labelText, final String value, int index, IMetadataReader.METADATA_TYPES type) {
+	private JComponent getMetadataEntryViewPanel(String labelText, final String value, int index, IMetadataReader.COMMON_METADATA_TYPES type) {
 		JPanel panel = getOrCreatePanel(index);
 		
 		JLabel valueLabel = getOrCreateLabel("<html><b>" + labelText + "</b>: " + value + "</html>", index);
@@ -302,7 +302,7 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 	/**
 	 * Get the values for the editing component.
 	 */
-	Map<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
+	Map<IMetadataReader.COMMON_METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
 		return editingValues;
 	}
 	

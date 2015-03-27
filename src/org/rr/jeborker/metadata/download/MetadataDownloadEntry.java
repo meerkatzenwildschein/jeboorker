@@ -17,7 +17,7 @@ public interface MetadataDownloadEntry {
 	public String getDescription();
 	
 	public String getAgeSuggestion();
-
+	
 	/**
 	 * Get a thumbnail image which can be used for the preview.
 	 */

@@ -26,7 +26,7 @@ import org.rr.commons.utils.compression.FileEntryFilter;
 import org.rr.commons.utils.compression.zip.LazyZipEntryStream;
 import org.rr.commons.utils.compression.zip.ZipUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
 
 abstract class AEpubMetadataHandler extends AMetadataHandler {
 
@@ -85,7 +85,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.SERIES_NAME.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.SERIES_NAME.fillItem(metadataProperty, item);
 			}
 		},SUBJECT {
 			public String getName() {
@@ -94,7 +94,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 
 			@Override
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.GENRE.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.GENRE.fillItem(metadataProperty, item);
 			}
 		},PUBLISHER {
 			public String getName() {
@@ -163,11 +163,11 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 		},TITLE {
 			public String getName() {
-				return METADATA_TYPES.TITLE.getName();
+				return COMMON_METADATA_TYPES.TITLE.getName();
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.TITLE.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.TITLE.fillItem(metadataProperty, item);
 			}
 		},DATE {
 			public String getName() {
@@ -219,7 +219,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.AUTHOR.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.AUTHOR.fillItem(metadataProperty, item);
 			}
 		},TYPE {
 			public String getName() {
@@ -251,7 +251,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.COVER.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.COVER.fillItem(metadataProperty, item);
 			}
 		}
 	}

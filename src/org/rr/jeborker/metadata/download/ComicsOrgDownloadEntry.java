@@ -5,8 +5,9 @@ import static org.rr.commons.utils.StringUtils.EMPTY;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.jsoup.nodes.Document;
@@ -41,22 +42,39 @@ public class ComicsOrgDownloadEntry implements MetadataDownloadEntry {
 
 	@Override
 	public List<String> getAuthors() {
-		Elements singleStories = htmlDoc.getElementsByClass("credits");
-		for (Element singleStory : singleStories) {
-			Elements authors = singleStory.getElementsByClass("credit_value");
-			if(authors != null && not(authors.isEmpty())) {
-				List<String> result = new ArrayList<String>(authors.size());
-				for (Element author : authors) {
-					String authorText = author.text();
-					if(not(authorText.startsWith("?")) && not(result.contains(authorText))) {
-						result.add(author.text());
+		Map<String, String> values = getValues();
+		List<String> result = new ArrayList<String>(values.size());
+		if(values.containsKey("Pencils")) {
+			result.add(values.get("Pencils"));
+		}
+		if(values.containsKey("Inks")) {
+			result.add(values.get("Inks"));
+		}
+		if(values.containsKey("Colors")) {
+			result.add(values.get("Colors"));
+		}
+		return result;
+	}
+	
+	public Map<String, String> getValues() {
+		Map<String, String> result = new HashMap<>();
+		Elements credits = htmlDoc.getElementsByClass("single_story");
+		for (Element credit : credits) {
+			Elements spans = credit.getElementsByTag("span");
+			String creditLabel = null;
+			for (Element span : spans) {
+				if(span.className().equals("credit_label")) {
+					creditLabel = span.text().replace(":", "").trim();
+				} else if(span.className().equals("credit_value")) {
+					String value = span.text().trim();
+					if(not(StringUtils.equals(value, "?"))) {
+						result.put(creditLabel, span.text().trim());
 					}
 				}
-				return result;
 			}
 		}
-
-		return Collections.emptyList();
+		
+		return result;
 	}
 
 	@Override

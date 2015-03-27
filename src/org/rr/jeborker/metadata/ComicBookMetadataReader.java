@@ -34,12 +34,12 @@ class ComicBookMetadataReader implements IMetadataReader {
 	private ComicBookReader comicBookReader;
 
 	ComicBookMetadataReader(IResourceHandler resource) {
-		this.ebookResourceHandler = resource;
+		ebookResourceHandler = resource;
 	}
 
 	@Override
 	public List<IResourceHandler> getEbookResource() {
-		return Collections.singletonList(this.ebookResourceHandler);
+		return Collections.singletonList(ebookResourceHandler);
 	}
 
 	@Override
@@ -67,10 +67,10 @@ class ComicBookMetadataReader implements IMetadataReader {
 			}
 			byte[] cover = doc.getCover();
 			if(cover != null) {
-				result.add(new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), cover));
+				result.add(new MetadataProperty(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName(), cover));
 			}
 		} catch (Throwable e) {
-			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for comicbook " + ebookResourceHandler, e);
+			LoggerFactory.logWarning(getClass(), "Could not read metadata for comicbook " + ebookResourceHandler, e);
 		}
 		return result;
 	}
@@ -109,7 +109,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, COMMON_METADATA_TYPES type) {
 		MetadataProperty newProperty;
 		switch(type) {
 		case AUTHOR:
@@ -140,7 +140,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 			newProperty = new MetadataProperty(COMICBOOK_METADATA_TYPES.LANGUAGE.getName(), EMPTY);
 			break;
 		case COVER:
-			newProperty = new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), null);
+			newProperty = new MetadataProperty(COMMON_METADATA_TYPES.COVER.getName(), null);
 			break;
 		default: newProperty = null;
 		}
@@ -168,10 +168,10 @@ class ComicBookMetadataReader implements IMetadataReader {
 	}
 
 	ComicBookDocument getDocument() throws IOException {
-		if(this.doc == null) {
-			this.doc = getComicBookReader().getDocument();
+		if(doc == null) {
+			doc = getComicBookReader().getDocument();
 		}
-		return this.doc;
+		return doc;
 	}
 
 	/**
@@ -220,7 +220,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.TITLE.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.TITLE.fillItem(metadataProperty, item);
 			}
 
 			public List<String> getValidValues() {
@@ -244,7 +244,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.SERIES_NAME.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.SERIES_NAME.fillItem(metadataProperty, item);
 			}
 
 			public List<String> getValidValues() {
@@ -507,7 +507,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.AUTHOR.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.AUTHOR.fillItem(metadataProperty, item);
 			}
 
 			public List<String> getValidValues() {
@@ -723,7 +723,7 @@ class ComicBookMetadataReader implements IMetadataReader {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				METADATA_TYPES.GENRE.fillItem(metadataProperty, item);
+				COMMON_METADATA_TYPES.GENRE.fillItem(metadataProperty, item);
 			}
 
 			public List<String> getValidValues() {

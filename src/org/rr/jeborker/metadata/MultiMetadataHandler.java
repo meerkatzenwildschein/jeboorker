@@ -28,14 +28,14 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	@Override
 	public List<MetadataProperty> readMetadata() {	
 		//read and collect metadata from the ebook resources
-		final HashMap<METADATA_TYPES, List<MetadataProperty>> metadata = new HashMap<IMetadataReader.METADATA_TYPES, List<MetadataProperty>>();
+		final HashMap<COMMON_METADATA_TYPES, List<MetadataProperty>> metadata = new HashMap<IMetadataReader.COMMON_METADATA_TYPES, List<MetadataProperty>>();
 		for (int i = 0; i < ebookResourceHandler.size(); i++) {
 			final IResourceHandler resourceHandler = ebookResourceHandler.get(i);
 			final IMetadataReader reader = MetadataHandlerFactory.getReader(resourceHandler);
 			final List<MetadataProperty> readMetadata = reader.readMetadata();
 
 			//collect all metadata separated by it's type (author, title, etc.)
-			for(METADATA_TYPES type : METADATA_TYPES.values()) {
+			for(COMMON_METADATA_TYPES type : COMMON_METADATA_TYPES.values()) {
 				List<MetadataProperty> typeMetadata = metadata.containsKey(type) ? metadata.get(type) : new ArrayList<MetadataProperty>();
 				typeMetadata.addAll(reader.getMetadataByType(true, readMetadata, type));
 				metadata.put(type, typeMetadata);				
@@ -52,10 +52,10 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	 * Create {@link MetadataProperty} list for the properties given with the <i>metadata</i> parameter.
 	 * @return List with {@link MetadataProperty}. Never returns <code>null</code>.
 	 */
-	protected List<MetadataProperty> createMetadataProperties(final HashMap<METADATA_TYPES, List<MetadataProperty>> metadata) {
+	protected List<MetadataProperty> createMetadataProperties(final HashMap<COMMON_METADATA_TYPES, List<MetadataProperty>> metadata) {
 		final List<MetadataProperty> result = new ArrayList<>();
-        for (Map.Entry<METADATA_TYPES, List<MetadataProperty>> entry : metadata.entrySet()) {
-            final METADATA_TYPES metadataType = entry.getKey();
+        for (Map.Entry<COMMON_METADATA_TYPES, List<MetadataProperty>> entry : metadata.entrySet()) {
+            final COMMON_METADATA_TYPES metadataType = entry.getKey();
             final List<MetadataProperty> metadataValues = entry.getValue();
             final List<Object> values = new ArrayList<Object>() { 
             	{
@@ -76,7 +76,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 
 	@Override
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
-		for(METADATA_TYPES type : METADATA_TYPES.values()) {
+		for(COMMON_METADATA_TYPES type : COMMON_METADATA_TYPES.values()) {
 			for(MetadataProperty metadataProperty : metadataProperties) {
 				if(metadataProperty.getName().equals(type.getName())) {
 					type.fillItem(metadataProperty, item);
@@ -96,7 +96,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 
 	@Override
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, COMMON_METADATA_TYPES type) {
 		List<MetadataProperty> result = new ArrayList<>();
 		for(MetadataProperty prop : props) {
 			if(prop.getName().equals(type.getName())) {
@@ -113,13 +113,13 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 	}
 	
 	/**
-	 * Tells if the given {@link METADATA_TYPES} is available as 
+	 * Tells if the given {@link COMMON_METADATA_TYPES} is available as 
 	 * multi metadata property. Not all metadata are commonly supported
 	 * by each metadata writer instance.  
 	 * 
 	 * @return <code>true</code> for support and <code>false</code> otherwise.
 	 */
-	private boolean isSupportedMultiMetadata(final METADATA_TYPES type) {
+	private boolean isSupportedMultiMetadata(final COMMON_METADATA_TYPES type) {
 		switch(type) {
 			case AUTHOR:
 			case TITLE:
@@ -142,7 +142,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 			final List<MetadataProperty> readMetadata = new ArrayList<>(reader.readMetadata());
 			
 			boolean change = false;
-			for(METADATA_TYPES type : METADATA_TYPES.values()) {
+			for(COMMON_METADATA_TYPES type : COMMON_METADATA_TYPES.values()) {
 				for(MetadataProperty prop : props) {
 					if(type.getName().equals(prop.getName()) && !prop.getValues().isEmpty()) {
 						final Object value = prop.getValues().get(0);

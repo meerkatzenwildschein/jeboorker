@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtils;
 
@@ -127,14 +128,7 @@ public class MetadataProperty implements Cloneable {
 	}
 	
 	public String toString() {
-		return new StringBuilder(MetadataProperty.class.getSimpleName())
-			.append("[")
-			.append("name=")
-			.append(name)
-			.append(" value=")
-			.append(getValueAsString())
-			.append("]")
-			.toString();
+		return new ToStringBuilder(this).append("name", name).append("value", getValueAsString()).toString();
 	}
 
 	/**
@@ -189,13 +183,13 @@ public class MetadataProperty implements Cloneable {
 	 * Creates a new {@link MetadataProperty} instance with the data of this {@link MetadataProperty}.
 	 */
 	public MetadataProperty clone() {
-		MetadataProperty newMetadataProperty = new MetadataProperty(this.name, new ArrayList<>(this.values));
-		newMetadataProperty.propertyClass = this.propertyClass;
-		newMetadataProperty.propertyEditorClass = this.propertyEditorClass;
-		newMetadataProperty.propertyRendererClass = this.propertyRendererClass;
-		newMetadataProperty.validValues = this.validValues;
-		newMetadataProperty.hints = this.hints;
-		return newMetadataProperty;
+		MetadataProperty clone = new MetadataProperty(name, new ArrayList<>(values));
+		clone.propertyClass = propertyClass;
+		clone.propertyEditorClass = propertyEditorClass;
+		clone.propertyRendererClass = propertyRendererClass;
+		clone.validValues = validValues;
+		clone.hints = hints;
+		return clone;
 	}
 
 	public Class<?> getPropertyEditorClass() {
@@ -218,10 +212,10 @@ public class MetadataProperty implements Cloneable {
 	 * Adds a hint to this {@link MetadataProperty} instance.
 	 */
 	public void addHint(MetadataProperty.HINTS key, Object value) {
-		if(this.hints == null) {
-			this.hints = new HashMap<MetadataProperty.HINTS, Object>();
+		if(hints == null) {
+			hints = new HashMap<MetadataProperty.HINTS, Object>();
 		}
-		this.hints.put(key, value);
+		hints.put(key, value);
 	}
 	
 	/**
@@ -229,8 +223,8 @@ public class MetadataProperty implements Cloneable {
 	 * @return The desired hint or <code>null</code> if the desired hint is not available. 
 	 */
 	public Object getHint(MetadataProperty.HINTS key) {
-		if(this.hints != null) {
-			return this.hints.get(key);
+		if(hints != null) {
+			return hints.get(key);
 		}
 		return null;
 	}

@@ -10,7 +10,7 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
-import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
 
 import com.l2fprod.common.propertysheet.Property;
 
@@ -26,11 +26,11 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 			}
 		}
 		
-		reader = MetadataHandlerFactory.getReader(ebookResourceHandlers);
-		allMetadata = new ArrayList<>(METADATA_TYPES.values().length);
+		reader = MetadataHandlerFactory.getReaderForIResourceHandlers(ebookResourceHandlers);
+		allMetadata = new ArrayList<>(COMMON_METADATA_TYPES.values().length);
 		final ArrayList<Property> result = new ArrayList<>(allMetadata.size());
 		
-		for(METADATA_TYPES type : METADATA_TYPES.values()) {
+		for(COMMON_METADATA_TYPES type : COMMON_METADATA_TYPES.values()) {
 			List<MetadataProperty> l = Collections.emptyList();
 			List<MetadataProperty> metadataByType = reader.getMetadataByType(true, l, type);
 			if(!metadataByType.isEmpty()) {
@@ -51,7 +51,7 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 		setProperties(result.toArray(new Property[result.size()]));
 	}
 	
-	private static Property createProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, final METADATA_TYPES type) {
+	private static Property createProperty(final MetadataProperty metadataProperty, final List<EbookPropertyItem> items, final COMMON_METADATA_TYPES type) {
 		return new EbookSheetProperty(metadataProperty, items, -1) {
 			final ArrayList<String> values = new ArrayList<String>(items.size()) {
 				{

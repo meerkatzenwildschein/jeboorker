@@ -3,6 +3,8 @@ package org.rr.jeborker.metadata.download;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rr.jeborker.db.item.EbookPropertyItem;
+
 public class MetadataDownloadProviderFactory {
 	
 	public static interface DownloaderType {
@@ -79,7 +81,7 @@ public class MetadataDownloadProviderFactory {
 	 *     {@link #getDownloaderNames()} method.
 	 * @return The desired downloader or <code>null</code> if there is no downloader with the given name.
 	 */
-	public static MetadataDownloader getDownloader(String name) {
+	public static MetadataDownloader getDownloader(String name, List<EbookPropertyItem> selectedEbookPropertyItems) {
 		for(DOWNLOADER_TYPES type: DOWNLOADER_TYPES.values()) {
 			if(type.getName().equals(name)) {
 				return type.getMetadataDownloader();

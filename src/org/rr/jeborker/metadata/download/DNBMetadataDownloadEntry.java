@@ -166,4 +166,5 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 	public String getAgeSuggestion() {
 		return null;
 	}
+	
 }

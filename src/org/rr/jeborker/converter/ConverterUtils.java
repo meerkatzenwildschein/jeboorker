@@ -24,7 +24,7 @@ class ConverterUtils {
 		List<MetadataProperty> sourceMetadata = sourceReader.readMetadata();
 		List<MetadataProperty> targetMetadata = new ArrayList<>(sourceMetadata.size());
 
-		for(IMetadataReader.METADATA_TYPES type : IMetadataReader.METADATA_TYPES.values()) {
+		for(IMetadataReader.COMMON_METADATA_TYPES type : IMetadataReader.COMMON_METADATA_TYPES.values()) {
 			List<MetadataProperty> sourceMetadataByType = sourceReader.getMetadataByType(false, sourceMetadata, type);
 			List<MetadataProperty> targetMetadataByType = targetReader.getMetadataByType(true, targetMetadata, type);
 

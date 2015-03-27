@@ -95,15 +95,15 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 					fetchThumbnail = pdfDoc.fetchCoverFromPDFContent();
 				}
 				if(fetchThumbnail != null) {
-					result.add(new MetadataProperty(IMetadataReader.METADATA_TYPES.COVER.getName(), fetchThumbnail));
+					result.add(new MetadataProperty(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName(), fetchThumbnail));
 				}
 			} catch (Exception e) {
-				LoggerFactory.logWarning(this.getClass(), "Could not read cover for pdf " + ebookResource, e);
+				LoggerFactory.logWarning(getClass(), "Could not read cover for pdf " + ebookResource, e);
 			}
 
 			return result;
 		} catch (Throwable e) {
-			LoggerFactory.logWarning(this.getClass(), "Could not read metadata for pdf " + ebookResource, e);
+			LoggerFactory.logWarning(getClass(), "Could not read metadata for pdf " + ebookResource, e);
 		}
 		return new ArrayList<MetadataProperty>(0);
 	}
@@ -112,7 +112,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		try {
 			return pdfDoc.getXMPMetadata();
 		} catch (IOException e) {
-			LoggerFactory.logWarning(this.getClass(), "Could not read xmp metadata for pdf " + ebookResource, e);
+			LoggerFactory.logWarning(getClass(), "Could not read xmp metadata for pdf " + ebookResource, e);
 		}
 		return null;
 	}
@@ -121,7 +121,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		try {
 			return pdfDoc.getInfo();
 		} catch (IOException e) {
-			LoggerFactory.logWarning(this.getClass(), "Could not read info metadata for pdf " + ebookResource, e);
+			LoggerFactory.logWarning(getClass(), "Could not read info metadata for pdf " + ebookResource, e);
 		}
 		return null;
 	}
@@ -210,17 +210,17 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 				item.setSeriesIndex(metadataProperty.getValueAsString());
 			} else if(name.equals("seriesname")) {
 				item.setSeriesName(metadataProperty.getValueAsString());
-			} else if(name.equals(IMetadataReader.METADATA_TYPES.COVER.getName())) {
-				IMetadataReader.METADATA_TYPES.COVER.fillItem(metadataProperty, item);
+			} else if(name.equals(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName())) {
+				IMetadataReader.COMMON_METADATA_TYPES.COVER.fillItem(metadataProperty, item);
 			}
 		}
 		if(!authorMetadataProperty.isEmpty()) {
 			for(MetadataProperty property : authorMetadataProperty) {
-				METADATA_TYPES.AUTHOR.fillItem(property, item);
+				COMMON_METADATA_TYPES.AUTHOR.fillItem(property, item);
 			}
 		} else {
 			for(MetadataProperty property : creatorMetadataProperty) {
-				METADATA_TYPES.AUTHOR.fillItem(property, item);
+				COMMON_METADATA_TYPES.AUTHOR.fillItem(property, item);
 			}
 		}
 	}
@@ -332,7 +332,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 	}
 
 	@Override
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, COMMON_METADATA_TYPES type) {
 		final String search;
 		final String name;
 

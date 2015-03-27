@@ -58,7 +58,9 @@ class MetadataDownloadUtils {
 	static List<Document> getDocuments(List<byte[]> content, String url) throws IOException {
 		List<Document> documents = new ArrayList<>(content.size());
 		for (byte[] bs : content) {
-			documents.add(getDocument(bs, url));
+			if(content != null) {
+				documents.add(getDocument(bs, url));
+			}
 		}
 		return documents;
 	}

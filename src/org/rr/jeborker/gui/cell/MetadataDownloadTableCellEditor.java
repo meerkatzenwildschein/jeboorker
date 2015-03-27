@@ -13,7 +13,7 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
 import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
 
 public class MetadataDownloadTableCellEditor implements TableCellEditor, Serializable {
@@ -24,7 +24,7 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	private MetadataDownloadEntry editingEntry;
 
 
-	private Map<METADATA_TYPES, List<Entry<JCheckBox, String>>> editingValues;
+	private Map<COMMON_METADATA_TYPES, List<Entry<JCheckBox, String>>> editingValues;
 	
 	public MetadataDownloadTableCellEditor(MetadataDownloadTableCellRenderer renderer) {
 		super();
@@ -41,7 +41,7 @@ public class MetadataDownloadTableCellEditor implements TableCellEditor, Seriali
 	/**
 	 * Get the values for the editing component.
 	 */
-	public Map<IMetadataReader.METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
+	public Map<IMetadataReader.COMMON_METADATA_TYPES, List<Map.Entry<JCheckBox, String>>> getEditingValues() {
 		return editingValues;
 	}
 

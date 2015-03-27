@@ -100,7 +100,7 @@ public class MetadataDownloadController {
 	 *     is a {@link Entry} with the checkbox boolean value as <code>key</code> and the
 	 *     text with the <code>value</code>.
 	 */
-	public List<Entry<Boolean, String>> getValues(IMetadataReader.METADATA_TYPES type) {
+	public List<Entry<Boolean, String>> getValues(IMetadataReader.COMMON_METADATA_TYPES type) {
 		return getView().getValues(type);
 	}
 	
@@ -109,7 +109,7 @@ public class MetadataDownloadController {
 	 * that are selected by the user.
 	 * @return A list with the downloaded string values for the given type.
 	 */
-	public List<String> getFilteredValues(IMetadataReader.METADATA_TYPES type) {
+	public List<String> getFilteredValues(IMetadataReader.COMMON_METADATA_TYPES type) {
 		List<Entry<Boolean, String>> values = getValues(type);
 		ArrayList<String> result = new ArrayList<>(values.size());
 		for(Entry<Boolean, String> value : values) {

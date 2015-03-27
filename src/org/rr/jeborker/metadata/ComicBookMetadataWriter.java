@@ -33,7 +33,7 @@ class ComicBookMetadataWriter implements IMetadataWriter {
 			for(MetadataProperty prop : props) {
 				String name = prop.getName();
 				String value = prop.getValueAsString();
-				if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name)) {
+				if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(name)) {
 					continue;
 				}
 				docInfo.put(name, value);

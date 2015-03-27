@@ -33,6 +33,6 @@ public class PreferenceItem implements IDBObject, Serializable {
 	}
 
 	public String toString() {
-		return this.getClass().getName() + "[" + name + "=" + value + "]";
+		return getClass().getName() + "[" + name + "=" + value + "]";
 	}
 }

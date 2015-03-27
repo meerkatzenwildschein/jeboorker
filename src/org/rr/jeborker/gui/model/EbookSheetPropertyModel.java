@@ -116,7 +116,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public Property getCoverProperty() {
 		List<MetadataProperty> allMetadata = getAllMetadata();
 		for(MetadataProperty metadata : allMetadata) {
-			if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(metadata.getName())) {
+			if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(metadata.getName())) {
 				final DefaultProperty coverProperty = new DefaultProperty();
 				coverProperty.setDisplayName("cover");
 				coverProperty.setName(metadata.getName());
@@ -216,7 +216,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public byte[] getCover() {
 		IMetadataReader metadataReader = getMetadataReader();
 		if(metadataReader != null) {
-			List<MetadataProperty> metadataByType = metadataReader.getMetadataByType(false, allMetadata, IMetadataReader.METADATA_TYPES.COVER);
+			List<MetadataProperty> metadataByType = metadataReader.getMetadataByType(false, allMetadata, IMetadataReader.COMMON_METADATA_TYPES.COVER);
 			if(metadataByType != null && !metadataByType.isEmpty()) {
 				MetadataProperty metadataProperty = metadataByType.get(0);
 				if(metadataProperty.getValues() != null && !metadataProperty.getValues().isEmpty()) {
@@ -310,7 +310,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	 * @return <code>true</code> if the given {@link Property} is a cover and <code>false</code> otherwise.
 	 */
 	private boolean isCoverProperty(Property property) {
-		if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(property.getName())) {
+		if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(property.getName())) {
 			return true;
 		}
 		return false;

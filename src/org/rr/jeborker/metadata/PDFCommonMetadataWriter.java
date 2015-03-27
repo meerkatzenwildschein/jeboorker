@@ -76,10 +76,10 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 						String dateValue = DateConversionUtils.toString((Date) firstValue, DateConversionUtils.DATE_FORMATS.PDF);
 						info.put(name, dateValue);
 					} else {
-						if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
+						if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
 							fetchXMPThumbnail = (byte[]) firstValue;
 							xmpMetadataSet = true;
-						} else if(IMetadataReader.METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof String) {
+						} else if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof String) {
 							fetchXMPThumbnail = Base64.decode((String) firstValue);
 							xmpMetadataSet = true;
 						} else {

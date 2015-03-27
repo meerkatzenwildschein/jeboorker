@@ -39,7 +39,7 @@ import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.metadata.IMetadataReader;
-import org.rr.jeborker.metadata.IMetadataReader.METADATA_TYPES;
+import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -340,7 +340,7 @@ public class MainController {
 			List<EbookPropertyItem> selectedEbookPropertyItems = getSelectedEbookPropertyItems();
 			for (EbookPropertyItem item : selectedEbookPropertyItems) {
 				IMetadataReader reader = MetadataHandlerFactory.getReader(ResourceHandlerFactory.getResourceHandler(item.getFile()));
-				List<MetadataProperty> metadataByType = reader.getMetadataByType(true, model.getAllMetadata(), METADATA_TYPES.RATING);
+				List<MetadataProperty> metadataByType = reader.getMetadataByType(true, model.getAllMetadata(), COMMON_METADATA_TYPES.RATING);
 				if(!metadataByType.isEmpty()) {
 					MetadataProperty ratingMetadata = metadataByType.get(0);
 

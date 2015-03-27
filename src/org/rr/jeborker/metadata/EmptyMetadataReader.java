@@ -46,7 +46,7 @@ public class EmptyMetadataReader implements IMetadataReader {
 	}
 
 	@Override
-	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, METADATA_TYPES type) {
+	public List<MetadataProperty> getMetadataByType(boolean create, List<MetadataProperty> props, COMMON_METADATA_TYPES type) {
 		return Collections.emptyList();
 	}
 

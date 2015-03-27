@@ -180,7 +180,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 			}
 		} catch (Exception e) {
 			final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
-			LoggerFactory.logWarning(this.getClass(), "could not write cover for " + ebookResourceHandler.getName(), e);
+			LoggerFactory.logWarning(getClass(), "could not write cover for " + ebookResourceHandler.getName(), e);
 		}			
 	}
 	
