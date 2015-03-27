@@ -31,7 +31,7 @@ public class URLResourceHandler extends AResourceHandler {
 
 	@Override
 	public boolean isValidResource(String resource) {
-		if(resource != null && resource.startsWith("http://")) {
+		if(resource != null && (resource.startsWith("http://") || resource.startsWith("https://"))) {
 			try {
 				new URL(resource);
 				return true;
@@ -54,10 +54,10 @@ public class URLResourceHandler extends AResourceHandler {
 	@Override
 	public ResourceHandlerInputStream getContentInputStream() throws IOException {
 		ResourceHandlerInputStream result;
-		if(this.url.getProtocol().equals("http")) {
-			result = new ResourceHandlerInputStream(this, new HttpInputStream(this.url));
+		if(url.getProtocol().equals("http")) {
+			result = new ResourceHandlerInputStream(this, new HttpInputStream(url));
 		} else {
-			URLConnection connection = this.url.openConnection();
+			URLConnection connection = url.openConnection();
 			if(connection instanceof HttpURLConnection) {
 				((HttpURLConnection) connection).setConnectTimeout(10 * 1000); //10 sec timeout
 				((HttpURLConnection) connection).setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");

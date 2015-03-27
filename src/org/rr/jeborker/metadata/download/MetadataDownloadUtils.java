@@ -29,7 +29,10 @@ class MetadataDownloadUtils {
 		try {
 			LoggerFactory.getLogger().log(Level.INFO, "Downloading " + url);
 			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(url);
-			return resourceLoader.getContent();
+			if(resourceLoader != null) {
+				return resourceLoader.getContent();
+			}
+			LoggerFactory.getLogger(MetadataDownloadUtils.class).log(Level.INFO, "No resource loader for " + url);
 		} catch (IOException e) {
 			LoggerFactory.getLogger(MetadataDownloadUtils.class).log(Level.INFO, "Failed load " + url, e);
 		}
