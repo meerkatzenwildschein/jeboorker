@@ -97,6 +97,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 			if(link.tagName().equals("a")) {
 				String href = link.attr("href");
 				if (href != null && href.contains("books.google.") && !href.contains("printsec=")) {
+					href = href.replaceAll("https://", "http://");
 					links.add(href);
 				}
 			}

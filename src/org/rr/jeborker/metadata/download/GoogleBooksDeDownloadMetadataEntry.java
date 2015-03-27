@@ -130,6 +130,7 @@ public class GoogleBooksDeDownloadMetadataEntry implements MetadataDownloadEntry
 				String imageUrl = imageElement.attr("src");
 				try {
 					if(imageUrl.startsWith("http")) {
+						imageUrl = imageUrl.replaceAll("https://", "http://");
 						LoggerFactory.getLogger(this).log(Level.INFO, "Downloading " + imageUrl);
 						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
 						thumbnailImage = resourceHandler.getContent();
