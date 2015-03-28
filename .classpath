@@ -35,6 +35,10 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar" sourcepath="lib/commons-lang-2.6-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Jpushbullet"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+<<<<<<< HEAD
+	<classpathentry kind="lib" path="lib/bounce-0.19.jar"/>
+=======
 	<classpathentry kind="lib" path="lib/bounce.jar"/>
+>>>>>>> refs/remotes/origin/master
 	<classpathentry kind="output" path="bin"/>
 </classpath>
