@@ -4,26 +4,26 @@
  * Copyright (c) 2002 - 2009, Edwin Dankert
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice, 
+ * * Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright 
- *   notice, this list of conditions and the following disclaimer in the 
- *   documentation and/or other materials provided with the distribution. 
- * * Neither the name of 'Edwin Dankert' nor the names of its contributors 
- *   may  be used to endorse or promote products derived from this software 
- *   without specific prior written permission. 
+ * * Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the distribution.
+ * * Neither the name of 'Edwin Dankert' nor the names of its contributors
+ *   may  be used to endorse or promote products derived from this software
+ *   without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR 
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.bounce.text.xml;
@@ -45,7 +45,7 @@ import org.bounce.xml.XMLChar;
  * Prinzing </b>. See:
  * http://java.sun.com/products/jfc/tsc/articles/text/editor_kit/
  * </p>
- * 
+ *
  * @version $Revision: 1.5 $, $Date: 2009/01/22 22:14:59 $
  * @author Edwin Dankert <edankert@gmail.com>
  */
@@ -70,10 +70,10 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 
 	/**
 	 * Constructs a scanner for the Document.
-	 * 
+	 *
 	 * @param document
 	 *            the document containing the XML content.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public XMLScanner(Document document) throws IOException {
@@ -102,18 +102,18 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		} else if (tagScanner == CONTENT_SCANNER) {
 			return XMLEvent.CHARACTERS;
 		}
-		
+
 		if (getStartOffset() == 0) {
 			return XMLEvent.START_DOCUMENT;
 		}
-		
+
 		return XMLEvent.END_DOCUMENT;
 	}
-	
+
 	public int getNextTag() throws IOException {
 		while (true) {
 			scan();
-			
+
 			if (token == XMLStyleConstants.ELEMENT_NAME) {
 				return getEventType();
 			} else if (tagScanner == TAG_SCANNER && TAG_SCANNER.scanner == ELEMENT_START_SCANNER && ELEMENT_START_SCANNER.scanner == TAG_END_SCANNER && TAG_END_SCANNER.emptyElement) {
@@ -126,12 +126,12 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 
 	/**
 	 * Sets the scanning range.
-	 * 
+	 *
 	 * @param start
 	 *            the start of the range.
 	 * @param end
 	 *            the end of the range.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void setRange(int start, int end) throws IOException {
@@ -142,9 +142,9 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 
 	/**
 	 * Scans the Xml Stream for XML specific tokens.
-	 * 
+	 *
 	 * @return the last location.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public long scan() throws IOException {
@@ -191,14 +191,14 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 				break;
 			}
 		}
-		
+
 		if (error) {
 			if (in.getLastChar() == -1 && getStartOffset() == getEndOffset()) {
 				token = null;
 				tagScanner = null;
 			}
 		}
-		
+
 		return l;
 	}
 
@@ -211,7 +211,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		/**
 		 * returns whether this scanner has finished scanning all it was
 		 * supposed to scan.
-		 * 
+		 *
 		 * @return true when the scanner is finished.
 		 */
 		public boolean isFinished() {
@@ -470,7 +470,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					finished();
 				} else {
 					int character = in.getLastChar();
-					
+
 					if (character == '>') {
 						scanner = TAG_END_SCANNER;
 						scanner.reset();
@@ -488,7 +488,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					}
 				}
 			}
-			
+
 			return token;
 		}
 
@@ -520,7 +520,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					finished();
 				} else {
 					int ch = in.getLastChar();
-					
+
 					if (ch == '/' || ch == '>') {
 						scanner = TAG_END_SCANNER;
 						scanner.reset();
@@ -536,7 +536,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					}
 				}
 			}
-			
+
 			return token;
 		}
 
@@ -582,10 +582,10 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		public String scan(DocumentInputReader in) throws IOException {
 
 			int character = in.getLastChar();
-			
+
 			if (first) {
 				first = false;
-				
+
 				if (!isNameStart(character)) {
 					error = true;
 
@@ -597,7 +597,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 
 				character = in.read();
 			}
-			
+
 			do {
 				if (nameStart) {
 					nameStart = false;
@@ -655,7 +655,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 
 	private class TagEndScanner extends Scanner {
 		boolean emptyElement = false;
-		
+
 		/**
 		 * @see Scanner#scan(DocumentInputReader)
 		 */
@@ -705,11 +705,11 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		public String scan(DocumentInputReader in) throws IOException {
 			String token = null;
 			int ch = in.getLastChar();
-			
+
 			if (ch == '=') {
 				in.read();
 				foundEquals = true;
-				
+
 				token = XMLStyleConstants.SPECIAL;
 			} else {
 				token = scanner.scan(in);
@@ -720,7 +720,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					finished();
 				} else {
 					ch = in.getLastChar();
-					
+
 					if (isSpace((char)ch)) {
 						scanner = WHITESPACE_SCANNER;
 						scanner.reset();
@@ -742,7 +742,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					}
 				}
 			}
-			
+
 			return token;
 		}
 
@@ -771,7 +771,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		 */
 		public String scan(DocumentInputReader in) throws IOException {
 			int character = in.getLastChar();
-			
+
 			if (firstTime) {
 				firstTime = false;
 
@@ -788,7 +788,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 										character = in.read();
 										namespace = true;
 									}
-								}	
+								}
 							}
 						}
 					}
@@ -803,7 +803,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					}
 				}
 			}
-			
+
 			do {
 				if (nameStart) {
 					nameStart = false;
@@ -821,7 +821,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 							} else if (namespace) {
 								return XMLStyleConstants.NAMESPACE_NAME;
 							}
-							
+
 							return XMLStyleConstants.ATTRIBUTE_NAME;
 						} else {
 							character = in.read();
@@ -836,18 +836,18 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 						prefix = true;
 						return XMLStyleConstants.NAMESPACE_NAME;
 					}
-					
+
 					prefix = true;
 					return XMLStyleConstants.ATTRIBUTE_PREFIX;
 				} else if (isSpace(character) || character == '=') {
 					finished();
-					
+
 					if (namespace && prefix) {
 						return XMLStyleConstants.NAMESPACE_PREFIX;
 					} else if (namespace) {
 						return XMLStyleConstants.NAMESPACE_NAME;
 					}
-					
+
 					return XMLStyleConstants.ATTRIBUTE_NAME;
 				} else if (isName(character)) {
 					character = in.read();
@@ -862,7 +862,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 						} else if (namespace) {
 							return XMLStyleConstants.NAMESPACE_NAME;
 						}
-						
+
 						return XMLStyleConstants.ATTRIBUTE_NAME;
 					} else {
 						character = in.read();
@@ -891,11 +891,11 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		private Scanner scanner = null;
 		private String style = null;
 		private int start = -1;
-		
+
 		public AttributeValueScanner(String style) {
 			this.style = style;
 		}
-		
+
 		/**
 		 * @see Scanner#scan(DocumentInputReader)
 		 */
@@ -904,12 +904,12 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 				return scanner.scan(in);
 			} else {
 				int character = in.getLastChar();
-				
+
 				if (start == -1) {
 					start = character;
 					character = in.read();
 				}
-	
+
 				do {
 					if (character == start) {
 						character = in.read();
@@ -921,7 +921,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					} else if (character == '&') {
 						scanner = ENTITY_REFERENCE_SCANNER;
 						scanner.reset();
-	
+
 						return style;
 					} else {
 						error = true;
@@ -936,7 +936,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 				} while (true);
 			}
 		}
-		
+
 		/**
 		 * @see Scanner#reset()
 		 */
@@ -960,14 +960,14 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 				return scanner.scan(in);
 			} else {
 				int character = in.getLastChar();
-				
+
 				do {
 					if (isContent(character)) {
 						character = in.read();
 					} else if (character == '&') {
 						scanner = ENTITY_REFERENCE_SCANNER;
 						scanner.reset();
-	
+
 						return XMLStyleConstants.ELEMENT_VALUE;
 					} else if (character == '<' || character == -1) {
 						finished();
@@ -1000,7 +1000,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 	private class EntityReferenceScanner extends Scanner {
 		private boolean characterReference = false;
 		private boolean hexadecimal = false;
-		
+
 		/**
 		 * @see Scanner#scan(DocumentInputReader)
 		 */
@@ -1018,7 +1018,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 					}
 				} else {
 					error = true;
-					
+
 					if (character == '<' || character == -1) {
 						finished();
 						return XMLStyleConstants.ENTITY_REFERENCE;
@@ -1026,7 +1026,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 						character = in.read();
 					}
 				}
-				
+
 				do {
 					if (characterReference && isCharacterRef(character, hexadecimal)) {
 						character = in.read();
@@ -1067,14 +1067,14 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 
 		/**
 		 * Scan the input steam for a token.
-		 * 
+		 *
 		 * @param in
 		 *            the input stream reader.
 		 * @return the token.
 		 * @throws IOException
 		 */
 		public abstract String scan(DocumentInputReader in) throws IOException;
-		
+
 		/**
 		 * The scanner has finished scanning the information, only a reset can
 		 * change this.
@@ -1086,7 +1086,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		/**
 		 * returns whether this scanner has finished scanning all it was
 		 * supposed to scan.
-		 * 
+		 *
 		 * @return true when the scanner is finished.
 		 */
 		public boolean isFinished() {
@@ -1100,7 +1100,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 			finished = false;
 		}
 	}
-	
+
 	private static boolean isNameStart(int character) {
 		if (character == -1 || character == ':') {
 			return false;
@@ -1125,9 +1125,9 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		if (character > '0' && character < '9') {
 			return true;
 		}
-		
+
 		if (hex) {
-			if (character == 'a' || character == 'A' 
+			if (character == 'a' || character == 'A'
 				|| character == 'b' || character == 'B'
 				|| character == 'c' || character == 'C'
 				|| character == 'd' || character == 'D'
@@ -1136,7 +1136,7 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -1152,8 +1152,12 @@ public class XMLScanner extends SyntaxHighlightingScanner {
 		if (character == -1) {
 			return false;
 		}
-		
+
 		if (XMLChar.isContent(character)) {
+			return true;
+		}
+
+		if (character == ']') {
 			return true;
 		}
 
