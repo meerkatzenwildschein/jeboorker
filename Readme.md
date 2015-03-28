@@ -13,7 +13,7 @@ After the read process has been done, all books from all folders you've specifie
 ## Folder handling
 Always you copy some new ebooks with your favourite file manager to your collection, just perfrom a File->Refresh folder for a rescan, so jeboorker can recognize these.
 
-The folders you've added can be toggled in it's visibility state by File->Show/hide folder.
+The folders you've added can be toggled in it's visibility state by File -> Show/hide folder.
 
 ## Adding new books using Drag and Drop
 You can copy Books simply by Dragging it in the Jeboorker list. The book is copied to the same folder as the drop target book is located. You can also drag a book from Jeboorker to you favourite file manager.
