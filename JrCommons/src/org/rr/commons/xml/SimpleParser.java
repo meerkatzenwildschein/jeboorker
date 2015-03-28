@@ -118,7 +118,7 @@ class SimpleParser {
 
     for (int index = off; index < len; index++) {
       char chr = data[index];
-//System.out.print(chr);
+
       switch (parser_state.state) {
       case START:
         if (chr == OPEN_BRACKET) {
@@ -326,7 +326,7 @@ class SimpleParser {
 
     handler.saveParserState(parser_state);
   }
-  
+
   private static void rtrim(StringBuilder value) {
 	  int newSize = value.length();
 	  for (int i = value.length(); i > 0; i--) {
@@ -337,7 +337,7 @@ class SimpleParser {
 			  break;
 		  }
 	  }
-	  
+
 	  if(newSize < value.length()) {
 		  value.delete(newSize, value.length());
 	  }
