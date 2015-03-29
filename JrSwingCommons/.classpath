@@ -5,9 +5,9 @@
 	<classpathentry kind="src" path="my_swing"/>
 	<classpathentry kind="src" path="jxlayer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Jeboorker/lib/commons-exec-1.1.jar"/>
+	<classpathentry kind="lib" path="/Jeboorker/lib/miglayout-4.0-swing.jar"/>
+	<classpathentry kind="lib" path="/Jeboorker/lib/miglayout-4.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
-	<classpathentry kind="lib" path="/jeboorker/lib/commons-exec-1.1.jar"/>
-	<classpathentry kind="lib" path="/jeboorker/lib/miglayout-4.0-swing.jar"/>
-	<classpathentry kind="lib" path="/jeboorker/lib/miglayout-4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
