@@ -5,42 +5,41 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtils;
+import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.DropboxAPI.Entry;
-import com.dropbox.client2.exception.DropboxException;
-import com.dropbox.client2.exception.DropboxUnlinkedException;
-import com.dropbox.client2.session.AccessTokenPair;
-import com.dropbox.client2.session.AppKeyPair;
-import com.dropbox.client2.session.RequestTokenPair;
-import com.dropbox.client2.session.Session.AccessType;
-import com.dropbox.client2.session.WebAuthSession;
-import com.dropbox.client2.session.WebAuthSession.WebAuthInfo;
+import com.dropbox.core.DbxAppInfo;
+import com.dropbox.core.DbxAuthFinish;
+import com.dropbox.core.DbxClient;
+import com.dropbox.core.DbxEntry.File;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.DbxWebAuthNoRedirect;
+import com.dropbox.core.DbxWriteMode;
 
 public class CopyToDropboxApiFolderAction extends AbstractAction {
 
-	private static final String DROPBOX_AUTH_SECRET = "dropboxAuthSecret";
-	private static final String DROPBOX_AUTH_KEY = "dropboxAuthKey";
-	private static final AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
-	private static DropboxAPI<WebAuthSession> mDBApi;
+	private static final long serialVersionUID = 8728272292807726067L;
 
-	//source file to copy
+	/** Key to get the access token from the preferences. */
+	private static final String DROPBOX_ACCESS_TOKEN_KEY = "dropboxAuthKey";
+
+	/** source file to upload to dropbox */
 	String source;
 
 	CopyToDropboxApiFolderAction(String text) {
@@ -53,9 +52,9 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		IResourceHandler resource = ResourceHandlerFactory.getResourceHandler(source);
-        try {
-        	String message = Bundle.getFormattedString("CopyToDropboxAction.uploading", resource.getName());
-        	MainController.getController().getProgressMonitor().monitorProgressStart(message);
+		try {
+			String message = Bundle.getFormattedString("CopyToDropboxAction.uploading", resource.getName());
+			MainController.getController().getProgressMonitor().monitorProgressStart(message);
 
 			doUpload(resource);
 		} catch (Exception ex) {
@@ -67,73 +66,61 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 
 	/**
 	 * Uploads the given {@link IResourceHandler} to the dropbox folder of the application.
+	 *
 	 * @param resource The resource to be uploaded.
 	 *
-	 * @see http://aaka.sh/patel/2011/12/20/authenticating-dropbox-java-api/
-	 * @see http://berry120.blogspot.de/2012/02/dropbox-java-api.html
+	 * @see https://www.dropbox.com/developers/core/start/java
 	 */
-	private void doUpload(IResourceHandler resource) throws DropboxException, MalformedURLException, IOException, URISyntaxException {
+	private void doUpload(IResourceHandler resource) throws MalformedURLException, IOException, URISyntaxException, DbxException {
 		// https://www.dropbox.com/developers
-		AppKeyPair appKey = new AppKeyPair(StringUtils.rot13("m8zitanp9n1p5nq"), StringUtils.rot13("gz585xxj5gp98qe"));
+		DbxAppInfo appInfo = new DbxAppInfo(StringUtils.rot13("m8zitanp9n1p5nq"), StringUtils.rot13("gz585xxj5gp98qe"));
+		DbxRequestConfig config = new DbxRequestConfig("Jeboorker/" + Jeboorker.VERSION, Locale.getDefault().toString());
+		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
 
-        WebAuthSession session = new WebAuthSession(appKey, ACCESS_TYPE);
-        WebAuthInfo authInfo = session.getAuthInfo();
-        RequestTokenPair pair = authInfo.requestTokenPair;
-        mDBApi = new DropboxAPI<>(session);
-        InputStream inputStream = resource.getContentInputStream();
-        @SuppressWarnings("unused") Entry newEntry;
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		String accessToken = preferenceStore.getGenericEntryAsString(DROPBOX_ACCESS_TOKEN_KEY);
+		if (StringUtils.isNotEmpty(accessToken)) {
+			// re-auth specific stuff
+			try {
+				DbxClient client = createClient(config, accessToken);
 
-        try {
-        	final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-        	if(StringUtils.isNotEmpty(preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY))) {
-	        	// re-auth specific stuff
-	        	try {
-	        		reauthToDropbox();
-
-	        		//throws the DropboxUnlinkedException if auth was detracted.
-	        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
-	        	} catch(DropboxUnlinkedException e) {
-	        		// retry with an auth if the old auth are no longer be valid.
-	        		authToDropbox(session, authInfo, pair);
-	        		newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
-	        	}
-	        } else {
-	            authToDropbox(session, authInfo, pair);
-	            newEntry = mDBApi.putFile(resource.getName(), inputStream, resource.size(), null, null);
-	        }
-        } finally {
-        	IOUtils.closeQuietly(inputStream);
-	    }
+				// throws the DbxException if auth was detracted.
+				doUpload(resource, client);
+			} catch (DbxException e) {
+				// retry with an auth if the old auth are no longer be valid.
+				DbxClient client = authToDropbox(config, webAuth);
+				doUpload(resource, client);
+			}
+		} else {
+			DbxClient client = authToDropbox(config, webAuth);
+			doUpload(resource, client);
+		}
 	}
 
-	/**
-	 * Use a previously auth to connect to Dropbox.
-	 * @throws DropboxUnlinkedException if the auth has failed.
-	 */
-	private void reauthToDropbox() throws DropboxUnlinkedException {
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		String key = preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_KEY);
-		String secret = preferenceStore.getGenericEntryAsString(DROPBOX_AUTH_SECRET);
-		AccessTokenPair reAuthTokens = new AccessTokenPair(key, secret);
-		mDBApi.getSession().setAccessTokenPair(reAuthTokens);
+	private File doUpload(IResourceHandler resource, DbxClient client) throws DbxException, IOException {
+		try (InputStream inputStream = resource.getContentInputStream()) {
+			return client.uploadFile('/' + resource.getName(), DbxWriteMode.add(), resource.size(), inputStream);
+		}
 	}
 
-	/**
-	 * Authenticates Jeboorker at Dropbox.
-	 */
-	private void authToDropbox(WebAuthSession session, WebAuthInfo authInfo, RequestTokenPair pair) throws IOException, URISyntaxException,
-			MalformedURLException, DropboxException {
-		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		SwingUtils.openURL(authInfo.url);
+	private DbxClient createClient(DbxRequestConfig config, String accessToken) {
+		return new DbxClient(config, accessToken);
+	}
 
-		JOptionPane.showMessageDialog(MainController.getController().getMainWindow(), Bundle.getString("CopyToDropboxAction.auth"));
-		session.retrieveWebAccessToken(pair);
+	private DbxClient authToDropbox(DbxRequestConfig config, DbxWebAuthNoRedirect webAuth) throws IOException, URISyntaxException,
+			MalformedURLException, DbxException {
+		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		String authorizeUrl = webAuth.start();
+		SwingUtils.openURL(authorizeUrl);
 
-		AccessTokenPair tokens = session.getAccessTokenPair();
+		String code = JOptionPane.showInputDialog(MainController.getController().getMainWindow(), Bundle.getString("CopyToDropboxAction.auth"));
 
-		// Use this token pair in future so you don't have to re-authenticate each time:
-		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_KEY, tokens.key);
-		preferenceStore.addGenericEntryAsString(DROPBOX_AUTH_SECRET, tokens.secret);
+		DbxAuthFinish authFinish = webAuth.finish(code);
+		String accessToken = authFinish.accessToken;
+
+		preferenceStore.addGenericEntryAsString(DROPBOX_ACCESS_TOKEN_KEY, accessToken);
+
+		return createClient(config, accessToken);
 	}
 
 }

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="src/main/test"/>
-	<classpathentry kind="src" path="epublib"/>
 	<classpathentry kind="src" path="pdfscissors"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JrCommons"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JrSwingCommons"/>
-	<classpathentry kind="lib" path="lib/bcprov-jdk15on-147.jar"/>
-	<classpathentry kind="lib" path="lib/jsoup-1.7.1.jar" sourcepath="lib/jsoup-1.7.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/junique-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/epublib/htmlcleaner-2.2.jar"/>
-	<classpathentry kind="lib" path="lib/epublib/commons-vfs-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/epublib/kxml2-2.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/dropbox/dropbox-java-sdk-1.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/dropbox/json_simple-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jmupdf/jmupdf.jar"/>
-	<classpathentry kind="lib" path="lib/commons-compress-1.4.1.jar" sourcepath="lib/commons-compress-1.4.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib/commons-exec-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jempbox.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="lib" path="lib/jna-3.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/platform-3.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/itext-5.jar" sourcepath="/itext"/>
-	<classpathentry kind="lib" path="lib/ormlite-core-4.48.jar"/>
-	<classpathentry kind="lib" path="lib/ormlite-jdbc-4.48.jar"/>
 	<classpathentry kind="lib" path="lib/weblaf-1.28.jar"/>
-	<classpathentry kind="lib" path="lib/jgoodies-common-1.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/jgoodies-looks-2.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/h2-1.3.175.jar"/>
-	<classpathentry kind="lib" path="lib/miglayout-4.0-swing.jar"/>
-	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar" sourcepath="lib/commons-lang-2.6-sources.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Jpushbullet"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="lib/itext-5.jar" sourcepath="/itext"/>
 	<classpathentry kind="lib" path="lib/bounce-0.19.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/commons"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/epublib"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/commons-swing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/l2fprod-all"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/myswing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jpushbullet"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
