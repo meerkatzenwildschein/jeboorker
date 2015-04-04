@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="jempbox"/>
 	<classpathentry kind="src" path="epublib"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="pdfscissors"/>
@@ -20,6 +19,7 @@
 	<classpathentry kind="lib" path="lib/jmupdf/jmupdf.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.4.1.jar" sourcepath="lib/commons-compress-1.4.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/commons-exec-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jempbox.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/platform-3.4.0.jar"/>
@@ -36,6 +36,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Jpushbullet"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/bounce-0.19.jar"/>
-
 	<classpathentry kind="output" path="bin"/>
 </classpath>

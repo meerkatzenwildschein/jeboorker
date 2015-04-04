@@ -142,6 +142,8 @@ Section -Main SEC0000
     File lib\jpushbullet.jar
     File lib\gson-2.2.4.jar
     File lib\miglayout-4.0.jar
+    File lib\bounce-0.19.jar
+    File lib\jempbox.jar
 
     RMDir /r $INSTDIR\lib\jmupdf
     SetOutPath $INSTDIR\lib\jmupdf
