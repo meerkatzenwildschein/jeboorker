@@ -23,7 +23,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 
 	public DatePropertyCellEditor() {
 		editor = new JTextField();
-		((JTextField)editor).setBorder(LookAndFeelTweaks.EMPTY_BORDER);  
+		((JTextField)editor).setBorder(LookAndFeelTweaks.EMPTY_BORDER);
 	}
 
 	public Component getCustomEditor() {
@@ -32,7 +32,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 
 	/**
 	 * Returns the Date of the Calendar
-	 * 
+	 *
 	 * @return the date choosed as a <b>java.util.Date </b>b> object or null is
 	 *         the date is not set
 	 */
@@ -42,7 +42,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 
 	/**
 	 * Sets the Date of the Calendar
-	 * 
+	 *
 	 * @param value
 	 *            the Date object
 	 */
@@ -58,10 +58,10 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 			LoggerFactory.log(Level.WARNING, this, "could not parse the entered value \""+String.valueOf(value)+"\"as Date.", e);
 		}
 	}
-	
+
 	/**
 	 * Returns the Date formated with the locale and formatString set.
-	 * 
+	 *
 	 * @return the chosen Date as String
 	 */
 	public String getAsText(Date date) {
@@ -70,11 +70,11 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 		}
 		DateFormat formatter = SimpleDateFormat.getDateInstance();
 		return formatter.format(date);
-	}	
+	}
 
 	/**
 	 * Returns the Date formated with the locale and formatString set.
-	 * 
+	 *
 	 * @return the chosen Date as String
 	 */
 	public String getAsText() {
@@ -82,11 +82,11 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 		DateFormat formatter = SimpleDateFormat.getDateInstance();
 		return formatter.format(date);
 	}
-	
+
 	/**
-	 * Returns the Date entered into the editor component. 
-	 * 
-	 * @return The Date from the editor component. 
+	 * Returns the Date entered into the editor component.
+	 *
+	 * @return The Date from the editor component.
 	 */
 	public Date getAsDate() {
 		String text = ((JTextField) this.editor).getText();
