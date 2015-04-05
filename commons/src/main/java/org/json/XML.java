@@ -29,7 +29,6 @@ import static org.rr.commons.utils.StringUtils.EMPTY;
 import java.util.Iterator;
 
 import org.rr.commons.utils.StringUtils;
-import org.rr.commons.utils.StringUtilsTest;
 
 
 /**
@@ -104,9 +103,9 @@ public class XML {
         }
         return sb.toString();
     }
-    
+
     /**
-     * Throw an exception if the string contains whitespace. 
+     * Throw an exception if the string contains whitespace.
      * Whitespace is not allowed in tagNames and attributes.
      * @param string
      * @throws JSONException
@@ -118,7 +117,7 @@ public class XML {
         }
         for (i = 0; i < length; i += 1) {
             if (Character.isWhitespace(string.charAt(i))) {
-                throw new JSONException("'" + string + 
+                throw new JSONException("'" + string +
                         "' contains a space character.");
             }
         }
@@ -201,7 +200,7 @@ public class XML {
             token = x.nextToken();
             if (name == null) {
                 throw x.syntaxError("Mismatched close tag " + token);
-            }            
+            }
             if (!token.equals(name)) {
                 throw x.syntaxError("Mismatched " + name + " and " + token);
             }
@@ -234,7 +233,7 @@ public class XML {
                         if (!(token instanceof String)) {
                             throw x.syntaxError("Missing value");
                         }
-                        jsonobject.accumulate(string, 
+                        jsonobject.accumulate(string,
                                 XML.stringToValue((String)token));
                         token = null;
                     } else {
@@ -267,7 +266,7 @@ public class XML {
                         } else if (token instanceof String) {
                             string = (String)token;
                             if (string.length() > 0) {
-                                jsonobject.accumulate("content", 
+                                jsonobject.accumulate("content",
                                         XML.stringToValue(string));
                             }
 
@@ -279,7 +278,7 @@ public class XML {
                                     context.accumulate(tagName, EMPTY);
                                 } else if (jsonobject.length() == 1 &&
                                        jsonobject.opt("content") != null) {
-                                    context.accumulate(tagName, 
+                                    context.accumulate(tagName,
                                             jsonobject.opt("content"));
                                 } else {
                                     context.accumulate(tagName, jsonobject);
@@ -300,7 +299,7 @@ public class XML {
      * Try to convert a string into a number, boolean, or null. If the string
      * can't be converted, return the string. This is much less ambitious than
      * JSONObject.stringToValue, especially because it does not attempt to
-     * convert plus forms, octal forms, hex forms, or E forms lacking decimal 
+     * convert plus forms, octal forms, hex forms, or E forms lacking decimal
      * points.
      * @param string A String.
      * @return A simple JSON value.
@@ -322,7 +321,7 @@ public class XML {
             return new Integer(0);
         }
 
-// If it might be a number, try converting it. If that doesn't work, 
+// If it might be a number, try converting it. If that doesn't work,
 // return the string.
 
         try {
@@ -352,7 +351,7 @@ public class XML {
         return string;
     }
 
-    
+
     /**
      * Convert a well-formed (but not necessarily valid) XML string into a
      * JSONObject. Some information may be lost in this transformation
