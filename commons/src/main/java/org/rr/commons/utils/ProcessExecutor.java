@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
 import org.apache.commons.exec.CommandLine;
@@ -30,14 +31,14 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 public class ProcessExecutor {
 
 	public static final Long WATCHDOG_EXIT_VALUE = -999L;
-	
+
 	public static void runProcessAsScript(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, InterruptedException, ExecutionException {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
 		CommandLine commandLineScript = null;
 		try {
-			if(commandline.getArguments().length > 0) {
-				commandLineScript = createCommandLineScript(commandline);	
+			if(ArrayUtils.isNotEmpty(commandline.getArguments())) {
+				commandLineScript = createCommandLineScript(commandline);
 				processCallable = new ProcessCallable(watchdogTimeout, handler, commandLineScript);
 			} else {
 				processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
@@ -50,90 +51,90 @@ public class ProcessExecutor {
 				execResourceHandler.delete();
 			}
 		}
-	}	
-	
+	}
+
 	public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
 		processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
 		return executor.submit(processCallable);
 	}
-	
-	private static CommandLine createCommandLineScript(final CommandLine commandline) {
+
+	private static CommandLine createCommandLineScript(CommandLine commandline) throws ExecutionException {
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_LINUX) {
-			StringBuilder script = new StringBuilder();
-			script.append("#!/bin/sh");
-			script.append(System.getProperty("line.separator"));
-			script.append(commandline.toString());
-
-			OutputStream contentOutputStream = null;
-			try {
-				IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("sh");
-				contentOutputStream = temporaryScriptResource.getContentOutputStream(false);
-				IOUtils.write(script, contentOutputStream);
-				contentOutputStream.flush();
-				
-				//make executable
-				ExecutorService executor = Executors.newSingleThreadExecutor();
-				ProcessCallable processCallable = new ProcessCallable(10000, new LogProcessExecutorHandler(), 
-						new CommandLine("chmod").addArgument("u+x").addArgument(temporaryScriptResource.toString(), true));
-				Future<Long> submit = executor.submit(processCallable);
-				submit.get(10, TimeUnit.SECONDS);
-				
-				//create command for exec script
-				CommandLine commandLineScript = new CommandLine(temporaryScriptResource.toFile().toString());
-				return commandLineScript;
-			} catch(Exception e) {
-				LoggerFactory.getLogger(ProcessExecutor.class).log(Level.SEVERE, "Could not create script.", e);
-			} finally {
-				if(contentOutputStream != null) {
-					IOUtils.closeQuietly(contentOutputStream);
-				}
-			}
+			return createLinuxCommandLineScript(commandline);
 		} else if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-			StringBuilder script = new StringBuilder(commandline.toString());
-
-			OutputStream contentOutputStream = null;
-			try {
-				IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("bat");
-				contentOutputStream = temporaryScriptResource.getContentOutputStream(false);
-				IOUtils.write(script, contentOutputStream);
-				contentOutputStream.flush();
-				
-				//create command for exec script
-				CommandLine commandLineScript = new CommandLine(temporaryScriptResource.toFile().toString());
-				return commandLineScript;
-			} catch(Exception e) {
-				LoggerFactory.getLogger(ProcessExecutor.class).log(Level.SEVERE, "Could not create script.", e);
-			} finally {
-				if(contentOutputStream != null) {
-					IOUtils.closeQuietly(contentOutputStream);
-				}
-			}			
+			return createWindowsCommandLineScript(commandline);
 		}
-			
-		return commandline;
+		throw new ExecutionException("Failed to execute " + commandline, null);
 	}
-	
+
+	private static CommandLine createWindowsCommandLineScript(CommandLine commandline) throws ExecutionException {
+		IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("bat");
+		try (OutputStream contentOutputStream = temporaryScriptResource.getContentOutputStream(false)) {
+			IOUtils.write(commandline.toString(), contentOutputStream);
+			contentOutputStream.flush();
+
+			//create command for exec script
+			return new CommandLine(temporaryScriptResource.toFile().toString());
+		} catch(Exception e) {
+			LoggerFactory.getLogger(ProcessExecutor.class).log(Level.SEVERE, "Could not create script.", e);
+		}
+		throw new ExecutionException("Failed to execute " + commandline, null);
+	}
+
+	private static CommandLine createLinuxCommandLineScript(CommandLine commandline) throws ExecutionException {
+		StringBuilder script = new StringBuilder();
+		script.append("#!/bin/sh")
+		.append(StringUtils.NEW_LINE)
+		.append(getCommandLineString(commandline));
+
+		IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("sh");
+		try (OutputStream contentOutputStream = temporaryScriptResource.getContentOutputStream(false)) {
+			IOUtils.write(script, contentOutputStream);
+			contentOutputStream.flush();
+
+			makeExecutable(temporaryScriptResource);
+
+			//create command for exec script
+			return new CommandLine(temporaryScriptResource.toFile().toString());
+		} catch(Exception e) {
+			LoggerFactory.getLogger(ProcessExecutor.class).log(Level.SEVERE, "Could not create script.", e);
+		}
+		throw new ExecutionException("Failed to execute " + commandline, null);
+	}
+
+	private static void makeExecutable(IResourceHandler temporaryScriptResource) throws InterruptedException, ExecutionException,
+			TimeoutException {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		ProcessCallable processCallable = new ProcessCallable(10000, new LogProcessExecutorHandler(),
+				new CommandLine("chmod").addArgument("u+x").addArgument(temporaryScriptResource.toString(), true));
+		Future<Long> submit = executor.submit(processCallable);
+		submit.get(10, TimeUnit.SECONDS);
+	}
+
+	private static String getCommandLineString(final CommandLine commandline) {
+		return commandline.getExecutable() + " " + ArrayUtils.join(commandline.getArguments(), " ");
+	}
+
 	/**
 	 * Replaces the whitespace char with one which did not cause parsing problems.
 	 */
 	public static String saveWhitespaces(String s) {
-		return StringUtils.replace(s, " ", "\u00A0");		
+		return StringUtils.replace(s, " ", "\u00A0");
 	}
 
 	private static class ProcessCallable implements Callable<Long> {
 
-	    /**
-	     * the timeout for the process in milliseconds. It must be
-	     *  greater than 0 or {@link ExecuteWatchdog#INFINITE_TIMEOUT} 
-	     */		
+		/**
+		 * the timeout for the process in milliseconds. It must be greater than 0 or {@link ExecuteWatchdog#INFINITE_TIMEOUT}
+		 */
 		private long watchdogTimeout;
 
 		private ProcessExecutorHandler handler;
 
 		private CommandLine commandline;
-		
+
 		private ProcessCallable(long watchdogTimeout, ProcessExecutorHandler handler, CommandLine commandline) {
 			this.watchdogTimeout = watchdogTimeout;
 			this.handler = handler;
@@ -168,7 +169,7 @@ public class ProcessExecutor {
 
 		private static int STD_OUT = 0;
 		private static int STD_ERR = 1;
-		
+
 		private ProcessExecutorHandler handler;
 
 		private int type;
@@ -201,7 +202,7 @@ public class ProcessExecutor {
 		}
 
 	}
-	
+
 	public static class EmptyProcessExecutorHandler implements ProcessExecutorHandler {
 
 		@Override
@@ -212,6 +213,6 @@ public class ProcessExecutor {
 		public void onStandardError(String msg) {
 		}
 
-	}	
+	}
 
 }

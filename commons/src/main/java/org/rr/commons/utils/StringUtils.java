@@ -14,11 +14,13 @@ public final class StringUtils implements Serializable {
 	private static final long serialVersionUID = 1505813189815359975L;
 
 	public static final String EMPTY = "";
-	
+
+	public static final String NEW_LINE = System.getProperty("line.separator");
+
 	public static final String UTF_8 = Charsets.UTF_8.name();
-	
+
 	private StringUtils() {}
-	
+
 	/**
 	 * An empty string array for public use.
 	 */
@@ -1242,7 +1244,7 @@ public final class StringUtils implements Serializable {
     public static boolean isNotEmpty(CharSequence text) {
     	return !isEmpty(text);
     }
-    
+
 
     /**
      * <p>Checks if a String is whitespace, empty ("") or null.</p>
@@ -1290,7 +1292,7 @@ public final class StringUtils implements Serializable {
      */
     public static boolean isNotBlank(CharSequence str) {
         return !StringUtils.isBlank(str);
-    }    
+    }
 
     /**
      * Encodes a string into a Soundex value. Soundex is an encoding used to
@@ -1545,8 +1547,8 @@ public final class StringUtils implements Serializable {
     	}
     	return -1;
     }
-    
-	
+
+
 	/**
 	 * Quotes the given text with the given char.
 	 * @param text Text that should be surrounded with the given quote char.
@@ -1559,7 +1561,7 @@ public final class StringUtils implements Serializable {
 		}
 		return quote + text + quote;
 	}
-	
+
 	/**
 	 * Whether the given source string ends with the given suffix, ignoring case.
 	 *
@@ -1579,7 +1581,7 @@ public final class StringUtils implements Serializable {
 		}
 		return source.substring(source.length() - suffix.length()).toLowerCase().endsWith(suffix.toLowerCase());
 	}
-	
+
 		/**
 	 * If the given text is null return "", the original text otherwise.
 	 *
@@ -1736,15 +1738,15 @@ public final class StringUtils implements Serializable {
 		}
 		return text.substring(cPos + 1);
 	}
-	
+
     //-----------------------------------------------------------------------
     /**
      * <p>Escapes the characters in a <code>String</code> to be suitable to pass to
      * an SQL query.</p>
      *
      * <p>For example,
-     * <pre>statement.executeQuery("SELECT * FROM MOVIES WHERE TITLE='" + 
-     *   StringEscapeUtils.escapeSql("McHale's Navy") + 
+     * <pre>statement.executeQuery("SELECT * FROM MOVIES WHERE TITLE='" +
+     *   StringEscapeUtils.escapeSql("McHale's Navy") +
      *   "'");</pre>
      * </p>
      *
@@ -1766,11 +1768,11 @@ public final class StringUtils implements Serializable {
     /**
      * Get the text between the first occurrence of <code>begin</code> and the <code>end</code> part including
      * the begin and the end part.
-     * 
+     *
      * @param text The text where a sub part should be extracted from
      * @param begin The begin part in <code>text</code>.
      * @param end The end part in <code>text</code>.
-     * @return The text part or <code>null</code> if <code>text</code> did not contain any matching part. 
+     * @return The text part or <code>null</code> if <code>text</code> did not contain any matching part.
      */
 		public static String between(String text, String begin, String end) {
 			int beginIndex = text.indexOf(begin);
@@ -1781,5 +1783,5 @@ public final class StringUtils implements Serializable {
 				}
 			}
 			return null;
-		}	
+		}
 }
