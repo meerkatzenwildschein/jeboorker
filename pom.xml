@@ -129,9 +129,9 @@
 		</plugins>
 	</build>
 	<modules>
-		<module>epublib2</module>
+		<module>epublib</module>
 		<module>commons</module>
-		<module>swing</module>
+		<module>commons-swing</module>
 		<module>l2fprod.properties</module>
 		<module>myswing</module>
 		<module>jpushbullet</module>
