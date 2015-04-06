@@ -8,9 +8,9 @@
 		<artifactId>jeboorker</artifactId>
 		<version>0.4.6</version>
 	</parent>
-	<artifactId>epublib2</artifactId>
+	<artifactId>epublib</artifactId>
 	<version>3.1</version>
-	<name>epublib2</name>
+	<name>epublib</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

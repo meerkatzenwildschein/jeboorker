@@ -147,7 +147,7 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
 
 
 class MainView extends JFrame {
-	
+
 	private static final long serialVersionUID = 6837919427429399376L;
 
 	private class MainViewPreferenceListener extends JeboorkerPreferenceListener {
@@ -268,7 +268,7 @@ class MainView extends JFrame {
 	private JButton saveMetadataButton;
 
 	private SortColumnComponent sortColumnComponent;
-	
+
 	private FilterPanelComponent filterFieldComponent;
 
 	private JSplitPane treeMainTableSplitPane;
@@ -282,13 +282,13 @@ class MainView extends JFrame {
 	private JTabbedPane treeTabbedPane;
 
 	private JPanel buttonPanel;
-	
+
 	private MainViewTreeComponentHandler treeComponentHandler;
-	
+
 	private MainViewPropertySheetHandler propertySheetHandler;
-	
+
 	private MainViewEbookTableComponentHandler ebookTableHandler;
-	
+
 	private MainController controller;
 
 	/**
@@ -350,7 +350,7 @@ class MainView extends JFrame {
 			propertyContentPanel.add(treeMainTableSplitPane, "h 100%, w 100%");
 
 			createMainTable();
-			
+
 			mainTableScrollPane = new JRScrollPane();
 			treeMainTableSplitPane.setRightComponent(mainTableScrollPane);
 			mainTableLayer = new JXLayer<JRTable>(mainTable, new AbstractLayerUI<JRTable>() {
@@ -492,7 +492,7 @@ class MainView extends JFrame {
 
 			mainSplitPane.setDividerLocation(getSize().width - 220);
 
-			
+
 		filterFieldComponent = new FilterPanelComponent();
 		contentPane.add(filterFieldComponent, "w 100%, wrap");
 
@@ -507,9 +507,9 @@ class MainView extends JFrame {
 
 		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
-		
+
 		initializeGlobalKeystrokes();
-		
+
 		treeComponentHandler = new MainViewTreeComponentHandler(basePathTree, fileSystemTree, this);
 		propertySheetHandler = new MainViewPropertySheetHandler(propertySheet, this);
 		ebookTableHandler = new MainViewEbookTableComponentHandler(mainTable, mainTableScrollPane);
@@ -553,7 +553,7 @@ class MainView extends JFrame {
 				}
 			}
 		});
-		
+
 		filterFieldComponent.initListeners();
 		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
@@ -679,7 +679,7 @@ class MainView extends JFrame {
 		    }
 		});
 	}
-	
+
 	private JComponent createFileSystemTree() {
 		final String fileSystemTreeName = "FileSystemTree";
 
@@ -705,7 +705,7 @@ class MainView extends JFrame {
 
 		fileSystemTree = new JRTree();
 		setupTree(fileSystemTree);
-		
+
 		fileSystemTree.setName(fileSystemTreeName);
 		fileSystemTree.setSelectionModel(new DefaultTreeSelectionModel());
 		FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel();
@@ -1289,7 +1289,7 @@ class MainView extends JFrame {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Tells the text filter field to display it self in and active filter color.
 	 */
@@ -1398,7 +1398,7 @@ class MainView extends JFrame {
 			LoggerFactory.getLogger().log(Level.WARNING, "Refresh property sheet has failed.", e);
 		}
 	}
-	
+
 	/**
 	 * Clears the image in the image viewer.
 	 */
@@ -1436,7 +1436,7 @@ class MainView extends JFrame {
 			imageViewer.setImageViewerResource(null);
 		}
 	}
-	
+
 	/**
 	 * Writes the application properties to the preference file
 	 */
@@ -1453,30 +1453,30 @@ class MainView extends JFrame {
 		preferenceStore.addGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation", Integer.valueOf(propertySheetImageSplitPane.getDividerLocation()));
 		preferenceStore.addGenericEntryAsString("basePathTreeSelection", TreeUtil.getExpansionStates(basePathTree));
 		preferenceStore.addGenericEntryAsString("fileSystemTreeSelection", TreeUtil.getExpansionStates(fileSystemTree));
-		
+
 		sortColumnComponent.storeApplicationProperties();
 		filterFieldComponent.storeApplicationHistory();
 	}
-	
+
 	/**
 	 * Restores the application properties
 	 */
 	void restoreComponentProperties() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		
+
 		//restore the window size from the preferences.
 		Number mainWindowSizeWidth = preferenceStore.getGenericEntryAsNumber("mainWindowSizeWidth");
 		Number mainWindowSizeHeight = preferenceStore.getGenericEntryAsNumber("mainWindowSizeHeight");
 		if(mainWindowSizeWidth!=null && mainWindowSizeHeight!=null) {
 			setSize(mainWindowSizeWidth.intValue(), mainWindowSizeHeight.intValue());
 		}
-		
+
 		//restore window location
 		Point entryAsScreenLocation = preferenceStore.getGenericEntryAsScreenLocation("mainWindowLocationX", "mainWindowLocationY");
 		if(entryAsScreenLocation != null) {
 			setLocation(entryAsScreenLocation);
 		}
-		
+
 		//restore the divider location at the main window
 		final Number mainWindowDividerLocation = preferenceStore.getGenericEntryAsNumber("mainWindowDividerLocation");
 		if(mainWindowDividerLocation != null) {
@@ -1487,34 +1487,34 @@ class MainView extends JFrame {
 			}
 			mainSplitPane.setDividerLocation(mainWindowDividerLocation.intValue() + add);
 		}
-		
+
 		//restore the divider location at the main window
 		final Number treeMainTableDividerLocation = preferenceStore.getGenericEntryAsNumber("treeMainTableDividerLocation");
 		if(treeMainTableDividerLocation != null) {
 			treeMainTableSplitPane.setDividerLocation(treeMainTableDividerLocation.intValue());
 		}
-		
+
 		//restore the divider location in the property sheet
 		final Number descriptionDividerLocation = preferenceStore.getGenericEntryAsNumber("descriptionDividerLocation");
 		if(descriptionDividerLocation != null) {
 			propertySheet.setDescriptionDividerLocation(descriptionDividerLocation.intValue());
 		}
-		
+
 		final Number propertySheetImageSplitPaneDividerLocation = preferenceStore.getGenericEntryAsNumber("propertySheetImageSplitPaneDividerLocation");
 		if (propertySheetImageSplitPaneDividerLocation != null) {
 			propertySheetImageSplitPane.setDividerLocation(propertySheetImageSplitPaneDividerLocation.intValue());
 		}
-		
+
 		final String basePathTreeSelection = preferenceStore.getGenericEntryAsString("basePathTreeSelection");
 		if(basePathTreeSelection != null) {
 			TreeUtil.restoreExpanstionState(basePathTree, basePathTreeSelection);
 		}
-		
+
 		final String fileSystemTreeSelection = preferenceStore.getGenericEntryAsString("fileSystemTreeSelection");
 		if(fileSystemTreeSelection != null) {
 			TreeUtil.restoreExpanstionState(fileSystemTree, fileSystemTreeSelection);
 		}
-		
+
 		filterFieldComponent.restoreComponentProperties();
 		sortColumnComponent.restoreComponentProperties();
 	}
@@ -1552,7 +1552,7 @@ class MainView extends JFrame {
 	public void setImageViewerResource(IResourceHandler imageResource) {
 		imageViewer.setImageViewerResource(imageResource);
 	}
-	
+
 	/**
 	 * Gets the {@link IResourceHandler} for the image which is displayed in the image viewer.
 	 * @return The desired {@link IResourceHandler} or <code>null</code>.
@@ -1583,5 +1583,5 @@ class MainView extends JFrame {
 	public MainViewEbookTableComponentHandler getEbookTableHandler() {
 		return ebookTableHandler;
 	}
-	
+
 }

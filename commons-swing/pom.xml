@@ -8,9 +8,9 @@
 		<artifactId>jeboorker</artifactId>
 		<version>0.4.6</version>
 	</parent>
-	<artifactId>commons.swing</artifactId>
+	<artifactId>commons-swing</artifactId>
 	<version>1.0</version>
-	<name>swing</name>
+	<name>commons.swing</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
