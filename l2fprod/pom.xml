@@ -9,9 +9,9 @@
 		<version>0.4.6</version>
 	</parent>
 	<groupId>com.l2fprod</groupId>
-	<artifactId>l2fprod.properties</artifactId>
+	<artifactId>l2fprod</artifactId>
 	<version>7.3_1</version>
-	<name>l2fprod.properties</name>
+	<name>l2fprod</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

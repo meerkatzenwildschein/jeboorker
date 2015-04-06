@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="src/main/test"/>
-	<classpathentry kind="src" path="pdfscissors"/>
-	<classpathentry kind="lib" path="lib/jmupdf/jmupdf.jar"/>
-	<classpathentry kind="lib" path="lib/jempbox.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="lib" path="lib/itext-5.jar" sourcepath="/itext"/>
-	<classpathentry kind="lib" path="lib/bounce-0.19.jar"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -30,11 +12,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/commons"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/epublib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/commons-swing"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/l2fprod-all"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/myswing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/epublib"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jeboorker-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jpushbullet"/>
-	<classpathentry kind="lib" path="lib/weblaf-1.28.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/l2fprod"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/myswing"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
