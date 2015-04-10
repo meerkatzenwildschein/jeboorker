@@ -57,7 +57,7 @@ class H2DBManager extends DefaultDBManager {
 					initFullTextIndices(entity);
 				}
 				reCreateFullTextIndices();
-				dbPreferenceStore.addEntryAsString(DATABASE_VERSION_KEY, Jeboorker.VERSION);
+				dbPreferenceStore.addEntryAsString(DATABASE_VERSION_KEY, Jeboorker.getVersion());
 			}
 			return connection;
 		} catch (Exception e) {
@@ -138,7 +138,7 @@ class H2DBManager extends DefaultDBManager {
 
 			String sqlString = sql.toString();
 			LoggerFactory.getLogger(this).log(Level.INFO, sqlString);
-			
+
 			Dao<T, T> createDao = DaoManager.createDao(getConnectionPool(), cls);
 			GenericRawResults<T> queryRaw = createDao.queryRaw(sqlString, new RawRowMapperImpl<T, T>(new TableInfo<T, T>(getConnectionPool(),
 					(BaseDaoImpl<T, T>) createDao, cls)), new String[0]);
@@ -202,7 +202,7 @@ class H2DBManager extends DefaultDBManager {
 					String searchColumn = keyword.substring(0, keyword.indexOf(':')).toUpperCase();
 					keyword = keyword.substring(keyword.indexOf(':') + 1).toUpperCase();
 					keyword = StringUtils.escapeSql(keyword);
-					
+
 					localSQL.append("upper(").append(searchColumn).append(") like '%").append(keyword).append("%'").append(orString);
 					append = true;
 				}
@@ -212,7 +212,7 @@ class H2DBManager extends DefaultDBManager {
 			}
 
 			localSQL.append(") ");
-			
+
 			if(append) {
 				sql.append(localSQL);
 			}

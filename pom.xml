@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rr</groupId>
 	<artifactId>jeboorker</artifactId>
-	<version>0.4.6</version>
+	<version>0.0</version>
 	<packaging>pom</packaging>
 	<name>jeboorker</name>
 	<url>http://maven.apache.org</url>
@@ -12,6 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
 
 	<dependencies>
 	</dependencies>
@@ -41,7 +42,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.parent.build.directory}/lib</outputDirectory>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>

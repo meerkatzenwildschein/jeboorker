@@ -103,8 +103,8 @@ Section -Main SEC0000
     File doc\license\Commons-Codec_license.txt
 
     SetOutPath $INSTDIR\exec
-    File 'exec\Rar.exe'
-    File 'exec\UnRAR.exe'
+    File 'dist\win32\Rar.exe'
+    File 'dist\win32\UnRAR.exe'
 
     RMDir /r $INSTDIR\lib
     SetOutPath $INSTDIR\lib

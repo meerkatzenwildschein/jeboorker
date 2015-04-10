@@ -316,7 +316,7 @@ class MainView extends JFrame {
 	 * Initialize the contents of the frame.
 	 */
 	void initialize() {
-		this.setTitle(Jeboorker.APP + " " + Jeboorker.VERSION);
+		this.setTitle(Jeboorker.APP + " " + Jeboorker.getVersion());
 		this.setIconImage(ImageResourceBundle.getResourceAsImageIcon("logo_16.png").getImage());
 		this.setBounds(100, 100, 792, 622);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ -f /usr/bin/jeboorker ]
+then
+    rm /usr/bin/jeboorker
+fi
+exit 0

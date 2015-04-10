@@ -26,7 +26,7 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 class AboutDialogView extends JDialog {
 
 	private static final long serialVersionUID = -5833977607733981288L;
-	
+
 	AboutDialogView(final JFrame invoker, final AboutDialogController controller) {
 		super(invoker);
 		this.setResizable(false);
@@ -38,29 +38,29 @@ class AboutDialogView extends JDialog {
 				controller.close();
 				AboutDialogView.this.dispose();
 			}
-			
+
 		});
-		
+
 		JPanel contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5,5,5,5));
 		setContentPane(contentPanel);
-		
+
 		SwingUtils.centerOnWindow(invoker, this);
 		setTitle(Bundle.getString("PlainMetadataEditorView.about"));
 		getContentPane().setLayout(new BorderLayout(0, 0));
-		
+
 		JLabel applicationLogo = new JLabel(" ");
 		applicationLogo.setVerticalAlignment(JLabel.TOP);
 		applicationLogo.setIcon(ImageResourceBundle.getResourceAsImageIcon("logo_64.png"));
 		getContentPane().add(applicationLogo, BorderLayout.WEST);
-		
+
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new VerticalLayout(3, VerticalLayout.CENTER));
-		
-		JLabel lblVersion = new JLabel(Jeboorker.APP + " v." + Jeboorker.VERSION + " (GPL v2+)");
+
+		JLabel lblVersion = new JLabel(Jeboorker.APP + " v." + Jeboorker.getVersion() + " (GPL v2+)");
 		panel.add(lblVersion);
-		
+
 		JLabel lblUrl = new JLabel();
 		lblUrl.setForeground(Color.BLUE);
 		lblUrl.setText(Jeboorker.URL);
@@ -74,16 +74,16 @@ class AboutDialogView extends JDialog {
 					LoggerFactory.getLogger().log(Level.WARNING, "could not browse url " + Jeboorker.URL, e);
 				}
 			}
-			
+
 		});
 		panel.add(lblUrl);
-		
+
 		JLabel lblMe = new JLabel("By Rüdiger Rüttelstein");
 		panel.add(lblMe);
-		
+
 		JButton buttonOK = new JButton();
 		buttonOK.setAction(new AbstractAction() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				controller.close();
@@ -92,7 +92,7 @@ class AboutDialogView extends JDialog {
 		});
 		buttonOK.setText("OK");
 		getContentPane().add(buttonOK, BorderLayout.SOUTH);
-		
+
 	}
 
 }

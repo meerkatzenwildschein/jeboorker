@@ -1,125 +1,81 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="Jeboorker">
-	<property environment="env" />
-	<property name="ECLIPSE_HOME" value="../../../../opt/eclipse42" />
-	<property name="JrCommons.location" value="JrCommons" />
-	<property name="JrSwingCommons.location" value="JrSwingCommons" />
-	<property name="debuglevel" value="source,lines,vars" />
-	<property name="target" value="1.7" />
-	<property name="source" value="1.7" />
-	<path id="JUnit 3.libraryclasspath">
-		<pathelement location="${ECLIPSE_HOME}/plugins/org.junit_3.8.2.v3_8_2_v20100427-1100/junit.jar" />
-	</path>
-	<path id="JrCommons.classpath">
-		<pathelement location="${JrCommons.location}/bin" />
-		<pathelement location="${JrCommons.location}/lib/commons-lang-2.5.jar" />
-		<pathelement location="${JrCommons.location}/lib/commons-net-2.2.jar" />
-		<pathelement location="${JrCommons.location}/lib/jna-3.4.0.jar" />
-		<pathelement location="${JrCommons.location}/lib/platform-3.4.0.jar" />
-		<pathelement location="${JrCommons.location}/lib/commons-io-2.4.jar" />
-		<path refid="JUnit 3.libraryclasspath" />
-	</path>
-	<path id="JrSwingCommons.classpath">
-		<pathelement location="${JrSwingCommons.location}/bin" />
-		<path refid="JrCommons.classpath" />
-	</path>
-	<path id="Jeboorker.classpath">
-		<pathelement location="bin" />
-		<path refid="JrCommons.classpath" />
-		<path refid="JrSwingCommons.classpath" />
-		<pathelement location="lib/commons-lang-2.5.jar" />
-		<pathelement location="lib/bcprov-jdk15on-147.jar" />
-		<pathelement location="lib/jsoup-1.7.1.jar" />
-		<pathelement location="lib/junique-1.0.4.jar" />
-		<pathelement location="lib/epublib/htmlcleaner-2.2.jar" />
-		<pathelement location="lib/epublib/commons-vfs-1.0.jar" />
-		<pathelement location="lib/epublib/kxml2-2.2.2.jar" />
-		<pathelement location="lib/commons-logging-1.1.1.jar" />
-		<pathelement location="lib/commons-io-2.4.jar" />
-		<path refid="JUnit 3.libraryclasspath" />
-		<pathelement location="lib/jna-3.4.0.jar" />
-		<pathelement location="lib/platform-3.4.0.jar" />
-		<pathelement location="lib/itext-5.jar" />
-		<pathelement location="lib/ormlite-core-4.48.jar" />
-		<pathelement location="lib/jempbox.jar" />
-		<pathelement location="lib/h2-1.3.175.jar" />
-		<pathelement location="lib/miglayout-4.0.jar" />
-		<pathelement location="lib/jgoodies-looks-2.5.3.jar" />
-	</path>
-	<target name="init">
-		<mkdir dir="bin" />
-		<copy includeemptydirs="false" todir="bin">
-			<fileset dir="src">
-				<exclude name="**/*.launch" />
-				<exclude name="**/*.java" />
+<project basedir="." default="distribute-linux" name="Jeboorker">
+	<property name="target" value="target" />
+	<property name="dist-debian" value="${target}/dist-debian" />
+
+	<target name="distribute-linux">
+		<property name="programm-folder" value="${dist-debian}/usr/share/jeboorker" />
+
+		<antcall target="copy-libs">
+			<param name="target" value="${programm-folder}" />
+		</antcall>
+		<antcall target="copy-license-files">
+			<param name="target" value="${programm-folder}/../doc/jeboorker" />
+		</antcall>
+		<antcall target="copy-dist-files">
+			<param name="target" value="${programm-folder}/../" />
+		</antcall>
+		<copy file="dist/jeboorker.sh" todir="${programm-folder}/"/>
+		<antcall target="copy-debian-control">
+			<param name="target" value="${dist-debian}" />
+		</antcall>
+	</target>
+
+	<target name="copy-libs" description="copy all libraries to the given target folder.">
+		<copy todir="${target}/lib" flatten="true">
+			<fileset dir="commons/target/">
+				<include name="**/*.jar" />
 			</fileset>
-		</copy>
-		<copy includeemptydirs="false" todir="bin">
-			<fileset dir="epublib">
-				<exclude name="**/*.launch" />
-				<exclude name="**/*.java" />
+			<fileset dir="commons-swing/target/">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="epublib/target/">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="jpushbullet/target/">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="l2fprod/target/">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="myswing/target/">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="jeboorker-main/target/">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="jeboorker-main/lib/">
+				<include name="**/*.so" />
 			</fileset>
 		</copy>
 	</target>
-	<target name="clean">
-		<delete dir="bin" />
-	</target>
-	<target depends="clean" name="cleanall">
-		<ant antfile="build.xml" dir="${JrCommons.location}" inheritAll="false" target="clean" />
-		<ant antfile="build.xml" dir="${JrSwingCommons.location}" inheritAll="false" target="clean" />
-	</target>
-	<target depends="build-subprojects,build-project" name="build" />
-	<target name="build-subprojects">
-		<ant antfile="build.xml" dir="${JrCommons.location}" inheritAll="false" target="build-project">
-			<propertyset>
-				<propertyref name="build.compiler" />
-			</propertyset>
-		</ant>
-		<ant antfile="build.xml" dir="${JrSwingCommons.location}" inheritAll="false" target="build-project">
-			<propertyset>
-				<propertyref name="build.compiler" />
-			</propertyset>
-		</ant>
-	</target>
-	<target depends="init" name="build-project">
-		<echo message="${ant.project.name}: ${ant.file}" />
-		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-			<src path="src" />
-			<src path="epublib" />
-			<classpath refid="Jeboorker.classpath" />
-		</javac>
-	</target>
-	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
-	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-		<copy todir="${ant.library.dir}">
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+
+	<target name="copy-debian-control" description="copy debian control files to the given target folder.">
+		<copy todir="${target}/DEBIAN">
+			<fileset dir="jeboorker-main/target/control">
+				<include name="**/*" />
+			</fileset>
 		</copy>
-		<unzip dest="${ant.library.dir}">
-			<patternset includes="jdtCompilerAdapter.jar" />
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
-		</unzip>
-	</target>
-	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
-		<antcall target="build" />
-	</target>
-	<target name="Jeboorker (1)">
-		<java classname="org.rr.jeborker.Jeboorker" failonerror="true" fork="yes">
-			<jvmarg line="-Duser.language=de -Duser.region=EN -Dapplication.suffix=devel -Xmx264m -XX:+AggressiveOpts -XX:+OptimizeStringConcat" />
-			<classpath refid="Jeboorker.classpath" />
-		</java>
 	</target>
 
-	<target name="jar" depends="init">
-		<jar destfile="lib/jeboorker.jar" basedir="./bin" includes="**/*.*"></jar>
-		<jar destfile="lib/jrcommons.jar" basedir="${JrCommons.location}/bin" includes="**/*.*"></jar>
-		<jar destfile="lib/jrswingcommons.jar" basedir="${JrSwingCommons.location}/bin" includes="**/*.*"></jar>
+	<target name="copy-license-files" description="copy license files to the given target folder.">
+		<copy todir="${target}/license">
+			<fileset dir="doc/license">
+				<include name="**/*" />
+			</fileset>
+		</copy>
 	</target>
 
-	<target name="dist" depends="init,jar" />
+	<target name="copy-dist-files" description="copy other files to the given target folder.">
+		<copy todir="${target}/pixmaps">
+			<fileset dir="dist/pixmaps">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy todir="${target}/applications">
+			<fileset dir="dist/applications/">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+	</target>
 </project>

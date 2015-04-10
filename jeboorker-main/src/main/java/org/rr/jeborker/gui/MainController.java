@@ -27,7 +27,6 @@ import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtils;
-import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -47,6 +46,8 @@ import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 
 public class MainController {
+
+	private static long startupTime = System.currentTimeMillis();
 
 	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
@@ -108,7 +109,7 @@ public class MainController {
 	public MainViewPropertySheetHandler getPropertySheetHandler() {
 		return mainWindow.getPropertySheetHandler();
 	}
-	
+
 	/**
 	 * Gets the controller which handles the preference dialog.
 	 */
@@ -159,10 +160,10 @@ public class MainController {
 
 		mainWindow = new MainView(this);
 		mainWindow.initialize();
-		
+
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.init"));
 		splashScreen.setLoadingValue(60);
-		
+
 		mainWindow.initListeners();
 
 		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.restore"));
@@ -176,7 +177,7 @@ public class MainController {
 			@Override
 			public void run() {
 				mainWindow.setVisible(true);
-				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms startup time");
+				LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - startupTime) + "ms startup time");
 
 				MainController.getController().getMainWindow().getGlassPane().setVisible(true);
 				initMainModel();
@@ -212,13 +213,13 @@ public class MainController {
 					mainWindow.getEbookTableHandler().setModel(ebookPropertyDBTableModel);
 				} finally {
 					getMainWindow().getGlassPane().setVisible(false);
-					LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - Jeboorker.startupTime) + "ms until data model loaded");
+					LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - startupTime) + "ms until data model loaded");
 					getProgressMonitor().setEnabled(true);
 				}
 			}
 		}.execute();
 	}
-	
+
 	public void refreshTableItem(int[] selectedRows, boolean refreshMetadataSheet) {
 		mainWindow.getEbookTableHandler().refreshTableItem(selectedRows);
 
@@ -353,7 +354,7 @@ public class MainController {
 			}
 		}
 	}
-	
+
 	/**
 	 * Saves/Writes the metadata properties if something has changed.
 	 */
@@ -421,7 +422,7 @@ public class MainController {
 		}
 		return new int[0];
 	}
-	
+
 	public List<Field> getSelectedSortColumnFields() {
 		return mainWindow.getSortColumnSelectedFields();
 	}
@@ -548,11 +549,11 @@ public class MainController {
 	public List<Field> getSelectedFilterFields() {
 		return mainWindow.getSelectedFilterFields();
 	}
-	
+
 	public void setFilterColorEnabled(boolean enabled) {
 		mainWindow.setFilterColorEnabled(enabled);
 	}
-	
+
 	public String getFilterText() {
 		return mainWindow.getFilterText();
 	}
@@ -560,6 +561,6 @@ public class MainController {
 	public void addFilterFieldSearch(String filterText) {
 		mainWindow.addFilterFieldSearch(filterText);
 	}
-	
+
 }
 

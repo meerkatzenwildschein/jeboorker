@@ -8,6 +8,7 @@ import it.sauronsoftware.junique.MessageHandler;
 import java.awt.Frame;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
@@ -38,15 +39,11 @@ public class Jeboorker {
 	public static final ExecutorService APPLICATION_THREAD_POOL = new ThreadPoolExecutor(0, 1024,
 			60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ApplicationThreadFactory()) {};
 
-	public static final String VERSION = "0.4.6";
-
 	public static final String APP = "Jeboorker";
 
-	public static final String URL = "https://code.google.com/p/jeboorker/";
+	public static final String URL = "https://github.com/meerkatzenwildschein/jeboorker";
 
 	private static MainController mainController;
-
-	public static long startupTime = System.currentTimeMillis();
 
 	/**
 	 * Launch the application.
@@ -105,8 +102,19 @@ public class Jeboorker {
 			// Sends arguments to the already active instance.
 			JUnique.sendMessage(Jeboorker.class.getName(), EMPTY);
 
-			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + VERSION + " is already running.");
+			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + getVersion() + " is already running.");
 		}
+	}
+
+	public static String getVersion() {
+		Properties properties = new Properties();
+		try {
+			properties.load(Jeboorker.class.getResourceAsStream("version.properties"));
+			return properties.getProperty("version");
+		} catch (IOException e) {
+			LoggerFactory.log(Level.SEVERE, Jeboorker.class, "Failed to load version.");
+		}
+		return "UNKNOWN"; // fallback version
 	}
 
 	/**
@@ -117,7 +125,7 @@ public class Jeboorker {
 		List<String> args = bean.getInputArguments();
 		String argsString = ListUtils.join(args, " ");
 
-		LoggerFactory.getLogger().info("Jeboorker " + Jeboorker.VERSION + " started with " + argsString);
+		LoggerFactory.getLogger().info("Jeboorker " + getVersion() + " started with " + argsString);
 
 		Properties props = System.getProperties();
 		Set<Object> keys = props.keySet();
@@ -137,32 +145,24 @@ public class Jeboorker {
 	}
 
 	private static void setupClasspath() {
-		final String appFolder = getAppFolder();
-		final Set<String> jarFileSet = new HashSet<>();
-
 		try {
-			addPath(new File(appFolder + File.separator + "lib/"), jarFileSet);
-			addPath(new File(appFolder + File.separator + "lib/orientdb/"), jarFileSet);
-			addPath(new File(appFolder + File.separator + "lib/epubcheck/"), jarFileSet);
-			addPath(new File(appFolder + File.separator + "lib/epublib/"), jarFileSet);
-			addPath(new File(appFolder + File.separator + "lib/dropbox/"), jarFileSet);
-			addPath(new File(appFolder + File.separator + "lib/jmupdf/"), jarFileSet);
-
-			String nativeLibPath = appFolder + File.separator + "lib/jmupdf/";
-			ReflectionUtils.addLibraryPath(nativeLibPath);
-		} catch (Exception e1) {
-			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e1);
+			String libFolder = getAppFolder() + File.separator + "lib/";
+			addPathToSystemClassLoader(new File(libFolder));
+			ReflectionUtils.addLibraryPath(libFolder);
+		} catch (Exception e) {
+			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e);
 			System.exit(-1);
 		}
 	}
 
 	/**
 	 * Add a classpath to the default system classloader.
-	 * @param dir The dir with jars to be added (not recursively)
+	 * @param dir The directory with jars to be added (not recursively)
 	 * @throws Exception
 	 */
-	public static void addPath(final File dir, final Set<String> jarFileSet) throws Exception {
+	public static void addPathToSystemClassLoader(File dir) throws Exception {
 		if(dir != null && dir.isDirectory()) {
+			final Set<String> jarFileSet = new HashSet<>();
 			final File[] files = dir.listFiles(new FileFilter() {
 
 				@Override

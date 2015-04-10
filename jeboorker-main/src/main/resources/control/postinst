@@ -1,0 +1,11 @@
+#!/bin/sh
+if [ -f /usr/bin/jeboorker ]
+then
+    rm /usr/bin/jeboorker
+fi
+ln -s /usr/share/jeboorker/jeboorker.sh /usr/bin/jeboorker
+chmod a+x /usr/share/jeboorker/jeboorker.sh
+
+desktop-file-install /usr/share/applications/jeboorker.desktop 
+exit 0
+

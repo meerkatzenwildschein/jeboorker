@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Jeboorker
+Name[de_DE]=Jeboorker
+Comment=Ebook management
+GenericName=Jeboorker
+Exec=jeboorker
+Terminal=false
+X-MultipleArgs=false
+Icon=/usr/share/pixmaps/jeboorker64.png
+Type=Application
+Categories=Office;
+StartupNotify=true
+

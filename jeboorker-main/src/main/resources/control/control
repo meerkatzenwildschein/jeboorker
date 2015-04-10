@@ -1,0 +1,8 @@
+Package: jeboorker
+Version: ${pom.version}
+Section: office
+Priority: extra
+Architecture: all
+Depends: sun-java7-jre|openjdk-7-jre,xdg-utils,unrar,rar,desktop-file-utils
+Maintainer: rra
+Description: ebook management
