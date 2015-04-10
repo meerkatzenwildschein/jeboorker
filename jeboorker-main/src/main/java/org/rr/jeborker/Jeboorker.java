@@ -42,7 +42,7 @@ public class Jeboorker {
 
 	public static final String APP = "Jeboorker";
 
-	public static final String URL = "https://code.google.com/p/jeboorker/";
+	public static final String URL = "https://github.com/meerkatzenwildschein/jeboorker";
 
 	private static MainController mainController;
 
