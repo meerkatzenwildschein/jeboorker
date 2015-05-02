@@ -1,5 +1,5 @@
 Package: jeboorker
-Version: ${pom.version}
+Version: version_placeholder
 Section: office
 Priority: extra
 Architecture: all

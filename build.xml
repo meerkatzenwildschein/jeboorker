@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="distribute-linux" name="Jeboorker">
+	<!-- register ant "deb" task -->
+	<path id="ant-deb.classpath">
+		<fileset dir="jeboorker-main/lib" includes="*.jar" />
+	</path>
+	<taskdef name="deb" classname="com.googlecode.ant_deb_task.Deb" classpathref="ant-deb.classpath" />
+
+	<loadproperties srcFile="jeboorker-main/target/org/rr/jeborker/version.properties" />
 	<property name="target" value="target" />
 	<property name="dist-debian" value="${target}/dist-debian" />
 
 	<target name="distribute-linux">
+		<echo message="Packaging Jeboorker version ${version}"/>
+
 		<property name="programm-folder" value="${dist-debian}/usr/share/jeboorker" />
 
 		<antcall target="copy-libs">
@@ -15,10 +24,21 @@
 		<antcall target="copy-dist-files">
 			<param name="target" value="${programm-folder}/../" />
 		</antcall>
-		<copy file="dist/jeboorker.sh" todir="${programm-folder}/"/>
 		<antcall target="copy-debian-control">
 			<param name="target" value="${dist-debian}" />
 		</antcall>
+
+		<copy file="dist/jeboorker.sh" todir="${programm-folder}/" />
+		<chmod file="${programm-folder}/jeboorker.sh" perm="a+rx"/>
+
+		<antcall target="execute-dpkg-deb-build" />
+	</target>
+
+	<target name="execute-dpkg-deb-build">
+		<exec executable="dpkg-deb">
+			<arg value="--build"/>
+			<arg value="${dist-debian}"/>
+		</exec>
 	</target>
 
 	<target name="copy-libs" description="copy all libraries to the given target folder.">
@@ -52,10 +72,16 @@
 
 	<target name="copy-debian-control" description="copy debian control files to the given target folder.">
 		<copy todir="${target}/DEBIAN">
-			<fileset dir="jeboorker-main/target/control">
+			<fileset dir="dist/control">
 				<include name="**/*" />
 			</fileset>
 		</copy>
+
+		<replace file="${target}/DEBIAN/control" value="${version}">
+			<replacetoken>version_placeholder</replacetoken>
+		</replace>
+
+		<chmod dir="${target}/DEBIAN/" perm="a+rx" includes="**"/>
 	</target>
 
 	<target name="copy-license-files" description="copy license files to the given target folder.">
