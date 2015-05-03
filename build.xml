@@ -42,6 +42,7 @@
 		</exec>
 	</target>
 
+
 	<target name="copy-libs" description="copy all libraries to the given target folder.">
 		<copy todir="${target}/lib" flatten="true">
 			<fileset dir="commons/target/">
