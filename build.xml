@@ -6,7 +6,7 @@
 	</path>
 	<taskdef name="deb" classname="com.googlecode.ant_deb_task.Deb" classpathref="ant-deb.classpath" />
 
-	<loadproperties srcFile="jeboorker-main/target/org/rr/jeborker/version.properties" />
+	<loadproperties srcFile="jeboorker-main/target/maven-archiver/pom.properties" />
 	<property name="target" value="target" />
 	<property name="dist-debian" value="${target}/dist-debian" />
 
@@ -38,6 +38,7 @@
 		<exec executable="dpkg-deb">
 			<arg value="--build"/>
 			<arg value="${dist-debian}"/>
+			<arg value="jeboorker_${version}.deb"/>
 		</exec>
 	</target>
 
