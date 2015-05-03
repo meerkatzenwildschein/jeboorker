@@ -9,6 +9,7 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
@@ -109,8 +110,11 @@ public class Jeboorker {
 	public static String getVersion() {
 		Properties properties = new Properties();
 		try {
-			properties.load(Jeboorker.class.getResourceAsStream("version.properties"));
-			return properties.getProperty("version");
+			InputStream pomProperties = Jeboorker.class.getClass().getResourceAsStream("/META-INF/maven/org.rr/jeboorker-main/pom.properties");
+			if(pomProperties != null) {
+				properties.load(pomProperties);
+				return properties.getProperty("version");
+			}
 		} catch (IOException e) {
 			LoggerFactory.log(Level.SEVERE, Jeboorker.class, "Failed to load version.");
 		}

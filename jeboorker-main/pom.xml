@@ -148,43 +148,43 @@
 			<groupId>de.sciss</groupId>
 			<artifactId>weblaf</artifactId>
 			<version>1.28</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/weblaf-1.28.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/weblaf-1.28.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.bounce</groupId>
 			<artifactId>bounce</artifactId>
 			<version>0.19_1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/bounce-0.19.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/bounce-0.19.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.itext</groupId>
 			<artifactId>itext</artifactId>
 			<version>5</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/itext-5.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/itext-5.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.jempbox</groupId>
 			<artifactId>jempbox</artifactId>
 			<version>0.2.0_1</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/jempbox.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/jempbox.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.jmupdf</groupId>
 			<artifactId>jmupdf</artifactId>
 			<version>0.5.0</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/jmupdf.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/jmupdf.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.jmupdf</groupId>
 			<artifactId>jmupdf-viewer</artifactId>
 			<version>0.5.0</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/jmupdf-viewer.jar</systemPath>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/jmupdf-viewer.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>
