@@ -38,7 +38,7 @@ public class MainMenuBarController {
 		}
 
 		private String removeTrailingNameSeparator(String key) {
-			return StringUtils.removeEnd(StringUtil.removeEnd(key, "/"), "\\");
+			return StringUtils.removeEnd(StringUtils.removeEnd(key, "/"), "\\");
 		}
 
 	};
