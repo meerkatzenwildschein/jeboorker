@@ -32,6 +32,7 @@
 		<chmod file="${programm-folder}/jeboorker.sh" perm="a+rx"/>
 
 		<antcall target="execute-dpkg-deb-build" />
+		<antcall target="execute-tar-build" />
 	</target>
 
 	<target name="execute-dpkg-deb-build">
@@ -42,6 +43,15 @@
 		</exec>
 	</target>
 
+	<target name="execute-tar-build">
+		<tar destfile="${target}/jeboorker_${version}.tar" basedir="${dist-debian}/usr/share">
+			<tarfileset dir="${dist-debian}/usr/share">
+				<include name="**" />
+			</tarfileset>
+		</tar>
+		<gzip src="${target}/jeboorker_${version}.tar" destfile="${target}/jeboorker_${version}.tar.gz"/>
+		<delete file="${target}/jeboorker_${version}.tar"/>
+	</target>
 
 	<target name="copy-libs" description="copy all libraries to the given target folder.">
 		<copy todir="${target}/lib" flatten="true">
