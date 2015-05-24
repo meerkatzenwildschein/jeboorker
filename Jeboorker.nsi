@@ -5,17 +5,17 @@ Name "Jeboorker Start"
 
 # Included files
 !include Sections.nsh
-!include FileFunc.nsh 
+!include FileFunc.nsh
 
 # Installer pages
 Page instfiles
 
 # Installer attributes
-OutFile Jeboorker.exe
+OutFile dist\win32\Jeboorker.exe
 InstallDir $PROGRAMFILES\Jeboorker
 CRCCheck on
 XPStyle on
-Icon "logo_16.ico"
+Icon "dist\logo_16.ico"
 SilentInstall silent
 InstallDirRegKey HKLM "${REGKEY}" Path
 

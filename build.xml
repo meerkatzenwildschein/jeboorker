@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="distribute-linux" name="Jeboorker">
+<project basedir="." default="distribute-all" name="Jeboorker">
 	<!-- register ant "deb" task -->
 	<path id="ant-deb.classpath">
 		<fileset dir="jeboorker-main/lib" includes="*.jar" />
@@ -8,12 +8,31 @@
 
 	<loadproperties srcFile="jeboorker-main/target/maven-archiver/pom.properties" />
 	<property name="target" value="target" />
-	<property name="dist-debian" value="${target}/dist-debian" />
+	<property name="packaging" value="${target}/packaging" />
+
+
+	<target name="distribute-all">
+		<antcall target="distribute-linux" />
+		<antcall target="distribute-windows" />
+	</target>
+
+	<target name="distribute-windows">
+		<!-- create Jeboorker executable -->
+		<exec executable="makensis">
+			<arg value="Jeboorker.nsi"/>
+		</exec>
+
+		<!-- create windows setup file -->
+		<exec executable="makensis">
+			<arg value="-DVERSION=${version}"/>
+			<arg value="setup.nsi"/>
+		</exec>
+	</target>
 
 	<target name="distribute-linux">
 		<echo message="Packaging Jeboorker version ${version}"/>
 
-		<property name="programm-folder" value="${dist-debian}/usr/share/jeboorker" />
+		<property name="programm-folder" value="${packaging}/usr/share/jeboorker" />
 
 		<antcall target="copy-libs">
 			<param name="target" value="${programm-folder}" />
@@ -25,23 +44,33 @@
 			<param name="target" value="${programm-folder}/../" />
 		</antcall>
 		<antcall target="copy-debian-control">
-			<param name="target" value="${dist-debian}" />
+			<param name="target" value="${packaging}" />
 		</antcall>
 
 		<copy file="dist/jeboorker.sh" todir="${programm-folder}/" />
 		<chmod file="${programm-folder}/jeboorker.sh" perm="a+rx"/>
 
 		<antcall target="execute-dpkg-deb-build" />
+		<antcall target="execute-tar-build" />
 	</target>
 
 	<target name="execute-dpkg-deb-build">
 		<exec executable="dpkg-deb">
 			<arg value="--build"/>
-			<arg value="${dist-debian}"/>
+			<arg value="${packaging}"/>
 			<arg value="${target}/jeboorker_${version}.deb"/>
 		</exec>
 	</target>
 
+	<target name="execute-tar-build">
+		<tar destfile="${target}/jeboorker_${version}.tar" basedir="${packaging}/usr/share">
+			<tarfileset dir="${packaging}/usr/share">
+				<include name="**/*" />
+			</tarfileset>
+		</tar>
+		<gzip src="${target}/jeboorker_${version}.tar" destfile="${target}/jeboorker_${version}.tar.gz"/>
+		<delete file="${target}/jeboorker_${version}.tar"/>
+	</target>
 
 	<target name="copy-libs" description="copy all libraries to the given target folder.">
 		<copy todir="${target}/lib" flatten="true">
