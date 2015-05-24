@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,7 @@ import org.rr.commons.swing.components.model.DefaultJRCheckBoxComboBoxModel;
 import org.rr.commons.swing.components.model.JRCheckBoxComboBoxModel;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -113,7 +113,7 @@ public class FilterPanelComponent extends JPanel {
 	 * @return The text from the filter/search field. Never returns <code>null</code>.
 	 */
 	public String getFilterText() {
-		return StringUtils.toString(filterField.getEditor().getItem());
+		return StringUtil.toString(filterField.getEditor().getItem());
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class FilterPanelComponent extends JPanel {
 			public String getLabel(int index) {
 				Field value = getValueAt(index);
 				ViewField annotation = ((Field) value).getAnnotation(ViewField.class);
-				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", EMPTY).toLowerCase());
+				String localizedName = Bundle.getString(StringUtil.replace(annotation.name(), " ", EMPTY).toLowerCase());
 				if (localizedName != null) {
 					return localizedName;
 				} else {
@@ -245,7 +245,7 @@ public class FilterPanelComponent extends JPanel {
 		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
 		StringBuilder modelEntries = new StringBuilder();
 		for (int i = 0; i < model.getSize(); i++) {
-			String elementAt = StringUtils.replace(StringUtils.toString(model.getElementAt(i)), ",", EMPTY);
+			String elementAt = StringUtil.replace(StringUtil.toString(model.getElementAt(i)), ",", EMPTY);
 			if (modelEntries.length() > 0) {
 				modelEntries.append(",");
 			}

@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -67,9 +67,9 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 				Object sValue = super.getValue();
 				if(sValue instanceof List) {
 					Object o = ((List<?>) sValue).get(0);
-					values.set(0, StringUtils.toString(o, true));
+					values.set(0, StringUtil.toString(o, true));
 				} else {
-					values.set(0, StringUtils.toString(sValue, true));
+					values.set(0, StringUtil.toString(sValue, true));
 				}
 				return values;
 			}

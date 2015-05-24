@@ -86,7 +86,7 @@ public class ProcessExecutor {
 	private static CommandLine createLinuxCommandLineScript(CommandLine commandline) throws ExecutionException {
 		StringBuilder script = new StringBuilder();
 		script.append("#!/bin/sh")
-		.append(StringUtils.NEW_LINE)
+		.append(StringUtil.NEW_LINE)
 		.append(getCommandLineString(commandline));
 
 		IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("sh");
@@ -121,7 +121,7 @@ public class ProcessExecutor {
 	 * Replaces the whitespace char with one which did not cause parsing problems.
 	 */
 	public static String saveWhitespaces(String s) {
-		return StringUtils.replace(s, " ", "\u00A0");
+		return StringUtil.replace(s, " ", "\u00A0");
 	}
 
 	private static class ProcessCallable implements Callable<Long> {

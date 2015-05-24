@@ -1,6 +1,6 @@
 package org.rr.jeborker.db.item;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.File;
 import java.io.Serializable;
@@ -17,7 +17,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.IDBObject;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -250,7 +250,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 		for (Field field : dbViewFields) {
 			try {
 				if(field.getAnnotation(ProtectedField.class) == null) {
-					String setter = "set" + StringUtils.capitalize(field.getName());
+					String setter = "set" + StringUtil.capitalize(field.getName());
 					try {
 						ReflectionUtils.invokeMethod(this, setter, new Object[] { null });
 					} catch (Exception e) {
@@ -276,8 +276,8 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 	
 	public void setFile(String file) {
-		this.file = StringUtils.replace(file, "/", File.separator);
-		this.file = StringUtils.replace(this.file, "\\", File.separator);
+		this.file = StringUtil.replace(file, "/", File.separator);
+		this.file = StringUtil.replace(this.file, "\\", File.separator);
 		this.fileName = file != null ? FilenameUtils.getName(file) : null;
 	}
 
@@ -434,7 +434,7 @@ public class EbookPropertyItem implements IDBObject, Serializable {
 	}
 
 	public void setAuthorSort(String authorSort) {
-		if(StringUtils.isNotEmpty(authorSort)) {
+		if(StringUtil.isNotEmpty(authorSort)) {
 			authorSort = authorSort.trim();
 			int lastSpaceIdx = authorSort.lastIndexOf(' ');
 			if(lastSpaceIdx != -1) {

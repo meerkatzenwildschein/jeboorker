@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -26,7 +26,7 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
 import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -510,12 +510,12 @@ public class MainController {
 		if(name == null) {
 			return null;
 		}
-		String localized = StringUtils.replace(name.toLowerCase(), new String[] {"/", " ", ":"}, EMPTY);
+		String localized = StringUtil.replace(name.toLowerCase(), new String[] {"/", " ", ":"}, EMPTY);
 		localized = Bundle.getString(localized);
 		if(localized != null && localized.length() > 0) {
-			return StringUtils.capitalize(localized);
+			return StringUtil.capitalize(localized);
 		} else {
-			return StringUtils.capitalize(name);
+			return StringUtil.capitalize(name);
 		}
 	}
 

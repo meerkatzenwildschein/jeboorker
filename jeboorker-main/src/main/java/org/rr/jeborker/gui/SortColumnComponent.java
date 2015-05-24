@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
@@ -24,7 +24,7 @@ import org.rr.commons.swing.components.model.DefaultJRCheckBoxComboBoxModel;
 import org.rr.commons.swing.components.model.JRCheckBoxComboBoxModel;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.OrderDirection;
@@ -193,7 +193,7 @@ class SortColumnComponent extends JPanel {
 			public String getLabel(int index) {
 				Field value = getValueAt(index);
 				ViewField annotation = value.getAnnotation(ViewField.class);
-				String localizedName = Bundle.getString(StringUtils.replace(annotation.name(), " ", EMPTY).toLowerCase());
+				String localizedName = Bundle.getString(StringUtil.replace(annotation.name(), " ", EMPTY).toLowerCase());
 				if(localizedName != null) {
 					return localizedName;
 				} else {

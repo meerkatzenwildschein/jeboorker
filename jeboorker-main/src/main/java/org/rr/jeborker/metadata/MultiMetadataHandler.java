@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, IMetadataWriter {
@@ -146,7 +146,7 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 				for(MetadataProperty prop : props) {
 					if(type.getName().equals(prop.getName()) && !prop.getValues().isEmpty()) {
 						final Object value = prop.getValues().get(0);
-						final boolean createNew = !StringUtils.toString(value).isEmpty();
+						final boolean createNew = !StringUtil.toString(value).isEmpty();
 						final List<MetadataProperty> metadataByType = reader.getMetadataByType(createNew, readMetadata, type);
 						
 						if(!metadataByType.isEmpty()) {
@@ -154,10 +154,10 @@ class MultiMetadataHandler extends AMetadataHandler implements IMetadataReader, 
 							
 							Object oldValue = metadataProperty.getValues().isEmpty() ? null : metadataProperty.getValues().get(0);
 							if(value != null && !value.equals(oldValue)) {
-								if(!StringUtils.toString(value).isEmpty() && !readMetadata.contains(metadataProperty.getFirstMetadataProperty())) {
+								if(!StringUtil.toString(value).isEmpty() && !readMetadata.contains(metadataProperty.getFirstMetadataProperty())) {
 									//add if not already exists.
 									readMetadata.add(metadataProperty.getFirstMetadataProperty());
-								} else if(StringUtils.toString(value).isEmpty()) {
+								} else if(StringUtil.toString(value).isEmpty()) {
 									//remove empty metadata entries
 									readMetadata.remove(metadataProperty.getFirstMetadataProperty());
 								}

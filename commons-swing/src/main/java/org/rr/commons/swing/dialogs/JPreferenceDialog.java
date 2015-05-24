@@ -1,6 +1,6 @@
 package org.rr.commons.swing.dialogs;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -34,7 +34,7 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class JPreferenceDialog extends JDialog {
 
@@ -130,7 +130,7 @@ public class JPreferenceDialog extends JDialog {
 				Boolean booleanValue = BooleanUtils.toBoolean(text);
 				return booleanValue.booleanValue();
 			} else if(component instanceof JComboBox) {
-				String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
+				String text = StringUtil.toString( ((JComboBox)component).getSelectedItem() );
 				Boolean booleanValue = BooleanUtils.toBoolean(text);
 				return booleanValue.booleanValue();
 			}
@@ -152,10 +152,10 @@ public class JPreferenceDialog extends JDialog {
 				String text = ((JTextComponent)component).getText();
 				return text;
 			} else if(component instanceof JComboBox) {
-				String text = StringUtils.toString( ((JComboBox)component).getSelectedItem() );
+				String text = StringUtil.toString( ((JComboBox)component).getSelectedItem() );
 				return text;
 			} else if(component instanceof JSlider) {
-				String text = StringUtils.toString( ((JSlider)component).getValue() );
+				String text = StringUtil.toString( ((JSlider)component).getValue() );
 				return text;
 			}
 		}
@@ -295,7 +295,7 @@ public class JPreferenceDialog extends JDialog {
 	private List<PreferenceEntry> getPreferenceEntriesByCategory(String category) {
 		ArrayList<PreferenceEntry> result = new ArrayList<JPreferenceDialog.PreferenceEntry>();
 		for(PreferenceEntry preferenceEntry : preferenceEntries.values()) {
-			if(StringUtils.toString(category).equals(StringUtils.toString(preferenceEntry.getCategory()))) {
+			if(StringUtil.toString(category).equals(StringUtil.toString(preferenceEntry.getCategory()))) {
 				result.add(preferenceEntry);
 			}
 		}
@@ -308,7 +308,7 @@ public class JPreferenceDialog extends JDialog {
 	private List<String> getPreferenceCategories() {
 		ArrayList<String> result = new ArrayList<>();
 		for(PreferenceEntry preferenceEntry : preferenceEntries.values()) {
-			String category = StringUtils.toString(preferenceEntry.getCategory());
+			String category = StringUtil.toString(preferenceEntry.getCategory());
 			if(!result.contains(category)) {
 				result.add(category);
 			}

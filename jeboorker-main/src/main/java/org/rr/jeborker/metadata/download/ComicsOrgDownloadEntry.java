@@ -1,7 +1,7 @@
 package org.rr.jeborker.metadata.download;
 
 import static org.rr.commons.utils.BooleanUtils.not;
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class ComicsOrgDownloadEntry implements MetadataDownloadEntry {
 	
@@ -67,7 +67,7 @@ public class ComicsOrgDownloadEntry implements MetadataDownloadEntry {
 					creditLabel = span.text().replace(":", "").trim();
 				} else if(span.className().equals("credit_value")) {
 					String value = span.text().trim();
-					if(not(StringUtils.equals(value, "?"))) {
+					if(not(StringUtil.equals(value, "?"))) {
 						result.put(creditLabel, span.text().trim());
 					}
 				}
@@ -125,9 +125,9 @@ public class ComicsOrgDownloadEntry implements MetadataDownloadEntry {
 				Elements coverLinks = htmlDoc.getElementsByClass("issue_cover_links");
 				for (Element coverLink : coverLinks) {
 					String html = coverLink.html();
-					String imagePage = StringUtils.between(html, "\"/issue/", "\"");
+					String imagePage = StringUtil.between(html, "\"/issue/", "\"");
 					if(imagePage != null) {
-						imagePage = StringUtils.replace(imagePage, "\"", EMPTY);
+						imagePage = StringUtil.replace(imagePage, "\"", EMPTY);
 						byte[] loadPage = MetadataDownloadUtils.loadPage(new URL(mainUrl + imagePage));
 						Document document = MetadataDownloadUtils.getDocument(loadPage, mainUrl);
 						coverImage = getCoverImage(document);

@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -17,7 +17,7 @@ import org.htmlcleaner.TagNode;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerInputStream;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.UtilConstants;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
@@ -74,15 +74,15 @@ class HTMLMetadataReader implements IMetadataReader {
 				}
 				content.append(html);
 
-				if((bodyIndex = StringUtils.find(content, body, content.length() - len - body.length(), UtilConstants.COMPARE_TEXT)) != -1) {
+				if((bodyIndex = StringUtil.find(content, body, content.length() - len - body.length(), UtilConstants.COMPARE_TEXT)) != -1) {
 					break;
 				}
 			}
 
 			if(bodyIndex != -1) {
 				String metadata = content.toString().substring(0, bodyIndex);
-				metadata = StringUtils.replace(metadata, new String[] {"<html>"}, EMPTY, UtilConstants.COMPARE_TEXT);
-				metadata = StringUtils.ltrim(metadata, '\r', '\n');
+				metadata = StringUtil.replace(metadata, new String[] {"<html>"}, EMPTY, UtilConstants.COMPARE_TEXT);
+				metadata = StringUtil.ltrim(metadata, '\r', '\n');
 				return metadata;
 			}
 		} finally {

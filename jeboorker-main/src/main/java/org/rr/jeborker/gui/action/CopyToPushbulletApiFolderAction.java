@@ -19,7 +19,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.swing.dialogs.JListSelectionDialog;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.ThreadUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -79,7 +79,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	private void initUpload(final IResourceHandler resource) throws IllegalStateException, IOException {
 		final String pushBulletApiKey = getApiKey();
 
-		if(StringUtils.isNotEmpty(pushBulletApiKey)) {
+		if(StringUtil.isNotEmpty(pushBulletApiKey)) {
 			ThreadUtils.loopAndWait(targetDeviceIdentifiers, new ThreadUtils.RunnableImpl<String, Void>() {
 
 				@Override
@@ -126,9 +126,9 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	private String getApiKey() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String pushBulletApiKey = preferenceStore.getGenericEntryAsString(PUSHBULLET_API_KEY);
-		if(StringUtils.isEmpty(pushBulletApiKey)) {
+		if(StringUtil.isEmpty(pushBulletApiKey)) {
 			pushBulletApiKey = askForApiKey();
-			if(StringUtils.isNotEmpty(pushBulletApiKey)) {
+			if(StringUtil.isNotEmpty(pushBulletApiKey)) {
 				preferenceStore.addGenericEntryAsString(PUSHBULLET_API_KEY, pushBulletApiKey);
 			}
 		}
@@ -153,7 +153,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 			@Override
 			public String getViewValueAt(int idx) {
 				Extras extras = devices.get(idx).getExtras();
-				return StringUtils.capitalize(extras.getManufacturer()) + " " + StringUtils.capitalize(extras.getModel());
+				return StringUtil.capitalize(extras.getManufacturer()) + " " + StringUtil.capitalize(extras.getModel());
 			}
 
 			@Override
@@ -191,7 +191,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	private List<Integer> fetchSelectedDeviceIndices() {
 		APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String joinedIndices = dbPreferenceStore.getGenericEntryAsString(PUSHBULLET_DEVICE_SELECTION_KEY);
-		if(StringUtils.isNotEmpty(joinedIndices)) {
+		if(StringUtil.isNotEmpty(joinedIndices)) {
 			List<String> splitIndiceStrings = ListUtils.split(joinedIndices, ";");
 			return new TransformValueList<String, Integer>(splitIndiceStrings) {
 

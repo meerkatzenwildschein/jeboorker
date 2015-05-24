@@ -16,7 +16,7 @@ import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.IOUtil;
 import nl.siegmann.epublib.util.commons.io.XmlStreamReader;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /**
  * Represents a resource that is part of the epub.
@@ -435,7 +435,7 @@ public class Resource implements Serializable {
 	}
 
 	public String toString() {
-		return StringUtils.toString("id", id,
+		return StringUtil.toString("id", id,
 				"title", title,
 				"encoding", inputEncoding,
 				"mediaType", mediaType,
@@ -467,7 +467,7 @@ public class Resource implements Serializable {
 			return this.href;
 		}
 		String packagePath = packageHref.substring(0, lastSlashPos + 1);
-		if (StringUtils.isNotEmpty(this.href) || this.href.length() > lastSlashPos) {
+		if (StringUtil.isNotEmpty(this.href) || this.href.length() > lastSlashPos) {
 			if (this.href.startsWith(packagePath)) {
 				// fix only entries within the given packageHref. The entry could be
 				// destroyed in the case that the ref is not in the given package.

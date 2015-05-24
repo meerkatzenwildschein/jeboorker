@@ -35,7 +35,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.components.JRScrollPane;
 import org.rr.commons.swing.components.JRTable;
 import org.rr.commons.swing.components.container.ShadowPanel;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.cell.MetadataDownloadTableCellEditor;
 import org.rr.jeborker.gui.cell.MetadataDownloadTableCellRenderer;
@@ -223,8 +223,8 @@ class MetadataDownloadView extends AbstractDialogView {
 		});
 
 		if(!selectedEbookPropertyItems.isEmpty()) {
-			String searchPhrase = (StringUtils.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtils.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
-			if(StringUtils.isNotEmpty(searchPhrase)) {
+			String searchPhrase = (StringUtil.toString(selectedEbookPropertyItems.get(0).getAuthor()) + " " + StringUtil.toString(selectedEbookPropertyItems.get(0).getTitle())).trim();
+			if(StringUtil.isNotEmpty(searchPhrase)) {
 				searchTextField.setText(searchPhrase.trim());
 			} else {
 				String fileName = FilenameUtils.removeExtension(selectedEbookPropertyItems.get(0).getFileName());

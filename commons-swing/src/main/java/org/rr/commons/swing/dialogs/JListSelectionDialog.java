@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
 
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 
 public class JListSelectionDialog<E> extends BaseDialog {
@@ -42,7 +42,7 @@ public class JListSelectionDialog<E> extends BaseDialog {
 
 		Container contentPane = getContentPane();
 
-		JLabel messageLabel = new JLabel(StringUtils.toString(message));
+		JLabel messageLabel = new JLabel(StringUtil.toString(message));
 		contentPane.add(messageLabel, BorderLayout.NORTH);
 
 		JScrollPane choisePanelScrollPane = new JScrollPane();

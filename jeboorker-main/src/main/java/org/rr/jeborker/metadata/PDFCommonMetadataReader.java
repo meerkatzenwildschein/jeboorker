@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.pdf.PDFDocument;
 import org.w3c.dom.Document;
@@ -156,7 +156,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 			} else {
 				Object value = schemaChild.getTextContent();
 				if(tagName.endsWith("Date") || tagName.endsWith("SourceModified")) {
-					final String stringValue = StringUtils.toString(value);
+					final String stringValue = StringUtil.toString(value);
 					if(stringValue.trim().isEmpty()) {
 						continue; //no sense to add an empty Date.
 					} else {
@@ -171,7 +171,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 						}
 					}
 				}
-				if(!StringUtils.toString(value).trim().isEmpty()) {
+				if(!StringUtil.toString(value).trim().isEmpty()) {
 					final PDFMetadataProperty pdfMetadataProperty = new PDFMetadataProperty(tagName, value, null);
 					result.add(pdfMetadataProperty);
 				}

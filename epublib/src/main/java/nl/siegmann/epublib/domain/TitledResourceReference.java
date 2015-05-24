@@ -2,7 +2,7 @@ package nl.siegmann.epublib.domain;
 
 import java.io.Serializable;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 import nl.siegmann.epublib.Constants;
 
@@ -52,7 +52,7 @@ public class TitledResourceReference extends ResourceReference implements Serial
 	 * @return
 	 */
 	public String getCompleteHref() {
-		if (StringUtils.isEmpty(fragmentId)) {
+		if (StringUtil.isEmpty(fragmentId)) {
 			return resource.getHref();
 		} else {
 			return resource.getHref() + Constants.FRAGMENT_SEPARATOR_CHAR + fragmentId;

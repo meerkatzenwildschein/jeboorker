@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.cell;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.net.URL;
 import java.text.MessageFormat;

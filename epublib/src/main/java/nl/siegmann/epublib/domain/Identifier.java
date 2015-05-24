@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 
 /**
@@ -102,19 +102,19 @@ public class Identifier implements Serializable {
 	}
 
 	public int hashCode() {
-		return StringUtils.defaultIfNull(scheme).hashCode() ^ StringUtils.defaultIfNull(value).hashCode();
+		return StringUtil.defaultIfNull(scheme).hashCode() ^ StringUtil.defaultIfNull(value).hashCode();
 	}
 	
 	public boolean equals(Object otherIdentifier) {
 		if(! (otherIdentifier instanceof Identifier)) {
 			return false;
 		}
-		return StringUtils.equals(scheme, ((Identifier) otherIdentifier).scheme)
-		&& StringUtils.equals(value, ((Identifier) otherIdentifier).value);
+		return StringUtil.equals(scheme, ((Identifier) otherIdentifier).scheme)
+		&& StringUtil.equals(value, ((Identifier) otherIdentifier).value);
 	}
 	
 	public String toString() {
-		if (StringUtils.isEmpty(scheme)) {
+		if (StringUtil.isEmpty(scheme)) {
 			return "" + value;
 		}
 		return "" + scheme + ":" + value;

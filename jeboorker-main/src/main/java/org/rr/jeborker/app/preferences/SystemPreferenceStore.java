@@ -1,6 +1,6 @@
 package org.rr.jeborker.app.preferences;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.prefs.Preferences;
 

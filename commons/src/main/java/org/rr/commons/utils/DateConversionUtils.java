@@ -1,6 +1,6 @@
 package org.rr.commons.utils;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -230,7 +230,7 @@ public class DateConversionUtils {
 			public Date getDate(String dateString) {
 				try {
 					if(dateString.indexOf(' ') != -1) {
-						dateString = StringUtils.replace(dateString, " ", "T");
+						dateString = StringUtil.replace(dateString, " ", "T");
 					}
 					if(dateString.endsWith("Z")) {
 						dateString = dateString.substring(0, dateString.length() -1) + "+00:00";
@@ -258,7 +258,7 @@ public class DateConversionUtils {
 			public Date getDate(String dateString) {
 				try {
 					if(dateString.indexOf(' ')!=-1) {
-						dateString = StringUtils.replace(dateString, " ", "T");
+						dateString = StringUtil.replace(dateString, " ", "T");
 					}
 					return new W3CDateFormat().parse(dateString);
 				} catch (ParseException e) {
@@ -286,7 +286,7 @@ public class DateConversionUtils {
 			public Date getDate(String dateString) {
 				try {
 					if(dateString.indexOf(' ')!=-1) {
-						dateString = StringUtils.replace(dateString, " ", "T");
+						dateString = StringUtil.replace(dateString, " ", "T");
 					}
 					return new W3CDateFormat().parse(dateString);
 				} catch (ParseException e) {
@@ -308,7 +308,7 @@ public class DateConversionUtils {
 			public Date getDate(String dateString) {
 				try {
 					if(dateString.indexOf(' ')!=-1) {
-						dateString = StringUtils.replace(dateString, " ", "T");
+						dateString = StringUtil.replace(dateString, " ", "T");
 					}
 					return new W3CDateFormat().parse(dateString);
 				} catch (ParseException e) {
@@ -473,7 +473,7 @@ public class DateConversionUtils {
 			
 			public Date getDate(String dateString) {
 				final String saved = dateString;
-				dateString = StringUtils.replace(dateString, "'", EMPTY).substring(2);
+				dateString = StringUtil.replace(dateString, "'", EMPTY).substring(2);
 				if(dateString.indexOf('Z')!=-1) {
 					//D:200012181807Z
 					//D:20110427120924Z00'00'

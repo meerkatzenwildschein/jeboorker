@@ -19,7 +19,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rr.commons.collection.TransformValueSet;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /**
  * {@link MetadataDownloader} implementation that loads metadata from the "Katalog der deutschen Nationalbibliothek".
@@ -57,7 +57,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 			if (html != null) {
 				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), PAGE_CHARSET, MAIN_URL);
 				GoogleBooksDeDownloadMetadataEntry entry = new GoogleBooksDeDownloadMetadataEntry(htmlDoc);
-				if(StringUtils.isNotEmpty(entry.getTitle())) {
+				if(StringUtil.isNotEmpty(entry.getTitle())) {
 					result.add(entry);
 				}
 			}
@@ -114,7 +114,7 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 	}
 
 	private List<URL> getSearchPageUrls(String searchTerm) throws UnsupportedEncodingException, MalformedURLException {
-		String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtils.UTF_8);
+		String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtil.UTF_8);
 		List<URL> urls = new ArrayList<>(PAGES_TO_LOAD);
 		for (int i = 0; i < PAGES_TO_LOAD; i++) {
 			String position = "&start=" + (i * 10);

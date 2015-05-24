@@ -30,7 +30,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.components.JRTable;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 public class RenameFileView extends AbstractDialogView {
@@ -88,7 +88,7 @@ public class RenameFileView extends AbstractDialogView {
 			}
 			EbookPropertyItem ebookPropertyItem = toRename.get(rowIndex);
 			cachedValues[rowIndex] = ResourceHandlerUtils.removeInvalidCharacters(formatFileName(getFileNamePattern(), ebookPropertyItem, rowIndex));
-			cachedValues[rowIndex] = StringUtils.removeMultipleWhiteSpaces(cachedValues[rowIndex]);
+			cachedValues[rowIndex] = StringUtil.removeMultipleWhiteSpaces(cachedValues[rowIndex]);
 			return cachedValues[rowIndex];
 		}
 
@@ -251,7 +251,7 @@ public class RenameFileView extends AbstractDialogView {
 		List<Entry<EbookPropertyItem, IResourceHandler>> result = new ArrayList<Entry<EbookPropertyItem, IResourceHandler>>(rowCount);
 		for (int i = 0; i < rowCount; i++) {
 			final EbookPropertyItem ebookPropertyItem = toRename.get(i);
-			String renamedFileName = StringUtils.toString(previewTableModel.getValueAt(i, 0));
+			String renamedFileName = StringUtil.toString(previewTableModel.getValueAt(i, 0));
 			final IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(ebookPropertyItem.getResourceHandler().getParentResource(), renamedFileName);
 			result.add(new Map.Entry<EbookPropertyItem, IResourceHandler>() {
 
@@ -281,23 +281,23 @@ public class RenameFileView extends AbstractDialogView {
 	 * @return The formatted file name.
 	 */
 	private String formatFileName(String pattern, EbookPropertyItem item, int num) {
-		pattern = pattern.replaceAll("%a", StringUtils.toString(item.getAuthor()));
-		pattern = pattern.replaceAll("%t", StringUtils.toString(item.getTitle()));
-		pattern = pattern.replaceAll("%g", StringUtils.toString(item.getGenre()));
-		pattern = pattern.replaceAll("%i", StringUtils.toString(item.getSeriesIndex()));
-		pattern = pattern.replaceAll("%s", StringUtils.toString(item.getSeriesName()));
+		pattern = pattern.replaceAll("%a", StringUtil.toString(item.getAuthor()));
+		pattern = pattern.replaceAll("%t", StringUtil.toString(item.getTitle()));
+		pattern = pattern.replaceAll("%g", StringUtil.toString(item.getGenre()));
+		pattern = pattern.replaceAll("%i", StringUtil.toString(item.getSeriesIndex()));
+		pattern = pattern.replaceAll("%s", StringUtil.toString(item.getSeriesName()));
 		if(pattern.contains("%n")) {
 			int numIndex = pattern.indexOf("%n") + 2;
 			int digits = 0;
 			while(pattern.length() > numIndex + digits && pattern.charAt(numIndex + digits) == '#') {
 				digits++;
 			}
-			String formattedNum = new DecimalFormat(StringUtils.string(digits, '0')).format(num);
+			String formattedNum = new DecimalFormat(StringUtil.string(digits, '0')).format(num);
 			pattern = pattern.replaceAll("%n#*", formattedNum);
 		}
-		pattern = StringUtils.removeMultipleWhiteSpaces(pattern);
+		pattern = StringUtil.removeMultipleWhiteSpaces(pattern);
 		String fileExtension = item.getResourceHandler().getFileExtension();
-		if(StringUtils.isNotEmpty(fileExtension)) {
+		if(StringUtil.isNotEmpty(fileExtension)) {
 			return pattern + "." + fileExtension;
 		}
 		return pattern;
@@ -316,7 +316,7 @@ public class RenameFileView extends AbstractDialogView {
 	 * @param pattern The string to be displayed in the file name field.
 	 */
 	void setFileNamePattern(String pattern) {
-		if(StringUtils.isNotEmpty(pattern)) {
+		if(StringUtil.isNotEmpty(pattern)) {
 			textFieldFilePattern.setText(pattern);
 		}
 	}
@@ -341,12 +341,12 @@ public class RenameFileView extends AbstractDialogView {
 	private void handleInvalidRenameTargets() {
 		int rowCount = previewTableModel.getRowCount();
 		for (int i = 0; i < rowCount; i++) {
-			String value = StringUtils.toString(previewTableModel.getValueAt(i, 0));
+			String value = StringUtil.toString(previewTableModel.getValueAt(i, 0));
 			for (int j = i + 1; j < rowCount; j++) {
 				if(value.equals(previewTableModel.getValueAt(j, 0))) {
 					getButtonAt(OK_BUTTON_INDEX).setEnabled(false);
 					return;
-				} else if(StringUtils.isEmpty(value)) {
+				} else if(StringUtil.isEmpty(value)) {
 					getButtonAt(OK_BUTTON_INDEX).setEnabled(false);
 					return;
 				} else if(value.equals(".")) {

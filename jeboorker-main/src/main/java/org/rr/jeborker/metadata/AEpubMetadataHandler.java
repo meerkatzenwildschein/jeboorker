@@ -20,7 +20,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
 import org.rr.commons.utils.compression.zip.LazyZipEntryStream;
@@ -365,7 +365,7 @@ abstract class AEpubMetadataHandler extends AMetadataHandler {
 				throw new IOException("Zip entries not even");
 			}
 
-			final Book epub = reader.readEpub(resources, StringUtils.UTF_8, ebookResourceHandler.getName());
+			final Book epub = reader.readEpub(resources, StringUtil.UTF_8, ebookResourceHandler.getName());
 			return epub;
 		} finally {
 			IOUtils.closeQuietly(zipData);

@@ -19,7 +19,7 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class DesktopUtils {
 
@@ -129,7 +129,7 @@ public class DesktopUtils {
 			cl.addArgument("--entry", false);
 			cl.addArgument("--title=" + title, false);
 			cl.addArgument("--text=" + message, false);
-			if(StringUtils.isNotEmpty(defaultValue)) {
+			if(StringUtil.isNotEmpty(defaultValue)) {
 				cl.addArgument("--entry-text");
 				cl.addArgument(defaultValue);
 			}

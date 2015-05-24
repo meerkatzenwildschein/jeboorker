@@ -9,7 +9,7 @@ import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
@@ -43,7 +43,7 @@ class SearchAction extends AbstractAction {
 				@Override
 				public void appendKeyword(List<String> keywords) {
 					for (String filterValue : filterValues) {
-						if(!StringUtils.toString(filterValue).trim().isEmpty()) {
+						if(!StringUtil.toString(filterValue).trim().isEmpty()) {
 							controller.setFilterColorEnabled(true);
 							List<Field> selectedFilterFields = controller.getSelectedFilterFields();
 							if(!selectedFilterFields.isEmpty()) {

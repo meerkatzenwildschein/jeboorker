@@ -35,7 +35,7 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.MathUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.UtilConstants;
 
 public class SwingUtils {
@@ -310,7 +310,7 @@ public class SwingUtils {
 	 * @return The text where the first mnemonic char is removed.
 	 */
 	public static String removeMnemonicMarker(String text) {
-		return StringUtils.replace(text, "&", "", 0, 1, UtilConstants.COMPARE_BINARY);
+		return StringUtil.replace(text, "&", "", 0, 1, UtilConstants.COMPARE_BINARY);
 	}
 
 	/**

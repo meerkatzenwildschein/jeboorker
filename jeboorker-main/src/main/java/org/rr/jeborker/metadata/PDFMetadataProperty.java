@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +12,7 @@ import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,7 +45,7 @@ class PDFMetadataProperty extends MetadataProperty {
 		super(tagName, value);
 		this.listElementName = listElementName;
 		if(value instanceof String) {
-			this.value = StringUtils.trim((String)value); 
+			this.value = StringUtil.trim((String)value); 
 		} else {
 			this.value = value;			
 		}
@@ -77,7 +77,7 @@ class PDFMetadataProperty extends MetadataProperty {
 			for (PDFMetadataProperty child : childs) {
 				Object childValue = child.getValues().get(0);
 				if(isDate && !(childValue instanceof Date)) {
-					Date date = DateConversionUtils.toDate(StringUtils.toString(childValue));
+					Date date = DateConversionUtils.toDate(StringUtil.toString(childValue));
 					result.add(date);
 				} else {
 					result.add(childValue);
@@ -91,7 +91,7 @@ class PDFMetadataProperty extends MetadataProperty {
 
 					@Override
 					public Object transform(Object source) {
-						Date d = DateConversionUtils.toDate(StringUtils.toString(source));
+						Date d = DateConversionUtils.toDate(StringUtil.toString(source));
 						if(d != null) {
 							return d;
 						}
@@ -174,7 +174,7 @@ class PDFMetadataProperty extends MetadataProperty {
 				final String dateString = DateConversionUtils.toString((Date)value, DateConversionUtils.DATE_FORMATS.W3C_SECOND);
 				resultElement.setTextContent(dateString);		
 			} else {
-				resultElement.setTextContent(StringUtils.toString(value));				
+				resultElement.setTextContent(StringUtil.toString(value));				
 			}
 		} else if(listElementName!=null && childs!=null && childs.size() > 0) {
 			final Element listElement = document.createElement(listElementName);

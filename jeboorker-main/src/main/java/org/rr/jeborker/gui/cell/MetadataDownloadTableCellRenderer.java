@@ -32,7 +32,7 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.layout.VerticalLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.download.MetadataDownloadEntry;
 import org.rr.pm.image.IImageProvider;
@@ -153,36 +153,36 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 			componentCount++;
 		}
 		
-		if(StringUtils.isNotEmpty(entry.getTitle())) {
+		if(StringUtil.isNotEmpty(entry.getTitle())) {
 			JComponent metadataEntryTitleView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.title"), entry.getTitle(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.TITLE);
 			mainPanel.add(metadataEntryTitleView);
 			componentCount++;
 		}
 		
-		if(StringUtils.isNotEmpty(entry.getAgeSuggestion())) {
+		if(StringUtil.isNotEmpty(entry.getAgeSuggestion())) {
 			JComponent metadataEntryAgeSuggestionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.ageSuggestion"), entry.getAgeSuggestion(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.AGE_SUGGESTION);
 			mainPanel.add(metadataEntryAgeSuggestionView);
 			componentCount++;
 		}
 		
 		//no isbn 10 if isbn 13 is available
-		if(StringUtils.isNotEmpty(entry.getIsbn13())) {
+		if(StringUtil.isNotEmpty(entry.getIsbn13())) {
 			JComponent metadataEntryISBN13View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn13"), entry.getIsbn13(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN13View);
 			componentCount++;
-		} else if(StringUtils.isNotEmpty(entry.getIsbn10())) {
+		} else if(StringUtil.isNotEmpty(entry.getIsbn10())) {
 			JComponent metadataEntryISBN10View = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.isbn10"), entry.getIsbn10(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.ISBN);
 			mainPanel.add(metadataEntryISBN10View);
 			componentCount++;
 		}
 		
-		if(StringUtils.isNotEmpty(entry.getLanguage())) {
+		if(StringUtil.isNotEmpty(entry.getLanguage())) {
 			JComponent metadataEntryLanguageView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.language"), entry.getLanguage(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.LANGUAGE);
 			mainPanel.add(metadataEntryLanguageView);
 			componentCount++;
 		}
 		
-		if(StringUtils.isNotEmpty(entry.getDescription())) {
+		if(StringUtil.isNotEmpty(entry.getDescription())) {
 			JComponent metadataEntryDescriptionView = getMetadataEntryViewPanel(Bundle.getString("MetadataDownloadTableCellRenderer.label.description"), entry.getDescription(), componentCount, IMetadataReader.COMMON_METADATA_TYPES.DESCRIPTION);
 			mainPanel.add(metadataEntryDescriptionView);
 			componentCount++;

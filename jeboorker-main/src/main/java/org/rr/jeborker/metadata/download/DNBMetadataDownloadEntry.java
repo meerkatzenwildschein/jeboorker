@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata.download;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

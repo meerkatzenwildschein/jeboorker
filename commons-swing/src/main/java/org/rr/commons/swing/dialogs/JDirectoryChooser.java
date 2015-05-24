@@ -49,7 +49,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.rr.commons.swing.dialogs.JDirectoryChooser.JFolderTree.FolderTreeModel.IFolderNode;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class JDirectoryChooser extends Component {
 
@@ -1312,8 +1312,8 @@ public class JDirectoryChooser extends Component {
 				 */
 				public boolean matchName(String name) {
 					if(this.fileSystemViewInstance.isDrive(this.folder)) {
-						String match = StringUtils.replace(this.folder.getPath(), String.valueOf(File.separatorChar), "");
-						match = StringUtils.replace(match, ":", "");
+						String match = StringUtil.replace(this.folder.getPath(), String.valueOf(File.separatorChar), "");
+						match = StringUtil.replace(match, ":", "");
 						if(toOSCompareString(match).equals(toOSCompareString(name))) {
 							return true;
 						}

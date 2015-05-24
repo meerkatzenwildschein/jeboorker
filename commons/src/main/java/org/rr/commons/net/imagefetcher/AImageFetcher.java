@@ -1,6 +1,6 @@
 package org.rr.commons.net.imagefetcher;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.net.InetAddress;

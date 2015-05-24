@@ -19,7 +19,7 @@ import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -163,7 +163,7 @@ public class EpubReader {
 		} catch (Exception e) {
 			log.log(Level.WARNING, e.getMessage() + " META-INF/container.xml for epub " + book.getName(), e);
 		}
-		if(StringUtils.isEmpty(result)) {
+		if(StringUtil.isEmpty(result)) {
 			result = defaultResult;
 		}
 		return result;

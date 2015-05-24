@@ -1,6 +1,6 @@
 package org.rr.jeborker;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 import it.sauronsoftware.junique.AlreadyLockedException;
 import it.sauronsoftware.junique.JUnique;
 import it.sauronsoftware.junique.MessageHandler;
@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.compression.rar.RarUtils;
 import org.rr.jeborker.app.JeboorkerLogger;
 import org.rr.jeborker.gui.MainController;
@@ -135,7 +135,7 @@ public class Jeboorker {
 		Set<Object> keys = props.keySet();
 		for(Object key : keys) {
 			Object value = props.get(key);
-			LoggerFactory.getLogger().info(StringUtils.toString(key) + "=" + StringUtils.toString(value));
+			LoggerFactory.getLogger().info(StringUtil.toString(key) + "=" + StringUtil.toString(value));
 		}
 
 	}

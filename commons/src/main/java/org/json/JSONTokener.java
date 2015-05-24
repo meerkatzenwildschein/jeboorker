@@ -1,6 +1,6 @@
 package org.json;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -387,7 +387,7 @@ public class JSONTokener {
         this.back();
 
         string = sb.toString().trim();
-        if (StringUtils.isEmpty(string)) {
+        if (StringUtil.isEmpty(string)) {
             throw this.syntaxError("Missing value");
         }
         return JSONObject.stringToValue(string);

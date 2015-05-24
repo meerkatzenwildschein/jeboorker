@@ -18,7 +18,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.metadata.pdf.PDFDocument;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageInfo;
@@ -85,9 +85,9 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 						} else {
 							if(info.containsKey(name)) {
 								String oldValue = info.get(name);
-								firstValue = oldValue + ", " + StringUtils.toString(firstValue);
+								firstValue = oldValue + ", " + StringUtil.toString(firstValue);
 							}
-							String insValue = StringUtils.toString(firstValue).trim();
+							String insValue = StringUtil.toString(firstValue).trim();
 							if(!insValue.isEmpty()) {
 								info.put(name, insValue);
 							}

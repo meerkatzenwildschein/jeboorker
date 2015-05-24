@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.cell;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,7 +32,7 @@ import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.button.JMediumWeightPopupMenu;
 import org.rr.commons.swing.components.resources.ImageResourceBundle;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.UtilConstants;
 
 public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
@@ -312,7 +312,7 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 			 */
 			private String clean(String s) {
 				String result = s;
-				result = StringUtils.replace(s, "  ", EMPTY);
+				result = StringUtil.replace(s, "  ", EMPTY);
 				result = result.trim();
 				return result;
 			}			
@@ -330,9 +330,9 @@ public class FileSystemRenameTreeCellEditor extends AbstractCellEditor implement
 		List<String> toRemove = new ArrayList<>();
 		toRemove.add(filename);
 		
-		int nameWhiteSpaces = StringUtils.occurrence(name, " ", UtilConstants.COMPARE_BINARY);
+		int nameWhiteSpaces = StringUtil.occurrence(name, " ", UtilConstants.COMPARE_BINARY);
 		for(String offer : offers) {
-			if(StringUtils.occurrence(offer, " ", UtilConstants.COMPARE_BINARY) != nameWhiteSpaces) {
+			if(StringUtil.occurrence(offer, " ", UtilConstants.COMPARE_BINARY) != nameWhiteSpaces) {
 				toRemove.add(offer);
 			}
 		}

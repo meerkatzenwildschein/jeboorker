@@ -14,7 +14,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
@@ -291,7 +291,7 @@ public class ActionUtils {
 
 	private static boolean isSupportedEbookFormatMime(IResourceHandler resource, boolean force) {
 		final String mime = resource.getMimeType(force);
-		if(StringUtils.isEmpty(mime)) {
+		if(StringUtil.isEmpty(mime)) {
 			return false;
 		}
 

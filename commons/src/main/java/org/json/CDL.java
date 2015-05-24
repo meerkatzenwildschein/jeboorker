@@ -1,6 +1,6 @@
 package org.json;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 /*
 Copyright (c) 2002 JSON.org

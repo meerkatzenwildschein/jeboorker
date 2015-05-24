@@ -3,7 +3,7 @@ package nl.siegmann.epublib.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 import nl.siegmann.epublib.domain.MediaType;
 
@@ -69,7 +69,7 @@ public class MediatypeService {
 		for(int i = 0; i < mediatypes.length; i++) {
 			MediaType mediatype = mediatypes[i];
 			for(String extension: mediatype.getExtensions()) {
-				if(StringUtils.endsWithIgnoreCase(filename, extension)) {
+				if(StringUtil.endsWithIgnoreCase(filename, extension)) {
 					return mediatype;
 				}
 			}

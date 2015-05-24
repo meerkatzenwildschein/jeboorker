@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.cell;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -41,7 +41,7 @@ import org.rr.commons.utils.HTMLEntityConverter;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.db.IDBObject;
@@ -345,10 +345,10 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				if(field.getName().equals("file")) {
 					fieldValueObject = item.getResourceHandler().getName();
 				}
-				final String fieldValueString = StringUtils.toString(fieldValueObject);
+				final String fieldValueString = StringUtil.toString(fieldValueObject);
 			
-				if(StringUtils.isNotEmpty(fieldValueString)) {
-					if(StringUtils.isNotEmpty(result)) {
+				if(StringUtil.isNotEmpty(fieldValueString)) {
+					if(StringUtil.isNotEmpty(result)) {
 						result.append(", ");
 					}
 					
@@ -364,7 +364,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		}
 		
 		//prepend the author to the result string
-		if(StringUtils.isNotEmpty(result)) {
+		if(StringUtil.isNotEmpty(result)) {
 			result.insert(0, ", ");
 		}
 		
@@ -382,7 +382,7 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 				}
 				b.append(author);
 			}
-			if(StringUtils.isNotEmpty(b)) {
+			if(StringUtil.isNotEmpty(b)) {
 				result.insert(0, b);
 			} else {
 				result.insert(0, "<"+Bundle.getString("EbookTableCellComponent.noAuthor")+">");
@@ -399,9 +399,9 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 	 * @return The desired book title.
 	 */
 	private String getTitle(EbookPropertyItem item) {
-		if(item != null && StringUtils.isEmpty(item.getTitle())) {
+		if(item != null && StringUtil.isEmpty(item.getTitle())) {
 			//if there is no title, just use the file name but without file extension
-			final String fileName = StringUtils.substringBefore(item.getFileName(), ".", false);
+			final String fileName = StringUtil.substringBefore(item.getFileName(), ".", false);
 			return fileName;
 		} else {
 			return cleanString(item != null ? item.getTitle() : EMPTY);

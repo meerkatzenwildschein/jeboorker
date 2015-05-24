@@ -16,7 +16,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -73,13 +73,13 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 */
 	private void doUpload(IResourceHandler resource) throws MalformedURLException, IOException, URISyntaxException, DbxException {
 		// https://www.dropbox.com/developers
-		DbxAppInfo appInfo = new DbxAppInfo(StringUtils.rot13("m8zitanp9n1p5nq"), StringUtils.rot13("gz585xxj5gp98qe"));
+		DbxAppInfo appInfo = new DbxAppInfo(StringUtil.rot13("m8zitanp9n1p5nq"), StringUtil.rot13("gz585xxj5gp98qe"));
 		DbxRequestConfig config = new DbxRequestConfig("Jeboorker/" + Jeboorker.getVersion(), Locale.getDefault().toString());
 		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
 
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String accessToken = preferenceStore.getGenericEntryAsString(DROPBOX_ACCESS_TOKEN_KEY);
-		if (StringUtils.isNotEmpty(accessToken)) {
+		if (StringUtil.isNotEmpty(accessToken)) {
 			// re-auth specific stuff
 			try {
 				DbxClient client = createClient(config, accessToken);
