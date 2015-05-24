@@ -25,7 +25,7 @@
 		<!-- create windows setup file -->
 		<exec executable="makensis">
 			<arg value="-DVERSION=${version}"/>
-			<arg value="setup.nsi"/>
+			<arg value="build.nsi"/>
 		</exec>
 	</target>
 
