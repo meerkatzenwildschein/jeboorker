@@ -7,7 +7,7 @@ import javax.swing.JTree;
 import org.rr.commons.mufs.IResourceHandler;
 
 public class MainViewSelectionUtils {
-	
+
 	/**
 	 * Tells if the {@link JTree} component which currently have the focus hold one selection.
 	 * @return <code>true</code> if there is a selection to the current {@link JTree}.
@@ -29,7 +29,7 @@ public class MainViewSelectionUtils {
 	 * @return The number of selected items.
 	 */
 	static int getTreeItemSelectionCount() {
-		return MainController.getController().getMainTreeHandler().getTreeItemSelectionCount();
+		return MainController.getController().getMainTreeHandler().getSelectedTreeItems().size();
 	}
 
 	/**

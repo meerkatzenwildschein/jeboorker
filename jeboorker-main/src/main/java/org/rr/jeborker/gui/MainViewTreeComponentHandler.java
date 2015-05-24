@@ -102,12 +102,12 @@ public class MainViewTreeComponentHandler {
 			}
 		}
 	}
-	
+
 	public TreePath restoreExpansionState(JTree tree, List<String> fullPathSegments) {
 		String treeExpansionPathString = ListUtils.join(fullPathSegments, TreeUtil.PATH_SEPARATOR);
 		TreePath lastExpandedRow = TreeUtil.restoreExpanstionState(tree, treeExpansionPathString);
 		return lastExpandedRow;
-	}	
+	}
 
 	/**
 	 * Collapse all tree nodes in the tree with the given name.
@@ -129,7 +129,7 @@ public class MainViewTreeComponentHandler {
 			}
 		}
 	}
-	
+
 	/**
 	 * Refresh the Tree for the base path's.
 	 */
@@ -176,14 +176,5 @@ public class MainViewTreeComponentHandler {
 				}
 			});
 		}
-	}
-
-	/**
-	 * Get the selection count of the tree component which currently have the focus.
-	 * @return The number of selected items.
-	 */
-	public int getTreeItemSelectionCount() {
-		JTree selectedTreePathComponent = mainWindow.getSelectedTreePathComponent();
-		return selectedTreePathComponent.getSelectionModel().getSelectionCount();
 	}
 }

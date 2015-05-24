@@ -123,7 +123,6 @@ class MainMenuBarView extends JMenuBar {
 			private void createDynamicFileMenu() {
 				final MainController controller = MainController.getController();
 				final List<EbookPropertyItem> selectedItems = controller.getSelectedEbookPropertyItems();
-				final List<IResourceHandler> selectedResources = controller.getMainTreeHandler().getSelectedTreeItems();
 				final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
 
 				menueFile.removeAll();
@@ -242,6 +241,7 @@ class MainMenuBarView extends JMenuBar {
 					openFileMenuEntry.setEnabled(true);
 				} else {
 					if(MainViewSelectionUtils.isTreeItemSingleSelection()) {
+						List<IResourceHandler> selectedResources = controller.getMainTreeHandler().getSelectedTreeItems();
 						openFolderMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.OPEN_FOLDER_ACTION, selectedResources.get(0).toString()));
 						openFolderMenuEntry.setEnabled(true);
 
