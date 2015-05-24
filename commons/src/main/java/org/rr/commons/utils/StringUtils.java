@@ -1784,4 +1784,8 @@ public final class StringUtils implements Serializable {
 			}
 			return null;
 		}
+
+		public static String removeEnd(String str, String remove) {
+			return org.apache.commons.lang.StringUtils.removeEnd(str, remove);
+		}
 }

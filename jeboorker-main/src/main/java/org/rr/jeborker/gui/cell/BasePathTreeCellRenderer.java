@@ -32,6 +32,7 @@ import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
@@ -131,7 +132,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 								ActionUtils.setBasePathVisibility(basePath, !isVisible);
 							}
 						}
-						
+
 						((DefaultTreeModel)tree.getModel()).reload((TreeNode) selectionPath.getLastPathComponent());
 					}
 				}
@@ -256,8 +257,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		try {
 			checkbox.setShowTriStateIcon(false);
 			if(basePaths.contains(pathResourceString)) {
-				final List<String> basePath = MainMenuBarController.getController().getHiddenBasePathEntries();
-				if(basePath.contains(pathResourceString)) {
+				if(MainMenuBarController.getController().containsHiddenBasePathEntry(pathResourceString)) {
 					//hidden
 					checkbox.setSelected(false);
 				} else {

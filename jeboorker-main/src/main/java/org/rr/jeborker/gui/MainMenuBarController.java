@@ -12,18 +12,39 @@ import java.util.Map;
 
 import javax.swing.JMenuBar;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.rr.commons.utils.ListUtils;
+import org.rr.commons.utils.StringUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.action.ActionFactory;
 
 public class MainMenuBarController {
 
+	/** contains the visibility state for each base path as key. The path statement will be automatically normalized */
+	private final Map<String, Boolean> showHideBasePathVisibility = new HashMap<String, Boolean>() {
+
+		private static final long serialVersionUID = 1878898968010941794L;
+
+		@Override
+		public Boolean put(String key, Boolean value) {
+			return super.put(removeTrailingNameSeparator(key), value);
+		}
+
+		@Override
+		public Boolean get(Object key) {
+			return super.get(removeTrailingNameSeparator((String) key));
+		}
+
+		private String removeTrailingNameSeparator(String key) {
+			return StringUtils.removeEnd(StringUtils.removeEnd(key, "/"), "\\");
+		}
+
+	};
+
 	private static MainMenuBarController controller;
 
 	private MainMenuBarView view;
-
-	private Map<String, Boolean> showHideBasePathToggleStatus = new HashMap<String, Boolean>();
 
 	private MainMenuBarController() {
 		super();
@@ -66,7 +87,7 @@ public class MainMenuBarController {
 	 * @return <code>true</code> if the ebook items are shown and <code>false</code> if not.
 	 */
 	public boolean isShowHideBasePathStatusShow(final String basePath) {
-		final Boolean status = showHideBasePathToggleStatus.get(basePath);
+		final Boolean status = showHideBasePathVisibility.get(basePath);
 		if(status == null) {
 			return true; //show per default
 		}
@@ -74,7 +95,12 @@ public class MainMenuBarController {
 	}
 
 	public void setShowHideBasePathStatusShow(final String basePath, final boolean show) {
-		showHideBasePathToggleStatus.put(basePath, Boolean.valueOf(show));
+		showHideBasePathVisibility.put(basePath, Boolean.valueOf(show));
+	}
+
+	public boolean containsHiddenBasePathEntry(String entry) {
+		Boolean isShow = showHideBasePathVisibility.get(entry);
+		return BooleanUtils.isFalse(isShow);
 	}
 
 	/**
@@ -82,15 +108,15 @@ public class MainMenuBarController {
 	 * @return A list of all hidden base path entries.
 	 */
 	public List<String> getHiddenBasePathEntries() {
-		if(showHideBasePathToggleStatus.isEmpty()) {
+		if(showHideBasePathVisibility.isEmpty()) {
 			return Collections.emptyList();
 		}
 
 		final ArrayList<String> result = new ArrayList<>();
-	    for (Map.Entry<String, Boolean> entry : showHideBasePathToggleStatus.entrySet()) {
+	    for (Map.Entry<String, Boolean> entry : showHideBasePathVisibility.entrySet()) {
 	        String basePath = entry.getKey();
-	        Boolean isSHow = entry.getValue();
-	        if(isSHow!=null && isSHow.booleanValue() == false) {
+	        Boolean isShow = entry.getValue();
+	        if(isShow != null && isShow.booleanValue() == false) {
 	        	result.add(basePath);
 	        }
 	    }
@@ -99,7 +125,7 @@ public class MainMenuBarController {
 
 	void storeProperties() {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		final List<String> hiddenBasePathEntries = MainMenuBarController.getController().getHiddenBasePathEntries();
+		final List<String> hiddenBasePathEntries = getHiddenBasePathEntries();
 		if(hiddenBasePathEntries.isEmpty()) {
 			preferenceStore.addGenericEntryAsString("mainMenuBasePathHide", EMPTY);
 		} else {

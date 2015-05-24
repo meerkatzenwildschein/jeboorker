@@ -39,6 +39,8 @@ import org.rr.jeborker.metadata.MetadataHandlerFactory;
 
 class MainMenuBarView extends JMenuBar {
 
+	private static final long serialVersionUID = 5278345064008258478L;
+
 	private static Icon eyesVisible;
 
 	private static Icon eyesInvisible;

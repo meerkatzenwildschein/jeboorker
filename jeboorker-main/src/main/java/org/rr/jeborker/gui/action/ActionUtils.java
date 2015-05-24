@@ -37,7 +37,7 @@ import com.j256.ormlite.stmt.Where;
 import com.l2fprod.common.propertysheet.Property;
 
 public class ActionUtils {
-	
+
 	/**
 	 * Adds a metadata item to the sheet.
 	 * @param property The property to be added.
@@ -48,7 +48,7 @@ public class ActionUtils {
 		controller.addMetadataProperty(createProperty);
 		return createProperty;
 	}
-	
+
 	/**
 	 * Shutdown the application.
 	 */
@@ -60,7 +60,7 @@ public class ActionUtils {
 		} catch(Exception e1) {
 			LoggerFactory.logWarning(ActionUtils.class, "Database shutdown failed.", e1);
 		}
-		
+
 		System.exit(0);
 	}
 
@@ -76,7 +76,7 @@ public class ActionUtils {
 			refreshEbookPropertyItem(item, resourceLoader);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(resourceLoader);
@@ -84,7 +84,7 @@ public class ActionUtils {
 			});
 		}
 	}
-	
+
 	/**
 	 * Refresh the given {@link EbookPropertyItem}. Does also persist it to the db!
 	 * @param item The item to be refreshed
@@ -97,7 +97,7 @@ public class ActionUtils {
 		} else {
 			refreshResourceHandler = resourceHandler;
 		}
-		
+
 		//remove the entry from db and view.
 		if(!refreshResourceHandler.exists()) {
 			ActionUtils.removeEbookPropertyItem(item);
@@ -105,10 +105,10 @@ public class ActionUtils {
 		} else {
 			EbookPropertyItemUtils.refreshEbookPropertyItem(item, refreshResourceHandler, true);
 			DefaultDBManager.getInstance().updateObject(item);
-		
+
 			if(isSelectedItem(item)) {
 				SwingUtilities.invokeLater(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						MainController.getController().refreshTableSelectedItem(true);
@@ -117,7 +117,7 @@ public class ActionUtils {
 				});
 			} else {
 				SwingUtilities.invokeLater(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						int row = MainController.getController().getTableModel().searchRow(item);
@@ -128,7 +128,7 @@ public class ActionUtils {
 			}
 		}
 	}
-	
+
 	/**
 	 * Tests if the given item is a selected one in the view.
 	 * @param item The item to be tested if it's selected.
@@ -143,7 +143,7 @@ public class ActionUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Toggles the visibility of the given base path entry. If it's visible
 	 * it's set to hide an other way round.
@@ -153,7 +153,7 @@ public class ActionUtils {
 		final boolean isShow = MainMenuBarController.getController().isShowHideBasePathStatusShow(path);
 		setBasePathVisibility(path, !isShow);
 	}
-	
+
 	/**
 	 * Sets the visibility of the given base path.
 	 * @param path path which visibility should be set.
@@ -166,19 +166,19 @@ public class ActionUtils {
 			controller.getTableModel().removeWhereCondition(queryIdentifier); //remove possibly existing queries.
 			if(!show) {
 				controller.getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
-					
+
 					@Override
 					public String getIdentifier() {
 						return queryIdentifier;
 					}
-					
+
 					@Override
 					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
 						where.ne("basePath", path);
 					}
 				});
 			}
-				
+
 			MainMenuBarController.getController().setShowHideBasePathStatusShow(path, show);
 		} catch (Exception ex) {
 			LoggerFactory.log(Level.WARNING, ActionUtils.class, "Path " + path, ex);
@@ -186,7 +186,7 @@ public class ActionUtils {
 			controller.getEbookTableHandler().refreshTable();
 		}
 	}
-	
+
 	/**
 	 * Adds the given item to the database and to the ui.
 	 * @param item The item to be added.
@@ -194,7 +194,7 @@ public class ActionUtils {
 	public static void addAndStoreEbookPropertyItem(EbookPropertyItem item) {
 		addAndStoreEbookPropertyItem(item, -1);
 	}
-	
+
 	/**
 	 * Adds the given item to the database and to the ui.
 	 * @param item The item to be added.
@@ -213,7 +213,7 @@ public class ActionUtils {
 	private static void storeEbookPropertyItem(EbookPropertyItem item) {
 		DefaultDBManager.getInstance().storeObject(item);
 	}
-	
+
 	/**
 	 * Adds the given {@link EbookPropertyItem} to the ui model.
 	 * @param item The item to be added.
@@ -221,15 +221,15 @@ public class ActionUtils {
 	 */
 	private static void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				MainController.getController().addEbookPropertyItem(item, row);
 			}
 		});
 	}
-	
-	
+
+
 	/**
 	 * Deletes the given item from the database and the view.
 	 * @param item The item to be deleted.
@@ -237,11 +237,11 @@ public class ActionUtils {
 	public static void removeEbookPropertyItem(final EbookPropertyItem item) {
 		final MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		final MainController controller = MainController.getController();
-		
+
 		progressMonitor.setMessage(Bundle.getFormattedString("RemoveBasePathAction.deleting", item.getFileName()));
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				boolean removed = controller.removeEbookPropertyItem(item);
@@ -253,7 +253,7 @@ public class ActionUtils {
 			}
 		});
 	}
-	
+
 	/**
 	 * Tells if this {@link AResourceHandler} instance file format is an image.
 	 * @param force Open the given {@link IResourceHandler} and read magic bytes if the ebook mime could not be detected.
@@ -264,18 +264,18 @@ public class ActionUtils {
 			//no tmp files. tmp files are used to save a changed ebook temporary.
 			return false;
 		}
-		
+
 		if(isSupportedEbookFormatExtension(resource)) {
 			return true;
 		}
-		
+
 		if(isSupportedEbookFormatMime(resource, force)) {
 			return true;
 		}
-	
+
 		return false;
 	}
-	
+
 	/**
 	 * user file formats with basic/empty reader support
 	 */
@@ -288,13 +288,13 @@ public class ActionUtils {
 		}
 		return false;
 	}
-	
+
 	private static boolean isSupportedEbookFormatMime(IResourceHandler resource, boolean force) {
 		final String mime = resource.getMimeType(force);
 		if(StringUtils.isEmpty(mime)) {
 			return false;
 		}
-		
+
 		for(SUPPORTED_MIMES supportedMime : JeboorkerConstants.SUPPORTED_MIMES.values()) {
 			if(supportedMime.getMime().equals(mime)) {
 				return true;
@@ -302,7 +302,7 @@ public class ActionUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
 	 * The files will be copied and the {@link EbookPropertyItem}s will be created.
@@ -312,9 +312,9 @@ public class ActionUtils {
 	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
 			final List<IResourceHandler> sourceResourcesToTransfer, final boolean move) throws IOException {
 		final ArrayList<IResourceHandler> importedResources = new ArrayList<>();
-		
+
 		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				FileRefreshBackground.setDisabled(true);
@@ -329,7 +329,7 @@ public class ActionUtils {
 							boolean transferSuccess = transferFile(sourceResource, targetResource, move);
 							if(transferSuccess) {
 								EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
-								
+
 								List<EbookPropertyItem> sourceItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(sourceResource);
 								if(ListUtils.isNotEmpty(sourceItems)) {
 									ActionUtils.storeEbookPropertyItem(newItem);
@@ -341,7 +341,7 @@ public class ActionUtils {
 								}
 								controller.getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
 								importedResources.add(targetResource);
-								
+
 								if(move) {
 									refreshResourceParents(sourceResourcesToTransfer);
 								}
@@ -360,23 +360,23 @@ public class ActionUtils {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to copy file " + basePath + " to " + targetRecourceDirectory, e);
 				} finally {
 					SwingUtilities.invokeLater(new Runnable() {
-						
+
 						@Override
 						public void run() {
 							removeDeletedFileFromModelAndDatabase(importedResources);
 							removeDeletedFileFromModelAndDatabase(sourceResourcesToTransfer);
 						}
 					});
-					
+
 					progressMonitor.monitorProgressStop();
 					FileRefreshBackground.setDisabled(false);
 				}
 			}
 		});
-		
+
 		return importedResources;
 	}
-	
+
 	private static void refreshResourceParents(List<IResourceHandler> resources) {
 		List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(resources.size());
 		for (IResourceHandler resourceHandler : resources) {
@@ -387,7 +387,7 @@ public class ActionUtils {
 			}
 		}
 	}
-	
+
 	private static boolean transferFile(IResourceHandler sourceResource, IResourceHandler targetResource, boolean move) throws IOException {
 		if(move) {
 			sourceResource.moveTo(targetResource, false);
@@ -396,7 +396,7 @@ public class ActionUtils {
 		}
 		return targetResource.exists();
 	}
-	
+
 	private static boolean isImportAllowed(IResourceHandler sourceResource, IResourceHandler targetResource) {
 		return sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists();
 	}
