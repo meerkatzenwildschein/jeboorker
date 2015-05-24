@@ -2,7 +2,7 @@ package nl.siegmann.epublib.browsersupport;
 
 import java.util.EventObject;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
@@ -97,7 +97,7 @@ public class NavigationEvent extends EventObject {
 	}
 
 	public boolean isFragmentChanged() {
-		return StringUtils.equals(getOldFragmentId(), getCurrentFragmentId());
+		return StringUtil.equals(getOldFragmentId(), getCurrentFragmentId());
 	}
 
 	public Resource getOldResource() {
@@ -135,7 +135,7 @@ public class NavigationEvent extends EventObject {
 	}
 	
 	public String toString() {
-		return StringUtils.toString(
+		return StringUtil.toString(
 				"oldSectionPos", oldSectionPos,
 				"oldResource", oldResource,
 				"oldBook", oldBook,

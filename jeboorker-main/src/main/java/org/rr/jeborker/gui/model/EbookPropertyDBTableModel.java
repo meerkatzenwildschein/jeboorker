@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.model;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;

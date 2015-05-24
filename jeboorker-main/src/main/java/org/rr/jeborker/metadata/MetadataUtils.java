@@ -10,7 +10,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.metadata.ComicBookMetadataReader.COMICBOOK_METADATA_TYPES;
 import org.rr.jeborker.metadata.comicbook.ArchiveHandlerFactory;
 import org.rr.jeborker.metadata.comicbook.IArchiveHandler;
@@ -51,19 +51,19 @@ public class MetadataUtils {
 		boolean result = metadataProperty2.getValues().size() == 1 && metadataProperty1.getValues().size() == 1
 			&& CommonUtils.compareTo(metadataProperty2.getValues().get(0), metadataProperty1.getValues().get(0)) == 0;
 
-		final String metadataProperty1Name = StringUtils.toString(metadataProperty1.getName()).toLowerCase();
-		final String metadataProperty2Name = StringUtils.toString(metadataProperty2.getName()).toLowerCase();
+		final String metadataProperty1Name = StringUtil.toString(metadataProperty1.getName()).toLowerCase();
+		final String metadataProperty2Name = StringUtil.toString(metadataProperty2.getName()).toLowerCase();
 
 		if (result && metadataProperty1Name.equals(metadataProperty2Name)) {
 			// name is the same
 			return true;
-		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
+		} else if(StringUtil.compareTwice(metadataProperty1Name, metadataProperty2Name, "createdate", "creationdate")) {
 			//merge createdate and creationdate because they have the same sense
 			return true;
-		}  else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "modifydate", "moddate")) {
+		}  else if(StringUtil.compareTwice(metadataProperty1Name, metadataProperty2Name, "modifydate", "moddate")) {
 			//merge createdate and creationdate because they have the same sense
 			return true;
-		} else if(StringUtils.compareTwice(metadataProperty1Name, metadataProperty2Name, "calibrerating", "rating")) {
+		} else if(StringUtil.compareTwice(metadataProperty1Name, metadataProperty2Name, "calibrerating", "rating")) {
 			return true;
 		} else {
 			return false;

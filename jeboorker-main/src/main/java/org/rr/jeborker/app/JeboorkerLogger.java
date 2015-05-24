@@ -1,6 +1,6 @@
 package org.rr.jeborker.app;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.File;
 import java.io.FileNotFoundException;

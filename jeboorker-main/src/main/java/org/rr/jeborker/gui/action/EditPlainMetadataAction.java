@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.event.ActionEvent;
 

@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -40,7 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -1249,7 +1249,7 @@ public class JSONObject {
      */
     public static Object stringToValue(String string) {
         Double d;
-        if (StringUtils.isEmpty(string)) {
+        if (StringUtil.isEmpty(string)) {
             return string;
         }
         if (string.equalsIgnoreCase("true")) {

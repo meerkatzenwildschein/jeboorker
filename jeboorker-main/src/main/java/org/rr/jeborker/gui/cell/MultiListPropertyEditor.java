@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.cell;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Component;
 import java.awt.Insets;
@@ -26,7 +26,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.rr.commons.collection.CompoundList;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.UtilConstants;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
@@ -130,7 +130,7 @@ public class MultiListPropertyEditor extends AbstractPropertyEditor {
 		this.setAvailableValues(values);
 		if(selectedValue == null) {
 			((JComboBox) editor).setSelectedIndex(0);
-		} else if(StringUtils.toString(selectedValue).isEmpty()) {
+		} else if(StringUtil.toString(selectedValue).isEmpty()) {
 			((JComboBox) editor).setSelectedIndex(1);
 		} else {
 			((JComboBox) editor).setSelectedItem(selectedValue);

@@ -2,7 +2,7 @@ package nl.siegmann.epublib.domain;
 
 import java.io.Serializable;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 
 
@@ -90,7 +90,7 @@ public class GuideReference extends TitledResourceReference implements Serializa
 	
 	public GuideReference(Resource resource, String type, String title, String fragmentId) {
 		super(resource, title, fragmentId);
-		this.type = StringUtils.isNotEmpty(type) ? type.toLowerCase() : null;
+		this.type = StringUtil.isNotEmpty(type) ? type.toLowerCase() : null;
 	}
 
 	public String getType() {

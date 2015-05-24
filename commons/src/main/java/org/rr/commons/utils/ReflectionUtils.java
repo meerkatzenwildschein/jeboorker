@@ -1,6 +1,6 @@
 package org.rr.commons.utils;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.File;
 import java.io.IOException;
@@ -142,7 +142,7 @@ public class ReflectionUtils implements Serializable {
 			}
 			
 			if(useGetter) {
-				String getter = "get" + StringUtils.capitalize(fieldName);
+				String getter = "get" + StringUtil.capitalize(fieldName);
 				Method method = getMethod(c, getter, null, VISIBILITY_VISIBLE_ACCESSIBLE_ONLY);
 				if(method != null) {
 					method.setAccessible(true);
@@ -181,7 +181,7 @@ public class ReflectionUtils implements Serializable {
 	 * @throws ReflectionFailureException
 	 */
 	public static Object getStaticFieldValue(final String qualifiedFieldName) throws ReflectionFailureException {
-		String fieldName = StringUtils.substringAfter(qualifiedFieldName, ".", false, UtilConstants.COMPARE_BINARY);
+		String fieldName = StringUtil.substringAfter(qualifiedFieldName, ".", false, UtilConstants.COMPARE_BINARY);
 		
 		//test if there is a class already identified and cached. 
 		//the cache only contains the class if the class is also the result. If a
@@ -195,7 +195,7 @@ public class ReflectionUtils implements Serializable {
 			return cachedClass;
 		}
 		
-		String className = StringUtils.substringBefore(qualifiedFieldName, ".", false, UtilConstants.COMPARE_BINARY);
+		String className = StringUtil.substringBefore(qualifiedFieldName, ".", false, UtilConstants.COMPARE_BINARY);
 		if(className.length()==0) {
 			className = qualifiedFieldName;
 		}
@@ -416,11 +416,11 @@ public class ReflectionUtils implements Serializable {
 				}
 			}
 			if(isAllowedType) {
-				Method method = getMethod(clazz, "get" + StringUtils.capitalize(field.getName()), null, VISIBILITY_VISIBLE_ACCESSIBLE_ONLY);
+				Method method = getMethod(clazz, "get" + StringUtil.capitalize(field.getName()), null, VISIBILITY_VISIBLE_ACCESSIBLE_ONLY);
 				if(method!=null) {
 					result.add(field);
 				} else {
-					method = getMethod(clazz, "is" + StringUtils.capitalize(field.getName()), null, VISIBILITY_VISIBLE_ACCESSIBLE_ONLY);
+					method = getMethod(clazz, "is" + StringUtil.capitalize(field.getName()), null, VISIBILITY_VISIBLE_ACCESSIBLE_ONLY);
 					if(method!=null) {
 						result.add(field);
 					}
@@ -1261,7 +1261,7 @@ public class ReflectionUtils implements Serializable {
     	}
     	try {
 	    	String versionProperty = System.getProperty( "java.version" );
-	    	String numString = StringUtils.replace(versionProperty, ".", EMPTY).substring(0,2);
+	    	String numString = StringUtil.replace(versionProperty, ".", EMPTY).substring(0,2);
 	    	javaVersion = CommonUtils.toNumber(numString).intValue();
 	    	return javaVersion;
     	} catch (Exception e) {

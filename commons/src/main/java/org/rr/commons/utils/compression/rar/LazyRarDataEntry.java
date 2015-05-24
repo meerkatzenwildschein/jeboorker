@@ -12,7 +12,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 
 class LazyRarDataEntry extends CompressedDataEntry {
@@ -29,7 +29,7 @@ class LazyRarDataEntry extends CompressedDataEntry {
 		final CommandLine cl = new CommandLine(RarUtils.getUnRarExecutable());
 		cl.addArgument("e");
 		
-		cl.addArgument("-n\"" + StringUtils.replace(path, "/", File.separator) + "\"", false);
+		cl.addArgument("-n\"" + StringUtil.replace(path, "/", File.separator) + "\"", false);
 		cl.addArgument("-o+"); //overwrite existing
 		cl.addArgument("\"" + rarFileHandler.toFile().getPath() + "\"", false);
 		

@@ -1,6 +1,6 @@
 package org.rr.commons.utils;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -161,7 +161,7 @@ public final class ListUtils implements Serializable {
 			return Collections.emptyList();
 		}
 		
-		ArrayList<String> result = new ArrayList<>(StringUtils.occurrence(text, String.valueOf(separator), UtilConstants.COMPARE_BINARY) + 1);
+		ArrayList<String> result = new ArrayList<>(StringUtil.occurrence(text, String.valueOf(separator), UtilConstants.COMPARE_BINARY) + 1);
 		int last = 0;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
@@ -216,7 +216,7 @@ public final class ListUtils implements Serializable {
 			}
 		}
 		if(buffer.length()>0) {
-			String lastEntry = StringUtils.padRight(buffer.toString(), length);
+			String lastEntry = StringUtil.padRight(buffer.toString(), length);
 			result.add(lastEntry);
 		}
 		

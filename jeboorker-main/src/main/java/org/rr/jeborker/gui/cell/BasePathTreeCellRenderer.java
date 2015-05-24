@@ -28,7 +28,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.components.tree.TreeUtil;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -165,8 +165,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = pathResource;
 		} else {
-			pathResource = ResourceHandlerFactory.getResourceHandler(StringUtils.toString(value));
-			label.setText(StringUtils.toString(value));
+			pathResource = ResourceHandlerFactory.getResourceHandler(StringUtil.toString(value));
+			label.setText(StringUtil.toString(value));
 			checkbox.setVisible(true);
 			setCheckboxCheck(pathResource, basePaths);
 			this.value = null;
@@ -252,7 +252,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	}
 
 	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final BasePathList basePaths) {
-		final String pathResourceString = StringUtils.toString(pathResourceHandler);
+		final String pathResourceString = StringUtil.toString(pathResourceHandler);
 		checkbox.removeItemListener(getCheckboxItemListener());
 		try {
 			checkbox.setShowTriStateIcon(false);

@@ -14,7 +14,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 import com.l2fprod.common.model.DefaultObjectRenderer;
 import com.l2fprod.common.model.ObjectRenderer;
@@ -45,11 +45,11 @@ public class MultiListPropertyRenderer extends JComboBox implements TableCellRen
             if(o == null) {
             	//null value means no changes
             	setText(noChanges);            	
-            } else if(StringUtils.toString(o).isEmpty()) {
+            } else if(StringUtil.toString(o).isEmpty()) {
             	//empty string is clear
             	setText(clear);
             } else {
-            	setText(StringUtils.toString(o));
+            	setText(StringUtil.toString(o));
             }
         } else {
         	setText(clear);

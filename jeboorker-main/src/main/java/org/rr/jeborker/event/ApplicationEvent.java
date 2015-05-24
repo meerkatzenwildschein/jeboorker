@@ -1,6 +1,6 @@
 package org.rr.jeborker.event;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.Arrays;
 import java.util.EventObject;

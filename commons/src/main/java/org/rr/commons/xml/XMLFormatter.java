@@ -22,7 +22,7 @@ package org.rr.commons.xml;
  * Last modified by $Author$
  * $Date$
  */
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

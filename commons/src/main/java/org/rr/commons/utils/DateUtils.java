@@ -825,7 +825,7 @@ public final class DateUtils implements Serializable {
      * @return <code>true</code> if both given values are equal and <code>false</code> otherwiese.
      */
 	public static boolean equals(Date value, Date editorValue) {
-		return StringUtils.toString(value).equals(StringUtils.toString(editorValue));
+		return StringUtil.toString(value).equals(StringUtil.toString(editorValue));
 	}
 
 	public static boolean notEqual(Date value, Date editorValue) {

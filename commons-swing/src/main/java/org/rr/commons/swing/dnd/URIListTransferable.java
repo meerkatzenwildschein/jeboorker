@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class URIListTransferable implements Transferable {
 	
@@ -59,7 +59,7 @@ public class URIListTransferable implements Transferable {
         StringBuilder buffer = new StringBuilder();
         for(URI uri : uris) {
         	String uriString = uri.toString();
-        	uriString = StringUtils.replace(uriString, "file:", "file://");
+        	uriString = StringUtil.replace(uriString, "file:", "file://");
         	buffer.append(uriString).append(LINE_BREAK);
         }
         String transferString = buffer.toString();

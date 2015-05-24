@@ -14,7 +14,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.icon.DecoratedIcon;
 import org.rr.commons.swing.icon.TextIcon;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.gui.model.FileSystemNode;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
@@ -46,7 +46,7 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 	}
 
 	private boolean isUserHome(IResourceHandler file) {
-		return StringUtils.equals(file.toString(), System.getProperty("user.home"));
+		return StringUtil.equals(file.toString(), System.getProperty("user.home"));
 	}
 
 	private boolean isDirectory(IResourceHandler file) {
@@ -58,7 +58,7 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 	}
 
 	private Icon createFileIcon(IResourceHandler file) {
-		String fileExtension = StringUtils.right(file.getFileExtension(), 4);
+		String fileExtension = StringUtil.right(file.getFileExtension(), 4);
 		if(CACHE.containsKey(fileExtension)) {
 			return CACHE.get(fileExtension);
 		}

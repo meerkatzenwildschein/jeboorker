@@ -18,7 +18,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -44,7 +44,7 @@ class RenameFileAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		MainController controller = MainController.getController();
 		List<Entry<EbookPropertyItem, IResourceHandler>> renameFiles = Collections.emptyList();
-		if (StringUtils.isEmpty(file)) {
+		if (StringUtil.isEmpty(file)) {
 			List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
 			if (!selectedEbookPropertyItems.isEmpty()) {
 				renameFiles = openRenameFileDialogWithEbookPropertyItems(selectedEbookPropertyItems);

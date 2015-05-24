@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Component;
 import java.io.File;
@@ -23,7 +23,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.action.WebLinkAction;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -91,7 +91,7 @@ class MainMenuBarView extends JMenuBar {
 		for (int i = 0; i < menuComponents.length; i++) {
 			if(menuComponents[i] instanceof JMenuItem) {
 				final String name = (String) ((JMenuItem)menuComponents[i]).getAction().getValue(Action.NAME);
-				if(StringUtils.replace(name, File.separator, EMPTY).equals(StringUtils.replace(path, File.separator, EMPTY))) {
+				if(StringUtil.replace(name, File.separator, EMPTY).equals(StringUtil.replace(path, File.separator, EMPTY))) {
 					menu.remove((JMenuItem)menuComponents[i]);
 				}
 			}
@@ -430,7 +430,7 @@ class MainMenuBarView extends JMenuBar {
 						action.putValue("converterClass", c.getClass());
 						JMenuItem converterMenuItem = new JMenuItem(action);
 
-						converterMenuItem.setText(StringUtils.capitalize(c.getConversionSourceType().getName()) + " " + Bundle.getString("MainMenuBarView.conversion.connector") + " " + StringUtils.capitalize(c.getConversionTargetType().getName()));
+						converterMenuItem.setText(StringUtil.capitalize(c.getConversionSourceType().getName()) + " " + Bundle.getString("MainMenuBarView.conversion.connector") + " " + StringUtil.capitalize(c.getConversionTargetType().getName()));
 						convertSubMenu.add(converterMenuItem);
 						convertSubMenu.setEnabled(true);
 					}

@@ -1,6 +1,6 @@
 package org.rr.commons.mufs;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -20,7 +20,7 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class ResourceHandlerFactory {
 
@@ -405,7 +405,7 @@ public class ResourceHandlerFactory {
 		data = data.replace("\r", EMPTY);
 		List<String> splitData = ListUtils.split(data, '\n');
 		for (String splitDataItem : splitData) {
-			if (!StringUtils.toString(splitDataItem).trim().isEmpty()) {
+			if (!StringUtil.toString(splitDataItem).trim().isEmpty()) {
 				try {
 					File file;
 					if(splitDataItem.indexOf(":") != -1) {

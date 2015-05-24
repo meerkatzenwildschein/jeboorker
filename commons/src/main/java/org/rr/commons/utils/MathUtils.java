@@ -1,6 +1,6 @@
 package org.rr.commons.utils;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.Serializable;
 

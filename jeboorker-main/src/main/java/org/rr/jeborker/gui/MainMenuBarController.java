@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -13,8 +13,9 @@ import java.util.Map;
 import javax.swing.JMenuBar;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.action.ActionFactory;

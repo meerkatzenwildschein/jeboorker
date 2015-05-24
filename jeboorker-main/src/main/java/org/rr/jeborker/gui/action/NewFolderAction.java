@@ -14,7 +14,7 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.DesktopUtils;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -39,7 +39,7 @@ class NewFolderAction extends AbstractAction {
 				Bundle.getString("NewFolderAction.title"), null);
 
 		newFolderName = ResourceHandlerUtils.removeInvalidCharacters(newFolderName);
-		if(StringUtils.isNotEmpty(newFolderName)) {
+		if(StringUtil.isNotEmpty(newFolderName)) {
 			IResourceHandler newFolderResource = ResourceHandlerFactory.getResourceHandler(new File(location, newFolderName));
 			try {
 				newFolderResource.mkdirs();

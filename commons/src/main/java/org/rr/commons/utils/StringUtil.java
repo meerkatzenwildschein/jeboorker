@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.io.Charsets;
 
-public final class StringUtils implements Serializable {
+public final class StringUtil implements Serializable {
 
 	private static final long serialVersionUID = 1505813189815359975L;
 
@@ -19,7 +19,7 @@ public final class StringUtils implements Serializable {
 
 	public static final String UTF_8 = Charsets.UTF_8.name();
 
-	private StringUtils() {}
+	private StringUtil() {}
 
 	/**
 	 * An empty string array for public use.
@@ -1291,7 +1291,7 @@ public final class StringUtils implements Serializable {
      * @since 2.0
      */
     public static boolean isNotBlank(CharSequence str) {
-        return !StringUtils.isBlank(str);
+        return !StringUtil.isBlank(str);
     }
 
     /**
@@ -1762,7 +1762,7 @@ public final class StringUtils implements Serializable {
         if (str == null) {
             return null;
         }
-        return StringUtils.replace(str, "'", "''");
+        return StringUtil.replace(str, "'", "''");
     }
 
     /**
@@ -1785,7 +1785,4 @@ public final class StringUtils implements Serializable {
 			return null;
 		}
 
-		public static String removeEnd(String str, String remove) {
-			return org.apache.commons.lang.StringUtils.removeEnd(str, remove);
-		}
 }

@@ -16,7 +16,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ProcessExecutor;
 import org.rr.commons.utils.ProcessExecutorHandler;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.CompressionUtils;
 import org.rr.commons.utils.compression.EmptyFileEntryFilter;
@@ -114,7 +114,7 @@ public class RarUtils {
 					} else if(msg.indexOf(cl.toString()) != -1) {
 						return;
 					} else {
-						msg = StringUtils.replace(msg, "\\", "/");
+						msg = StringUtil.replace(msg, "\\", "/");
 						result.add(msg);
 					}
 				}
@@ -161,13 +161,13 @@ public class RarUtils {
 			cl.addArgument("-ep"); //do not use the fs path
 			
 			String rarFilePath = rarFileHandler.toFile().getAbsolutePath();
-			cl.addArgument(StringUtils.quote(rarFilePath, '"'), false); //rar archive
+			cl.addArgument(StringUtil.quote(rarFilePath, '"'), false); //rar archive
 			
 			//create a copy of the entry that should be added to the rar.
 			in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
 			FileUtils.copyInputStreamToFile(data, in);
 			
-			cl.addArgument(StringUtils.quote(in.getAbsolutePath(), '"'), false); //entry to add
+			cl.addArgument(StringUtil.quote(in.getAbsolutePath(), '"'), false); //entry to add
 			
 			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
 				

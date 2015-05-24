@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.cell;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Component;
 import java.text.DateFormat;
@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.DateConversionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 import com.l2fprod.common.swing.LookAndFeelTweaks;
@@ -49,7 +49,7 @@ public class DatePropertyCellEditor extends AbstractPropertyEditor {
 	public void setValue(Object value) {
 		try {
 			if(!(value instanceof Date)) {
-				value = DateConversionUtils.toDate(StringUtils.toString(value));
+				value = DateConversionUtils.toDate(StringUtil.toString(value));
 			}
 			this.date = (Date) value;
 			((JTextField) this.editor).setText(getAsText((Date) value));

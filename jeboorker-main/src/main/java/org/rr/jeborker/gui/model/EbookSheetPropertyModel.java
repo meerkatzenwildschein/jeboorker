@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.model;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
@@ -330,7 +330,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		}
 
 		private String getOrderValue(Property p1) {
-			String name1 = StringUtils.toString(p1.getName()).toLowerCase();
+			String name1 = StringUtil.toString(p1.getName()).toLowerCase();
 			if(name1.equals("file")) {
 				return "01";
 			} else if(name1.equals("author") || name1.equals("creator / aut")) {

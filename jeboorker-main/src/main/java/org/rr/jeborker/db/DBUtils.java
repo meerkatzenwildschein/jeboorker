@@ -1,6 +1,6 @@
 package org.rr.jeborker.db;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 import com.j256.ormlite.stmt.Where;
 
@@ -27,12 +27,12 @@ public class DBUtils {
 		if (resultValue != null) {
 			// The Backslash is the escape character and is needed to be doubled.
 			if (resultValue.indexOf('\\') != -1) {
-				resultValue = StringUtils.replace(resultValue, "\\", "\\\\");
+				resultValue = StringUtil.replace(resultValue, "\\", "\\\\");
 			}
 
 			// Single quotes marks the sql string in the query.
 			if (resultValue.indexOf('\'') != -1) {
-				resultValue = StringUtils.replace(resultValue, "'", "\\'");
+				resultValue = StringUtil.replace(resultValue, "'", "\\'");
 			}
 		}
 

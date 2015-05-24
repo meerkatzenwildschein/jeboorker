@@ -12,7 +12,7 @@ import org.rr.commons.collection.WrapperList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
@@ -135,18 +135,18 @@ public class BasePathList extends WrapperList<String> {
 	 */
 	@Override
 	public boolean contains(Object path) {
-		String c = StringUtils.toString(path);
-		if (StringUtils.isEmpty(c)) {
+		String c = StringUtil.toString(path);
+		if (StringUtil.isEmpty(c)) {
 			return false;
 		}
 
 		for (String s : toWrap) {
-			if (StringUtils.equals(s, c)) {
+			if (StringUtil.equals(s, c)) {
 				return true;
 			} else {
 				IResourceHandler first = ResourceHandlerFactory.getResourceHandler(c);
 				IResourceHandler second = ResourceHandlerFactory.getResourceHandler(s);
-				if (first != null && second != null && StringUtils.equals(first.getResourceString(), second.getResourceString())) {
+				if (first != null && second != null && StringUtil.equals(first.getResourceString(), second.getResourceString())) {
 					return true;
 				}
 			}

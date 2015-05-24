@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui.action;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import javax.swing.Action;
 import javax.swing.JFileChooser;
@@ -10,7 +10,7 @@ import org.rr.commons.net.imagefetcher.ImageWebSearchFetcherFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.JImageDownloadDialog;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -46,12 +46,12 @@ class SetCoverFromDownload extends SetCoverFrom<JImageDownloadDialog> implements
 			//no author in the search term for now. Big Book Search did not like it.
 			if(item != null) {
 				String authors = item.getAuthor() != null ? item.getAuthor().replace(IDBObject.LIST_SEPARATOR_CHAR, " ") : null;
-				if(StringUtils.isNotEmpty(authors)) {
+				if(StringUtil.isNotEmpty(authors)) {
 					searchPhrase += authors + " ";
 				}
 			} 
 			
-			if(item != null && StringUtils.isNotEmpty(item.getTitle())) {
+			if(item != null && StringUtil.isNotEmpty(item.getTitle())) {
 				searchPhrase += item.getTitle();
 			} else {
 				searchPhrase += this.resourceHandler.getName();
@@ -60,7 +60,7 @@ class SetCoverFromDownload extends SetCoverFrom<JImageDownloadDialog> implements
 					searchPhrase = searchPhrase.substring(0, searchPhrase.length()-1);
 				}				
 			}
-			searchPhrase = StringUtils.replace(searchPhrase, "-", " ");
+			searchPhrase = StringUtil.replace(searchPhrase, "-", " ");
 			
 			imageDownloadDialog.setSearchPhrase(searchPhrase);
 			

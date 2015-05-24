@@ -20,7 +20,7 @@ import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.ThreadUtils;
 
 class MetadataDownloadUtils {
@@ -55,7 +55,7 @@ class MetadataDownloadUtils {
 	}
 	
 	static Document getDocument(byte[] content, String url) throws IOException {
-		return Jsoup.parse(new ByteArrayInputStream(content), StringUtils.UTF_8, url);
+		return Jsoup.parse(new ByteArrayInputStream(content), StringUtil.UTF_8, url);
 	}
 	
 	static List<Document> getDocuments(List<byte[]> content, String url) throws IOException {
@@ -97,7 +97,7 @@ class MetadataDownloadUtils {
 	}
 	
 	static List<URL> getSearchPageUrls(String searchTerm, int pagesToLoad, String queryUrl) throws UnsupportedEncodingException, MalformedURLException {
-		String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtils.UTF_8);
+		String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtil.UTF_8);
 		List<URL> urls = new ArrayList<>(pagesToLoad);
 		for (int i = 0; i < pagesToLoad; i++) {
 			String position = String.valueOf(i * 10);

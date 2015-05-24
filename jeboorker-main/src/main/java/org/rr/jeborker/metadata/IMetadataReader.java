@@ -8,7 +8,7 @@ import org.bouncycastle.asn1.cms.MetaData;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -39,8 +39,8 @@ public interface IMetadataReader {
 				if(values != null) {
 					final List<String> authors = item.getAuthor() != null ? ListUtils.split(item.getAuthor(), IDBObject.LIST_SEPARATOR_CHAR) : new ArrayList<String>();
 					for(Object author : values) {
-						String a = StringUtils.toString(author).trim();
-						if(!StringUtils.isEmpty(a) && !authors.contains(a)) {
+						String a = StringUtil.toString(author).trim();
+						if(!StringUtil.isEmpty(a) && !authors.contains(a)) {
 							authors.add(a);
 						}
 					}

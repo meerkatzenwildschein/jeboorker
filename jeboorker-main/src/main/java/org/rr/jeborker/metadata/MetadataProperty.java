@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /**
  * Class for storing metadata in a key/value kind with value class support.
@@ -53,7 +53,7 @@ public class MetadataProperty implements Cloneable {
 		this.name = name;
 		this.values = new ArrayList<>(1);
 		if(value instanceof String) {
-			value = StringUtils.trim((String)value); 
+			value = StringUtil.trim((String)value); 
 		}
 		this.values.add(value);
 	}
@@ -90,7 +90,7 @@ public class MetadataProperty implements Cloneable {
 		final List<Object> values = getValues();
 		if(values.size() > 0) {
 			Object object = values.get(0);
-			return StringUtils.toString(object);
+			return StringUtil.toString(object);
 		}
 		return EMPTY;
 	}

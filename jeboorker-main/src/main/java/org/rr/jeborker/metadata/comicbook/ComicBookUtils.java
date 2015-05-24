@@ -2,7 +2,7 @@ package org.rr.jeborker.metadata.comicbook;
 
 import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class ComicBookUtils {
 	
@@ -34,7 +34,7 @@ public class ComicBookUtils {
 		if(value instanceof YeyNoType) {
 			return (YeyNoType) value;
 		} else if(value != null) {
-			return YeyNoType.getInstance(StringUtils.toString(value));
+			return YeyNoType.getInstance(StringUtil.toString(value));
 		}
 		return null;
 	}
@@ -43,7 +43,7 @@ public class ComicBookUtils {
 		if(value instanceof YeyNoType) {
 			return (ComicPageType) value;
 		} else if(value != null) {
-			return ComicPageType.getInstance(StringUtils.toString(value));
+			return ComicPageType.getInstance(StringUtil.toString(value));
 		}
 		return null;
 	}

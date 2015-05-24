@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 
 /**
@@ -82,7 +82,7 @@ public class Spine implements Serializable {
 	 * @return
 	 */
 	public int findFirstResourceById(String resourceId) {
-		if (StringUtils.isEmpty(resourceId)) {
+		if (StringUtil.isEmpty(resourceId)) {
 			return -1;
 		}
 		
@@ -171,7 +171,7 @@ public class Spine implements Serializable {
 	 */
 	public int getResourceIndex(String resourceHref) {
 		int result = -1;
-		if (StringUtils.isEmpty(resourceHref)) {
+		if (StringUtil.isEmpty(resourceHref)) {
 			return result;
 		}
 		for (int i = 0; i < spineReferences.size(); i++) {

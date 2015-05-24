@@ -11,7 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class ComicsOrgDownloader implements MetadataDownloader {
 
@@ -40,7 +40,7 @@ public class ComicsOrgDownloader implements MetadataDownloader {
 		List<MetadataDownloadEntry> result = new ArrayList<>(metadataHtmlContent.size());
 		for (byte[] html : metadataHtmlContent) {
 			if (html != null) {
-				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), StringUtils.UTF_8, MAIN_URL);
+				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), StringUtil.UTF_8, MAIN_URL);
 				result.add(new ComicsOrgDownloadEntry(htmlDoc, MAIN_URL));
 			}
 		}

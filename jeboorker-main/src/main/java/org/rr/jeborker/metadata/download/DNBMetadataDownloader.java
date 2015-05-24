@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /**
  * {@link MetadataDownloader} implementation that loads metadata from the "Katalog der deutschen Nationalbibliothek".
@@ -48,7 +48,7 @@ public class DNBMetadataDownloader implements MetadataDownloader {
 		List<MetadataDownloadEntry> result = new ArrayList<>(metadataHtmlContent.size());
 		for (byte[] html : metadataHtmlContent) {
 			if (html != null) {
-				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), StringUtils.UTF_8, MAIN_URL);
+				Document htmlDoc = Jsoup.parse(new ByteArrayInputStream(html), StringUtil.UTF_8, MAIN_URL);
 				Elements tags = htmlDoc.getElementsByTag("td");
 				result.add(new DNBMetadataDownloadEntry(htmlDoc, tags));
 			}

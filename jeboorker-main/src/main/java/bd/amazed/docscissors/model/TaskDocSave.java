@@ -15,7 +15,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
@@ -77,7 +77,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 				if (this.get()) {
 					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetFile);
 					String baseFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePathFor(resourceHandler);
-					if(StringUtils.isNotEmpty(baseFolder)) {
+					if(StringUtil.isNotEmpty(baseFolder)) {
 						if(!this.targetFileExists) { //Do not add again
 							addToDatabase(resourceHandler, ResourceHandlerFactory.getResourceHandler(baseFolder));
 						}

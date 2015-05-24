@@ -1,6 +1,6 @@
 package org.rr.jeborker.gui;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
@@ -97,7 +97,7 @@ import org.rr.commons.swing.image.SimpleImageViewer;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.JeboorkerPreferenceListener;
@@ -608,7 +608,7 @@ class MainView extends JFrame {
 							.append(" ").append(item.getSeriesName())
 							.toString();
 				}
-				return StringUtils.toString(obj);
+				return StringUtil.toString(obj);
 			}
 		});
 
@@ -970,7 +970,7 @@ class MainView extends JFrame {
 
 					@Override
 					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-						String fullResourceFilterPathStatement = StringUtils.replace(fullResourceFilterPath, "\\", "\\\\");
+						String fullResourceFilterPathStatement = StringUtil.replace(fullResourceFilterPath, "\\", "\\\\");
 						where.like("file", fullResourceFilterPathStatement + "%");
 					}
 				});
@@ -1413,7 +1413,7 @@ class MainView extends JFrame {
 	private void setImage(final byte[] cover, final EbookPropertyItem ebookPropertyItem) {
 		if (cover != null && ebookPropertyItem != null) {
 			//remove file extension by removing the separation dot because an image file name is expected.
-			final String coverFileName = StringUtils.replace(ebookPropertyItem.getResourceHandler().getResourceString(), new String[] {".", "/", "\\"}, "_");
+			final String coverFileName = StringUtil.replace(ebookPropertyItem.getResourceHandler().getResourceString(), new String[] {".", "/", "\\"}, "_");
 			imageViewer.setImageViewerResource(ResourceHandlerFactory.getVirtualResourceHandler(coverFileName, new VirtualStaticResourceDataLoader() {
 
 			ByteArrayInputStream byteArrayInputStream = null;

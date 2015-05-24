@@ -15,7 +15,7 @@ import nl.siegmann.epublib.domain.Meta;
 import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Resources;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -157,7 +157,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 
 	private static Author createAuthor(Element authorElement) {
 		String authorString = DOMUtil.getTextChildrenContent(authorElement);
-		if (StringUtils.isEmpty(authorString)) {
+		if (StringUtil.isEmpty(authorString)) {
 			return null;
 		}
 		int spacePos = authorString.lastIndexOf(' ');
@@ -184,7 +184,7 @@ class PackageDocumentMetadataReader extends PackageDocumentBase {
 			Element identifierElement = (Element) identifierElements.item(i);
 			String schemeName = identifierElement.getAttributeNS(NAMESPACE_OPF, DCAttributes.scheme);
 			String identifierValue = DOMUtil.getTextChildrenContent(identifierElement);
-			if (StringUtils.isEmpty(identifierValue)) {
+			if (StringUtil.isEmpty(identifierValue)) {
 				continue;
 			}
 			Identifier identifier = new Identifier(schemeName, identifierValue);

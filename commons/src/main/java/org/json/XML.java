@@ -24,11 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.Iterator;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 
 /**
@@ -305,7 +305,7 @@ public class XML {
      * @return A simple JSON value.
      */
     public static Object stringToValue(String string) {
-        if (StringUtils.isEmpty(string)) {
+        if (StringUtil.isEmpty(string)) {
             return string;
         }
         if ("true".equalsIgnoreCase(string)) {

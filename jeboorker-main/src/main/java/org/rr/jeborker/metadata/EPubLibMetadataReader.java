@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import nl.siegmann.epublib.domain.Resources;
 import org.apache.commons.io.Charsets;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
 class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
@@ -74,7 +74,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			private boolean isListEmpty(List<Object> values) {
 				if(values != null && !values.isEmpty()) {
 					for(Object value : values) {
-						if(!StringUtils.isEmpty(value != null ? String.valueOf(value) : null)) {
+						if(!StringUtil.isEmpty(value != null ? String.valueOf(value) : null)) {
 							return false;
 						}
 					}

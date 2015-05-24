@@ -10,7 +10,7 @@ import java.util.List;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -107,7 +107,7 @@ class EbookSheetProperty extends DefaultProperty {
 			if (propertyValue instanceof Date) {
 				value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format((Date) propertyValue));
 			} else {
-				Date date = DateConversionUtils.toDate(StringUtils.toString(metadataProperty.getValues().get(lpropertyIndex)));
+				Date date = DateConversionUtils.toDate(StringUtil.toString(metadataProperty.getValues().get(lpropertyIndex)));
 				if (date != null) {
 					value.append(DateFormat.getDateInstance(SimpleDateFormat.LONG).format(date));
 				}
@@ -116,7 +116,7 @@ class EbookSheetProperty extends DefaultProperty {
 			if (value.length() > 0) {
 				value.append("<br/>");
 			}
-			value.append(StringUtils.toString(metadataProperty.getValues().get(lpropertyIndex)));
+			value.append(StringUtil.toString(metadataProperty.getValues().get(lpropertyIndex)));
 		}
 
 		return value.toString();
@@ -128,10 +128,10 @@ class EbookSheetProperty extends DefaultProperty {
 
 		String localizedName = MainController.getController().getLocalizedString(name);
 		if(!isMultiSelection() && metadataProperty.getValues().size() > 1) {
-			localizedName = (this.propertyIndex + 1) + ") " + StringUtils.toString(localizedName);
+			localizedName = (this.propertyIndex + 1) + ") " + StringUtil.toString(localizedName);
 		}
 
-		return StringUtils.toString(localizedName);
+		return StringUtil.toString(localizedName);
 	}
 
 	public String getDisplayDescriptionName() {

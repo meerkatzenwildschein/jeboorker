@@ -1,6 +1,6 @@
 package org.rr.jeborker.metadata;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.util.ArrayList;

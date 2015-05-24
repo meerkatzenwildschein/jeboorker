@@ -1,7 +1,7 @@
 package org.rr.jeborker.app.preferences;
 
 import static org.rr.commons.utils.BooleanUtils.not;
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -18,7 +18,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS;
@@ -267,7 +267,7 @@ public abstract class APreferenceStore {
 	public static String getConfigDirectory() {
 		String configDir = System.getProperties().getProperty("user.home");
 		String suffix = System.getProperties().getProperty("application.suffix");
-		configDir += File.separator + ".jeboorker" + (StringUtils.isNotEmpty(suffix) ? "." + suffix : EMPTY) + File.separator;
+		configDir += File.separator + ".jeboorker" + (StringUtil.isNotEmpty(suffix) ? "." + suffix : EMPTY) + File.separator;
 
 		makeConfigDirIfNotExists(configDir);
 
@@ -301,7 +301,7 @@ public abstract class APreferenceStore {
 	 */
 	public void restoreWindowLocationAndSize(String key, Window window) {
 		String sizeAndLocation = getGenericEntryAsString(key);
-		if(StringUtils.isNotEmpty(sizeAndLocation)) {
+		if(StringUtil.isNotEmpty(sizeAndLocation)) {
 			List<String> s = ListUtils.split(sizeAndLocation, ";");
 			window.setLocation(new Point(NumberUtils.toInt(s.get(0)), NumberUtils.toInt(s.get(1))));
 			window.setSize(NumberUtils.toInt(s.get(2)), NumberUtils.toInt(s.get(3)));

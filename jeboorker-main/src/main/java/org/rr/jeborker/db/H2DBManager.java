@@ -1,6 +1,6 @@
 package org.rr.jeborker.db;
 
-import static org.rr.commons.utils.StringUtils.EMPTY;
+import static org.rr.commons.utils.StringUtil.EMPTY;
 import static org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS.DATABASE_VERSION_KEY;
 
 import java.lang.reflect.Field;
@@ -18,7 +18,7 @@ import org.rr.commons.collection.IteratorList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -182,7 +182,7 @@ class H2DBManager extends DefaultDBManager {
 				if (keyword.contains(":")) {
 					keyword = keyword.substring(keyword.indexOf(':') + 1);
 				}
-				keyword = StringUtils.escapeSql(keyword);
+				keyword = StringUtil.escapeSql(keyword);
 				sql.append("select * from FT_SEARCH_DATA('").append(keyword).append("', 0, 0) B where B.TABLE='").append(tableName).append("'");
 			}
 			sql.append(") B");
@@ -201,7 +201,7 @@ class H2DBManager extends DefaultDBManager {
 				if (keyword.contains(":")) {
 					String searchColumn = keyword.substring(0, keyword.indexOf(':')).toUpperCase();
 					keyword = keyword.substring(keyword.indexOf(':') + 1).toUpperCase();
-					keyword = StringUtils.escapeSql(keyword);
+					keyword = StringUtil.escapeSql(keyword);
 
 					localSQL.append("upper(").append(searchColumn).append(") like '%").append(keyword).append("%'").append(orString);
 					append = true;

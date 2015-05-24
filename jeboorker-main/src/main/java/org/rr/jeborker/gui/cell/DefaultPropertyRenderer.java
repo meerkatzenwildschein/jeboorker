@@ -6,7 +6,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 public class DefaultPropertyRenderer extends DefaultTableCellRenderer {
 	
@@ -28,7 +28,7 @@ public class DefaultPropertyRenderer extends DefaultTableCellRenderer {
     		String text = ((IResourceHandler)value).getName();
     		setText(text);
     	} else {
-    		String text = StringUtils.toString(value);
+    		String text = StringUtil.toString(value);
     		setText(text);
     	}
 	}

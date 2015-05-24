@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 
 import nl.siegmann.epublib.service.MediatypeService;
 
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 
 /**
  * A Book's collection of Metadata.
@@ -143,7 +143,7 @@ public class Metadata implements Serializable {
 			return "";
 		}
 		for (String title: titles) {
-			if (StringUtils.isNotEmpty(title)) {
+			if (StringUtil.isNotEmpty(title)) {
 				return title;
 			}
 		}

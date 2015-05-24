@@ -10,7 +10,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.StringUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.commons.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -101,7 +101,7 @@ public class ComicBookWriter {
 				HashMap<String, Object> pagesInfo = page.getInfo();
 				Element pageElement = xmlDoc.createElement("Page");
 				for (Entry<String, Object> pageEntry : pagesInfo.entrySet()){
-					pageElement.setAttribute(pageEntry.getKey(), StringUtils.toString(pageEntry.getValue()));
+					pageElement.setAttribute(pageEntry.getKey(), StringUtil.toString(pageEntry.getValue()));
 				}
 				pagesElement.appendChild(pageElement);
 			}
