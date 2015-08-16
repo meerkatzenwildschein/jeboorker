@@ -425,11 +425,11 @@ class MainView extends JFrame {
 				}
 			}));
 
-			JComponent basePathTreeComp = createBasePathTree();
-			treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
-
 			JComponent fileSystemTreeComp = createFileSystemTree();
 			treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.fileSystem"), fileSystemTreeComp);
+
+			JComponent basePathTreeComp = createBasePathTree();
+			treeTabbedPane.addTab(Bundle.getString("EborkerMainView.tabbedPane.basePath"), basePathTreeComp);
 
 			treeMainTableSplitPane.setLeftComponent(treeTabbedPane);
 			treeMainTableSplitPane.setOneTouchExpandable(true);
