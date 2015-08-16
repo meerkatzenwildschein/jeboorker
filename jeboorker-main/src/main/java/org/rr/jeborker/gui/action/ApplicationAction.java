@@ -9,7 +9,6 @@ import javax.swing.Action;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.BooleanUtils;
-import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
 
