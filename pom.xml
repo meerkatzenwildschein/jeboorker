@@ -71,7 +71,7 @@
 		<module>commons-swing</module>
 		<module>l2fprod</module>
 		<module>myswing</module>
-		<module>jpushbullet</module>
+		<module>jpushbullet2</module>
 		<module>jeboorker-main</module>
 	</modules>
 	<repositories>
