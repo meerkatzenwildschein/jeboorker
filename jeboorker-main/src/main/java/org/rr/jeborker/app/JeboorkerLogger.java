@@ -22,15 +22,16 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
 
 public class JeboorkerLogger extends Handler {
-	
+
 	private static final File LOG_FILE = new File(APreferenceStore.getConfigDirectory(), Jeboorker.APP + ".log");
-	
+
 	private static final String LINE_BREAK = System.getProperty("line.separator");
-	
+
 	private OutputStream logfileOutputStream;
-	
+
 	public JeboorkerLogger() {
 		try {
 			logfileOutputStream = new FileOutputStream(LOG_FILE);
@@ -38,7 +39,7 @@ public class JeboorkerLogger extends Handler {
 			e.printStackTrace(System.err);
 		}
 	}
-	
+
 	@Override
 	public void close() throws SecurityException {
 		flush();
@@ -62,7 +63,7 @@ public class JeboorkerLogger extends Handler {
 			toMonitor(record);
 		}
 	}
-	
+
 	private static void toConsole(LogRecord record) {
 		System.err.println(record.getMessage());
 		Throwable thrown = record.getThrown();
@@ -70,7 +71,14 @@ public class JeboorkerLogger extends Handler {
 			thrown.printStackTrace(System.err);
 		}
 	}
-	
+
+	/**
+	 * Log the given record to the UI progress monitor. The record will be
+	 * discarded if the UI is not initialized. This can happen with errors
+	 * in the startup phase.
+
+	 * @param record The record to be published to the UI monitor.
+	 */
 	private static void toMonitor(LogRecord record) {
 		if (record.getMessage() != null) {
 			String thrownCause = EMPTY;
@@ -81,20 +89,24 @@ public class JeboorkerLogger extends Handler {
 				}
 			}
 			try {
-				MainController.getController().getProgressMonitor().setMessage(record.getMessage() + (thrownCause != null && !thrownCause.isEmpty() ? " (" + thrownCause+ ")" : EMPTY));
+				MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+				if(progressMonitor != null) {
+					progressMonitor.setMessage(
+							record.getMessage() + (thrownCause != null && !thrownCause.isEmpty() ? " (" + thrownCause+ ")" : EMPTY));
+				}
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	private void toLogFile(LogRecord record) {
 		StringBuilder s = new StringBuilder();
 		if (record.getMessage() != null) {
 			s.append(SimpleDateFormat.getDateTimeInstance().format(new Date()) + " " + record.getLevel() + ": " + record.getMessage());
 			s.append(LINE_BREAK);
 		}
-		
+
 		if(record.getThrown() != null) {
 			StringWriter stringWriter = new StringWriter();
 			PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -125,7 +137,7 @@ public class JeboorkerLogger extends Handler {
 				raf.read(intro);
 				raf.seek(LOG_FILE.length() - bytesToRead);
 				raf.read(tail, 0, bytesToRead);
-				
+
 				return new StringBuilder(new String(intro)).append("\n...\n").append(new String(tail)).toString();
 			} catch (Exception e) {
 				LoggerFactory.log(Level.WARNING, JeboorkerLogger.class, "Failed to read bytes from log file " + LOG_FILE, e);
