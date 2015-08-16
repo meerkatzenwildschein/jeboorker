@@ -16,6 +16,7 @@ import net.iharder.jpushbullet2.PushbulletClient;
 import net.iharder.jpushbullet2.PushbulletException;
 
 import org.apache.commons.io.FileUtils;
+import org.rr.commons.collection.Pair;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -144,7 +145,13 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	 * @throws PushbulletException
 	 */
 	private List<String> askForTargetDeviceIdentifier(PushbulletClient client) throws IllegalStateException, IOException, PushbulletException {
-		final List<Device> devices = client.getDevices();
+		final List<Pair<String, String>> devices = new TransformValueList<Device, Pair<String, String>>(client.getDevices()) {
+
+			@Override
+			public Pair<String, String> transform(Device device) {
+				return new Pair<String, String>(device.getIden(), StringUtil.capitalize(device.getManufacturer()) + " " + StringUtil.capitalize(device.getModel()));
+			}
+		};
 
 		JListSelectionDialog<String> dialog = new JListSelectionDialog<>(MainController.getController().getMainWindow());
 		dialog.centerOnScreen();
@@ -153,13 +160,12 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 
 			@Override
 			public String getViewValueAt(int idx) {
-				Device device = devices.get(idx);
-				return StringUtil.capitalize(device.getManufacturer()) + " " + StringUtil.capitalize(device.getModel());
+				return devices.get(idx).getF();
 			}
 
 			@Override
 			public String getValueAt(int idx) {
-				return devices.get(idx).getIden();
+				return devices.get(idx).getE();
 			}
 
 			@Override
@@ -176,7 +182,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 
 				@Override
 				public String transform(Integer idx) {
-					return devices.get(idx.intValue()).getIden();
+					return devices.get(idx.intValue()).getE();
 				}
 			};
 		}
