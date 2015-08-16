@@ -83,7 +83,7 @@
 			<fileset dir="epublib/target/">
 				<include name="**/*.jar" />
 			</fileset>
-			<fileset dir="jpushbullet/target/">
+			<fileset dir="jpushbullet2/target/">
 				<include name="**/*.jar" />
 			</fileset>
 			<fileset dir="l2fprod/target/">

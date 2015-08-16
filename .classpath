@@ -15,8 +15,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/commons-swing"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/epublib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jeboorker-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jpushbullet"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/l2fprod"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/myswing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jpushbullet2"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

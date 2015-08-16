@@ -11,6 +11,10 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 
+import net.iharder.jpushbullet2.Device;
+import net.iharder.jpushbullet2.PushbulletClient;
+import net.iharder.jpushbullet2.PushbulletException;
+
 import org.apache.commons.io.FileUtils;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
@@ -26,14 +30,10 @@ import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
-import com.shakethat.jpushbullet.PushbulletClient;
-import com.shakethat.jpushbullet.net.Devices;
-import com.shakethat.jpushbullet.net.Extras;
-
 public class CopyToPushbulletApiFolderAction extends AbstractAction implements IDoOnlyOnceAction<List<String>> {
 
 	private static final long serialVersionUID = -4631469476414229079L;
-	
+
 	/** max number of threads which performs parallel pushbullet uploads */
 	private static final int MAX_UPLOAD_THREADS = 5;
 
@@ -45,7 +45,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	private static final String PUSHBULLET_DEVICE_SELECTION_KEY = "pushBulletDeviceSelection";
 
 	String source;
-	
+
 	private List<String> targetDeviceIdentifiers;
 
 	CopyToPushbulletApiFolderAction(String text) {
@@ -87,25 +87,25 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 					try {
 						PushbulletClient client = new PushbulletClient(pushBulletApiKey);
 						uploadResource(client, targetDeviceIdentifier, resource);
-					} catch (IOException e) {
+					} catch (Exception e) {
 						LoggerFactory.getLogger().log(Level.SEVERE, "Failed to uploaded file " + resource + " using pushbullet.", e);
 					}
 					return null;
 				}
-				
-				private void uploadResource(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws IOException {
+
+				private void uploadResource(PushbulletClient client, String targetDeviceIdentifier, IResourceHandler resource) throws Exception {
 					String name = resource.getName();
 					if(containsAnyNonAsciiChars(name)) {
-						String newName = createNonAsciiCharFreeString(name, "_");			
+						String newName = createNonAsciiCharFreeString(name, "_");
 						IResourceHandler newResourceHandler = ResourceHandlerFactory.getResourceHandler(new File(FileUtils.getTempDirectory(), newName));
 						try {
 							resource.copyTo(newResourceHandler, true);
-							client.sendFile(targetDeviceIdentifier, newResourceHandler.toFile());
+							client.sendFile(targetDeviceIdentifier, newResourceHandler.toFile(), null);
 						} finally {
 							newResourceHandler.delete();
 						}
 					} else {
-						client.sendFile(targetDeviceIdentifier, resource.toFile());
+						client.sendFile(targetDeviceIdentifier, resource.toFile(), null);
 					}
 				}
 
@@ -115,8 +115,8 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 
 				private boolean containsAnyNonAsciiChars(String name) {
 					return name.matches("^.*[^\\x00-\\x7F].*$");
-				}				
-			
+				}
+
 			}, MAX_UPLOAD_THREADS);
 		} else {
 			throw new IllegalStateException("No api key specified.");
@@ -134,16 +134,17 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 		}
 		return pushBulletApiKey;
 	}
-	
+
 	/**
 	 * Opens a message dialog and ask the user to which device the ebook should be send to.
 	 * @param client The client which is needed to get the available devices.
 	 * @return A list with Identifier for the selected devices.
 	 * @throws IllegalStateException
 	 * @throws IOException
+	 * @throws PushbulletException
 	 */
-	private List<String> askForTargetDeviceIdentifier(PushbulletClient client) throws IllegalStateException, IOException {
-		final List<Devices> devices = client.getDevices().getDevices();
+	private List<String> askForTargetDeviceIdentifier(PushbulletClient client) throws IllegalStateException, IOException, PushbulletException {
+		final List<Device> devices = client.getDevices();
 
 		JListSelectionDialog<String> dialog = new JListSelectionDialog<>(MainController.getController().getMainWindow());
 		dialog.centerOnScreen();
@@ -152,8 +153,8 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 
 			@Override
 			public String getViewValueAt(int idx) {
-				Extras extras = devices.get(idx).getExtras();
-				return StringUtil.capitalize(extras.getManufacturer()) + " " + StringUtil.capitalize(extras.getModel());
+				Device device = devices.get(idx);
+				return StringUtil.capitalize(device.getManufacturer()) + " " + StringUtil.capitalize(device.getModel());
 			}
 
 			@Override
@@ -213,10 +214,10 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 
 	@Override
 	public List<String> doOnce() {
-		PushbulletClient client = new PushbulletClient(getApiKey());
 		try {
+			PushbulletClient client = new PushbulletClient(getApiKey());
 			return this.targetDeviceIdentifiers = askForTargetDeviceIdentifier(client);
-		} catch (IllegalStateException | IOException e) {
+		} catch (Throwable e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "Failed to connect to pushbullet service", e);
 		}
 		return null;

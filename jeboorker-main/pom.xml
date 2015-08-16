@@ -32,9 +32,9 @@
 			<version>3.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.shakethat</groupId>
-			<artifactId>jpushbullet</artifactId>
-			<version>1.0</version>
+			<groupId>net.iharder.jpushbullet2</groupId>
+			<artifactId>jpushbullet2</artifactId>
+			<version>0.3.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.l2fprod</groupId>

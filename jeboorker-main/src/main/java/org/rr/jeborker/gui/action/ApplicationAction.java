@@ -106,6 +106,8 @@ public class ApplicationAction extends AbstractAction {
 			if(this.realAction instanceof IFinalizeAction) {
 				((IFinalizeAction) this.realAction).finalizeAction(0);
 			}
+		} catch(Exception ex) {
+			LoggerFactory.getLogger(this.getClass()).log(Level.WARNING, "Failed to invoke action", ex);
 		} finally {
 			endAction();
 			fireAfterAction();
