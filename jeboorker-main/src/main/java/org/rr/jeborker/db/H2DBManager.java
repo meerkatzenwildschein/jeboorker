@@ -1,7 +1,7 @@
 package org.rr.jeborker.db;
 
 import static org.rr.commons.utils.StringUtil.EMPTY;
-import static org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS.DATABASE_VERSION_KEY;
+import static org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS.JEBOORKER_DB_VERSION_KEY;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.h2.jdbc.JdbcResultSet;
 import org.h2.result.LocalResult;
 import org.rr.commons.collection.ICloseableList;
@@ -43,27 +42,30 @@ class H2DBManager extends DefaultDBManager {
 		try {
 			Class.forName("org.h2.Driver");
 
-			JdbcPooledConnectionSource connection = new JdbcPooledConnectionSource("jdbc:h2:" + configPath + "h2db;MULTI_THREADED=TRUE;TRACE_LEVEL_FILE=0");
+			JdbcPooledConnectionSource connection = new JdbcPooledConnectionSource("jdbc:h2:" + configPath + "h2db;MULTI_THREADED=TRUE;TRACE_LEVEL_FILE=0;OPTIMIZE_UPDATE=false");
 			connection.setUsername("sa");
 			connection.setPassword(EMPTY);
 			setConnectionPool(connection);
-
-			APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(DATABASE_VERSION_KEY);
-			String jbDbVersion = dbPreferenceStore.getEntryAsString(DATABASE_VERSION_KEY);
-			if (jbDbVersion == null) {
-				prepareFullTextIndices();
-				for (Class<?> entity : KNOWN_CLASSES) {
-					TableUtils.createTableIfNotExists(connection, entity);
-					initFullTextIndices(entity);
-				}
-				reCreateFullTextIndices();
-				dbPreferenceStore.addEntryAsString(DATABASE_VERSION_KEY, Jeboorker.getVersion());
-			}
+			createDatabaseIfNecessary(connection);
 			return connection;
 		} catch (Exception e) {
 			LoggerFactory.log(Level.SEVERE, this, "could not init database in " + configPath, e);
 		}
 		return null;
+	}
+
+	private void createDatabaseIfNecessary(JdbcPooledConnectionSource connection) throws SQLException {
+		APreferenceStore dbPreferenceStore = PreferenceStoreFactory.getPreferenceStore(JEBOORKER_DB_VERSION_KEY);
+		String jbDbVersion = dbPreferenceStore.getEntryAsString(JEBOORKER_DB_VERSION_KEY);
+		if (jbDbVersion == null) {
+			prepareFullTextIndices();
+			for (Class<?> entity : KNOWN_CLASSES) {
+				TableUtils.createTableIfNotExists(connection, entity);
+				initFullTextIndices(entity);
+			}
+			reCreateFullTextIndices();
+			dbPreferenceStore.addEntryAsString(JEBOORKER_DB_VERSION_KEY, Jeboorker.getVersion());
+		}
 	}
 
 	private void reCreateFullTextIndices() throws SQLException {
@@ -107,7 +109,7 @@ class H2DBManager extends DefaultDBManager {
 		}
 	}
 
-	public <T> ICloseableList<T> queryFullTextSearch(Class<T> cls, Where<T, T> where, List<String> keywords, List<Field> orderFields,
+	public synchronized <T> ICloseableList<T> queryFullTextSearch(Class<T> cls, Where<T, T> where, List<String> keywords, List<Field> orderFields,
 			OrderDirection orderDirection) {
 		try {
 			// select * from ebookpropertyitem A, FT_SEARCH_DATA('liga', 0, 0) B where A.FILE = B.KEYS

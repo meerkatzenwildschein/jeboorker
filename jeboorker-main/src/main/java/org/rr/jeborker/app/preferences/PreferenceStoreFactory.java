@@ -81,7 +81,7 @@ public class PreferenceStoreFactory {
 				return DB_STORE;
 			}
 		},
-		DATABASE_VERSION_KEY {
+		JEBOORKER_DB_VERSION_KEY {
 			@Override
 			public String getKey() {
 				return "jb.dbversion";

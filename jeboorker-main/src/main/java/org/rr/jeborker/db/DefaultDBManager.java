@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.rr.commons.collection.ICloseableList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ReflectionUtils;
@@ -86,7 +85,7 @@ public abstract class DefaultDBManager {
 	 * @return a new {@link QueryBuilder} instance for the given class. Never returns <code>null</code>
 	 * @throws RuntimeException if an SQL error occurs.
 	 */
-	public <T> QueryBuilder<T, T> getQueryBuilder(Class<T> cls) {
+	public synchronized <T> QueryBuilder<T, T> getQueryBuilder(Class<T> cls) {
 		Dao<T, T> createDao;
 		try {
 			createDao = DaoManager.createDao(connection, cls);
@@ -97,7 +96,7 @@ public abstract class DefaultDBManager {
 		}
 	}
 
-	public IDBObject storeObject(final IDBObject item) {
+	public synchronized IDBObject storeObject(final IDBObject item) {
 		try {
 			Dao<IDBObject, ?> createDao = (Dao<IDBObject, ?>) DaoManager.createDao(connection, item.getClass());
 			createDao.createOrUpdate(item);
@@ -113,7 +112,7 @@ public abstract class DefaultDBManager {
 	 * @param cls The class type of the pojos to be fetched
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
-	public <T> Collection<T> getItems(Class<T> cls) {
+	public synchronized <T> Collection<T> getItems(Class<T> cls) {
 		try {
 			Dao<IDBObject, T> createDao = (Dao<IDBObject, T>) DaoManager.createDao(connection, cls);
 			List<T> queryForAll = (List<T>) createDao.queryForAll();
@@ -130,7 +129,7 @@ public abstract class DefaultDBManager {
 	 * @param cls The class type of the pojos to be fetched
 	 * @return A Iterable which provides the data. Never returns <code>null</code>.
 	 */
-	public <T> List<T> getItems(final Class<T> cls, Where<T, T> where, final List<Field> orderFields,
+	public synchronized <T> List<T> getItems(final Class<T> cls, Where<T, T> where, final List<Field> orderFields,
 			final OrderDirection orderDirection) {
 		try {
 			Dao<T, T> createDao = DaoManager.createDao(connection, cls);
@@ -163,7 +162,7 @@ public abstract class DefaultDBManager {
 	 * @param item
 	 *            {@link IDBObject} instance to be updated.
 	 */
-	public IDBObject updateObject(final IDBObject item) {
+	public synchronized IDBObject updateObject(final IDBObject item) {
 		// store the bytes before deleting
 		final HashMap<Field, byte[]> data = new HashMap<Field, byte[]>();
 
@@ -195,7 +194,7 @@ public abstract class DefaultDBManager {
 	 *            The condition value.
 	 * @return A list with all results.
 	 */
-	public <T> List<T> getObject(Class<T> class1, final String field, final String value) {
+	public synchronized <T> List<T> getObject(Class<T> class1, final String field, final String value) {
 		try {
 			Dao<T, T> createDao = DaoManager.createDao(connection, class1);
 			QueryBuilder<T, T> queryBuilder = createDao.queryBuilder();
@@ -208,7 +207,7 @@ public abstract class DefaultDBManager {
 		}
 	}
 
-	public boolean deleteObject(IDBObject item) {
+	public synchronized boolean deleteObject(IDBObject item) {
 		return deleteObject(item, true);
 	}
 
@@ -219,7 +218,7 @@ public abstract class DefaultDBManager {
 	 *            The item to be deleted.
 	 * @return
 	 */
-	public boolean deleteObject(IDBObject item, boolean deleteCover) {
+	public synchronized boolean deleteObject(IDBObject item, boolean deleteCover) {
 		try {
 			Dao<IDBObject, ?> createDao = (Dao<IDBObject, ?>) DaoManager.createDao(connection, item.getClass());
 			createDao.delete(item);
