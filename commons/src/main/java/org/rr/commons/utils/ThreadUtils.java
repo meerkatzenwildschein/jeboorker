@@ -10,19 +10,19 @@ import org.rr.commons.collection.IteratorList;
 public class ThreadUtils {
 
 	private static final Object MUTEX = new Object();
-	
+
 	public static <S,T> List<T> loopAndWait(final Iterable<S> l, final RunnableImpl<S,T> each, final int maxThreads) {
 		return loopAndWait(l.iterator(), each, maxThreads);
 	}
-	
+
 	public static <S,T> List<T> loopAndWait(final Iterator<S> l, final RunnableImpl<S,T> each, final int maxThreads) {
 		return loopAndWait(new IteratorList<S>(l, -1), each, maxThreads);
 	}
-	
+
 	public static <S,T> List<T> loopAndWait(final List<S> l, final RunnableImpl<S,T> each, int maxThreads) {
 		return loop(l, each, maxThreads, true);
 	}
-	
+
 	/**
 	 * Does a loop over the given list where the <code>each</code> parameter is
 	 * invoked with any entry in the list. The
@@ -34,8 +34,8 @@ public class ThreadUtils {
 	 */
 	private static <S, T> List<T> loop(final List<S> l, final RunnableImpl<S, T> each, int maxThreads, boolean wait) {
 		final Thread[] slots = new Thread[maxThreads];
-		final List<T> results = Collections.synchronizedList(new ArrayList<T>(l.size()));
-		final List<S> working = Collections.synchronizedList(new ArrayList<S>(l));
+		final List<T> results = Collections.synchronizedList(l != null ? new ArrayList<T>(l.size()) : Collections.<T>emptyList());
+		final List<S> working = Collections.synchronizedList(l != null ? new ArrayList<S>(l) : Collections.<S>emptyList());
 		while(!working.isEmpty()) {
 			//thread slot searching and execution must be synchronized.
 			synchronized(MUTEX) {
@@ -45,7 +45,7 @@ public class ThreadUtils {
 					if(slots[slot] == null) {
 						//free slot to use.
 						slots[slot] = new Thread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								S entry = null;
@@ -53,7 +53,7 @@ public class ThreadUtils {
 									entry = working.remove(0);
 								} catch(IndexOutOfBoundsException e) {
 								}
-								
+
 								if(entry != null) {
 									int index = l.indexOf(entry);
 									ListUtils.set(results, each.run(entry), index);
@@ -68,7 +68,7 @@ public class ThreadUtils {
 						emptySlotFound = false;
 					}
 				}
-				
+
 				if(!emptySlotFound && !working.isEmpty()) {
 					try {
 						Thread.sleep(100);
@@ -77,7 +77,7 @@ public class ThreadUtils {
 				}
 			}
 		}
-		
+
 		if(wait) {
 			while(!containsOnlyNull(slots)) {
 				try {
@@ -88,7 +88,7 @@ public class ThreadUtils {
 		}
 		return results;
 	}
-	
+
 	private static boolean containsOnlyNull(Object[] values) {
 		for (int i = 0; i < values.length; i++) {
 			if(values[i] != null) {
@@ -97,7 +97,7 @@ public class ThreadUtils {
 		}
 		return true;
 	}
-	
+
 	public static abstract class RunnableImpl<S, T> {
 		public abstract T run(S entry);
 	}
