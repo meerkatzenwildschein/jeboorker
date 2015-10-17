@@ -17,6 +17,8 @@
 	</target>
 
 	<target name="distribute-windows">
+		<mkdir dir="${target}"/>
+
 		<!-- create Jeboorker executable -->
 		<exec executable="makensis">
 			<arg value="Jeboorker.nsi"/>
