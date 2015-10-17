@@ -6,6 +6,7 @@ import it.sauronsoftware.junique.JUnique;
 import it.sauronsoftware.junique.MessageHandler;
 
 import java.awt.Frame;
+import java.awt.SplashScreen;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -62,35 +63,9 @@ public class Jeboorker {
 			RarUtils.setRarExecFolder("/usr/bin");
 		}
 
-		boolean start = true;
-		try {
-			JUnique.acquireLock(Jeboorker.class.getName(), new MessageHandler() {
-				public String handle(String message) {
-					if (mainController != null) {
-						java.awt.EventQueue.invokeLater(new Runnable() {
-						    @Override
-						    public void run() {
-						        int state = mainController.getMainWindow().getExtendedState();
-						        state &= ~Frame.ICONIFIED;
+		boolean isRunning = handleAlreadyRunning();
 
-						        mainController.getMainWindow().setExtendedState(state);
-						        mainController.getMainWindow().setFocusableWindowState(false);
-						    	mainController.getMainWindow().toFront();
-					    		//seems to be needed to work. Don't know why.
-					    		ReflectionUtils.sleepSilent(1000);
-						    	mainController.getMainWindow().setFocusableWindowState(true);
-						    }
-						});
-					}
-					return null;
-				}
-			});
-		} catch (AlreadyLockedException e) {
-			// Application already running.
-			start = false;
-		}
-
-		if(start) {
+		if(!isRunning) {
 			try {
 				logSystemInfo();
 
@@ -103,11 +78,48 @@ public class Jeboorker {
 			// Sends arguments to the already active instance.
 			JUnique.sendMessage(Jeboorker.class.getName(), EMPTY);
 
-			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + getVersion() + " is already running.");
+			LoggerFactory.log(Level.INFO, Jeboorker.class, "Jeboorker " + getAppVersion() + " is already running.");
+		}
+		closeSplashScreen();
+	}
+
+	private static boolean handleAlreadyRunning() {
+		try {
+			JUnique.acquireLock(Jeboorker.class.getName(), new MessageHandler() {
+				public String handle(String message) {
+					if (mainController != null) {
+						java.awt.EventQueue.invokeLater(new Runnable() {
+						    @Override
+						    public void run() {
+					        int state = mainController.getMainWindow().getExtendedState();
+					        state &= ~Frame.ICONIFIED;
+
+					        mainController.getMainWindow().setExtendedState(state);
+					        mainController.getMainWindow().setFocusableWindowState(false);
+						    	mainController.getMainWindow().toFront();
+					    		//seems to be needed to work. Don't know why.
+					    		ReflectionUtils.sleepSilent(1000);
+						    	mainController.getMainWindow().setFocusableWindowState(true);
+						    }
+						});
+					}
+					return null;
+				}
+			});
+			return false;
+		} catch (AlreadyLockedException e) {
+			// Application already running.
+			return true;
 		}
 	}
 
-	public static String getVersion() {
+	public static void closeSplashScreen() {
+		if(SplashScreen.getSplashScreen() != null) {
+			SplashScreen.getSplashScreen().close();
+		}		
+	}
+	
+	public static String getAppVersion() {
 		Properties properties = new Properties();
 		try {
 			InputStream pomProperties = Jeboorker.class.getClass().getResourceAsStream("/META-INF/maven/org.rr/jeboorker-main/pom.properties");
@@ -129,7 +141,7 @@ public class Jeboorker {
 		List<String> args = bean.getInputArguments();
 		String argsString = ListUtils.join(args, " ");
 
-		LoggerFactory.getLogger().info("Jeboorker " + getVersion() + " started with " + argsString);
+		LoggerFactory.getLogger().info("Jeboorker " + getAppVersion() + " started with " + argsString);
 
 		Properties props = System.getProperties();
 		Set<Object> keys = props.keySet();

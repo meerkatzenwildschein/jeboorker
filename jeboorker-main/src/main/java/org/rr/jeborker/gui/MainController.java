@@ -24,7 +24,6 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.JDirectoryChooser;
-import org.rr.commons.swing.dialogs.JSplashScreen;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
@@ -53,8 +52,6 @@ public class MainController {
 
 	private MainView mainWindow;
 
-	private JSplashScreen splashScreen;
-
 	/**
 	 * The controller singleton.
 	 */
@@ -77,14 +74,7 @@ public class MainController {
 		if(controller == null) {
 			try {
 				controller = new MainController();
-				controller.splashScreen = JSplashScreen.getInstance();
-				controller.splashScreen.startProgress(null);
-				try {
-					controller.initialize();
-				} finally {
-					controller.splashScreen.setLoadingValue(100);
-					controller.splashScreen.endProgress();
-				}
+				controller.initialize();
 			} catch (Exception e) {
 				LoggerFactory.getLogger(MainController.class).log(Level.SEVERE, "Startup failed.", e);
 			}
@@ -155,19 +145,10 @@ public class MainController {
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		SwingUtils.setLookAndFeel(lookAndFeel);
 
-		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.opendb"));
-		splashScreen.setLoadingValue(35);
-
 		mainWindow = new MainView(this);
 		mainWindow.initialize();
 
-		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.init"));
-		splashScreen.setLoadingValue(60);
-
 		mainWindow.initListeners();
-
-		splashScreen.setLoadingText(Bundle.getString("MainMenuBarController.restore"));
-		splashScreen.setLoadingValue(80);
 
 		mainWindow.restoreComponentProperties();
 		MainMenuBarController.getController().restoreProperties();
