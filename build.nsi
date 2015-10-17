@@ -61,6 +61,7 @@ Section -Main SEC0000
 	SetOutPath $INSTDIR
     File dist\Jeboorker.bat
     File dist\Jeboorker.vbs
+    File dist\splashscreen.gif
     File dist\win32\Jeboorker.exe
     File Readme.txt
 
