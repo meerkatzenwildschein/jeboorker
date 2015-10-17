@@ -78,8 +78,6 @@ Section -Main SEC0000
     File commons-swing\target\lib\*.jar
     File epublib\target\*.jar
     File epublib\target\lib\*.jar
-    File jpushbullet\target\*.jar
-    File jpushbullet\target\lib\*.jar
     File l2fprod\target\*.jar
     File l2fprod\target\lib\*.jar
     File myswing\target\*.jar
