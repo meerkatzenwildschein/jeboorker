@@ -48,6 +48,7 @@
 		</antcall>
 
 		<copy file="dist/jeboorker.sh" todir="${programm-folder}/" />
+		<copy file="dist/splashscreen.gif" todir="${programm-folder}/" />
 		<chmod file="${programm-folder}/jeboorker.sh" perm="a+rx"/>
 
 		<antcall target="execute-dpkg-deb-build" />
@@ -63,7 +64,9 @@
 	</target>
 
 	<target name="execute-tar-build">
-		<tar destfile="${target}/jeboorker_${version}.tar" basedir="${packaging}/usr/share">
+		<property name="tar-file" value="${target}/jeboorker_${version}.tar" />
+		<delete file="${tar-file}"/>
+		<tar destfile="${tar-file}" basedir="${packaging}/usr/share">
 			<tarfileset dir="${packaging}/usr/share">
 				<include name="**/*" />
 			</tarfileset>
@@ -81,9 +84,6 @@
 				<include name="**/*.jar" />
 			</fileset>
 			<fileset dir="epublib/target/">
-				<include name="**/*.jar" />
-			</fileset>
-			<fileset dir="jpushbullet2/target/">
 				<include name="**/*.jar" />
 			</fileset>
 			<fileset dir="l2fprod/target/">

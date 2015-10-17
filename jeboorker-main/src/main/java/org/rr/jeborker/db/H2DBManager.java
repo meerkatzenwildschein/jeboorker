@@ -64,7 +64,7 @@ class H2DBManager extends DefaultDBManager {
 				initFullTextIndices(entity);
 			}
 			reCreateFullTextIndices();
-			dbPreferenceStore.addEntryAsString(JEBOORKER_DB_VERSION_KEY, Jeboorker.getVersion());
+			dbPreferenceStore.addEntryAsString(JEBOORKER_DB_VERSION_KEY, Jeboorker.getAppVersion());
 		}
 	}
 

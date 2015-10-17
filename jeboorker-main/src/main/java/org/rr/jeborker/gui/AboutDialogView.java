@@ -58,7 +58,7 @@ class AboutDialogView extends JDialog {
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new VerticalLayout(3, VerticalLayout.CENTER));
 
-		JLabel lblVersion = new JLabel(Jeboorker.APP + " v." + Jeboorker.getVersion() + " (GPL v2+)");
+		JLabel lblVersion = new JLabel(Jeboorker.APP + " v." + Jeboorker.getAppVersion() + " (GPL v2+)");
 		panel.add(lblVersion);
 
 		JLabel lblUrl = new JLabel();
