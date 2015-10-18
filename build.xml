@@ -67,14 +67,12 @@
 
 	<target name="execute-tar-build">
 		<property name="tar-file" value="${target}/jeboorker_${version}.tar" />
+		<property name="tar-gz-file" value="${target}/jeboorker_${version}.tar.gz" />
+		
+		<delete file="${tar-gz-file}"/>
+		<tar destfile="${tar-file}" basedir="${packaging}/usr/share" />
+		<gzip src="${tar-file}" destfile="${tar-gz-file}"/>
 		<delete file="${tar-file}"/>
-		<tar destfile="${tar-file}" basedir="${packaging}/usr/share">
-			<tarfileset dir="${packaging}/usr/share">
-				<include name="**/*" />
-			</tarfileset>
-		</tar>
-		<gzip src="${target}/jeboorker_${version}.tar" destfile="${target}/jeboorker_${version}.tar.gz"/>
-		<delete file="${target}/jeboorker_${version}.tar"/>
 	</target>
 
 	<target name="copy-libs" description="copy all libraries to the given target folder.">
