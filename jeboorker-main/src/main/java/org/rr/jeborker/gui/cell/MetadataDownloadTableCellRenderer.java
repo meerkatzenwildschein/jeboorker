@@ -127,9 +127,9 @@ public class MetadataDownloadTableCellRenderer extends JPanel implements TableCe
 		
 		Component[] allComponents = SwingUtils.getAllComponents(null, this);
 		for(Component c : allComponents) {
-			RendererUtils.setColor(c, isSelected);
+			SwingUtils.setColor(c, isSelected);
 		}
-		RendererUtils.setColor(this, isSelected);
+		SwingUtils.setColor(this, isSelected);
 		return this;
 	}
 	

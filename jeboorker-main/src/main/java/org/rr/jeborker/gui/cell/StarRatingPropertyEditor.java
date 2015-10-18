@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import javax.swing.JPanel;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.StarRater;
 import org.rr.commons.utils.CommonUtils;
 
@@ -24,7 +25,7 @@ public class StarRatingPropertyEditor extends JPanel implements PropertyEditor {
 		starRater = new StarRater();
 		this.setLayout(new BorderLayout());
 		this.add(starRater, BorderLayout.CENTER);
-		RendererUtils.setColor(this, true);
+		SwingUtils.setColor(this, true);
 	}
 
 	public Component getCustomEditor() {

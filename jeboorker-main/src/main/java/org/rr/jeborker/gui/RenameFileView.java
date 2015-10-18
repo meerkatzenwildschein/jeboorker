@@ -19,7 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -29,6 +28,7 @@ import javax.swing.table.TableModel;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
+import org.rr.commons.swing.components.JREditableHistoryComboBox;
 import org.rr.commons.swing.components.JRTable;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
@@ -66,6 +66,7 @@ public class RenameFileView extends AbstractDialogView {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			actionResult = ACTION_RESULT_OK;
+			addCurrentPatternToHistory();
 			controller.close();
 		}
 	};
@@ -138,7 +139,7 @@ public class RenameFileView extends AbstractDialogView {
 		}
 	};
 
-	private JTextField textFieldFilePattern;
+	private JREditableHistoryComboBox textFieldFilePattern;
 
 	public RenameFileView(RenameFileController controller, List<EbookPropertyItem> list, JFrame mainWindow) {
 		super(mainWindow);
@@ -169,9 +170,9 @@ public class RenameFileView extends AbstractDialogView {
 		gbc_lblFilePattern.gridy = 0;
 		getContentPane().add(lblFilePattern, gbc_lblFilePattern);
 
-		textFieldFilePattern = new JTextField();
-		textFieldFilePattern.getDocument().addDocumentListener(textFieldFilePatternChangeListener);
-		textFieldFilePattern.setText("%a - %t");
+		textFieldFilePattern = new JREditableHistoryComboBox();
+		textFieldFilePattern.addDocumentListener(textFieldFilePatternChangeListener);
+		textFieldFilePattern.setItem("%a - %t");
 		GridBagConstraints gbc_textFieldFilePattern = new GridBagConstraints();
 		gbc_textFieldFilePattern.insets = new Insets(5, 0, 3, 5);
 		gbc_textFieldFilePattern.fill = GridBagConstraints.BOTH;
@@ -308,7 +309,7 @@ public class RenameFileView extends AbstractDialogView {
 	 * @return The desired file name. Never returns <code>null</code>.
 	 */
 	String getFileNamePattern() {
-		return textFieldFilePattern.getText();
+		return textFieldFilePattern.getEditorValue();
 	}
 
 	/**
@@ -317,8 +318,26 @@ public class RenameFileView extends AbstractDialogView {
 	 */
 	void setFileNamePattern(String pattern) {
 		if(StringUtil.isNotEmpty(pattern)) {
-			textFieldFilePattern.setText(pattern);
+			textFieldFilePattern.setItem(pattern);
 		}
+	}
+	
+	/**
+	 * Sets the file name history values displayed in the combobox popup.
+	 * @param history The history values.
+	 */
+	void setFileNameHistory(String history) {
+		if(StringUtil.isNotEmpty(history)) {
+			textFieldFilePattern.setHistoryValues(history);
+		}
+	}
+	
+	/**
+	 * Gets the file name history values displayed in the combobox popup.
+	 * @return The file history list.
+	 */
+	String getFileNameHistory() {
+		return textFieldFilePattern.getHistoryValues();
 	}
 
 	/**
@@ -358,6 +377,15 @@ public class RenameFileView extends AbstractDialogView {
 		getButtonAt(OK_BUTTON_INDEX).setEnabled(true);
 	}
 
+	/**
+	 * Adds the current editor value to the history of the pattern field.
+	 */
+	private void addCurrentPatternToHistory() {
+		String selectedItem = (String) textFieldFilePattern.getSelectedItem();
+		if(StringUtil.isNotBlank(selectedItem)) {
+			textFieldFilePattern.addHistoryValue(selectedItem);
+		}
+	}
 
 	@Override
 	protected int getBottomButtonCount() {

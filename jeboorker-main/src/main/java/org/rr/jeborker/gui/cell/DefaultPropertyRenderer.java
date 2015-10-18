@@ -6,6 +6,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtil;
 
 public class DefaultPropertyRenderer extends DefaultTableCellRenderer {
@@ -17,7 +18,7 @@ public class DefaultPropertyRenderer extends DefaultTableCellRenderer {
 	
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	Component tableCellRendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-    	RendererUtils.setColor(tableCellRendererComponent, isSelected);
+    	SwingUtils.setColor(tableCellRendererComponent, isSelected);
     	return tableCellRendererComponent;
     }
 

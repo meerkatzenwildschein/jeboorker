@@ -408,4 +408,14 @@ public class SwingUtils {
 		}
 	}
 
+	
+	public static void setColor(Component comp, boolean isSelected) {
+		if(isSelected) {
+			comp.setBackground(SwingUtils.getSelectionBackgroundColor());
+			comp.setForeground(SwingUtils.getSelectionForegroundColor());
+		} else {
+			comp.setBackground(SwingUtils.getBackgroundColor());
+			comp.setForeground(SwingUtils.getForegroundColor());
+		}
+	}	
 }

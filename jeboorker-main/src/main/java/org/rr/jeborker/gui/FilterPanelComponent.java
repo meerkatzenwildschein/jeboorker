@@ -11,21 +11,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.MutableComboBoxModel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
-import javax.swing.text.JTextComponent;
 
-import net.miginfocom.swing.MigLayout;
-
-import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRCheckBoxComboBox;
+import org.rr.commons.swing.components.JREditableHistoryComboBox;
 import org.rr.commons.swing.components.model.DefaultJRCheckBoxComboBoxModel;
 import org.rr.commons.swing.components.model.JRCheckBoxComboBoxModel;
 import org.rr.commons.utils.ListUtils;
@@ -38,7 +30,8 @@ import org.rr.jeborker.db.item.ViewField;
 import org.rr.jeborker.gui.action.ActionFactory;
 import org.rr.jeborker.gui.action.ApplicationAction;
 import org.rr.jeborker.gui.additional.EbookPropertyItemFieldComperator;
-import org.rr.jeborker.gui.cell.FilterFieldComboboxEditor;
+
+import net.miginfocom.swing.MigLayout;
 
 public class FilterPanelComponent extends JPanel {
 
@@ -46,9 +39,7 @@ public class FilterPanelComponent extends JPanel {
 	
 	private final JRCheckBoxComboBox<Field> filterFieldSelection = new JRCheckBoxComboBox<>();
 	
-	private final JComboBox<String> filterField = new JComboBox<>();
-	
-	private final BasicComboBoxEditor comboboxEditor = new FilterFieldComboboxEditor();
+	private final JREditableHistoryComboBox filterField = new JREditableHistoryComboBox();
 	
 	private final FilterFieldActionListener filterFieldActionListener = new FilterFieldActionListener();
 
@@ -91,11 +82,6 @@ public class FilterPanelComponent extends JPanel {
 		JRCheckBoxComboBoxModel<Field> sortColumnComboBoxModel = this.initFieldSelectionModel();
 		filterFieldSelection.setCheckBoxComboBoxModel(sortColumnComboBoxModel);
 		
-		filterField.setModel(new DefaultComboBoxModel<String>());
-		filterField.setEditable(true);
-		filterField.setEditor(comboboxEditor);
-		((JComponent)comboboxEditor.getEditorComponent()).setBorder(new EmptyBorder(0, 5, 0, 5));
-
 		add(filterFieldSelection, EMPTY);
 		add(filterField, "w 100%");
 		
@@ -113,7 +99,7 @@ public class FilterPanelComponent extends JPanel {
 	 * @return The text from the filter/search field. Never returns <code>null</code>.
 	 */
 	public String getFilterText() {
-		return StringUtil.toString(filterField.getEditor().getItem());
+		return filterField.getEditorValue();
 	}
 
 	/**
@@ -178,49 +164,15 @@ public class FilterPanelComponent extends JPanel {
 	 *            The search expression to be attached.
 	 */
 	public void addFilterFieldSearch(final String searchExpression) {
-		if (searchExpression != null && searchExpression.length() > 0) {
-			MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
-			model.insertElementAt(searchExpression, 0);
-			if (model.getSize() > 10) {
-				model.removeElementAt(model.getSize() - 1);
-			}
-			removeDuplicateElementsFromFilterModel(searchExpression);
-		}
+		filterField.addHistoryValue(searchExpression);
 	}
 
-	/**
-	 * If the selected expression or any other one is more than one times in the filter history list, the last ones will be removed.
-	 *
-	 * @param selectedExpression
-	 *            The currently selected filter expression.
-	 */
-	private void removeDuplicateElementsFromFilterModel(final String selectedExpression) {
-		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
-		HashSet<String> entries = new HashSet<>(model.getSize());
-		for (int i = 0; i < model.getSize(); i++) {
-			String elementAt = (String) model.getElementAt(i);
-			if (entries.contains(elementAt)) {
-				model.removeElementAt(i);
-				i--;
-			}
-			entries.add(elementAt);
-		}
-		model.setSelectedItem(selectedExpression);
-	}
 	
 	/**
 	 * Tells the text filter field to display it self in and active filter color.
 	 */
 	public void enableFilterColor(boolean enable) {
-		if (enable) {
-			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getSelectionBackgroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getSelectionForegroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor().brighter());
-		} else {
-			((JTextComponent) comboboxEditor.getEditorComponent()).setForeground(SwingUtils.getForegroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setBackground(SwingUtils.getBackgroundColor());
-			((JTextComponent) comboboxEditor.getEditorComponent()).setSelectionColor(SwingUtils.getSelectionBackgroundColor());
-		}
+		filterField.enableFilterColor(enable);
 	}
 
 	/**
@@ -242,16 +194,8 @@ public class FilterPanelComponent extends JPanel {
 	
 	private void storeFilterHistory() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
-		StringBuilder modelEntries = new StringBuilder();
-		for (int i = 0; i < model.getSize(); i++) {
-			String elementAt = StringUtil.replace(StringUtil.toString(model.getElementAt(i)), ",", EMPTY);
-			if (modelEntries.length() > 0) {
-				modelEntries.append(",");
-			}
-			modelEntries.append(elementAt);
-		}
-		preferenceStore.addGenericEntryAsString("FilterPanelControllerEntries", modelEntries.toString());
+		String historyValues = filterField.getHistoryValues();
+		preferenceStore.addGenericEntryAsString("FilterPanelControllerEntries", historyValues);
 	}
 
 	private void storeFileHistory() {
@@ -273,16 +217,8 @@ public class FilterPanelComponent extends JPanel {
 
 	private void restoreFilterHistory() {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) filterField.getModel();
 		String filterEntries = preferenceStore.getGenericEntryAsString("FilterPanelControllerEntries");
-		if (filterEntries != null && filterEntries.length() > 0) {
-			List<String> split = ListUtils.split(filterEntries, ",");
-			for (String string : split) {
-				model.addElement(string);
-			}
-		}
-		filterField.updateUI();
-
+		filterField.setHistoryValues(filterEntries);
 	}
 
 	private void restoreFilterSelection() {
@@ -305,7 +241,7 @@ public class FilterPanelComponent extends JPanel {
 	private void restoreFileHistory() {
 		String latestSearch = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getGenericEntryAsString(
 				"FilterPanelControllerCurrentFilter");
-		comboboxEditor.setItem(latestSearch);
+		filterField.setItem(latestSearch);
 		filterFieldActionListener.getNonThreadingSearchAction().invokeAction(new ActionEvent(this, 0, "initialize"));
 	}
 }

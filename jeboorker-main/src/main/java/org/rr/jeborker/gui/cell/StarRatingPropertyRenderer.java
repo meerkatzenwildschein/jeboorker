@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.StarRater;
 import org.rr.commons.utils.CommonUtils;
 
@@ -45,7 +46,7 @@ public class StarRatingPropertyRenderer extends JPanel implements TableCellRende
 	
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         setValue(value);
-        RendererUtils.setColor(this, isSelected);
+        SwingUtils.setColor(this, isSelected);
         return this;
     }	
 

@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtil;
 
@@ -58,7 +59,7 @@ public class MultiListPropertyRenderer extends JComboBox implements TableCellRen
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         setValue(value);
-        RendererUtils.setColor(this, isSelected);
+        SwingUtils.setColor(this, isSelected);
         return this;
     }
 

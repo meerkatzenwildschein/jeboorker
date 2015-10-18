@@ -94,6 +94,7 @@ public class RenameFileController {
 		preferenceStore.addGenericEntryAsNumber("renameFileDialogLocationX", getView().getLocation().x);
 		preferenceStore.addGenericEntryAsNumber("renameFileDialogLocationY", getView().getLocation().y);
 		preferenceStore.addGenericEntryAsString("renameFileDialogPattern", getView().getFileNamePattern());
+		preferenceStore.addGenericEntryAsString("renameFileDialogPatternHistory", getView().getFileNameHistory());
 	}
 
 	private void restoreProperties() {
@@ -113,5 +114,6 @@ public class RenameFileController {
 		}
 
 		getView().setFileNamePattern(preferenceStore.getGenericEntryAsString("renameFileDialogPattern"));
+		getView().setFileNameHistory(preferenceStore.getGenericEntryAsString("renameFileDialogPatternHistory"));
 	}
 }

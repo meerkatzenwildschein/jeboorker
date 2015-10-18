@@ -12,6 +12,7 @@ import java.util.Locale;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.ListUtils;
 
@@ -62,7 +63,7 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setValue(value);
-        RendererUtils.setColor(this, isSelected);
+        SwingUtils.setColor(this, isSelected);
         return this;
     }
 
