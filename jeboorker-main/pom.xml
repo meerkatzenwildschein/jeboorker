@@ -147,9 +147,9 @@
 		<dependency>
 			<groupId>de.sciss</groupId>
 			<artifactId>weblaf</artifactId>
-			<version>1.28</version>
+			<version>1.29</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/weblaf-1.28.jar</systemPath>
+			<systemPath>${project.basedir}/lib/weblaf-complete-1.29.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.bounce</groupId>
