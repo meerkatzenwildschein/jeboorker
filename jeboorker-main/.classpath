@@ -24,7 +24,7 @@
 	<classpathentry kind="lib" path="/Jeboorker/lib/bounce-0.19.jar"/>
 	<classpathentry kind="lib" path="/Jeboorker/lib/itext-5.jar" sourcepath="/itext"/>
 	<classpathentry kind="lib" path="/Jeboorker/lib/jempbox.jar"/>
-	<classpathentry kind="lib" path="/Jeboorker/lib/weblaf-1.28.jar"/>
+	<classpathentry kind="lib" path="lib/weblaf-complete-1.29.jar"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
