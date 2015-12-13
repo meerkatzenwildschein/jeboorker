@@ -51,8 +51,6 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 
 	private Object value;
 
-	private ItemListener checkboxItemListener;
-
 	private boolean isDropCell;
 
 	private Icon eyesVisible;
@@ -64,6 +62,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	private Font labelNormalFont;
 
 	private Font labelBoldFont;
+	
+	private ItemListener[] allCheckboxItemListeners;
 
 	public BasePathTreeCellRenderer(JTree tree) {
 		this.tree = tree;
@@ -85,7 +85,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		gbc_chckbxCheck.gridx = 0;
 		gbc_chckbxCheck.gridy = 0;
 		add(checkbox, gbc_chckbxCheck);
-		checkbox.addItemListener(getCheckboxItemListener());
+		checkbox.addItemListener(createCheckboxItemListener());
 
 		checkbox.setRolloverEnabled(false);
 		checkbox.setTriStateIcon(eyesTreeState);
@@ -105,9 +105,8 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		add(label, gbc_label);
 	}
 
-	private ItemListener getCheckboxItemListener() {
-		if(this.checkboxItemListener == null) {
-			this.checkboxItemListener = new ItemListener() {
+	private ItemListener createCheckboxItemListener() {
+			return new ItemListener() {
 
 				@Override
 				public void itemStateChanged(ItemEvent e) {
@@ -137,8 +136,6 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 					}
 				}
 			};
-		}
-		return this.checkboxItemListener;
 	}
 
 	@Override
@@ -253,7 +250,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 
 	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final BasePathList basePaths) {
 		final String pathResourceString = StringUtil.toString(pathResourceHandler);
-		checkbox.removeItemListener(getCheckboxItemListener());
+		removeCheckboxItemListener();
 		try {
 			checkbox.setShowTriStateIcon(false);
 			if(basePaths.contains(pathResourceString)) {
@@ -284,7 +281,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 				checkbox.setVisible(true);
 			}
 		} finally {
-			checkbox.addItemListener(getCheckboxItemListener());
+			addCheckboxItemListener();
 		}
 	}
 
@@ -299,6 +296,21 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 	private void setupLabelFont() {
 		this.labelNormalFont = label.getFont();
 		this.labelBoldFont = new Font(this.labelNormalFont.getName(), Font.BOLD, this.labelNormalFont.getSize());
+	}
+	
+	private void removeCheckboxItemListener() {
+		allCheckboxItemListeners = checkbox.getItemListeners();
+		for (ItemListener itemListener : allCheckboxItemListeners) {
+			checkbox.removeItemListener(itemListener);
+		}
+	}
+	
+	private void addCheckboxItemListener() {
+		if(allCheckboxItemListeners != null) {
+			for (ItemListener itemListener : allCheckboxItemListeners) {
+				checkbox.addItemListener(itemListener);
+			}
+		}
 	}
 
 }
