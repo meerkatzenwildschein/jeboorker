@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -115,18 +116,8 @@ public class PdfToCBZConverter implements IEBookConverter {
 	
 	private String getFileName(int pageNumber, int pageCount) {
 		String name = ResourceHandlerUtils.getFileNameWithoutFileExtension(pdfResource);
-		String pattern = "000";
-		if(pageCount < 10) {
-			pattern = "0";
-		} else if(pageCount < 100) {
-			pattern = "00";
-		} else if(pageCount < 1000) {
-			pattern = "000";
-		} else if(pageCount < 10000) {
-			pattern = "0000";
-		} else if(pageCount < 100000) {
-			pattern = "00000";
-		}
+		String pattern = StringUtils.repeat("0", String.valueOf(pageCount).length());
+		
 		DecimalFormat format = new DecimalFormat(pattern);
 		String formattedPageNumber = format.format(pageNumber);
 		
@@ -160,6 +151,10 @@ public class PdfToCBZConverter implements IEBookConverter {
     
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {
 		this.converterPreferenceController = controller;
-	}       
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(StringUtils.repeat("0", String.valueOf(101).length()));
+	}
 
 }
