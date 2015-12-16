@@ -66,15 +66,12 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	 */
 	private void createImageSizeEntries(final String generalCategory) {
 		if(isShowImageSizeEntry()) {
-			final JSlider reduceValue = new JSlider(10, 100);
+			final JSlider reduceValue = new JSlider(JSlider.HORIZONTAL, 10, 100, 100);
 			reduceValue.setMajorTickSpacing(10);
 			reduceValue.setMinorTickSpacing(5);
-			if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-				reduceValue.setPaintTicks(true);
-				reduceValue.setPaintLabels(true);
-				reduceValue.setSnapToTicks(true);
-			}
-			reduceValue.setValue(100);
+			reduceValue.setPaintTicks(true);
+			reduceValue.setPaintLabels(true);
+			reduceValue.setSnapToTicks(true);
 			reduceValue.setMinimumSize(new Dimension(220, 45));
 			String reduceImageQualityLabel = Bundle.getString("ConverterPreferenceView.pref.reduceImageQuality");
 			PreferenceEntry reduceImageQualityItem = new PreferenceEntry(REDUCE_IMAGE_SIZE_PREFERENCE_NAME, reduceImageQualityLabel, reduceValue, generalCategory);
