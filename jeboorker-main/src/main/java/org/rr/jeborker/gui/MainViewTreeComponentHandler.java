@@ -79,11 +79,11 @@ public class MainViewTreeComponentHandler {
 						extract.set(0, extract.get(0) + File.separator);
 					}
 					String join = ListUtils.join(extract, File.separator);
-					fullPathSegments.add(join);
+					fullPathSegments.add(attachFileSeparator(join));
 				} else {
 					List<String> extract = ListUtils.extract(pathSegments, 1, i + 1);
 					String join = ListUtils.join(extract, File.separator);
-					fullPathSegments.add(File.separator + join);
+					fullPathSegments.add(File.separator + attachFileSeparator(join));
 				}
 			}
 
@@ -101,6 +101,13 @@ public class MainViewTreeComponentHandler {
 				controller.getEbookTableHandler().clearSelection();
 			}
 		}
+	}
+	
+	private String attachFileSeparator(String fileName) {
+		if(fileName != null && !fileName.isEmpty() && !fileName.endsWith(File.separator)) {
+			return fileName + File.separator;
+		}
+		return fileName;
 	}
 
 	public TreePath restoreExpansionState(JTree tree, List<String> fullPathSegments) {
