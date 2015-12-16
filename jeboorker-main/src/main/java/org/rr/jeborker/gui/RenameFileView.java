@@ -25,6 +25,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
@@ -285,21 +286,27 @@ public class RenameFileView extends AbstractDialogView {
 		pattern = pattern.replaceAll("%a", StringUtil.toString(item.getAuthor()));
 		pattern = pattern.replaceAll("%t", StringUtil.toString(item.getTitle()));
 		pattern = pattern.replaceAll("%g", StringUtil.toString(item.getGenre()));
-		pattern = pattern.replaceAll("%i", StringUtil.toString(item.getSeriesIndex()));
+		pattern = formatNumberPattern(pattern, "%i", NumberUtils.toInt(item.getSeriesIndex()));
 		pattern = pattern.replaceAll("%s", StringUtil.toString(item.getSeriesName()));
-		if(pattern.contains("%n")) {
-			int numIndex = pattern.indexOf("%n") + 2;
+		pattern = formatNumberPattern(pattern, "%n", num);
+		
+		pattern = StringUtil.removeMultipleWhiteSpaces(pattern);
+		String fileExtension = item.getResourceHandler().getFileExtension();
+		if(StringUtil.isNotEmpty(fileExtension)) {
+			return pattern + "." + fileExtension;
+		}
+		return pattern;
+	}
+
+	private String formatNumberPattern(String pattern, String identifier, int num) {
+		if(pattern.contains(identifier)) {
+			int numIndex = pattern.indexOf(identifier) + 2;
 			int digits = 0;
 			while(pattern.length() > numIndex + digits && pattern.charAt(numIndex + digits) == '#') {
 				digits++;
 			}
 			String formattedNum = new DecimalFormat(StringUtil.string(digits, '0')).format(num);
-			pattern = pattern.replaceAll("%n#*", formattedNum);
-		}
-		pattern = StringUtil.removeMultipleWhiteSpaces(pattern);
-		String fileExtension = item.getResourceHandler().getFileExtension();
-		if(StringUtil.isNotEmpty(fileExtension)) {
-			return pattern + "." + fileExtension;
+			pattern = pattern.replaceAll(identifier + "#*", formattedNum);
 		}
 		return pattern;
 	}
