@@ -142,11 +142,11 @@ public class PdfToPdfConverter implements IEBookConverter {
     /**
      * Create a new {@link ConverterPreferenceController} instance.
      */
-    public ConverterPreferenceController createConverterPreferenceController() {
+  public ConverterPreferenceController createConverterPreferenceController() {
 		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
 		controller.setShowLandscapePageEntries(false);
 		return controller;
-    }
+  }
     
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {
 		this.converterPreferenceController = controller;
