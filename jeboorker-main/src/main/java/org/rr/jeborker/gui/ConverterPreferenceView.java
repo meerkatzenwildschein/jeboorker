@@ -15,7 +15,6 @@ import javax.swing.JSlider;
 import org.rr.commons.swing.components.JRCheckBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.utils.BooleanUtils;
-import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.MetadataProperty;
 
