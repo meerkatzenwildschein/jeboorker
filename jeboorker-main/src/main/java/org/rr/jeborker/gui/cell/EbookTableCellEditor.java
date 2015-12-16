@@ -15,7 +15,7 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	
 	private static final long serialVersionUID = -6770247928468695828L;
 	
-	private EbookTableCellRenderer renderer = new EbookTableCellRenderer();
+	private final EbookTableCellRenderer renderer;
 	
 	private EditListener editListener;
 	
@@ -24,6 +24,7 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	public EbookTableCellEditor(final EditListener editListener) {
 		super();
 		this.editListener = editListener;
+		renderer = new EbookTableCellRenderer();
 	}
 	
 	@Override
@@ -69,7 +70,7 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	}
 
 	@Override
-	public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		this.value = (EbookPropertyItem) value;
 		final Component tableCellComponent = renderer.getTableCellComponent(table, value, true, true, row, column);
 		if(editListener != null) {
