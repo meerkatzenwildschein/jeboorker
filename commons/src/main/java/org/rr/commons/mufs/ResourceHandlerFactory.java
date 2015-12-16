@@ -193,7 +193,7 @@ public class ResourceHandlerFactory {
 
 	/**
 	 * Get a {@link IResourceHandler} instance with the given, additional extension. The
-	 * result {@link IResourceHandler} will not exists. if the sibling the the extension already
+	 * result {@link IResourceHandler} will not exists. If the sibling with the extension already
 	 * exists a number will be added at the end of the result {@link IResourceHandler}.
 	 *
 	 * @param sibling the sibling path.
