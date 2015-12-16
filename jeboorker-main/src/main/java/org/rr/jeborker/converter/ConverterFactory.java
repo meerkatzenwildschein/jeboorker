@@ -20,6 +20,7 @@ public class ConverterFactory {
 			ArrayList<IEBookConverter> result = new ArrayList<>();
 			result.add(new CbrToEpubConverter(resource));
 			result.add(new CbrToPdfConverter(resource));
+			result.add(new CbrToCbrConverter(resource));
 			return result;
 		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime().equals(resource.getMimeType(true))) {
 			ArrayList<IEBookConverter> result = new ArrayList<>();
