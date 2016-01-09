@@ -19,17 +19,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.rr.commons.collection.LRUCacheMap;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -52,197 +56,264 @@ import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
-public class EbookTableCellRenderer extends JPanel implements TableCellRenderer, Serializable  {
+public class EbookTableCellRenderer implements TableCellRenderer, Serializable  {
 
 	private static final long serialVersionUID = -4684790158985895647L;
 	
-	public EbookTableCellRenderer() {
-		init();
-	}
-	
+	class RendererComponent extends JPanel {
+		
+		public RendererComponent() {
+			init();
+		}
+		
+		private JLabel imageLabel;
+		
+		private JLabel firstLineLabel;
+		
+		private JLabel secondLineLabel;
+		
+		private JTextArea thirdLineLabel;
+		
+		private JLabel dataFormatLabel;
+		
+		private StarRater starRater;
+		
+		private boolean labelSetupComplete = false;
+		
+		public void init() {
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+			gridBagLayout.rowHeights = new int[]{0, 0, 0};
+			gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, 1.0,  Double.MIN_VALUE};
+			setLayout(gridBagLayout);
+			
+			imageLabel = new JLabel(EMPTY);
+			imageLabel.setOpaque(false);
+			imageLabel.setVerticalAlignment(SwingConstants.TOP);
+			GridBagConstraints gbc_imageLabel = new GridBagConstraints();
+			gbc_imageLabel.insets = new Insets(0, 0, 0, 0);
+			gbc_imageLabel.gridheight = 5;
+			gbc_imageLabel.gridx = 0;
+			gbc_imageLabel.gridy = 1;
+			add(imageLabel, gbc_imageLabel);
+			
+			firstLineLabel = new JLabel(EMPTY);
+			firstLineLabel.setOpaque(false);
+			firstLineLabel.setVerticalAlignment(SwingConstants.TOP);
+			GridBagConstraints gbc_firstLineLabel = new GridBagConstraints();
+			gbc_firstLineLabel.insets = new Insets(0, 0, 0, 0);
+			gbc_firstLineLabel.anchor = GridBagConstraints.WEST;
+			gbc_firstLineLabel.gridx = 1;
+			gbc_firstLineLabel.gridy = 1;
+			add(firstLineLabel, gbc_firstLineLabel);
+			
+			dataFormatLabel = new JLabel(EMPTY);
+			dataFormatLabel.setOpaque(false);
+			dataFormatLabel.setVerticalAlignment(SwingConstants.TOP);
+			GridBagConstraints gbc_label = new GridBagConstraints();
+			gbc_label.anchor = GridBagConstraints.NORTHEAST;
+			gbc_label.insets = new Insets(2, 0, 0, 0);
+			gbc_label.gridx = 2;
+			gbc_label.gridy = 2;
+			add(dataFormatLabel, gbc_label);
+			
+			starRater = new StarRater();
+			starRater.setMinimumSize(new Dimension(85,27));
+			GridBagConstraints gbc_test = new GridBagConstraints();
+			gbc_test.insets = new Insets(3, 0, 0, 0);
+			gbc_test.gridx = 2;
+			gbc_test.gridy = 1;
+			starRater.addMouseListener(new MouseAdapter() {
 
-	JLabel imageLabel;
-	
-	JLabel firstLineLabel;
-	
-	JLabel secondLineLabel;
-	
-	JLabel thirdLineLabel;
-	
-	JLabel dataFormatLabel;
-	
-	StarRater starRater;
-	
-	private Dimension thumbnailDimension;
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(starRater.getSelection() > 0) {
+						MainController.getController().setRatingToSelectedEntry(starRater.getSelection() * 2);
+					}
+				}
+				
+			});
+			add(starRater, gbc_test);
+			
+			secondLineLabel = new JLabel(EMPTY);
+			secondLineLabel.setOpaque(false);
+			secondLineLabel.setVerticalAlignment(SwingConstants.TOP);
+			GridBagConstraints gbc_secondLineLabel = new GridBagConstraints();
+			gbc_secondLineLabel.insets = new Insets(0, 0, 0, 0);
+			gbc_secondLineLabel.gridwidth = 3;
+			gbc_secondLineLabel.anchor = GridBagConstraints.WEST;
+			gbc_secondLineLabel.gridx = 1;
+			gbc_secondLineLabel.gridy = 2;
+			add(secondLineLabel, gbc_secondLineLabel);
+			
+			thirdLineLabel = new JTextArea(EMPTY);
+			thirdLineLabel.setOpaque(false);
+			thirdLineLabel.setLineWrap(true);
+			thirdLineLabel.setWrapStyleWord(true);
+			thirdLineLabel.setBorder(BorderFactory.createEmptyBorder());
+			GridBagConstraints gbc_thirdLineLabel = new GridBagConstraints();
+			gbc_thirdLineLabel.insets = new Insets(0, 0, 0, 0);
+			gbc_thirdLineLabel.gridwidth = 3;
+			gbc_thirdLineLabel.anchor = GridBagConstraints.WEST;
+			gbc_thirdLineLabel.gridx = 1;
+			gbc_thirdLineLabel.gridy = 3;
+			add(thirdLineLabel, gbc_thirdLineLabel);
+			
+			this.setOpaque(true);
+		}
+		
+		/**
+		 * take sure that the labels have a constant allocation.
+		 */
+		void completeLabelSetup(JTable table, RendererComponent renderer) {
+			if(!labelSetupComplete) {
+				Font f = renderer.firstLineLabel.getFont();
+				renderer.firstLineLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
+				
+				final int oneLineHeight = 19;
+				final int lastLabelHeight = table.getRowHeight() - oneLineHeight - oneLineHeight;
+				
+				renderer.firstLineLabel.setBorder(new EmptyBorder(0,0,0,0));
+				renderer.firstLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
+				
+				renderer.dataFormatLabel.setBorder(new EmptyBorder(0,0,0,5));
+				renderer.dataFormatLabel.setForeground(Color.GRAY);
+				
+				renderer.secondLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
+				renderer.secondLineLabel.setBorder(new EmptyBorder(0,0,0,0));
+				
+				renderer.thirdLineLabel.setMinimumSize(new Dimension(table.getWidth(), lastLabelHeight));
+				
+				renderer.imageLabel.setMinimumSize(new Dimension(50, table.getRowHeight()));
+				renderer.imageLabel.setMaximumSize(new Dimension(50, table.getRowHeight()));
+				renderer.imageLabel.setSize(new Dimension(50, table.getRowHeight()));
+				renderer.imageLabel.setPreferredSize(new Dimension(50, table.getRowHeight()));
+				labelSetupComplete = true;
+			}
+		}		
+		
+		void setStarRaterSelection(int sel) {
+			starRater.setSelection(sel);
+		}
+		
+		int getStarRaterSelection() {
+			return starRater.getSelection();
+		}
+	}
 	
 	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
-	/**
-	 * A flag that tells where must be something to do with the labels.
-	 */
-	private boolean labelSetupComplete = false;
-
-	public void init() {
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0,  Double.MIN_VALUE};
-		setLayout(gridBagLayout);
-		
-		imageLabel = new JLabel(EMPTY);
-		imageLabel.setOpaque(false);
-		imageLabel.setVerticalAlignment(SwingConstants.TOP);
-		GridBagConstraints gbc_imageLabel = new GridBagConstraints();
-		gbc_imageLabel.insets = new Insets(0, 0, 0, 0);
-		gbc_imageLabel.gridheight = 5;
-		gbc_imageLabel.gridx = 0;
-		gbc_imageLabel.gridy = 1;
-		add(imageLabel, gbc_imageLabel);
-		
-		firstLineLabel = new JLabel(EMPTY);
-		firstLineLabel.setOpaque(false);
-		firstLineLabel.setVerticalAlignment(SwingConstants.TOP);
-		GridBagConstraints gbc_firstLineLabel = new GridBagConstraints();
-		gbc_firstLineLabel.insets = new Insets(0, 0, 0, 0);
-		gbc_firstLineLabel.anchor = GridBagConstraints.WEST;
-		gbc_firstLineLabel.gridx = 1;
-		gbc_firstLineLabel.gridy = 1;
-		add(firstLineLabel, gbc_firstLineLabel);
-		
-		dataFormatLabel = new JLabel(EMPTY);
-		dataFormatLabel.setOpaque(false);
-		dataFormatLabel.setVerticalAlignment(SwingConstants.TOP);
-		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.anchor = GridBagConstraints.NORTHEAST;
-		gbc_label.insets = new Insets(2, 0, 0, 0);
-		gbc_label.gridx = 2;
-		gbc_label.gridy = 2;
-		add(dataFormatLabel, gbc_label);
-		
-		starRater = new StarRater();
-		starRater.setMinimumSize(new Dimension(85,27));
-		GridBagConstraints gbc_test = new GridBagConstraints();
-		gbc_test.insets = new Insets(3, 0, 0, 0);
-		gbc_test.gridx = 2;
-		gbc_test.gridy = 1;
-		starRater.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(starRater.getSelection() > 0) {
-					MainController.getController().setRatingToSelectedEntry(starRater.getSelection() * 2);
-				}
-			}
-			
-		});
-		add(starRater, gbc_test);
-		
-		secondLineLabel = new JLabel(EMPTY);
-		secondLineLabel.setOpaque(false);
-		secondLineLabel.setVerticalAlignment(SwingConstants.TOP);
-		GridBagConstraints gbc_secondLineLabel = new GridBagConstraints();
-		gbc_secondLineLabel.insets = new Insets(0, 0, 0, 0);
-		gbc_secondLineLabel.gridwidth = 3;
-		gbc_secondLineLabel.anchor = GridBagConstraints.WEST;
-		gbc_secondLineLabel.gridx = 1;
-		gbc_secondLineLabel.gridy = 2;
-		add(secondLineLabel, gbc_secondLineLabel);
-		
-		thirdLineLabel = new JLabel(EMPTY);
-		thirdLineLabel.setOpaque(false);
-		thirdLineLabel.setVerticalAlignment(SwingConstants.TOP);
-		GridBagConstraints gbc_thirdLineLabel = new GridBagConstraints();
-		gbc_thirdLineLabel.insets = new Insets(0, 0, 0, 0);
-		gbc_thirdLineLabel.gridwidth = 3;
-		gbc_thirdLineLabel.anchor = GridBagConstraints.WEST;
-		gbc_thirdLineLabel.gridx = 1;
-		gbc_thirdLineLabel.gridy = 3;
-		add(thirdLineLabel, gbc_thirdLineLabel);
-		
-		this.setOpaque(true);
-	}
+	private Dimension thumbnailDimension;
 	
+	private LRUCacheMap<EbookPropertyItem, RendererComponent> rendererComponentCache;
+	
+	private List<RendererComponent> reusableComponentCache = new ArrayList<>(); 
+	
+	public EbookTableCellRenderer() {
+		rendererComponentCache = new LRUCacheMap<EbookPropertyItem, RendererComponent>(20) {
+	    protected boolean removeEldestEntry(Map.Entry<EbookPropertyItem, RendererComponent> eldest) {
+	    	boolean result = super.removeEldestEntry(eldest);
+	    	if(result) {
+	    		reusableComponentCache.add(eldest.getValue());
+	    	}
+	    	return result;
+	    }
+		};
+	}
+
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		final Component tableCellComponent = this.getTableCellComponent(table, value, isSelected, hasFocus, row, column);
+		RendererComponent renderer = this.getTableCellComponent(table, value, isSelected, hasFocus, row, column);
 		if(isSelected) {
-			this.setBackground(SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20));
-			this.setForeground(SwingUtils.getSelectionForegroundColor());
+			renderer.setBackground(SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20));
+			renderer.setForeground(SwingUtils.getSelectionForegroundColor());
 		} else {
 			if(row % 2 == 0) {
-				this.setBackground(SwingUtils.getStripeBackgroundColor());
+				renderer.setBackground(SwingUtils.getStripeBackgroundColor());
 			} else {
-				this.setBackground(SwingUtils.getBackgroundColor());
+				renderer.setBackground(SwingUtils.getBackgroundColor());
 			}
-			this.setForeground(SwingUtils.getForegroundColor());
+			renderer.setForeground(SwingUtils.getForegroundColor());
 		}
 		
-		return tableCellComponent;
+		return renderer;
 	}
 
-	Component getTableCellComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, final int column) {
-		//can happens that one row is rendered several times. Test here if the same row has already been rendered.
-		//no need to do it twice.
+	RendererComponent getTableCellComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, final int column) {
 		final EbookPropertyItem item = (EbookPropertyItem) value;
 		final Color foregroundColor = SwingUtils.getForegroundColor();
 		final Color selectionForegroundColor = SwingUtils.getSelectionForegroundColor();
 		final Color brighterColor = SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20);
 		final Color backgroundColor = SwingUtils.getBackgroundColor();
+
+		RendererComponent renderer = getTableCellComponentFromCache(item);
+		if(renderer == null) {
+			renderer = createTableCellComponent(item);
+		}
 		
 		if(isSelected) {
-			firstLineLabel.setForeground(selectionForegroundColor);
-			secondLineLabel.setForeground(selectionForegroundColor);
-			thirdLineLabel.setForeground(selectionForegroundColor);
-			this.setForeground(selectionForegroundColor);
-			this.setBackground(brighterColor);
+			renderer.firstLineLabel.setForeground(selectionForegroundColor);
+			renderer.secondLineLabel.setForeground(selectionForegroundColor);
+			renderer.thirdLineLabel.setForeground(selectionForegroundColor);
+			renderer.setForeground(selectionForegroundColor);
+			renderer.setBackground(brighterColor);
 		} else {
-			firstLineLabel.setForeground(foregroundColor);
-			secondLineLabel.setForeground(foregroundColor);
-			thirdLineLabel.setForeground(foregroundColor);
-			this.setForeground(foregroundColor);
-			this.setBackground(backgroundColor);
+			renderer.firstLineLabel.setForeground(foregroundColor);
+			renderer.secondLineLabel.setForeground(foregroundColor);
+			renderer.thirdLineLabel.setForeground(foregroundColor);
+			renderer.setForeground(foregroundColor);
+			renderer.setBackground(backgroundColor);
 		}
 		
-		switch(column) {
-			case 0:
-				imageLabel.setIcon(this.getImageIconCover(table, item));
-				this.completeLabelSetup(table);
-				
-				//title
-				firstLineLabel.setText(this.getTitle(item));
-			         
-				//gray light file format
-				dataFormatLabel.setText(getDataFormat(item));
-				
-				//star rating
-				final float starRatingValue = this.getStarRatingValue(item);
-				if(starRatingValue < 0) {
-					this.starRater.setRating(0);
-				} else {
-					this.starRater.setRating(starRatingValue);
-				}
-				
-				//second line author and order values.
-				secondLineLabel.setText(getAuthorAndOrderValues(item));
-				
-				//third line description
-				if(item != null && item.getDescription() != null) {
-					//attach html for a multiline label but previously strip all possible html from the description.
-					String strippedDescription = cleanString(item != null ? item.getDescription() : EMPTY);
-					thirdLineLabel.setText("<html>" + strippedDescription + "</html>");
-				} else {
-					thirdLineLabel.setText(EMPTY);
-				}
-				break;
-			case 1:
-			case 2:
-			case 3:
-			default:
-				break;
+		renderer.imageLabel.setIcon(this.getImageIconCover(table, item));
+		renderer.completeLabelSetup(table, renderer);
+		
+		//title
+		renderer.firstLineLabel.setText(this.getTitle(item));
+	         
+		//gray light file format
+		renderer.dataFormatLabel.setText(getDataFormat(item));
+		
+		//star rating
+		final float starRatingValue = this.getStarRatingValue(item);
+		if(starRatingValue < 0) {
+			renderer.starRater.setRating(0);
+		} else {
+			renderer.starRater.setRating(starRatingValue);
 		}
 		
-		return this;
+		//second line author and order values.
+		renderer.secondLineLabel.setText(getAuthorAndOrderValues(item));
+		
+		//third line description
+		if(item != null && item.getDescription() != null) {
+			//attach html for a multiline label but previously strip all possible html from the description.
+			String strippedDescription = cleanString(item != null ? item.getDescription() : EMPTY);
+			renderer.thirdLineLabel.setText(strippedDescription);
+		} else {
+			renderer.thirdLineLabel.setText(EMPTY);
+		}
+		
+		return renderer;
+	}
+
+	private RendererComponent createTableCellComponent(EbookPropertyItem item) {
+		RendererComponent result;
+		if(!reusableComponentCache.isEmpty()) {
+			result = reusableComponentCache.remove(0);
+		} else {
+			result = new RendererComponent(); 
+		}
+		RendererComponent removed = rendererComponentCache.put(item, result);
+		if(removed != null) {
+			reusableComponentCache.add(removed);
+		}
+		return result;
+	}
+
+	private RendererComponent getTableCellComponentFromCache(EbookPropertyItem item) {
+		return rendererComponentCache.get(item);
 	}
 	
 	/**
@@ -451,35 +522,5 @@ public class EbookTableCellRenderer extends JPanel implements TableCellRenderer,
 		return EMPTY;
 	}
 
-	/**
-	 * take sure that the labels have a constant allocation.
-	 */
-	private void completeLabelSetup(JTable table) {
-		if(!labelSetupComplete) {
-			java.awt.Font f = firstLineLabel.getFont();
-			firstLineLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
-			
-			final int oneLineHeight = 19;
-			final int lastLabelHeight = table.getRowHeight() - oneLineHeight - oneLineHeight;
-			
-			firstLineLabel.setBorder(new EmptyBorder(0,0,0,0));
-			firstLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
-			
-			dataFormatLabel.setBorder(new EmptyBorder(0,0,0,5));
-			dataFormatLabel.setForeground(Color.GRAY);
-			
-			secondLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
-			secondLineLabel.setBorder(new EmptyBorder(0,0,0,0));
-			
-			thirdLineLabel.setMinimumSize(new Dimension(table.getWidth(), lastLabelHeight));
-			
-			imageLabel.setMinimumSize(new Dimension(50, table.getRowHeight()));
-			imageLabel.setMaximumSize(new Dimension(50, table.getRowHeight()));
-			imageLabel.setSize(new Dimension(50, table.getRowHeight()));
-			imageLabel.setPreferredSize(new Dimension(50, table.getRowHeight()));
-			labelSetupComplete = true;
-		}
-	}
-	
 	
 }

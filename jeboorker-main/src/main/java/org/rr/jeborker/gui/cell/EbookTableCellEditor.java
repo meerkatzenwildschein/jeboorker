@@ -10,6 +10,7 @@ import javax.swing.table.TableCellEditor;
 
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.cell.EbookTableCellRenderer.RendererComponent;
 
 public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	
@@ -20,6 +21,8 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	private EditListener editListener;
 	
 	private EbookPropertyItem value;
+	
+	private RendererComponent tableCellComponent;
 	
 	public EbookTableCellEditor(final EditListener editListener) {
 		super();
@@ -47,10 +50,10 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 		if(editListener != null) {
 			editListener.editingStoped();
 		}
-		if(renderer.starRater.getSelection() > 0) {
-			MainController.getController().setRatingToSelectedEntry(renderer.starRater.getSelection() * 2);
+		if(tableCellComponent.getStarRaterSelection() > 0) {
+			MainController.getController().setRatingToSelectedEntry(tableCellComponent.getStarRaterSelection() * 2);
 		}
-		renderer.starRater.setSelection(0);
+		tableCellComponent.setStarRaterSelection(0);
 		return true;
 	}
 
@@ -72,7 +75,7 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		this.value = (EbookPropertyItem) value;
-		final Component tableCellComponent = renderer.getTableCellComponent(table, value, true, true, row, column);
+		tableCellComponent = renderer.getTableCellComponent(table, value, true, true, row, column);
 		if(editListener != null) {
 			editListener.editingStarted();
 		}

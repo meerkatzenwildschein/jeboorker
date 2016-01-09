@@ -10,7 +10,6 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.Icon;
@@ -32,7 +31,6 @@ import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
-import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
