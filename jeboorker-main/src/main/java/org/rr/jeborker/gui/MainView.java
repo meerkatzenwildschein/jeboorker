@@ -288,6 +288,8 @@ class MainView extends JFrame {
 	private MainViewPropertySheetHandler propertySheetHandler;
 
 	private MainViewEbookTableComponentHandler ebookTableHandler;
+	
+	private MainTablePopupMouseListener mainTablePopupMouseListener;
 
 	private MainController controller;
 
@@ -520,7 +522,7 @@ class MainView extends JFrame {
 	 */
 	void initListeners() {
 		mainTable.getSelectionModel().addListSelectionListener(new PropertySheetListSelectionListener());
-		mainTable.addMouseListener(new MainTablePopupMouseListener());
+		mainTable.addMouseListener(getMainTablePopupMouseListener());
 
 		imageViewer.addMouseListener(new CoverPopupMouseListener());
 		basePathTree.addMouseListener(new BasePathTreePopupMouseListener());
@@ -558,12 +560,19 @@ class MainView extends JFrame {
 		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
 
+	private MouseListener getMainTablePopupMouseListener() {
+		if(mainTablePopupMouseListener == null) {
+			mainTablePopupMouseListener = new MainTablePopupMouseListener();
+		}
+		return mainTablePopupMouseListener;
+	}
+
 	private void createMainTable() {
 		mainTable = new JRTable();
 		mainTable.setName("MainTable");
 		mainTable.setRowHeight(74);
 		mainTable.setModel(new EbookPropertyDBTableModel(true));
-		mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+		mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer(getMainTablePopupMouseListener()));
 		mainTable.setDefaultEditor(Object.class, new EbookTableCellEditor(new EbookTableCellEditor.EditListener() {
 
 			@Override
@@ -582,7 +591,7 @@ class MainView extends JFrame {
 			@Override
 			public void editingCanceled() {
 			}
-		}));
+		}, getMainTablePopupMouseListener()));
 		mainTable.setTableHeader(null);
 		DefaultListSelectionModel defaultListSelectionModel = new DefaultListSelectionModel();
 		defaultListSelectionModel.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -1300,7 +1309,7 @@ class MainView extends JFrame {
 	public void refreshUI() {
 		// don't know why but otherwise the renderer won't work after changing the look and feel
 		if(!(mainTable.getDefaultRenderer(Object.class) instanceof EbookTableCellRenderer)) {
-			mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer());
+			mainTable.setDefaultRenderer(Object.class, new EbookTableCellRenderer(getMainTablePopupMouseListener()));
 		}
 	}
 

@@ -1,6 +1,7 @@
 package org.rr.jeborker.gui.cell;
 
 import java.awt.Component;
+import java.awt.event.MouseListener;
 import java.io.Serializable;
 import java.util.EventObject;
 
@@ -24,10 +25,10 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	
 	private RendererComponent tableCellComponent;
 	
-	public EbookTableCellEditor(final EditListener editListener) {
+	public EbookTableCellEditor(final EditListener editListener, final MouseListener popupMouseListener) {
 		super();
 		this.editListener = editListener;
-		renderer = new EbookTableCellRenderer();
+		renderer = new EbookTableCellRenderer(popupMouseListener);
 	}
 	
 	@Override

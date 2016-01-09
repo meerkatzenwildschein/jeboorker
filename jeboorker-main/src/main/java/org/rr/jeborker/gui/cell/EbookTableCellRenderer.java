@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -28,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
@@ -72,7 +74,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		
 		private JLabel secondLineLabel;
 		
-		private JTextArea thirdLineLabel;
+		private JTextArea thirdLineTextArea;
 		
 		private JLabel dataFormatLabel;
 		
@@ -147,18 +149,19 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 			gbc_secondLineLabel.gridy = 2;
 			add(secondLineLabel, gbc_secondLineLabel);
 			
-			thirdLineLabel = new JTextArea(EMPTY);
-			thirdLineLabel.setOpaque(false);
-			thirdLineLabel.setLineWrap(true);
-			thirdLineLabel.setWrapStyleWord(true);
-			thirdLineLabel.setBorder(BorderFactory.createEmptyBorder());
-			GridBagConstraints gbc_thirdLineLabel = new GridBagConstraints();
-			gbc_thirdLineLabel.insets = new Insets(0, 0, 0, 0);
-			gbc_thirdLineLabel.gridwidth = 3;
-			gbc_thirdLineLabel.anchor = GridBagConstraints.WEST;
-			gbc_thirdLineLabel.gridx = 1;
-			gbc_thirdLineLabel.gridy = 3;
-			add(thirdLineLabel, gbc_thirdLineLabel);
+			thirdLineTextArea = new JTextArea(EMPTY);
+			thirdLineTextArea.setOpaque(false);
+			thirdLineTextArea.setLineWrap(true);
+			thirdLineTextArea.setWrapStyleWord(true);
+			thirdLineTextArea.setEnabled(false);
+			thirdLineTextArea.setBorder(BorderFactory.createEmptyBorder());
+			GridBagConstraints gbc_thirdLineTextArea = new GridBagConstraints();
+			gbc_thirdLineTextArea.insets = new Insets(0, 0, 0, 0);
+			gbc_thirdLineTextArea.gridwidth = 3;
+			gbc_thirdLineTextArea.anchor = GridBagConstraints.WEST;
+			gbc_thirdLineTextArea.gridx = 1;
+			gbc_thirdLineTextArea.gridy = 3;
+			add(thirdLineTextArea, gbc_thirdLineTextArea);
 			
 			this.setOpaque(true);
 		}
@@ -166,7 +169,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		/**
 		 * take sure that the labels have a constant allocation.
 		 */
-		void completeLabelSetup(JTable table, RendererComponent renderer) {
+		void completeLabelSetup(final JTable table, RendererComponent renderer) {
 			if(!labelSetupComplete) {
 				Font f = renderer.firstLineLabel.getFont();
 				renderer.firstLineLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
@@ -183,7 +186,15 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 				renderer.secondLineLabel.setMinimumSize(new Dimension(table.getWidth(), oneLineHeight));
 				renderer.secondLineLabel.setBorder(new EmptyBorder(0,0,0,0));
 				
-				renderer.thirdLineLabel.setMinimumSize(new Dimension(table.getWidth(), lastLabelHeight));
+				renderer.thirdLineTextArea.setMinimumSize(new Dimension(table.getWidth(), lastLabelHeight));
+				renderer.thirdLineTextArea.addMouseListener(new MouseAdapter() {
+
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						// dispatch the mouse event in the text field to the table's popup menu.
+						popupMouseListener.mouseReleased(SwingUtilities.convertMouseEvent(thirdLineTextArea, e, table));
+					}
+				});
 				
 				renderer.imageLabel.setMinimumSize(new Dimension(50, table.getRowHeight()));
 				renderer.imageLabel.setMaximumSize(new Dimension(50, table.getRowHeight()));
@@ -210,7 +221,10 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	
 	private List<RendererComponent> reusableComponentCache = new ArrayList<>(); 
 	
-	public EbookTableCellRenderer() {
+	private final MouseListener popupMouseListener;
+	
+	public EbookTableCellRenderer(final MouseListener popupMouseListener) {
+		this.popupMouseListener = popupMouseListener;
 		rendererComponentCache = new LRUCacheMap<EbookPropertyItem, RendererComponent>(20) {
 	    protected boolean removeEldestEntry(Map.Entry<EbookPropertyItem, RendererComponent> eldest) {
 	    	boolean result = super.removeEldestEntry(eldest);
@@ -225,6 +239,11 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		RendererComponent renderer = this.getTableCellComponent(table, value, isSelected, hasFocus, row, column);
+		setStripedColorSetupToRenderer(isSelected, row, renderer);
+		return renderer;
+	}
+
+	private void setStripedColorSetupToRenderer(boolean isSelected, int row, RendererComponent renderer) {
 		if(isSelected) {
 			renderer.setBackground(SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20));
 			renderer.setForeground(SwingUtils.getSelectionForegroundColor());
@@ -236,8 +255,6 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 			}
 			renderer.setForeground(SwingUtils.getForegroundColor());
 		}
-		
-		return renderer;
 	}
 
 	RendererComponent getTableCellComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, final int column) {
@@ -252,19 +269,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 			renderer = createTableCellComponent(item);
 		}
 		
-		if(isSelected) {
-			renderer.firstLineLabel.setForeground(selectionForegroundColor);
-			renderer.secondLineLabel.setForeground(selectionForegroundColor);
-			renderer.thirdLineLabel.setForeground(selectionForegroundColor);
-			renderer.setForeground(selectionForegroundColor);
-			renderer.setBackground(brighterColor);
-		} else {
-			renderer.firstLineLabel.setForeground(foregroundColor);
-			renderer.secondLineLabel.setForeground(foregroundColor);
-			renderer.thirdLineLabel.setForeground(foregroundColor);
-			renderer.setForeground(foregroundColor);
-			renderer.setBackground(backgroundColor);
-		}
+		setCommonColorRendererComponentSetup(isSelected, foregroundColor, selectionForegroundColor, brighterColor, backgroundColor, renderer);
 		
 		renderer.imageLabel.setIcon(this.getImageIconCover(table, item));
 		renderer.completeLabelSetup(table, renderer);
@@ -275,27 +280,51 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		//gray light file format
 		renderer.dataFormatLabel.setText(getDataFormat(item));
 		
-		//star rating
+		setStarRatingRendererComponentSetup(item, renderer);
+		
+		//second line author and order values.
+		renderer.secondLineLabel.setText(getAuthorAndOrderValues(item));
+		
+		//third line description
+		setThirdLineRendererComponentSetup(item, renderer);
+		
+		return renderer;
+	}
+
+	private void setThirdLineRendererComponentSetup(final EbookPropertyItem item, RendererComponent renderer) {
+		if(item != null && item.getDescription() != null) {
+			//attach html for a multiline label but previously strip all possible html from the description.
+			String strippedDescription = cleanString(item != null ? item.getDescription() : EMPTY);
+			renderer.thirdLineTextArea.setText(strippedDescription);
+		} else {
+			renderer.thirdLineTextArea.setText(EMPTY);
+		}
+	}
+
+	private void setStarRatingRendererComponentSetup(final EbookPropertyItem item, RendererComponent renderer) {
 		final float starRatingValue = this.getStarRatingValue(item);
 		if(starRatingValue < 0) {
 			renderer.starRater.setRating(0);
 		} else {
 			renderer.starRater.setRating(starRatingValue);
 		}
-		
-		//second line author and order values.
-		renderer.secondLineLabel.setText(getAuthorAndOrderValues(item));
-		
-		//third line description
-		if(item != null && item.getDescription() != null) {
-			//attach html for a multiline label but previously strip all possible html from the description.
-			String strippedDescription = cleanString(item != null ? item.getDescription() : EMPTY);
-			renderer.thirdLineLabel.setText(strippedDescription);
+	}
+
+	private void setCommonColorRendererComponentSetup(boolean isSelected, final Color foregroundColor, final Color selectionForegroundColor,
+			final Color brighterColor, final Color backgroundColor, RendererComponent renderer) {
+		if(isSelected) {
+			renderer.firstLineLabel.setForeground(selectionForegroundColor);
+			renderer.secondLineLabel.setForeground(selectionForegroundColor);
+			renderer.thirdLineTextArea.setForeground(selectionForegroundColor);
+			renderer.setForeground(selectionForegroundColor);
+			renderer.setBackground(brighterColor);
 		} else {
-			renderer.thirdLineLabel.setText(EMPTY);
+			renderer.firstLineLabel.setForeground(foregroundColor);
+			renderer.secondLineLabel.setForeground(foregroundColor);
+			renderer.thirdLineTextArea.setForeground(foregroundColor);
+			renderer.setForeground(foregroundColor);
+			renderer.setBackground(backgroundColor);
 		}
-		
-		return renderer;
 	}
 
 	private RendererComponent createTableCellComponent(EbookPropertyItem item) {
