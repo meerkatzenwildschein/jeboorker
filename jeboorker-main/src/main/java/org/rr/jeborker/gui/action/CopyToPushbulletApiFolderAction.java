@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.action;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -11,11 +12,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 
-import net.iharder.jpushbullet2.Device;
-import net.iharder.jpushbullet2.PushbulletClient;
-import net.iharder.jpushbullet2.PushbulletException;
-
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.rr.commons.collection.Pair;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
@@ -30,6 +28,10 @@ import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
+
+import net.iharder.jpushbullet2.Device;
+import net.iharder.jpushbullet2.PushbulletClient;
+import net.iharder.jpushbullet2.PushbulletException;
 
 public class CopyToPushbulletApiFolderAction extends AbstractAction implements IDoOnlyOnceAction<List<String>> {
 
@@ -145,13 +147,7 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 	 * @throws PushbulletException
 	 */
 	private List<String> askForTargetDeviceIdentifier(PushbulletClient client) throws IllegalStateException, IOException, PushbulletException {
-		final List<Pair<String, String>> devices = new TransformValueList<Device, Pair<String, String>>(client.getDevices()) {
-
-			@Override
-			public Pair<String, String> transform(Device device) {
-				return new Pair<String, String>(device.getIden(), StringUtil.capitalize(device.getManufacturer()) + " " + StringUtil.capitalize(device.getModel()));
-			}
-		};
+		final List<Pair<String, String>> devices = filterUndesiredDevices(transformToIdAndNamePair(client));
 
 		JListSelectionDialog<String> dialog = new JListSelectionDialog<>(MainController.getController().getMainWindow());
 		dialog.centerOnScreen();
@@ -187,6 +183,30 @@ public class CopyToPushbulletApiFolderAction extends AbstractAction implements I
 			};
 		}
 		return Collections.emptyList();
+	}
+
+	private TransformValueList<Device, Pair<String, String>> transformToIdAndNamePair(PushbulletClient client) throws PushbulletException {
+		return new TransformValueList<Device, Pair<String, String>>(client.getDevices()) {
+
+			@Override
+			public Pair<String, String> transform(Device device) {
+				return new Pair<String, String>(device.getIden(), getDeviceName(device));
+			}
+
+			private String getDeviceName(Device device) {
+				return StringUtils.trim(StringUtil.capitalize(StringUtils.defaultString(device.getManufacturer())) + " " + StringUtil.capitalize(StringUtils.defaultString(device.getModel())));
+			}
+		};
+	}
+
+	private List<Pair<String, String>> filterUndesiredDevices(final List<Pair<String, String>> devices) {
+		List<Pair<String, String>> result = new ArrayList<>();
+		for (Pair<String, String> pair : devices) {
+			if(StringUtils.isNotBlank(pair.getF())) {
+				result.add(pair);
+			}
+		}
+		return result;
 	}
 
 	private void storeSelectedDeviceIndices(List<Integer> indices) {
