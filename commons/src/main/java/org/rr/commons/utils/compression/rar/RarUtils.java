@@ -87,7 +87,7 @@ public class RarUtils {
 	private static List<String> processFileEntryFilter(List<String> files, FileEntryFilter filter) {
 		ArrayList<String> result = new ArrayList<>(files.size());
 		for(String file: files) {
-			if(filter.accept(file, file.getBytes())) {
+			if(filter == null || filter.accept(file, file.getBytes())) {
 				result.add(file);
 			}
 		}
