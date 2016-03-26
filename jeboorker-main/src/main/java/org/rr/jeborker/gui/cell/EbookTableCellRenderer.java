@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -35,7 +34,6 @@ import javax.swing.table.TableCellRenderer;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-import org.rr.commons.collection.LRUCacheMap;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -217,7 +215,6 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	
 	private Dimension thumbnailDimension;
 	
-	private LRUCacheMap<EbookPropertyItem, RendererComponent> rendererComponentCache;
 	
 	private List<RendererComponent> reusableComponentCache = new ArrayList<>(); 
 	
@@ -225,15 +222,6 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	
 	public EbookTableCellRenderer(final MouseListener popupMouseListener) {
 		this.popupMouseListener = popupMouseListener;
-		rendererComponentCache = new LRUCacheMap<EbookPropertyItem, RendererComponent>(20) {
-	    protected boolean removeEldestEntry(Map.Entry<EbookPropertyItem, RendererComponent> eldest) {
-	    	boolean result = super.removeEldestEntry(eldest);
-	    	if(result) {
-	    		reusableComponentCache.add(eldest.getValue());
-	    	}
-	    	return result;
-	    }
-		};
 	}
 
 	@Override
@@ -264,7 +252,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		final Color brighterColor = SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20);
 		final Color backgroundColor = SwingUtils.getBackgroundColor();
 
-		RendererComponent renderer = getTableCellComponentFromCache(item);
+		RendererComponent renderer = null;//getTableCellComponentFromCache(item);
 		if(renderer == null) {
 			renderer = createTableCellComponent(item);
 		}
@@ -334,15 +322,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		} else {
 			result = new RendererComponent(); 
 		}
-		RendererComponent removed = rendererComponentCache.put(item, result);
-		if(removed != null) {
-			reusableComponentCache.add(removed);
-		}
 		return result;
-	}
-
-	private RendererComponent getTableCellComponentFromCache(EbookPropertyItem item) {
-		return rendererComponentCache.get(item);
 	}
 	
 	/**
