@@ -28,7 +28,7 @@ public class EbookTableCellEditor implements TableCellEditor, Serializable {
 	public EbookTableCellEditor(final EditListener editListener, final MouseListener popupMouseListener) {
 		super();
 		this.editListener = editListener;
-		renderer = new EbookTableCellRenderer(popupMouseListener);
+		renderer = new EbookTableCellRenderer(popupMouseListener, true);
 	}
 	
 	@Override

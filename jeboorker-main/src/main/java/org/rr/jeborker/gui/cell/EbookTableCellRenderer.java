@@ -225,8 +225,17 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	
 	private final MouseListener popupMouseListener;
 	
-	public EbookTableCellRenderer(final MouseListener popupMouseListener) {
+	private boolean singletonComponent = false;
+
+	private RendererComponent rendererComponent;
+
+	public EbookTableCellRenderer(MouseListener popupMouseListener) {
 		this.popupMouseListener = popupMouseListener;
+	}
+	
+	public EbookTableCellRenderer(MouseListener popupMouseListener, boolean singletonComponent) {
+		this.popupMouseListener = popupMouseListener;
+		this.singletonComponent = singletonComponent;
 	}
 
 	@Override
@@ -279,7 +288,6 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		
 		//third line description
 		setThirdLineRendererComponentSetup(item, renderer);
-
 		return renderer;
 	}
 
@@ -319,7 +327,13 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		}
 	}
 
-	private RendererComponent createTableCellComponent(EbookPropertyItem item) {
+	protected RendererComponent createTableCellComponent(EbookPropertyItem item) {
+		if(singletonComponent) {
+			if(rendererComponent == null) {
+				rendererComponent = new RendererComponent();
+			}
+			return rendererComponent;
+		}
 		return new RendererComponent();
 	}
 	
