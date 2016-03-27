@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.rr.commons.collection.VolatileHashMap;
@@ -79,6 +80,13 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		private StarRater starRater;
 		
 		private boolean labelSetupComplete = false;
+		
+		public String toString() {
+			return new ToStringBuilder(this)
+					.append("label1", firstLineLabel.getText())
+					.append("label2", secondLineLabel.getText())
+					.toString();
+		}
 		
 		public void init() {
 			GridBagLayout gridBagLayout = new GridBagLayout();
@@ -215,9 +223,6 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	
 	private Dimension thumbnailDimension;
 	
-	
-	private List<RendererComponent> reusableComponentCache = new ArrayList<>(); 
-	
 	private final MouseListener popupMouseListener;
 	
 	public EbookTableCellRenderer(final MouseListener popupMouseListener) {
@@ -252,14 +257,13 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		final Color brighterColor = SwingUtils.getBrighterColor(SwingUtils.getSelectionBackgroundColor(), 20);
 		final Color backgroundColor = SwingUtils.getBackgroundColor();
 
-		RendererComponent renderer = null;//getTableCellComponentFromCache(item);
-		if(renderer == null) {
-			renderer = createTableCellComponent(item);
-		}
-		
+		// seems there is an openjdk issue with linux which cause getTableCellComponent could be invoked 
+		// before the painting process is finished. 
+		// Avoid these and create always a new renderer instance.
+		RendererComponent renderer = createTableCellComponent(item);
 		setCommonColorRendererComponentSetup(isSelected, foregroundColor, selectionForegroundColor, brighterColor, backgroundColor, renderer);
 		
-		renderer.imageLabel.setIcon(this.getImageIconCover(table, item));
+		renderer.imageLabel.setIcon(getImageIconCover(table, item));
 		renderer.completeLabelSetup(table, renderer);
 		
 		//title
@@ -275,7 +279,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		
 		//third line description
 		setThirdLineRendererComponentSetup(item, renderer);
-		
+
 		return renderer;
 	}
 
@@ -316,13 +320,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	}
 
 	private RendererComponent createTableCellComponent(EbookPropertyItem item) {
-		RendererComponent result;
-		if(!reusableComponentCache.isEmpty()) {
-			result = reusableComponentCache.remove(0);
-		} else {
-			result = new RendererComponent(); 
-		}
-		return result;
+		return new RendererComponent();
 	}
 	
 	/**
@@ -530,6 +528,5 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		}
 		return EMPTY;
 	}
-
 	
 }
