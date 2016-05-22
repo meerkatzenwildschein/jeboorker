@@ -107,6 +107,7 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.action.ActionFactory;
+import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.action.PasteFromClipboardAction;
 import org.rr.jeborker.gui.cell.BasePathTreeCellEditor;
 import org.rr.jeborker.gui.cell.BasePathTreeCellRenderer;
@@ -124,6 +125,7 @@ import org.rr.jeborker.gui.cell.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.cell.StarRatingPropertyRenderer;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+import org.rr.jeborker.gui.model.EbookPropertyFileTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
 import org.rr.jeborker.gui.model.EmptyListModel;
@@ -884,6 +886,26 @@ class MainView extends JFrame {
 			}
 
 		});
+		
+		fileSystemTree.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				final int row = fileSystemTree.getRowForLocation(e.getPoint().x, e.getPoint().y);
+				final TreePath selectedPath = fileSystemTree.getPathForRow(row);
+				
+				if(selectedPath != null) {
+					Object cellEditorValue = selectedPath.getLastPathComponent();
+					if(cellEditorValue instanceof FileSystemNode) {
+						IResourceHandler selectedResource = ((FileSystemNode)cellEditorValue).getResource();
+						if(ActionUtils.isSupportedEbookFormat(selectedResource, false)) {
+							MainController.getController().changeToFileModel(selectedResource);
+						}
+					}
+				}
+			}
+			
+		});
 
 		return fileSystemTreePanel;
 	}
@@ -957,7 +979,7 @@ class MainView extends JFrame {
 							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(filterTreePath);
 							MainController.getController().getEbookTableHandler().refreshTable();
 						} else {
-							boolean remove = MainController.getController().getTableModel().removeWhereCondition(QUERY_IDENTIFER);
+							boolean remove = MainController.getController().changeToDatabaseModel().removeWhereCondition(QUERY_IDENTIFER);
 							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(null);
 							if(remove) {
 								MainController.getController().getEbookTableHandler().refreshTable();
@@ -970,7 +992,7 @@ class MainView extends JFrame {
 
 
 			private void setPathFilter(final String fullResourceFilterPath) {
-				MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+				MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 					@Override
 					public String getIdentifier() {

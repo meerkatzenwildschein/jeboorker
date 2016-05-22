@@ -33,7 +33,7 @@ class SearchAction extends AbstractAction {
 		try {
 			final List<String> filterValues = ListUtils.split(filterText, ",", -1);
 
-			controller.getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+			controller.changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 				@Override
 				public String getIdentifier() {
@@ -69,7 +69,7 @@ class SearchAction extends AbstractAction {
 				
 				@Override
 				public void run() {
-					int rowCount = controller.getTableModel().getRowCount();
+					int rowCount = controller.getModel().getRowCount();
 					monitorStop(filterText, rowCount);
 				}
 			});

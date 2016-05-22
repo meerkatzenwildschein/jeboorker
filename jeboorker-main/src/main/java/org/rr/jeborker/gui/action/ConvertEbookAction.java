@@ -56,7 +56,7 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 			if(targetResourceHandler != null) {
 				EbookPropertyItem sourceItem = null;
 				for(int rowIndex : selectedRowsToRefresh) {
-					EbookPropertyItem ebookPropertyItemAt = controller.getTableModel().getEbookPropertyItemAt(rowIndex);
+					EbookPropertyItem ebookPropertyItemAt = controller.getModel().getEbookPropertyItemAt(rowIndex);
 					if(ebookPropertyItemAt.getResourceHandler().equals(bookResourceHandler)) {
 						sourceItem = ebookPropertyItemAt;
 						row = rowIndex;
@@ -64,8 +64,13 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 					}
 				}
 				
-				IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath());
-				this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceHandler, resourceHandler);
+				if(sourceItem != null) {
+					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(sourceItem.getBasePath());
+					this.newEbookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceHandler, resourceHandler);
+					controller.getMainTreeHandler().refreshFileSystemTreeEntry(resourceHandler.getParentResource());
+				} else {
+					LoggerFactory.getLogger(this).log(Level.SEVERE, "Failed to find " + bookResourceHandler + " in table.");
+				}
 			} else {
 				LoggerFactory.getLogger(this).log(Level.INFO, "Converting " + bookResourceHandler + " aborted.");
 			}

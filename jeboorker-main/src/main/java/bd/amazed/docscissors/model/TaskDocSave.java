@@ -97,7 +97,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 		final MainController controller = MainController.getController();
 		final String sourcePdfFileName = FilenameUtils.removeExtension(docFile.getOriginalFile().getName());
 
-		MainController.getController().getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+		MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 			@Override
 			public String getIdentifier() {

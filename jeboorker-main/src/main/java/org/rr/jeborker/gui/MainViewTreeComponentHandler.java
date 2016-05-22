@@ -69,7 +69,6 @@ public class MainViewTreeComponentHandler {
 	 * Get the selected Tree items from the file system tree.
 	 */
 	public List<IResourceHandler> getSelectedFileSystemTreeItems() {
-		JTree fileSystemTree = mainWindow.getFileSystemTree();
 		return getSelectedResources(fileSystemTree);
 	}
 

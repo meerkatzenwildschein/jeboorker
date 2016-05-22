@@ -35,7 +35,9 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.event.ApplicationEvent;
 import org.rr.jeborker.event.EventManager;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+import org.rr.jeborker.gui.model.EbookPropertyFileTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.ReloadableTableModel;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
@@ -51,7 +53,7 @@ public class MainController {
 	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
 	private MainView mainWindow;
-
+	
 	/**
 	 * The controller singleton.
 	 */
@@ -177,12 +179,12 @@ public class MainController {
 		getProgressMonitor().setEnabled(false);
 
 		new SwingWorker<Void, Void>() {
-
+			
 			EbookPropertyDBTableModel ebookPropertyDBTableModel;
 
 			@Override
 			protected Void doInBackground() throws Exception {
-				EbookPropertyDBTableModel tableModel = getTableModel();
+				EbookPropertyDBTableModel tableModel = getDBModel();
 				ebookPropertyDBTableModel = new EbookPropertyDBTableModel(tableModel, false);
 				ebookPropertyDBTableModel.getRowCount();
 				return null;
@@ -191,14 +193,32 @@ public class MainController {
 			@Override
 			protected void done() {
 				try {
-					mainWindow.getEbookTableHandler().setModel(ebookPropertyDBTableModel);
+					setMainEbookTableModel(ebookPropertyDBTableModel);
 				} finally {
 					getMainWindow().getGlassPane().setVisible(false);
 					LoggerFactory.getLogger(this).log(Level.INFO, (System.currentTimeMillis() - startupTime) + "ms until data model loaded");
 					getProgressMonitor().setEnabled(true);
 				}
 			}
+
+
 		}.execute();
+	}
+	
+	private void setMainEbookTableModel(TableModel model) {
+		mainWindow.getEbookTableHandler().setModel(model);
+	}
+	
+	public EbookPropertyFileTableModel changeToFileModel(IResourceHandler resource) {
+		EbookPropertyFileTableModel fileModel = new EbookPropertyFileTableModel(resource);
+		setMainEbookTableModel(fileModel);
+		return fileModel;
+	}
+	
+	public EbookPropertyDBTableModel changeToDatabaseModel() {
+		EbookPropertyDBTableModel model = mainWindow.getEbookTableHandler().getDBModel();
+		setMainEbookTableModel(model);
+		return model;
 	}
 
 	public void refreshTableItem(int[] selectedRows, boolean refreshMetadataSheet) {
@@ -345,7 +365,7 @@ public class MainController {
 		List<IResourceHandler> propertyResourceHandler = sheetModel.getPropertyResourceHandler();
 		if(getPropertySheetHandler().getModel().isChanged()) {
 			MainControllerUtils.writeProperties(sheetProperties, propertyResourceHandler);
-			EbookPropertyDBTableModel tableModel = getTableModel();
+			ReloadableTableModel tableModel = getModel();
 			int rowCount = tableModel.getRowCount();
 
 			if(minSelectionIndex >= 0 && minSelectionIndex < rowCount) {
@@ -376,12 +396,10 @@ public class MainController {
 	 */
 	public void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
 		if(preferenceStore.isBasePathVisible(item.getBasePath())) {
-			TableModel model = getTableModel();
-			if (model instanceof EbookPropertyDBTableModel) {
-				getEbookTableHandler().clearSelection();
-				((EbookPropertyDBTableModel) model).addRow(item, row);
-				mainWindow.getEbookTableHandler().stopEdit();
-			}
+			ReloadableTableModel model = getModel();
+			getEbookTableHandler().clearSelection();
+			model.addRow(item, row);
+			mainWindow.getEbookTableHandler().stopEdit();
 		}
 	}
 
@@ -414,22 +432,27 @@ public class MainController {
 	 * @param item The {@link EbookPropertyItem} to be removed.
 	 */
 	public boolean removeEbookPropertyItem(EbookPropertyItem item) {
-		TableModel model = getTableModel();
-		if(model instanceof EbookPropertyDBTableModel) {
-			mainWindow.getEbookTableHandler().clearSelection();
-			mainWindow.getEbookTableHandler().editingStopped(new ChangeEvent(this));
-			return ((EbookPropertyDBTableModel)model).removeRow(item);
-		}
-		return false;
+		ReloadableTableModel model = controller.getModel();
+		mainWindow.getEbookTableHandler().clearSelection();
+		mainWindow.getEbookTableHandler().editingStopped(new ChangeEvent(this));
+		return model.removeRow(item);
+	}
+
+	/**
+	 * gets the Database model for the main table. If the main table isn't in database mode, the mode will be switched.
+	 * @return The desired model. <code>null</code> if the model is not initialized.
+	 */
+	public EbookPropertyDBTableModel getDBModel() {
+		return mainWindow.getEbookTableHandler().getDBModel();
 	}
 
 	/**
 	 * gets the current model for the main table.
 	 * @return The desired model. <code>null</code> if the model is not initialized.
 	 */
-	public EbookPropertyDBTableModel getTableModel() {
+	public ReloadableTableModel getModel() {
 		return mainWindow.getEbookTableHandler().getModel();
-	}
+	}	
 
 	/**
 	 * Gets the progress indicator.

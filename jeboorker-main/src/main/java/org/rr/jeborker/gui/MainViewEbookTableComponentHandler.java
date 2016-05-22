@@ -6,15 +6,18 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableModel;
 
 import org.rr.commons.swing.components.JRTable;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+import org.rr.jeborker.gui.model.ReloadableTableModel;
 
 public class MainViewEbookTableComponentHandler {
 
 	private JRTable mainTable;
 	private JScrollPane mainTableScrollPane;
+	private EbookPropertyDBTableModel ebookPropertyDBTableModel;
 
 	public MainViewEbookTableComponentHandler(JRTable mainTable, JScrollPane mainTableScrollPane) {
 		this.mainTable = mainTable;
@@ -29,21 +32,32 @@ public class MainViewEbookTableComponentHandler {
 		mainTable.editingStopped(changeEvent);
 	}
 
-	public void setModel(EbookPropertyDBTableModel ebookPropertyDBTableModel) {
+	public void setModel(TableModel ebookPropertyDBTableModel) {
 		mainTable.setModel(ebookPropertyDBTableModel);
+		if(ebookPropertyDBTableModel instanceof EbookPropertyDBTableModel) {
+			this.ebookPropertyDBTableModel = (EbookPropertyDBTableModel) ebookPropertyDBTableModel;
+		}
 	}
 
 	public void stopEdit() {
 		mainTable.stopEdit();
 	}
-	
-	public EbookPropertyDBTableModel getModel() {
-		return (EbookPropertyDBTableModel) mainTable.getModel();
+
+	public ReloadableTableModel getModel() {
+		return (ReloadableTableModel) mainTable.getModel();
+	}
+
+  EbookPropertyDBTableModel getDBModel() {
+		TableModel model = mainTable.getModel();
+		if(model instanceof EbookPropertyDBTableModel) {
+			return (EbookPropertyDBTableModel) model;
+		}
+		return ebookPropertyDBTableModel;
 	}
 	
 	public void refreshTableItem(int[] selectedRows) {
-		final EbookPropertyDBTableModel model = getModel();
-		if(selectedRows==null || selectedRows.length == 0) {
+		TableModel model = getModel();
+		if(selectedRows == null || selectedRows.length == 0) {
 			return;
 		} else {
 			int editingRow = mainTable.getEditingRow();
@@ -52,7 +66,9 @@ public class MainViewEbookTableComponentHandler {
 					mainTable.stopEdit();
 				}
 
-				model.reloadEbookPropertyItemAt(selectedRows[i]);
+				if(model instanceof EbookPropertyDBTableModel) {
+					((EbookPropertyDBTableModel)model).reloadEbookPropertyItemAt(selectedRows[i]);
+				}
 				mainTable.tableChanged(new TableModelEvent(model, selectedRows[i]));
 			}
 		}
@@ -83,7 +99,7 @@ public class MainViewEbookTableComponentHandler {
 	 * @param refreshMetadataSheet do also refresh the metadata sheet.
 	 */
 	public void refreshTableRows(final int[] rows) {
-		final EbookPropertyDBTableModel model = getModel();
+		final ReloadableTableModel model = getModel();
 		if (rows == null || rows.length == 0) {
 			return;
 		} else {

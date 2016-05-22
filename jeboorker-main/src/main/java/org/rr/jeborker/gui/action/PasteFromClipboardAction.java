@@ -22,6 +22,7 @@ import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
+import org.rr.jeborker.gui.model.ReloadableTableModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 public class PasteFromClipboardAction extends AbstractAction implements ClipboardOwner {
@@ -97,7 +98,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 	 * @param row The row for the import target.
 	 */
 	public static boolean importEbookFromClipboard(Transferable t, int dropRow) {
-		EbookPropertyDBTableModel listModel = MainController.getController().getTableModel();
+		ReloadableTableModel listModel = MainController.getController().getModel();
 
 		// Get the current string under the drop.
 		EbookPropertyItem value = (EbookPropertyItem) listModel.getValueAt(dropRow, 0);

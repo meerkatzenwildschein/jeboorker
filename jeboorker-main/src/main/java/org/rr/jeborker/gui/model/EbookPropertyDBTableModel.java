@@ -33,7 +33,7 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import com.j256.ormlite.stmt.NullArgHolder;
 import com.j256.ormlite.stmt.Where;
 
-public class EbookPropertyDBTableModel implements TableModel {
+public class EbookPropertyDBTableModel implements ReloadableTableModel {
 	
 	public abstract static class EbookPropertyDBTableModelQuery {
 		public boolean isVolatile() {
@@ -61,7 +61,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 	};
 	
 	/** List of listeners */
-	protected EventListenerList listenerList = new EventListenerList();
+	private EventListenerList listenerList = new EventListenerList();
 
 	private ICloseableList<EbookPropertyItem> dbItems;
 
@@ -97,9 +97,9 @@ public class EbookPropertyDBTableModel implements TableModel {
 	 *
 	 * @param l the TableModelListener
 	 */
+	@Override
 	public void addTableModelListener(TableModelListener l) {
 		listenerList.add(TableModelListener.class, l);
-
 	}
 
 	@Override
@@ -114,11 +114,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public String getColumnName(int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return Bundle.getString("EbookPropertyDBTableModel.headline");
-		}
-		return null;
+		return Bundle.getString("EbookPropertyDBTableModel.headline");
 	}
 
 	@Override
@@ -228,15 +224,14 @@ public class EbookPropertyDBTableModel implements TableModel {
 		return false;
 	}
 
-    /**
-     * Removes a listener from the list that's notified each time a
-     * change to the data model occurs.
-     *
-     * @param   l               the TableModelListener
-     */
-    public void removeTableModelListener(TableModelListener l) {
-        listenerList.remove(TableModelListener.class, l);
-    }
+	/**
+	 * Removes a listener from the list that's notified each time a change to the data model occurs.
+	 *
+	 * @param l the TableModelListener
+	 */
+	public void removeTableModelListener(TableModelListener l) {
+		listenerList.remove(TableModelListener.class, l);
+	}
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {

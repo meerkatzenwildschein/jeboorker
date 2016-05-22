@@ -31,6 +31,7 @@ import org.rr.jeborker.gui.MainMenuBarController;
 import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
+import org.rr.jeborker.gui.model.ReloadableTableModel;
 import org.rr.jeborker.metadata.MetadataProperty;
 
 import com.j256.ormlite.stmt.Where;
@@ -120,7 +121,8 @@ public class ActionUtils {
 
 					@Override
 					public void run() {
-						int row = MainController.getController().getTableModel().searchRow(item);
+						ReloadableTableModel model = MainController.getController().getModel();
+						int row = model.searchRow(item);
 						MainController.getController().refreshTableItem(new int[] {row}, false);
 						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(refreshResourceHandler);
 					}
@@ -163,9 +165,10 @@ public class ActionUtils {
 		final String queryIdentifier = ShowHideBasePathAction.class.getName() + "_" + path;
 		final MainController controller = MainController.getController();
 		try {
-			controller.getTableModel().removeWhereCondition(queryIdentifier); //remove possibly existing queries.
+			EbookPropertyDBTableModel model = controller.changeToDatabaseModel();
+			model.removeWhereCondition(queryIdentifier); //remove possibly existing queries.
 			if(!show) {
-				controller.getTableModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+				model.addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 					@Override
 					public String getIdentifier() {
