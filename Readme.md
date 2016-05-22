@@ -1,7 +1,7 @@
 ## Download
-- [Windows](http://morologia.net/jeboorker/download.php?f=jeboorker.exe)
-- [Linux](http://morologia.net/jeboorker/download.php?f=jeboorker.tar.gz)
-- [Debian / Ubuntu](http://morologia.net/jeboorker/download.php?f=jeboorker.deb)
+- [Windows](http://morologia.de/jeboorker/download.php?f=jeboorker.exe)
+- [Linux](http://morologia.de/jeboorker/download.php?f=jeboorker.tar.gz)
+- [Debian / Ubuntu](http://morologia.de/jeboorker/download.php?f=jeboorker.deb)
 
 ## Getting started
 If you start Jeboorker the first time, you have to specify the folder where youre ebooks located at. This can be done with the menu File->Read folder. You can add as many folders as you want.
