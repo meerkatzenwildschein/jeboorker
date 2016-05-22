@@ -43,15 +43,19 @@ public class MainViewTreeComponentHandler {
 	 */
 	public List<IResourceHandler> getSelectedTreeItems() {
 		JTree selectedTreeComponent = mainWindow.getSelectedTreePathComponent();
-		if(selectedTreeComponent != null) {
-			TreePath[] selectionPaths = ((JTree)selectedTreeComponent).getSelectionPaths();
-			if(selectionPaths != null) {
+		return getSelectedResources(selectedTreeComponent);
+	}
+
+	private List<IResourceHandler> getSelectedResources(JTree selectedTreeComponent) {
+		if (selectedTreeComponent != null) {
+			TreePath[] selectionPaths = ((JTree) selectedTreeComponent).getSelectionPaths();
+			if (selectionPaths != null) {
 				ArrayList<IResourceHandler> result = new ArrayList<>(selectionPaths.length);
-				if(selectionPaths != null) {
-					for(TreePath selectionPath : selectionPaths) {
+				if (selectionPaths != null) {
+					for (TreePath selectionPath : selectionPaths) {
 						TreeNode targetResource = (TreeNode) selectionPath.getLastPathComponent();
-						if(targetResource instanceof FileSystemNode) {
-							result.add( ((FileSystemNode)targetResource).getResource() );
+						if (targetResource instanceof FileSystemNode) {
+							result.add(((FileSystemNode) targetResource).getResource());
 						}
 					}
 				}
@@ -59,6 +63,14 @@ public class MainViewTreeComponentHandler {
 			}
 		}
 		return Collections.emptyList();
+	}
+	
+	/**
+	 * Get the selected Tree items from the file system tree.
+	 */
+	public List<IResourceHandler> getSelectedFileSystemTreeItems() {
+		JTree fileSystemTree = mainWindow.getFileSystemTree();
+		return getSelectedResources(fileSystemTree);
 	}
 
 	/**

@@ -1298,6 +1298,10 @@ class MainView extends JFrame {
 		}
 		return null;
 	}
+	
+	JTree getFileSystemTree() {
+		return fileSystemTree;
+	}
 
 	/**
 	 * Tells the text filter field to display it self in and active filter color.
