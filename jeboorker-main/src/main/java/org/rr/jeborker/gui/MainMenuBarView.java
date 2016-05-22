@@ -19,12 +19,14 @@ import javax.swing.JSeparator;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.action.WebLinkAction;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
+import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -141,9 +143,11 @@ class MainMenuBarView extends JMenuBar {
 					menuRemoveBasePath.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 					for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 						String path = iterator.next();
-						JMenuItem pathItem = new JMenuItem();
-						pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
-						menuRemoveBasePath.add(pathItem);
+						if(ObjectUtils.notEqual(path, BasePathList.getImportBasePath())) {
+							JMenuItem pathItem = new JMenuItem();
+							pathItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REMOVE_BASE_PATH_ACTION, path));
+							menuRemoveBasePath.add(pathItem);
+						}
 					}
 					menueFile.add(menuRemoveBasePath);
 					if(basePath.isEmpty()) {
