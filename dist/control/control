@@ -3,6 +3,6 @@ Version: version_placeholder
 Section: office
 Priority: extra
 Architecture: all
-Depends: sun-java7-jre|openjdk-7-jre,xdg-utils,unrar,rar,desktop-file-utils
+Depends: sun-java7-jre|openjdk-7-jre|sun-java8-jre|openjdk-8-jre,xdg-utils,unrar,rar,desktop-file-utils
 Maintainer: rra
 Description: ebook management
