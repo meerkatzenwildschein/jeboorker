@@ -73,10 +73,10 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
+import org.rr.commons.collection.FilterList;
+import org.rr.commons.collection.FilterList.Filter;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -125,7 +125,6 @@ import org.rr.jeborker.gui.cell.StarRatingPropertyEditor;
 import org.rr.jeborker.gui.cell.StarRatingPropertyRenderer;
 import org.rr.jeborker.gui.model.BasePathTreeModel;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
-import org.rr.jeborker.gui.model.EbookPropertyFileTableModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyModel;
 import org.rr.jeborker.gui.model.EbookSheetPropertyMultiSelectionModel;
 import org.rr.jeborker.gui.model.EmptyListModel;
@@ -136,8 +135,6 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataProperty;
 
-import skt.swing.StringConvertor;
-
 import com.j256.ormlite.stmt.Where;
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry;
@@ -146,6 +143,9 @@ import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel.Item;
+
+import net.miginfocom.swing.MigLayout;
+import skt.swing.StringConvertor;
 
 
 class MainView extends JFrame {
@@ -891,18 +891,26 @@ class MainView extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				final int row = fileSystemTree.getRowForLocation(e.getPoint().x, e.getPoint().y);
-				final TreePath selectedPath = fileSystemTree.getPathForRow(row);
-				
-				if(selectedPath != null) {
-					Object cellEditorValue = selectedPath.getLastPathComponent();
-					if(cellEditorValue instanceof FileSystemNode) {
-						IResourceHandler selectedResource = ((FileSystemNode)cellEditorValue).getResource();
-						if(ActionUtils.isSupportedEbookFormat(selectedResource, false)) {
-							MainController.getController().changeToFileModel(selectedResource);
-						}
+				TreePath[] selectionPaths = fileSystemTree.getSelectionPaths();
+				List<IResourceHandler> resources = new FilterList<>(toIResourceHandler(selectionPaths), new Filter<IResourceHandler>() {
+
+					@Override
+					public boolean isFiltered(IResourceHandler resource) {
+						return resource == null || !ActionUtils.isSupportedEbookFormat(resource, false);
+					}
+				});
+				MainController.getController().changeToFileModel(resources);
+			}
+			
+			private List<IResourceHandler> toIResourceHandler(TreePath[] path) {
+				List<IResourceHandler> result = new ArrayList<>(path.length);
+				for (TreePath value : path) {
+					Object node = value.getLastPathComponent();
+					if(node instanceof FileSystemNode) {
+						result.add(((FileSystemNode) node).getResource());
 					}
 				}
+				return result;
 			}
 			
 		});

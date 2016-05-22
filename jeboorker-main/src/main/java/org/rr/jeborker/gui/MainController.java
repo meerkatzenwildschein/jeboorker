@@ -209,8 +209,8 @@ public class MainController {
 		mainWindow.getEbookTableHandler().setModel(model);
 	}
 	
-	public EbookPropertyFileTableModel changeToFileModel(IResourceHandler resource) {
-		EbookPropertyFileTableModel fileModel = new EbookPropertyFileTableModel(resource);
+	public EbookPropertyFileTableModel changeToFileModel(List<IResourceHandler> resources) {
+		EbookPropertyFileTableModel fileModel = new EbookPropertyFileTableModel(resources);
 		setMainEbookTableModel(fileModel);
 		return fileModel;
 	}
