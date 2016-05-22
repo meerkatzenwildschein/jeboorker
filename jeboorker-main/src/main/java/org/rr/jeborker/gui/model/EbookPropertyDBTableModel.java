@@ -60,48 +60,47 @@ public class EbookPropertyDBTableModel implements TableModel {
 		
 	};
 	
-    /** List of listeners */
-    protected EventListenerList listenerList = new EventListenerList();
-    
-    private ICloseableList<EbookPropertyItem> dbItems;
-    
-    private List<EbookPropertyItem> allItems;
-    
-    private final List<EbookPropertyDBTableModelQuery> whereConditions = new ArrayList<>();
+	/** List of listeners */
+	protected EventListenerList listenerList = new EventListenerList();
 
-    private final List<Field> orderByColumns = new ArrayList<>();
-    
-    private OrderDirection orderDirection = null;
-    
-    private boolean dirty = false;
-    
-    private int oldSize = 0;
-    
-    private boolean emptyModel = false;
-    
-    public EbookPropertyDBTableModel(boolean emptyModel) {
-    	super();
-    	this.emptyModel = emptyModel;
-    }
-    
-    public EbookPropertyDBTableModel(EbookPropertyDBTableModel copy, boolean emptyModel) {
-    	super();
-    	this.emptyModel = emptyModel;
-    	setOrderByColumns(copy.getOrderByColumns());
-    	setOrderDirection(copy.getOrderDirection());
-    	whereConditions.addAll(copy.whereConditions);
-    }
-    
-    /**
-     * Adds a listener to the list that's notified each time a change
-     * to the data model occurs.
-     *
-     * @param l the TableModelListener
-     */
-    public void addTableModelListener(TableModelListener l) {
-        listenerList.add(TableModelListener.class, l);
-        
-    }
+	private ICloseableList<EbookPropertyItem> dbItems;
+
+	private List<EbookPropertyItem> allItems;
+
+	private final List<EbookPropertyDBTableModelQuery> whereConditions = new ArrayList<>();
+
+	private final List<Field> orderByColumns = new ArrayList<>();
+
+	private OrderDirection orderDirection = null;
+
+	private boolean dirty = false;
+
+	private int oldSize = 0;
+
+	private boolean emptyModel = false;
+
+	public EbookPropertyDBTableModel(boolean emptyModel) {
+		super();
+		this.emptyModel = emptyModel;
+	}
+
+	public EbookPropertyDBTableModel(EbookPropertyDBTableModel copy, boolean emptyModel) {
+		super();
+		this.emptyModel = emptyModel;
+		setOrderByColumns(copy.getOrderByColumns());
+		setOrderDirection(copy.getOrderDirection());
+		whereConditions.addAll(copy.whereConditions);
+	}
+
+	/**
+	 * Adds a listener to the list that's notified each time a change to the data model occurs.
+	 *
+	 * @param l the TableModelListener
+	 */
+	public void addTableModelListener(TableModelListener l) {
+		listenerList.add(TableModelListener.class, l);
+
+	}
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
@@ -244,169 +243,164 @@ public class EbookPropertyDBTableModel implements TableModel {
 		fireTableCellUpdated(row, column);
 	}
 	
-    /**
-     * Notifies all listeners that the value of the cell at
-     * <code>[row, column]</code> has been updated.
-     *
-     * @param row  row of cell which has been updated
-     * @param column  column of cell which has been updated
-     * @see TableModelEvent
-     * @see EventListenerList
-     */
-    public void fireTableCellUpdated(int row, int column) {
-        fireTableChanged(new TableModelEvent(this, row, row, column));
-    }
-    
-    /**
-     * Forwards the given notification event to all
-     * <code>TableModelListeners</code> that registered
-     * themselves as listeners for this table model.
-     *
-     * @param e  the event to be forwarded
-     *
-     * @see #addTableModelListener
-     * @see TableModelEvent
-     * @see EventListenerList
-     */
-    public void fireTableChanged(TableModelEvent e) {
-        // Guaranteed to return a non-null array
-        Object[] listeners = listenerList.getListenerList();
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        for (int i = listeners.length-2; i>=0; i-=2) {
-            if (listeners[i]==TableModelListener.class) {
-                ((TableModelListener)listeners[i+1]).tableChanged(e);
-            }
-        }
-    }
-    
-    /**
-     * Notifies all listeners that rows in the range
-     * <code>[firstRow, lastRow]</code>, inclusive, have been inserted.
-     *
-     * @param  firstRow  the first row
-     * @param  lastRow   the last row
-     *
-     * @see TableModelEvent
-     * @see EventListenerList
-     */
-    public void fireTableRowsInserted(int firstRow, int lastRow) {
-        fireTableChanged(new TableModelEvent(this, firstRow, lastRow + 1,
-                             TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
-    }
-    
-    /**
-     * Notifies all listeners that rows in the range
-     * <code>[firstRow, lastRow]</code>, inclusive, have been deleted.
-     *
-     * @param firstRow  the first row
-     * @param lastRow   the last row
-     *
-     * @see TableModelEvent
-     * @see EventListenerList
-     */
-    public void fireTableRowsDeleted(int firstRow, int lastRow) {
-        fireTableChanged(new TableModelEvent(this, firstRow, lastRow,
-                             TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
-    }
+	/**
+	 * Notifies all listeners that the value of the cell at <code>[row, column]</code> has been updated.
+	 *
+	 * @param row row of cell which has been updated
+	 * @param column column of cell which has been updated
+	 * @see TableModelEvent
+	 * @see EventListenerList
+	 */
+	public void fireTableCellUpdated(int row, int column) {
+		fireTableChanged(new TableModelEvent(this, row, row, column));
+	}
 
-    /**
-     * Get the {@link EbookPropertyItem}s to be handled by this model.
-     * @param refresh <code>true</code> if the data should be refreshed and <code>false</code>
-     *  for using them from cache.
-     * @return The desired {@link EbookPropertyItem}s.
-     */
-    private List<EbookPropertyItem> getEbookItems() {
-    	//NO BREAKPOINT HERE!
-		if(emptyModel) {
+	/**
+	 * Forwards the given notification event to all <code>TableModelListeners</code> that registered themselves as listeners for this table
+	 * model.
+	 *
+	 * @param e the event to be forwarded
+	 *
+	 * @see #addTableModelListener
+	 * @see TableModelEvent
+	 * @see EventListenerList
+	 */
+	public void fireTableChanged(TableModelEvent e) {
+		// Guaranteed to return a non-null array
+		Object[] listeners = listenerList.getListenerList();
+		// Process the listeners last to first, notifying
+		// those that are interested in this event
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == TableModelListener.class) {
+				((TableModelListener) listeners[i + 1]).tableChanged(e);
+			}
+		}
+	}
+
+	/**
+	 * Notifies all listeners that rows in the range <code>[firstRow, lastRow]</code>, inclusive, have been inserted.
+	 *
+	 * @param firstRow the first row
+	 * @param lastRow the last row
+	 *
+	 * @see TableModelEvent
+	 * @see EventListenerList
+	 */
+	public void fireTableRowsInserted(int firstRow, int lastRow) {
+		fireTableChanged(new TableModelEvent(this, firstRow, lastRow + 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
+	}
+
+	/**
+	 * Notifies all listeners that rows in the range <code>[firstRow, lastRow]</code>, inclusive, have been deleted.
+	 *
+	 * @param firstRow the first row
+	 * @param lastRow the last row
+	 *
+	 * @see TableModelEvent
+	 * @see EventListenerList
+	 */
+	public void fireTableRowsDeleted(int firstRow, int lastRow) {
+		fireTableChanged(new TableModelEvent(this, firstRow, lastRow, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
+	}
+
+	/**
+	 * Get the {@link EbookPropertyItem}s to be handled by this model.
+	 * 
+	 * @param refresh <code>true</code> if the data should be refreshed and <code>false</code> for using them from cache.
+	 * @return The desired {@link EbookPropertyItem}s.
+	 */
+	private List<EbookPropertyItem> getEbookItems() {
+		// NO BREAKPOINT HERE!
+		if (emptyModel) {
 			this.allItems = Collections.emptyList();
-		} else if(isDirty() || dbItems == null) {
-    		this.dirty = false;
-    		Where<EbookPropertyItem, EbookPropertyItem> whereConditions = prepareQuery();
-    		List<String> keywords = prepareKeywords();
-    		ICloseableList<EbookPropertyItem> items = DefaultDBManager.getInstance().queryFullTextSearch(EbookPropertyItem.class, whereConditions, keywords, getOrderByColumns(), getOrderDirection());
-    		clearVolatileConditions();
-    		
-    		if(this.dbItems != null) {
-    			this.dbItems.close();
-    		}
-    		this.dbItems = items;
-    		List<EbookPropertyItem> addedItems = new ArrayList<>();
-    		this.allItems = new CompoundList<>(dbItems, addedItems);
-    	}
-    	return this.allItems;
-    }
-    
-    private List<String> prepareKeywords() {
-    	ArrayList<String> result = new ArrayList<>();
-    	for(EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
-    		whereCondition.appendKeyword(result);
-    	}
-    	return result;
-    }
-    
-    private Where<EbookPropertyItem, EbookPropertyItem> prepareQuery() {
-    	List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<>();
-    	Where<EbookPropertyItem, EbookPropertyItem> where = DefaultDBManager.getInstance().getQueryBuilder(EbookPropertyItem.class).where();
-    	for(EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
-    		try {
-    			if(!DBUtils.isEmpty(where)) {
-    				where.and();
-    			}
+		} else if (isDirty() || dbItems == null) {
+			this.dirty = false;
+			Where<EbookPropertyItem, EbookPropertyItem> whereConditions = prepareQuery();
+			List<String> keywords = prepareKeywords();
+			ICloseableList<EbookPropertyItem> items = DefaultDBManager.getInstance().queryFullTextSearch(EbookPropertyItem.class, whereConditions,
+					keywords, getOrderByColumns(), getOrderDirection());
+			clearVolatileConditions();
+
+			if (this.dbItems != null) {
+				this.dbItems.close();
+			}
+			this.dbItems = items;
+			List<EbookPropertyItem> addedItems = new ArrayList<>();
+			this.allItems = new CompoundList<>(dbItems, addedItems);
+		}
+		return this.allItems;
+	}
+
+	private List<String> prepareKeywords() {
+		ArrayList<String> result = new ArrayList<>();
+		for (EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
+			whereCondition.appendKeyword(result);
+		}
+		return result;
+	}
+
+	private Where<EbookPropertyItem, EbookPropertyItem> prepareQuery() {
+		List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<>();
+		Where<EbookPropertyItem, EbookPropertyItem> where = DefaultDBManager.getInstance().getQueryBuilder(EbookPropertyItem.class).where();
+		for (EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
+			try {
+				if (!DBUtils.isEmpty(where)) {
+					where.and();
+				}
 				whereCondition.appendQuery(where);
 			} catch (SQLException e) {
 				LoggerFactory.log(Level.SEVERE, this, "Failed to prepare Query", e);
 			}
-    		if(whereCondition.isVolatile()) {
-    			toRemove.add(whereCondition);
-    		}
-    	}
-    	whereConditions.removeAll(toRemove);
-    	return where;
-    }
-    
-    /**
-     * Attaches an {@link EbookPropertyItem} to the specified row. If the row parameter
-     * is -1 the value is added to the end of the list.
-     * @param item The item to be attached.
-     * @param row The row where the {@link EbookPropertyItem} should be added to.
-     */
-    public void addRow(EbookPropertyItem item, int row) {
-    	if(row < 0) {
-    		boolean isInsert = false;
-    		try {
-    			isInsert = this.allItems.add(item);
-    		} catch (java.lang.UnsupportedOperationException e) {
-    			//not allowed to add
-    			this.allItems = new CompoundList<EbookPropertyItem>(this.allItems, new ArrayList<>(Arrays.asList(item)));
-    			isInsert = true;
-    		}
-    		if(isInsert) {
-        		final int ins = this.allItems.size() - 1;
-    	    	fireTableRowsInserted(ins, ins);
-    		}
-    	} else {
-    		this.allItems = new InsertElementList<>(this.allItems, item, row);
-    		fireTableRowsInserted(row, row);
-    	}
-    }
-    
+			if (whereCondition.isVolatile()) {
+				toRemove.add(whereCondition);
+			}
+		}
+		whereConditions.removeAll(toRemove);
+		return where;
+	}
+
+	/**
+	 * Attaches an {@link EbookPropertyItem} to the specified row. If the row parameter is -1 the value is added to the end of the list.
+	 * 
+	 * @param item The item to be attached.
+	 * @param row The row where the {@link EbookPropertyItem} should be added to.
+	 */
+	public void addRow(EbookPropertyItem item, int row) {
+		if (row < 0) {
+			boolean isInsert = false;
+			try {
+				isInsert = this.allItems.add(item);
+			} catch (java.lang.UnsupportedOperationException e) {
+				// not allowed to add
+				this.allItems = new CompoundList<EbookPropertyItem>(this.allItems, new ArrayList<>(Arrays.asList(item)));
+				isInsert = true;
+			}
+			if (isInsert) {
+				final int ins = this.allItems.size() - 1;
+				fireTableRowsInserted(ins, ins);
+			}
+		} else {
+			this.allItems = new InsertElementList<>(this.allItems, item, row);
+			fireTableRowsInserted(row, row);
+		}
+	}
+
 	public boolean removeRow(final EbookPropertyItem item) {
 		final Iterator<EbookPropertyItem> iterator = this.allItems.iterator();
 		boolean removed = false;
 		for (int i = 0; iterator.hasNext(); i++) {
 			final EbookPropertyItem toRemove = iterator.next();
 			try {
-				if(toRemove!=null && toRemove.equals(item)) {
+				if (toRemove != null && toRemove.equals(item)) {
 					DefaultDBManager.getInstance().deleteObject(toRemove);
-					if(!isDirty()) {
+					if (!isDirty()) {
 						this.allItems = new BlindElementList<>(this.allItems, i);
 						fireTableRowsDeleted(i, i);
 					}
 					removed = true;
 					break;
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				this.setDirty();
 				break;
 			}
@@ -414,17 +408,17 @@ public class EbookPropertyDBTableModel implements TableModel {
 		return removed;
 	}
 
-    /**
-     * @return <code>true</code> if a refresh is needed and <code>false</code> otherwise.
-     * @see #setDirty()
-     */
+	/**
+	 * @return <code>true</code> if a refresh is needed and <code>false</code> otherwise.
+	 * @see #setDirty()
+	 */
 	public boolean isDirty() {
 		return dirty;
 	}
 
 	/**
-	 * Tells the model that the data has changed and next time the data should
-	 * be refetched from the database.
+	 * Tells the model that the data has changed and next time the data should be refetched from the database.
+	 * 
 	 * @see #isDirty()
 	 */
 	public void setDirty() {
@@ -436,12 +430,10 @@ public class EbookPropertyDBTableModel implements TableModel {
 	}
 
 	/**
-	 * Set the order by columns to the table model. To apply the new order
-	 * invoke the {@link #setDirty()} method or directly do a
+	 * Set the order by columns to the table model. To apply the new order invoke the {@link #setDirty()} method or directly do a
 	 * <code>MainController.getController().refreshTable(true);</code>
 	 *
-	 * @param orderByColumns Order columns to be set to the model.
-	 * Previously set order columns will be removed.
+	 * @param orderByColumns Order columns to be set to the model. Previously set order columns will be removed.
 	 */
 	public void setOrderByColumns(List<Field> orderByColumns) {
 		this.orderByColumns.clear();
@@ -450,10 +442,11 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	/**
 	 * Gets the current order direction. Ascending order is the default one.
+	 * 
 	 * @return The current order direction.
 	 */
 	public OrderDirection getOrderDirection() {
-		if(this.orderDirection == null) {
+		if (this.orderDirection == null) {
 			this.orderDirection = new OrderDirection(OrderDirection.DIRECTION_ASC);
 		}
 		return this.orderDirection;
@@ -461,6 +454,7 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	/**
 	 * Sets the order direction for the displayed data.
+	 * 
 	 * @param orderDirection The order direction to be used for the data.
 	 */
 	public void setOrderDirection(final OrderDirection orderDirection) {
@@ -473,34 +467,34 @@ public class EbookPropertyDBTableModel implements TableModel {
 	private void clearVolatileConditions() {
 		List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery>();
 		for (EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
-			if(whereCondition.isVolatile()) {
+			if (whereCondition.isVolatile()) {
 				toRemove.add(whereCondition);
 			}
 		}
 		whereConditions.removeAll(toRemove);
 	}
-	
+
 	/**
-	 * Adds a {@link EbookPropertyDBTableModelQuery} which will be used to create the
-	 * model's sql query.
+	 * Adds a {@link EbookPropertyDBTableModelQuery} which will be used to create the model's sql query.
 	 */
 	public void addWhereCondition(EbookPropertyDBTableModelQuery query) {
 		removeWhereCondition(query.getIdentifier());
 		whereConditions.add(query);
 	}
-	
+
 	/**
 	 * Removes a {@link EbookPropertyDBTableModelQuery} which was previously added with the
 	 * {@link #addWhereCondition(EbookPropertyDBTableModelQuery)} method.
-	 * @param identifier The identifier of the {@link EbookPropertyDBTableModelQuery} instance to be removed.
-	 * the {@link EbookPropertyDBTableModelQuery#getIdentifier()} method is used to identify the {@link EbookPropertyDBTableModelQuery}
-	 * which gets removed.
+	 * 
+	 * @param identifier The identifier of the {@link EbookPropertyDBTableModelQuery} instance to be removed. the
+	 *          {@link EbookPropertyDBTableModelQuery#getIdentifier()} method is used to identify the {@link EbookPropertyDBTableModelQuery}
+	 *          which gets removed.
 	 * @return <code>true</code> if a condition was removed and <code>false</code> otherwise.
 	 */
 	public boolean removeWhereCondition(String identifier) {
 		List<EbookPropertyDBTableModelQuery> toRemove = new ArrayList<EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery>();
 		for (EbookPropertyDBTableModelQuery whereCondition : whereConditions) {
-			if(whereCondition.getIdentifier().compareTo(identifier) == 0) {
+			if (whereCondition.getIdentifier().compareTo(identifier) == 0) {
 				toRemove.add(whereCondition);
 			}
 		}
