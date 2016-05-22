@@ -105,10 +105,6 @@ public class EbookPropertyDBTableModel implements TableModel {
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return String.class;
-			}
 		return String.class;
 	}
 
