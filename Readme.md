@@ -1,4 +1,4 @@
-## Download
+## Download v 0.5.0
 - [Windows](http://morologia.de/jeboorker/download.php?f=jeboorker.exe)
 - [Linux](http://morologia.de/jeboorker/download.php?f=jeboorker.tar.gz)
 - [Debian / Ubuntu](http://morologia.de/jeboorker/download.php?f=jeboorker.deb)
