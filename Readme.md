@@ -15,8 +15,8 @@ Always you copy some new ebooks with your favourite file manager to your collect
 
 The folders you've added can be toggled in it's visibility state by File -> Show/hide folder.
 
-## Adding new books using Drag and Drop
-You can copy Books simply by Dragging it in the Jeboorker list. The book is copied to the same folder as the drop target book is located. You can also drag a book from Jeboorker to your favourite file manager.
+## Adding new books
+You can copy Books simply by Dragging it in the Jeboorker list. The book is copied to the same folder as the drop target book is located. You can also drag a book from Jeboorker to your favourite file manager. You can also use the import menu item in the context menu of the file browser to add a new book to your collection. 
 
 ## Search books using the filters
 Jeboorker provides a filter field at the bottom which allows to filter for keywords. You can specify which kind of data should be searched by checking the desired kinds at the filter combobox at the left of the filter text field. If no filter is selected the filter is performed to title, author and file name.
