@@ -184,7 +184,7 @@ public class MainController {
 
 			@Override
 			protected Void doInBackground() throws Exception {
-				EbookPropertyDBTableModel tableModel = getDBModel();
+				EbookPropertyDBTableModel tableModel = changeToDatabaseModel();
 				ebookPropertyDBTableModel = new EbookPropertyDBTableModel(tableModel, false);
 				ebookPropertyDBTableModel.getRowCount();
 				return null;
@@ -436,14 +436,6 @@ public class MainController {
 		mainWindow.getEbookTableHandler().clearSelection();
 		mainWindow.getEbookTableHandler().editingStopped(new ChangeEvent(this));
 		return model.removeRow(item);
-	}
-
-	/**
-	 * gets the Database model for the main table. If the main table isn't in database mode, the mode will be switched.
-	 * @return The desired model. <code>null</code> if the model is not initialized.
-	 */
-	public EbookPropertyDBTableModel getDBModel() {
-		return mainWindow.getEbookTableHandler().getDBModel();
 	}
 
 	/**
