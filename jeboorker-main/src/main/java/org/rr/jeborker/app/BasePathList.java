@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.rr.commons.collection.CompoundList;
 import org.rr.commons.collection.WrapperList;
 import org.rr.commons.log.LoggerFactory;
@@ -121,6 +122,22 @@ public class BasePathList extends WrapperList<String> {
 			String basePath = toWrap.get(i);
 			if(path.startsWith(basePath)) {
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Tells if one of the given {@link IResourceHandler} is a registered base path resource.   
+	 * @param resources The resources to be tested.
+	 * @return <code>true</code> if one or more of the given resources is a base path member or <code>false</code> for none of them.
+	 */
+	public boolean isOneEntryABasePathMember(List<IResourceHandler> resources) {
+		for (IResourceHandler resourceHandler : resources) {
+			for (String path : toWrap) {
+				if(ObjectUtils.equals(resourceHandler, ResourceHandlerFactory.getResourceHandler(path))) {
+					return true;
+				}
 			}
 		}
 		return false;

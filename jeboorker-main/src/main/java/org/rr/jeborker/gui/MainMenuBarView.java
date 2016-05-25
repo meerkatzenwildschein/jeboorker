@@ -271,10 +271,14 @@ class MainMenuBarView extends JMenuBar {
 				if(MainViewSelectionUtils.isMainTableSelection()) {
 					deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForItems(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedItems, selectedEbookPropertyItemRows));
 					deleteFileMenuEntry.setEnabled(true);
-				} else if(MainViewSelectionUtils.isTreeItemSelection()){
+				} else if(MainViewSelectionUtils.isTreeItemSelection()) {
 					List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeHandler().getSelectedTreeItems();
 					deleteFileMenuEntry = new JMenuItem(ActionFactory.getActionForResource(ActionFactory.DYNAMIC_ACTION_TYPES.DELETE_FILE_ACTION, selectedTreeItems));
-					deleteFileMenuEntry.setEnabled(true);
+					if(PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath().isOneEntryABasePathMember(selectedTreeItems)) {
+						deleteFileMenuEntry.setEnabled(false);
+					} else {
+						deleteFileMenuEntry.setEnabled(true);	
+					}
 				} else {
 					deleteFileMenuEntry = new JMenuItem(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.DELETE_FILE_ACTION, EMPTY));
 					deleteFileMenuEntry.setEnabled(false);

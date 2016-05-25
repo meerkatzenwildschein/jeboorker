@@ -1117,7 +1117,12 @@ class MainView extends JFrame {
 
 			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(items));
 			menu.add(MainViewMenuUtils.createNewFolderMenuItem(basePathTree, fileSystemTree, pathNode));
-			menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
+			
+			JMenuItem deleteMenuItem = MainViewMenuUtils.createDeleteMenuItem(items);
+			if(PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath().isOneEntryABasePathMember(items)) {
+				deleteMenuItem.setEnabled(false);
+			}
+			menu.add(deleteMenuItem);
 
 			//setup and show popup
 			if(menu.getComponentCount() > 0) {
