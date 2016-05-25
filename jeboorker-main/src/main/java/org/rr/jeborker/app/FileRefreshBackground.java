@@ -132,14 +132,18 @@ public class FileRefreshBackground {
 			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
 			deleteOldTempFile(resourceHandler);
 			
+			if (!resourceHandler.exists()) {
+				LoggerFactory.getLogger(this).log(Level.INFO, resourceHandler + " no longer exists and will be removed from catalog.");
+				handleDeletedItem(ebookPropertyItem);
+				return;
+			}
+			
 			if(!isManagedItem(resourceHandler)) {
 				LoggerFactory.getLogger(this).log(Level.INFO, resourceHandler + " is not a managed resource and will not be refreshed.");
 				return;
 			}
 			
-			if (!resourceHandler.exists()) {
-				handleDeletedItem(ebookPropertyItem);
-			} else if (isRefreshNeeded(ebookPropertyItem, resourceHandler)) {
+			if (isRefreshNeeded(ebookPropertyItem, resourceHandler)) {
 				handleRefreshItem(ebookPropertyItem, resourceHandler);
 			}
 		}
