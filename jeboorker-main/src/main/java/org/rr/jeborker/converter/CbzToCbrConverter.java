@@ -7,12 +7,13 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
 import org.rr.commons.utils.compression.rar.RarUtils;
+import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 
-public class CbrToCbrConverter extends AArchiveToArchiveConverter {
+public class CbzToCbrConverter extends AArchiveToArchiveConverter {
 
-	public CbrToCbrConverter(IResourceHandler cbrResource) {
+	public CbzToCbrConverter(IResourceHandler cbrResource) {
 		super(cbrResource);
 	}
 	
@@ -26,20 +27,19 @@ public class CbrToCbrConverter extends AArchiveToArchiveConverter {
 		RarUtils.add(targetCbzResource, injectCounterToFileName(sourceFile.getName(), i), new ByteArrayInputStream(imageBytes));
 	}
 	
-	
 	@Override
 	protected String getTargetArchiveExtension() {
 		return SUPPORTED_MIMES.MIME_CBR.getName();
 	}
 
 	@Override
-	protected List<CompressedDataEntry> extractArchive(IResourceHandler cbrResource) {
-		return RarUtils.extract(cbrResource, (FileEntryFilter) null);
+	protected List<CompressedDataEntry> extractArchive(IResourceHandler cbzResource) {
+		return TrueZipUtils.extract(cbzResource, (FileEntryFilter) null);
 	}
 
 	@Override
 	public SUPPORTED_MIMES getConversionSourceType() {
-		return JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
+		return JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class TrueZipUtils {
 		final List<CompressedDataEntry> result = new ArrayList<>();
 		final List<String> entryList = list(zipFileHandler);
 		for(String entry : entryList) {
-			if(filter.accept(entry, entry.getBytes())) {
+			if(filter == null || filter.accept(entry, entry.getBytes())) {
 				result.add(extract(zipFileHandler, entry));
 			}
 		}

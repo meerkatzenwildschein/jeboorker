@@ -1,16 +1,20 @@
 package org.rr.jeborker.converter;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.IMetadataWriter;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
+import org.rr.pm.image.IImageProvider;
+import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 class ConverterUtils {
@@ -90,5 +94,5 @@ class ConverterUtils {
 		}
 		return false;
 	}
-
+	
 }
