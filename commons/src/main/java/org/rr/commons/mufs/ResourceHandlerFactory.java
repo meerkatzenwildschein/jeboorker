@@ -210,7 +210,7 @@ public class ResourceHandlerFactory {
 	 * with the desired extension already exists a number will be attached at the end of the filename.
 	 *
 	 * @param sibling the sibling {@link IResourceHandler}.
-	 * @param extension the extension for the sibling {@link IResourceHandler}.
+	 * @param extension the extension for the sibling {@link IResourceHandler} without the dot separator.
 	 * @return The sibling {@link IResourceHandler}.
 	 */
 	public static IResourceHandler getUniqueResourceHandler(final IResourceHandler sibling, String extension) {
@@ -222,6 +222,9 @@ public class ResourceHandlerFactory {
 		if(siblingString.lastIndexOf('.') != -1) {
 			siblingString = siblingString.substring(0, siblingString.lastIndexOf('.'));
 		}
+		
+		//remove existing counter to avoid chained counter extensions.
+		siblingString = siblingString.replaceAll("_\\d*", EMPTY);
 
 		int extensionNum = 0;
 		IResourceHandler result = null;
