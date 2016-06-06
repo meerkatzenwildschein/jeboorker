@@ -120,7 +120,13 @@ public class MainViewEbookTableComponentHandler {
 	 */
 	public int[] getSelectedRows() {
 		if (mainTable != null) {
-			return mainTable.getSelectedRows();
+			int[] selectedRows = mainTable.getSelectedRows();
+			
+			// if there is only one row this is always the selected one.
+			if(selectedRows.length == 0 && mainTable.getRowCount() == 1) {
+				return new int[1];
+			}
+			return selectedRows;
 		} else {
 			return new int[0];
 		}
@@ -147,7 +153,7 @@ public class MainViewEbookTableComponentHandler {
 	 */
 	public int[] getSelectedEbookPropertyItemRows() {
 		if (mainTable != null) {
-			final int[] selectedRows = mainTable.getSelectedRows();
+			final int[] selectedRows = getSelectedRows();
 			return selectedRows;
 		} else {
 			return new int[0];
