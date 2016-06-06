@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -54,24 +55,26 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 			contentOutputStream = targetPdfResource.getContentOutputStream(false);
 			pdfWriter = this.createPdfWriter(document, contentOutputStream);
 			attachImagesToPdf(compressedImageEntries, document, pdfWriter);
+			contentOutputStream.flush();
 		} catch(Exception e) {
 			LoggerFactory.getLogger(this).log(Level.WARNING, "Could not convert " + comicBookResource.getName() + " to Pdf." , e);
 		} finally {
-			if(pdfWriter != null) {
-				pdfWriter.flush();
-				try { 
-					pdfWriter.close(); 
-				} catch(Exception e) {}
-			}
-			try {
-				contentOutputStream.flush();
-				contentOutputStream.close();
-			} catch(Exception e) {}
+			closePdfWriter(pdfWriter);
+			IOUtils.closeQuietly(contentOutputStream);
 		}
 		
 		ConverterUtils.transferMetadata(this.comicBookResource, targetPdfResource);
 		
 		return targetPdfResource;
+	}
+
+	protected void closePdfWriter(PdfWriter pdfWriter) {
+		if(pdfWriter != null) {
+			pdfWriter.flush();
+			try { 
+				pdfWriter.close(); 
+			} catch(Exception e) {}
+		}
 	}	
 	
 	private PdfWriter createPdfWriter(final Document document, final OutputStream targetPdfOutputStream) throws DocumentException, IOException {
