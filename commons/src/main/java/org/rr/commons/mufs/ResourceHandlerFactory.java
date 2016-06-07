@@ -224,7 +224,7 @@ public class ResourceHandlerFactory {
 		}
 		
 		//remove existing counter to avoid chained counter extensions.
-		siblingString = siblingString.replaceAll("_\\d*", EMPTY);
+		siblingString = siblingString.replaceAll("_\\d*$", EMPTY);
 
 		int extensionNum = 0;
 		IResourceHandler result = null;
