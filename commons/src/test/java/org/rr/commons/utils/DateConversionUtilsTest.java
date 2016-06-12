@@ -1,8 +1,5 @@
 package org.rr.commons.utils;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 import java.util.Calendar;
 import java.util.Date;
 
