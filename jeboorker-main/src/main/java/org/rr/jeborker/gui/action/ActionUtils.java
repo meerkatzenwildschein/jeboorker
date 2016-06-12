@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.action;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -317,12 +318,15 @@ public class ActionUtils {
 		final ArrayList<IResourceHandler> importedResources = new ArrayList<>();
 
 		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
-
+			
+			List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(sourceResourcesToTransfer.size());
+			
 			@Override
 			public void run() {
 				FileRefreshBackground.setDisabled(true);
 				MainController controller = MainController.getController();
 				MainMonitor progressMonitor = controller.getProgressMonitor();
+				
 				try {
 					progressMonitor.monitorProgressStart("Start file copy");
 					for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
@@ -346,7 +350,8 @@ public class ActionUtils {
 								importedResources.add(targetResource);
 
 								if(move) {
-									refreshResourceParents(sourceResourcesToTransfer);
+									refreshResourceParents(Arrays.asList(sourceResource));
+									removeMovedEbookResourceFromMainView(sourceResource);	
 								}
 							}
 						} else {
@@ -362,33 +367,50 @@ public class ActionUtils {
 				} catch (IOException e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to copy file " + basePath + " to " + targetRecourceDirectory, e);
 				} finally {
-					SwingUtilities.invokeLater(new Runnable() {
-
-						@Override
-						public void run() {
-							removeDeletedFileFromModelAndDatabase(importedResources);
-							removeDeletedFileFromModelAndDatabase(sourceResourcesToTransfer);
-						}
-					});
+					cleanup(sourceResourcesToTransfer, move, importedResources);
 
 					progressMonitor.monitorProgressStop();
 					FileRefreshBackground.setDisabled(false);
+				}
+			}
+
+			protected void cleanup(final List<IResourceHandler> sourceResourcesToTransfer, final boolean move,
+					final ArrayList<IResourceHandler> importedResources) {
+				if(move) {
+					refreshResourceParents(sourceResourcesToTransfer);
+				}
+				
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						removeDeletedFileFromModelAndDatabase(importedResources);
+						removeDeletedFileFromModelAndDatabase(sourceResourcesToTransfer);
+					}
+				});
+			}
+			
+			private void refreshResourceParents(List<IResourceHandler> resources) {
+				for (IResourceHandler resourceHandler : resources) {
+					IResourceHandler parentResource = resourceHandler.getParentResource();
+					if(!alreadyRefreshedParents.contains(parentResource)) {
+						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(parentResource);
+						alreadyRefreshedParents.add(parentResource);
+					}
 				}
 			}
 		});
 
 		return importedResources;
 	}
-
-	private static void refreshResourceParents(List<IResourceHandler> resources) {
-		List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(resources.size());
-		for (IResourceHandler resourceHandler : resources) {
-			IResourceHandler parentResource = resourceHandler.getParentResource();
-			if(!alreadyRefreshedParents.contains(parentResource)) {
-				MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(parentResource);
-				alreadyRefreshedParents.add(parentResource);
-			}
-		}
+	
+	/**
+	 * If the main view shows a ebook entry from the file view and the book is imported into a managed folder, the ebook entry can be removed from the main view.
+	 * 
+	 * @param sourceResource
+	 */
+	private static void removeMovedEbookResourceFromMainView(IResourceHandler sourceResource) {
+		MainController.getController().removeEbookPropertyItem(EbookPropertyItemUtils.createBasicEbookPropertyItem(sourceResource));
 	}
 
 	private static boolean transferFile(IResourceHandler sourceResource, IResourceHandler targetResource, boolean move) throws IOException {

@@ -67,16 +67,29 @@ public class EbookPropertyItemUtils {
 		final List<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
 		return items;
 	}
-
+	
 	/**
-	 * Creates a new {@link EbookPropertyItem} from the given resource.
+	 * Creates a new {@link EbookPropertyItem} from the given resource but without any setup excepting the resource file name.
+	 *  
 	 * @param resource The resource where the {@link EbookPropertyItem} should be created from.
 	 * @return The newly created {@link EbookPropertyItem}.
 	 */
-	public static EbookPropertyItem createEbookPropertyItem(final IResourceHandler resource, final IResourceHandler topLevelBaseFolder) {
+	public static EbookPropertyItem createBasicEbookPropertyItem(final IResourceHandler resource) {
 		final EbookPropertyItem item = (EbookPropertyItem) DefaultDBManager.getInstance().newInstance(EbookPropertyItem.class);
-		item.setCreatedAt(new Date());
 		item.setFile(resource.getResourceString());
+		return item;
+	}
+	
+	/**
+	 * Creates a new {@link EbookPropertyItem} from the given resource.
+	 * 
+	 * @param resource The resource where the {@link EbookPropertyItem} should be created from.
+	 * @param topLevelBaseFolder The base folder where the {@link EbookPropertyItem} is located at.
+	 * @return The newly created {@link EbookPropertyItem}.
+	 */
+	public static EbookPropertyItem createEbookPropertyItem(final IResourceHandler resource, final IResourceHandler topLevelBaseFolder) {
+		final EbookPropertyItem item = createBasicEbookPropertyItem(resource);
+		item.setCreatedAt(new Date());
 		if(topLevelBaseFolder != null) {
 			item.setBasePath(topLevelBaseFolder.getResourceString());
 		}
