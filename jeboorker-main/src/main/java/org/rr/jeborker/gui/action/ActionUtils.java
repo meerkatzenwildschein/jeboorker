@@ -319,8 +319,6 @@ public class ActionUtils {
 
 		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
 			
-			List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(sourceResourcesToTransfer.size());
-			
 			@Override
 			public void run() {
 				FileRefreshBackground.setDisabled(true);
@@ -391,6 +389,7 @@ public class ActionUtils {
 			}
 			
 			private void refreshResourceParents(List<IResourceHandler> resources) {
+				List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(sourceResourcesToTransfer.size());
 				for (IResourceHandler resourceHandler : resources) {
 					IResourceHandler parentResource = resourceHandler.getParentResource();
 					if(!alreadyRefreshedParents.contains(parentResource)) {
