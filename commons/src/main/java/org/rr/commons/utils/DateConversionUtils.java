@@ -153,7 +153,7 @@ public class DateConversionUtils {
 			}
 
 			public String getString(Date date) {
-				return new SimpleDateFormat(FORMAT_PATTERN_1).format(date);
+				return new SimpleDateFormat(FORMAT_PATTERN_1, Locale.US).format(date);
 			}			
 		},	
 		ISO_8601_ORDINAL {
