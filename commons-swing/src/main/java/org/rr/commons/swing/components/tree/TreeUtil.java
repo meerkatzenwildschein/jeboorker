@@ -100,12 +100,15 @@ public class TreeUtil {
 	 * @see TreeUtil#getExpansionStates(JRTree)
 	 */
 	public static TreePath restoreExpanstionState(JTree tree, String expansionStates) {
-		List<String> expansionStatesList = ListUtils.split(expansionStates, "\n");
-		TreePath lastExpandedRow = null;
-		for(String expansionState : expansionStatesList) {
-			lastExpandedRow = restoreTreePathByName(tree, expansionState, PATH_SEPARATOR);
+		if(expansionStates != null) {
+			List<String> expansionStatesList = ListUtils.split(expansionStates, "\n");
+			TreePath lastExpandedRow = null;
+			for(String expansionState : expansionStatesList) {
+				lastExpandedRow = restoreTreePathByName(tree, expansionState, PATH_SEPARATOR);
+			}
+			return lastExpandedRow;
 		}
-		return lastExpandedRow;
+		return null;
 	}
 
 	/**

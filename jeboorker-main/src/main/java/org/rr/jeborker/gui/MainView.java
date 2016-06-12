@@ -34,6 +34,7 @@ import java.net.URI;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -903,14 +904,17 @@ class MainView extends JFrame {
 			}
 			
 			private List<IResourceHandler> toIResourceHandler(TreePath[] path) {
-				List<IResourceHandler> result = new ArrayList<>(path.length);
-				for (TreePath value : path) {
-					Object node = value.getLastPathComponent();
-					if(node instanceof FileSystemNode) {
-						result.add(((FileSystemNode) node).getResource());
+				if(path != null) {
+					List<IResourceHandler> result = new ArrayList<>(path != null ? path.length : 0);
+					for (TreePath value : path) {
+						Object node = value.getLastPathComponent();
+						if(node instanceof FileSystemNode) {
+							result.add(((FileSystemNode) node).getResource());
+						}
 					}
+					return result;
 				}
-				return result;
+				return Collections.emptyList();
 			}
 			
 		});
