@@ -112,10 +112,6 @@ class H2DBManager extends DefaultDBManager {
 	public synchronized <T> ICloseableList<T> queryFullTextSearch(Class<T> cls, Where<T, T> where, List<String> keywords, List<Field> orderFields,
 			OrderDirection orderDirection) {
 		try {
-			// select * from ebookpropertyitem A, FT_SEARCH_DATA('liga', 0, 0) B where A.FILE = B.KEYS
-			// select * from ebookpropertyitem A, (select * from FT_SEARCH_DATA('liga', 0, 0) union select * from FT_SEARCH_DATA('jones', 0, 0)) B where A.FILE
-			// = B.KEYS
-
 			StringBuilder sql = new StringBuilder();
 			String tableName = cls.getSimpleName().toUpperCase();
 			sql.append("SELECT A.* FROM ").append(tableName).append(" A ");
@@ -139,7 +135,6 @@ class H2DBManager extends DefaultDBManager {
 			appendOrderFields(orderFields, orderDirection, sql);
 
 			String sqlString = sql.toString();
-			LoggerFactory.getLogger(this).log(Level.INFO, sqlString);
 
 			Dao<T, T> createDao = DaoManager.createDao(getConnectionPool(), cls);
 			GenericRawResults<T> queryRaw = createDao.queryRaw(sqlString, new RawRowMapperImpl<T, T>(new TableInfo<T, T>(getConnectionPool(),
