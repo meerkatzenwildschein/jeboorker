@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -31,6 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalTheme;
 
+import org.rr.commons.collection.CompoundList;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.MathUtils;
 import org.rr.commons.utils.ReflectionFailureException;
@@ -39,6 +41,30 @@ import org.rr.commons.utils.StringUtil;
 import org.rr.commons.utils.UtilConstants;
 
 public class SwingUtils {
+	
+	// A maximally-contrasting palette of colors designed by Kenneth Kelly, but without white, black, or gray.
+	private static final List<Color> KENNETH_KELLY_COLORS = Collections.unmodifiableList(new ArrayList<Color>() {{
+		add(new Color(0xEAD846));
+		add(new Color(0x6F0989));
+		add(new Color(0xD9712A));
+		add(new Color(0x97C9E4));
+		add(new Color(0xB82035));
+		add(new Color(0xC3C385));
+		add(new Color(0x62AC49));
+		add(new Color(0xCE81AD));
+		add(new Color(0x476CB3));
+		add(new Color(0xDB8963));
+		add(new Color(0x491093));
+		add(new Color(0xDFAA36));
+		add(new Color(0x8F0189));
+		add(new Color(0xE7F45E));
+		add(new Color(0x7C1B15));
+		add(new Color(0x94B741));
+		add(new Color(0x6C3715));
+		add(new Color(0xD03227));
+		add(new Color(0x2B3916));
+	}});
+	
 	private static JLabel defaultLabel = new JLabel();
 
 	private static Color selectionForegroundColor;
@@ -417,5 +443,49 @@ public class SwingUtils {
 			comp.setBackground(SwingUtils.getBackgroundColor());
 			comp.setForeground(SwingUtils.getForegroundColor());
 		}
-	}	
+	}
+	
+	/**
+	 * Generates a list of colors. The result is always identical.
+	 * 
+	 * @param amount The number of colors to calculate.
+	 * @return A list of colors. Never returns <code>null</code>.
+	 * @see https://stackoverflow.com/questions/3403826/how-to-dynamically-compute-a-list-of-colors
+	 */
+	private static List<Color> calculateUniqueColors(int amount) {
+		final int lowerLimit = 0x10;
+		final int upperLimit = 0xE0;
+		final int colorStep = (int) ((upperLimit - lowerLimit) / Math.pow(amount, 1f / 3));
+
+		final List<Color> colors = new ArrayList<>(amount);
+
+		for (int R = lowerLimit; R < upperLimit; R += colorStep)
+			for (int G = lowerLimit; G < upperLimit; G += colorStep)
+				for (int B = lowerLimit; B < upperLimit; B += colorStep) {
+					if (colors.size() >= amount) { // The calculated step is not very precise, so this safeguard is appropriate
+						return colors;
+					} else {
+						if (R == G && G == B) {
+							continue;
+						}
+						int color = (R << 16) + (G << 8) + (B);
+						colors.add(new Color(color));
+					}
+				}
+		return colors;
+	}
+	
+	/**
+	 * Generates a list of colors. The result is always identical.
+	 * 
+	 * @param amount The number of colors to calculate.
+	 * @return A list of colors. Never returns <code>null</code>.
+	 */
+	public static List<Color> getUniqueColors(int amount) {
+		if(amount <= KENNETH_KELLY_COLORS.size()) {
+			return KENNETH_KELLY_COLORS;
+		}
+		return new CompoundList<>(KENNETH_KELLY_COLORS, calculateUniqueColors(amount - KENNETH_KELLY_COLORS.size()));
+	}
+
 }

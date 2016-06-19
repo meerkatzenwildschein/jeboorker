@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.Charsets;
@@ -794,6 +795,39 @@ public final class StringUtil implements Serializable {
 
         return result.toString();
     }
+    
+	/**
+	 * Remove a given trailing character from a given text and return the result. If the given text ends with a multiple amount of the
+	 * trailing character only the last one is removed.
+	 * 
+	 * @param text The text which should be striped.
+	 * @param c The character to be tested in <code>text</code>.
+	 * @return The striped text or <code>null</code> if the given text is <code>null</code>.
+	 */
+	public static String stripTrailing(String text, char c) {
+		if (text != null && text.charAt(text.length() - 1) == c) {
+			return text.substring(0, text.length() - 1);
+		}
+		return text;
+	}
+	
+	/**
+	 * Remove a given trailing character from a given text and return the result. If the given text ends with a multiple amount of the
+	 * trailing character only the last one is removed.
+	 * 
+	 * @param text The text which should be striped.
+	 * @param c Some character to be tested in <code>text</code>.
+	 * @return The striped text or <code>null</code> if the given text is <code>null</code>.
+	 */
+	public static String stripTrailing(String text, char[] c) {
+		for (char d : c) {
+			String stripped = stripTrailing(text, d);
+			if (text != stripped) {
+				return stripped;
+			}
+		}
+		return text;
+	}
 
     /**
      * Creates a <code>String</code> with space (" ") characters appended

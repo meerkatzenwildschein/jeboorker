@@ -1,5 +1,6 @@
 package org.rr.jeborker.app;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.rr.commons.collection.WrapperList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -22,7 +24,9 @@ public class BasePathList extends WrapperList<String> {
 	private static String importBasePath;
 
 	private final List<String> stickyBasePath = new ArrayList<>();
-
+	
+	private List<Color> uniqueColors;
+	
 	public BasePathList(List<String> basePaths) {
 		super(Collections.<String>emptyList());
 		init(basePaths);
@@ -112,7 +116,7 @@ public class BasePathList extends WrapperList<String> {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Tests if the given file / path starts with a valid base path.
 	 * @return <code>true</code> if a base path could be found for the given path or <code>false</code> otherwise.
@@ -126,7 +130,7 @@ public class BasePathList extends WrapperList<String> {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Tells if one of the given {@link IResourceHandler} is a registered base path resource.   
 	 * @param resources The resources to be tested.
@@ -152,23 +156,54 @@ public class BasePathList extends WrapperList<String> {
 	 */
 	@Override
 	public boolean contains(Object path) {
+		return find(path) != -1;
+	}
+	
+	/**
+	 * Search for the given path in the {@link BasePathList}. 
+	 * 
+	 *  @param path
+	 *            The path to be tested if it is contained by {@link BasePathList} or not.
+	 * @return the index in the list for the given path or -1 if the given path could not be found.
+	 */
+	public int find(Object path) {
 		String c = StringUtil.toString(path);
 		if (StringUtil.isEmpty(c)) {
-			return false;
+			return -1;
 		}
 
-		for (String s : toWrap) {
+		for(int i = 0; i < toWrap.size(); i++) {
+			String s = toWrap.get(i);
 			if (StringUtil.equals(s, c)) {
-				return true;
+				return i;
 			} else {
 				IResourceHandler first = ResourceHandlerFactory.getResourceHandler(c);
 				IResourceHandler second = ResourceHandlerFactory.getResourceHandler(s);
-				if (first != null && second != null && StringUtil.equals(first.getResourceString(), second.getResourceString())) {
-					return true;
+				if (first != null && second != null && ObjectUtils.equals(first, second)) {
+					return i;
 				}
 			}
 		}
-		return false;
+		return -1;
+	}
+	
+	public Color getColor(int idx) {
+		if(uniqueColors == null) {
+			uniqueColors = SwingUtils.getUniqueColors(size());
+		}
+		return uniqueColors.get(idx);
+	}
+
+	public Color getColor(String basePath) {
+		IResourceHandler first = ResourceHandlerFactory.getResourceHandler(basePath);
+		for(int i = 0; i < toWrap.size(); i++) {
+			IResourceHandler second = ResourceHandlerFactory.getResourceHandler(toWrap.get(i));
+
+			if(ObjectUtils.equals(first, second)) {
+				return getColor(i);
+			}
+		}
+		return null;
 	}
 
 }

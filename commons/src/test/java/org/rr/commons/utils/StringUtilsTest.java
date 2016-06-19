@@ -70,4 +70,10 @@ public class StringUtilsTest extends TestCase {
 		assertEquals(0, StringUtil.occurrence(text, "a"));
 	}
 	
+	public void testStripTrailing() {
+		String text = "abcdefghija";
+		assertTrue(StringUtil.stripTrailing(text, 'a').length() == text.length() - 1 );
+		assertTrue(StringUtil.stripTrailing(text, 'b').length() == text.length());
+	}
+	
 }

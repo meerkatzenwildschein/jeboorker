@@ -13,7 +13,6 @@ import java.io.File;
 import java.util.logging.Level;
 
 import javax.swing.Icon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
@@ -26,6 +25,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRCheckBox;
+import org.rr.commons.swing.components.JRLabel;
 import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
@@ -41,7 +41,7 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 
 	private static final Color filteredForegroundColor = Color.DARK_GRAY.brighter().brighter();
 
-	private JLabel label;
+	private JRLabel label;
 
 	private JTree tree;
 
@@ -93,9 +93,12 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		checkbox.setDisabledSelectedIcon(eyesInvisible);
 		checkbox.setOpaque(false);
 
-		label = new JLabel();
+		label = new JRLabel();
 		setupLabelFont();
 		label.setOpaque(false);
+		label.setUnderline(null);
+		label.setUnderlineInset(-3);
+		label.setUnderlineThinkness(2);
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.fill = GridBagConstraints.BOTH;
 		gbc_label.gridx = 1;
@@ -153,17 +156,20 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 			String resourceName = pathResource.getName();
 			label.setText(resourceName);
 			setCheckboxCheck(pathResource, basePaths);
+			setBasePathColorIndicator(pathResource, basePaths);
 			this.value = value;
 		} else if(value instanceof FileSystemNode){
 			pathResource = ((FileSystemNode)value).getResource();
 			label.setText(pathResource.getName());
 			setCheckboxCheck(pathResource, basePaths);
+			setBasePathColorIndicator(pathResource, basePaths);
 			this.value = pathResource;
 		} else {
 			pathResource = ResourceHandlerFactory.getResourceHandler(StringUtil.toString(value));
 			label.setText(StringUtil.toString(value));
 			checkbox.setVisible(true);
 			setCheckboxCheck(pathResource, basePaths);
+			setBasePathColorIndicator(pathResource, basePaths);
 			this.value = null;
 		}
 
@@ -246,6 +252,15 @@ public class BasePathTreeCellRenderer extends JPanel implements TreeCellRenderer
 		label.setPreferredSize(textDimension);
 	}
 
+	private void setBasePathColorIndicator(IResourceHandler pathResourceHandler, final BasePathList basePaths) {
+		int idx = basePaths.find(pathResourceHandler);
+		if(idx != -1) { // found
+			label.setUnderline(basePaths.getColor(idx));
+		} else {
+			label.setUnderline(null); // no underline
+		}
+	}
+	
 	private void setCheckboxCheck(IResourceHandler pathResourceHandler, final BasePathList basePaths) {
 		final String pathResourceString = StringUtil.toString(pathResourceHandler);
 		removeCheckboxItemListener();

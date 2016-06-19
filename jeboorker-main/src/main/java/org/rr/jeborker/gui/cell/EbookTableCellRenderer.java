@@ -47,8 +47,11 @@ import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionFailureException;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtil;
+import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.IDBObject;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -79,6 +82,8 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		
 		private StarRater starRater;
 		
+		private JPanel basePathColorIndicator;
+		
 		private boolean labelSetupComplete = false;
 		
 		public String toString() {
@@ -90,9 +95,9 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		
 		public void init() {
 			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+			gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
 			gridBagLayout.rowHeights = new int[]{0, 0, 0};
-			gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+			gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 			gridBagLayout.rowWeights = new double[]{0.0, 1.0,  Double.MIN_VALUE};
 			setLayout(gridBagLayout);
 			
@@ -128,10 +133,10 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 			
 			starRater = new StarRater();
 			starRater.setMinimumSize(new Dimension(85,27));
-			GridBagConstraints gbc_test = new GridBagConstraints();
-			gbc_test.insets = new Insets(3, 0, 0, 0);
-			gbc_test.gridx = 2;
-			gbc_test.gridy = 1;
+			GridBagConstraints gbc_starRater = new GridBagConstraints();
+			gbc_starRater.insets = new Insets(3, 0, 0, 0);
+			gbc_starRater.gridx = 2;
+			gbc_starRater.gridy = 1;
 			starRater.addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -142,7 +147,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 				}
 				
 			});
-			add(starRater, gbc_test);
+			add(starRater, gbc_starRater);
 			
 			secondLineLabel = new JLabel(EMPTY);
 			secondLineLabel.setOpaque(false);
@@ -168,7 +173,16 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 			gbc_thirdLineTextArea.gridx = 1;
 			gbc_thirdLineTextArea.gridy = 3;
 			add(thirdLineTextArea, gbc_thirdLineTextArea);
-			
+
+			basePathColorIndicator = new JPanel();
+			basePathColorIndicator.setOpaque(true);
+			GridBagConstraints gbc_color = new GridBagConstraints();
+			gbc_color.insets = new Insets(0, 0, 0, 0);
+			gbc_color.gridheight = 5;
+			gbc_color.gridx = 4;
+			gbc_color.gridy = 1;
+			add(basePathColorIndicator, gbc_color);
+
 			this.setOpaque(true);
 		}
 		
@@ -206,6 +220,8 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 				renderer.imageLabel.setMaximumSize(new Dimension(50, table.getRowHeight()));
 				renderer.imageLabel.setSize(new Dimension(50, table.getRowHeight()));
 				renderer.imageLabel.setPreferredSize(new Dimension(50, table.getRowHeight()));
+				
+				renderer.basePathColorIndicator.setMinimumSize(new Dimension(5, table.getRowHeight()));
 				labelSetupComplete = true;
 			}
 		}		
@@ -221,6 +237,8 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	
 	private static final VolatileHashMap<String, ImageIcon> thumbnailCache = new VolatileHashMap<String, ImageIcon>(20, 20);
 	
+	private final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+	
 	private Dimension thumbnailDimension;
 	
 	private final MouseListener popupMouseListener;
@@ -228,6 +246,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 	private boolean singletonComponent = false;
 
 	private RendererComponent rendererComponent;
+	
 
 	public EbookTableCellRenderer(MouseListener popupMouseListener) {
 		this.popupMouseListener = popupMouseListener;
@@ -288,7 +307,20 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		
 		//third line description
 		setThirdLineRendererComponentSetup(item, renderer);
+		
+		//base path color hint
+		setBasePathColorIndicator(item, renderer);
 		return renderer;
+	}
+
+	protected void setBasePathColorIndicator(final EbookPropertyItem item, RendererComponent renderer) {
+		BasePathList basePath = preferenceStore.getBasePath();
+		Color color = basePath != null && item != null ? basePath.getColor(item.getBasePath()) : null;
+		if(color != null) {
+			renderer.basePathColorIndicator.setBackground(preferenceStore.getBasePath().getColor(item.getBasePath()));
+		} else {
+			renderer.basePathColorIndicator.setBackground(SwingUtils.getBackgroundColor());
+		}
 	}
 
 	private void setThirdLineRendererComponentSetup(final EbookPropertyItem item, RendererComponent renderer) {
