@@ -465,9 +465,6 @@ public class SwingUtils {
 					if (colors.size() >= amount) { // The calculated step is not very precise, so this safeguard is appropriate
 						return colors;
 					} else {
-						if (R == G && G == B) {
-							continue;
-						}
 						int color = (R << 16) + (G << 8) + (B);
 						colors.add(new Color(color));
 					}
