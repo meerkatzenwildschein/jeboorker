@@ -1,7 +1,5 @@
-## Download v 0.5.0
-- [Windows](http://morologia.de/jeboorker/download.php?f=jeboorker.exe)
-- [Linux](http://morologia.de/jeboorker/download.php?f=jeboorker.tar.gz)
-- [Debian / Ubuntu](http://morologia.de/jeboorker/download.php?f=jeboorker.deb)
+## Download
+Download for Debian / Ubuntu, Windows and other Linux distributions are available at the [Release section](https://github.com/meerkatzenwildschein/jeboorker/releases).
 
 ## Getting started
 If you start Jeboorker the first time, you have to specify the folder where youre ebooks located at. This can be done with the menu File->Read folder. You can add as many folders as you want.
