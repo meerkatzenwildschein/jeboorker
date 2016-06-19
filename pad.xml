@@ -85,7 +85,7 @@
 			<Application_XML_File_URL>http://raw.githubusercontent.com/meerkatzenwildschein/jeboorker/master/pad.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://github.com/meerkatzenwildschein/jeboorker/wiki/Download</Primary_Download_URL>
+			<Primary_Download_URL>https://github.com/meerkatzenwildschein/jeboorker/releases</Primary_Download_URL>
 			<Secondary_Download_URL />
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
