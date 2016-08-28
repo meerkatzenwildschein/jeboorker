@@ -73,7 +73,14 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 					Object firstValue = value.get(0);
 					if (ReflectionUtils.equals(metadataProperty.getPropertyClass(), Date.class)) {
 						// date must be formatted to something like D:20061204092842
-						String dateValue = DateConversionUtils.toString((Date) firstValue, DateConversionUtils.DATE_FORMATS.PDF);
+						String dateValue;
+						if(firstValue instanceof Date) {
+							dateValue = DateConversionUtils.toString((Date) firstValue, DateConversionUtils.DATE_FORMATS.PDF);
+						} else if(firstValue instanceof String) {
+							dateValue = DateConversionUtils.toString(DateConversionUtils.toDate((String) firstValue), DateConversionUtils.DATE_FORMATS.PDF);
+						} else {
+							throw new IllegalArgumentException("The value '" + firstValue + "' is no member of the expected class type.");
+						}
 						info.put(name, dateValue);
 					} else {
 						if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
