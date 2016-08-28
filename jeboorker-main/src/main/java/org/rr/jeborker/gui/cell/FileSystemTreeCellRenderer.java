@@ -27,13 +27,13 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private static final Insets TEXT_ICON_INSETS = new Insets(1, 2, 3, 2);
 	
-	private static final Pair<Color, Color> TEXT_ICON_DEFAULT_COLOR = new Pair<Color, Color>(Color.WHITE, Color.BLUE);
+	private static final Pair<Color, Color> TEXT_ICON_DEFAULT_COLOR = new Pair<Color, Color>(Color.WHITE.darker(), Color.BLUE);
 	
-	private static final Pair<Color, Color> TEXT_ICON_PDF_COLOR = new Pair<Color, Color>(Color.WHITE, new Color(221, 0, 0));
+	private static final Pair<Color, Color> TEXT_ICON_PDF_COLOR = new Pair<Color, Color>(Color.WHITE.darker(), new Color(221, 0, 0));
 	
-	private static final Pair<Color, Color> TEXT_ICON_EPUB_COLOR = new Pair<Color, Color>(Color.WHITE, new Color(133, 185, 22));
+	private static final Pair<Color, Color> TEXT_ICON_EPUB_COLOR = new Pair<Color, Color>(Color.WHITE.darker(), new Color(133, 185, 22));
 	
-	private static final Pair<Color, Color> TEXT_ICON_CB_COLOR = new Pair<Color, Color>(Color.WHITE, new Color(184, 127, 7));
+	private static final Pair<Color, Color> TEXT_ICON_CB_COLOR = new Pair<Color, Color>(Color.WHITE.darker(), new Color(184, 127, 7));
 
 	private static final long serialVersionUID = -7057675192468615801L;
 
