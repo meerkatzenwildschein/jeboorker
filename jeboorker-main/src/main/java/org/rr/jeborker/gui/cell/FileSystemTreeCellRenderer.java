@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.cell;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
@@ -11,7 +12,10 @@ import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import org.rr.commons.collection.Pair;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.mufs.MimeUtils;
+import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.icon.DecoratedIcon;
 import org.rr.commons.swing.icon.TextIcon;
 import org.rr.commons.utils.StringUtil;
@@ -20,6 +24,16 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 
 public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
+
+	private static final Insets TEXT_ICON_INSETS = new Insets(1, 2, 3, 2);
+	
+	private static final Pair<Color, Color> TEXT_ICON_DEFAULT_COLOR = new Pair<Color, Color>(Color.WHITE, Color.BLUE);
+	
+	private static final Pair<Color, Color> TEXT_ICON_PDF_COLOR = new Pair<Color, Color>(Color.WHITE, new Color(221, 0, 0));
+	
+	private static final Pair<Color, Color> TEXT_ICON_EPUB_COLOR = new Pair<Color, Color>(Color.WHITE, new Color(133, 185, 22));
+	
+	private static final Pair<Color, Color> TEXT_ICON_CB_COLOR = new Pair<Color, Color>(Color.WHITE, new Color(184, 127, 7));
 
 	private static final long serialVersionUID = -7057675192468615801L;
 
@@ -46,7 +60,7 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 	}
 
 	private boolean isUserHome(IResourceHandler file) {
-		return StringUtil.equals(file.toString(), System.getProperty("user.home"));
+		return ResourceHandlerFactory.getResourceHandler(System.getProperty("user.home")).equals(file);
 	}
 
 	private boolean isDirectory(IResourceHandler file) {
@@ -62,15 +76,28 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 		if(CACHE.containsKey(fileExtension)) {
 			return CACHE.get(fileExtension);
 		}
-		return CACHE.put(fileExtension, new DecoratedIcon(ImageResourceBundle.FILE_16_ICON, createTextIcon(fileExtension)));
+		return CACHE.put(fileExtension, new DecoratedIcon(ImageResourceBundle.FILE_16_ICON, createTextIcon(fileExtension, file)));
 	}
 
-	private Icon createTextIcon(String fileExtension) {
-		return new TextIcon(16, 16, fileExtension, getTextIconFont(), TextIcon.Location.LOWER_RIGHT, new Insets(2, 2, 2, 2));
+	private Icon createTextIcon(String fileExtension, IResourceHandler file) {
+		Pair<Color, Color> color = getColor(file);
+		return new TextIcon(16, 16, fileExtension, getTextIconFont(), TextIcon.Location.LOWER_RIGHT, TEXT_ICON_INSETS, color.getE(), color.getF());
+	}
+	
+	private Pair<Color, Color> getColor(IResourceHandler file) {
+		if(MimeUtils.isPdf(file, false)) {
+			return TEXT_ICON_PDF_COLOR;
+		} else if(MimeUtils.isEpub(file, false)) {
+			return TEXT_ICON_EPUB_COLOR;
+		} else if(MimeUtils.isCbz(file, false) || MimeUtils.isCbr(file, false)) {
+			return TEXT_ICON_CB_COLOR;
+		}
+		
+		return TEXT_ICON_DEFAULT_COLOR;
 	}
 
 	private Font getTextIconFont() {
 		Font font = UIManager.getDefaults().getFont("Label.font");
-		return new Font(font.getFontName(), Font.BOLD, 6);
+		return new Font(font.getFontName(), Font.PLAIN, 6);
 	}
 }
