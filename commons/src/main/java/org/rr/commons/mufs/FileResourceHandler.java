@@ -25,6 +25,7 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.ListUtils;
 
@@ -34,6 +35,8 @@ import org.rr.commons.utils.ListUtils;
  * located in the file system.
  */
 class FileResourceHandler extends AResourceHandler {
+
+	private static final String[] PATH_SEGMENT_SEPARATORS = new String[] { "/", "\\", File.separator};
 
 	/**
 	 * The file url identifier.
@@ -68,11 +71,10 @@ class FileResourceHandler extends AResourceHandler {
 		super();
 	}
 	
-	
 	FileResourceHandler(File f) {
 		super();
 		this.setFile(f);
-		this.resourceString  = f.getPath();
+		this.resourceString = normalizeDirectoryResourceString(f.getPath(), f);
 	}
 	
 	/**
@@ -190,11 +192,10 @@ class FileResourceHandler extends AResourceHandler {
 		return result;
 	}
 
-
 	private String normalizeDirectoryResourceString(String resource, File file) {
 		if(file.isDirectory()) {
 			//normalize that a directory resource is always returned with a trailing slash / backslash
-			if(!resource.endsWith("/") && !resource.endsWith("\\") && !resource.endsWith(File.separator)) {
+			if(!StringUtils.endsWithAny(resource, PATH_SEGMENT_SEPARATORS)) {
 				resource = resource + File.separator;
 			}
 		}
@@ -622,7 +623,7 @@ class FileResourceHandler extends AResourceHandler {
 	}
 	
 	/**
-	 * Fast copy using nio. The apache {@link FileUtils} did this not.
+	 * Fast copy using nio.
 	 *
 	 * @param sourceFile source file
 	 * @param destFile target file
@@ -639,20 +640,12 @@ class FileResourceHandler extends AResourceHandler {
 			destFile.createNewFile();
 		}
 
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
+		try (FileInputStream in = new FileInputStream(sourceFile);
+				FileChannel source = in.getChannel();
+				FileOutputStream out = new FileOutputStream(destFile);
+				FileChannel destination = out.getChannel()) {
 			destination.transferFrom(source, position, source.size());
 			return true;
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
 		}
 	}
 	
@@ -703,26 +696,25 @@ class FileResourceHandler extends AResourceHandler {
 		return RESOURCE_HANDLER_USER_TYPES.FILESYSTEM;
 	}
 
-
-    /**
-     * Returns all root partitions on this system. For example, on
-     * Windows, this would be the A: through Z: drives.
-     */
+  /**
+   * Returns all root partitions on this system. For example, on
+   * Windows, this would be the A: through Z: drives.
+   */
 	@Override
 	public IResourceHandler[] getRoots() {
 		IResourceHandler[] fileSystemRoots = ResourceHandlerUtils.getFileSystemRoots();
 		return fileSystemRoots;
 	}
 
-    /**
-     * Name of a file, directory, or folder as it would be displayed in
-     * a system file browser. Example from Windows: the "M:\" directory
-     * displays as "CD-ROM (M:)"
-     *
-     * The default implementation gets information from the ShellFolder class.
-     *
-     * @return the file name as it would be displayed by a native file chooser
-     */
+  /**
+   * Name of a file, directory, or folder as it would be displayed in
+   * a system file browser. Example from Windows: the "M:\" directory
+   * displays as "CD-ROM (M:)"
+   *
+   * The default implementation gets information from the ShellFolder class.
+   *
+   * @return the file name as it would be displayed by a native file chooser
+   */
 	@Override
 	public String getSystemDisplayName() {
 		synchronized(fileSystemViewInstance) {
