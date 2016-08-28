@@ -71,6 +71,18 @@ public class MainViewTreeComponentHandler {
 	public List<IResourceHandler> getSelectedFileSystemTreeItems() {
 		return getSelectedResources(fileSystemTree);
 	}
+	
+	/**
+	 * Tells if the file system view is currently visible to the user.
+	 */
+	public boolean isFileTreeSelected() {
+		JTree selectedComponent = mainWindow.getSelectedTreePathComponent();
+		TreeModel model = selectedComponent.getModel();
+		if(model instanceof FileSystemTreeModel) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Expands the nodes for the given {@link IResourceHandler} instances in this

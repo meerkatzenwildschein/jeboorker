@@ -10,5 +10,8 @@ public class DefaultApplicationEventListener implements ApplicationEventListener
 	
 	@Override
 	public void metaDataSheetContentChanged(ApplicationEvent evt) {}
+
+	@Override
+	public void mainTreeVisibilityChanged(ApplicationEvent evt) {}
 	
 }

@@ -53,15 +53,37 @@ public class SyncFolderAction extends AbstractAction {
 
 		@Override
 		public void ebookItemSelectionChanged(ApplicationEvent evt) {
+			setupButtonEnablement();
+		}
+
+		protected void setupButtonEnablement() {
 			MainController controller = MainController.getController();
-			int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-			if(selectedEbookPropertyItemRows.length == 1) {
-				final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null);
-				action.setEnabled(true);
+			List<EbookPropertyItem> selectedEbookPropertyItems = controller.getSelectedEbookPropertyItems();
+			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null);
+			if(selectedEbookPropertyItems.size() == 1) {
+				if(locatedInHiddenFolder(selectedEbookPropertyItems.get(0)) && controller.getMainTreeHandler().isFileTreeSelected()) {
+					action.setEnabled(false);
+				} else {
+					action.setEnabled(true);
+				}
 			} else {
-				final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SYNC_FOLDER_ACTION, null);
 				action.setEnabled(false);
 			}
+		}
+		
+		@Override
+		public void mainTreeVisibilityChanged(ApplicationEvent evt) {
+			setupButtonEnablement();
+		}
+
+		private boolean locatedInHiddenFolder(EbookPropertyItem item) {
+			IResourceHandler resourceHandler = item.getResourceHandler();
+			while((resourceHandler = resourceHandler.getParentResource()) != null) {
+				if(resourceHandler.isHidden()) {
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 	

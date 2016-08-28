@@ -10,7 +10,7 @@ import org.rr.commons.collection.WeakList;
 public class EventManager {
 
 	public static enum EVENT_TYPES {
-		EBOOK_ITEM_SELECTION_CHANGE, METADATA_SHEET_SELECTION_CHANGE, METADATA_SHEET_CONTENT_CHANGE
+		EBOOK_ITEM_SELECTION_CHANGE, METADATA_SHEET_SELECTION_CHANGE, METADATA_SHEET_CONTENT_CHANGE, MAIN_TREE_VISIBILITY_CHANGED
 	}
 
 	private static WeakList<ApplicationEventListener> weakListenerList = new WeakList<>();
@@ -68,6 +68,8 @@ public class EventManager {
 			listener.metaDataSheetSelectionChanged(evt);
 		} else if(type.equals(EVENT_TYPES.METADATA_SHEET_CONTENT_CHANGE)) {
 			listener.metaDataSheetContentChanged(evt);
+		} else if(type.equals(EVENT_TYPES.MAIN_TREE_VISIBILITY_CHANGED)) {
+			listener.mainTreeVisibilityChanged(evt);
 		}
 	}
 

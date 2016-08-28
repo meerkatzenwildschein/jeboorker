@@ -7,5 +7,7 @@ public interface ApplicationEventListener {
 	public void ebookItemSelectionChanged(ApplicationEvent evt);
 
 	public void metaDataSheetContentChanged(ApplicationEvent evt);
+
+	public void mainTreeVisibilityChanged(ApplicationEvent evt);
 	
 }

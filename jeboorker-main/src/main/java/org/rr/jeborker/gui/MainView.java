@@ -64,6 +64,8 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
@@ -559,6 +561,13 @@ class MainView extends JFrame {
 			}
 		});
 
+		treeTabbedPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				EventManager.fireEvent(EventManager.EVENT_TYPES.MAIN_TREE_VISIBILITY_CHANGED, new ApplicationEvent(getEbookTableHandler().getSelectedEbookPropertyItems(), getSelectedMetadataProperty(), e.getSource()));
+			}
+		});
+		
 		filterFieldComponent.initListeners();
 		preferenceStore.addPreferenceChangeListener(new MainViewPreferenceListener());
 	}
