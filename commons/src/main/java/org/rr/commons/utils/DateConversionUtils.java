@@ -561,7 +561,7 @@ public class DateConversionUtils {
 	}	
 	
 	/**
-	 * Tries to create a date from the given date stringbut without the time part.
+	 * Tries to create a date from the given date string but without the time part.
 	 * @param dateString The date string to be parsed into a date.
 	 * @return The desired date or <code>null</code> if the date format could not be detected.
 	 */
