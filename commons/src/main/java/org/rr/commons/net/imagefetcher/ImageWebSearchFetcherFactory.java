@@ -19,10 +19,10 @@ public class ImageWebSearchFetcherFactory implements IImageFetcherFactory {
 				return "Big Book Search";
 			}
 		},		
-		GOOGLE_IMAGES {
+		ABABEEN_IMAGES {
 
 			public String getName() {
-				return "Google";
+				return "Ababeen";
 			}
 
 		}
@@ -49,8 +49,8 @@ public class ImageWebSearchFetcherFactory implements IImageFetcherFactory {
 	 */
 	private IImageFetcher getImageFetcher(FETCHER_TYPES type) {
 		switch (type) {
-		case GOOGLE_IMAGES:
-			return new GoogleImageFetcher();
+		case ABABEEN_IMAGES:
+			return new AbabeenImageFetcher();
 		case BIG_BOOK_IMAGES:
 			return new BigBookSearchImageFetcher();
 		}
