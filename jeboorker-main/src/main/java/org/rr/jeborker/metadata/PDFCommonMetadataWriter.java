@@ -42,15 +42,11 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 	public void writeMetadata(List<MetadataProperty> props) {
 		try {
 			final PDFCommonMetadataReader reader = (PDFCommonMetadataReader) MetadataHandlerFactory.getReader(ebookResource);
-			final List<MetadataProperty> readMetadata = reader.readMetadata();
 
 			byte[] fetchXMPThumbnail = reader.fetchXMPThumbnail(ebookResource);
 			HashMap<String, String> info = new HashMap<String, String>();
 			XMPMetadata blankXMP = new XMPMetadata();
 
-			// flag wich tells if xmp meta data where really be created.
-			// so no empty xmp doc will be inserted.
-			boolean xmpMetadataSet = countXMPMetadataProperties(readMetadata) != countXMPMetadataProperties(props);
 			for (MetadataProperty metadataProperty : props) {
 				final String name = metadataProperty.getName();
 				final List<Object> value = metadataProperty.getValues();
@@ -64,7 +60,6 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 						Element xmpSchemaElement = xmpSchema.getElement();
 						Element propertyElement = pdfMetadataProperty.createElement(xmpSchemaElement.getOwnerDocument());
 						xmpSchemaElement.appendChild(propertyElement);
-						xmpMetadataSet = true;
 					} else {
 						LoggerFactory.logWarning(this, "No schema for " + pdfMetadataProperty.getName() + " witdh namespace " + namespace + " in "
 								+ ebookResource, null);
@@ -85,10 +80,8 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 					} else {
 						if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof byte[]) {
 							fetchXMPThumbnail = (byte[]) firstValue;
-							xmpMetadataSet = true;
 						} else if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(name) && firstValue instanceof String) {
 							fetchXMPThumbnail = Base64.decode((String) firstValue);
-							xmpMetadataSet = true;
 						} else {
 							if(info.containsKey(name)) {
 								String oldValue = info.get(name);
@@ -108,7 +101,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 			}
 			
 			pdfDoc.setInfo(info);
-			pdfDoc.setXMPMetadata(xmpMetadataSet ? blankXMP.asByteArray() : null);
+			pdfDoc.setXMPMetadata(blankXMP.asByteArray());
 			pdfDoc.write();
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
@@ -170,20 +163,5 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 		} catch(Exception e) {
 			LoggerFactory.logWarning(this, "Could not write metadata to " + ebookResource, e);
 		}
-	}
-	
-	/**
-	 * Evaluates the number of {@link PDFMetadataProperty} instances in the given {@link MetadataProperty} list.
-	 * @param metadataProperties The list to be tested.
-	 * @return The number of {@link PDFMetadataProperty} in the given list.
-	 */
-	private int countXMPMetadataProperties(final List<MetadataProperty> metadataProperties) {
-		int count = 0;
-		for(MetadataProperty metadataProperty : metadataProperties) {
-			if (metadataProperty instanceof PDFMetadataProperty) {
-				count ++;
-			}
-		}
-		return count;
 	}
 }
