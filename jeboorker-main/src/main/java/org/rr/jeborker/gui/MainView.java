@@ -727,6 +727,22 @@ class MainView extends JFrame {
 		FileSystemTreeCellRenderer fileSystemTreeCellRenderer = new FileSystemTreeCellRenderer();
 		fileSystemTree.setCellRenderer(fileSystemTreeCellRenderer);
 		fileSystemTree.setCellEditor(new FileSystemTreeCellEditor(fileSystemTree, fileSystemTreeCellRenderer));
+		fileSystemTree.addTreeExpansionListener(new TreeExpansionListener() {
+
+			@Override
+			public void treeExpanded(TreeExpansionEvent event) {
+				// reset the file node cache before open to take changed folders under account
+				TreePath path = event.getPath();
+				Object collapsedNode = path.getLastPathComponent();
+				if(collapsedNode instanceof FileSystemNode) {
+					((FileSystemNode) collapsedNode).reset();
+				}
+			}
+
+			@Override
+			public void treeCollapsed(TreeExpansionEvent event) {}
+		});
+		
 		if(((DefaultMutableTreeNode) fileSystemTreeModel.getRoot()).getChildCount() == 1) {
 			fileSystemTree.addTreeExpansionListener(new TreeExpansionListener() {
 
@@ -788,72 +804,73 @@ class MainView extends JFrame {
 		fileSystemTree.setTransferHandler(new TransferHandler() {
 
 			public boolean canImport(TransferHandler.TransferSupport info) {
-                return DragAndDropUtils.isFileImportRequest(info);
-            }
+				return DragAndDropUtils.isFileImportRequest(info);
+			}
 
-            public boolean importData(TransferHandler.TransferSupport info) {
-                if (!info.isDrop()) {
-                    return false;
-                }
+			public boolean importData(TransferHandler.TransferSupport info) {
+				if (!info.isDrop()) {
+					return false;
+				}
 
-                if (!DragAndDropUtils.isFileImportRequest(info)) {
-                	LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
-                    return false;
-                }
+				if (!DragAndDropUtils.isFileImportRequest(info)) {
+					LoggerFactory.getLogger().log(Level.INFO, "List doesn't accept a drop of this type.");
+					return false;
+				}
 
-                JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
-                TreePath dropRow = dl.getPath();
-                Object lastPath = dropRow.getLastPathComponent();
-                try {
-                	IResourceHandler targetPathResource = ((FileSystemNode) lastPath).getResource();
-                	boolean reloadParent = false;
-                	if(targetPathResource.isFileResource()) {
-                		targetPathResource = targetPathResource.getParentResource();
-                		reloadParent = true;
-                	}
-                	Transferable transferable = info.getTransferable();
-                	List<IResourceHandler> sourceResourceHandlers = ResourceHandlerFactory.getResourceHandler(transferable);
-                	for(IResourceHandler sourceResourceHandler : sourceResourceHandlers) {
-                		String basePathFor = preferenceStore.getBasePathFor(targetPathResource);
-                		if(basePathFor != null) {
-                			//drop to a folder that is managed by jeboorker.
-                			PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
-                		} else {
-                			//do a simple copy
-                			IResourceHandler targetPathResourceFile = targetPathResource.addPathStatement(sourceResourceHandler.getName());
-                			IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile, targetPathResourceFile.getFileExtension());
-                			sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
-                		}
-                		if(reloadParent) {
-                			TreeNode node = (TreeNode) dropRow.getLastPathComponent();
-                			TreeNode parentNode = node.getParent();
-                			if(parentNode != null) {
-                				((DefaultTreeModel) fileSystemTree.getModel()).reload(parentNode);
-                			} else {
-                				((DefaultTreeModel) fileSystemTree.getModel()).reload(node);
-                			}
-                		} else {
-                			((DefaultTreeModel) fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
-                		}
-                	}
+				JTree.DropLocation dl = (JTree.DropLocation) info.getDropLocation();
+				TreePath dropRow = dl.getPath();
+				Object lastPath = dropRow.getLastPathComponent();
+				try {
+					IResourceHandler targetPathResource = ((FileSystemNode) lastPath).getResource();
+					boolean reloadParent = false;
+					if (targetPathResource.isFileResource()) {
+						targetPathResource = targetPathResource.getParentResource();
+						reloadParent = true;
+					}
+					Transferable transferable = info.getTransferable();
+					List<IResourceHandler> sourceResourceHandlers = ResourceHandlerFactory.getResourceHandler(transferable);
+					for (IResourceHandler sourceResourceHandler : sourceResourceHandlers) {
+						String basePathFor = preferenceStore.getBasePathFor(targetPathResource);
+						if (basePathFor != null) {
+							// drop to a folder that is managed by jeboorker.
+							PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
+						} else {
+							// do a simple copy
+							IResourceHandler targetPathResourceFile = targetPathResource.addPathStatement(sourceResourceHandler.getName());
+							IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile,
+									targetPathResourceFile.getFileExtension());
+							sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
+						}
+						if (reloadParent) {
+							TreeNode node = (TreeNode) dropRow.getLastPathComponent();
+							TreeNode parentNode = node.getParent();
+							if (parentNode != null) {
+								((DefaultTreeModel) fileSystemTree.getModel()).reload(parentNode);
+							} else {
+								((DefaultTreeModel) fileSystemTree.getModel()).reload(node);
+							}
+						} else {
+							((DefaultTreeModel) fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
+						}
+					}
 				} catch (Exception e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, e.getMessage(), e);
 					return false;
 				}
-                return true;
-            }
+				return true;
+			}
 
-            public int getSourceActions(JComponent c) {
-                return COPY;
-            }
+			public int getSourceActions(JComponent c) {
+				return COPY;
+			}
 
-            /**
-             * Create a new Transferable that is used to drag files from jeboorker to a native application.
-             */
-            protected Transferable createTransferable(JComponent c) {
-            	List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeHandler().getSelectedTreeItems();
-		        final List<URI> uriList = new ArrayList<>(selectedTreeItems.size());
-		        final List<String> files = new ArrayList<>(selectedTreeItems.size());
+			/**
+			 * Create a new Transferable that is used to drag files from jeboorker to a native application.
+			 */
+			protected Transferable createTransferable(JComponent c) {
+				List<IResourceHandler> selectedTreeItems = MainController.getController().getMainTreeHandler().getSelectedTreeItems();
+				final List<URI> uriList = new ArrayList<>(selectedTreeItems.size());
+				final List<String> files = new ArrayList<>(selectedTreeItems.size());
 
 				for (int i = 0; i < selectedTreeItems.size(); i++) {
 					IResourceHandler selectedTreeItem = selectedTreeItems.get(i);
@@ -866,17 +883,17 @@ class MainView extends JFrame {
 					}
 				}
 
-		        if(CommonUtils.isLinux()) {
-		        	if(ReflectionUtils.javaVersion() == 16) {
-		        		return new URIListTransferable(uriList, null);
-		        	} else {
-		        		return new FileTransferable(files);
-		        	}
-		        } else {
-		        	return new FileTransferable(files);
-		        }
-	        }
-        });
+				if (CommonUtils.isLinux()) {
+					if (ReflectionUtils.javaVersion() == 16) {
+						return new URIListTransferable(uriList, null);
+					} else {
+						return new FileTransferable(files);
+					}
+				} else {
+					return new FileTransferable(files);
+				}
+			}
+		});
 
 		fileSystemTree.addFocusListener(new FocusAdapter() {
 
