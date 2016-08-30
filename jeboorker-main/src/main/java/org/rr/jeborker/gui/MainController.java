@@ -220,6 +220,10 @@ public class MainController {
 		setMainEbookTableModel(model);
 		return model;
 	}
+	
+	public boolean isEbookPropertyFileTableModel() {
+		return mainWindow.getEbookTableHandler().getModel() instanceof EbookPropertyFileTableModel;
+	}
 
 	public void refreshTableItem(int[] selectedRows, boolean refreshMetadataSheet) {
 		mainWindow.getEbookTableHandler().refreshTableItem(selectedRows);

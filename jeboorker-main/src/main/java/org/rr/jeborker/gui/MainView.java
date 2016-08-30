@@ -926,7 +926,10 @@ class MainView extends JFrame {
 						return resource == null || !ActionUtils.isSupportedEbookFormat(resource, false);
 					}
 				});
-				MainController.getController().changeToFileModel(resources);
+				
+				if(!resources.isEmpty() || controller.isEbookPropertyFileTableModel()) {
+					controller.changeToFileModel(resources);
+				}
 			}
 			
 			private List<IResourceHandler> toIResourceHandler(TreePath[] path) {
