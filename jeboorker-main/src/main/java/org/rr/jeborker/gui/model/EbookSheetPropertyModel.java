@@ -80,9 +80,12 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	public void removeProperty(Property property) {
 		property.setValue(EMPTY);
 		super.removeProperty(property);
-		if(property instanceof EbookSheetProperty) {
-			MetadataProperty metadataProperty = ((EbookSheetProperty)property).metadataProperty;
-			allMetadata.remove(metadataProperty);
+		if (property instanceof EbookSheetProperty) {
+			List<MetadataProperty> subProperties = ((EbookSheetProperty) property).getMetadataProperties();
+			for (MetadataProperty metadataProperty : subProperties) {
+				allMetadata.remove(metadataProperty);
+			}
+			allMetadata.remove(((EbookSheetProperty) property).metadataProperty);
 		}
 		changed = true;
 	}
