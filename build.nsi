@@ -63,7 +63,7 @@ Section -Main SEC0000
     File dist\Jeboorker.vbs
     File dist\splashscreen.gif
     File dist\win32\Jeboorker.exe
-    File Readme.txt
+    File Readme.md
 
     SetOutPath $INSTDIR\doc\license
     File /r doc\license\*
