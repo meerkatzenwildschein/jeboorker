@@ -58,14 +58,14 @@ public class DateConversionUtilsTest extends TestCase {
 		
 		//W3C stolen T
 		assertTrue(DateConversionUtils.toDate("2010-09-22 11:15:52.216000+02:00").toString().equals(getDate(22, 9, 2010).toString()));
-		assertTrue(DateConversionUtils.toDateTime("2010-09-22 11:15:52+02:00").toString().equals(getDate(22, 9, 2010,10, 15, 52).toString()));
+		assertTrue(DateConversionUtils.toDateTime("2010-11-22 11:15:52+02:00").toString().equals(getDate(22, 11, 2010, 10, 15, 52).toString()));
 		assertTrue(DateConversionUtils.toDate("2010-09").toString().equals(getDate(1, 9, 2010).toString()));
 		assertTrue(DateConversionUtils.toDate("2011").toString().equals(getDate(1, 1, 2011).toString()));
 		
 		//RFC 822
-		assertTrue(DateConversionUtils.toDateTime("Wed, 02 Oct 2002 15:00:00 +0200").toString().equals(getDate(2, 10, 2002, 14, 0, 0).toString()));
-		assertTrue(DateConversionUtils.toDateTime("Wed, 02 Oct 2002 15:00 +0200").toString().equals(getDate(2, 10, 2002, 14, 0, 0).toString()));
-		assertTrue(DateConversionUtils.toDateTime("04 Jul 2001 12:08:56 -0700").toString().equals(getDate(4, 7, 2001, 20, 8, 56).toString()));
+		assertTrue(DateConversionUtils.toDateTime("Wed, 02 Nov 2002 15:00:00 +0200").toString().equals(getDate(2, 11, 2002, 14, 0, 0).toString()));
+		assertTrue(DateConversionUtils.toDateTime("Wed, 02 Nov 2002 15:00 +0200").toString().equals(getDate(2, 11, 2002, 14, 0, 0).toString()));
+		assertTrue(DateConversionUtils.toDateTime("04 Nov 2001 12:08:56 -0700").toString().equals(getDate(4, 11, 2001, 20, 8, 56).toString()));
 		
 		//PDF
 		assertTrue(DateConversionUtils.toDateTime("D:20001218180738+01'00'").toString().equals(getDate(18, 12, 2000, 18, 7, 38).toString()));
@@ -82,7 +82,7 @@ public class DateConversionUtilsTest extends TestCase {
 		assertEquals(DateConversionUtils.DATE_FORMATS.PDF.getString(DateConversionUtils.toDateTime("D:20001218180738+01'00'")) , "D:200012181807+01'00'");
 		
 		//2005-07-04T00:00:+0Z
-		assertEquals(DateConversionUtils.DATE_FORMATS.ISO_8601_DATE_TIME.getString(DateConversionUtils.toDateTime("2005-07-04T00:00:+0Z")) , "2005-07-04 01:00Z");
+		assertEquals(DateConversionUtils.DATE_FORMATS.ISO_8601_DATE_TIME.getString(DateConversionUtils.toDateTime("2005-11-04T00:00:+0Z")) , "2005-11-04 01:00Z");
 	}
 
 	private Date getDate(int day, int month, int year) {
