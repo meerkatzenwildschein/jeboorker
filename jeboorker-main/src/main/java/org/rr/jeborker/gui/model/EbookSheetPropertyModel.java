@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui.model;
 
+import static org.apache.commons.lang.ObjectUtils.notEqual;
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.util.ArrayList;
@@ -370,8 +371,9 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 		@Override
 		public void setValue(Object value) {
+			Object oldValue = getValue();
 			super.setValue(value);
-			if(value!=null && !value.equals(getValue())) {
+			if(notEqual(value, oldValue)) {
 				for (MetadataProperty metadataProperty : metadataProperties) {
 					metadataProperty.setValue(value, 0);
 				}

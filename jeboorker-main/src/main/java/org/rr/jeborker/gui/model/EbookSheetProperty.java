@@ -1,5 +1,7 @@
 package org.rr.jeborker.gui.model;
 
+import static org.apache.commons.lang.ObjectUtils.notEqual;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
@@ -75,7 +78,7 @@ class EbookSheetProperty extends DefaultProperty {
 				this.setChanged(false);
 				return;
 			}
-		} else if (value != null && !value.equals(editorValue)) {
+		} else if (notEqual(value, editorValue)) {
 			metadataProperty.setValue(value, this.propertyIndex);
 			this.setChanged(true);
 		} else if(value == null) {
