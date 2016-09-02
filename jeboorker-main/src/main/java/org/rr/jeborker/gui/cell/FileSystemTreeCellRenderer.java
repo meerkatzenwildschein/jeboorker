@@ -98,6 +98,6 @@ public class FileSystemTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private Font getTextIconFont() {
 		Font font = UIManager.getDefaults().getFont("Label.font");
-		return new Font(font.getFontName(), Font.PLAIN, 6);
+		return new Font(font.getFontName(), Font.BOLD, 6);
 	}
 }
