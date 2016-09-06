@@ -1197,7 +1197,7 @@ class MainView extends JFrame {
 			menu.add(MainViewMenuUtils.createNewFolderMenuItem(basePathTree, fileSystemTree, pathNode));
 		}
 		if(items.size() >= 1) {
-			menu.add(MainViewMenuUtils.createImportToMenu(items));
+			menu.add(MainViewMenuUtils.createImportToMenu(items, Bundle.getString("MainMenuBarController.import"), ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_IMPORT_ACTION));
 		}
 
 		menu.add(MainViewMenuUtils.createSendToMenu());
@@ -1254,6 +1254,7 @@ class MainView extends JFrame {
 			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(selectedResources));
 		}
 
+		menu.add(MainViewMenuUtils.createImportToMenu(selectedResources, Bundle.getString("MainMenuBarController.move"), ActionFactory.COMMON_ACTION_TYPES.MOVE_BETWEEN_BASE_FOLDER_ACTION));
 		menu.add(MainViewMenuUtils.createSendToMenu());
 		menu.add(MainViewMenuUtils.createDeleteMenuItem(selectedResources));
 

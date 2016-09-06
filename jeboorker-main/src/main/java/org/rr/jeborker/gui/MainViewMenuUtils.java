@@ -183,17 +183,16 @@ class MainViewMenuUtils {
 		return copyToSubMenu;
 	}
 	
-	static JMenu createImportToMenu(final List<IResourceHandler> items) {
+	static JMenu createImportToMenu(final List<IResourceHandler> items, String name, ActionFactory.COMMON_ACTION_TYPES actionType) {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		final List<String> basePath = preferenceStore.getBasePath();
-		final String name = Bundle.getString("MainMenuBarController.import");
 		final JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
 
 		mnImport.setIcon(ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
 		mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 		for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 			String path = iterator.next();
-			mnImport.add(MainViewMenuUtils.createFileSystemImportTargetMenuItem(path));
+			mnImport.add(MainViewMenuUtils.createFileSystemImportTargetMenuItem(path, actionType));
 		}
 		if(!ResourceHandlerUtils.containFilesOnly(items)) {
 			mnImport.setEnabled(false);
@@ -201,8 +200,8 @@ class MainViewMenuUtils {
 		return mnImport;
 	}
 
-	static JMenuItem createFileSystemImportTargetMenuItem(String path) {
-		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_IMPORT_ACTION, path);
+	private static JMenuItem createFileSystemImportTargetMenuItem(String path, ActionFactory.COMMON_ACTION_TYPES actionType) {
+		Action action = ActionFactory.getAction(actionType, path);
 		return new JMenuItem(action);
 	}
 

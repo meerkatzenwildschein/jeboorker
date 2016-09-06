@@ -192,5 +192,14 @@ public class EbookPropertyFileTableModel implements ReloadableTableModel {
 		
 		return false;
 	}
+	
+	@Override
+	public List<EbookPropertyItem> getEbookPropertyItemsAt(int[] rowIndex) {
+		List<EbookPropertyItem> result = new ArrayList<>(rowIndex.length);
+		for (int i : rowIndex) {
+			result.add(getEbookPropertyItemAt(i));
+		}
+		return result;
+	}
 
 }

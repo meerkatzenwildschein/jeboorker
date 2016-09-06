@@ -15,7 +15,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
 import org.rr.commons.collection.BlindElementList;
 import org.rr.commons.collection.CompoundList;
@@ -494,6 +493,15 @@ public class EbookPropertyDBTableModel implements ReloadableTableModel {
 			}
 		}
 		return whereConditions.removeAll(toRemove);
+	}
+
+	@Override
+	public List<EbookPropertyItem> getEbookPropertyItemsAt(int[] rowIndex) {
+		List<EbookPropertyItem> result = new ArrayList<>(rowIndex.length);
+		for (int i : rowIndex) {
+			result.add(getEbookPropertyItemAt(i));
+		}
+		return result;
 	}
 
 }

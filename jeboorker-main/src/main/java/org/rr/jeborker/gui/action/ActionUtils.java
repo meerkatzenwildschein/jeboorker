@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
@@ -81,7 +83,7 @@ public class ActionUtils {
 
 				@Override
 				public void run() {
-					MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(resourceLoader);
+					refreshFileSystemResourceParent(resourceLoader);
 				}
 			});
 		}
@@ -114,7 +116,7 @@ public class ActionUtils {
 					@Override
 					public void run() {
 						MainController.getController().refreshTableSelectedItem(true);
-						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(refreshResourceHandler);
+						refreshFileSystemResourceParent(refreshResourceHandler);
 					}
 				});
 			} else {
@@ -125,7 +127,7 @@ public class ActionUtils {
 						ReloadableTableModel model = MainController.getController().getModel();
 						int row = model.searchRow(item);
 						MainController.getController().refreshTableItem(new int[] {row}, false);
-						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(refreshResourceHandler);
+						refreshFileSystemResourceParent(refreshResourceHandler);
 					}
 				});
 			}
@@ -223,7 +225,7 @@ public class ActionUtils {
 	 * @param item The item to be added.
 	 * @param row The row where the item should be added. Can be -1 if it should be attached somewhere.
 	 */
-	private static void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
+	public static void addEbookPropertyItem(final EbookPropertyItem item, final int row) {
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -348,7 +350,7 @@ public class ActionUtils {
 								importedResources.add(targetResource);
 
 								if(move) {
-									refreshResourceParents(Arrays.asList(sourceResource));
+									refreshFileSystemResourceParents(Arrays.asList(sourceResource));
 									removeMovedEbookResourceFromMainView(sourceResource);	
 								}
 							}
@@ -375,7 +377,7 @@ public class ActionUtils {
 			protected void cleanup(final List<IResourceHandler> sourceResourcesToTransfer, final boolean move,
 					final ArrayList<IResourceHandler> importedResources) {
 				if(move) {
-					refreshResourceParents(sourceResourcesToTransfer);
+					refreshFileSystemResourceParents(sourceResourcesToTransfer);
 				}
 				
 				SwingUtilities.invokeLater(new Runnable() {
@@ -387,20 +389,24 @@ public class ActionUtils {
 					}
 				});
 			}
-			
-			private void refreshResourceParents(List<IResourceHandler> resources) {
-				List<IResourceHandler> alreadyRefreshedParents = new ArrayList<>(sourceResourcesToTransfer.size());
-				for (IResourceHandler resourceHandler : resources) {
-					IResourceHandler parentResource = resourceHandler.getParentResource();
-					if(!alreadyRefreshedParents.contains(parentResource)) {
-						MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(parentResource);
-						alreadyRefreshedParents.add(parentResource);
-					}
-				}
-			}
 		});
 
 		return importedResources;
+	}
+	
+	public static void refreshFileSystemResourceParents(List<IResourceHandler> resources) {
+		Set<IResourceHandler> alreadyRefreshedParents = new HashSet<>(resources.size());
+		for (IResourceHandler resourceHandler : resources) {
+			IResourceHandler parentResource = resourceHandler.getParentResource();
+			if(!alreadyRefreshedParents.contains(parentResource)) {
+				refreshFileSystemResourceParent(parentResource);
+				alreadyRefreshedParents.add(parentResource);
+			}
+		}
+	}
+
+	public static void refreshFileSystemResourceParent(IResourceHandler parentResource) {
+		MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(parentResource);
 	}
 	
 	/**
