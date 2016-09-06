@@ -1,5 +1,6 @@
 package org.rr.jeborker.gui;
 
+import static org.apache.commons.lang.ObjectUtils.notEqual;
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.AWTEvent;
@@ -846,9 +847,11 @@ class MainView extends JFrame {
 						} else {
 							// do a simple copy
 							IResourceHandler targetPathResourceFile = targetPathResource.addPathStatement(sourceResourceHandler.getName());
-							IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile,
-									targetPathResourceFile.getFileExtension());
-							sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
+							if(notEqual(sourceResourceHandler, targetPathResourceFile)) {
+								IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile,
+										targetPathResourceFile.getFileExtension());
+								sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
+							}
 						}
 						if (reloadParent) {
 							TreeNode node = (TreeNode) dropRow.getLastPathComponent();
