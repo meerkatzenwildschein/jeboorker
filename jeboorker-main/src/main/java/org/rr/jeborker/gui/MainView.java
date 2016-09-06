@@ -1209,7 +1209,7 @@ class MainView extends JFrame {
 			mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
 			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
 				String path = iterator.next();
-				mnImport.add(MainViewMenuUtils.crateFileSystemImportTargetMenuItem(path));
+				mnImport.add(MainViewMenuUtils.createFileSystemImportTargetMenuItem(path));
 			}
 			menu.add(mnImport);
 			if(!ResourceHandlerUtils.containFilesOnly(items)) {

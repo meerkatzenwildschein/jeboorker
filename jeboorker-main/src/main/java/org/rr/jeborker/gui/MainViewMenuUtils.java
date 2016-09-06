@@ -180,7 +180,7 @@ class MainViewMenuUtils {
 		return copyToSubMenu;
 	}
 
-	static JMenuItem crateFileSystemImportTargetMenuItem(String path) {
+	static JMenuItem createFileSystemImportTargetMenuItem(String path) {
 		Action action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.FILE_SYSTEM_IMPORT_ACTION, path);
 		return new JMenuItem(action);
 	}
