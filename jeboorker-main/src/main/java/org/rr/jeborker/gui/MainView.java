@@ -37,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -51,7 +50,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -84,7 +82,6 @@ import org.rr.commons.collection.FilterList.Filter;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.mufs.VirtualStaticResourceDataLoader;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.JRScrollPane;
@@ -1200,21 +1197,7 @@ class MainView extends JFrame {
 			menu.add(MainViewMenuUtils.createNewFolderMenuItem(basePathTree, fileSystemTree, pathNode));
 		}
 		if(items.size() >= 1) {
-			final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-			final List<String> basePath = preferenceStore.getBasePath();
-			final String name = Bundle.getString("MainMenuBarController.import");
-			final JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
-
-			mnImport.setIcon(ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
-			mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
-			for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
-				String path = iterator.next();
-				mnImport.add(MainViewMenuUtils.createFileSystemImportTargetMenuItem(path));
-			}
-			menu.add(mnImport);
-			if(!ResourceHandlerUtils.containFilesOnly(items)) {
-				mnImport.setEnabled(false);
-			}
+			menu.add(MainViewMenuUtils.createImportToMenu(items));
 		}
 
 		menu.add(MainViewMenuUtils.createCopyToMenu());

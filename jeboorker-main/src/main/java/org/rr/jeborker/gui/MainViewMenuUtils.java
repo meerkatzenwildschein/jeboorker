@@ -4,6 +4,7 @@ import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.Action;
@@ -18,6 +19,8 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.tree.JRTree;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.action.ActionCallback;
 import org.rr.jeborker.gui.action.ActionFactory;
@@ -178,6 +181,24 @@ class MainViewMenuUtils {
 			}
 		}
 		return copyToSubMenu;
+	}
+	
+	static JMenu createImportToMenu(final List<IResourceHandler> items) {
+		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+		final List<String> basePath = preferenceStore.getBasePath();
+		final String name = Bundle.getString("MainMenuBarController.import");
+		final JMenu mnImport = new JMenu(SwingUtils.removeMnemonicMarker(name));
+
+		mnImport.setIcon(ImageResourceBundle.getResourceAsImageIcon("import_16.png"));
+		mnImport.setMnemonic(SwingUtils.getMnemonicKeyCode(name));
+		for (Iterator<String> iterator = basePath.iterator(); iterator.hasNext();) {
+			String path = iterator.next();
+			mnImport.add(MainViewMenuUtils.createFileSystemImportTargetMenuItem(path));
+		}
+		if(!ResourceHandlerUtils.containFilesOnly(items)) {
+			mnImport.setEnabled(false);
+		}
+		return mnImport;
 	}
 
 	static JMenuItem createFileSystemImportTargetMenuItem(String path) {
