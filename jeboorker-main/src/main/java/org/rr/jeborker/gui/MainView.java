@@ -1200,7 +1200,7 @@ class MainView extends JFrame {
 			menu.add(MainViewMenuUtils.createImportToMenu(items));
 		}
 
-		menu.add(MainViewMenuUtils.createCopyToMenu());
+		menu.add(MainViewMenuUtils.createSendToMenu());
 		menu.add(MainViewMenuUtils.createDeleteMenuItem(items));
 
 		return menu;
@@ -1254,7 +1254,7 @@ class MainView extends JFrame {
 			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(selectedResources));
 		}
 
-		menu.add(MainViewMenuUtils.createCopyToMenu());
+		menu.add(MainViewMenuUtils.createSendToMenu());
 		menu.add(MainViewMenuUtils.createDeleteMenuItem(selectedResources));
 
 		return menu;

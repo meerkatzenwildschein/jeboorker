@@ -285,7 +285,7 @@ class MainMenuBarView extends JMenuBar {
 				}
 				deleteFileMenuEntry.setAccelerator(MainViewMenuUtils.DELETE_KEY);
 
-				JMenu copyToSubMenu = MainViewMenuUtils.createCopyToMenu();
+				JMenu copyToSubMenu = MainViewMenuUtils.createSendToMenu();
 				if(selectedItems.size() >= 1) {
 					copyToSubMenu.setEnabled(true);
 				}  else {

@@ -128,7 +128,7 @@ class MainViewMenuUtils {
 	/**
 	 * Creates the <code>copy to</code> menu with all sub menu targets.
 	 */
-	static JMenu createCopyToMenu() {
+	static JMenu createSendToMenu() {
 		final MainController controller = MainController.getController();
 		final List<EbookPropertyItem> items = MainController.getController().getSelectedEbookPropertyItems();
 		final int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
