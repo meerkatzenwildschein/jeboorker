@@ -11,6 +11,7 @@ import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
@@ -30,39 +31,40 @@ public class MoveBetweenBaseFolderAction extends AbstractAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		MainController controller = MainController.getController();
-		int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
-		List<EbookPropertyItem> selectedEbookPropertyItems = controller.getModel().getEbookPropertyItemsAt(selectedEbookPropertyItemRows);
-		IResourceHandler targetFolderResourceHandler = ResourceHandlerFactory.getResourceHandler(targetBasePath);
-		
-		for (int i = 0 ; i < selectedEbookPropertyItemRows.length; i++) {
-			try {
-				EbookPropertyItem ebookPropertyItem = selectedEbookPropertyItems.get(i);
-				IResourceHandler sourceResourceHandler = ebookPropertyItem.getResourceHandler();
-				IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolderResourceHandler, sourceResourceHandler.getName());
-				if(targetResourceHandler.exists()) {
-					LoggerFactory.log(Level.WARNING, this, "Failed to move " + sourceResourceHandler + " to " + targetBasePath + ". Target file already exists.");
-					continue;
+		FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
+			
+			@Override
+			public void run() {
+				MainController controller = MainController.getController();
+				int[] selectedEbookPropertyItemRows = controller.getSelectedEbookPropertyItemRows();
+				List<EbookPropertyItem> selectedEbookPropertyItems = controller.getModel().getEbookPropertyItemsAt(selectedEbookPropertyItemRows);
+				IResourceHandler targetFolderResourceHandler = ResourceHandlerFactory.getResourceHandler(targetBasePath);
+
+				for (int i = 0; i < selectedEbookPropertyItemRows.length; i++) {
+					try {
+						EbookPropertyItem ebookPropertyItem = selectedEbookPropertyItems.get(i);
+						IResourceHandler sourceResourceHandler = ebookPropertyItem.getResourceHandler();
+						IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolderResourceHandler, sourceResourceHandler.getName());
+						if(targetResourceHandler.exists()) {
+							LoggerFactory.log(Level.WARNING, this, "Failed to move " + sourceResourceHandler + " to " + targetBasePath + ". Target file already exists.");
+							continue;
+						}
+						
+						sourceResourceHandler.moveTo(targetResourceHandler, false);
+						ActionUtils.refreshFileSystemResourceParent(sourceResourceHandler.getParentResource());
+						
+						ebookPropertyItem.setBasePath(targetBasePath);
+						ebookPropertyItem.setFile(targetResourceHandler.toFile().getAbsolutePath());
+						
+						DefaultDBManager.getInstance().updateObject(ebookPropertyItem);
+						
+						ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, targetResourceHandler);
+					} catch(Exception ex) {
+						LoggerFactory.log(Level.WARNING, this, "Failed to move file to " + targetBasePath, ex);
+					}
 				}
-				
-				boolean removed = controller.removeEbookPropertyItem(ebookPropertyItem);
-				if(removed) {
-					sourceResourceHandler.moveTo(targetResourceHandler, false);
-					ActionUtils.refreshFileSystemResourceParent(sourceResourceHandler.getParentResource());
-					
-					ebookPropertyItem.setBasePath(targetBasePath);
-					ebookPropertyItem.setFile(targetResourceHandler.toFile().getAbsolutePath());
-					
-					DefaultDBManager.getInstance().updateObject(ebookPropertyItem);
-					ActionUtils.addEbookPropertyItem(ebookPropertyItem, selectedEbookPropertyItemRows[i]);
-					
-					ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, targetResourceHandler);
-				}
-			} catch(Exception ex) {
-				LoggerFactory.log(Level.WARNING, this, "Failed to move file to " + targetBasePath, ex);
-			}
-		}
-		refreshFileSystemResourceParents(selectedEbookPropertyItems);
+				refreshFileSystemResourceParents(selectedEbookPropertyItems);			}
+		});
 	}
 
 	private static void refreshFileSystemResourceParents(List<EbookPropertyItem> resources) {
