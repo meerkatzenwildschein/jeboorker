@@ -1254,8 +1254,8 @@ class MainView extends JFrame {
 			menu.add(MainViewMenuUtils.createOpenFolderMenuItem(selectedResources));
 		}
 
-		menu.add(MainViewMenuUtils.createImportToMenu(selectedResources, Bundle.getString("MainMenuBarController.move"), ActionFactory.COMMON_ACTION_TYPES.MOVE_BETWEEN_BASE_FOLDER_ACTION));
 		menu.add(MainViewMenuUtils.createSendToMenu());
+		menu.add(MainViewMenuUtils.createImportToMenu(selectedResources, Bundle.getString("MainMenuBarController.move"), ActionFactory.COMMON_ACTION_TYPES.MOVE_BETWEEN_BASE_FOLDER_ACTION));
 		menu.add(MainViewMenuUtils.createDeleteMenuItem(selectedResources));
 
 		return menu;
