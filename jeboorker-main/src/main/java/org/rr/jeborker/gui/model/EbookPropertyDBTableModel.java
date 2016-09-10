@@ -32,7 +32,7 @@ import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import com.j256.ormlite.stmt.NullArgHolder;
 import com.j256.ormlite.stmt.Where;
 
-public class EbookPropertyDBTableModel implements ReloadableTableModel {
+public class EbookPropertyDBTableModel extends AbstractEbookPropertyTableModel {
 	
 	public abstract static class EbookPropertyDBTableModelQuery {
 		public boolean isVolatile() {
@@ -493,15 +493,6 @@ public class EbookPropertyDBTableModel implements ReloadableTableModel {
 			}
 		}
 		return whereConditions.removeAll(toRemove);
-	}
-
-	@Override
-	public List<EbookPropertyItem> getEbookPropertyItemsAt(int[] rowIndex) {
-		List<EbookPropertyItem> result = new ArrayList<>(rowIndex.length);
-		for (int i : rowIndex) {
-			result.add(getEbookPropertyItemAt(i));
-		}
-		return result;
 	}
 
 }

@@ -17,7 +17,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 
-public class EbookPropertyFileTableModel implements ReloadableTableModel {
+public class EbookPropertyFileTableModel extends AbstractEbookPropertyTableModel {
 	
 	private List<EbookPropertyItem> ebookPropertyItems;
 	
@@ -33,7 +33,6 @@ public class EbookPropertyFileTableModel implements ReloadableTableModel {
 			}
 		});
 	}
-
 	
 	/**
 	 * Adds a listener to the list that's notified each time a change to the data model occurs.
@@ -191,15 +190,6 @@ public class EbookPropertyFileTableModel implements ReloadableTableModel {
 		}
 		
 		return false;
-	}
-	
-	@Override
-	public List<EbookPropertyItem> getEbookPropertyItemsAt(int[] rowIndex) {
-		List<EbookPropertyItem> result = new ArrayList<>(rowIndex.length);
-		for (int i : rowIndex) {
-			result.add(getEbookPropertyItemAt(i));
-		}
-		return result;
 	}
 
 }
