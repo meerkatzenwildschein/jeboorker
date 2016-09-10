@@ -97,8 +97,6 @@ public class Jeboorker {
 					        mainController.getMainWindow().setExtendedState(state);
 					        mainController.getMainWindow().setFocusableWindowState(false);
 						    	mainController.getMainWindow().toFront();
-					    		//seems to be needed to work. Don't know why.
-					    		ReflectionUtils.sleepSilent(1000);
 						    	mainController.getMainWindow().setFocusableWindowState(true);
 						    }
 						});
