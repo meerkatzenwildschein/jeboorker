@@ -17,8 +17,10 @@ import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.DateConversionUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.commons.utils.StringUtil;
+import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.metadata.pdf.PDFDocument;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageInfo;
@@ -49,7 +51,6 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 
 			for (MetadataProperty metadataProperty : props) {
 				final String name = metadataProperty.getName();
-				final List<Object> value = metadataProperty.getValues();
 
 				if (metadataProperty instanceof PDFMetadataProperty) {
 					PDFMetadataProperty pdfMetadataProperty = (PDFMetadataProperty) metadataProperty;
@@ -65,7 +66,7 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 								+ ebookResource, null);
 					}
 				} else {
-					Object firstValue = value.get(0);
+					Object firstValue = ListUtils.get(metadataProperty.getValues(), 0);
 					if (ReflectionUtils.equals(metadataProperty.getPropertyClass(), Date.class)) {
 						// date must be formatted to something like D:20061204092842
 						String dateValue;
@@ -102,9 +103,12 @@ class PDFCommonMetadataWriter extends APDFCommonMetadataHandler implements IMeta
 			
 			pdfDoc.setInfo(info);
 			pdfDoc.setXMPMetadata(blankXMP.asByteArray());
+			FileRefreshBackground.setDisabled(true);
 			pdfDoc.write();
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "could not write pdf meta data for " + ebookResource, e);
+		} finally {
+			FileRefreshBackground.setDisabled(false);
 		}
 	}
 

@@ -29,6 +29,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.Base64;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
@@ -142,13 +143,18 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 	}
 
 	private void writeBook(final Book epub, final IResourceHandler ebookResourceHandler) throws IOException {
-		final EpubWriter writer = new EpubWriter();
-		final IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResourceHandler, "tmp");
-		writer.write(epub, temporaryResourceLoader.getContentOutputStream(false));
-		if(temporaryResourceLoader.size() > 0) {
-			temporaryResourceLoader.moveTo(ebookResourceHandler, true);
-		} else {
-			temporaryResourceLoader.delete();
+		FileRefreshBackground.setDisabled(true);
+		try {
+			final EpubWriter writer = new EpubWriter();
+			final IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResourceHandler, "tmp");
+			writer.write(epub, temporaryResourceLoader.getContentOutputStream(false));
+			if(temporaryResourceLoader.size() > 0) {
+				temporaryResourceLoader.moveTo(ebookResourceHandler, true);
+			} else {
+				temporaryResourceLoader.delete();
+			}
+		} finally {
+			FileRefreshBackground.setDisabled(false);
 		}
 	}
 	

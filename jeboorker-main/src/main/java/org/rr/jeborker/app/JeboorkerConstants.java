@@ -7,6 +7,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.metal.OceanTheme;
 
+import org.rr.commons.mufs.MimeUtils;
+
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertGreen;
@@ -38,7 +40,7 @@ public class JeboorkerConstants {
 
 			@Override
 			public String getMime() {
-				return "application/epub+zip".intern();
+				return MimeUtils.MIME_EPUB;
 			}
 			
 			@Override
@@ -55,7 +57,7 @@ public class JeboorkerConstants {
 
 			@Override
 			public String getMime() {
-				return "application/pdf".intern();
+				return MimeUtils.MIME_PDF;
 			}
 			
 			@Override
@@ -72,7 +74,7 @@ public class JeboorkerConstants {
 
 			@Override
 			public String getMime() {
-				return "application/x-cbz".intern();
+				return MimeUtils.MIME_CBZ;
 			}
 			
 			@Override
@@ -90,7 +92,7 @@ public class JeboorkerConstants {
 
 			@Override
 			public String getMime() {
-				return "application/x-cbr".intern();
+				return MimeUtils.MIME_CBR;
 			}
 			
 			@Override
@@ -108,7 +110,7 @@ public class JeboorkerConstants {
 
 			@Override
 			public String getMime() {
-				return "text/html".intern();
+				return MimeUtils.MIME_HTML;
 			}
 			
 			@Override
@@ -116,7 +118,25 @@ public class JeboorkerConstants {
 				return getMime();
 			}			
 			
-		}				
+		},
+		MIME_MOBI {
+
+			@Override
+			public String getName() {
+				return "mobi";
+			}
+
+			@Override
+			public String getMime() {
+				return MimeUtils.MIME_MOBI;
+			}
+			
+			@Override
+			public String toString() {
+				return getMime();
+			}			
+			
+		}
 	};
 
 	public static final Map<String, String> LOOK_AND_FEELS = new LinkedHashMap<String, String>() {

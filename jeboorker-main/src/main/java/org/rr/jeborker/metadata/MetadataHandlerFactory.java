@@ -5,6 +5,7 @@ import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
 import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
 import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_HTML;
 import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_MOBI;
 
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +75,8 @@ public class MetadataHandlerFactory {
 				return latestReader = new ComicBookMetadataReader(resource);
 			} else if(resource.getMimeType(true).equals(MIME_HTML.getMime())) {
 				return latestReader = new HTMLMetadataReader(resource);
+			} else if(resource.getMimeType(true).equals(MIME_MOBI.getMime())) {
+				return latestReader = new MobiMetadataReader(resource);
 			}  
 		}
 		return latestReader = new EmptyMetadataReader(resource);
@@ -108,6 +111,8 @@ public class MetadataHandlerFactory {
 				return wrap(new PDFCommonMetadataWriter(resource));
 			} else if(resource.getMimeType(true).equals(MIME_CBZ.getMime()) || resource.getMimeType(true).equals(MIME_CBR.getMime())) {
 				return wrap(new ComicBookMetadataWriter(resource));
+			} else if(resource.getMimeType(true).equals(MIME_MOBI.getMime())) {
+				return wrap(new MobiMetadataWriter(resource));
 			}
 		}
 		return null;

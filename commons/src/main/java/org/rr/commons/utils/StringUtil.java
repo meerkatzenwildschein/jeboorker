@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.Charsets;
@@ -1652,6 +1651,21 @@ public final class StringUtil implements Serializable {
 			return (text2 == null);
 		}
 		return text1.equals(text2);
+	}
+	
+
+	/**
+	 * Null-safe string comparator ignoring case
+	 *
+	 * @param text1
+	 * @param text2
+	 * @return
+	 */
+	public static boolean equalsIgnoreCase(String text1, String text2) {
+		if (text1 == null) {
+			return (text2 == null);
+		}
+		return text1.equalsIgnoreCase(text2);
 	}
 
 	/**
