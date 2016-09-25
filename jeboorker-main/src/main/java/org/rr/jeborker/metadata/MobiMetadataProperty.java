@@ -141,5 +141,16 @@ class MobiMetadataProperty extends MetadataProperty {
 		}
 		return super.getAdditionalDescription();
 	}
+	
+	@Override
+	public boolean isSingle() {
+		switch(exthRecord.getRecordType()) {
+		case 100: //author
+		case 105: //subject, genre
+			return false;
+		}
+		return super.isSingle();
+	}
+
 
 }
