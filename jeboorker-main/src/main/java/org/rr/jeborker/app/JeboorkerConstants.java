@@ -136,6 +136,24 @@ public class JeboorkerConstants {
 				return getMime();
 			}			
 			
+		},
+		MIME_AZW {
+
+			@Override
+			public String getName() {
+				return "azw3";
+			}
+
+			@Override
+			public String getMime() {
+				return MimeUtils.MIME_AZW;
+			}
+			
+			@Override
+			public String toString() {
+				return getMime();
+			}			
+			
 		}
 	};
 

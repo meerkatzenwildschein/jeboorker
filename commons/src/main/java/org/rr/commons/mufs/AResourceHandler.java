@@ -42,7 +42,7 @@ abstract class AResourceHandler implements IResourceHandler {
 			put(MimeUtils.MIME_XML, Pattern.compile("(.xml)$"));
 			put(MimeUtils.MIME_RTF, Pattern.compile("(.rtf)$"));
 			put(MimeUtils.MIME_MOBI, Pattern.compile("(.mobi)$"));
-			put(MimeUtils.MIME_AZW, Pattern.compile("(.azw)$"));
+			put(MimeUtils.MIME_AZW, Pattern.compile("(.azw\\d*)$"));
 			put(MimeUtils.MIME_FB2, Pattern.compile("(.fb2)$"));
 			put(MimeUtils.MIME_LIT, Pattern.compile("(.lit)$"));
 			put(MimeUtils.MIME_PKG, Pattern.compile("(.pkg)$"));
