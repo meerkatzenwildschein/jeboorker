@@ -83,7 +83,7 @@ class SaveMetadataAction extends AbstractAction {
 			if(MetadataHandlerFactory.hasWriterSupport(itemResourceList)) {
 				final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);
 				final Property metadataProperty = evt.getMetadataProperty();
-				boolean isEditable = metadataProperty instanceof DefaultProperty ? ((DefaultProperty) metadataProperty).isEditable() : true;
+				boolean isEditable = isPropertyEditable(metadataProperty) || isPropertyDeletable(metadataProperty);
 				if(metadataProperty == null || !isEditable) {
 					action.setEnabled(false);
 				} else {
@@ -92,6 +92,14 @@ class SaveMetadataAction extends AbstractAction {
 			}
 		}
 
+		private boolean isPropertyEditable(Property metadataProperty) {
+			return metadataProperty instanceof DefaultProperty ? ((DefaultProperty) metadataProperty).isEditable() : true;
+		}
+		
+		private boolean isPropertyDeletable(Property metadataProperty) {
+			return metadataProperty instanceof DefaultProperty ? ((DefaultProperty) metadataProperty).isDeletable() : true;
+		}
+		
 		@Override
 		public void ebookItemSelectionChanged(ApplicationEvent evt) {
 			final ApplicationAction action = ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.SAVE_METADATA_ACTION, null);

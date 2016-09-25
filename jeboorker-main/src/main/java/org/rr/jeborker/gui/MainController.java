@@ -294,11 +294,9 @@ public class MainController {
 	 */
 	public void removeSelectedMetadataProperty() {
 		Property selectedMetadataProperty = getSelectedMetadataProperty();
-		if(selectedMetadataProperty!=null) {
-			if(selectedMetadataProperty.isEditable()) {
-				PropertySheetTableModel model = getPropertySheetHandler().getModel();
-				model.removeProperty(selectedMetadataProperty);
-			}
+		if (selectedMetadataProperty != null) {
+			PropertySheetTableModel model = getPropertySheetHandler().getModel();
+			model.removeProperty(selectedMetadataProperty);
 		}
 	}
 
