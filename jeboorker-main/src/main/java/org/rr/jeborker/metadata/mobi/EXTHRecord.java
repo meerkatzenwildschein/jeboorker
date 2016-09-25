@@ -188,6 +188,10 @@ public class EXTHRecord {
 		StreamUtils.intToByteArray(size(), recordLength);
 	}
 
+	public void setData(byte[] value) {
+		recordData = value;
+	}
+	
 	public void setData(int value) {
 		if (recordData == null) {
 			recordData = new byte[4];

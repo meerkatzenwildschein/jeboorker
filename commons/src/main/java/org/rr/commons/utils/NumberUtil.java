@@ -1,5 +1,7 @@
 package org.rr.commons.utils;
 
+import java.nio.ByteBuffer;
+
 public class NumberUtil {
 
 	private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -11,6 +13,10 @@ public class NumberUtil {
 			result += data[i] << 8 * (data.length - 1 - i);
 		}
 		return result;
+	}
+	
+	public static byte[] toByteArray(long l) {
+		return ByteBuffer.allocate(Long.SIZE / Byte.SIZE).putLong(l).array();
 	}
 
 	public static String bytesToHex(byte[] bytes) {

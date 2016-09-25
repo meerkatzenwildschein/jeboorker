@@ -73,6 +73,13 @@ public class MetadataProperty implements Cloneable {
 	}
 	
 	/**
+	 * Gets the code name which can be some format specific, technical information like the record types for the mobipocket format. 
+	 */
+	public String getOriginCodeName() {
+		return EMPTY;
+	}
+	
+	/**
 	 * If a {@link MetadataProperty} implementation supports multiple
 	 * values per property, a list of values is returned here. These
 	 * values are all from the same type or empty/null.
@@ -227,5 +234,9 @@ public class MetadataProperty implements Cloneable {
 			return hints.get(key);
 		}
 		return null;
+	}
+	
+	public String getAdditionalDescription() {
+		return EMPTY;
 	}
 }

@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.DateUtils;
 import org.rr.commons.utils.ReflectionUtils;
@@ -121,7 +120,10 @@ class EbookSheetProperty extends DefaultProperty {
 			}
 			value.append(StringUtil.toString(metadataProperty.getValues().get(lpropertyIndex)));
 		}
-
+		
+		if(StringUtil.isNotBlank(metadataProperty.getAdditionalDescription())) {
+			value.append("<br/>" + metadataProperty.getAdditionalDescription());
+		}
 		return value.toString();
 	}
 
@@ -138,7 +140,7 @@ class EbookSheetProperty extends DefaultProperty {
 	}
 
 	public String getDisplayDescriptionName() {
-		final String name = metadataProperty.getName();
+		String name = (metadataProperty.getOriginCodeName() + " " + metadataProperty.getName()).trim();
 
 		String localizedName = getDisplayName();
 		localizedName += "</b><i> &lt;" + name+"&gt;</i><b>";

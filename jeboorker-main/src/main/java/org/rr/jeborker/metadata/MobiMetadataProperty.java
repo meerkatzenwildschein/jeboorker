@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.NumberUtil;
 import org.rr.commons.utils.StringUtil;
@@ -36,12 +37,8 @@ class MobiMetadataProperty extends MetadataProperty {
 	private Object getValue() {
 		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
 			return DateConversionUtils.toDate(new String(exthRecord.getData()));
-		} else if(exthRecord.getRecordType() == 204) {
-			// creator software
-			return NumberUtil.getUnsignedInt(exthRecord.getData()) & 0xFF;
-		} else if(isCreatorNumberType()) {
-			// creator number
-			return NumberUtil.getUnsignedInt(exthRecord.getData()) & 0xFF;
+		} else if(isCreatorNumberType() || exthRecord.getRecordType() == 204) {
+			return NumberUtil.getUnsignedInt(exthRecord.getData()) & 0xFF; // creator software
 		} else if(exthRecord.getRecordType() == 300) { // font signature
 			return NumberUtil.bytesToHex(exthRecord.getData());
 		}
@@ -77,6 +74,10 @@ class MobiMetadataProperty extends MetadataProperty {
 			case 107:
 			case 108:
 			case 109:
+			case 204:
+			case 205:
+			case 206:
+			case 207:
 			case 112:
 			case 113:
 			case 501:
@@ -101,24 +102,23 @@ class MobiMetadataProperty extends MetadataProperty {
 	public String getName() {
 		return exthRecord.getTypeDescription() != null ? exthRecord.getTypeDescription() : "Unknown " + exthRecord.getRecordType();
 	}
+	
+	public String getOriginCodeName() {
+		return StringUtil.toString(exthRecord.getRecordType());
+	}
 
 	public EXTHRecord getExthRecord() {
 		return exthRecord;
 	}
-	
-	/**
-	 * Sets the value to the desired index.
-	 * @param idx The index of the value
-	 */
+
 	public void setValue(final Object value, final int idx) {
 		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
 			Date d = (value instanceof Date) ? (Date) value : DateConversionUtils.toDate(StringUtil.toString(value));
 			String dateString = DateConversionUtils.DATE_FORMATS.W3C_SECOND.getString(d);
 			exthRecord.setData(dateString, StringUtil.UTF_8);
-		} else if(exthRecord.getRecordType() == 204) {
-			// creator software, changing is not supported
-		} else if(isCreatorNumberType()) {
-			// creator number, changing is not supported
+		} else if(exthRecord.getRecordType() == 204 || isCreatorNumberType()) {
+			Long l = (value instanceof Long) ? (Long) value : NumberUtils.toLong(StringUtil.toString(value));
+			exthRecord.setData(NumberUtil.toByteArray(l));
 		} else if(exthRecord.getRecordType() == 300) { 
 		// font signature, changing is not supported
 		} else {
@@ -126,12 +126,20 @@ class MobiMetadataProperty extends MetadataProperty {
 		}
 	}
 
-	/**
-	 * Drop all existing values and set this ones from the given List.
-	 * @param newValues The new values for this {@link MetadataProperty} instance.
-	 */
 	public void setValues(final List<Object> newValues) {
 		setValue(newValues.get(0), 0);
+	}
+
+	@Override
+	public String getAdditionalDescription() {
+		String key = "MobiMetadataProperty." + exthRecord.getRecordType() + ".description";
+		if(Bundle.getBundle().containsKey(key)) {
+			String description = Bundle.getBundle().getString("MobiMetadataProperty." + exthRecord.getRecordType() + ".description");
+			if (StringUtil.isNotBlank(description)) {
+				return description;
+			}
+		}
+		return super.getAdditionalDescription();
 	}
 
 }

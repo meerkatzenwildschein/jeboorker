@@ -113,6 +113,11 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 			case DESCRIPTION:
 				result.add(new MobiMetadataProperty(103, EMPTY)); // description
 				break;
+			case GENRE:
+				result.add(new MobiMetadataProperty(105, EMPTY)); // subject
+				break;
+			default:
+				break;
 			}
 		}
 		return result;
@@ -146,6 +151,8 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 				if (StringUtil.equalsIgnoreCase(prop.getName(), "description")) {
 					result.add(prop);
 				}
+				break;
+			default:
 				break;
 			}
 
