@@ -15,18 +15,22 @@ class MobiMetadataProperty extends MetadataProperty {
 	
 	private EXTHRecord exthRecord;
 	
-	MobiMetadataProperty(EXTHRecord exthRecord) {
+	private String encoding;
+	
+	MobiMetadataProperty(EXTHRecord exthRecord, String encoding) {
 		super(getRecordName(exthRecord), exthRecord);
 		this.exthRecord = exthRecord;
+		this.encoding = encoding;
 	}
 	
-	MobiMetadataProperty(int recordType, byte[] data) {
+	MobiMetadataProperty(int recordType, byte[] data, String encoding) {
 		super(EXTHRecord.getDescriptionForType(recordType), new EXTHRecord(recordType, data));
 		exthRecord = (EXTHRecord) super.getValues().get(0);
+		this.encoding = encoding;
 	}
 	
-	MobiMetadataProperty(int recordType, String data) {
-		this(recordType, data.getBytes());
+	MobiMetadataProperty(int recordType, String data, String encoding) {
+		this(recordType, data.getBytes(), encoding);
 	}
 	
 	@Override
@@ -92,7 +96,7 @@ class MobiMetadataProperty extends MetadataProperty {
 	 */
 	@Override
 	public MetadataProperty clone() {
-		MobiMetadataProperty newMetadataProperty = new MobiMetadataProperty(this.exthRecord);
+		MobiMetadataProperty newMetadataProperty = new MobiMetadataProperty(exthRecord, encoding);
 		newMetadataProperty.hints = this.hints;
 		newMetadataProperty.values = new ArrayList<>(this.values);
 		return newMetadataProperty;
@@ -115,14 +119,14 @@ class MobiMetadataProperty extends MetadataProperty {
 		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
 			Date d = (value instanceof Date) ? (Date) value : DateConversionUtils.toDate(StringUtil.toString(value));
 			String dateString = DateConversionUtils.DATE_FORMATS.W3C_SECOND.getString(d);
-			exthRecord.setData(dateString, StringUtil.UTF_8);
+			exthRecord.setData(dateString, encoding);
 		} else if(exthRecord.getRecordType() == 204 || isCreatorNumberType()) {
 			Long l = (value instanceof Long) ? (Long) value : NumberUtils.toLong(StringUtil.toString(value));
 			exthRecord.setData(NumberUtil.toByteArray(l));
 		} else if(exthRecord.getRecordType() == 300) { 
 		// font signature, changing is not supported
 		} else {
-			exthRecord.setData(StringUtil.toString(value), StringUtil.UTF_8);
+			exthRecord.setData(StringUtil.toString(value), encoding);
 		}
 	}
 

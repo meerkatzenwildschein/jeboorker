@@ -2,10 +2,12 @@ package org.rr.jeborker.metadata;
 
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtil;
@@ -18,6 +20,8 @@ import org.rr.jeborker.metadata.mobi.MobiMetaException;
 public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMetadataReader {
 
 	private IResourceHandler ebookResource;
+	
+	private String characterEncoding;
 
 	public MobiMetadataReader(IResourceHandler ebookResource) {
 		this.ebookResource = ebookResource;
@@ -34,6 +38,7 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 			final ArrayList<MetadataProperty> result = new ArrayList<>();
 
 			MobiMeta mobiMeta = new MobiMeta(ebookResource.toFile());
+			characterEncoding = StringUtils.defaultIfBlank(mobiMeta.getCharacterEncoding(), StringUtil.UTF_8);
 
 			String fullName = mobiMeta.getFullName();
 			if (StringUtil.isNotBlank(fullName)) {
@@ -42,7 +47,7 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 
 			List<EXTHRecord> exthRecords = mobiMeta.getEXTHRecords();
 			for (EXTHRecord exthRecord : exthRecords) {
-				result.add(new MobiMetadataProperty(exthRecord));
+				result.add(new MobiMetadataProperty(exthRecord, characterEncoding));
 			}
 			return result;
 		} catch (MobiMetaException e) {
@@ -55,18 +60,18 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 	public List<MetadataProperty> getSupportedMetadata() {
 		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		result.add(new MetadataProperty("title", EMPTY));
-		result.add(new MobiMetadataProperty(100, EMPTY)); // author
-		result.add(new MobiMetadataProperty(103, EMPTY)); // description
-		result.add(new MobiMetadataProperty(104, EMPTY)); // isbn
-		result.add(new MobiMetadataProperty(105, EMPTY)); // subject
-		result.add(new MobiMetadataProperty(106, EMPTY)); // publishingdate
-		result.add(new MobiMetadataProperty(107, EMPTY)); // review
-		result.add(new MobiMetadataProperty(108, EMPTY)); // contributor
-		result.add(new MobiMetadataProperty(109, EMPTY)); // rights
-		result.add(new MobiMetadataProperty(112, EMPTY)); // source
-		result.add(new MobiMetadataProperty(113, EMPTY)); // asin
-		result.add(new MobiMetadataProperty(524, EMPTY)); // language
-		result.add(new MobiMetadataProperty(501, EMPTY)); // cdetype
+		result.add(new MobiMetadataProperty(100, EMPTY, characterEncoding)); // author
+		result.add(new MobiMetadataProperty(103, EMPTY, characterEncoding)); // description
+		result.add(new MobiMetadataProperty(104, EMPTY, characterEncoding)); // isbn
+		result.add(new MobiMetadataProperty(105, EMPTY, characterEncoding)); // subject
+		result.add(new MobiMetadataProperty(106, EMPTY, characterEncoding)); // publishingdate
+		result.add(new MobiMetadataProperty(107, EMPTY, characterEncoding)); // review
+		result.add(new MobiMetadataProperty(108, EMPTY, characterEncoding)); // contributor
+		result.add(new MobiMetadataProperty(109, EMPTY, characterEncoding)); // rights
+		result.add(new MobiMetadataProperty(112, EMPTY, characterEncoding)); // source
+		result.add(new MobiMetadataProperty(113, EMPTY, characterEncoding)); // asin
+		result.add(new MobiMetadataProperty(524, EMPTY, characterEncoding)); // language
+		result.add(new MobiMetadataProperty(501, EMPTY, characterEncoding)); // cdetype
 		return result;
 	}
 
@@ -102,19 +107,19 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 				result.add(new MetadataProperty("title", EMPTY));
 				break;
 			case AUTHOR:
-				result.add(new MobiMetadataProperty(100, EMPTY)); // author
+				result.add(new MobiMetadataProperty(100, EMPTY, characterEncoding)); // author
 				break;
 			case ISBN:
-				result.add(new MobiMetadataProperty(104, EMPTY)); // isbn
+				result.add(new MobiMetadataProperty(104, EMPTY, characterEncoding)); // isbn
 				break;
 			case LANGUAGE:
-				result.add(new MobiMetadataProperty(524, EMPTY)); // language
+				result.add(new MobiMetadataProperty(524, EMPTY, characterEncoding)); // language
 				break;
 			case DESCRIPTION:
-				result.add(new MobiMetadataProperty(103, EMPTY)); // description
+				result.add(new MobiMetadataProperty(103, EMPTY, characterEncoding)); // description
 				break;
 			case GENRE:
-				result.add(new MobiMetadataProperty(105, EMPTY)); // subject
+				result.add(new MobiMetadataProperty(105, EMPTY, characterEncoding)); // subject
 				break;
 			default:
 				break;
