@@ -110,7 +110,6 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 				}
 			}
 		}
-		System.out.println(item);
 	}
 
 	@Override
