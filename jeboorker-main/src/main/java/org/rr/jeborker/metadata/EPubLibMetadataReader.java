@@ -39,7 +39,6 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		final IResourceHandler ebookResourceHandler = getEbookResource().get(0);
 
 		try {
-//			final byte[] zipData = this.getContent(ebookResourceHandler);
 			final Book epub = readBook(ebookResourceHandler.getContentInputStream(), ebookResourceHandler, true);
 			final Metadata metadata = epub.getMetadata();
 

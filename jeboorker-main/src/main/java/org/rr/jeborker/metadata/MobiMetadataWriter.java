@@ -25,7 +25,7 @@ public class MobiMetadataWriter implements IMetadataWriter {
 		try {
 			FileRefreshBackground.setDisabled(true);
 			
-			MobiMeta mobiMeta = new MobiMeta(ebookResource.toFile());
+			MobiMeta mobiMeta = new MobiMeta().readMetaData(ebookResource.toFile());
 			List<EXTHRecord> exthRecords = mobiMeta.getEXTHRecords();
 			exthRecords.clear();
 			

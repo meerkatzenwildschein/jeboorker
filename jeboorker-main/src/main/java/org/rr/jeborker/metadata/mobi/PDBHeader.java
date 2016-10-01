@@ -29,25 +29,29 @@ package org.rr.jeborker.metadata.mobi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @see http://wiki.mobileread.com/wiki/PDB#Palm_Database_Format
+ */
 public class PDBHeader {
-	private byte[] name = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	private byte[] attributes = { 0, 0 };
-	private byte[] version = { 0, 0 };
-	private byte[] creationDate = { 0, 0, 0, 0 };
-	private byte[] modificationDate = { 0, 0, 0, 0 };
-	private byte[] lastBackupDate = { 0, 0, 0, 0 };
-	private byte[] modificationNumber = { 0, 0, 0, 0 };
-	private byte[] appInfoID = { 0, 0, 0, 0 };
-	private byte[] sortInfoID = { 0, 0, 0, 0 };
-	private byte[] type = { 0, 0, 0, 0 };
-	private byte[] creator = { 0, 0, 0, 0 };
-	private byte[] uniqueIDSeed = { 0, 0, 0, 0 };
-	private byte[] nextRecordListID = { 0, 0, 0, 0 };
-	private byte[] numRecords = { 0, 0 };
-	private List<RecordInfo> recordInfoList;
+	private byte[] name = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // 0
+	private byte[] attributes = { 0, 0 }; // 32
+	private byte[] version = { 0, 0 }; // 34
+	private byte[] creationDate = { 0, 0, 0, 0 }; // 36
+	private byte[] modificationDate = { 0, 0, 0, 0 }; // 40
+	private byte[] lastBackupDate = { 0, 0, 0, 0 }; // 44
+	private byte[] modificationNumber = { 0, 0, 0, 0 }; // 48
+	private byte[] appInfoID = { 0, 0, 0, 0 }; // 52
+	private byte[] sortInfoID = { 0, 0, 0, 0 }; // 56
+	private byte[] type = { 0, 0, 0, 0 }; // 60
+	private byte[] creator = { 0, 0, 0, 0 }; // 64
+	private byte[] uniqueIDSeed = { 0, 0, 0, 0 }; // 68
+	private byte[] nextRecordListID = { 0, 0, 0, 0 }; // 72
+	private byte[] numRecords = { 0, 0 }; // 76
+	private List<RecordInfo> recordInfoList; // 78
 	private byte[] gapToData = { 0, 0 };
 
 	public PDBHeader(InputStream in) throws IOException {
@@ -75,6 +79,10 @@ public class PDBHeader {
 		}
 
 		StreamUtils.readByteArray(in, gapToData);
+	}
+	
+	public List<RecordInfo> getRecordInfos() {
+		return Collections.unmodifiableList(recordInfoList);
 	}
 
 	public long getMobiHeaderSize() {

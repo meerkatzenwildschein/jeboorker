@@ -44,7 +44,7 @@ public class RecordInfo {
 			MobiCommon.logMessage("RecordInfo uniqueID: " + StreamUtils.byteArrayToInt(uniqueID));
 		}
 	}
-
+	
 	public long getRecordDataOffset() {
 		return StreamUtils.byteArrayToLong(recordDataOffset);
 	}

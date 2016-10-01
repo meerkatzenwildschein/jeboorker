@@ -98,7 +98,7 @@ public interface IMetadataReader {
 			}
 
 			public void fillItem(MetadataProperty metadataProperty, EbookPropertyItem item) {
-				item.setGenre(metadataProperty.getValueAsString());
+				item.setGenre(StringUtil.join(IDBObject.LIST_SEPARATOR_CHAR, item.getGenre(), metadataProperty.getValueAsString()));
 			}
 			
 			@Override

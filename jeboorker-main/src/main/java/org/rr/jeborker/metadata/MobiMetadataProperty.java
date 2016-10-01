@@ -10,6 +10,7 @@ import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.NumberUtil;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.metadata.mobi.EXTHRecord;
+import org.rr.jeborker.metadata.mobi.StreamUtils;
 
 class MobiMetadataProperty extends MetadataProperty {
 	
@@ -42,9 +43,9 @@ class MobiMetadataProperty extends MetadataProperty {
 		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
 			return DateConversionUtils.toDate(new String(exthRecord.getData()));
 		} else if(isCreatorNumberType() || exthRecord.getRecordType() == 204) {
-			return NumberUtil.getUnsignedInt(exthRecord.getData()) & 0xFF; // creator software
-		} else if(exthRecord.getRecordType() == 300) { // font signature
-			return NumberUtil.bytesToHex(exthRecord.getData());
+			return StreamUtils.byteArrayToLong(exthRecord.getData()); // creator software
+		} else if(EXTHRecord.isBinaryType(exthRecord.getRecordType())) { 
+			return "0x" + NumberUtil.bytesToHex(exthRecord.getData());
 		}
 		
 		return new String(exthRecord.getData());
@@ -123,8 +124,8 @@ class MobiMetadataProperty extends MetadataProperty {
 		} else if(exthRecord.getRecordType() == 204 || isCreatorNumberType()) {
 			Long l = (value instanceof Long) ? (Long) value : NumberUtils.toLong(StringUtil.toString(value));
 			exthRecord.setData(NumberUtil.toByteArray(l));
-		} else if(exthRecord.getRecordType() == 300) { 
-		// font signature, changing is not supported
+		} else if(EXTHRecord.isBinaryType(exthRecord.getRecordType())) {
+			// binary value types can not be edited.
 		} else {
 			exthRecord.setData(StringUtil.toString(value), encoding);
 		}

@@ -2,7 +2,6 @@ package org.rr.jeborker.metadata;
 
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,12 +9,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.metadata.AEpubMetadataHandler.EPUB_METADATA_TYPES;
 import org.rr.jeborker.metadata.mobi.EXTHRecord;
 import org.rr.jeborker.metadata.mobi.MobiMeta;
-import org.rr.jeborker.metadata.mobi.MobiMetaException;
 
 public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMetadataReader {
 
@@ -37,7 +35,7 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 		try {
 			final ArrayList<MetadataProperty> result = new ArrayList<>();
 
-			MobiMeta mobiMeta = new MobiMeta(ebookResource.toFile());
+			MobiMeta mobiMeta = new MobiMeta().readMetaData(ebookResource.toFile());
 			characterEncoding = StringUtils.defaultIfBlank(mobiMeta.getCharacterEncoding(), StringUtil.UTF_8);
 
 			String fullName = mobiMeta.getFullName();
@@ -49,8 +47,14 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 			for (EXTHRecord exthRecord : exthRecords) {
 				result.add(new MobiMetadataProperty(exthRecord, characterEncoding));
 			}
+			
+			byte[] cover = mobiMeta.getCoverOrThumb();
+			if(cover != null) {
+				result.add(new MetadataProperty(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName(), cover));
+			}
+			
 			return result;
-		} catch (MobiMetaException e) {
+		} catch (Exception e) {
 			LoggerFactory.logWarning(getClass(), "Could not read metadata for pdf " + ebookResource, e);
 		}
 		return new ArrayList<MetadataProperty>(0);
@@ -61,6 +65,7 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 		final ArrayList<MetadataProperty> result = new ArrayList<>();
 		result.add(new MetadataProperty("title", EMPTY));
 		result.add(new MobiMetadataProperty(100, EMPTY, characterEncoding)); // author
+		result.add(new MobiMetadataProperty(101, EMPTY, characterEncoding)); // publisher
 		result.add(new MobiMetadataProperty(103, EMPTY, characterEncoding)); // description
 		result.add(new MobiMetadataProperty(104, EMPTY, characterEncoding)); // isbn
 		result.add(new MobiMetadataProperty(105, EMPTY, characterEncoding)); // subject
@@ -79,13 +84,33 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 	public void fillEbookPropertyItem(List<MetadataProperty> metadataProperties, EbookPropertyItem item) {
 		item.clearMetadata();
 		for (MetadataProperty metadataProperty : metadataProperties) {
-			for (EPUB_METADATA_TYPES type : EPUB_METADATA_TYPES.values()) {
-				if (type.getName().equals(metadataProperty.getName())) {
-					type.fillItem(metadataProperty, item);
-					break;
+			if(metadataProperty instanceof MobiMetadataProperty) {
+				if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "author")) {
+					COMMON_METADATA_TYPES.AUTHOR.fillItem(metadataProperty, item);
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "publisher")) {
+					item.setPublisher(metadataProperty.getValueAsString());
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "publishing date")) {
+					item.setPublishingDate(DateConversionUtils.toDate(metadataProperty.getValueAsString()));
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "subject")) {
+					item.setGenre(StringUtil.join(" ", item.getGenre(), metadataProperty.getValueAsString()));
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "rights")) {
+					item.setRights(metadataProperty.getValueAsString());
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "ISBN")) {
+					item.setIsbn(metadataProperty.getValueAsString());
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "language")) {
+					item.setLanguage(metadataProperty.getValueAsString());
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "description")) {
+					item.setDescription(metadataProperty.getValueAsString());
+				}
+			} else {
+				if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), "title")) {
+					item.setTitle(metadataProperty.getValueAsString());
+				} else if(StringUtil.equalsIgnoreCase(metadataProperty.getName(), IMetadataReader.COMMON_METADATA_TYPES.COVER.getName())) {
+					COMMON_METADATA_TYPES.COVER.fillItem(metadataProperty, item);
 				}
 			}
 		}
+		System.out.println(item);
 	}
 
 	@Override
@@ -121,6 +146,9 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 			case GENRE:
 				result.add(new MobiMetadataProperty(105, EMPTY, characterEncoding)); // subject
 				break;
+			case COVER:
+				result.add(new MetadataProperty(COMMON_METADATA_TYPES.COVER.getName(), null)); // cover
+				break;
 			default:
 				break;
 			}
@@ -154,6 +182,16 @@ public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMe
 				break;
 			case DESCRIPTION:
 				if (StringUtil.equalsIgnoreCase(prop.getName(), "description")) {
+					result.add(prop);
+				}
+				break;
+			case GENRE:
+				if (StringUtil.equalsIgnoreCase(prop.getName(), "subject")) {
+					result.add(prop);
+				}
+				break;
+			case COVER:
+				if(StringUtil.equalsIgnoreCase(prop.getName(), COMMON_METADATA_TYPES.COVER.getName())) {
 					result.add(prop);
 				}
 				break;

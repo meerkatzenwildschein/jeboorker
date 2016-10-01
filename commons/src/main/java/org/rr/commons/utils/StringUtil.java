@@ -1832,5 +1832,24 @@ public final class StringUtil implements Serializable {
 			}
 			return null;
 		}
+		
+		/**
+		 * Creates a string from the given strings where each of them is separated by the given separator.
+		 * @param separator The separator which separates each given string.
+		 * @param s The strings to be joined together.
+		 * @return The joined string.
+		 */
+		public static String join(String separator, String... s) {
+			StringBuffer b = new StringBuffer();
+			for (String string : s) {
+				if (isNotEmpty(string)) {
+					if (b.length() != 0) {
+						b.append(separator);
+					}
+					b.append(string);
+				}
+			}
+			return b.toString();
+		}
 
 }

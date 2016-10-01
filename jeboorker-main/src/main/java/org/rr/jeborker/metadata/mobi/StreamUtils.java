@@ -26,6 +26,7 @@
  */
 package org.rr.jeborker.metadata.mobi;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -54,9 +55,9 @@ public class StreamUtils {
 
 	public static byte readByte(InputStream in) throws IOException {
 		int b = in.read();
-		if (b == -1)
+		if (b == -1) {
 			throw new IOException("Supposed to read a byte, but could not");
-		LoggerFactory.log(Level.WARNING, StreamUtils.class, "readByte: " + b);
+		}
 		return (byte) (b & 0xff);
 	}
 
@@ -72,6 +73,20 @@ public class StreamUtils {
 			offset += bytesRead;
 			bytesLeft -= bytesRead;
 		}
+	}
+
+	public static byte[] inputStreamToByteArray(InputStream is) throws IOException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		int nRead;
+		byte[] data = new byte[16384];
+
+		while ((nRead = is.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, nRead);
+		}
+
+		buffer.flush();
+		return buffer.toByteArray();
 	}
 
 	public static String byteArrayToString(byte[] buffer) {
@@ -163,11 +178,13 @@ public class StreamUtils {
 		sb.append("{ ");
 		int len = buffer.length;
 		for (int i = 0; i < len; i++) {
-			if (i > 0)
+			if (i > 0) {
 				sb.append(", ");
+			}
 			sb.append(buffer[i] & 0xff);
 		}
 		sb.append(" }");
 		return sb.toString();
 	}
+
 }

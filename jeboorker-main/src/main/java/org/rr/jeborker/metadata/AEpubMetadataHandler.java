@@ -7,13 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import nl.siegmann.epublib.domain.Book;
-import nl.siegmann.epublib.domain.Identifier;
-import nl.siegmann.epublib.domain.Resource;
-import nl.siegmann.epublib.domain.Resources;
-import nl.siegmann.epublib.epub.EpubReader;
-
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -27,6 +20,12 @@ import org.rr.commons.utils.compression.zip.LazyZipEntryStream;
 import org.rr.commons.utils.compression.zip.ZipUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.IMetadataReader.COMMON_METADATA_TYPES;
+
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Identifier;
+import nl.siegmann.epublib.domain.Resource;
+import nl.siegmann.epublib.domain.Resources;
+import nl.siegmann.epublib.epub.EpubReader;
 
 abstract class AEpubMetadataHandler extends AMetadataHandler {
 

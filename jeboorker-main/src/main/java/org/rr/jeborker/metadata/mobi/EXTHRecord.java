@@ -59,10 +59,19 @@ public class EXTHRecord {
 			put(117, "adult"); // Mobipocket Creator adds this if Adult only is checked on its GUI; contents: "yes"
 			put(118, "retail price"); // As text, e.g. "4.99"
 			put(119, "retail price currency"); // As text, e.g. "USD"
+			put(120, "TSC");
 			put(121, "KF8 BOUNDARY Offset");
+			put(122, "fixed-layout");
+			put(123, "book-type");
+			put(124, "orientation-lock");
 			put(125, "count of resources");
+			put(126, "original-resolution");
+			put(127, "zero-gutter");
+			put(128, "zero-margin");
 			put(129, "KF8 cover URI");
 			put(131, "Unknown 131");
+			put(132, "region magnification");
+			put(150, "lending enabled");
 			put(200, "dictionary short name"); // As text
 			put(201, "coveroffset"); // Add to first image field in Mobi Header to find PDB record containing the cover image
 			put(202, "thumboffset"); // Add to first image field in Mobi Header to find PDB record containing the thumbnail cover image
@@ -92,9 +101,45 @@ public class EXTHRecord {
 			put(502, "Last update time");
 			put(503, "Updated Title");
 			put(504, "ASIN");
+			put(505, "amazon content reference");
+			put(506, "Title-Language");
+			put(507, "Title-Display-Direction");
+			put(508, "Title-Pronunciation");
+			put(509, "Title-Collation");
+			put(510, "Secondary-Title");
+			put(511, "Secondary-Title-Language");
+			put(512, "Secondary-Title-Direction");
+			put(513, "Secondary-Title-Pronunciation");
+			put(514, "Secondary-Title-Collation");
+			put(515, "Author-Language");
+			put(516, "Author-Display-Direction");
+			put(517, "Author-Pronunciation");
+			put(518, "Author-Collation");
+			put(519, "Author-Type");
+			put(520, "Publisher-Language");
+			put(521, "Publisher-Display-Direction");
+			put(522, "Publisher-Pronunciation");
+			put(523, "Publisher-Collation");
 			put(524, "language");
 			put(525, "alignment");
+			put(526, "NCX-Ingested-By-Software");
+			put(527, "page-progression-direction");
+			put(528, "override-kindle-fonts");
+			put(529, "Compression-Upgraded");
+			put(530, "Soft-Hyphens-In-Content");
+			put(531, "Dictionary_In_Langague");
+			put(532, "Dictionary_Out_Language");
+			put(533, "Font_Converted");
+			put(534, "Amazon_Creator_Info");
 			put(535, "Creator Build Number"); // I found 1019-d6e4792 in this record, which is a build number of Kindlegen 2.7
+			put(536, "HD-Media-Containers-Info"); // CONT_Header is 0, Ends with CONTAINER_BOUNDARY (or Asset_Type?)
+			put(538, "Resource-Container-Fidelity");
+			put(539, "HD-Container-Mimetype");
+			put(540, "Sample-For_Special-Purpose");
+			put(541, "Kindletool-Operation-Information");
+			put(542, "Container_Id");
+			put(543, "Asset-Type");
+			put(544, "Unknown 544");
 			put(547, "InMemory"); // String 'I\x00n\x00M\x00e\x00m\x00o\x00r\x00y\x00' found in this record, for KindleGen V2.9 build 1029-0897292
 		}
 	};
@@ -122,6 +167,20 @@ public class EXTHRecord {
 	
 	public static boolean isDateType(int type) {
 		return dateTypesSet.contains(Integer.valueOf(type));
+	}
+	
+	public static boolean isBinaryType(int type) {
+		return type == 300 // font signature
+				|| type == 208 // Watermark
+				|| type == 209 // Tamper-Proof-Keys
+				|| type == 403 // Unknown
+				|| type == 405 // Ownership-Type
+				|| type == 407 // Unknown
+				|| type == 420 // Multimedia-Content-Reference
+				|| type == 450 // Locations_Match
+				|| type == 451 // Full-Story-Length
+				|| type == 452 // Sample-Start_Location
+				|| type == 453;// Sample-End-Location
 	}
 
 	public static boolean isKnownType(int type) {

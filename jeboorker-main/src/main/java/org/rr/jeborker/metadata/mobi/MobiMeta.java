@@ -26,36 +26,40 @@
  */
 package org.rr.jeborker.metadata.mobi;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class MobiMeta {
-	public final static int BUFFER_SIZE = 4096;
-
-	protected PDBHeader pdbHeader;
-	protected MobiHeader mobiHeader;
-	protected String characterEncoding;
-	protected List<EXTHRecord> exthRecords;
-	private File inputFile;
-
-	public MobiMeta(File f) throws MobiMetaException {
-		inputFile = f;
-		FileInputStream in = null;
+	
+	private static final byte[] INDX = "INDX".getBytes();
+	private PDBHeader pdbHeader;
+	private MobiHeader mobiHeader;
+	private List<EXTHRecord> exthRecords;
+	private byte[] inputBytes;
+	
+	public MobiMeta readMetaData(File inputFile) throws MobiMetaException {
 		try {
-			in = new FileInputStream(f);
+			inputBytes = FileUtils.readFileToByteArray(inputFile);
+
+			InputStream in = new ByteArrayInputStream(inputBytes);
 			pdbHeader = new PDBHeader(in);
-			mobiHeader = new MobiHeader(in, pdbHeader.getMobiHeaderSize());
+			mobiHeader = new MobiHeader(in, inputBytes, pdbHeader.getMobiHeaderSize());
 			exthRecords = mobiHeader.getEXTHRecords();
-			characterEncoding = mobiHeader.getCharacterEncoding();
-		} catch (IOException e) {
-			throw new MobiMetaException("Could not parse mobi file " + f.getAbsolutePath() + ": " + e.getMessage());
-		} finally {
-			if (in != null)
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
+		} catch(IOException e) {
+			throw new MobiMetaException("Could not parse mobi file " + inputFile.getAbsolutePath() + ": " + e.getMessage());
 		}
+		return this;
 	}
 
 	public void saveToNewFile(File outputFile) throws MobiMetaException {
@@ -70,7 +74,7 @@ public class MobiMeta {
 			pdbHeader.adjustOffsetsAfterMobiHeader(mobiHeader.size());
 		}
 
-		FileInputStream in = null;
+		InputStream in = null;
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(outputFile);
@@ -78,8 +82,8 @@ public class MobiMeta {
 			mobiHeader.write(out);
 
 			int bytesRead;
-			byte[] buffer = new byte[BUFFER_SIZE];
-			in = new FileInputStream(inputFile);
+			byte[] buffer = new byte[4096];
+			in = new ByteArrayInputStream(inputBytes);
 			in.skip(readOffset);
 			while ((bytesRead = in.read(buffer)) != -1) {
 				out.write(buffer, 0, bytesRead);
@@ -139,12 +143,12 @@ public class MobiMeta {
 	}
 
 	public String getMetaInfo() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("PDB Header\r\n");
-		sb.append("----------\r\n");
+		StringBuilder sb = new StringBuilder();
+		sb.append("PDB Header\n");
+		sb.append("----------\n");
 		sb.append("Name: ");
 		sb.append(pdbHeader.getName());
-		sb.append("\r\n");
+		sb.append("\n");
 		String[] attributes = getPDBHeaderAttributes();
 		if (attributes.length > 0) {
 			sb.append("Attributes: ");
@@ -153,125 +157,125 @@ public class MobiMeta {
 					sb.append(", ");
 				sb.append(attributes[i]);
 			}
-			sb.append("\r\n");
+			sb.append("\n");
 		}
 		sb.append("Version: ");
 		sb.append(pdbHeader.getVersion());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Creation Date: ");
 		sb.append(pdbHeader.getCreationDate());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Modification Date: ");
 		sb.append(pdbHeader.getModificationDate());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Last Backup Date: ");
 		sb.append(pdbHeader.getLastBackupDate());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Modification Number: ");
 		sb.append(pdbHeader.getModificationNumber());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("App Info ID: ");
 		sb.append(pdbHeader.getAppInfoID());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Sort Info ID: ");
 		sb.append(pdbHeader.getSortInfoID());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Type: ");
 		sb.append(pdbHeader.getType());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Creator: ");
 		sb.append(pdbHeader.getCreator());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Unique ID Seed: ");
 		sb.append(pdbHeader.getUniqueIDSeed());
-		sb.append("\r\n\r\n");
+		sb.append("\n\n");
 
-		sb.append("PalmDOC Header\r\n");
-		sb.append("--------------\r\n");
+		sb.append("PalmDOC Header\n");
+		sb.append("--------------\n");
 		sb.append("Compression: ");
 		sb.append(mobiHeader.getCompression());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Text Length: ");
 		sb.append(mobiHeader.getTextLength());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Record Count: ");
 		sb.append(mobiHeader.getRecordCount());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Record Size: ");
 		sb.append(mobiHeader.getRecordSize());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Encryption Type: ");
 		sb.append(mobiHeader.getEncryptionType());
-		sb.append("\r\n\r\n");
+		sb.append("\n\n");
 
-		sb.append("MOBI Header\r\n");
-		sb.append("-----------\r\n");
+		sb.append("MOBI Header\n");
+		sb.append("-----------\n");
 		sb.append("Header Length: ");
 		sb.append(mobiHeader.getHeaderLength());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Mobi Type: ");
 		sb.append(mobiHeader.getMobiType());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Unique ID: ");
 		sb.append(mobiHeader.getUniqueID());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("File Version: ");
 		sb.append(mobiHeader.getFileVersion());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Orthographic Index: ");
 		sb.append(mobiHeader.getOrthographicIndex());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Inflection Index: ");
 		sb.append(mobiHeader.getInflectionIndex());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Index Names: ");
 		sb.append(mobiHeader.getIndexNames());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Index Keys: ");
 		sb.append(mobiHeader.getIndexKeys());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Extra Index 0: ");
 		sb.append(mobiHeader.getExtraIndex0());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Extra Index 1: ");
 		sb.append(mobiHeader.getExtraIndex1());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Extra Index 2: ");
 		sb.append(mobiHeader.getExtraIndex2());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Extra Index 3: ");
 		sb.append(mobiHeader.getExtraIndex3());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Extra Index 4: ");
 		sb.append(mobiHeader.getExtraIndex4());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Extra Index 5: ");
 		sb.append(mobiHeader.getExtraIndex5());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("First Non-Book Index: ");
 		sb.append(mobiHeader.getFirstNonBookIndex());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Full Name Offset: ");
 		sb.append(mobiHeader.getFullNameOffset());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Full Name Length: ");
 		sb.append(mobiHeader.getFullNameLength());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Min Version: ");
 		sb.append(mobiHeader.getMinVersion());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Huffman Record Offset: ");
 		sb.append(mobiHeader.getHuffmanRecordOffset());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Huffman Record Count: ");
 		sb.append(mobiHeader.getHuffmanRecordCount());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Huffman Table Offset: ");
 		sb.append(mobiHeader.getHuffmanTableOffset());
-		sb.append("\r\n");
+		sb.append("\n");
 		sb.append("Huffman Table Length: ");
 		sb.append(mobiHeader.getHuffmanTableLength());
-		sb.append("\r\n");
+		sb.append("\n");
 
 		return sb.toString();
 	}
@@ -299,4 +303,128 @@ public class MobiMeta {
 
 		return ret;
 	}
+	
+	public byte[] getCoverOrThumb() {
+		byte[] imgNumber = null;
+		EXTHRecord exthRecord;
+		if ((exthRecord = mobiHeader.getEXTHRecord(201)) != null) {
+			imgNumber = exthRecord.getData();
+		} else if ((exthRecord = mobiHeader.getEXTHRecord(202)) != null) {
+			imgNumber = exthRecord.getData();
+		}
+
+		if (imgNumber != null) {
+			int index = StreamUtils.byteArrayToInt(imgNumber);
+			return getRecordByIndex(index + mobiHeader.getFirstImageIndex());
+		} else {
+			for (int i = mobiHeader.getFirstImageIndex(); i < mobiHeader.getLastContentIndex(); i++) {
+				byte[] img = getRecordByIndex(i);
+				if ((img[0] & 0xff) == 0xFF && (img[1] & 0xff) == 0xD8) {
+					return img;
+				}
+			}
+		}
+		return null;
+	}
+	
+  public String getTextContent() throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		int firstContentIndex = mobiHeader.getFirstContentIndex() == 0 ? 1 : mobiHeader.getFirstContentIndex();
+		
+		for (int i = firstContentIndex; i < mobiHeader.getLastContentIndex() - 1 && i < mobiHeader.getFirstImageIndex(); i++) {
+			int start = (int) pdbHeader.getRecordInfos().get(i).getRecordDataOffset();
+			int end = (int) pdbHeader.getRecordInfos().get(i + 1).getRecordDataOffset();
+			byte[] coded = Arrays.copyOfRange(inputBytes, start, end);
+
+			byte[] decoded = null;
+			if (mobiHeader.getCompressionCode() == 2) { // PalmDOC
+				decoded = lz77(coded);
+			} else if (mobiHeader.getCompressionCode() == 1) { // None
+				decoded = coded;
+			} else if (mobiHeader.getCompressionCode() == 17480) { // HUFF/CDIC
+				try {
+					decoded = coded;
+				} catch (Exception e) {
+					e.printStackTrace();
+					decoded = ("error").getBytes();
+				}
+			} else {
+				decoded = ("Compression not supported " + mobiHeader.getCompressionCode()).getBytes();
+			}
+
+			byte[] header = Arrays.copyOfRange(decoded, 0, 4);
+			if (Arrays.equals(INDX, header)) {
+				continue;
+			}
+
+			for (int n = 0; n < decoded.length; n++) {
+				if (decoded[n] != 0x00) {
+					outputStream.write(decoded[n]);
+				}
+
+			}
+		}
+		try {
+			return outputStream.toString(getCharacterEncoding());
+		} catch (UnsupportedEncodingException e) {
+			return outputStream.toString();
+		}
+	}
+
+	private static byte[] lz77(byte[] bytes) {
+		ByteArrayBuffer out = new ByteArrayBuffer(bytes.length);
+		try {
+			int i = 0;
+			while (i < bytes.length - 4) { // try -2,4,8,10
+				int b = bytes[i++] & 0x00FF;
+				try {
+					if (b == 0x0) {
+						out.write(b);
+					} else if (b <= 0x08) {
+						for (int j = 0; j < b; j++) {
+							out.write(bytes[i + j]);
+						}
+						i += b;
+					}
+		
+					else if (b <= 0x7f) {
+						out.write(b);
+					} else if (b <= 0xbf) {
+						b = b << 8 | bytes[i++] & 0xFF;
+						int length = (b & 0x0007) + 3;
+						int location = (b >> 3) & 0x7FF;
+		
+						for (int j = 0; j < length; j++) {
+							out.write(out.getRawData()[out.size() - location]);
+						}
+					} else {
+						out.write(' ');
+						out.write(b ^ 0x80);
+					}
+				} catch(Exception e) {
+					
+				}
+			}
+			return out.getRawData();
+		} finally {
+			IOUtils.closeQuietly(out);
+		}
+	}
+	
+	private byte[] getRecordByIndex(int index) {
+		List<RecordInfo> recordInfos = pdbHeader.getRecordInfos();
+		if (index >= recordInfos.size()) {
+			return null;
+		}
+		RecordInfo recordInfo = recordInfos.get(index);
+		long from = recordInfo.getRecordDataOffset();
+		long to = inputBytes.length;
+		
+		if (index + 1 < recordInfos.size()) {
+			to = recordInfos.get(index + 1).getRecordDataOffset();
+		}
+
+		return Arrays.copyOfRange(inputBytes, (int) from, (int) to);
+	}
+
 }

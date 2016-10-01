@@ -33,51 +33,53 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MobiHeader {
-	private byte[] compression = { 0, 0 };
-	private byte[] unused0 = { 0, 0 };
-	private byte[] textLength = { 0, 0, 0, 0 };
-	private byte[] recordCount = { 0, 0 };
-	private byte[] recordSize = { 0, 0 };
-	private byte[] encryptionType = { 0, 0 };
-	private byte[] unused1 = { 0, 0 };
-	private byte[] identifier = { 0, 0, 0, 0 };
-	private byte[] headerLength = { 0, 0, 0, 0 }; // from offset 0x10
-	private byte[] mobiType = { 0, 0, 0, 0 };
-	private byte[] textEncoding = { 0, 0, 0, 0 };
-	private byte[] uniqueID = { 0, 0, 0, 0 };
-	private byte[] fileVersion = { 0, 0, 0, 0 };
-	private byte[] orthographicIndex = { 0, 0, 0, 0 };
-	private byte[] inflectionIndex = { 0, 0, 0, 0 };
-	private byte[] indexNames = { 0, 0, 0, 0 };
-	private byte[] indexKeys = { 0, 0, 0, 0 };
-	private byte[] extraIndex0 = { 0, 0, 0, 0 };
-	private byte[] extraIndex1 = { 0, 0, 0, 0 };
-	private byte[] extraIndex2 = { 0, 0, 0, 0 };
-	private byte[] extraIndex3 = { 0, 0, 0, 0 };
-	private byte[] extraIndex4 = { 0, 0, 0, 0 };
-	private byte[] extraIndex5 = { 0, 0, 0, 0 };
-	private byte[] firstNonBookIndex = { 0, 0, 0, 0 };
-	private byte[] fullNameOffset = { 0, 0, 0, 0 };
-	private byte[] fullNameLength = { 0, 0, 0, 0 };
-	private byte[] locale = { 0, 0, 0, 0 };
-	private byte[] inputLanguage = { 0, 0, 0, 0 };
-	private byte[] outputLanguage = { 0, 0, 0, 0 };
-	private byte[] minVersion = { 0, 0, 0, 0 };
-	private byte[] firstImageIndex = { 0, 0, 0, 0 };
-	private byte[] huffmanRecordOffset = { 0, 0, 0, 0 };
-	private byte[] huffmanRecordCount = { 0, 0, 0, 0 };
-	private byte[] huffmanTableOffset = { 0, 0, 0, 0 };
-	private byte[] huffmanTableLength = { 0, 0, 0, 0 };
-	private byte[] exthFlags = { 0, 0, 0, 0 };
+	private byte[] compression = { 0, 0 }; // 0
+	private byte[] unused0 = { 0, 0 }; // 2
+	private byte[] textLength = { 0, 0, 0, 0 }; // 4
+	private byte[] recordCount = { 0, 0 }; // 8
+	private byte[] recordSize = { 0, 0 }; // 10
+	private byte[] encryptionType = { 0, 0 }; // 12
+	private byte[] unused1 = { 0, 0 }; // 14
+	private byte[] identifier = { 0, 0, 0, 0 }; // 16
+	private byte[] headerLength = { 0, 0, 0, 0 }; // 20 from offset 0x10
+	private byte[] mobiType = { 0, 0, 0, 0 }; // 24
+	private byte[] textEncoding = { 0, 0, 0, 0 }; //28 
+	private byte[] uniqueID = { 0, 0, 0, 0 }; // 32
+	private byte[] fileVersion = { 0, 0, 0, 0 }; // 36
+	private byte[] orthographicIndex = { 0, 0, 0, 0 }; // 40
+	private byte[] inflectionIndex = { 0, 0, 0, 0 }; // 44
+	private byte[] indexNames = { 0, 0, 0, 0 }; // 48
+	private byte[] indexKeys = { 0, 0, 0, 0 }; // 52
+	private byte[] extraIndex0 = { 0, 0, 0, 0 }; // 56
+	private byte[] extraIndex1 = { 0, 0, 0, 0 }; // 60
+	private byte[] extraIndex2 = { 0, 0, 0, 0 }; // 64
+	private byte[] extraIndex3 = { 0, 0, 0, 0 }; // 68
+	private byte[] extraIndex4 = { 0, 0, 0, 0 }; // 72
+	private byte[] extraIndex5 = { 0, 0, 0, 0 }; // 76
+	private byte[] firstNonBookIndex = { 0, 0, 0, 0 }; // 80
+	private byte[] fullNameOffset = { 0, 0, 0, 0 }; // 84
+	private byte[] fullNameLength = { 0, 0, 0, 0 }; // 88
+	private byte[] locale = { 0, 0, 0, 0 }; // 92
+	private byte[] inputLanguage = { 0, 0, 0, 0 }; // 96
+	private byte[] outputLanguage = { 0, 0, 0, 0 }; // 100
+	private byte[] minVersion = { 0, 0, 0, 0 }; // 104
+	private byte[] firstImageIndex = { 0, 0, 0, 0 }; // 108
+	private byte[] huffmanRecordOffset = { 0, 0, 0, 0 }; // 112
+	private byte[] huffmanRecordCount = { 0, 0, 0, 0 }; // 116
+	private byte[] huffmanTableOffset = { 0, 0, 0, 0 }; // 120
+	private byte[] huffmanTableLength = { 0, 0, 0, 0 }; // 124
+	private byte[] exthFlags = { 0, 0, 0, 0 }; // 128-132
 	private byte[] restOfMobiHeader = null;
 	private EXTHHeader exthHeader = null;
 	private byte[] remainder = null;
 	// end of useful data
 
+	private int firstContentIndex;
+	private int lastContentIndex;
 	private byte[] fullName = null;
 	private String characterEncoding = null;
 
-	public MobiHeader(InputStream in, long mobiHeaderSize) throws IOException {
+	public MobiHeader(InputStream in, byte[] raw,  long mobiHeaderSize) throws IOException {
 		MobiCommon.logMessage("*** MobiHeader ***");
 		MobiCommon.logMessage("compression");
 		StreamUtils.readByteArray(in, compression);
@@ -162,6 +164,9 @@ public class MobiHeader {
 		boolean exthExists = ((StreamUtils.byteArrayToInt(exthFlags) & 0x40) != 0);
 		MobiCommon.logMessage("exthExists: " + exthExists);
 		StreamUtils.readByteArray(in, restOfMobiHeader);
+		
+		firstContentIndex = StreamUtils.byteArrayToInt(new byte[] {restOfMobiHeader[60], restOfMobiHeader[61]});
+		lastContentIndex  = StreamUtils.byteArrayToInt(new byte[] {restOfMobiHeader[62], restOfMobiHeader[63]});
 
 		if (exthExists) {
 			exthHeader = new EXTHHeader(in);
@@ -185,7 +190,7 @@ public class MobiHeader {
 			MobiCommon.logMessage("full name: " + StreamUtils.byteArrayToString(fullName));
 		}
 	}
-
+	
 	public String getCharacterEncoding() {
 		return characterEncoding;
 	}
@@ -242,6 +247,15 @@ public class MobiHeader {
 	public List<EXTHRecord> getEXTHRecords() {
 		return (exthHeader == null) ? (new LinkedList<EXTHRecord>()) : exthHeader.getRecordList();
 	}
+	
+	public EXTHRecord getEXTHRecord(int type) {
+		for (EXTHRecord record : getEXTHRecords()) {
+			if(record.getRecordType() == type) {
+				return record;
+			}
+		}
+		return null;
+	}
 
 	public void setEXTHRecords(List<EXTHRecord> list) {
 		int flag = StreamUtils.byteArrayToInt(exthFlags) & 0xffffbf;
@@ -271,6 +285,10 @@ public class MobiHeader {
 
 	public int size() {
 		return 132 + restOfMobiHeader.length + exthHeaderSize() + remainder.length;
+	}
+	
+	public int getCompressionCode() {
+		return StreamUtils.byteArrayToInt(compression);
 	}
 
 	public String getCompression() {
@@ -430,6 +448,10 @@ public class MobiHeader {
 	private int exthHeaderSize() {
 		return (exthHeader == null) ? 0 : exthHeader.size();
 	}
+	
+	int getFirstImageIndex() {
+		return StreamUtils.byteArrayToInt(firstImageIndex);
+	}
 
 	public void write(OutputStream out) throws IOException {
 		out.write(compression);
@@ -472,5 +494,13 @@ public class MobiHeader {
 		if (exthHeader != null)
 			exthHeader.write(out);
 		out.write(remainder);
+	}
+	
+	public int getFirstContentIndex() {
+		return firstContentIndex;
+	}
+
+	public int getLastContentIndex() {
+		return lastContentIndex;
 	}
 }
