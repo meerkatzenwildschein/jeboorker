@@ -85,7 +85,7 @@ public class PDBHeader {
 		return Collections.unmodifiableList(recordInfoList);
 	}
 
-	public long getMobiHeaderSize() {
+	public long getMobiHeaderSize() { // mobi header is stored in the first record
 		return (recordInfoList.size() > 1) ? (recordInfoList.get(1).getRecordDataOffset() - recordInfoList.get(0).getRecordDataOffset()) : 0;
 	}
 

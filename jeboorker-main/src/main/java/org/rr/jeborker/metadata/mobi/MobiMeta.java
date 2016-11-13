@@ -307,19 +307,18 @@ public class MobiMeta {
 	public byte[] getCoverOrThumb() {
 		byte[] imgNumber = null;
 		EXTHRecord exthRecord;
-		if ((exthRecord = mobiHeader.getEXTHRecord(201)) != null) {
+		if ((exthRecord = mobiHeader.getEXTHRecord(202)) != null) {
 			imgNumber = exthRecord.getData();
-		} else if ((exthRecord = mobiHeader.getEXTHRecord(202)) != null) {
-			imgNumber = exthRecord.getData();
-		}
+		} 
 
 		if (imgNumber != null) {
 			int index = StreamUtils.byteArrayToInt(imgNumber);
 			return getRecordByIndex(index + mobiHeader.getFirstImageIndex());
 		} else {
+			// search for image in content.
 			for (int i = mobiHeader.getFirstImageIndex(); i < mobiHeader.getLastContentIndex(); i++) {
 				byte[] img = getRecordByIndex(i);
-				if ((img[0] & 0xff) == 0xFF && (img[1] & 0xff) == 0xD8) {
+				if ((img[0] & 0xff) == 0xFF && (img[1] & 0xff) == 0xD8) { // jpg magic bytes
 					return img;
 				}
 			}
@@ -342,12 +341,7 @@ public class MobiMeta {
 			} else if (mobiHeader.getCompressionCode() == 1) { // None
 				decoded = coded;
 			} else if (mobiHeader.getCompressionCode() == 17480) { // HUFF/CDIC
-				try {
-					decoded = coded;
-				} catch (Exception e) {
-					e.printStackTrace();
-					decoded = ("error").getBytes();
-				}
+				decoded = coded;
 			} else {
 				decoded = ("Compression not supported " + mobiHeader.getCompressionCode()).getBytes();
 			}
@@ -361,7 +355,6 @@ public class MobiMeta {
 				if (decoded[n] != 0x00) {
 					outputStream.write(decoded[n]);
 				}
-
 			}
 		}
 		try {
