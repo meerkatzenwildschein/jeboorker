@@ -284,10 +284,12 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 					allMetadata.removeAll(mergedProperties);
 					i--;
 				} else {
-					Property property = createProperty(metadataProperty, items, 0);
-					result.add(property);
+					if(metadataProperty.isVisible()) {
+						Property property = createProperty(metadataProperty, items, 0);
+						result.add(property);
+					}
 				}
-			} else {
+			} else if(metadataProperty.isVisible()) {
 				for (int j=0; j < values.size(); j++) {
 					Property property = createProperty(metadataProperty, items, j);
 					result.add(property);
@@ -295,17 +297,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 			}
 		}
 
-		this.removeCoverProperty(result);
-
 		return result;
-	}
-
-	protected void removeCoverProperty(List<Property> result) {
-		for(Property property : new ArrayList<Property>(result)) {
-			if(isCoverProperty(property)) {
-				result.remove(property);
-			}
-		}
 	}
 
 	/**

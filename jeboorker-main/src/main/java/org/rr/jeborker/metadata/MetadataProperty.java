@@ -136,6 +136,19 @@ public class MetadataProperty implements Cloneable {
 		return true;
 	}
 	
+
+	/**
+	 * Tells if the property should be shown to the user.
+	 * @return <code>true</code> if the property is visible or <code>false</code> if not.
+	 */
+	public boolean isVisible() {
+		return isCoverProperty();
+	}
+
+	private boolean isCoverProperty() {
+		return !IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(getName());
+	}
+	
 	/**
 	 * Tells if the property is deletable or not.
 	 * @return <code>true</code> if the property is deletable or <code>false</code> if not.

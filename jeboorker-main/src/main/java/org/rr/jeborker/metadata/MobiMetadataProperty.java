@@ -1,37 +1,36 @@
 package org.rr.jeborker.metadata;
 
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.DateConversionUtils;
-import org.rr.commons.utils.NumberUtil;
 import org.rr.commons.utils.StringUtil;
-import org.rr.jeborker.metadata.mobi.EXTHRecord;
-import org.rr.jeborker.metadata.mobi.StreamUtils;
+import org.rr.mobi4java.EXTHRecord;
+import org.rr.mobi4java.EXTHRecord.RECORD_TYPE;
+import org.rr.mobi4java.exth.BinaryRecordDelegate;
+import org.rr.mobi4java.exth.DateRecordDelegate;
+import org.rr.mobi4java.exth.RecordDelegate;
+import org.rr.mobi4java.exth.StringRecordDelegate;
 
 class MobiMetadataProperty extends MetadataProperty {
 	
-	private EXTHRecord exthRecord;
+	private RecordDelegate exthRecord;
 	
 	private String encoding;
 	
-	MobiMetadataProperty(EXTHRecord exthRecord, String encoding) {
-		super(getRecordName(exthRecord), exthRecord);
-		this.exthRecord = exthRecord;
-		this.encoding = encoding;
+	MobiMetadataProperty(RecordDelegate record, String name, String encoding) {
+		super(name, record);
+		this.exthRecord = record;
 	}
 	
-	MobiMetadataProperty(int recordType, byte[] data, String encoding) {
-		super(EXTHRecord.getDescriptionForType(recordType), new EXTHRecord(recordType, data));
-		exthRecord = (EXTHRecord) super.getValues().get(0);
-		this.encoding = encoding;
-	}
-	
-	MobiMetadataProperty(int recordType, String data, String encoding) {
-		this(recordType, data.getBytes(), encoding);
+	MobiMetadataProperty(EXTHRecord record, String name, String encoding) {
+		super(name, record);
 	}
 	
 	@Override
@@ -40,56 +39,30 @@ class MobiMetadataProperty extends MetadataProperty {
 	}
 	
 	private Object getValue() {
-		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
-			return DateConversionUtils.toDate(new String(exthRecord.getData()));
-		} else if(isCreatorNumberType() || exthRecord.getRecordType() == 204) {
-			return StreamUtils.byteArrayToLong(exthRecord.getData()); // creator software
-		} else if(EXTHRecord.isBinaryType(exthRecord.getRecordType())) { 
-			return "0x" + NumberUtil.bytesToHex(exthRecord.getData());
+		if(exthRecord instanceof DateRecordDelegate) {
+			try {
+				return ((DateRecordDelegate) exthRecord).getAsDate();
+			} catch (ParseException e) {
+				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to read date value.", e);
+				return StringUtil.EMPTY;
+			}
+		} else if(exthRecord instanceof BinaryRecordDelegate) {
+			return ((BinaryRecordDelegate) exthRecord).getAsString();
 		}
 		
-		return new String(exthRecord.getData());
-	}
-
-	protected boolean isCreatorNumberType() {
-		return exthRecord.getRecordType() == 205 || exthRecord.getRecordType() == 206 || exthRecord.getRecordType() == 207;
-	}
-
-	private static String getRecordName(EXTHRecord exthRecord) {
-		return exthRecord.getTypeDescription();
+		return new String(exthRecord.getRecord().getData());
 	}
 	
 	public Class<?> getPropertyClass() {
-		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
+		if(exthRecord instanceof DateRecordDelegate) {
 			return Date.class;
 		}
 		return getValue().getClass();
 	}
-
+	
 	@Override
-	public boolean isEditable() {
-		switch (exthRecord.getRecordType()) {
-			case 100:
-			case 101:
-			case 102:
-			case 103:
-			case 104:
-			case 105:
-			case 106:
-			case 107:
-			case 108:
-			case 109:
-			case 204:
-			case 205:
-			case 206:
-			case 207:
-			case 112:
-			case 113:
-			case 501:
-			case 524:
-				return true;
-		}
-		return false;
+	public boolean isVisible() {
+		return super.isVisible() && !(exthRecord instanceof BinaryRecordDelegate);
 	}
 
 	/**
@@ -97,61 +70,44 @@ class MobiMetadataProperty extends MetadataProperty {
 	 */
 	@Override
 	public MetadataProperty clone() {
-		MobiMetadataProperty newMetadataProperty = new MobiMetadataProperty(exthRecord, encoding);
+		MobiMetadataProperty newMetadataProperty = new MobiMetadataProperty(exthRecord, getName(), encoding);
 		newMetadataProperty.hints = this.hints;
 		newMetadataProperty.values = new ArrayList<>(this.values);
 		return newMetadataProperty;
 	}
-
-	@Override
-	public String getName() {
-		return exthRecord.getTypeDescription() != null ? exthRecord.getTypeDescription() : "Unknown " + exthRecord.getRecordType();
-	}
 	
 	public String getOriginCodeName() {
-		return StringUtil.toString(exthRecord.getRecordType());
+		return StringUtil.toString(exthRecord.getRecord().getRecordType().getType());
 	}
 
 	public EXTHRecord getExthRecord() {
-		return exthRecord;
+		return exthRecord.getRecord();
 	}
 
 	public void setValue(final Object value, final int idx) {
-		if(EXTHRecord.isDateType(exthRecord.getRecordType())) {
+		if(exthRecord instanceof DateRecordDelegate) {
 			Date d = (value instanceof Date) ? (Date) value : DateConversionUtils.toDate(StringUtil.toString(value));
-			String dateString = DateConversionUtils.DATE_FORMATS.W3C_SECOND.getString(d);
-			exthRecord.setData(dateString, encoding);
-		} else if(exthRecord.getRecordType() == 204 || isCreatorNumberType()) {
-			Long l = (value instanceof Long) ? (Long) value : NumberUtils.toLong(StringUtil.toString(value));
-			exthRecord.setData(NumberUtil.toByteArray(l));
-		} else if(EXTHRecord.isBinaryType(exthRecord.getRecordType())) {
-			// binary value types can not be edited.
+			((DateRecordDelegate)exthRecord).setDateData(d);
+		} else if(exthRecord instanceof StringRecordDelegate) {
+			try {
+				((StringRecordDelegate)exthRecord).setStringData(StringUtil.toString(value), encoding);
+			} catch (UnsupportedEncodingException e) {
+				LoggerFactory.getLogger().log(Level.SEVERE, "Failed to set value " + StringUtil.toString(value), e);
+			}
 		} else {
-			exthRecord.setData(StringUtil.toString(value), encoding);
+			exthRecord.getRecord().setData(StringUtil.toString(value).getBytes());
 		}
 	}
 
 	public void setValues(final List<Object> newValues) {
 		setValue(newValues.get(0), 0);
 	}
-
-	@Override
-	public String getAdditionalDescription() {
-		String key = "MobiMetadataProperty." + exthRecord.getRecordType() + ".description";
-		if(Bundle.getBundle().containsKey(key)) {
-			String description = Bundle.getBundle().getString("MobiMetadataProperty." + exthRecord.getRecordType() + ".description");
-			if (StringUtil.isNotBlank(description)) {
-				return description;
-			}
-		}
-		return super.getAdditionalDescription();
-	}
 	
 	@Override
 	public boolean isSingle() {
-		switch(exthRecord.getRecordType()) {
-		case 100: //author
-		case 105: //subject, genre
+		if(exthRecord.getRecord().getRecordType() == RECORD_TYPE.AUTHOR) {
+			return false;
+		} else if(exthRecord.getRecord().getRecordType() == RECORD_TYPE.SUBJECT) {
 			return false;
 		}
 		return super.isSingle();

@@ -134,15 +134,17 @@ public class MetadataHandlerFactory {
 	
 	/**
 	 * Tells if there is cover writer support for the given resource.
-	 * @param resourceHandler The resource to be tested for support.
+	 * @param resource The resource to be tested for support.
 	 * @return <code>true</code> if writer support is available and <code>false</code> otherwise.
 	 */
-	public static boolean hasCoverWriterSupport(final IResourceHandler resourceHandler) {
-		final String mimeType = resourceHandler.getMimeType(true);
+	public static boolean hasCoverWriterSupport(final IResourceHandler resource) {
+		final String mimeType = resource.getMimeType(true);
 		if(mimeType != null) {
-			if(resourceHandler.getMimeType(true).equals(MIME_EPUB.getMime())) {
+			if(resource.getMimeType(true).equals(MIME_EPUB.getMime())) {
 				return true;
-			} else if(resourceHandler.getMimeType(true).equals(MIME_PDF.getMime())) {
+			} else if(resource.getMimeType(true).equals(MIME_PDF.getMime())) {
+				return true;
+			} else if(resource.getMimeType(true).equals(MIME_MOBI.getMime()) || resource.getMimeType(true).equals(MIME_AZW.getMime())) {
 				return true;
 			}
 		}	

@@ -1,28 +1,28 @@
 package org.rr.commons.net.imagefetcher;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.compression.CompressedDataEntry;
-import org.rr.commons.utils.compression.FileEntryFilter;
-import org.rr.commons.utils.compression.truezip.TrueZipUtils;
+import org.rr.mobi4java.MobiDocument;
+import org.rr.mobi4java.MobiReader;
 
-public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
+public class ImageMobiFileFetcherFactory implements IImageFetcherFactory {
+
+	private IResourceHandler mobiFile;
 	
-	private IResourceHandler zipFile;
-	
-	public ImageZipFileFetcherFactory(final IResourceHandler zipFile) {
-		this.zipFile = zipFile;
+	public ImageMobiFileFetcherFactory(final IResourceHandler mobiFile) {
+		this.mobiFile = mobiFile;
 	}
-
+	
 	@Override
 	public IImageFetcher getImageFetcher(String fetcherName) {
 		return getImageFetcher(fetcherName, null);
@@ -30,15 +30,20 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 
 	@Override
 	public IImageFetcher getImageFetcher(String fetcherName, String searchTerm) {
-		return new ZipFileImageFetcher();
+		return new MobiFileImageFetcher();
 	}
 
 	@Override
 	public List<String> getFetcherNames() {
-		return Collections.singletonList("ZIP");
+		return Collections.singletonList("MOBI");
+	}
+
+	@Override
+	public boolean searchTermSupport() {
+		return false;
 	}
 	
-	private class ZipFileImageFetcher implements IImageFetcher {
+	private class MobiFileImageFetcher implements IImageFetcher {
 
 		@Override
 		public void setSearchTerm(String searchTerm) {
@@ -52,35 +57,27 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 		@Override
 		public Iterator<IImageFetcherEntry> getEntriesIterator() {
 			return new Iterator<IImageFetcherEntry>() {
-				Iterator<String> entries;
+				Iterator<byte[]> images;
 				{
-					try {
-						entries = TrueZipUtils.list(zipFile, new FileEntryFilter() {
+						try (InputStream in = mobiFile.getContentInputStream()) {
+							MobiDocument mobiDoc = new MobiReader().read(in);
+							images = mobiDoc.getImages().iterator();
 							
-							@Override
-							public boolean accept(String entry, byte[] rawEntry) {
-								entry = entry. toLowerCase();
-								if(entry.endsWith(".jpg") || entry.endsWith(".jpeg") || entry.endsWith(".png") || entry.endsWith(".gif")) {
-									return true;
-								}
-								return false;
-							}
-						}).iterator();
-					} catch(Exception e) {
-						LoggerFactory.getLogger().log(Level.INFO, "Could not read zip file " + zipFile, e);
-					}
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
 				}
 				
 				
 				@Override
 				public boolean hasNext() {
-					return entries.hasNext();
+					return images.hasNext();
 				}
 
 				@Override
 				public IImageFetcherEntry next() {
 					try {
-						final String entry = entries.next();
+						final byte[] imageBytes = images.next();
 						return new IImageFetcherEntry() {
 							
 							private int width = -1;
@@ -95,7 +92,7 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 							@Override
 							public URL getImageURL() {
 								try {
-									return new URL("file://" + entry);
+									return new URL("file://" + UUID.randomUUID());
 								} catch (Exception e) {
 									LoggerFactory.getLogger().log(Level.INFO, "Invalid URL", e);
 								}
@@ -114,7 +111,7 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 
 							@Override
 							public String getTitle() {
-								return new File(entry).getName();
+								return UUID.randomUUID().toString();
 							}
 
 							@Override
@@ -124,15 +121,14 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 
 							@Override
 							public byte[] getImageBytes() throws IOException {
-								CompressedDataEntry extractZipEntry = TrueZipUtils.extract(zipFile, entry);
-								return extractZipEntry.getBytes();
+								return imageBytes;
 							}
 							
 						};
 					} catch(NoSuchElementException e1) {
 						throw new ArrayIndexOutOfBoundsException();
 					} catch(Exception e) {
-						LoggerFactory.getLogger().log(Level.INFO, "Could not read zip file " + zipFile, e);
+						LoggerFactory.getLogger().log(Level.INFO, "Could not read zip file " + mobiFile, e);
 					}					
 					return null;
 				}
@@ -141,13 +137,9 @@ public class ImageZipFileFetcherFactory implements IImageFetcherFactory {
 				public void remove() {
 				}
 			};
+			
 		}
 		
-	}
-
-	@Override
-	public boolean searchTermSupport() {
-		return false;
 	}
 
 }

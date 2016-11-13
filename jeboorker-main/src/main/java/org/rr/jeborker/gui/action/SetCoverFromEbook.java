@@ -3,6 +3,8 @@ package org.rr.jeborker.gui.action;
 import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBR;
 import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
 import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_EPUB;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_MOBI;
+import static org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES.MIME_AZW;
 
 import java.util.logging.Level;
 
@@ -12,6 +14,7 @@ import javax.swing.JFileChooser;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.net.imagefetcher.IImageFetcherFactory;
+import org.rr.commons.net.imagefetcher.ImageMobiFileFetcherFactory;
 import org.rr.commons.net.imagefetcher.ImageZipFileFetcherFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.dialogs.JImageDownloadDialog;
@@ -48,6 +51,8 @@ class SetCoverFromEbook extends SetCoverFrom<JImageDownloadDialog> implements ID
 				if(MIME_CBZ.getMime().equals(item.getMimeType()) || MIME_CBR.getMime().equals(item.getMimeType()) 
 						|| MIME_EPUB.getMime().equals(item.getMimeType())) {
 					fetcher = new ImageZipFileFetcherFactory(item.getResourceHandler());
+				} else if(MIME_MOBI.getMime().equals(item.getMimeType()) || MIME_AZW.getMime().equals(item.getMimeType())) {
+					fetcher = new ImageMobiFileFetcherFactory(item.getResourceHandler());
 				} else {
 					LoggerFactory.log(Level.WARNING, this, "No image fetcher instance for " + item.getResourceHandler());
 					return null;

@@ -78,5 +78,14 @@
 			<name>poolborges-github</name>
 			<url>https://github.com/poolborges/maven/raw/master/thirdparty/</url>
 		</repository>
+		
+		<repository>
+			<id>mobi-api4java-mvn-repo</id>
+			<url>https://raw.github.com/rrauschenbach/mobi-api4java/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
 	</repositories>
 </project>

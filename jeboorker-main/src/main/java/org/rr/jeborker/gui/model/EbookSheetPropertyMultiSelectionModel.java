@@ -37,14 +37,14 @@ public class EbookSheetPropertyMultiSelectionModel extends EbookSheetPropertyMod
 				MetadataProperty metadataProperty = metadataByType.get(0);
 				if(metadataProperty != null) {
 					allMetadata.add(metadataProperty);
+
+					if(metadataProperty.isVisible()) {
+						Property property = createProperty(metadataProperty, items, type);
+						result.add(property);
+					}
 				}
-			
-				Property property = createProperty(metadataProperty, items, type);
-				result.add(property);
 			}
 		}
-		
-		this.removeCoverProperty(result);
 		
 		Collections.sort(result, PROPERTY_COMPARATOR);
 		

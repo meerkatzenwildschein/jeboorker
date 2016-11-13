@@ -91,7 +91,11 @@
 			<artifactId>truezip-swing</artifactId>
 			<version>7.7.2</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.rr</groupId>
+			<artifactId>mobi-api4java</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
