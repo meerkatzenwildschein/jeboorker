@@ -22,6 +22,7 @@ import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
+import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.metadata.IMetadataReader;
 import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
@@ -63,9 +64,18 @@ public class EbookPropertyItemUtils {
 		if(resourceLoader == null) {
 			return Collections.emptyList();
 		}
-		final DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
-		final List<EbookPropertyItem> items = defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
-		return items;
+		
+		// Look for selected resources
+		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getSelectedEbookPropertyItems();
+		for (EbookPropertyItem ebookPropertyItem : selectedEbookPropertyItems) {
+			if(ebookPropertyItem.getResourceHandler().equals(resourceLoader)) {
+				return Collections.singletonList(ebookPropertyItem);
+			}
+		}
+
+		// Query resource from database
+		DefaultDBManager defaultDBManager = DefaultDBManager.getInstance();
+		return defaultDBManager.getObject(EbookPropertyItem.class, "file", resourceLoader.toString());
 	}
 	
 	/**
