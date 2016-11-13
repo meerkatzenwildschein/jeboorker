@@ -71,7 +71,6 @@
 		<module>l2fprod</module>
 		<module>myswing</module>
 		<module>jeboorker-main</module>
-    <module>mobi-metadata</module>
   </modules>
 	<repositories>
 		<repository>

@@ -14,6 +14,7 @@ import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.metadata.mobi.EXTHRecord;
 import org.rr.jeborker.metadata.mobi.MobiMeta;
+import org.rr.mobi4java.MobiDocument;
 
 public class MobiMetadataReader extends APDFCommonMetadataHandler implements IMetadataReader {
 

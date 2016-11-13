@@ -30,18 +30,8 @@ public class MetadataProperty implements Cloneable {
 	
 	protected HashMap<MetadataProperty.HINTS, Object> hints;
 	
-	static interface ActionType {
-		String getName();
-	}
-	
-	public static enum HINTS implements ActionType {
-		COVER_FROM_EBOOK_FILE_NAME {
-
-			@Override
-			public String getName() {
-				return "CoverFromEbookFileName";
-			}
-		}
+	public static enum HINTS {
+		COVER_FROM_EBOOK_FILE_NAME
 	}	
 	
 	MetadataProperty(String name, List<Object> values) {
