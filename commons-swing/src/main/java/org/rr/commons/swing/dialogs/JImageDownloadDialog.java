@@ -122,9 +122,6 @@ public class JImageDownloadDialog extends JDialog {
 		init(owner, factory);
 	}
 	
-	/**
-	 * @wbp.parser.constructor
-	 */
 	public JImageDownloadDialog(IImageFetcherFactory factory) {
 		super();
 		this.factory = factory;
@@ -146,7 +143,7 @@ public class JImageDownloadDialog extends JDialog {
 		this.setGlassPane(new ShadowPanel());
 		getGlassPane().setVisible(false);
 		
-	    ((JComponent)getContentPane()).registerKeyboardAction(cancelAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+	  ((JComponent)getContentPane()).registerKeyboardAction(cancelAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		
 		//workaround for a swing bug. The first time, the editor is used, the
 		//ui color instance draws the wrong color but have the right rgb values.
