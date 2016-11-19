@@ -80,6 +80,8 @@ public class ImageMobiFileFetcherFactory implements IImageFetcherFactory {
 						final byte[] imageBytes = images.next();
 						return new IImageFetcherEntry() {
 							
+							private String title = UUID.randomUUID().toString();
+							
 							private int width = -1;
 							
 							private int height = -1;
@@ -92,7 +94,7 @@ public class ImageMobiFileFetcherFactory implements IImageFetcherFactory {
 							@Override
 							public URL getImageURL() {
 								try {
-									return new URL("file://" + UUID.randomUUID());
+									return new URL("file://" + title);
 								} catch (Exception e) {
 									LoggerFactory.getLogger().log(Level.INFO, "Invalid URL", e);
 								}
@@ -111,7 +113,7 @@ public class ImageMobiFileFetcherFactory implements IImageFetcherFactory {
 
 							@Override
 							public String getTitle() {
-								return UUID.randomUUID().toString();
+								return title;
 							}
 
 							@Override
