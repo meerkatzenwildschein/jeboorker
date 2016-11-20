@@ -9,7 +9,7 @@
 		<version>0.4.6</version>
 	</parent>
 	<artifactId>jeboorker-main</artifactId>
-	<version>1.1.0</version>
+	<version>1.2.0</version>
 	<name>jeboorker-main</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.192</version>
+			<version>1.4.193</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>
