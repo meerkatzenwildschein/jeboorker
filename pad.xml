@@ -34,9 +34,9 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Jeboorker</Program_Name>
-		<Program_Version>1.0.0</Program_Version>
-		<Program_Release_Month>06</Program_Release_Month>
-		<Program_Release_Day>19</Program_Release_Day>
+		<Program_Version>1.2.0</Program_Version>
+		<Program_Release_Month>11</Program_Release_Month>
+		<Program_Release_Day>20</Program_Release_Day>
 		<Program_Release_Year>2016</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
@@ -46,7 +46,7 @@
 		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
 		<Program_OS_Support>Linux,Linux GPL,Win7 x32,Win7 x64,WinXP</Program_OS_Support>
 		<Program_Language>English,German</Program_Language>
-		<Program_Change_Info>The change log can be found at http://github.com/meerkatzenwildschein/jeboorker/wiki/Changelog</Program_Change_Info>
+		<Program_Change_Info>The change log can be found at https://github.com/meerkatzenwildschein/jeboorker/releases</Program_Change_Info>
 		<Program_Specific_Category>Miscellaneous</Program_Specific_Category>
 		<Program_Category_Class>Home &amp; Hobby::Cataloging</Program_Category_Class>
 		<Program_Categories />
@@ -73,7 +73,7 @@
 			<Char_Desc_80>Ebook management software which can be merged with an existing ebook collection</Char_Desc_80>
 			<Char_Desc_250>Jeboorker is an ebook management software which can be merged with an existing ebook folder structure. It provides an user interface that allows to search or change the ebook meta data. Jeboorker supports epub, cbr, cbz and pdf documents without DRM</Char_Desc_250>
 			<Char_Desc_450>Jeboorker is an ebook management software which can be merged with an existing ebook folder structure. It provides an user interface that allows to search or change the ebook meta data. Jeboorker supports epub, cbr, cbz and pdf documents without DRM so far.</Char_Desc_450>
-			<Char_Desc_2000>Jeboorker is an ebook management software which can be merged with an existing ebook folder structure. It provides an user interface that allows to search or change the ebook meta data. Jeboorker supports epub, cbr, cbz and pdf documents without DRM so far.</Char_Desc_2000>
+			<Char_Desc_2000>Jeboorker is an ebook management software which can be merged with an existing ebook folder structure. It provides an user interface that allows to search or change the ebook meta data. Jeboorker supports epub, cbr, cbz, mobi, azw and pdf documents without DRM so far.</Char_Desc_2000>
 		</English>
 	</Program_Descriptions>
 	<Web_Info>
