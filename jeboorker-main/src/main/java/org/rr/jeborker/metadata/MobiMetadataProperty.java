@@ -18,6 +18,8 @@ import org.rr.mobi4java.exth.DateRecordDelegate;
 import org.rr.mobi4java.exth.RecordDelegate;
 import org.rr.mobi4java.exth.StringRecordDelegate;
 
+import static org.rr.commons.utils.StringUtil.UTF_8;;
+
 class MobiMetadataProperty extends MetadataProperty {
 	
 	private RecordDelegate exthRecord;
@@ -44,7 +46,7 @@ class MobiMetadataProperty extends MetadataProperty {
 				return ((DateRecordDelegate) exthRecord).getAsDate();
 			} catch (ParseException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to read date value.", e);
-				return StringUtil.EMPTY;
+				return ((DateRecordDelegate) exthRecord).getAsString(UTF_8);
 			}
 		} else if(exthRecord instanceof BinaryRecordDelegate) {
 			return ((BinaryRecordDelegate) exthRecord).getAsString();
