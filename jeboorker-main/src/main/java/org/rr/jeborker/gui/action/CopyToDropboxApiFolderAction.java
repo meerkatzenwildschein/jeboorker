@@ -73,7 +73,7 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 */
 	private void doUpload(IResourceHandler resource) throws MalformedURLException, IOException, URISyntaxException, DbxException {
 		// https://www.dropbox.com/developers
-		DbxAppInfo appInfo = new DbxAppInfo(StringUtil.rot13("m8zitanp9n1p5nq"), StringUtil.rot13("gz585xxj5gp98qe"));
+		DbxAppInfo appInfo = new DbxAppInfo(StringUtil.rot13(Bundle.getString("CopyToDropboxAction.key")), StringUtil.rot13(Bundle.getString("CopyToDropboxAction.secret")));
 		DbxRequestConfig config = new DbxRequestConfig("Jeboorker/" + Jeboorker.getAppVersion(), Locale.getDefault().toString());
 		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
 
