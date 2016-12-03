@@ -70,9 +70,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultTreeSelectionModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jdesktop.jxlayer.JXLayer;
@@ -93,7 +91,6 @@ import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.swing.components.util.EnablePropertyChangeHighlighterSupport;
 import org.rr.commons.swing.dnd.DragAndDropUtils;
 import org.rr.commons.swing.dnd.FileTransferable;
-import org.rr.commons.swing.dnd.URIListTransferable;
 import org.rr.commons.swing.image.SimpleImageViewer;
 import org.rr.commons.swing.layout.EqualsLayout;
 import org.rr.commons.utils.CommonUtils;
