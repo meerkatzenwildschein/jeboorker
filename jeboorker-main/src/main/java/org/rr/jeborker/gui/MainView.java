@@ -686,15 +686,7 @@ class MainView extends JFrame {
 							}
 		        }
 
-		        if(CommonUtils.isLinux()) {
-		        	if(ReflectionUtils.javaVersion() == 16) {
-		        		return new URIListTransferable(uriList, null);
-		        	} else {
-		        		return new FileTransferable(files);
-		        	}
-		        } else {
-		        	return new FileTransferable(files);
-		        }
+		        return new FileTransferable(files);
 		    }
 		});
 	}
@@ -829,12 +821,11 @@ class MainView extends JFrame {
 				Object lastPath = dropRow.getLastPathComponent();
 				try {
 					IResourceHandler targetPathResource = ((FileSystemNode) lastPath).getResource();
-					boolean reloadParent = false;
 					if (targetPathResource.isFileResource()) {
 						targetPathResource = targetPathResource.getParentResource();
-						reloadParent = true;
 					}
 					Transferable transferable = info.getTransferable();
+					boolean isLocal = (boolean) ReflectionUtils.getFieldValue(transferable, "isLocal", false);
 					List<IResourceHandler> sourceResourceHandlers = ResourceHandlerFactory.getResourceHandler(transferable);
 					for (IResourceHandler sourceResourceHandler : sourceResourceHandlers) {
 						String basePathFor = preferenceStore.getBasePathFor(targetPathResource);
@@ -842,25 +833,20 @@ class MainView extends JFrame {
 							// drop to a folder that is managed by jeboorker.
 							PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
 						} else {
-							// do a simple copy
+							// do a simple copy or move
 							IResourceHandler targetPathResourceFile = targetPathResource.addPathStatement(sourceResourceHandler.getName());
 							if(notEqual(sourceResourceHandler, targetPathResourceFile)) {
 								IResourceHandler uniqueTargetPathResourceFile = ResourceHandlerFactory.getUniqueResourceHandler(targetPathResourceFile,
 										targetPathResourceFile.getFileExtension());
-								sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
+								if(isLocal || (MOVE & info.getSourceDropActions()) == MOVE) {
+									sourceResourceHandler.moveTo(uniqueTargetPathResourceFile, false);
+									treeComponentHandler.refreshFileSystemTreeEntry(sourceResourceHandler);
+								} else {
+									sourceResourceHandler.copyTo(uniqueTargetPathResourceFile, false);
+								}
 							}
 						}
-						if (reloadParent) {
-							TreeNode node = (TreeNode) dropRow.getLastPathComponent();
-							TreeNode parentNode = node.getParent();
-							if (parentNode != null) {
-								((DefaultTreeModel) fileSystemTree.getModel()).reload(parentNode);
-							} else {
-								((DefaultTreeModel) fileSystemTree.getModel()).reload(node);
-							}
-						} else {
-							((DefaultTreeModel) fileSystemTree.getModel()).reload((TreeNode) dropRow.getLastPathComponent());
-						}
+						treeComponentHandler.refreshFileSystemTreeEntry(targetPathResource);
 					}
 				} catch (Exception e) {
 					LoggerFactory.getLogger(this).log(Level.WARNING, e.getMessage(), e);
@@ -892,15 +878,7 @@ class MainView extends JFrame {
 					}
 				}
 
-				if (CommonUtils.isLinux()) {
-					if (ReflectionUtils.javaVersion() == 16) {
-						return new URIListTransferable(uriList, null);
-					} else {
-						return new FileTransferable(files);
-					}
-				} else {
-					return new FileTransferable(files);
-				}
+				return new FileTransferable(files);
 			}
 		});
 

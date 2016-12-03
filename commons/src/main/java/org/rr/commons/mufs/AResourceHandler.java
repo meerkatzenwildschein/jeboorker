@@ -176,7 +176,7 @@ abstract class AResourceHandler implements IResourceHandler {
 	}
 
 	/**
-	 * Tells if the reosurce handled by this {@link AResourceHandler} is
+	 * Tells if the resource handled by this {@link AResourceHandler} is
 	 * a file resource.
 	 *
 	 * @return <code>true</code> if it's a file resource or <code>false</code> otherwise.
