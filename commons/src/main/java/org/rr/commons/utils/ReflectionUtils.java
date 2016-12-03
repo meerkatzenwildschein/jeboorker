@@ -18,6 +18,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -732,7 +733,7 @@ public class ReflectionUtils implements Serializable {
 			}
 			
 			//Get all matching methods
-			List<Method> methods = ListUtils.union(Arrays.asList(clazz.getDeclaredMethods()), Arrays.asList(clazz.getMethods()));
+			List<Method> methods = clazz != null ? ListUtils.union(Arrays.asList(clazz.getDeclaredMethods()), Arrays.asList(clazz.getMethods())) : Collections.<Method>emptyList();
 			for (Method m : methods) {
 				String targetMethodName = m.getName();
 				if (targetMethodName.equalsIgnoreCase(methodName) && m.getParameterTypes().length == args.length ) { //Method name match
