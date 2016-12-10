@@ -3,8 +3,9 @@ package bd.amazed.docscissors.view;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import bd.amazed.docscissors.model.PageGroup;
 
@@ -20,11 +21,11 @@ public class UIHandler {
 	private int page;
 	private boolean showMergeMode;
 
-	private Vector<UIHandlerListener> listeners;
+	private List<UIHandlerListener> listeners;
 
 	public UIHandler() {
 		rects = new ArrayList<>();
-		listeners = new Vector<>();
+		listeners = Collections.synchronizedList(new ArrayList<UIHandlerListener>());
 		reset();
 	}
 
@@ -192,12 +193,8 @@ public class UIHandler {
 		}
 	}
 
-	public boolean removeListener(UIHandler listner) {
-		return listeners.remove(listner);
-	}
-
 	public void removeAllListeners() {
-		listeners.removeAllElements();
+		listeners.clear();
 	}
 
 	private void fireEditModeChanged() {

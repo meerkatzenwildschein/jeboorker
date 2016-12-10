@@ -8,7 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import bd.amazed.docscissors.model.RectChangeListener;
 
@@ -30,7 +32,7 @@ public class Rect implements Cloneable {
 
 	private static Font font;
 
-	protected Vector<RectChangeListener> listeners = new Vector<>();
+	protected List<RectChangeListener> listeners = Collections.<RectChangeListener>synchronizedList(new ArrayList<RectChangeListener>());
 	private UIHandler uiHandler;
 
 	/**
@@ -47,14 +49,6 @@ public class Rect implements Cloneable {
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		}
-	}
-
-	public boolean removeListener(RectChangeListener listener) {
-		return listeners.remove(listener);
-	}
-
-	public void removeAllListeners() {
-		listeners.removeAllElements();
 	}
 
 	protected void setBounds(Rectangle newBounds) {

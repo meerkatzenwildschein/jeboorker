@@ -1,6 +1,6 @@
 package bd.amazed.docscissors.model;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 
@@ -19,5 +19,5 @@ public interface ModelListener {
 
 	public void clipboardPaste(boolean isCut, Rect onClipboard);
 
-	public void pageGroupChanged(Vector<PageGroup> pageGroups);
+	public void pageGroupChanged(List<PageGroup> pageGroups);
 }

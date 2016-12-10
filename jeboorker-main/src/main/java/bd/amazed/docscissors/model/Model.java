@@ -1,6 +1,7 @@
 package bd.amazed.docscissors.model;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
 
@@ -15,7 +16,7 @@ public class Model {
 
 	private static Model instance;
 
-	private Vector<ModelListener> modelListeners;
+	private List<ModelListener> modelListeners;
 
 	private DocumentInfo currentDoc = DocumentInfo.NullDoc();
 
@@ -25,17 +26,17 @@ public class Model {
 
 	private boolean isClipboardCut;
 
-	private Vector<PageGroup> pageGroups;
+	private List<PageGroup> pageGroups;
 
 	private Model() {
-		modelListeners = new java.util.Vector<>();
+		modelListeners = new ArrayList<>();
 		reset();
 	}
 
 
 	private void reset() {
 		zoomFactor = 1;
-		pageGroups = new Vector<>();
+		pageGroups = new ArrayList<>();
 	}
 
 
@@ -67,7 +68,7 @@ public class Model {
 	 * @param originalFile original file
 	 * @param previewImage previewImage, must not be null
 	 */
-	public void setDoc(DocumentInfo docFile, Vector<PageGroup> pageGroups) {
+	public void setDoc(DocumentInfo docFile, List<PageGroup> pageGroups) {
 		if (currentDoc == null) {
 			throw new IllegalArgumentException("Cannot set null doc file");
 		}
@@ -91,7 +92,7 @@ public class Model {
 		fireSetDocFailed(file, err);
 	}
 
-	private void setPageGroups(Vector<PageGroup> pageGroups) {
+	private void setPageGroups(List<PageGroup> pageGroups) {
 		this.pageGroups = pageGroups;
 		firePageGroupChanged(pageGroups);
 	}
@@ -118,16 +119,16 @@ public class Model {
 		return clipboardRect;
 	}
 
-	public Vector<PageGroup> getPageGroups() {
+	public List<PageGroup> getPageGroups() {
 		return pageGroups;
 	}
 
 	public PageRectsMap getPageRectsMap() {
 		PageGroup pageGroup = null;
-		Vector<Integer> pages = null;
+		List<Integer> pages = null;
 		PageRectsMap pageRectsMap = new PageRectsMap();
 		for (int i = 0; i < pageGroups.size(); i++) {
-			pageGroup = pageGroups.elementAt(i);
+			pageGroup = pageGroups.get(i);
 			pages = pageGroup.getPages();
 			for (int page = 0; page < pages.size(); page++) {
 				pageRectsMap.putRects(pages.get(page), pageGroup.getRectangles());
@@ -153,7 +154,7 @@ public class Model {
 		}
 	}
 
-	protected void firePageGroupChanged(Vector<PageGroup> pageGroups) {
+	protected void firePageGroupChanged(List<PageGroup> pageGroups) {
 		for (ModelListener listener : modelListeners) {
 			listener.pageGroupChanged(pageGroups);
 		}

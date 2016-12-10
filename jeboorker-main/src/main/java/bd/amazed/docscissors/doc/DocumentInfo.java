@@ -12,7 +12,6 @@ public class DocumentInfo {
 
 	// we basically read from a temp normalized file.
 	// Original file reference is just stored.
-	private IResourceHandler normalizedFile;
 	private IResourceHandler originalFile;
 	private HashMap<String, String> pdfInfo;
 	private int pageCount;
@@ -39,7 +38,7 @@ public class DocumentInfo {
 		this.originalFile = originalFile;
 	}
 
-	public HashMap getDocInfo() {
+	public HashMap<String, String> getDocInfo() {
 		if (pdfInfo == null) {
 			return new HashMap<String, String>();
 		} else {

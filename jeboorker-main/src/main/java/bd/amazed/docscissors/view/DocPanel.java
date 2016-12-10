@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.rr.commons.log.LoggerFactory;
@@ -97,7 +97,6 @@ public class DocPanel extends JDocumentDecoderPanel implements ModelListener, Re
 
 	@Override
 	public void newDocLoaded(DocumentInfo pdfFile) {
-		IResourceHandler filePath = pdfFile.getOriginalFile();
 		try {
 			super.openPdfFile(pdfFile);
 			super.decodePage(uiHandler.getPage());
@@ -180,7 +179,7 @@ public class DocPanel extends JDocumentDecoderPanel implements ModelListener, Re
 	}
 
 	@Override
-	public void pageGroupChanged(Vector<PageGroup> pageGroups) {
+	public void pageGroupChanged(List<PageGroup> pageGroups) {
 
 	}
 

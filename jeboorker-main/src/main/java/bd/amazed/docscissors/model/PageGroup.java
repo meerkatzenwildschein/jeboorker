@@ -3,6 +3,7 @@ package bd.amazed.docscissors.model;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import bd.amazed.docscissors.view.Rect;
@@ -55,18 +56,18 @@ public class PageGroup {
 	}
 
 
-	public static Vector<PageGroup> createGroupForAllPages(int pageCount) {
+	public static List<PageGroup> createGroupForAllPages(int pageCount) {
 		PageGroup allPages = new PageGroup(Bundle.getString("PageGroup.allPages"));
 		for (int i = 1; i <= pageCount; i++ ) {
 			allPages.addPage(i);
 		}
-		Vector<PageGroup> pageGroups = new Vector<>();
+		List<PageGroup> pageGroups = new ArrayList<>();
 		pageGroups.add(allPages);
 		return pageGroups;
 	}
 
-	public static Vector<PageGroup> createGroupForIndividualPage(int pageCount) {
-		Vector<PageGroup> pageGroups = new Vector<>(pageCount);
+	public static List<PageGroup> createGroupForIndividualPage(int pageCount) {
+		List<PageGroup> pageGroups = new ArrayList<>(pageCount);
 		for (int i = 1; i <= pageCount; i++ ) {
 			PageGroup group = new PageGroup(Bundle.getString("PageGroup.Page") + " " + i);
 			group.addPage(i);
@@ -76,7 +77,7 @@ public class PageGroup {
 	}
 
 
-	public static Vector<PageGroup> createGroupForOddEven(int pageCount) {
+	public static List<PageGroup> createGroupForOddEven(int pageCount) {
 		PageGroup oddPages = new PageGroup(Bundle.getString("PageGroup.oddPages"));
 		PageGroup evenPages = new PageGroup(Bundle.getString("PageGroup.evenPages"));
 		for (int i = 1; i <= pageCount; i++ ) {
@@ -86,7 +87,7 @@ public class PageGroup {
 				oddPages.addPage(i);
 			}
 		}
-		Vector<PageGroup> pageGroups = new Vector<>();
+		List<PageGroup> pageGroups = new ArrayList<>();
 		pageGroups.add(oddPages);
 		pageGroups.add(evenPages);
 		return pageGroups;
@@ -123,7 +124,7 @@ public class PageGroup {
 		return pages.elementAt(index);
 	}
 
-	public static Vector<PageGroup> createGroup(int groupType, int pageCount) {
+	public static List<PageGroup> createGroup(int groupType, int pageCount) {
 		switch (groupType) {
 		case GROUP_TYPE_ALL:
 			return PageGroup.createGroupForAllPages(pageCount);

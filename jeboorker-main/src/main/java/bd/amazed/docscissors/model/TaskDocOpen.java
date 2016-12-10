@@ -3,7 +3,7 @@ package bd.amazed.docscissors.model;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -15,7 +15,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import bd.amazed.docscissors.doc.DocumentCropper;
 import bd.amazed.docscissors.doc.DocumentInfo;
 
-public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
+public class TaskDocOpen extends SwingWorker<List<PageGroup>, Void> {
 
 	private DocumentInfo docFile;
 	private IResourceHandler originalFile;
@@ -32,11 +32,11 @@ public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
 	}
 
 	@Override
-	protected Vector<PageGroup> doInBackground() throws Exception {
+	protected List<PageGroup> doInBackground() throws Exception {
 		cropper = DocumentCropper.getCropper(originalFile);
 		docFile = cropper.getDocumentInfo();
 
-		Vector<PageGroup> pageGroups = PageGroup.createGroup(groupType, docFile.getPageCount());
+		List<PageGroup> pageGroups = PageGroup.createGroup(groupType, docFile.getPageCount());
 
 		if (shouldCreateStackView && groupType != PageGroup.GROUP_TYPE_INDIVIDUAL) {
 			setProgress(0);
@@ -48,7 +48,7 @@ public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
 			};
 
 			for (int i = 0; i < pageGroups.size(); i++) {
-				PageGroup pageGroup = pageGroups.elementAt(i);
+				PageGroup pageGroup = pageGroups.get(i);
 				BufferedImage image = cropper.getNormalizedImage(docFile, propertyChangeListener, pageGroup);
 
 				if (image == null) {
@@ -77,7 +77,7 @@ public class TaskDocOpen extends SwingWorker<Vector<PageGroup>, Void> {
 		setProgress(100);
 		firePropertyChange("done", false, true);
 		if (!isCancelled) {
-			Vector<PageGroup> pageGroups = null;
+			List<PageGroup> pageGroups = null;
 			try {
 				pageGroups = this.get();
 				if (pageGroups != null && !isCancelled) {
