@@ -1,7 +1,6 @@
 package org.rr.jeborker.gui.action;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -40,7 +39,7 @@ public class CopyToTargetAction extends AbstractAction {
 
 	private void copy(IResourceHandler source, IResourceHandler target) throws IOException {
 		if(target.isDirectoryResource()) {
-			target = ResourceHandlerFactory.getResourceHandler(target.toString() + File.separator + source.getName());
+			target = ResourceHandlerFactory.getResourceHandler(target, source.getName());
 		}
 		source.copyTo(target, false);
 	}
