@@ -22,6 +22,7 @@ import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.action.ActionUtils;
 import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
@@ -75,13 +76,22 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 		if (!progressMonitor.isCanceled()) {
 			try {
 				if (this.get()) {
-					IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetFile);
-					String baseFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePathFor(resourceHandler);
-					if(StringUtil.isNotEmpty(baseFolder)) {
-						if(!this.targetFileExists) { //Do not add again
-							addToDatabase(resourceHandler, ResourceHandlerFactory.getResourceHandler(baseFolder));
+					MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
+					try {
+						progressMonitor.blockMainFrame(true);
+						progressMonitor.setMessage("Saving file " + targetFile.getName());
+
+						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetFile);
+						String baseFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePathFor(resourceHandler);
+						if (StringUtil.isNotEmpty(baseFolder)) {
+							if (!this.targetFileExists) { // Do not add again
+								addToDatabase(resourceHandler, ResourceHandlerFactory.getResourceHandler(baseFolder));
+							}
+							applyFilter(resourceHandler);
 						}
-						applyFilter(resourceHandler);
+						ActionUtils.refreshFileSystemResourceParent(resourceHandler.getParentResource());
+					} finally {
+						progressMonitor.blockMainFrame(false);
 					}
 				}
 			} catch (InterruptedException e) {
