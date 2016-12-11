@@ -13,9 +13,11 @@ import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.utils.ArrayUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.Jeboorker;
@@ -368,7 +370,6 @@ public class ActionUtils {
 					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to copy file " + basePath + " to " + targetRecourceDirectory, e);
 				} finally {
 					cleanup(sourceResourcesToTransfer, move, importedResources);
-
 					progressMonitor.monitorProgressStop();
 					FileRefreshBackground.setDisabled(false);
 				}
@@ -448,4 +449,47 @@ public class ActionUtils {
 			}
 		}
 	}
+	
+	public static void applyFilter(final List<IResourceHandler> fileNameToFilter) {
+		MainController.getController().changeToDatabaseModel();
+		TransformValueList<IResourceHandler, String> transformValueList = new TransformValueList<IResourceHandler, String>(fileNameToFilter) {
+
+			@Override
+			public String transform(IResourceHandler source) {
+				return source.getName();
+			}
+		};
+		applyFilter(ListUtils.join(transformValueList, ","));
+	}
+	
+	public static void applyFilter(final String ... fileNameToFilter) {
+		MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+
+			@Override
+			public String getIdentifier() {
+				return getClass().getName();
+			}
+
+			@Override
+			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+				String filter = ArrayUtils.join(fileNameToFilter, ",");
+				LoggerFactory.getLogger().log(Level.INFO, "Apply filter " + filter);
+				where.like("fileName", filter);
+			}
+
+			@Override
+			public boolean isVolatile() {
+				return true;
+			}
+		});
+
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				MainController.getController().getEbookTableHandler().refreshTable();
+			}
+		});
+	}
+
 }

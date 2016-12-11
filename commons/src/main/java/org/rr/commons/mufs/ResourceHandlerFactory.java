@@ -205,6 +205,10 @@ public class ResourceHandlerFactory {
 		return getUniqueResourceHandler(resourceLoader, extension);
 	}
 
+	public static IResourceHandler getUniqueResourceHandler(final IResourceHandler sibling, String extension) {
+		return getUniqueResourceHandler(sibling, null, extension);
+	}
+	
 	/**
 	 * Get a {@link IResourceHandler} instance with the given, additional extension. If the sibling
 	 * with the desired extension already exists a number will be attached at the end of the filename.
@@ -213,7 +217,7 @@ public class ResourceHandlerFactory {
 	 * @param extension the extension for the sibling {@link IResourceHandler} without the dot separator.
 	 * @return The sibling {@link IResourceHandler}.
 	 */
-	public static IResourceHandler getUniqueResourceHandler(final IResourceHandler sibling, String extension) {
+	public static IResourceHandler getUniqueResourceHandler(final IResourceHandler sibling, String addition, String extension) {
 		if(extension == null) {
 			extension = sibling.getFileExtension();
 		}
@@ -228,7 +232,7 @@ public class ResourceHandlerFactory {
 
 		int extensionNum = 0;
 		IResourceHandler result = null;
-		while( (result = getResourceHandler(siblingString + (extensionNum != 0 ? "_" + extensionNum : EMPTY) + "." + extension)).exists() ) {
+		while( (result = getResourceHandler(siblingString + (addition != null ? "_" + addition : EMPTY) + (extensionNum != 0 ? "_" + extensionNum : EMPTY) + "." + extension)).exists() ) {
 			extensionNum ++;
 		}
 		return result;

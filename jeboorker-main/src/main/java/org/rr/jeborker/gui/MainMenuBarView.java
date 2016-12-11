@@ -4,6 +4,7 @@ import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -366,7 +367,21 @@ class MainMenuBarView extends JMenuBar {
 					}
 				}
 				menuEdit.add(pdfScissorsItem);
-
+				
+				JMenuItem mergeDocItem = new JMenuItem();
+				mergeDocItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.MERGE_DOCUMENT_ACTION, null));
+				mergeDocItem.setEnabled(false);
+				if(MainViewSelectionUtils.isMainTableMultiSelection()) {
+					Collection<String> mimeTypesFromSelection = MainViewSelectionUtils.getMimeTypesFromSelection();
+					if(mimeTypesFromSelection.size() == 1) {
+						if(mimeTypesFromSelection.contains(JeboorkerConstants.SUPPORTED_MIMES.MIME_PDF.getMime())) {
+							mergeDocItem.setEnabled(true);
+						}
+					}
+				}
+				menuEdit.add(mergeDocItem);
+				
+				
 				menuEdit.add(new JSeparator());
 
 				JMenuItem editPreferencesItem = new JMenuItem();

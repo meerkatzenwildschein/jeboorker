@@ -50,7 +50,7 @@ class ShowPdfScissorsAction extends AbstractAction {
 
 			EbookPropertyItem ebookPropertyItem = selectedEbookPropertyItems.get(0);
 			IResourceHandler resourceHandler = ebookPropertyItem.getResourceHandler();
-			IResourceHandler uniqueResourceHandler = ResourceHandlerFactory.getUniqueResourceHandler(resourceHandler, null);
+			IResourceHandler uniqueResourceHandler = ResourceHandlerFactory.getUniqueResourceHandler(resourceHandler, "scissored", null);
 			scissors.setSaveFile(uniqueResourceHandler.toFile());
 
 			openOptionDialog(controller, scissors, resourceHandler);

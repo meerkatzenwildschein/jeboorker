@@ -2,38 +2,31 @@ package bd.amazed.docscissors.model;
 
 import java.awt.Component;
 import java.io.File;
-import java.sql.SQLException;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.apache.commons.io.FilenameUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
-import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.MainMonitor;
 import org.rr.jeborker.gui.action.ActionUtils;
-import org.rr.jeborker.gui.model.EbookPropertyDBTableModel;
 
 import bd.amazed.docscissors.doc.DocumentCropper;
 import bd.amazed.docscissors.doc.DocumentInfo;
 
-import com.j256.ormlite.stmt.Where;
-
 public class TaskDocSave extends SwingWorker<Boolean, Void> {
 
-	private static final String QUERY_IDENTIFER = TaskDocSave.class.getName();
 	private DocumentInfo docFile;
 	private File targetFile;
 	PageRectsMap pageRectsMap;
@@ -88,6 +81,8 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 								addToDatabase(resourceHandler, ResourceHandlerFactory.getResourceHandler(baseFolder));
 							}
 							applyFilter(resourceHandler);
+						} else {
+							MainController.getController().changeToFileModel(Collections.singletonList(resourceHandler));
 						}
 						ActionUtils.refreshFileSystemResourceParent(resourceHandler.getParentResource());
 					} finally {
@@ -104,40 +99,11 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 	}
 
 	private void applyFilter(IResourceHandler targetResourceHandler) {
-		final MainController controller = MainController.getController();
-		final String sourcePdfFileName = FilenameUtils.removeExtension(docFile.getOriginalFile().getName());
-
-		MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
-
-			@Override
-			public String getIdentifier() {
-				return QUERY_IDENTIFER;
-			}
-
-			@Override
-			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-				where.like("fileName", sourcePdfFileName + "%");
-			}
-
-			@Override
-			public boolean isVolatile() {
-				return true;
-			}
-		});
-
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				controller.getEbookTableHandler().refreshTable();
-			}
-		});
-
+		ActionUtils.applyFilter(docFile.getOriginalFile().getName());
 	}
 
 	private void addToDatabase(IResourceHandler resource, IResourceHandler baseFolder) {
-		final EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
-		DefaultDBManager.getInstance().storeObject(item);
+		EbookPropertyItem item = EbookPropertyItemUtils.createEbookPropertyItem(resource, baseFolder);
 		ActionUtils.addAndStoreEbookPropertyItem(item);
 	}
 

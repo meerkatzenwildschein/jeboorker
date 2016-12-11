@@ -1,10 +1,14 @@
 package org.rr.jeborker.gui;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JTree;
 
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.jeborker.db.item.EbookPropertyItem;
 
 public class MainViewSelectionUtils {
 
@@ -41,6 +45,14 @@ public class MainViewSelectionUtils {
 	}
 
 	/**
+	 * Tells if the main table component hold more than one selection.
+	 * @return <code>true</code> if there is more than one selection on the main table.
+	 */
+	static boolean isMainTableMultiSelection() {
+		return getMainTableSelectionCount() > 1;
+	}
+	
+	/**
 	 * Tells if the main table component hold one or more selections.
 	 * @return <code>true</code> if there is a selection on the main table.
 	 */
@@ -54,6 +66,18 @@ public class MainViewSelectionUtils {
 	 */
 	static int getMainTableSelectionCount() {
 		return MainController.getController().getEbookTableHandler().getSelectedRowCount();
+	}
+	
+	static Collection<String> getMimeTypesFromSelection() {
+		List<EbookPropertyItem> selectedEbookPropertyItems = MainController.getController().getEbookTableHandler().getSelectedEbookPropertyItems();
+		TransformValueList<EbookPropertyItem, String> mimeTypesFromSelection = new TransformValueList<EbookPropertyItem, String>(selectedEbookPropertyItems) {
+
+			@Override
+			public String transform(EbookPropertyItem source) {
+				return source.getMimeType();
+			}
+		};
+		return new HashSet<String>(mimeTypesFromSelection);
 	}
 
 	/**

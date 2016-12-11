@@ -13,12 +13,12 @@ import org.rr.jeborker.metadata.MetadataHandlerFactory;
 import org.rr.jeborker.metadata.MetadataProperty;
 import org.rr.pm.image.ImageUtils;
 
-class ConverterUtils {
+public class ConverterUtils {
 
 	/**
 	 * Transfers the main metadata between the given source and the target resource.
 	 */
-	static void transferMetadata(final IResourceHandler sourceResource, final IResourceHandler targetResource) {
+	public static void transferMetadata(final IResourceHandler sourceResource, final IResourceHandler targetResource) {
 		IMetadataReader sourceReader = MetadataHandlerFactory.getReader(sourceResource);
 		IMetadataReader targetReader = MetadataHandlerFactory.getReader(targetResource);
 		List<MetadataProperty> sourceMetadata = sourceReader.readMetadata();
