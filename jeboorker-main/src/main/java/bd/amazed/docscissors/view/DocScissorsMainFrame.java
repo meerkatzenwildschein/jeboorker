@@ -321,8 +321,7 @@ public class DocScissorsMainFrame extends JFrame implements ModelListener {
 					progressMonitor.setProgress(progress, 100);
 				} else if ("done".equals(evt.getPropertyName())) {
 					lock.countDown();
-					MainController.getController().getProgressMonitor().blockMainFrame(false);
-					progressMonitor.clearMessage();
+					MainController.getController().getProgressMonitor().blockMainFrame(false).clearMessage();
 				} else if ("message".equals(evt.getPropertyName())) {
 					progressMonitor.setMessage((String)evt.getNewValue());
 				}

@@ -71,8 +71,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 				if (this.get()) {
 					MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 					try {
-						progressMonitor.blockMainFrame(true);
-						progressMonitor.setMessage("Saving file " + targetFile.getName());
+						progressMonitor.blockMainFrame(true).setMessage("Saving file " + targetFile.getName());
 
 						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(targetFile);
 						String baseFolder = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePathFor(resourceHandler);

@@ -39,8 +39,7 @@ public class FileSystemImportAction extends AbstractAction {
 
 		MainMonitor progressMonitor = MainController.getController().getProgressMonitor();
 		try {
-			progressMonitor.blockMainFrame(true);
-			progressMonitor.setMessage("Importing files");
+			progressMonitor.blockMainFrame(true).setMessage("Importing files");
 			
 			boolean delete = preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
 			ActionUtils.importEbookResources(selectedTreeItems, targetBasePath, delete);
