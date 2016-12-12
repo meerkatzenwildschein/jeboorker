@@ -45,7 +45,7 @@ class MobiMetadataProperty extends MetadataProperty {
 			try {
 				return ((DateRecordDelegate) exthRecord).getAsDate();
 			} catch (ParseException e) {
-				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to read date value.", e);
+				LoggerFactory.getLogger(this).log(Level.WARNING, e.getMessage());
 				return ((DateRecordDelegate) exthRecord).getAsString(UTF_8);
 			}
 		} else if(exthRecord instanceof BinaryRecordDelegate) {
