@@ -611,6 +611,7 @@ class MainView extends JFrame {
 		MainViewMenuUtils.registerDeleteKeyAction(mainTable);
 		MainViewMenuUtils.registerRefreshEntryKeyAction(mainTable);
 		MainViewMenuUtils.registerRenameFileKeyAction(mainTable);
+		MainViewMenuUtils.registerApplyFilterKeyAction(mainTable);
 
 		mainTable.putClientProperty(StringConvertor.class, new StringConvertor() {
 
@@ -795,6 +796,7 @@ class MainView extends JFrame {
 		MainViewMenuUtils.registerPasteFromClipboardKeyAction(fileSystemTree);
 		MainViewMenuUtils.registerDeleteKeyAction(fileSystemTree);
 		MainViewMenuUtils.registerFileSystemRefreshKeyAction(fileSystemTree);
+		MainViewMenuUtils.registerApplyFilterKeyAction(fileSystemTree);
 
 		fileSystemTree.setDragEnabled(true);
 		fileSystemTree.setTransferHandler(new TransferHandler() {
