@@ -828,7 +828,7 @@ class MainView extends JFrame {
 						String basePathFor = preferenceStore.getBasePathFor(targetPathResource);
 						if (basePathFor != null) {
 							// drop to a folder that is managed by jeboorker.
-							PasteFromClipboardAction.importEbookFromClipboard(transferable, Integer.MIN_VALUE, basePathFor, targetPathResource);
+							PasteFromClipboardAction.importEbookFromClipboard(transferable, basePathFor, targetPathResource);
 						} else {
 							// do a simple copy or move
 							IResourceHandler targetPathResourceFile = targetPathResource.addPathStatement(sourceResourceHandler.getName());
@@ -1048,7 +1048,7 @@ class MainView extends JFrame {
                 IResourceHandler firstPathResource = ((FileSystemNode) firstPath).getResource();
                 IResourceHandler lastPathPathResource = ((FileSystemNode) lastPath).getResource();
                 try {
-					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), Integer.MIN_VALUE, firstPathResource.toString(), lastPathPathResource);
+					PasteFromClipboardAction.importEbookFromClipboard(info.getTransferable(), firstPathResource.toString(), lastPathPathResource);
 					basePathTree.startEditingAtPath(dropRow);
 				} catch (Exception e) {
 					try {

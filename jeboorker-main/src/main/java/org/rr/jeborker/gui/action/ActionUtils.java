@@ -3,7 +3,6 @@ package org.rr.jeborker.gui.action;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,10 +17,7 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.ArrayUtils;
-import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtil;
-import org.rr.jeborker.Jeboorker;
-import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.JeboorkerConstants;
@@ -323,8 +319,8 @@ public class ActionUtils {
 						EbookPropertyItem ebookPropertyItem = sourceEbookPropertyItems.get(i);
 						IResourceHandler sourceResourceHandler = ebookPropertyItem.getResourceHandler();
 						IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolderResourceHandler, sourceResourceHandler.getName());
-						if (targetResourceHandler.exists()) {
-							LoggerFactory.log(Level.WARNING, this, "Failed to move " + sourceResourceHandler + " to " + basePath + ". Target file already exists.");
+						if (!isImportAllowed(sourceResourceHandler, targetResourceHandler)) {
+							LoggerFactory.log(Level.WARNING, this, "Not allowed to move " + sourceResourceHandler + " to " + targetResourceHandler + ".");
 							continue;
 						}
 
@@ -343,19 +339,29 @@ public class ActionUtils {
 		});		
 	}
 	
-	public static void importEbookResources(final List<IResourceHandler> sources, final String basePath, final boolean move) {
+	public static List<IResourceHandler> importEbookResources(final List<IResourceHandler> sources, final String basePath, final boolean move) {
+		return importEbookResources(sources, null, basePath, move);
+	}
+	
+	public static List<IResourceHandler> importEbookResources(final List<IResourceHandler> sources, final IResourceHandler targetResourceDirectory, final String basePath, final boolean move) {
+		final List<IResourceHandler> importedResources = new ArrayList<>();
 		FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
 
 			@Override
 			public void run() {
-				IResourceHandler targetFolderResourceHandler = ResourceHandlerFactory.getResourceHandler(basePath);
+				IResourceHandler targetFolder;
+				if(targetResourceDirectory != null) {
+					targetFolder = targetResourceDirectory;
+				} else {
+					targetFolder = ResourceHandlerFactory.getResourceHandler(basePath);
+				}
 				
 				for (int i = 0; i < sources.size(); i++) {
 					try {
 						IResourceHandler sourceResourceHandler = sources.get(i);
-						IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolderResourceHandler, sourceResourceHandler.getName());
-						if (targetResourceHandler.exists()) {
-							LoggerFactory.log(Level.WARNING, this, "Failed to move " + sourceResourceHandler + " to " + basePath + ". Target file already exists.");
+						IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolder, sourceResourceHandler.getName());
+						if (!isImportAllowed(sourceResourceHandler, targetResourceHandler)) {
+							LoggerFactory.log(Level.WARNING, this, "Not allowed to move " + sourceResourceHandler + " to " + targetResourceHandler + ".");
 							continue;
 						}
 
@@ -363,100 +369,17 @@ public class ActionUtils {
 						EbookPropertyItem ebookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceHandler, ResourceHandlerFactory.getResourceHandler(basePath));
 
 						ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, targetResourceHandler);
+						importedResources.add(targetResourceHandler);
 					} catch (Exception ex) {
 						LoggerFactory.log(Level.WARNING, this, "Failed to move file to " + basePath, ex);
 					}
 				}
 				refreshFileSystemResourceParents(sources);
 			}
-		});		
-	}
-
-	/**
-	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
-	 * The files will be copied and the {@link EbookPropertyItem}s will be created.
-	 * @param deleteAnyway Deletes the resource after a successful import in any case.
-	 * @return A list of all imported (target) file resources.
-	 * @deprecated
-	 */
-	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
-			final List<IResourceHandler> sourceResourcesToTransfer, final boolean move) throws IOException {
-		final ArrayList<IResourceHandler> importedResources = new ArrayList<>();
-
-		Jeboorker.APPLICATION_THREAD_POOL.execute(new Runnable() {
-			
-			@Override
-			public void run() {
-				FileRefreshBackground.setDisabled(true);
-				MainController controller = MainController.getController();
-				MainMonitor progressMonitor = controller.getProgressMonitor();
-				
-				try {
-					progressMonitor.monitorProgressStart("Start file copy");
-					for(IResourceHandler sourceResource : sourceResourcesToTransfer) {
-						IResourceHandler targetResource = ResourceHandlerFactory.getResourceHandler(targetRecourceDirectory, sourceResource.getName());
-						progressMonitor.setMessage(Bundle.getFormattedString("CopyToTargetAction.copy", sourceResource.getName(), targetResource.getName()));
-						if(isImportAllowed(sourceResource, targetResource)) {
-							boolean transferSuccess = transferFile(sourceResource, targetResource, move);
-							if(transferSuccess) {
-								EbookPropertyItem newItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResource, ResourceHandlerFactory.getResourceHandler(basePath));
-
-								List<EbookPropertyItem> sourceItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(sourceResource);
-								if(ListUtils.isNotEmpty(sourceItems)) {
-									ActionUtils.storeEbookPropertyItem(newItem);
-									for(EbookPropertyItem sourceItem : sourceItems) {
-										controller.removeEbookPropertyItem(sourceItem);
-									}
-								} else {
-									ActionUtils.addAndStoreEbookPropertyItem(newItem, dropRow + 1);
-								}
-								controller.getMainTreeHandler().refreshFileSystemTreeEntry(targetRecourceDirectory);
-								importedResources.add(targetResource);
-
-								if(move) {
-									refreshFileSystemResourceParents(Arrays.asList(sourceResource));
-									removeMovedEbookResourceFromMainView(sourceResource);	
-								}
-							}
-						} else {
-							if(!ActionUtils.isSupportedEbookFormat(sourceResource, true)) {
-								LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'. It's not a supported ebook format.");
-							} else if(sourceResource.exists()){
-								LoggerFactory.getLogger().log(Level.INFO, "File '" + sourceResource.getName() + "' already exists.");
-							} else {
-								LoggerFactory.getLogger().log(Level.INFO, "Could not drop '" + sourceResource.getName() + "'");
-							}
-						}
-					}
-				} catch (IOException e) {
-					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to copy file " + basePath + " to " + targetRecourceDirectory, e);
-				} finally {
-					cleanup(sourceResourcesToTransfer, move, importedResources);
-					progressMonitor.monitorProgressStop();
-					FileRefreshBackground.setDisabled(false);
-				}
-			}
-
-			protected void cleanup(final List<IResourceHandler> sourceResourcesToTransfer, final boolean move,
-					final ArrayList<IResourceHandler> importedResources) {
-				if(move) {
-					refreshFileSystemResourceParents(sourceResourcesToTransfer);
-				}
-				
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						removeDeletedFileFromModelAndDatabase(importedResources);
-						removeDeletedFileFromModelAndDatabase(sourceResourcesToTransfer);
-					}
-				});
-			}
 		});
-
 		return importedResources;
 	}
-	
+
 	public static List<IResourceHandler> toResourceHandler(List<EbookPropertyItem> resources) {
 		return new TransformValueList<EbookPropertyItem, IResourceHandler>(resources) {
 
@@ -481,15 +404,6 @@ public class ActionUtils {
 	public static void refreshFileSystemResourceParent(IResourceHandler parentResource) {
 		MainController.getController().getMainTreeHandler().refreshFileSystemTreeEntry(parentResource);
 	}
-	
-	/**
-	 * If the main view shows a ebook entry from the file view and the book is imported into a managed folder, the ebook entry can be removed from the main view.
-	 * 
-	 * @param sourceResource
-	 */
-	private static void removeMovedEbookResourceFromMainView(IResourceHandler sourceResource) {
-		MainController.getController().removeEbookPropertyItem(EbookPropertyItemUtils.createBasicEbookPropertyItem(sourceResource));
-	}
 
 	private static boolean transferFile(IResourceHandler sourceResource, IResourceHandler targetResource, boolean move) throws IOException {
 		if(move) {
@@ -502,24 +416,6 @@ public class ActionUtils {
 
 	private static boolean isImportAllowed(IResourceHandler sourceResource, IResourceHandler targetResource) {
 		return sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists();
-	}
-
-	/**
-	 * Removes the deleted files from model and database if they're located in a base path and no longer exists
-	 */
-	private static void removeDeletedFileFromModelAndDatabase(List<IResourceHandler> movedEbookResources) {
-		DefaultDBManager db = DefaultDBManager.getInstance();
-		BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
-		for (IResourceHandler resource : movedEbookResources) {
-			List<EbookPropertyItem> ebookPropertyItems = EbookPropertyItemUtils.getEbookPropertyItemByResource(resource);
-			for (EbookPropertyItem item : ebookPropertyItems) {
-				if (!resource.exists() && basePathList.getBasePathForFile(resource) != null) {
-					db.deleteObject(item);
-					FileRefreshBackground.getInstance().addEbook(item);
-					LoggerFactory.getLogger().log(Level.INFO, "Removed deleted ebook " + resource);
-				}
-			}
-		}
 	}
 	
 	public static void applyFilter(final String ... fileNames) {

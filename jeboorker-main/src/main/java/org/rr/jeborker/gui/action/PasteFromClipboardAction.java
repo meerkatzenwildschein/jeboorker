@@ -16,6 +16,7 @@ import javax.swing.Action;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -60,7 +61,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 					for(String basePath : basePaths) {
 						if(target.startsWith(basePath)) {
 							isImported = true;
-							importEbookFromClipboard(contents, Integer.MIN_VALUE, basePath, targetRecourceDirectory);
+							importEbookFromClipboard(contents, basePath, targetRecourceDirectory);
 							break;
 						}
 					}
@@ -105,18 +106,23 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		// Get the string that is being dropped.
 		try {
 			IResourceHandler targetRecourceDirectory = value.getResourceHandler().getParentResource();
-			importEbookFromClipboard(t, dropRow, value.getBasePath(), targetRecourceDirectory);
+			importEbookFromClipboard(t, value.getBasePath(), targetRecourceDirectory);
 		}
 		catch (Exception e) { return false; }
 
 		return true;
 	}
 
-	public static void importEbookFromClipboard(Transferable transferable, int dropRow, String basePath, IResourceHandler targetRecourceDirectory)
+	public static void importEbookFromClipboard(Transferable transferable, String basePath, IResourceHandler targetRecourceDirectory)
 			throws UnsupportedFlavorException, IOException, ClassNotFoundException {
 		boolean deleteSourceFiles = true;
 		List<IResourceHandler> sourceFiles = ResourceHandlerFactory.getResourceHandler(transferable);
-		ActionUtils.importEbookResources(dropRow, basePath, targetRecourceDirectory, sourceFiles, deleteSourceFiles);
+		List<IResourceHandler> importEbookResources = ActionUtils.importEbookResources(sourceFiles, targetRecourceDirectory, basePath, deleteSourceFiles);
+		if(!importEbookResources.isEmpty()) {
+			ActionUtils.applyFilter(ResourceHandlerUtils.toFileNames(importEbookResources).toArray(new String[0]));
+		}
 	}
+	
+
 
 }

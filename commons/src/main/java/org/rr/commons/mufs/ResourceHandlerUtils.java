@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.exec.CommandLine;
+import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ProcessExecutor;
@@ -705,5 +706,15 @@ public class ResourceHandlerUtils {
 		fileName = fileName.replaceAll("\\\\", EMPTY);
 		fileName = fileName.replaceAll(File.pathSeparator, EMPTY);
 		return fileName;
+	}
+	
+	public static List<String> toFileNames(final List<IResourceHandler> selectedTreeItems) {
+		return new TransformValueList<IResourceHandler, String>(selectedTreeItems) {
+
+			@Override
+			public String transform(IResourceHandler source) {
+				return source.getName();
+			}
+		};
 	}
 }
