@@ -42,7 +42,7 @@ public abstract class AbstractFileTreeModel extends DefaultTreeModel {
 	 */
 	public void reload(IResourceHandler resourceToRefresh, List<TreePath> treePathRows) {
 		for (TreePath pathForRow : treePathRows) {
-			if(pathForRow.getLastPathComponent() instanceof FileSystemNode) {
+			if(pathForRow != null && pathForRow.getLastPathComponent() instanceof FileSystemNode) {
 				IResourceHandler resourceHandler = ((FileSystemNode) pathForRow.getLastPathComponent()).getResource();
 				if(resourceHandler.equals(resourceToRefresh)) {
 					reload((TreeNode) pathForRow.getLastPathComponent());

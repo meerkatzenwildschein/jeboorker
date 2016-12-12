@@ -78,8 +78,9 @@ public class MainMonitor {
 		}
 	}
 
-	public void blockMainFrame(boolean block) {
+	public MainMonitor blockMainFrame(boolean block) {
 		MainController.getController().getMainWindow().getGlassPane().setVisible(block);
+		return this;
 	}
 
 	public void monitorProgressStop() {

@@ -310,12 +310,74 @@ public class ActionUtils {
 		}
 		return false;
 	}
+	
+	public static void moveEbookResources(final List<EbookPropertyItem> sourceEbookPropertyItems, final String basePath, final boolean move) {
+		FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
+
+			@Override
+			public void run() {
+				IResourceHandler targetFolderResourceHandler = ResourceHandlerFactory.getResourceHandler(basePath);
+				
+				for (int i = 0; i < sourceEbookPropertyItems.size(); i++) {
+					try {
+						EbookPropertyItem ebookPropertyItem = sourceEbookPropertyItems.get(i);
+						IResourceHandler sourceResourceHandler = ebookPropertyItem.getResourceHandler();
+						IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolderResourceHandler, sourceResourceHandler.getName());
+						if (targetResourceHandler.exists()) {
+							LoggerFactory.log(Level.WARNING, this, "Failed to move " + sourceResourceHandler + " to " + basePath + ". Target file already exists.");
+							continue;
+						}
+
+						transferFile(sourceResourceHandler, targetResourceHandler, false);
+
+						ebookPropertyItem.setBasePath(basePath);
+						ebookPropertyItem.setFile(targetResourceHandler.toFile().getAbsolutePath());
+
+						ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, targetResourceHandler);
+					} catch (Exception ex) {
+						LoggerFactory.log(Level.WARNING, this, "Failed to move file to " + basePath, ex);
+					}
+				}
+				refreshFileSystemResourceParents(toResourceHandler(sourceEbookPropertyItems));
+			}
+		});		
+	}
+	
+	public static void importEbookResources(final List<IResourceHandler> sources, final String basePath, final boolean move) {
+		FileRefreshBackground.runWithDisabledRefresh(new Runnable() {
+
+			@Override
+			public void run() {
+				IResourceHandler targetFolderResourceHandler = ResourceHandlerFactory.getResourceHandler(basePath);
+				
+				for (int i = 0; i < sources.size(); i++) {
+					try {
+						IResourceHandler sourceResourceHandler = sources.get(i);
+						IResourceHandler targetResourceHandler = ResourceHandlerFactory.getResourceHandler(targetFolderResourceHandler, sourceResourceHandler.getName());
+						if (targetResourceHandler.exists()) {
+							LoggerFactory.log(Level.WARNING, this, "Failed to move " + sourceResourceHandler + " to " + basePath + ". Target file already exists.");
+							continue;
+						}
+
+						transferFile(sourceResourceHandler, targetResourceHandler, false);
+						EbookPropertyItem ebookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceHandler, ResourceHandlerFactory.getResourceHandler(basePath));
+
+						ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, targetResourceHandler);
+					} catch (Exception ex) {
+						LoggerFactory.log(Level.WARNING, this, "Failed to move file to " + basePath, ex);
+					}
+				}
+				refreshFileSystemResourceParents(sources);
+			}
+		});		
+	}
 
 	/**
 	 * Imports the given transferedFiles {@link IResourceHandler} list into the given {@link IResourceHandler}  <code>targetRecourceDirectory</code>.
 	 * The files will be copied and the {@link EbookPropertyItem}s will be created.
 	 * @param deleteAnyway Deletes the resource after a successful import in any case.
 	 * @return A list of all imported (target) file resources.
+	 * @deprecated
 	 */
 	public static List<IResourceHandler> importEbookResources(final int dropRow, final String basePath, final IResourceHandler targetRecourceDirectory,
 			final List<IResourceHandler> sourceResourcesToTransfer, final boolean move) throws IOException {
@@ -395,6 +457,16 @@ public class ActionUtils {
 		return importedResources;
 	}
 	
+	public static List<IResourceHandler> toResourceHandler(List<EbookPropertyItem> resources) {
+		return new TransformValueList<EbookPropertyItem, IResourceHandler>(resources) {
+
+			@Override
+			public IResourceHandler transform(EbookPropertyItem source) {
+				return source.getResourceHandler();
+			}
+		};
+	}
+	
 	public static void refreshFileSystemResourceParents(List<IResourceHandler> resources) {
 		Set<IResourceHandler> alreadyRefreshedParents = new HashSet<>(resources.size());
 		for (IResourceHandler resourceHandler : resources) {
@@ -450,19 +522,7 @@ public class ActionUtils {
 		}
 	}
 	
-	public static void applyFilter(final List<IResourceHandler> fileNameToFilter) {
-		MainController.getController().changeToDatabaseModel();
-		TransformValueList<IResourceHandler, String> transformValueList = new TransformValueList<IResourceHandler, String>(fileNameToFilter) {
-
-			@Override
-			public String transform(IResourceHandler source) {
-				return source.getName();
-			}
-		};
-		applyFilter(ListUtils.join(transformValueList, ","));
-	}
-	
-	public static void applyFilter(final String ... fileNameToFilter) {
+	public static void applyFilter(final String ... fileNames) {
 		MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 			@Override
@@ -472,9 +532,16 @@ public class ActionUtils {
 
 			@Override
 			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-				String filter = ArrayUtils.join(fileNameToFilter, ",");
+				String filter = ArrayUtils.join(fileNames, ",");
 				LoggerFactory.getLogger().log(Level.INFO, "Apply filter " + filter);
-				where.like("fileName", filter);
+				for (int i = 0; i < fileNames.length; i++) {
+					String fileName = fileNames[i];
+					if(i == 0) {
+						where.like("fileName", fileName);
+					} else {
+						where.or().like("fileName", fileName);
+					}
+				}
 			}
 
 			@Override

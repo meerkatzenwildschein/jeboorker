@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -16,8 +15,6 @@ import javax.swing.tree.TreePath;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.swing.components.tree.TreeUtil;
-import org.rr.commons.utils.ListUtils;
 
 public class FileSystemTreeModel extends AbstractFileTreeModel {
 
