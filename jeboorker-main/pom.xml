@@ -9,7 +9,7 @@
 		<version>0.4.6</version>
 	</parent>
 	<artifactId>jeboorker-main</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<name>jeboorker-main</name>
 	<url>http://maven.apache.org</url>
 	<properties>

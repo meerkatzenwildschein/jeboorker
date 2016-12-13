@@ -379,7 +379,7 @@ class MainMenuBarView extends JMenuBar {
 						}
 					}
 				}
-				menuEdit.add(mergeDocItem);
+//				menuEdit.add(mergeDocItem);
 				
 				
 				menuEdit.add(new JSeparator());
