@@ -49,7 +49,7 @@ class ConvertEbookAction extends AbstractAction implements IFinalizeAction, IDoO
 			if(!this.converterPreferenceController.isConfirmed()) {
 				return;
 			}
-			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", bookResourceHandler.getName()));
+			controller.getProgressMonitor().monitorProgressStart(Bundle.getFormattedString("ConvertEbookAction.message", bookResourceHandler.getName()), false);
 			
 			converter.setConverterPreferenceController(this.converterPreferenceController);
 			IResourceHandler targetResourceHandler = converter.convert();
