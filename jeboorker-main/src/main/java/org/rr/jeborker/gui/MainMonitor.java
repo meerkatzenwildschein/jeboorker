@@ -22,7 +22,7 @@ public class MainMonitor {
 	private JProgressBar progressbar;
 
 	private int started = 0;
-
+	
 	private boolean isEnabled;
 
 	private MainMonitor(JProgressBar progressbar) {
@@ -45,8 +45,10 @@ public class MainMonitor {
 					} else {
 						try {
 							Thread.sleep(clearTimeout);
-							setMessage(EMPTY);
-							clearTimeout = -1;
+							if(!isBlocked()) {
+								clearMessage();
+								clearTimeout = -1;
+							}
 						} catch (InterruptedException e) {
 							LoggerFactory.getLogger().log(Level.WARNING, "Sleep InterruptedException", e);
 						}
@@ -63,24 +65,32 @@ public class MainMonitor {
 		return instance;
 	}
 
-	public void monitorProgressStart(final String message) {
+	public void monitorProgressStart(final String message, final boolean indeterminate) {
 		if(isEnabled) {
 			started++;
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					progressbar.setIndeterminate(true);
+					progressbar.setIndeterminate(indeterminate);
 					setMessage(message);
 					blockMainFrame(true);
 				}
 			});
 		}
 	}
+	
+	public void monitorProgressStart(final String message) {
+		monitorProgressStart(message, true);
+	}
 
 	public MainMonitor blockMainFrame(boolean block) {
 		MainController.getController().getMainWindow().getGlassPane().setVisible(block);
 		return this;
+	}
+	
+	private boolean isBlocked() {
+		return MainController.getController().getMainWindow().getGlassPane().isVisible();
 	}
 
 	public void monitorProgressStop() {
@@ -138,6 +148,22 @@ public class MainMonitor {
 					progressbar.setMinimum(0);
 					progressbar.setMaximum(max);
 					progressbar.setValue(progress);
+					progressbar.setString(progressbar.getString());
+				}
+			});
+		}
+	}
+	
+	public void resetProgress() {
+		if(isEnabled) {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					progressbar.setIndeterminate(false);
+					progressbar.setMinimum(0);
+					progressbar.setMaximum(100);
+					progressbar.setValue(0);
 				}
 			});
 		}
