@@ -19,7 +19,9 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.utils.StringUtil;
+import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.db.item.EbookPropertyItemUtils;
@@ -64,6 +66,7 @@ class RenameFileAction extends AbstractAction {
 
 			@Override
 			public void run() {
+				BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
 				LinkedList<IResourceHandler> toRefreshInFileSystemTree = new LinkedList<>();
 				for (Entry<EbookPropertyItem, IResourceHandler> toRename : renameFiles) {
 					EbookPropertyItem source = toRename.getKey();
@@ -86,7 +89,7 @@ class RenameFileAction extends AbstractAction {
 						}
 						sourceResourceHandler.moveTo(targetResourceHandler, true);
 
-						if(source.getBasePath() != null) {
+						if(basePathList.containsBasePathFor(source.getBasePath())) {
 							EbookPropertyItemUtils.renameCoverThumbnail(sourceResourceHandler, targetResourceHandler);
 							DefaultDBManager.getInstance().deleteObject(source);
 							source.setFile(targetResourceHandler.getResourceString());

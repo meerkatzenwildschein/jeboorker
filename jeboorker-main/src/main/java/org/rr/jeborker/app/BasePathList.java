@@ -122,6 +122,10 @@ public class BasePathList extends WrapperList<String> {
 	 * @return <code>true</code> if a base path could be found for the given path or <code>false</code> otherwise.
 	 */
 	public boolean containsBasePathFor(final String path) {
+		if(path == null) {
+			return false;
+		}
+		
 		for(int i = 0; i < toWrap.size(); i++) {
 			String basePath = toWrap.get(i);
 			if(path.startsWith(basePath)) {

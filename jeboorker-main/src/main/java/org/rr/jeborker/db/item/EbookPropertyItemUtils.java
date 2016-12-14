@@ -272,7 +272,7 @@ public class EbookPropertyItemUtils {
 	 */
 	public static void storePathElements(final Collection<String> path) {
 		final List<String> oldPathElements = fetchPathElements();
-		final BasePathList basePathList = PreferenceStoreFactory.getDummyPreferenceStore().getBasePath();
+		final BasePathList basePathList = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE).getBasePath();
 		String indexedString;
 		if(oldPathElements != null && !oldPathElements.isEmpty()) {
 			final HashSet<String> allElements = new HashSet<>(path.size());
