@@ -9,7 +9,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -20,15 +19,12 @@ import org.rr.commons.utils.CommonUtils;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.BasePathList;
-import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory.PREFERENCE_KEYS;
 import org.rr.jeborker.gui.MainMenuBarController;
 
 public abstract class APreferenceStore {
 
 	private final ListenerList<JeboorkerPreferenceListener> preferenceChangeListener = new ListenerList<>();
-
-	private final String BASE_PATH = "basePath";
 
 	/**
 	 * Fetch a previously stored string value with it's key from the DB.
@@ -42,39 +38,15 @@ public abstract class APreferenceStore {
 	protected abstract void deleteEntryFromImpl(String key);
 
 	public void addBasePath(String path) {
-		String basePath = getGenericEntryAsString(BASE_PATH);
-		if (basePath.length() == 0) {
-			basePath = path;
-		} else {
-			basePath += (File.pathSeparator + path);
-		}
-
-		addGenericEntryAsString(BASE_PATH, basePath);
-		FileWatchService.addWatchPath(path);
+		throw new IllegalArgumentException("Base path action are not supported.");
 	}
-
+	
 	/**
 	 * Removes one entry from the base path list.
 	 * @param path The path entry to be removed.
 	 */
 	public void removeBasePath(String path) {
-		List<String> oldBasePath = getBasePath();
-		StringBuilder newBasePath = new StringBuilder();
-
-		for (Iterator<String> iterator = oldBasePath.iterator(); iterator.hasNext();) {
-			final String oldPath = iterator.next();
-			if(!oldPath.replaceAll("\\/", "").equals(path.replaceAll("\\/", "")) &&
-					!oldPath.equals(BasePathList.getImportBasePath())) {
-				newBasePath.append(oldPath).append(File.pathSeparator);
-			}
-		}
-
-		//remove the last separator char
-		if(newBasePath.length() > 0) {
-			newBasePath.deleteCharAt(newBasePath.length() - 1);
-		}
-
-		addGenericEntryAsString(BASE_PATH, newBasePath.toString());
+		throw new IllegalArgumentException("Base path action are not supported.");
 	}
 
 	/**
@@ -82,15 +54,7 @@ public abstract class APreferenceStore {
 	 * @return The stored base path entries. never returns <code>null</code>.
 	 */
 	public BasePathList getBasePath() {
-		String basePath = getGenericEntryAsString(BASE_PATH);
-		if(basePath.length() == 0) {
-			return new BasePathList();
-		} else if (basePath.indexOf(File.pathSeparator) == -1) {
-			return new BasePathList(basePath);
-		} else {
-			String[] split = basePath.split(File.pathSeparator);
-			return new BasePathList(Arrays.asList(split));
-		}
+		throw new IllegalArgumentException("Base path action are not supported.");
 	}
 
 	/**
