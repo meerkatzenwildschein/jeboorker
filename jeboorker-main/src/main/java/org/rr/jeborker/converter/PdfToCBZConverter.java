@@ -86,10 +86,9 @@ public class PdfToCBZConverter implements IEBookConverter {
 						TrueZipUtils.add(targetCbzResource, getFileName(pageNumber + additional, pageCount), new ByteArrayInputStream(renderedPage));
 					}
 				}
-			} catch(Exception e) { 
-				if(e instanceof IOException) {
-					throw (IOException) e;
-				}
+			} catch(IOException e) { 
+				 throw e;
+			} catch(Exception e) {
 				throw new IOException("Failed to convert PDF " + pdfResource.getName(), e);
 			} finally {
 				if (doc != null) {
