@@ -12,7 +12,6 @@ import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
-import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
@@ -313,6 +312,7 @@ public class ActionUtils {
 			@Override
 			public void run() {
 				IResourceHandler targetFolderResourceHandler = ResourceHandlerFactory.getResourceHandler(basePath);
+				List<IResourceHandler> resourcesToRefresh = new ArrayList<>();
 				
 				for (int i = 0; i < sourceEbookPropertyItems.size(); i++) {
 					try {
@@ -324,7 +324,8 @@ public class ActionUtils {
 							continue;
 						}
 
-						transferFile(sourceResourceHandler, targetResourceHandler, false);
+						resourcesToRefresh.add(sourceResourceHandler);
+						transferFile(sourceResourceHandler, targetResourceHandler, move);
 
 						ebookPropertyItem.setBasePath(basePath);
 						ebookPropertyItem.setFile(targetResourceHandler.toFile().getAbsolutePath());
@@ -334,7 +335,7 @@ public class ActionUtils {
 						LoggerFactory.log(Level.WARNING, this, "Failed to move file to " + basePath, ex);
 					}
 				}
-				refreshFileSystemResourceParents(toResourceHandler(sourceEbookPropertyItems));
+				refreshFileSystemResourceParents(resourcesToRefresh);
 			}
 		});		
 	}
@@ -378,16 +379,6 @@ public class ActionUtils {
 			}
 		});
 		return importedResources;
-	}
-
-	public static List<IResourceHandler> toResourceHandler(List<EbookPropertyItem> resources) {
-		return new TransformValueList<EbookPropertyItem, IResourceHandler>(resources) {
-
-			@Override
-			public IResourceHandler transform(EbookPropertyItem source) {
-				return source.getResourceHandler();
-			}
-		};
 	}
 	
 	public static void refreshFileSystemResourceParents(List<IResourceHandler> resources) {
