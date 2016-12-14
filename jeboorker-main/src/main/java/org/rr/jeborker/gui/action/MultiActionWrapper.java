@@ -15,6 +15,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.ReflectionUtils;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.event.RefreshAbstractAction;
+import org.rr.jeborker.gui.MainController;
 
 class MultiActionWrapper extends AbstractAction {
 
@@ -74,6 +75,7 @@ class MultiActionWrapper extends AbstractAction {
 		
 		//create an action instance for all the other handlers. 
 		for (int i = 1; iterator.hasNext(); i++) {
+			MainController.getController().getProgressMonitor().setProgress(i, handlers.size());
 			IResourceHandler handler = iterator.next();
 			Action action = createInstance(firstActionInstance.getClass(), handler, selectedRowsToRefresh);
 			
@@ -86,6 +88,7 @@ class MultiActionWrapper extends AbstractAction {
 				LoggerFactory.logWarning(this, "could not create action for " + handler, null);
 			}
 		}
+		MainController.getController().getProgressMonitor().resetProgress();
 		
 		//do the finalize for all actions
 		if(firstActionInstance instanceof IFinalizeAction) {
