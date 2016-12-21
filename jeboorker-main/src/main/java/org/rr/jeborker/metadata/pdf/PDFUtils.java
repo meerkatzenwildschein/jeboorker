@@ -81,9 +81,6 @@ public class PDFUtils {
 	 */
 	public static void merge(List<IResourceHandler> inputPdfDocuments, IResourceHandler outputPdfDocument)
 			throws DocumentException, IOException {
-		
-		
-		
 		Document document = new Document();
 		try (OutputStream outputStream = outputPdfDocument.getContentOutputStream(false)) {
 			PdfWriter writer = PdfWriter.getInstance(document, outputStream);

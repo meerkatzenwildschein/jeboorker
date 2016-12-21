@@ -5,16 +5,21 @@ import static org.rr.commons.utils.BooleanUtils.not;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JSlider;
 
+import org.rr.commons.collection.Pair;
 import org.rr.commons.swing.components.JRCheckBox;
+import org.rr.commons.swing.components.JRComboBox;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.utils.BooleanUtils;
+import org.rr.commons.utils.ListUtils;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
 import org.rr.jeborker.metadata.MetadataProperty;
 
@@ -30,9 +35,13 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	
 	private boolean isInitialized = false;
 	
-	private boolean showLandscapePageEntries = true;
+	private boolean showLandscapePageEntries = false;
 	
-	private boolean showImageSizeEntry = true;
+	private boolean showImageSizeEntry = false;
+	
+	private List<Pair<String, Pair<String, List<String>>>> commonListBoxEntries;
+	
+	private List<Pair<String, Boolean>> commonCheckBoxEntries;
 	
 	private ConverterPreferenceController controller;
 
@@ -57,13 +66,15 @@ class ConverterPreferenceView extends JPreferenceDialog {
 			final String generalCategory = Bundle.getString("ConverterPreferenceView.tab.general");
 			createLandscapePageEntries(generalCategory);
 			createImageSizeEntries(generalCategory);
+			createCommonListBoxEntries(generalCategory);
+			createCommonCheckBoxEntries(generalCategory);
 		}
 	}
 	
 	/**
 	 * Create and add the image resize slider.
 	 */
-	private void createImageSizeEntries(final String generalCategory) {
+	private void createImageSizeEntries(final String category) {
 		if(isShowImageSizeEntry()) {
 			final JSlider reduceValue = new JSlider(JSlider.HORIZONTAL, 10, 100, 100);
 			reduceValue.setMajorTickSpacing(10);
@@ -73,7 +84,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 			reduceValue.setSnapToTicks(true);
 			reduceValue.setMinimumSize(new Dimension(220, 45));
 			String reduceImageQualityLabel = Bundle.getString("ConverterPreferenceView.pref.reduceImageQuality");
-			PreferenceEntry reduceImageQualityItem = new PreferenceEntry(REDUCE_IMAGE_SIZE_PREFERENCE_NAME, reduceImageQualityLabel, reduceValue, generalCategory);
+			PreferenceEntry reduceImageQualityItem = new PreferenceEntry(REDUCE_IMAGE_SIZE_PREFERENCE_NAME, reduceImageQualityLabel, reduceValue, category);
 			addPreferenceEntry(reduceImageQualityItem);
 		}
 	}
@@ -83,7 +94,7 @@ class ConverterPreferenceView extends JPreferenceDialog {
 	 * The combobox provides options like rotate or split. The manga checkbox for the
 	 * split option is also added here.
 	 */
-	private void createLandscapePageEntries(final String generalCategory) {
+	private void createLandscapePageEntries(final String category) {
 		if(isShowLandscapePageEntries()) {
 			final JComboBox<String> landscapeFormatCombobox = new JComboBox<>();
 			final JRCheckBox isMangaCheckBox = new JRCheckBox();
@@ -111,15 +122,40 @@ class ConverterPreferenceView extends JPreferenceDialog {
 					}
 				}
 			});
-			PreferenceEntry landscapeFormatItem = new PreferenceEntry(LANDSCAPE_FORMAT_PREFERENCE_NAME, landscapeFormatLabel, landscapeFormatCombobox, generalCategory);
+			PreferenceEntry landscapeFormatItem = new PreferenceEntry(LANDSCAPE_FORMAT_PREFERENCE_NAME, landscapeFormatLabel, landscapeFormatCombobox, category);
 			addPreferenceEntry(landscapeFormatItem);
 			
 			String isMangaLabel = Bundle.getString("ConverterPreferenceView.pref.isManga");
-			PreferenceEntry isMangaItem = new PreferenceEntry(IS_MANGA_PREFERENCE_NAME, isMangaLabel, isMangaCheckBox, generalCategory);
+			PreferenceEntry isMangaItem = new PreferenceEntry(IS_MANGA_PREFERENCE_NAME, isMangaLabel, isMangaCheckBox, category);
 			addPreferenceEntry(isMangaItem);
 		}
 	}
 
+	private void createCommonListBoxEntries(String category) {
+		if(ListUtils.isNotEmpty(commonListBoxEntries)) {
+			for (Pair<String, Pair<String, List<String>>> entry : commonListBoxEntries) {
+				JComboBox<String> combobox = new JRComboBox<>();
+				combobox.setModel(new DefaultComboBoxModel<String>(entry.getF().getF().toArray(new String[entry.getF().getF().size()])));
+				combobox.setSelectedItem(entry.getF().getE());
+				
+				PreferenceEntry preferenceEntry = new PreferenceEntry(entry.getE(), entry.getE(), combobox, category);
+				addPreferenceEntry(preferenceEntry);				
+			}
+		}
+	}
+
+	private void createCommonCheckBoxEntries(String category) {
+		if(ListUtils.isNotEmpty(commonCheckBoxEntries)) {
+			for (Pair<String, Boolean> entry : commonCheckBoxEntries) {
+				JCheckBox checkbox = new JRCheckBox();
+				checkbox.setSelected(entry.getF());
+	
+				PreferenceEntry preferenceEntry = new PreferenceEntry(entry.getE(), entry.getE(), checkbox, category);
+				addPreferenceEntry(preferenceEntry);				
+			}
+		}
+	}
+	
 	public boolean isShowLandscapePageEntries() {
 		return showLandscapePageEntries;
 	}
@@ -154,6 +190,20 @@ class ConverterPreferenceView extends JPreferenceDialog {
 			}
 		}
 		return result;
+	}
+
+	public void addCommonListSelection(String label, Pair<String, List<String>> entries) {
+		if(commonListBoxEntries == null) {
+			commonListBoxEntries = new ArrayList<>();
+		}
+		commonListBoxEntries.add(new Pair<String, Pair<String, List<String>>>(label, entries));
+	}
+
+	public void addCommonCheckBox(String label, boolean selected) {
+		if(commonCheckBoxEntries == null) {
+			commonCheckBoxEntries = new ArrayList<>();
+		}
+		commonCheckBoxEntries.add(new Pair<String, Boolean>(label, selected));
 	}
 	
 }

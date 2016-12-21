@@ -81,7 +81,6 @@ public class JeboorkerConstants {
 			public String toString() {
 				return getMime();
 			}			
-			
 		},
 		MIME_CBR {
 
@@ -99,7 +98,6 @@ public class JeboorkerConstants {
 			public String toString() {
 				return getMime();
 			}			
-			
 		},
 		MIME_HTML {
 
@@ -117,7 +115,23 @@ public class JeboorkerConstants {
 			public String toString() {
 				return getMime();
 			}			
+		},
+		MIME_TXT {
+
+			@Override
+			public String getName() {
+				return "txt";
+			}
+
+			@Override
+			public String getMime() {
+				return MimeUtils.MIME_TEXT;
+			}
 			
+			@Override
+			public String toString() {
+				return getMime();
+			}			
 		},
 		MIME_MOBI {
 
@@ -135,7 +149,6 @@ public class JeboorkerConstants {
 			public String toString() {
 				return getMime();
 			}			
-			
 		},
 		MIME_AZW {
 
@@ -153,7 +166,6 @@ public class JeboorkerConstants {
 			public String toString() {
 				return getMime();
 			}			
-			
 		}
 	};
 

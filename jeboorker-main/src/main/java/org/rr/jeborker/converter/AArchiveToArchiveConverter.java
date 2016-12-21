@@ -99,7 +99,10 @@ public abstract class AArchiveToArchiveConverter implements IEBookConverter {
 	 * Create a new {@link ConverterPreferenceController} instance.
 	 */
 	public ConverterPreferenceController createConverterPreferenceController() {
-		return MainController.getController().getConverterPreferenceController();
+		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
+		controller.setShowImageSizeEntry(true);
+		controller.setShowLandscapePageEntries(true);
+		return controller;
 	}
 
   protected BufferedImage getBufferedImageFromArchive(InputStream compressionEntryStream) {

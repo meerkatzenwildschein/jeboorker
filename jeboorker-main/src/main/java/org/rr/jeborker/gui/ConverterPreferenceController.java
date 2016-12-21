@@ -1,9 +1,11 @@
 package org.rr.jeborker.gui;
 
 import java.awt.Point;
+import java.util.List;
 
 import javax.swing.JFrame;
 
+import org.rr.commons.collection.Pair;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -17,7 +19,6 @@ public class ConverterPreferenceController {
 	private boolean hasShown = false;
 	
 	private ConverterPreferenceController() {
-		
 	}
 	
 	static ConverterPreferenceController getInstance() {
@@ -153,6 +154,18 @@ public class ConverterPreferenceController {
 	 */
 	public void setShowLandscapePageEntries(boolean showLandscapePageEntries) {
 		getView().setShowLandscapePageEntries(showLandscapePageEntries);
+	}
+	
+	public void addCommonListSelection(String label, List<String> entries, String selectedEntry) {
+		getView().addCommonListSelection(label, new Pair<String, List<String>>(selectedEntry, entries));
+	}
+	
+	public void addCommonCheckBox(String label, boolean checked) {
+		getView().addCommonCheckBox(label, checked);
+	}
+	
+	public String getCommonValue(String label) {
+		return getView().getStringValue(label);
 	}
 	
 }
