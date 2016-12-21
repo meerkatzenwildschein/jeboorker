@@ -53,10 +53,9 @@ public class PdfToPdfConverter implements IEBookConverter {
 				transferPdfContent(document, reader, writer);
 			}
 			
+		} catch (IOException e) {
+				throw e;
 		} catch (Exception e) {
-			if(e instanceof IOException) {
-				throw (IOException) e;
-			}
 			throw new IOException("Failed to convert PDF " + pdfResource.getName(), e);
 		} finally {
 			if(writer != null) {
@@ -145,6 +144,7 @@ public class PdfToPdfConverter implements IEBookConverter {
   public ConverterPreferenceController createConverterPreferenceController() {
 		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
 		controller.setShowLandscapePageEntries(false);
+		controller.setShowImageSizeEntry(true);
 		return controller;
   }
     

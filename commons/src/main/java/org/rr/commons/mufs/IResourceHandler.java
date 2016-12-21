@@ -105,6 +105,13 @@ public interface IResourceHandler extends Comparable<IResourceHandler> {
 	 * @return The content for the resource.
 	 */
 	public void setContent(byte[] content) throws IOException;
+	
+	/**
+	 * Writes the content of the resource handled by this {@link IResourceHandler} instance.
+	 *
+	 * @return The content for the resource.
+	 */
+	public void setContent(CharSequence content) throws IOException;
 
 	/**
 	 * Gets an {@link InputStream} for the resource handled by this {@link IResourceHandler} instance.

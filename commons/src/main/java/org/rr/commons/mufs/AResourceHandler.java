@@ -317,6 +317,12 @@ abstract class AResourceHandler implements IResourceHandler {
 		IOUtils.write(content, contentOutputStream);
 		IOUtils.closeQuietly(contentOutputStream);
 	}
+	
+	public synchronized void setContent(CharSequence content) throws IOException {
+		OutputStream contentOutputStream = this.getContentOutputStream(false);
+		IOUtils.write(content, contentOutputStream);
+		IOUtils.closeQuietly(contentOutputStream);		
+	}
 
 	/**
 	 * Tests the resource string of the given object with this
