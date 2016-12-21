@@ -23,10 +23,8 @@ import javax.swing.event.MenuListener;
 import org.apache.commons.lang.ObjectUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.swing.SwingUtils;
-import org.rr.commons.swing.action.WebLinkAction;
 import org.rr.commons.utils.ListUtils;
 import org.rr.commons.utils.StringUtil;
-import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -58,8 +56,6 @@ class MainMenuBarView extends JMenuBar {
 
 	private JMenu menuEdit;
 
-	private JMenu menueExtras;
-
 	private JMenu menueHelp;
 
 	private JMenu menuRemoveBasePath;
@@ -76,7 +72,6 @@ class MainMenuBarView extends JMenuBar {
 	private void init() {
 		add(createFileMenu());
 		add(createEditMenu());
-		add(createExtrasMenu());
 		add(createHelpMenu());
 	}
 
@@ -466,15 +461,15 @@ class MainMenuBarView extends JMenuBar {
 		return this.menuEdit;
 	}
 
-	private JMenu createExtrasMenu() {
-		final String extrasMenuBarName = Bundle.getString("EborkerMainView.extras");
+	private JMenu createHelpMenu() {
+		final String helpMenuBarName = Bundle.getString("EborkerMainView.help");
 
-		this.menueExtras = new JMenu(SwingUtils.removeMnemonicMarker(extrasMenuBarName));
-		this.menueExtras.setMnemonic(SwingUtils.getMnemonicKeyCode(extrasMenuBarName));
-
+		menueHelp = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
+		menueHelp.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
+		
 		JMenuItem logItem = new JMenuItem();
 		logItem.setAction(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_LOG_MONITOR_ACTION, null));
-		menueExtras.add(logItem);
+		menueHelp.add(logItem);
 
 		{ // look and feel menu
 			String lookAndFeelName = Bundle.getString("EborkerMainView.laf");
@@ -506,19 +501,10 @@ class MainMenuBarView extends JMenuBar {
 				}
 				parentMenu.add(radioMenuItem);
 			}
-			menueExtras.add(lookAndFeelMenu);
+			menueHelp.add(lookAndFeelMenu);
 		}
-
-		return this.menueExtras;
-	}
-
-	private JMenu createHelpMenu() {
-		final String helpMenuBarName = Bundle.getString("EborkerMainView.help");
-
-		menueHelp = new JMenu(SwingUtils.removeMnemonicMarker(helpMenuBarName));
-		menueHelp.setMnemonic(SwingUtils.getMnemonicKeyCode(helpMenuBarName));
+		
 		menueHelp.add(ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.VIEW_ABOUT_DIALOG_ACTION, null));
-		menueHelp.add(new WebLinkAction(Bundle.getString("EborkerMainView.internetUrl"), Jeboorker.URL));
 
 		return menueHelp;
 	}
