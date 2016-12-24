@@ -15,6 +15,8 @@ import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.ImageUtils;
@@ -24,8 +26,15 @@ import com.jmupdf.interfaces.PagePixels;
 import com.jmupdf.page.PageRect;
 
 public class PdfToCBZConverter implements IEBookConverter {
+	
+	private static String IMAGE_QUALITY_LABEL = Bundle.getString("MultipleConverter.imageQuality.label");
+	
+	private static String IMAGE_QUALITY_KEY = PdfToCBZConverter.class.getName() + "." + IMAGE_QUALITY_LABEL;
+	
+	private APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
 	private IResourceHandler pdfResource;
+	
 	private ConverterPreferenceController converterPreferenceController;
 	
 	public PdfToCBZConverter(IResourceHandler pdfResource) {
@@ -52,7 +61,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 			pp.getOptions().setZoom(1.5f);
 			pp.drawPage(null, bb.getX0(), bb.getY0(), bb.getX1(), bb.getY1());
 			BufferedImage image = pp.getImage();
-			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, converterPreferenceDialog);
+			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getImageQuality(), converterPreferenceDialog);
 			List<byte[]> result = new ArrayList<byte[]>(processImageModifications.size());
 			for(BufferedImage processedImage : processImageModifications) {
 				byte[] imageBytes = ImageUtils.getImageBytes(processedImage, MimeUtils.MIME_JPEG);
@@ -98,6 +107,7 @@ public class PdfToCBZConverter implements IEBookConverter {
 			}	
 			
 			ConverterUtils.transferMetadata(pdfResource, targetCbzResource);
+			preferenceStore.addGenericEntryAsNumber(IMAGE_QUALITY_KEY, getImageQuality());
 			return targetCbzResource;	
 		}
 		return null;
@@ -140,15 +150,19 @@ public class PdfToCBZConverter implements IEBookConverter {
 		return this.converterPreferenceController;
 	}
 	
-    /**
-     * Create a new {@link ConverterPreferenceController} instance.
-     */
-    public ConverterPreferenceController createConverterPreferenceController() {
-		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
-		controller.setShowImageSizeEntry(true);
-		controller.setShowLandscapePageEntries(true);
-		return controller;
-    }
+	/**
+	 * Create a new {@link ConverterPreferenceController} instance.
+	 */
+	public ConverterPreferenceController createConverterPreferenceController() {
+		ConverterPreferenceController preferenceController = MainController.getController().getConverterPreferenceController();
+		preferenceController.addCommonSlider(IMAGE_QUALITY_LABEL, preferenceStore.getGenericEntryAsNumber(IMAGE_QUALITY_KEY, 100).intValue());
+		preferenceController.setShowLandscapePageEntries(true);
+		return preferenceController;
+	}
+	
+	private int getImageQuality() {
+		return getConverterPreferenceController().getCommonValueAsInt(IMAGE_QUALITY_LABEL);
+	}
     
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {
 		this.converterPreferenceController = controller;

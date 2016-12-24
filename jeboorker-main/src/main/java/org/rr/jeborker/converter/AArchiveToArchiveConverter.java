@@ -11,6 +11,8 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.compression.CompressedDataEntry;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
@@ -18,6 +20,12 @@ import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
 
 public abstract class AArchiveToArchiveConverter implements IEBookConverter {
+	
+	private static String IMAGE_QUALITY_LABEL = Bundle.getString("MultipleConverter.imageQuality.label");
+	
+	private static String IMAGE_QUALITY_KEY = AArchiveToArchiveConverter.class.getName() + "." + IMAGE_QUALITY_LABEL;
+	
+	private APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 	
 	private ConverterPreferenceController converterPreferenceController;
 	
@@ -29,10 +37,15 @@ public abstract class AArchiveToArchiveConverter implements IEBookConverter {
 	
 	@Override
 	public IResourceHandler convert() throws IOException {
-		final ConverterPreferenceController converterPreferenceController = getConverterPreferenceController();
+		ConverterPreferenceController converterPreferenceController = getConverterPreferenceController();
+		
 		if(converterPreferenceController.isConfirmed()) {
-			List<CompressedDataEntry> sourceFiles = extractArchive(archiveResource);
-			return convertAndWriteToTargetArchive(converterPreferenceController, sourceFiles);
+			try {
+				List<CompressedDataEntry> sourceFiles = extractArchive(archiveResource);
+				return convertAndWriteToTargetArchive(converterPreferenceController, sourceFiles);
+			} finally {
+				preferenceStore.addGenericEntryAsNumber(IMAGE_QUALITY_KEY, getImageQuality());
+			}
 		}
 		
 		return null;
@@ -45,7 +58,7 @@ public abstract class AArchiveToArchiveConverter implements IEBookConverter {
 			byte[] bytes = sourceFile.getBytes();
 			if(ConverterUtils.isImageFileName(sourceFile.getName())) {
 				BufferedImage image = getBufferedImageFromArchive(new ByteArrayInputStream(bytes));
-				List<BufferedImage> modifiedImages = ConverterUtils.processImageModifications(image, converterPreferenceController);
+				List<BufferedImage> modifiedImages = ConverterUtils.processImageModifications(image, getImageQuality(), converterPreferenceController);
 				for (int i = 0; i < modifiedImages.size(); i++) {
 					BufferedImage modifiedImage = modifiedImages.get(i);
 					String targetMime = MimeUtils.getImageMimeFromFileName(sourceFile.getName(), "image/" + FilenameUtils.getExtension(sourceFile.getName()));
@@ -99,10 +112,14 @@ public abstract class AArchiveToArchiveConverter implements IEBookConverter {
 	 * Create a new {@link ConverterPreferenceController} instance.
 	 */
 	public ConverterPreferenceController createConverterPreferenceController() {
-		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
-		controller.setShowImageSizeEntry(true);
-		controller.setShowLandscapePageEntries(true);
-		return controller;
+		ConverterPreferenceController preferenceController = MainController.getController().getConverterPreferenceController();
+		preferenceController.addCommonSlider(IMAGE_QUALITY_LABEL, preferenceStore.getGenericEntryAsNumber(IMAGE_QUALITY_KEY, 100).intValue());
+		preferenceController.setShowLandscapePageEntries(true);
+		return preferenceController;
+	}
+	
+	private int getImageQuality() {
+		return getConverterPreferenceController().getCommonValueAsInt(IMAGE_QUALITY_LABEL);
 	}
 
   protected BufferedImage getBufferedImageFromArchive(InputStream compressionEntryStream) {

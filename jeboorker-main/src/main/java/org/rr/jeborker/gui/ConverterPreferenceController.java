@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import org.rr.commons.collection.Pair;
 import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -136,36 +135,34 @@ public class ConverterPreferenceController {
 	}	
 	
 	/**
-	 * Get the quality for the image conversion.
-	 */
-	public Number getImageSize() {
-		return getView().getNumericValue(ConverterPreferenceView.REDUCE_IMAGE_SIZE_PREFERENCE_NAME);
-	}	
-	
-	/**
-	 * Sets the visibility of the page/image size slide.
-	 */
-	public void setShowImageSizeEntry(boolean showImageSizeEntry) {
-		getView().setShowImageSizeEntry(showImageSizeEntry);
-	}	
-	
-	/**
 	 * Sets the visibility of the landscape setup entries. 
 	 */
 	public void setShowLandscapePageEntries(boolean showLandscapePageEntries) {
 		getView().setShowLandscapePageEntries(showLandscapePageEntries);
 	}
 	
+	public void addCommonSlider(String label, int defaultValue) {
+		getView().addCommonSlider(label, defaultValue);
+	}
+	
 	public void addCommonListSelection(String label, List<String> entries, String selectedEntry) {
-		getView().addCommonListSelection(label, new Pair<String, List<String>>(selectedEntry, entries));
+		getView().addCommonListSelection(label, entries, selectedEntry);
 	}
 	
 	public void addCommonCheckBox(String label, boolean checked) {
 		getView().addCommonCheckBox(label, checked);
 	}
 	
-	public String getCommonValue(String label) {
+	public String getCommonValueAsString(String label) {
 		return getView().getStringValue(label);
+	}
+	
+	public boolean getCommonValueAsBoolean(String label) {
+		return getView().getBooleanValue(label);
+	}
+	
+	public int getCommonValueAsInt(String label) {
+		return getView().getNumericValue(label).intValue();
 	}
 	
 }

@@ -1,7 +1,5 @@
 package org.rr.commons.swing.dialogs;
 
-import static org.rr.commons.utils.StringUtil.EMPTY;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -135,7 +133,7 @@ public class JPreferenceDialog extends JDialog {
 				return booleanValue.booleanValue();
 			}
 		}
-		return false;
+		throw new IllegalArgumentException("Invalid component '" + name + "'");
 	}
 
 	/**
@@ -159,7 +157,7 @@ public class JPreferenceDialog extends JDialog {
 				return text;
 			}
 		}
-		return EMPTY;
+		throw new IllegalArgumentException("Invalid component '" + name + "'");
 	}
 
 	/**
@@ -181,7 +179,7 @@ public class JPreferenceDialog extends JDialog {
 				return Integer.valueOf( ((JSlider)component).getValue() );
 			}
 		}
-		return null;
+		throw new IllegalArgumentException("Invalid component '" + name + "'");
 	}
 
 	public void setVisible(boolean visible) {

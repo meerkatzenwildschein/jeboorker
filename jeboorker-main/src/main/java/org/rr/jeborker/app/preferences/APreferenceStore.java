@@ -140,6 +140,11 @@ public abstract class APreferenceStore {
 			return null;
 		}
 	}
+	
+	public Number getGenericEntryAsNumber(String key, Number defaultValue) {
+		Number result = getGenericEntryAsNumber(key);
+		return result != null ? result : defaultValue;
+	}
 
 	public void addEntryAsBoolean(PREFERENCE_KEYS key, Boolean b) {
 		addGenericEntryBoolean(key.getKey(), b);

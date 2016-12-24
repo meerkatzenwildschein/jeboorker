@@ -11,6 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
@@ -25,6 +27,12 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
 abstract class ACompressedImageToPdfConverter implements IEBookConverter {
+	
+	private static String IMAGE_QUALITY_LABEL = Bundle.getString("MultipleConverter.imageQuality.label");
+	
+	private static String IMAGE_QUALITY_KEY = ACompressedImageToPdfConverter.class.getName() + "." + IMAGE_QUALITY_LABEL;
+	
+	private APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
 	protected IResourceHandler comicBookResource;
 	
@@ -64,6 +72,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 		}
 		
 		ConverterUtils.transferMetadata(this.comicBookResource, targetPdfResource);
+		preferenceStore.addGenericEntryAsNumber(IMAGE_QUALITY_KEY, getImageQuality());
 		
 		return targetPdfResource;
 	}
@@ -92,7 +101,7 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
         	String imageEntry = compressedImageEntries.get(i);
         	if(ConverterUtils.isImageFileName(imageEntry)) {
 	        	BufferedImage image = getBufferedImageFromArchive(imageEntry);
-	        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getConverterPreferenceController());
+	        	List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(image, getImageQuality(), getConverterPreferenceController());
 	        	for(BufferedImage bufferedImage : processImageModifications) {
 		        	float pageWidth = ((float)bufferedImage.getWidth());
 		        	float pageHeight = ((float)bufferedImage.getHeight());
@@ -142,15 +151,19 @@ abstract class ACompressedImageToPdfConverter implements IEBookConverter {
 		return this.converterPreferenceController;
 	}
 	
-    /**
-     * Create a new {@link ConverterPreferenceController} instance.
-     */
-    public ConverterPreferenceController createConverterPreferenceController() {
-		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
-		controller.setShowImageSizeEntry(true);
-		controller.setShowLandscapePageEntries(true);
-		return controller;
-    }
+	/**
+	 * Create a new {@link ConverterPreferenceController} instance.
+	 */
+	public ConverterPreferenceController createConverterPreferenceController() {
+		ConverterPreferenceController preferenceController = MainController.getController().getConverterPreferenceController();
+		preferenceController.addCommonSlider(IMAGE_QUALITY_LABEL, preferenceStore.getGenericEntryAsNumber(IMAGE_QUALITY_KEY, 100).intValue());
+		preferenceController.setShowLandscapePageEntries(true);
+		return preferenceController;
+	}
+	
+	private int getImageQuality() {
+		return getConverterPreferenceController().getCommonValueAsInt(IMAGE_QUALITY_LABEL);
+	}
     
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {
 		this.converterPreferenceController = controller;

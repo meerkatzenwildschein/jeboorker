@@ -48,10 +48,9 @@ public class ConverterUtils {
 	 * @param converterPreferenceController The {@link ConverterPreferenceController} instance containing the user selections.
 	 * @return The processed images. Never returns <code>null</code>.
 	 */
-    static List<BufferedImage> processImageModifications(BufferedImage bufferedImage, ConverterPreferenceController converterPreferenceController) {
-    	Number imageSize = converterPreferenceController.getImageSize();
-    	if(imageSize != null && imageSize.intValue() < 99) {
-    		bufferedImage = ImageUtils.scalePercent(bufferedImage, (double)imageSize.intValue() / 100);
+    static List<BufferedImage> processImageModifications(BufferedImage bufferedImage, int imageSize, ConverterPreferenceController converterPreferenceController) {
+    	if(imageSize < 99) {
+    		bufferedImage = ImageUtils.scalePercent(bufferedImage, (double)imageSize / 100);
     	}
 
     	final float imageWidth = ((float)bufferedImage.getWidth());

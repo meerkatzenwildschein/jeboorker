@@ -21,6 +21,8 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.MimeUtils;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.jeborker.app.preferences.APreferenceStore;
+import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 import org.rr.jeborker.gui.ConverterPreferenceController;
 import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
@@ -31,6 +33,12 @@ import org.rr.pm.image.ImageUtils;
  * A converter for image archives to epub
  */
 abstract class ACompressedImageToEpubConverter implements IEBookConverter {
+	
+	private static String IMAGE_QUALITY_LABEL = Bundle.getString("MultipleConverter.imageQuality.label");
+	
+	private static String IMAGE_QUALITY_KEY = ACompressedImageToEpubConverter.class.getName() + "." + IMAGE_QUALITY_LABEL;
+	
+	private APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 
 	protected IResourceHandler comicBookResource;
 
@@ -68,6 +76,8 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 		deleteTemporaryFiles();
 		ConverterUtils.transferMetadata(this.comicBookResource, targetEpubResource);
+		
+		preferenceStore.addGenericEntryAsNumber(IMAGE_QUALITY_KEY, getImageQuality());
 
 		return targetEpubResource;
 	}
@@ -131,7 +141,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 		if(isImageConversion()) {
 			ArrayList<InputStream> result = new ArrayList<>();
 			IImageProvider imageProvider = ImageProviderFactory.getImageProvider(ResourceHandlerFactory.getResourceHandler(imageIn));
-			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(imageProvider.getImage(), getConverterPreferenceController());
+			List<BufferedImage> processImageModifications = ConverterUtils.processImageModifications(imageProvider.getImage(), getImageQuality(), getConverterPreferenceController());
 			for(BufferedImage image : processImageModifications) {
 				String mime = MimeUtils.getImageMimeFromFileName(imageName, MimeUtils.MIME_JPEG);
 				byte[] imageBytes = ImageUtils.getImageBytes(image, mime);
@@ -152,10 +162,9 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 	 * Tells if some image conversion is needed.
 	 */
 	private boolean isImageConversion() {
-		ConverterPreferenceController controller = getConverterPreferenceController();
-		return 	controller.isLandscapePageRotate() ||
-				controller.isLandscapePageSplit() ||
-				(controller.getImageSize() != null && controller.getImageSize().intValue() < 99);
+		ConverterPreferenceController preferenceController = getConverterPreferenceController();
+		return preferenceController.isLandscapePageRotate() || preferenceController.isLandscapePageSplit()
+				|| preferenceController.getCommonValueAsInt(IMAGE_QUALITY_LABEL) < 99;
 	}
 
 	/**
@@ -227,15 +236,19 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 
 		return this.converterPreferenceController;
 	}
+	
+	private int getImageQuality() {
+		return getConverterPreferenceController().getCommonValueAsInt(IMAGE_QUALITY_LABEL);
+	}
 
 	/**
 	 * Create a new {@link ConverterPreferenceController} instance.
 	 */
 	public ConverterPreferenceController createConverterPreferenceController() {
-		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
-		controller.setShowImageSizeEntry(true);
-		controller.setShowLandscapePageEntries(true);
-		return controller;
+		ConverterPreferenceController preferenceController = MainController.getController().getConverterPreferenceController();
+		preferenceController.addCommonSlider(IMAGE_QUALITY_LABEL, preferenceStore.getGenericEntryAsNumber(IMAGE_QUALITY_KEY, 100).intValue());
+		preferenceController.setShowLandscapePageEntries(true);
+		return preferenceController;
 	}
 
 	public void setConverterPreferenceController(ConverterPreferenceController controller) {

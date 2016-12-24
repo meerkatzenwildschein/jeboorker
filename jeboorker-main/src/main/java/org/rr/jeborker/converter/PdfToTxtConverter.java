@@ -145,17 +145,15 @@ public class PdfToTxtConverter implements IEBookConverter {
 	}
 	
 	private boolean isRemovePageNumersEnabled() {
-		String pageNumbersEnabled = getConverterPreferenceController().getCommonValue(REMOVE_PAGE_NUMBERS_LABEL);
-		return BooleanUtils.toBoolean(pageNumbersEnabled);
+		return getConverterPreferenceController().getCommonValueAsBoolean(REMOVE_PAGE_NUMBERS_LABEL);
 	}
 	
 	private boolean isRemoveHypenEnabled() {
-		String pageNumbersEnabled = getConverterPreferenceController().getCommonValue(REMOVE_HYPHEN_LABEL);
-		return BooleanUtils.toBoolean(pageNumbersEnabled);
+		return getConverterPreferenceController().getCommonValueAsBoolean(REMOVE_HYPHEN_LABEL);
 	}
 
 	private String getExtractionMode() {
-		return getConverterPreferenceController().getCommonValue(EXTRACTION_MODE_LABEL);
+		return getConverterPreferenceController().getCommonValueAsString(EXTRACTION_MODE_LABEL);
 	}
 
 	private void extractTextFromPdf(Document document, PdfReader reader, PrintWriterFilter out) throws IOException {
@@ -213,7 +211,6 @@ public class PdfToTxtConverter implements IEBookConverter {
 	public ConverterPreferenceController createConverterPreferenceController() {
 		ConverterPreferenceController controller = MainController.getController().getConverterPreferenceController();
 		controller.setShowLandscapePageEntries(false);
-		controller.setShowImageSizeEntry(false);
 		controller.addCommonListSelection(EXTRACTION_MODE_LABEL, Arrays.asList(LOCATION_BASED_TEXT_EXTRACTION, SIMPLE_TEXT_EXTRACTION), getRestoredComboboxValue(EXTRACTION_MODE_LABEL, LOCATION_BASED_TEXT_EXTRACTION));
 		controller.addCommonCheckBox(REMOVE_PAGE_NUMBERS_LABEL, getRestoredCheckboxValue(REMOVE_PAGE_NUMBERS_LABEL));
 		controller.addCommonCheckBox(REMOVE_HYPHEN_LABEL, getRestoredCheckboxValue(REMOVE_HYPHEN_LABEL));
