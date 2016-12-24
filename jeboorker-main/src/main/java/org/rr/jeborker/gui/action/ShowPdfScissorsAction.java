@@ -18,6 +18,7 @@ import org.rr.commons.swing.dialogs.JPreferenceDialog;
 import org.rr.commons.swing.dialogs.JPreferenceDialog.PreferenceEntry;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 import org.rr.jeborker.gui.MainController;
+import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 import bd.amazed.docscissors.model.PageGroup;
 import bd.amazed.docscissors.view.DocScissorsMainFrame;
@@ -35,6 +36,8 @@ class ShowPdfScissorsAction extends AbstractAction {
 			putValue(Action.NAME, text);
 		}
 		putValue(ApplicationAction.NON_THREADED_ACTION_KEY, Boolean.TRUE); //No threading
+		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("scissor_16.png"));
+		putValue(Action.LARGE_ICON_KEY, ImageResourceBundle.getResourceAsImageIcon("scissor_22.png"));
 		putValue(MNEMONIC_KEY, SwingUtils.getMnemonicKeyCode(name));
 	}
 
