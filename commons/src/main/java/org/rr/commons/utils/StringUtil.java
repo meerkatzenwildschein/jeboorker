@@ -18,7 +18,13 @@ public final class StringUtil implements Serializable {
 	public static final String NEW_LINE = System.getProperty("line.separator");
 
 	public static final String UTF_8 = Charsets.UTF_8.name();
-
+	
+	public static final String UTF_16 = Charsets.UTF_16.name();
+	
+	public static final String ISO_8859_1 = Charsets.ISO_8859_1.name();
+	
+	public static final String US_ASCII = Charsets.US_ASCII.name();
+	
 	private StringUtil() {}
 
 	/**

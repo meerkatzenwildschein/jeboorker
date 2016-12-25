@@ -6,6 +6,7 @@ import static org.rr.commons.utils.StringUtil.replace;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.BooleanUtils;
 import org.rr.commons.utils.MathUtils;
+import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.app.JeboorkerConstants;
 import org.rr.jeborker.app.JeboorkerConstants.SUPPORTED_MIMES;
 import org.rr.jeborker.app.preferences.APreferenceStore;
@@ -48,6 +50,8 @@ public class PdfToTxtConverter implements IEBookConverter {
 	private static final String REMOVE_PAGE_NUMBERS_LABEL = Bundle.getString("PdfToTxtConverter.removePageNumbers.label");
 	
 	private static final String REMOVE_HYPHEN_LABEL = Bundle.getString("PdfToTxtConverter.removeHyphen.label");
+	
+	private static final String TEXT_CODE_PAGE_LABEL = Bundle.getString("PdfToTxtConverter.codePage.label");
 
 	private APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 	
@@ -71,7 +75,7 @@ public class PdfToTxtConverter implements IEBookConverter {
 		PdfReader reader = null;
 		try (OutputStream txtOutputStream = targetTxtResource.getContentOutputStream(false)) {
 			reader = PDFUtils.getReader(this.pdfResource.toFile());
-			PrintWriterFilter printWriter = new PrintWriterFilter(new PrintWriter(txtOutputStream), PrintWriterFilter.getAcceptAllLineFilter());
+			PrintWriterFilter printWriter = new PrintWriterFilter(new PrintWriter(new OutputStreamWriter(txtOutputStream, getSelectedCodePage())), PrintWriterFilter.getAcceptAllLineFilter());
 
 			if (isRemovePageNumersEnabled()) {
 				printWriter = createNumberFilterPrintWriter(printWriter);
@@ -99,7 +103,8 @@ public class PdfToTxtConverter implements IEBookConverter {
 		
 		storeCheckboxValue(REMOVE_PAGE_NUMBERS_LABEL, isRemovePageNumersEnabled());
 		storeCheckboxValue(REMOVE_HYPHEN_LABEL, isRemoveHypenEnabled());
-		storeComboboxValue(EXTRACTION_MODE_LABEL, getExtractionMode());
+		storeComboboxValue(EXTRACTION_MODE_LABEL, getSelectedExtractionMode());
+		storeComboboxValue(TEXT_CODE_PAGE_LABEL, getSelectedCodePage());
 		
 		return targetTxtResource;
 	}
@@ -152,8 +157,12 @@ public class PdfToTxtConverter implements IEBookConverter {
 		return getConverterPreferenceController().getCommonValueAsBoolean(REMOVE_HYPHEN_LABEL);
 	}
 
-	private String getExtractionMode() {
+	private String getSelectedExtractionMode() {
 		return getConverterPreferenceController().getCommonValueAsString(EXTRACTION_MODE_LABEL);
+	}
+	
+	private String getSelectedCodePage() {
+		return getConverterPreferenceController().getCommonValueAsString(TEXT_CODE_PAGE_LABEL);
 	}
 
 	private void extractTextFromPdf(Document document, PdfReader reader, PrintWriterFilter out) throws IOException {
@@ -164,7 +173,7 @@ public class PdfToTxtConverter implements IEBookConverter {
 	}
 
 	private TextExtractionStrategy getExtractionStrategy() {
-		String extractionMode = getExtractionMode();
+		String extractionMode = getSelectedExtractionMode();
 		TextExtractionStrategy extractionStrategy;
 		if (StringUtils.equals(extractionMode, SIMPLE_TEXT_EXTRACTION)) {
 			extractionStrategy = new SimpleTextExtractionStrategy();
@@ -214,6 +223,7 @@ public class PdfToTxtConverter implements IEBookConverter {
 		controller.addCommonListSelection(EXTRACTION_MODE_LABEL, Arrays.asList(LOCATION_BASED_TEXT_EXTRACTION, SIMPLE_TEXT_EXTRACTION), getRestoredComboboxValue(EXTRACTION_MODE_LABEL, LOCATION_BASED_TEXT_EXTRACTION));
 		controller.addCommonCheckBox(REMOVE_PAGE_NUMBERS_LABEL, getRestoredCheckboxValue(REMOVE_PAGE_NUMBERS_LABEL));
 		controller.addCommonCheckBox(REMOVE_HYPHEN_LABEL, getRestoredCheckboxValue(REMOVE_HYPHEN_LABEL));
+		controller.addCommonListSelection(TEXT_CODE_PAGE_LABEL, Arrays.asList(StringUtil.UTF_8, StringUtil.UTF_16, StringUtil.ISO_8859_1, StringUtil.US_ASCII), getRestoredComboboxValue(TEXT_CODE_PAGE_LABEL, StringUtil.UTF_8));
 		return controller;
 	}
 	
