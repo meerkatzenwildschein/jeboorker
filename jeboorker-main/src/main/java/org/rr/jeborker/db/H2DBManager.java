@@ -72,7 +72,7 @@ class H2DBManager extends DefaultDBManager {
 		JdbcPooledConnectionSource connectionPool = getConnectionPool();
 		DatabaseConnection connection = null;
 		try {
-			connection = connectionPool.getReadWriteConnection();
+			connection = connectionPool.getReadWriteConnection(null);
 			connection.executeStatement("CALL FT_REINDEX()", DatabaseConnection.DEFAULT_RESULT_FLAGS);
 		} finally {
 			if (connection != null) {
@@ -85,7 +85,7 @@ class H2DBManager extends DefaultDBManager {
 		JdbcPooledConnectionSource connectionPool = getConnectionPool();
 		DatabaseConnection connection = null;
 		try {
-			connection = connectionPool.getReadWriteConnection();
+			connection = connectionPool.getReadWriteConnection(null);
 			connection.executeStatement("CREATE ALIAS IF NOT EXISTS FT_INIT FOR \"org.h2.fulltext.FullText.init\"", DatabaseConnection.DEFAULT_RESULT_FLAGS);
 			connection.executeStatement("CALL FT_INIT()", DatabaseConnection.DEFAULT_RESULT_FLAGS);
 		} finally {
@@ -99,7 +99,7 @@ class H2DBManager extends DefaultDBManager {
 		JdbcPooledConnectionSource connectionPool = getConnectionPool();
 		DatabaseConnection connection = null;
 		try {
-			connection = connectionPool.getReadWriteConnection();
+			connection = connectionPool.getReadWriteConnection(null);
 			connection.executeStatement("CALL FT_CREATE_INDEX('PUBLIC', '" + entity.getSimpleName().toUpperCase() + "', NULL)",
 					DatabaseConnection.DEFAULT_RESULT_FLAGS);
 		} finally {
