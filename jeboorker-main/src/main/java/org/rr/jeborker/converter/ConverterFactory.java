@@ -31,6 +31,10 @@ public class ConverterFactory {
 			result.add(new PdfToTxtConverter(resource));
 			result.add(new PdfToPdfConverter(resource));
 			return result;
+		} else if(resource != null && JeboorkerConstants.SUPPORTED_MIMES.MIME_MOBI.getMime().equals(resource.getMimeType(true))) {
+			ArrayList<IEBookConverter> result = new ArrayList<>();
+			result.add(new MobiToTxtConverter(resource));
+			return result;
 		}
 		return Collections.emptyList();
 	}
