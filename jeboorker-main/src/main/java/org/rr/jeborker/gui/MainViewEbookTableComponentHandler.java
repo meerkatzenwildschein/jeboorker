@@ -66,8 +66,8 @@ public class MainViewEbookTableComponentHandler {
 					mainTable.stopEdit();
 				}
 
-				if(model instanceof EbookPropertyDBTableModel) {
-					((EbookPropertyDBTableModel)model).reloadEbookPropertyItemAt(selectedRows[i]);
+				if(model instanceof ReloadableTableModel) {
+					((ReloadableTableModel)model).reloadEbookPropertyItemAt(selectedRows[i]);
 				}
 				mainTable.tableChanged(new TableModelEvent(model, selectedRows[i]));
 			}

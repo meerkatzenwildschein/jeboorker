@@ -95,6 +95,7 @@ class RenameFileAction extends AbstractAction {
 							source.setFile(targetResourceHandler.getResourceString());
 							DefaultDBManager.getInstance().storeObject(source);
 						} else {
+							source.setFile(targetResourceHandler.getResourceString());
 							toRefreshInFileSystemTree.add(sourceResourceHandler.getParentResource());
 							toRefreshInFileSystemTree.add(targetResourceHandler.getParentResource());
 						}
