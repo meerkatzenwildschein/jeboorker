@@ -110,10 +110,14 @@ public final class CommonUtils implements Serializable {
 	 * @param object
 	 *            The <code>Object</code> to be converted into a
 	 *            <code>Number</code>
-	 * @return The <code>Number</code> object or <code>null</code> if the
+	 * @return The <code>Number</code> object or <code>0</code> if the
 	 *         <code>Object</code> could not be converted.
 	 */
 	public static final Number toNumber(final Object object) throws NumberFormatException {
+		return toNumber(object, 0);
+	}
+	
+	public static final Number toNumber(final Object object, Number defaultValue) throws NumberFormatException {
 		if (object instanceof Number) {
 			return (Number) object;
 		} else if (object == null) {
@@ -167,7 +171,7 @@ public final class CommonUtils implements Serializable {
 			throw new NumberFormatException("Could not format " + object
 					+ " to a number");
 		} catch (Exception e) {
-			return null;
+			return defaultValue;
 		}
 	}
 	

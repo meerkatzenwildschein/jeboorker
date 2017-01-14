@@ -31,6 +31,8 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.components.JREditableHistoryComboBox;
 import org.rr.commons.swing.components.JRTable;
+import org.rr.commons.utils.CommonUtils;
+import org.rr.commons.utils.NumberUtil;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
 
@@ -286,7 +288,7 @@ public class RenameFileView extends AbstractDialogView {
 		pattern = pattern.replaceAll("%a", StringUtil.toString(item.getAuthor()));
 		pattern = pattern.replaceAll("%t", StringUtil.toString(item.getTitle()));
 		pattern = pattern.replaceAll("%g", StringUtil.toString(item.getGenre()));
-		pattern = formatNumberPattern(pattern, "%i", NumberUtils.toInt(item.getSeriesIndex()));
+		pattern = formatNumberPattern(pattern, "%i", CommonUtils.toNumber(item.getSeriesIndex()).intValue());
 		pattern = pattern.replaceAll("%s", StringUtil.toString(item.getSeriesName()));
 		pattern = formatNumberPattern(pattern, "%n", num);
 		
