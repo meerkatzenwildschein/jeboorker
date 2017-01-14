@@ -366,7 +366,7 @@ public class ActionUtils {
 							continue;
 						}
 
-						transferFile(sourceResourceHandler, targetResourceHandler, false);
+						transferFile(sourceResourceHandler, targetResourceHandler, move);
 						EbookPropertyItem ebookPropertyItem = EbookPropertyItemUtils.createEbookPropertyItem(targetResourceHandler, ResourceHandlerFactory.getResourceHandler(basePath));
 
 						ActionUtils.refreshEbookPropertyItem(ebookPropertyItem, targetResourceHandler);
