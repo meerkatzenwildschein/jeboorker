@@ -1,5 +1,6 @@
 package org.rr.jeborker.metadata;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.ByteArrayInputStream;
@@ -24,10 +25,12 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.epub.EpubWriter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.Base64;
+import org.rr.commons.utils.DateConversionUtils;
 import org.rr.commons.utils.compression.truezip.TrueZipUtils;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.gui.MainController;
@@ -112,6 +115,10 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 			} else if(meta.getType() instanceof Meta) {
 				Object type = meta.getType();
 				Meta m = new Meta( ((Meta)type).getName(), meta.getValueAsString() );
+				if(StringUtils.equals(m.getName(), "calibre:timestamp")) {
+					String formattedDate = DateConversionUtils.toString(meta.getValueAsDate(), DateConversionUtils.DATE_FORMATS.W3C_MILLISECOND);
+					m.setContent(isNotBlank(formattedDate) ? formattedDate : meta.getValueAsString());
+				}
 				metadata.addOtherMeta(m);
 			} else if(EPUB_METADATA_TYPES.LANGUAGE.getName().equals(meta.getName())) {
 				metadata.setLanguage(meta.getValueAsString());
@@ -136,7 +143,7 @@ class EPubLibMetadataWriter extends AEpubMetadataHandler implements IMetadataWri
 					epub.setCoverImage(null);
 				}
 			} else {
-				Meta m = new Meta( meta.getName(), meta.getValueAsString() );
+				Meta m = new Meta(meta.getName(), meta.getValueAsString());
 				metadata.addOtherMeta(m);
 			}
 		}

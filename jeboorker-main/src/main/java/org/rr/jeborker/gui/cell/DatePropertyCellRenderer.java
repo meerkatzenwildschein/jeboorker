@@ -23,15 +23,11 @@ public class DatePropertyCellRenderer extends DefaultTableCellRenderer {
 	private DateFormat dateFormat;
 
     public DatePropertyCellRenderer() {
-        this(DateFormat.getDateInstance(DateFormat.SHORT));
+        this(DateFormat.getDateInstance());
     }
 
     public DatePropertyCellRenderer(String formatString) {
         this(formatString, Locale.getDefault());
-    }
-
-    public DatePropertyCellRenderer(Locale l) {
-        this(DateFormat.getDateInstance(DateFormat.SHORT, l));
     }
 
     public DatePropertyCellRenderer(String formatString, Locale l) {

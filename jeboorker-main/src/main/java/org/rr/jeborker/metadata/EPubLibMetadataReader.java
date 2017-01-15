@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Date;
 import nl.siegmann.epublib.domain.Date.Event;
 import nl.siegmann.epublib.domain.Identifier;
 import nl.siegmann.epublib.domain.Meta;
@@ -23,10 +24,13 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
 
 import org.apache.commons.io.Charsets;
+import org.apache.commons.lang3.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.StringUtil;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.gui.cell.DatePropertyCellEditor;
+import org.rr.jeborker.gui.cell.DatePropertyCellRenderer;
 
 class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
 
@@ -132,15 +136,19 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 		List<nl.siegmann.epublib.domain.Date> dates = metadata.getDates();
 		for (nl.siegmann.epublib.domain.Date date : dates) {
 			Event event = date.getEvent();
+			EpubLibMetadataProperty<Date> property;
 			if(event != null && Event.PUBLICATION.equals(event)) {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName(), date.getValue(), date));
+				property = new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.PUBLICATION_DATE.getName(), date.getValue(), date);
 			} else if(event != null && Event.CREATION.equals(event)) {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.CREATION_DATE.getName(), date.getValue(), date));
+				property = new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.CREATION_DATE.getName(), date.getValue(), date);
 			} else if(event != null && Event.MODIFICATION.equals(event)) {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.MODIFICATION_DATE.getName(), date.getValue(), date));
+				property = new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.MODIFICATION_DATE.getName(), date.getValue(), date);
 			} else {
-				result.add(new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.DATE.getName(), date.getValue(), date));
+				property = new EpubLibMetadataProperty<nl.siegmann.epublib.domain.Date>(EPUB_METADATA_TYPES.DATE.getName(), date.getValue(), date);
 			}
+			property.setPropertyRendererClass(DatePropertyCellRenderer.class);
+			property.setPropertyEditorClass(DatePropertyCellEditor.class);
+			result.add(property);
 		}
 
 		List<Identifier> identifiers = metadata.getIdentifiers();
@@ -169,7 +177,12 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 			if(IMetadataReader.COMMON_METADATA_TYPES.COVER.getName().equalsIgnoreCase(meta.getName())) {
 				continue;
 			}
-			result.add(new EpubLibMetadataProperty<Meta>(meta.getName(), meta.getContent(), meta));
+			EpubLibMetadataProperty<Meta> property = new EpubLibMetadataProperty<Meta>(meta.getName(), meta.getContent(), meta);
+			if(StringUtils.equals(property.getName(), "calibre:timestamp")) {
+				property.setPropertyRendererClass(DatePropertyCellRenderer.class);
+				property.setPropertyEditorClass(DatePropertyCellEditor.class);
+			}
+			result.add(property);
 		}
 
 		String format = metadata.getFormat();
