@@ -59,7 +59,7 @@ public class MobiMetadataWriter implements IMetadataWriter {
 	protected void writeBook(MobiDocument mobiDoc) throws IOException {
 		IResourceHandler temporaryResourceLoader = ResourceHandlerFactory.getUniqueResourceHandler(ebookResource, "tmp");
 		try (OutputStream out = temporaryResourceLoader.getContentOutputStream(false);) {
-			new MobiWriter().write(mobiDoc, out);
+			new MobiWriter(mobiDoc).write(out);
 			if (temporaryResourceLoader.size() > 0) {
 				temporaryResourceLoader.moveTo(ebookResource, true);
 			} else {
