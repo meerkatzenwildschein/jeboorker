@@ -43,7 +43,7 @@ public class FileSystemImportAction extends AbstractAction {
 			boolean delete = preferenceStore.getEntryAsBoolean(PreferenceStoreFactory.PREFERENCE_KEYS.DELETE_EBOOK_AFTER_IMPORT).booleanValue();
 			List<IResourceHandler> importEbookResources = ActionUtils.importEbookResources(selectedTreeItems, targetBasePath, delete);
 			if(!importEbookResources.isEmpty()) {
-				ActionUtils.applyFilter(ResourceHandlerUtils.toFileNames(selectedTreeItems).toArray(new String[0]));
+				ActionUtils.applyFileNameFilter(ResourceHandlerUtils.toFileNames(selectedTreeItems).toArray(new String[selectedTreeItems.size()]));
 			}
 		} catch(Exception ex) {
 			LoggerFactory.log(Level.WARNING, this, "Failed to import file to " + targetFolder, ex);

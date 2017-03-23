@@ -168,18 +168,7 @@ public class ActionUtils {
 			EbookPropertyDBTableModel model = controller.changeToDatabaseModel();
 			model.removeWhereCondition(queryIdentifier); //remove possibly existing queries.
 			if(!show) {
-				model.addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
-
-					@Override
-					public String getIdentifier() {
-						return queryIdentifier;
-					}
-
-					@Override
-					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-						where.ne("basePath", path);
-					}
-				});
+				applyBasePathFilter(path, queryIdentifier, model);
 			}
 
 			MainMenuBarController.getController().setShowHideBasePathStatusShow(path, show);
@@ -188,6 +177,21 @@ public class ActionUtils {
 		} finally {
 			controller.getEbookTableHandler().refreshTable();
 		}
+	}
+
+	public static void applyBasePathFilter(final String path, final String queryIdentifier, EbookPropertyDBTableModel model) {
+		model.addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+
+			@Override
+			public String getIdentifier() {
+				return queryIdentifier;
+			}
+
+			@Override
+			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
+				where.ne("basePath", path);
+			}
+		});
 	}
 
 	/**
@@ -409,7 +413,7 @@ public class ActionUtils {
 		return sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists();
 	}
 	
-	public static void applyFilter(final String ... fileNames) {
+	public static void applyFileNameFilter(final String ... fileNames) {
 		MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 			@Override

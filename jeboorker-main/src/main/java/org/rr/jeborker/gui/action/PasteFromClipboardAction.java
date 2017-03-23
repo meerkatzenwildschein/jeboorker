@@ -119,7 +119,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		List<IResourceHandler> sourceFiles = ResourceHandlerFactory.getResourceHandler(transferable);
 		List<IResourceHandler> importEbookResources = ActionUtils.importEbookResources(sourceFiles, targetRecourceDirectory, basePath, deleteSourceFiles);
 		if(!importEbookResources.isEmpty()) {
-			ActionUtils.applyFilter(ResourceHandlerUtils.toFileNames(importEbookResources).toArray(new String[0]));
+			ActionUtils.applyFileNameFilter(ResourceHandlerUtils.toFileNames(importEbookResources).toArray(new String[importEbookResources.size()]));
 		}
 	}
 	
