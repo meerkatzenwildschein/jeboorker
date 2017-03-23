@@ -161,5 +161,9 @@ public class MainViewEbookTableComponentHandler {
 	public int getSelectedRowCount() {
 		return mainTable.getSelectedRowCount();
 	}
+	
+	public void setSelectionInterval(int from, int to) {
+		mainTable.getSelectionModel().setSelectionInterval(from, to);
+	}
 
 }

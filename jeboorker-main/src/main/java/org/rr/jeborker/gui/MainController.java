@@ -209,10 +209,19 @@ public class MainController {
 		mainWindow.getEbookTableHandler().setModel(model);
 	}
 	
-	public EbookPropertyFileTableModel changeToFileModel(List<IResourceHandler> resources) {
+	public void changeToFileModel(List<IResourceHandler> resources) {
 		EbookPropertyFileTableModel fileModel = new EbookPropertyFileTableModel(resources);
 		setMainEbookTableModel(fileModel);
-		return fileModel;
+		if(resources.size() == 1) {
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					mainWindow.getEbookTableHandler().setSelectionInterval(0, 0);
+					
+				}
+			});
+		}
 	}
 	
 	public EbookPropertyDBTableModel changeToDatabaseModel() {
