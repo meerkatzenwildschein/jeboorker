@@ -120,13 +120,7 @@ public class MainViewEbookTableComponentHandler {
 	 */
 	public int[] getSelectedRows() {
 		if (mainTable != null) {
-			int[] selectedRows = mainTable.getSelectedRows();
-			
-			// if there is only one row this is always the selected one.
-			if(selectedRows.length == 0 && mainTable.getRowCount() == 1) {
-				return new int[1];
-			}
-			return selectedRows;
+			return mainTable.getSelectedRows();
 		} else {
 			return new int[0];
 		}
