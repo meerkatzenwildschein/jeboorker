@@ -494,5 +494,12 @@ public class EbookPropertyDBTableModel extends AbstractEbookPropertyTableModel {
 		}
 		return whereConditions.removeAll(toRemove);
 	}
+	
+	/**
+	 * Remove all existing where conditions previously defined.
+	 */
+	public void removeWhereConditions() {
+		whereConditions.clear();
+	}
 
 }

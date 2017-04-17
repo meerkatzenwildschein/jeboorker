@@ -414,7 +414,9 @@ public class ActionUtils {
 	}
 	
 	public static void applyFileNameFilter(final String ... fileNames) {
-		MainController.getController().changeToDatabaseModel().addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
+		EbookPropertyDBTableModel model = MainController.getController().changeToDatabaseModel();
+		model.removeWhereConditions();
+		model.addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
 
 			@Override
 			public String getIdentifier() {
@@ -424,7 +426,7 @@ public class ActionUtils {
 			@Override
 			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
 				String filter = ArrayUtils.join(fileNames, ",");
-				LoggerFactory.getLogger().log(Level.INFO, "Apply filter " + filter);
+				LoggerFactory.getLogger().log(Level.INFO, "Apply file name filter '" + filter + "'");
 				for (int i = 0; i < fileNames.length; i++) {
 					String fileName = fileNames[i];
 					if(i == 0) {
