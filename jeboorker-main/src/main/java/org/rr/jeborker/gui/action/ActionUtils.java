@@ -17,7 +17,6 @@ import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
 import org.rr.commons.utils.StringUtil;
-import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.JeboorkerConstants;
