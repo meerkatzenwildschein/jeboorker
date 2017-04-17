@@ -991,29 +991,22 @@ class MainView extends JFrame {
 
 			private static final String QUERY_IDENTIFER = "BASE_PATH_MOUSE_LISTENER";
 
-			private Object previousEditorValue;
-
 			@Override
 			public void mousePressed(MouseEvent e) {
 				final int row = basePathTree.getRowForLocation(e.getPoint().x, e.getPoint().y);
 				final TreePath filterTreePath = basePathTree.getPathForRow(row);
 
-				if(filterTreePath != null) {
+				if (filterTreePath != null) {
 					Object cellEditorValue = filterTreePath.getLastPathComponent();
-					if(cellEditorValue == null || !cellEditorValue.equals(previousEditorValue)) {
-						if(cellEditorValue instanceof FileSystemNode) {
-							setPathFilter(((FileSystemNode)cellEditorValue).getName());
-							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(filterTreePath);
-							MainController.getController().getEbookTableHandler().refreshTable();
-						} else {
-							boolean remove = MainController.getController().changeToDatabaseModel().removeWhereCondition(QUERY_IDENTIFER);
-							((BasePathTreeModel)basePathTree.getModel()).setFilterTreePath(null);
-							if(remove) {
-								MainController.getController().getEbookTableHandler().refreshTable();
-							}
-						}
+					if (cellEditorValue instanceof FileSystemNode) {
+						setPathFilter(((FileSystemNode) cellEditorValue).getName());
+						((BasePathTreeModel) basePathTree.getModel()).setFilterTreePath(filterTreePath);
+						MainController.getController().getEbookTableHandler().refreshTable();
+					} else {
+						MainController.getController().changeToDatabaseModel().removeWhereCondition(QUERY_IDENTIFER);
+						((BasePathTreeModel) basePathTree.getModel()).setFilterTreePath(null);
+						MainController.getController().getEbookTableHandler().refreshTable();
 					}
-					previousEditorValue = cellEditorValue;
 				}
 			}
 
