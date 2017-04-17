@@ -2,7 +2,9 @@ package bd.amazed.docscissors.model;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -79,7 +81,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 							if (!this.targetFileExists) { // Do not add again
 								addToDatabase(resourceHandler, ResourceHandlerFactory.getResourceHandler(baseFolder));
 							}
-							applyFilter(resourceHandler);
+							applyFilter(Arrays.asList(resourceHandler, docFile.getOriginalFile()));
 						} else {
 							MainController.getController().changeToFileModel(Collections.singletonList(resourceHandler));
 						}
@@ -97,8 +99,8 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 		}
 	}
 
-	private void applyFilter(IResourceHandler targetResourceHandler) {
-		ActionUtils.applyFileNameFilter(Collections.singletonList(docFile.getOriginalFile()), true);
+	private void applyFilter(List<IResourceHandler> targetResourceHandler) {
+		ActionUtils.applyFileNameFilter(targetResourceHandler, true);
 	}
 
 	private void addToDatabase(IResourceHandler resource, IResourceHandler baseFolder) {
