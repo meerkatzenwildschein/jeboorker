@@ -124,13 +124,15 @@ class H2DBManager extends DefaultDBManager {
 					sql.append(" AND ");
 				}
 			} else {
-				sql.append(" WHERE ");
+				if(!isEmptyWhereClause(where)) {
+					sql.append(" WHERE ");
+				} else {
+					sql.append(" ");
+				}
 			}
-			try {
+			
+			if(!isEmptyWhereClause(where)) {
 				sql.append(where.getStatement()).append(' ');
-			} catch(IllegalStateException e) {
-				sql.append("true = true ");
-				LoggerFactory.getLogger().log(Level.INFO, "No Where clause", e);
 			}
 			appendOrderFields(orderFields, orderDirection, sql);
 
@@ -148,6 +150,10 @@ class H2DBManager extends DefaultDBManager {
 			LoggerFactory.log(Level.SEVERE, this, "Failed to execute query", e);
 			return new IteratorList<T>(new ArrayList<T>(0).iterator(), 0);
 		}
+	}
+
+	private <T> boolean isEmptyWhereClause(Where<T, T> where) {
+		return where.toString().equals("empty where clause");
 	}
 
 	private <T> int getRowCount(Iterator<T> iterator) throws ReflectionFailureException {
