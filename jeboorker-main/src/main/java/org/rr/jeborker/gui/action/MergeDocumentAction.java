@@ -82,6 +82,6 @@ class MergeDocumentAction extends AbstractAction {
 	}
 	
 	private void applyFilter(IResourceHandler uniqueResourceHandler) {
-		ActionUtils.applyFileNameFilter(uniqueResourceHandler.getName());
+		ActionUtils.applyFileNameFilter(Collections.singletonList(uniqueResourceHandler), true);
 	}
 }

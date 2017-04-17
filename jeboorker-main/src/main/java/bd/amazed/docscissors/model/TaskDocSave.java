@@ -98,7 +98,7 @@ public class TaskDocSave extends SwingWorker<Boolean, Void> {
 	}
 
 	private void applyFilter(IResourceHandler targetResourceHandler) {
-		ActionUtils.applyFileNameFilter(docFile.getOriginalFile().getName());
+		ActionUtils.applyFileNameFilter(Collections.singletonList(docFile.getOriginalFile()), true);
 	}
 
 	private void addToDatabase(IResourceHandler resource, IResourceHandler baseFolder) {

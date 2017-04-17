@@ -16,7 +16,6 @@ import javax.swing.Action;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
@@ -124,7 +123,7 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		if(!importEbookResources.isEmpty()) {
 			// remove the source ebook entries which no longer exists from the database model
 			removeNotExistingEbookEntriesFromDatabase(sourceFiles);
-			ActionUtils.applyFileNameFilter(ResourceHandlerUtils.toFileNames(importEbookResources).toArray(new String[importEbookResources.size()]));
+			ActionUtils.applyFileNameFilter(importEbookResources, true);
 		}
 	}
 

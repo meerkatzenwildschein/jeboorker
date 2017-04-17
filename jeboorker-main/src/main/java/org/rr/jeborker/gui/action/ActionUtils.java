@@ -12,11 +12,12 @@ import java.util.logging.Level;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang3.StringUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
-import org.rr.commons.utils.ArrayUtils;
 import org.rr.commons.utils.StringUtil;
+import org.rr.jeborker.app.BasePathList;
 import org.rr.jeborker.app.FileRefreshBackground;
 import org.rr.jeborker.app.FileWatchService;
 import org.rr.jeborker.app.JeboorkerConstants;
@@ -413,7 +414,7 @@ public class ActionUtils {
 		return sourceResource != null && ActionUtils.isSupportedEbookFormat(sourceResource, true) && !targetResource.exists();
 	}
 	
-	public static void applyFileNameFilter(final String ... fileNames) {
+	public static void applyFileNameFilter(final List<IResourceHandler> resources, final boolean regardBasePath) {
 		EbookPropertyDBTableModel model = MainController.getController().changeToDatabaseModel();
 		model.removeWhereConditions();
 		model.addWhereCondition(new EbookPropertyDBTableModel.EbookPropertyDBTableModelQuery() {
@@ -425,14 +426,17 @@ public class ActionUtils {
 
 			@Override
 			public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-				String filter = ArrayUtils.join(fileNames, ",");
+				APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
+				String filter = StringUtils.join(resources, ",");
 				LoggerFactory.getLogger().log(Level.INFO, "Apply file name filter '" + filter + "'");
-				for (int i = 0; i < fileNames.length; i++) {
-					String fileName = fileNames[i];
+				for (int i = 0; i < resources.size(); i++) {
+					IResourceHandler resource = resources.get(i);
 					if(i == 0) {
-						where.like("fileName", fileName);
+						where.eq("fileName", resource.getName())
+						.and().like("basePath", preferenceStore.getBasePathFor(resource) + "%");
 					} else {
-						where.or().like("fileName", fileName);
+						where.or().eq("fileName", resource.getName())
+						.and().like("basePath", preferenceStore.getBasePathFor(resource) + "%");
 					}
 				}
 			}
