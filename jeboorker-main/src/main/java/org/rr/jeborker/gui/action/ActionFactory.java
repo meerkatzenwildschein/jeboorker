@@ -452,7 +452,7 @@ public class ActionFactory {
 				action = new QuitAction(text);
 				break;
 			case SEARCH_ACTION:
-				action = new SearchAction();
+				action = SearchAction.getInstance();
 				break;
 			case REMOVE_METADATA_ENTRY_ACTION:
 				action = RemoveMetadataEntryAction.getInstance();

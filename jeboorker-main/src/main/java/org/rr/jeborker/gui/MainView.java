@@ -507,6 +507,8 @@ class MainView extends JFrame {
 		progressBar = new JProgressBar();
 		statusPanel.add(progressBar, "w 100%");
 
+		applyFilterActionToAllComponents(contentPane);
+		
 		this.setContentPane(contentPane);
 		this.setJMenuBar(MainMenuBarController.getController().getView());
 
@@ -515,6 +517,13 @@ class MainView extends JFrame {
 		treeComponentHandler = new MainViewTreeComponentHandler(basePathTree, fileSystemTree, this);
 		propertySheetHandler = new MainViewPropertySheetHandler(propertySheet, this);
 		ebookTableHandler = new MainViewEbookTableComponentHandler(mainTable, mainTableScrollPane);
+	}
+
+	private void applyFilterActionToAllComponents(JPanel contentPane) {
+		Component[] allComponents = SwingUtils.getAllComponents(JComponent.class, contentPane);
+		for (Component component : allComponents) {
+			MainViewMenuUtils.registerApplyFilterKeyAction((JComponent) component);			
+		}
 	}
 
 	/**
@@ -977,6 +986,8 @@ class MainView extends JFrame {
 		basePathTree.setRowHeight(25);
 
 		MainViewMenuUtils.registerDeleteKeyAction(basePathTree);
+		MainViewMenuUtils.registerApplyFilterKeyAction(basePathTree);
+		
 
 		basePathTree.addMouseListener(new MouseAdapter() {
 

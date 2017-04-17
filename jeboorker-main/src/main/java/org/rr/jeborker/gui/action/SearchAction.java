@@ -17,12 +17,19 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 class SearchAction extends AbstractAction {
 
-	private static final long serialVersionUID = -2514716618739877972L;
+	private static SearchAction singletonInstance;
 	
 	private static final String QUERY_IDENTIFER = SearchAction.class.getName();
 
-	SearchAction() {
+	private SearchAction() {
 		putValue(Action.SMALL_ICON, ImageResourceBundle.getResourceAsImageIcon("play_16.png"));
+	}
+	
+	public static SearchAction getInstance() {
+		if(singletonInstance == null) {
+			singletonInstance = new SearchAction();
+		}
+		return singletonInstance;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
