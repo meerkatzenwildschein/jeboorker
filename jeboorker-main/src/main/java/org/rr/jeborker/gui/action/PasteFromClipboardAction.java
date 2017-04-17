@@ -20,7 +20,9 @@ import org.rr.commons.mufs.ResourceHandlerUtils;
 import org.rr.commons.swing.SwingUtils;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
+import org.rr.jeborker.db.DefaultDBManager;
 import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.db.item.EbookPropertyItemUtils;
 import org.rr.jeborker.gui.MainController;
 import org.rr.jeborker.gui.model.ReloadableTableModel;
 import org.rr.jeborker.gui.resources.ImageResourceBundle;
@@ -118,11 +120,24 @@ public class PasteFromClipboardAction extends AbstractAction implements Clipboar
 		boolean deleteSourceFiles = true;
 		List<IResourceHandler> sourceFiles = ResourceHandlerFactory.getResourceHandler(transferable);
 		List<IResourceHandler> importEbookResources = ActionUtils.importEbookResources(sourceFiles, targetRecourceDirectory, basePath, deleteSourceFiles);
+		
 		if(!importEbookResources.isEmpty()) {
+			// remove the source ebook entries which no longer exists from the database model
+			removeNotExistingEbookEntriesFromDatabase(sourceFiles);
 			ActionUtils.applyFileNameFilter(ResourceHandlerUtils.toFileNames(importEbookResources).toArray(new String[importEbookResources.size()]));
 		}
 	}
-	
 
+	private static void removeNotExistingEbookEntriesFromDatabase(List<IResourceHandler> resources) {
+		for (IResourceHandler importEbookResource : resources) {
+			DefaultDBManager dbManager = DefaultDBManager.getInstance();
+			List<EbookPropertyItem> ebookPropertyItemByResource = EbookPropertyItemUtils.getEbookPropertyItemByResource(importEbookResource);
+			for (EbookPropertyItem ebookPropertyItem : ebookPropertyItemByResource) {
+				if(!ebookPropertyItem.getResourceHandler().exists()) {
+					dbManager.deleteObject(ebookPropertyItem);
+				}
+			}
+		}
+	}
 
 }
