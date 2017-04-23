@@ -32,7 +32,7 @@ public class ProcessExecutor {
 
 	public static final Long WATCHDOG_EXIT_VALUE = -999L;
 
-	public static void runProcessAsScript(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, InterruptedException, ExecutionException {
+	public static synchronized void runProcessAsScript(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, InterruptedException, ExecutionException {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
 		CommandLine commandLineScript = null;
@@ -53,7 +53,7 @@ public class ProcessExecutor {
 		}
 	}
 
-	public static Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
+	public static synchronized Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
 		processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);

@@ -59,6 +59,16 @@ public class ResourceHandlerFactory {
 	static {
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
 	}
+	
+	public static IResourceHandler getTemporaryResourceFolder(String extension) {
+		File tmp = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString() + (extension != null ? "." + extension : ".tmp"));
+		if (tmp.mkdirs()) {
+			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(tmp);
+			temporaryResourceLoader.add(resourceLoader);
+			return resourceLoader;
+		}
+		throw new RuntimeException("Failed to create dir " + tmp.getAbsolutePath());
+	}
 
 	/**
 	 * Creates a {@link IResourceHandler} file which points to a temporary file which is automatically deleted
@@ -70,7 +80,6 @@ public class ResourceHandlerFactory {
 		try {
 			File tmp = File.createTempFile(UUID.randomUUID().toString(), extension != null ? "." + extension : ".tmp");
 			IResourceHandler resourceLoader = ResourceHandlerFactory.getResourceHandler(tmp);
-
 			temporaryResourceLoader.add(resourceLoader);
 			return resourceLoader;
 		} catch (IOException e) {

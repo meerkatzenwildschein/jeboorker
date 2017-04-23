@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.exec.CommandLine;
+import org.apache.commons.lang3.StringUtils;
 import org.rr.commons.collection.TransformValueList;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.utils.CommonUtils;
@@ -40,6 +41,21 @@ public class ResourceHandlerUtils {
 	public static final int SORT_BY_MODIFY_AT = 2;
 
 	public static final int SORT_BY_TYPE = 3;
+	
+	/**
+	 * Created a string which represents the relative path of the given <code>target</code> resource based on the given <code>base</code>
+	 * resource.
+	 * 
+	 * @param base The base which represents the absolute path.
+	 * @param target The target which must be a member of the given <code>base</code>.
+	 * @return A relative path statement if <code>target</code> is a member of <code>base</code>. Otherwise the string representation of the
+	 *         given <code>target</code> will be returned.
+	 */
+	public static String makeRelative(final IResourceHandler base, final IResourceHandler target) {
+		String relative = target.toString().substring(base.toString().length());
+		relative = StringUtils.stripStart(relative, "\\/");
+		return relative;
+	}
 
 	/**
 	 * Gets the resource hierarchy starting with the given base {@link IResourceHandler}.

@@ -65,6 +65,10 @@ public class CompressedDataEntry implements Comparable<CompressedDataEntry> {
 	public InputStream getData() {
 		return data;
 	}
+	
+	public String getPath() {
+		return path;
+	}
 
 	public String getName() {
 		return new File(path).getName();

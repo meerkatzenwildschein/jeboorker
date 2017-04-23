@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.rr.commons.collection.IteratorList;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.compression.CompressedDataEntry;
 
 public class ThreadUtils {
 
@@ -21,6 +23,11 @@ public class ThreadUtils {
 
 	public static <S,T> List<T> loopAndWait(final List<S> l, final RunnableImpl<S,T> each, int maxThreads) {
 		return loop(l, each, maxThreads, true);
+	}
+
+	public static List<List<IResourceHandler>> loopAndWait(List<CompressedDataEntry> sourceFiles,
+			RunnableImpl<CompressedDataEntry, List<IResourceHandler>> runnableImpl) {
+		return loopAndWait(sourceFiles, runnableImpl, Math.max(1, ThreadUtils.availableProcessors() -1));
 	}
 
 	/**
@@ -87,6 +94,10 @@ public class ThreadUtils {
 			}
 		}
 		return results;
+	}
+	
+	public static int availableProcessors() {
+		return Runtime.getRuntime().availableProcessors();
 	}
 
 	private static boolean containsOnlyNull(Object[] values) {

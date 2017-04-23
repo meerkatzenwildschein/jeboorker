@@ -47,4 +47,9 @@ public class CbrToCbzConverter extends AArchiveToArchiveConverter {
 		return JeboorkerConstants.SUPPORTED_MIMES.MIME_CBZ;
 	}
 
+	@Override
+	protected void addToArchive(IResourceHandler targetCbzResource, String archiveFile, byte[] imageBytes) {
+		TrueZipUtils.add(targetCbzResource, archiveFile, new ByteArrayInputStream(imageBytes));
+	}
+
 }
