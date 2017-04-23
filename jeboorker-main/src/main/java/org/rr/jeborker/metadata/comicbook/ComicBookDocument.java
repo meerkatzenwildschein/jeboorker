@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.rr.commons.mufs.MimeUtils;
+import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.mufs.ResourceHandlerUtils;
+
 public class ComicBookDocument {
 
 	private final HashMap<String, Object> info = new HashMap<String, Object>();
@@ -294,7 +298,14 @@ public class ComicBookDocument {
 			//simply get the first image as cover image
 			if(this.cover == null && !archiveEntries.isEmpty()) {
 				try {
-					this.cover = archiveHandler.getArchiveEntry(archiveEntries.get(0));
+					for(int i = 0; i < archiveEntries.size(); i++) {
+						byte[] archiveEntry = archiveHandler.getArchiveEntry(archiveEntries.get(i));
+						String mime = ResourceHandlerUtils.guessFormat(ResourceHandlerFactory.getResourceHandler(archiveEntry));
+						if(MimeUtils.isImageMime(mime)) {
+							this.cover = archiveEntry;
+							break;
+						}
+					}
 				} catch (IOException e) {
 				}
 			}

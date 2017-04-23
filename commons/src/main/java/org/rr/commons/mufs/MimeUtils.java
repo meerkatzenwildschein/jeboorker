@@ -105,7 +105,7 @@ public class MimeUtils {
 	}
 	
 	public static boolean isImageMime(String mime) {
-		return mime.startsWith("image/");
+		return mime != null && mime.startsWith("image/");
 	}
 	
 	public static boolean isJpegMime(String mime) {

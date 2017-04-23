@@ -158,6 +158,22 @@ public class ResourceHandlerFactory {
 
 		return new InputStreamResourceHandler(inputStream);
 	}
+	
+	/**
+	 * Gets a resource loader for the given <code>bytes</code>. This is helpful if there is only
+	 * bytes available which contains data to be shown to components working with {@link IResourceHandler}
+	 * objects.
+	 *
+	 * @param bytes The bytes handled by the {@link IResourceHandler}
+	 * @return The desired {@link IResourceHandler} instance.
+	 */
+	public static IResourceHandler getResourceHandler(byte[] bytes) {
+		if(bytes == null) {
+			throw new NullPointerException("could not load null resource");
+		}
+
+		return new InputStreamResourceHandler(new ByteArrayInputStream(bytes));
+	}
 
 	/**
 	 * Get a new {@link IResourceHandler} with the given {@link IResourceHandler} as parent and the
