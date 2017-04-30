@@ -247,18 +247,32 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 
 		final List<Property> properties = setupMetadata(Collections.singletonList(item), reader);
 
-		final DefaultProperty fileNameProperty = new DefaultProperty();
-		fileNameProperty.setDisplayName(Bundle.getString("EbookPropertySheetProperty.property.name.file"));
-		fileNameProperty.setName("file");
-		fileNameProperty.setEditable(false);
-		fileNameProperty.setDeletable(false);
-		fileNameProperty.setValue(resourceHandler);
-		fileNameProperty.setShortDescription(resourceHandler != null ? resourceHandler.toString() : EMPTY);
-		properties.add(fileNameProperty);
-
+		properties.add(createDefaultProperty(resourceHandler, properties,
+				"file", 
+				Bundle.getString("EbookPropertySheetProperty.property.name.file"),
+				resourceHandler.toString(),
+				resourceHandler != null ? resourceHandler.toString() : EMPTY));
+		
+		properties.add(createDefaultProperty(resourceHandler, properties,
+				"size", 
+				Bundle.getString("EbookPropertySheetProperty.property.size.file"), 
+				resourceHandler.size() + " bytes",
+				resourceHandler.size() < 1024 * 1024 ? resourceHandler.size() / 1024  + " KB" : resourceHandler.size()  / 1024 / 1024 + " MB"));
+		
 		Collections.sort(properties, PROPERTY_COMPARATOR);
 
 		return properties.toArray(new Property[properties.size()]);
+	}
+
+	private DefaultProperty createDefaultProperty(IResourceHandler resourceHandler, final List<Property> properties, String name, String displayName, String description, String value) {
+		DefaultProperty property = new DefaultProperty();
+		property.setDisplayName(displayName);
+		property.setName(name);
+		property.setEditable(false);
+		property.setDeletable(false);
+		property.setValue(value);
+		property.setShortDescription(description);
+		return property;
 	}
 
 
@@ -333,6 +347,8 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 				return "02";
 			} else if(name1.equals("title")) {
 				return "03";
+			} else if(name1.equals("size")) {
+				return "99";
 			} else {
 				return "50" + name1;
 			}
