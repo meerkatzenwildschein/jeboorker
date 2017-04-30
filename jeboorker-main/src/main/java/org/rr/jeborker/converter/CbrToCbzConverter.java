@@ -1,8 +1,11 @@
 package org.rr.jeborker.converter;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.utils.compression.CompressedDataEntry;
 import org.rr.commons.utils.compression.FileEntryFilter;
@@ -15,16 +18,6 @@ public class CbrToCbzConverter extends AArchiveToArchiveConverter {
 
 	public CbrToCbzConverter(IResourceHandler cbrResource) {
 		super(cbrResource);
-	}
-	
-	@Override
-	protected void addToArchive(IResourceHandler targetCbzResource, CompressedDataEntry sourceFile, byte[] imageBytes) {
-		TrueZipUtils.add(targetCbzResource, sourceFile.getName(), new ByteArrayInputStream(imageBytes));
-	}
-
-	@Override
-	protected void addToArchive(IResourceHandler targetCbzResource, CompressedDataEntry sourceFile, int i, byte[] imageBytes) {
-		TrueZipUtils.add(targetCbzResource, injectCounterToFileName(sourceFile.getName(), i), new ByteArrayInputStream(imageBytes));
 	}
 	
 	@Override
@@ -48,8 +41,12 @@ public class CbrToCbzConverter extends AArchiveToArchiveConverter {
 	}
 
 	@Override
-	protected void addToArchive(IResourceHandler targetCbzResource, String archiveFile, byte[] imageBytes) {
-		TrueZipUtils.add(targetCbzResource, archiveFile, new ByteArrayInputStream(imageBytes));
+	protected void addToArchive(IResourceHandler targetCbzResource, String archiveFile, File imageBytes) {
+		try {
+			TrueZipUtils.add(targetCbzResource, archiveFile, new ByteArrayInputStream(FileUtils.readFileToByteArray(imageBytes)));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

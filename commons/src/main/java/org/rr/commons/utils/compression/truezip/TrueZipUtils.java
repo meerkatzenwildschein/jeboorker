@@ -32,9 +32,9 @@ public class TrueZipUtils {
 	
 	static {
 		TConfig.get().setArchiveDetector(
-			    new TArchiveDetector(
-			        "cbz|epub",
-			        new JarDriver(IOPoolLocator.SINGLETON)));			
+			new TArchiveDetector(
+			"cbz|epub",
+			new JarDriver(IOPoolLocator.SINGLETON)));			
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class TrueZipUtils {
 		ArrayList<String> result = new ArrayList<>();
 		for(File f : listFiles) {
 			String enclEntryName = ((TFile)f).getEnclEntryName();
-			if(zipFileFilter.accept(enclEntryName, enclEntryName.getBytes())) {
+			if(enclEntryName != null && zipFileFilter.accept(enclEntryName, enclEntryName.getBytes())) {
 				result.add(enclEntryName);
 			}
 		}
@@ -97,38 +97,38 @@ public class TrueZipUtils {
 	public static boolean add(IResourceHandler zipFileHandler, String name, InputStream data) {
 		File zipFile = zipFileHandler.toFile();
 		boolean isDeleted;
-		
+
 		// First, push a new current configuration on the inheritable thread local
 		// stack.
 		TConfig config = TConfig.push();
 		try {
-		    // Set FsOutputOption.GROW for appending-to rather than reassembling an
-		    // archive file.
-			if(zipFile.length() > 5000000) { //Larger than five MB - don't reassemble the zip file.
+			// Set FsOutputOption.GROW for appending-to rather than reassembling an
+			// archive file.
+			if (zipFile.length() > 5000000) { // Larger than five MB - don't reassemble the zip file.
 				config.setOutputPreferences(config.getOutputPreferences().set(FsOutputOption.GROW));
 			}
-			if(CompressionUtils.isStoreOnlyFile(name)) {
+			if (CompressionUtils.isStoreOnlyFile(name)) {
 				config.setOutputPreferences(config.getOutputPreferences().set(FsOutputOption.STORE));
 			}
 
-		    TFile file = new TFile(zipFile.toString() + "/" + name);
-		    
-		    // Now use the current configuration and append the entry to the archive
-		    // file even if it's already present.
-		    TFileOutputStream zipOut = new TFileOutputStream(file);
-		    try {
-		    	IOUtils.copy(data, zipOut);
-		    } finally {
-		    	zipOut.flush();
-		    	IOUtils.closeQuietly(zipOut);
-		    }
-		    isDeleted = true;
-		} catch(Exception e) {
+			TFile file = new TFile(zipFile.toString() + "/" + name);
+
+			// Now use the current configuration and append the entry to the archive
+			// file even if it's already present.
+			TFileOutputStream zipOut = new TFileOutputStream(file);
+			try {
+				IOUtils.copy(data, zipOut);
+			} finally {
+				zipOut.flush();
+				IOUtils.closeQuietly(zipOut);
+			}
+			isDeleted = true;
+		} catch (Exception e) {
 			isDeleted = false;
 		} finally {
-		    // Pop the current configuration off the inheritable thread local stack.
-		    config.close();
-		    unmout();
+			// Pop the current configuration off the inheritable thread local stack.
+			config.close();
+			unmout();
 		}
 		return isDeleted;
 	}

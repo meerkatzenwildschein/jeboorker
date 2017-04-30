@@ -1,6 +1,6 @@
 package org.rr.jeborker.converter;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 
 import org.rr.commons.mufs.IResourceHandler;
@@ -15,16 +15,6 @@ public class CbzToCbrConverter extends AArchiveToArchiveConverter {
 
 	public CbzToCbrConverter(IResourceHandler cbrResource) {
 		super(cbrResource);
-	}
-	
-	@Override
-	protected void addToArchive(IResourceHandler targetCbzResource, CompressedDataEntry sourceFile, byte[] imageBytes) {
-		RarUtils.add(targetCbzResource, sourceFile.getName(), new ByteArrayInputStream(imageBytes));
-	}
-
-	@Override
-	protected void addToArchive(IResourceHandler targetCbzResource, CompressedDataEntry sourceFile, int i, byte[] imageBytes) {
-		RarUtils.add(targetCbzResource, injectCounterToFileName(sourceFile.getName(), i), new ByteArrayInputStream(imageBytes));
 	}
 	
 	@Override
@@ -48,8 +38,8 @@ public class CbzToCbrConverter extends AArchiveToArchiveConverter {
 	}
 
 	@Override
-	protected void addToArchive(IResourceHandler targetCbzResource, String archiveFile, byte[] imageBytes) {
-		RarUtils.add(targetCbzResource, archiveFile, new ByteArrayInputStream(imageBytes));
+	protected void addToArchive(IResourceHandler targetCbzResource, String archiveFile, File imageBytes) {
+		RarUtils.add(targetCbzResource, archiveFile, imageBytes);
 	}
 
 }

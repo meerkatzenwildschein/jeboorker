@@ -134,12 +134,8 @@ public class RarUtils {
 		return processFileEntryFilter(result, rarFileFilter);
 	}
 	
-	/**
-	 * Add / Replace the an entry with the given name and given data
-	 */
-	public static boolean add(IResourceHandler rarFileHandler, String name, InputStream data) {
+	public static boolean add(IResourceHandler rarFileHandler, String name, File in) {
 		final CommandLine cl = new CommandLine(getRarExecutable());
-		File in = null;
 		try {
 			cl.addArgument("a"); //add
 			cl.addArgument("-o+"); //overwrite existing
@@ -162,11 +158,6 @@ public class RarUtils {
 			
 			String rarFilePath = rarFileHandler.toFile().getAbsolutePath();
 			cl.addArgument(StringUtil.quote(rarFilePath, '"'), false); //rar archive
-			
-			//create a copy of the entry that should be added to the rar.
-			in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
-			FileUtils.copyInputStreamToFile(data, in);
-			
 			cl.addArgument(StringUtil.quote(in.getAbsolutePath(), '"'), false); //entry to add
 			
 			ProcessExecutor.runProcessAsScript(cl, new ProcessExecutorHandler() {
@@ -183,6 +174,22 @@ public class RarUtils {
 			}, ExecuteWatchdog.INFINITE_TIMEOUT);
 			
 			return true;
+		} catch (Exception e) {
+			LoggerFactory.getLogger().log(Level.SEVERE, "Faild to add " + name + " to "+ rarFileHandler, e);
+		}
+		return false;
+	}
+	
+	/**
+	 * Add / Replace the an entry with the given name and given data
+	 */
+	public static boolean add(IResourceHandler rarFileHandler, String name, InputStream data) {
+		File in = null;
+		try {
+			//create a copy of the entry that should be added to the rar.
+			in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
+			FileUtils.copyInputStreamToFile(data, in);
+			add(rarFileHandler, name, in);
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "Faild to add " + name + " to "+ rarFileHandler, e);
 		} finally {

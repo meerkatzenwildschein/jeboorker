@@ -2,6 +2,7 @@ package org.rr.jeborker.converter;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public abstract class AArchiveToArchiveConverter implements IEBookConverter {
 			List<IResourceHandler> converted = convert(sourceFiles, workingFolder);
 			for (IResourceHandler convertedSourceFile : converted) {
 				String archiveFile = ResourceHandlerUtils.makeRelative(workingFolder, convertedSourceFile);
-				addToArchive(targetArchiveResource, archiveFile, convertedSourceFile.getContent());
+				addToArchive(targetArchiveResource, archiveFile, convertedSourceFile.toFile());
 			}
 		} finally {
 			workingFolder.delete();
@@ -122,12 +123,8 @@ public abstract class AArchiveToArchiveConverter implements IEBookConverter {
 
 	protected abstract String getTargetArchiveExtension();
 	
-	protected abstract void addToArchive(IResourceHandler targetCbzResource, String archiveFile, byte[] imageBytes);
+	protected abstract void addToArchive(IResourceHandler targetCbzResource, String archiveFile, File imageBytes);
 
-	protected abstract void addToArchive(IResourceHandler targetCbzResource, CompressedDataEntry sourceFile, byte[] imageBytes);
-
-	protected abstract void addToArchive(IResourceHandler targetCbzResource, CompressedDataEntry sourceFile, int i, byte[] imageBytes);
-	
 	protected String injectCounterToFileName(String fileName, int count) {
 		return FilenameUtils.getBaseName(fileName) + "_" + count + "." + FilenameUtils.getExtension(fileName);
 	}
