@@ -3,6 +3,7 @@ package org.rr.jeborker.gui.model;
 import static org.apache.commons.lang.ObjectUtils.notEqual;
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -256,7 +257,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		properties.add(createDefaultProperty(resourceHandler, properties,
 				"size", 
 				Bundle.getString("EbookPropertySheetProperty.property.size.file"), 
-				resourceHandler.size() + " bytes",
+				DecimalFormat.getIntegerInstance().format(resourceHandler.size()) + " bytes",
 				resourceHandler.size() < 1024 * 1024 ? resourceHandler.size() / 1024  + " KB" : resourceHandler.size()  / 1024 / 1024 + " MB"));
 		
 		Collections.sort(properties, PROPERTY_COMPARATOR);
@@ -279,7 +280,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 	/**
 	 * attaches a property for each metadata item of the resource given with the
 	 * resourceLoader parameter.
-	 * @param result The list where the metadata properties should be attched to.
+	 * @param result The list where the metadata properties should be attached to.
 	 * @param resourceLoader The {@link IResourceHandler} providing the ebook data.
 	 */
 	protected List<Property> setupMetadata(final List<EbookPropertyItem> items, final IMetadataReader reader) {
@@ -330,7 +331,7 @@ public class EbookSheetPropertyModel extends PropertySheetTableModel {
 		return new EbookSheetProperty(metadataProperty, items, valueIndex);
 	}
 
-	protected static class MetadataPropertyComparator implements Comparator<Property> {
+	private static class MetadataPropertyComparator implements Comparator<Property> {
 
 		@Override
 		public int compare(Property p1, Property p2) {
