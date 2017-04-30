@@ -7,18 +7,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceNameFilter;
+import org.rr.commons.swing.components.tree.JRTree;
 import org.rr.commons.swing.components.tree.NamedNode;
+import org.rr.commons.utils.ListUtils;
+import org.rr.jeborker.gui.MainViewTreeComponentHandler;
 import org.rr.jeborker.gui.action.ActionUtils;
 
 public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<FileSystemNode> {
 
 	private IResourceHandler pathResource;
+	
+	private JRTree tree;
 	
 	private int hashCode;
 	
@@ -32,15 +38,17 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	
 	private Boolean isLeaf;
 	
-	FileSystemNode(IResourceHandler pathResource, TreeNode parent) {
+	FileSystemNode(IResourceHandler pathResource, TreeNode parent, JRTree tree) {
 		this.pathResource = pathResource;
 		this.parent = parent;
+		this.tree = tree;
 		this.hashCode = pathResource.toString().hashCode();
 	}
 	
-	FileSystemNode(IResourceHandler pathResource, TreeNode parent, boolean showFiles) {
+	FileSystemNode(IResourceHandler pathResource, TreeNode parent, JRTree tree, boolean showFiles) {
 		this.pathResource = pathResource;
 		this.parent = parent;
+		this.tree = tree;
 		this.showFiles = showFiles;
 		this.hashCode = pathResource.toString().hashCode();
 	}
@@ -48,17 +56,29 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 	@Override
 	public TreeNode getChildAt(int childIndex) {
 		final List<FileSystemNode> childResources = createChildren();
-		return childResources.get(childIndex);
+		return ListUtils.get(childResources, childIndex);
 	}
 
 	@Override
 	public int getChildCount() {
+		if(!this.pathResource.exists()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					MainViewTreeComponentHandler.refreshFileSystemTreeEntry(pathResource, tree, null);
+				}
+			});
+		}
 		final List<IResourceHandler> childResources = getChildResources();
 		return childResources.size();
 	}
 
 	@Override
 	public TreeNode getParent() {
+		if(!this.pathResource.exists()) {
+			return null;
+		}
 		return this.parent;
 	}
 
@@ -84,7 +104,7 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 		if(isLeaf == null) {
 			isLeaf = Boolean.valueOf(this.pathResource.isFileResource());
 		}
-		return isLeaf.booleanValue();
+		return isLeaf;
 	}
 
 	private List<FileSystemNode> createChildren() {
@@ -93,7 +113,7 @@ public class FileSystemNode implements MutableTreeNode, NamedNode, Comparable<Fi
 			childNodes = new ArrayList<>(childResources.size());
 			for(int i = 0; i < childResources.size(); i++) {
 				IResourceHandler resource = childResources.get(i);
-				childNodes.add(new FileSystemNode(resource, this, showFiles));
+				childNodes.add(new FileSystemNode(resource, this, tree, showFiles));
 			}
 		}
 		return childNodes;

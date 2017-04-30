@@ -9,11 +9,15 @@ import javax.swing.tree.TreePath;
 
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.swing.components.tree.JRTree;
 
 public abstract class AbstractFileTreeModel extends DefaultTreeModel {
+	
+	protected JRTree tree;
 
-	public AbstractFileTreeModel(TreeNode root) {
+	public AbstractFileTreeModel(TreeNode root, JRTree tree) {
 		super(root);
+		this.tree = tree;
 	}
 
 	@Override

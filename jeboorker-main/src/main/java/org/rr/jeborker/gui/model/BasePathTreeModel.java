@@ -14,6 +14,7 @@ import javax.swing.tree.TreePath;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
 import org.rr.commons.mufs.ResourceHandlerFactory;
+import org.rr.commons.swing.components.tree.JRTree;
 import org.rr.commons.swing.components.tree.NamedNode;
 import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.utils.ListUtils;
@@ -30,8 +31,8 @@ public class BasePathTreeModel extends AbstractFileTreeModel {
 
 	private TreePath filterTreePath;
 
-	public BasePathTreeModel() {
-		super(new DefaultMutableTreeNode("root"));
+	public BasePathTreeModel(JRTree tree) {
+		super(new DefaultMutableTreeNode("root"), tree);
 		this.root = (DefaultMutableTreeNode) getRoot();
 		this.init();
 	}
@@ -50,7 +51,7 @@ public class BasePathTreeModel extends AbstractFileTreeModel {
 
 		for(String path : basePath) {
 			IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(path);
-			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, false);
+			FileSystemNode basePathNode = new FileSystemNode(resourceHandler, null, tree, false);
 			root.add(basePathNode);
 		}
 		root.add(singletonUniqueAllEntryNode);

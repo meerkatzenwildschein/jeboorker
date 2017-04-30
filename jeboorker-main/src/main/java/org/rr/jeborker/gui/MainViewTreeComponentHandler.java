@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreeModel;
@@ -13,6 +14,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.swing.SwingUtils;
 import org.rr.commons.swing.components.tree.JRTree;
 import org.rr.commons.swing.components.tree.TreeUtil;
 import org.rr.commons.utils.ListUtils;
@@ -181,30 +183,59 @@ public class MainViewTreeComponentHandler {
 			}
 		});
 	}
+	
+	public void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh) {
+		refreshFileSystemTreeEntry(resourceToRefresh, fileSystemTree, basePathTree);
+	}
 
 	/**
 	 * Refresh the Tree for the file system. Only the node and it child's for the given {@link IResourceHandler} will be refreshed.
 	 */
-	public void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh) {
+	public static void refreshFileSystemTreeEntry(IResourceHandler resourceToRefresh, final JRTree fileSystemTree, final JRTree basePathTree) {
 		final TreeModel fileSystemTreeModel = fileSystemTree.getModel();
-		final TreeModel basePathTreeModel = basePathTree.getModel();
 
-		if(fileSystemTreeModel instanceof FileSystemTreeModel) {
-			if(!resourceToRefresh.exists() || resourceToRefresh.isFileResource()) {
+		if (fileSystemTreeModel instanceof FileSystemTreeModel) {
+			if (!resourceToRefresh.exists() || resourceToRefresh.isFileResource()) {
 				resourceToRefresh = resourceToRefresh.getParentResource();
 			}
+			final int scrollBarLocation = getVerticalScrollBarLocation(fileSystemTree);
 			final String expansionStates = TreeUtil.getExpansionStates(fileSystemTree);
 			fileSystemTree.stopEditing();
 			((FileSystemTreeModel) fileSystemTreeModel).reload(resourceToRefresh, fileSystemTree.getPathForRows());
-			((BasePathTreeModel) basePathTreeModel).reload(resourceToRefresh, basePathTree.getPathForRows());
+			
+			if(basePathTree != null) {
+				TreeModel basePathTreeModel = basePathTree.getModel();
+				((BasePathTreeModel) basePathTreeModel).reload(resourceToRefresh, basePathTree.getPathForRows());
+			}
 
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
 					TreeUtil.restoreExpanstionState(fileSystemTree, expansionStates);
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(fileSystemTree);
+							if (scrollBarLocation > 0) {
+								surroundingScrollPane.getVerticalScrollBar().setValue(scrollBarLocation);
+							}
+						}
+					});
 				}
 			});
 		}
+	}
+
+	private static int getVerticalScrollBarLocation(JRTree fileSystemTree) {
+		final int scrollbarLocation;
+		JScrollPane surroundingScrollPane = SwingUtils.getSurroundingScrollPane(fileSystemTree);
+		if(surroundingScrollPane != null) {
+			scrollbarLocation = surroundingScrollPane.getVerticalScrollBar().getValue();
+		} else {
+			scrollbarLocation = -1;
+		}
+		return scrollbarLocation;
 	}
 }

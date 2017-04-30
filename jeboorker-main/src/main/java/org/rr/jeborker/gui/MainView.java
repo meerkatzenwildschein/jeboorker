@@ -724,7 +724,7 @@ class MainView extends JFrame {
 
 		fileSystemTree.setName(fileSystemTreeName);
 		fileSystemTree.setSelectionModel(new DefaultTreeSelectionModel());
-		FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel();
+		FileSystemTreeModel fileSystemTreeModel = new FileSystemTreeModel(fileSystemTree);
 		fileSystemTree.setModel(fileSystemTreeModel);
 		fileSystemTree.setAutoMoveHorizontalSliders(preferenceStore.isTreeAutoScrollingEnabled());
 		fileSystemTree.setEditable(true);
@@ -966,7 +966,7 @@ class MainView extends JFrame {
 		basePathTree = new JRTree();
 		setupTree(basePathTree);
 		basePathTree.setName(basePathTreeName);
-		basePathTree.setModel(new BasePathTreeModel());
+		basePathTree.setModel(new BasePathTreeModel(basePathTree));
 		basePathTree.setEditable(true);
 		BasePathTreeCellRenderer basePathTreeCellRenderer = new BasePathTreeCellRenderer(basePathTree);
 		basePathTree.setCellRenderer(basePathTreeCellRenderer);
