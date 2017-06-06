@@ -69,7 +69,10 @@ class AddBasePathAction extends AbstractAction {
 
 	private void addBasePath(final MainController controller, final IResourceHandler selectedDirectory, String path) {
 		final APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		if(selectedDirectory!=null) {
+		
+		if(selectedDirectory != null) {
+			controller.changeToDatabaseModel();
+			
 			controller.getProgressMonitor().monitorProgressStart(Bundle.getString("AddBasePathAction.message"));
 			String messageFinished = Bundle.getString("AddBasePathAction.finished");
 			try {

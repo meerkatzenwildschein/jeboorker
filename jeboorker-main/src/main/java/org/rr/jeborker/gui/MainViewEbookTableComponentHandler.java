@@ -78,7 +78,7 @@ public class MainViewEbookTableComponentHandler {
 	 * Refresh the whole table.
 	 */
 	public void refreshTable() {
-		final EbookPropertyDBTableModel model = (EbookPropertyDBTableModel) mainTable.getModel();
+		final TableModel model = mainTable.getModel();
 		if(model instanceof EbookPropertyDBTableModel) {
 			((EbookPropertyDBTableModel)model).setDirty();
 		}
