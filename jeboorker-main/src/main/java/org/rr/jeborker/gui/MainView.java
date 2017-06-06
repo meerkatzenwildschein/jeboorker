@@ -73,6 +73,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.AbstractLayerUI;
 import org.rr.commons.collection.FilterList;
@@ -1021,8 +1023,7 @@ class MainView extends JFrame {
 
 					@Override
 					public void appendQuery(Where<EbookPropertyItem, EbookPropertyItem> where) throws SQLException {
-						String fullResourceFilterPathStatement = StringUtil.replace(fullResourceFilterPath, "\\", "\\\\");
-						where.like("file", fullResourceFilterPathStatement + "%");
+						where.like("file", StringUtil.escapeSql(fullResourceFilterPath) + "%");
 					}
 				});
 			}

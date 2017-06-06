@@ -1816,7 +1816,10 @@ public final class StringUtil implements Serializable {
         if (str == null) {
             return null;
         }
-        return StringUtil.replace(str, "'", "''");
+        str = StringUtil.replace(str, "'", "''");
+        str = StringUtil.replace(str, "\\", "\\\\");
+        str = StringUtil.replace(str, "%", "%%");
+        return str;
     }
 
     /**
@@ -1857,5 +1860,4 @@ public final class StringUtil implements Serializable {
 			}
 			return b.toString();
 		}
-
 }
