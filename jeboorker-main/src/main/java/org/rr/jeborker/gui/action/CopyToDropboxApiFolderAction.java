@@ -25,12 +25,11 @@ import org.rr.jeborker.gui.resources.ImageResourceBundle;
 
 import com.dropbox.core.DbxAppInfo;
 import com.dropbox.core.DbxAuthFinish;
-import com.dropbox.core.DbxClient;
-import com.dropbox.core.DbxEntry.File;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.DbxWebAuthNoRedirect;
-import com.dropbox.core.DbxWriteMode;
+import com.dropbox.core.DbxWebAuth;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
 
 public class CopyToDropboxApiFolderAction extends AbstractAction {
 
@@ -72,51 +71,51 @@ public class CopyToDropboxApiFolderAction extends AbstractAction {
 	 * @see https://www.dropbox.com/developers/core/start/java
 	 */
 	private void doUpload(IResourceHandler resource) throws MalformedURLException, IOException, URISyntaxException, DbxException {
-		// https://www.dropbox.com/developers
 		DbxAppInfo appInfo = new DbxAppInfo(StringUtil.rot13(Bundle.getString("CopyToDropboxAction.key")), StringUtil.rot13(Bundle.getString("CopyToDropboxAction.secret")));
-		DbxRequestConfig config = new DbxRequestConfig("Jeboorker/" + Jeboorker.getAppVersion(), Locale.getDefault().toString());
-		DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+		DbxRequestConfig requestConfig = DbxRequestConfig.newBuilder("Jeboorker/" + Jeboorker.getAppVersion()).withUserLocale(Locale.getDefault().toString()).build();
+		DbxWebAuth webAuth = new DbxWebAuth(requestConfig, appInfo);
 
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
 		String accessToken = preferenceStore.getGenericEntryAsString(DROPBOX_ACCESS_TOKEN_KEY);
 		if (StringUtil.isNotEmpty(accessToken)) {
 			// re-auth specific stuff
 			try {
-				DbxClient client = createClient(config, accessToken);
+				DbxClientV2 client = createClient(requestConfig, accessToken);
 
 				// throws the DbxException if auth was detracted.
 				doUpload(resource, client);
 			} catch (DbxException e) {
 				// retry with an auth if the old auth are no longer be valid.
-				DbxClient client = authToDropbox(config, webAuth);
+				DbxClientV2 client = authToDropbox(requestConfig, webAuth);
 				doUpload(resource, client);
 			}
 		} else {
-			DbxClient client = authToDropbox(config, webAuth);
+			DbxClientV2 client = authToDropbox(requestConfig, webAuth);
 			doUpload(resource, client);
 		}
 	}
 
-	private File doUpload(IResourceHandler resource, DbxClient client) throws DbxException, IOException {
+	private FileMetadata doUpload(IResourceHandler resource, DbxClientV2 client) throws DbxException, IOException {
 		try (InputStream inputStream = resource.getContentInputStream()) {
-			return client.uploadFile('/' + resource.getName(), DbxWriteMode.add(), resource.size(), inputStream);
+			return client.files().uploadBuilder('/' + resource.getName()).uploadAndFinish(inputStream);
 		}
 	}
 
-	private DbxClient createClient(DbxRequestConfig config, String accessToken) {
-		return new DbxClient(config, accessToken);
+	private DbxClientV2 createClient(DbxRequestConfig config, String accessToken) {
+		return new DbxClientV2(config, accessToken);
 	}
 
-	private DbxClient authToDropbox(DbxRequestConfig config, DbxWebAuthNoRedirect webAuth) throws IOException, URISyntaxException,
+	private DbxClientV2 authToDropbox(DbxRequestConfig config, DbxWebAuth webAuth) throws IOException, URISyntaxException,
 			MalformedURLException, DbxException {
 		APreferenceStore preferenceStore = PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.DB_STORE);
-		String authorizeUrl = webAuth.start();
+		DbxWebAuth.Request webAuthRequest = DbxWebAuth.newRequestBuilder().withNoRedirect().build();
+		String authorizeUrl = webAuth.authorize(webAuthRequest);
 		SwingUtils.openURL(authorizeUrl);
 
 		String code = JOptionPane.showInputDialog(MainController.getController().getMainWindow(), Bundle.getString("CopyToDropboxAction.auth"));
 
-		DbxAuthFinish authFinish = webAuth.finish(code);
-		String accessToken = authFinish.accessToken;
+		DbxAuthFinish authFinish = webAuth.finishFromCode(code);
+		String accessToken = authFinish.getAccessToken();
 
 		preferenceStore.addGenericEntryAsString(DROPBOX_ACCESS_TOKEN_KEY, accessToken);
 
