@@ -13,10 +13,10 @@ import java.util.concurrent.Future;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 public class HttpInputStream extends InputStream {
@@ -64,17 +64,17 @@ public class HttpInputStream extends InputStream {
 	}
 	
 	private byte[] getContent(URI url) throws IOException {
-		DefaultHttpClient httpclient = new DefaultHttpClient();
 		
-		HttpParams httpParams = httpclient.getParams();
-		HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-		HttpConnectionParams.setSoTimeout(httpParams, 5000);
-		httpclient.setParams(httpParams);
+		RequestConfig.Builder requestBuilder = RequestConfig.custom();
+		requestBuilder = requestBuilder.setConnectTimeout(5000);
+		requestBuilder = requestBuilder.setConnectionRequestTimeout(5000);
+		requestBuilder = requestBuilder.setSocketTimeout(5000);
 		
-		HttpGet httpGet;
-		httpGet = new HttpGet(url);
-	
-		HttpResponse response1 = httpclient.execute(httpGet);
+		HttpClientBuilder builder = HttpClientBuilder.create();     
+		builder.setDefaultRequestConfig(requestBuilder.build());
+		HttpClient httpclient = builder.build();
+		
+		HttpResponse response1 = httpclient.execute(new HttpGet(url));
 		
 		// The underlying HTTP connection is still held by the response object
 		// to allow the response content to be streamed directly from the network socket.
