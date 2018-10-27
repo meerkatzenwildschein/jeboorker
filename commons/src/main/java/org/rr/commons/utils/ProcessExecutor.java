@@ -2,11 +2,11 @@ package org.rr.commons.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
@@ -31,9 +31,12 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 public class ProcessExecutor {
 
 	public static final Long WATCHDOG_EXIT_VALUE = -999L;
+	
+	private static int n = Runtime.getRuntime().availableProcessors();
+	
+	private static ThreadPoolExecutor executor = new ThreadPoolExecutor(0, n, 1, TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(n));
 
 	public static synchronized void runProcessAsScript(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException, InterruptedException, ExecutionException {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
 		CommandLine commandLineScript = null;
 		try {
@@ -43,7 +46,8 @@ public class ProcessExecutor {
 			} else {
 				processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
 			}
-			Future<Long> submit = executor.submit(processCallable);
+			
+			Future<Long> submit = doExecute(processCallable);
 			submit.get();
 		} finally {
 			if(commandLineScript != null) {
@@ -53,11 +57,20 @@ public class ProcessExecutor {
 		}
 	}
 
+	private static Future<Long> doExecute(ProcessCallable processCallable) {
+		while(executor.getActiveCount() >= executor.getMaximumPoolSize()) {
+			LoggerFactory.getLogger(ProcessExecutor.class).info("wait until the executer has free threads for execution");
+			ReflectionUtils.sleepSilent(500);
+		}
+			
+		Future<Long> submit = executor.submit(processCallable);
+		return submit;
+	}
+
 	public static synchronized Future<Long> runProcess(final CommandLine commandline, final ProcessExecutorHandler handler, final long watchdogTimeout) throws IOException {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable;
 		processCallable = new ProcessCallable(watchdogTimeout, handler, commandline);
-		return executor.submit(processCallable);
+		return doExecute(processCallable);
 	}
 
 	private static CommandLine createCommandLineScript(CommandLine commandline) throws ExecutionException {
@@ -106,10 +119,9 @@ public class ProcessExecutor {
 
 	private static void makeExecutable(IResourceHandler temporaryScriptResource) throws InterruptedException, ExecutionException,
 			TimeoutException {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
 		ProcessCallable processCallable = new ProcessCallable(10000, new LogProcessExecutorHandler(),
 				new CommandLine("chmod").addArgument("u+x").addArgument(temporaryScriptResource.toString(), true));
-		Future<Long> submit = executor.submit(processCallable);
+		Future<Long> submit = doExecute(processCallable);
 		submit.get(10, TimeUnit.SECONDS);
 	}
 
