@@ -114,7 +114,7 @@ public class SwingUtils {
 		if (container == null) {
 			result =  getAllComponents(className, (Window)null);
 		} else {
-			result = getAllComponentsRecursive(container, new Class[] {className}, null).toArray(new Component[0]);
+			result = (Component[]) getAllComponentsRecursive(container, new Class[] {className}, null).toArray(new Component[0]);
 		}
 		return result;
 	}
