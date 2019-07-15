@@ -56,8 +56,6 @@ public class Jeboorker {
 		//setup the logger
 		LoggerFactory.addHandler(new JeboorkerLogger());
 
-		setupClasspath();
-
 		//Setup the location for the rar executables.
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
 			RarUtils.setRarExecFolder(getAppFolder() + File.separator + "exec");
@@ -158,49 +156,6 @@ public class Jeboorker {
 	 */
 	public static String getAppFolder() {
 		return System.getProperties().getProperty("user.dir");
-	}
-
-	private static void setupClasspath() {
-		try {
-			String libFolder = getAppFolder() + File.separator + "lib/";
-			addPathToSystemClassLoader(new File(libFolder));
-			ReflectionUtils.addLibraryPath(libFolder);
-		} catch (Exception e) {
-			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e);
-			System.exit(-1);
-		}
-	}
-
-	/**
-	 * Add a classpath to the default system classloader.
-	 * @param dir The directory with jars to be added (not recursively)
-	 * @throws Exception
-	 */
-	public static void addPathToSystemClassLoader(File dir) throws Exception {
-		if(dir != null && dir.isDirectory()) {
-			final Set<String> jarFileSet = new HashSet<>();
-			final File[] files = dir.listFiles(new FileFilter() {
-
-				@Override
-				public boolean accept(File pathname) {
-					return pathname.getName().endsWith(".jar");
-				}
-			});
-
-			if(files != null) {
-				final URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-				final Class<URLClassLoader> urlClass = URLClassLoader.class;
-				final Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
-				method.setAccessible(true);
-				for (int i = 0; i < files.length; i++) {
-					if(jarFileSet == null || !jarFileSet.contains(files[i].getName())) {
-						URL u = files[i].toURI().toURL();
-						method.invoke(urlClassLoader, new Object[] { u });
-						jarFileSet.add(files[i].getName());
-					}
-				}
-			}
-		}
 	}
 
 	private static class ApplicationThreadFactory implements ThreadFactory {
