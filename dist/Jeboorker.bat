@@ -1,1 +1,1 @@
-java -splash:splashscreen.gif -Xmx512m -XX:+UseParNewGC -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:+AggressiveOpts -cp .\lib\* org.rr.jeborker.Jeboorker
+java -splash:splashscreen.gif -Xmx512m -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:+AggressiveOpts -cp .\lib\* org.rr.jeborker.Jeboorker
