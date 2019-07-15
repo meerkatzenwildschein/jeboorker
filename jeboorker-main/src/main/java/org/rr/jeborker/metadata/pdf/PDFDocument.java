@@ -194,7 +194,7 @@ public abstract class PDFDocument {
 				PDFRenderer renderer = PDFRenderer.getPDFRendererInstance(getResourceHandler());				
 				return renderer.renderPagetoJpeg(1);
 			} catch (Throwable e) {
-				LoggerFactory.log(Level.WARNING, this, "could not render PDF " + getResourceHandler());
+				LoggerFactory.log(Level.WARNING, this, "could not render PDF " + getResourceHandler(), e);
 			}
 			
 			final PdfReader reader = getReader();

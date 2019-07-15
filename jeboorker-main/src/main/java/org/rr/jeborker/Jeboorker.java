@@ -56,6 +56,8 @@ public class Jeboorker {
 		//setup the logger
 		LoggerFactory.addHandler(new JeboorkerLogger());
 
+		setupClasspath();
+
 		//Setup the location for the rar executables.
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
 			RarUtils.setRarExecFolder(getAppFolder() + File.separator + "exec");
@@ -147,7 +149,6 @@ public class Jeboorker {
 			Object value = props.get(key);
 			LoggerFactory.getLogger().info(StringUtil.toString(key) + "=" + StringUtil.toString(value));
 		}
-
 	}
 
 	/**
@@ -156,6 +157,16 @@ public class Jeboorker {
 	 */
 	public static String getAppFolder() {
 		return System.getProperties().getProperty("user.dir");
+	}
+
+	private static void setupClasspath() {
+		try {
+			String libFolder = getAppFolder() + File.separator + "lib/";
+			ReflectionUtils.addLibraryPath(libFolder);
+		} catch (Exception e) {
+			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e);
+			System.exit(-1);
+		}
 	}
 
 	private static class ApplicationThreadFactory implements ThreadFactory {
