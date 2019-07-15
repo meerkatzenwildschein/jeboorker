@@ -6,4 +6,4 @@ CLASSPATH=$(echo lib/*.jar | tr ' ' '\n' | sort -g | tr '\n' ':')
 
 echo using java binary $JAVABIN
 echo starting with classpath $CLASSPATH
-$JAVABIN -splash:splashscreen.gif -client -Xmx512m -XX:+UseParNewGC -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:+AggressiveOpts $_JCONSOLE -cp $CLASSPATH org.rr.jeborker.Jeboorker $@
+$JAVABIN -splash:splashscreen.gif -client -Xmx512m -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:+AggressiveOpts $_JCONSOLE -cp $CLASSPATH org.rr.jeborker.Jeboorker $@
