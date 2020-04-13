@@ -6,15 +6,10 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.SplashScreen;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -55,8 +50,6 @@ public class Jeboorker {
 	public static void main(String[] args) {
 		//setup the logger
 		LoggerFactory.addHandler(new JeboorkerLogger());
-
-		setupClasspath();
 
 		//Setup the location for the rar executables.
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
@@ -157,16 +150,6 @@ public class Jeboorker {
 	 */
 	public static String getAppFolder() {
 		return System.getProperties().getProperty("user.dir");
-	}
-
-	private static void setupClasspath() {
-		try {
-			String libFolder = getAppFolder() + File.separator + "lib/";
-			ReflectionUtils.addLibraryPath(libFolder);
-		} catch (Exception e) {
-			LoggerFactory.log(Level.SEVERE, null, "Classpath failed", e);
-			System.exit(-1);
-		}
 	}
 
 	private static class ApplicationThreadFactory implements ThreadFactory {
