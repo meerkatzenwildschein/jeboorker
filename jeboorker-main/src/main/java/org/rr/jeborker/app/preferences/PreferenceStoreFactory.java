@@ -99,7 +99,7 @@ public class PreferenceStoreFactory {
 		},
 		LOOK_AND_FEEL {
 			
-			private final String INIT_DEFAULT_VALUE = com.alee.laf.WebLookAndFeel.class.getName();
+			private final String INIT_DEFAULT_VALUE = javax.swing.plaf.metal.MetalLookAndFeel.class.getName();
 			
 			@Override
 			public String getKey() {

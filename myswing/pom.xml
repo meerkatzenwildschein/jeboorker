@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
     	<groupId>org.rr</groupId>
-    	<artifactId>commons.swing</artifactId>
+    	<artifactId>commons-swing</artifactId>
     	<version>1.0</version>
     </dependency>
   </dependencies>

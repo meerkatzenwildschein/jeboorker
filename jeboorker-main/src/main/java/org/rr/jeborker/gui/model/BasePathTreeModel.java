@@ -128,7 +128,7 @@ public class BasePathTreeModel extends AbstractFileTreeModel {
 		}
 
 		@Override
-		public Enumeration<?> children() {
+		public  Enumeration<? extends TreeNode> children() {
 			return null;
 		}
 

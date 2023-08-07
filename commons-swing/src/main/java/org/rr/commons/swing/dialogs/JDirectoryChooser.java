@@ -1221,7 +1221,7 @@ public class JDirectoryChooser extends Component {
 				 * creates a new node if not already done. Nodes will
 				 * be created on demand.
 				 */
-				public Enumeration<File> children() {
+				public Enumeration<? extends TreeNode> children() {
 					throw new RuntimeException("not supported");
 				}
 			

@@ -1,11 +1,10 @@
 package org.rr.jeborker.metadata.pdf;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -15,10 +14,12 @@ import org.rr.jeborker.converter.ConverterUtils;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.io.FileChannelRandomAccessSource;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 public class PDFUtils {
 
@@ -31,31 +32,41 @@ public class PDFUtils {
 	 * @throws IOException
 	 */
 	public static PdfReader getReader(File pdfFile) throws IOException {
-		return new InputStreamPDFReaderDelegate(new BufferedInputStream(new FileInputStream(pdfFile)), pdfFile);
+		RandomAccessFile file = new RandomAccessFile(pdfFile, "r");
+		FileChannel fileChannelI = file.getChannel();
+		FileChannelRandomAccessSource fileChannelRandomAccessSource = new FileChannelRandomAccessSource(fileChannelI);
+		RandomAccessFileOrArray rafPdfIn = new RandomAccessFileOrArray(fileChannelRandomAccessSource);
+		return new PDFReaderDelegate(rafPdfIn, file, fileChannelI);
 	}
 
-	private static class InputStreamPDFReaderDelegate extends PdfReader {
+	private static class PDFReaderDelegate extends PdfReader {
 
-		private BufferedInputStream in;
+		private FileChannel fileChannelI;
 
-		private File file;
+		private RandomAccessFile file;
 
-		InputStreamPDFReaderDelegate(BufferedInputStream in, File file) throws IOException {
-			super(in, null);
-			this.in = in;
+		PDFReaderDelegate(RandomAccessFileOrArray rafPdfIn, RandomAccessFile file, FileChannel fileChannelI) throws IOException {
+			super(rafPdfIn, null);
 			this.file = file;
+			this.fileChannelI = fileChannelI;
 		}
 
 		@Override
 		public void close() {
 			super.close();
 			try {
-				if (in != null) {
-					in.close();
-					in = null;
-				}
+				this.file.close();
 			} catch (IOException e) {
 				LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to close File " + file, e);
+			}
+
+			if (fileChannelI != null) {
+				try {
+					fileChannelI.close();
+					this.fileChannelI = null;
+				} catch (IOException e) {
+					LoggerFactory.getLogger(this).log(Level.WARNING, "Failed to close File " + file, e);
+				}
 			}
 		}
 	}

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.rr</groupId>
 	<artifactId>jeboorker</artifactId>
-	<version>0.0</version>
+	<version>0.4.6</version>
 	<packaging>pom</packaging>
 	<name>jeboorker</name>
 	<url>http://maven.apache.org</url>
@@ -70,6 +70,7 @@
 		<module>commons-swing</module>
 		<module>l2fprod</module>
 		<module>myswing</module>
+		<module>mobi-api4java</module>
 		<module>jeboorker-main</module>
 	</modules>
 	<repositories>
