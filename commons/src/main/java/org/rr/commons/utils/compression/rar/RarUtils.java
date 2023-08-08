@@ -184,17 +184,17 @@ public class RarUtils {
 	 * Add / Replace the an entry with the given name and given data
 	 */
 	public static boolean add(IResourceHandler rarFileHandler, String name, InputStream data) {
-		File in = null;
+		File file = null;
 		try {
 			//create a copy of the entry that should be added to the rar.
-			in = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID().toString() + File.separator + name);
-			FileUtils.copyInputStreamToFile(data, in);
-			add(rarFileHandler, name, in);
+			file = new File(FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID() + File.separator + name);
+			FileUtils.copyInputStreamToFile(data, file);
+			add(rarFileHandler, name, file);
 		} catch (Exception e) {
 			LoggerFactory.getLogger().log(Level.SEVERE, "Faild to add " + name + " to "+ rarFileHandler, e);
 		} finally {
-			if(in != null) {
-				FileUtils.deleteQuietly(in.getParentFile());
+			if(file != null) {
+				FileUtils.deleteQuietly(file.getParentFile());
 			}
 		}
 		return false;

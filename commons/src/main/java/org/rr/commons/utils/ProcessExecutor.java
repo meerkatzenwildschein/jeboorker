@@ -85,7 +85,7 @@ public class ProcessExecutor {
 	private static CommandLine createWindowsCommandLineScript(CommandLine commandline) throws ExecutionException {
 		IResourceHandler temporaryScriptResource = ResourceHandlerFactory.getTemporaryResource("bat");
 		try (OutputStream contentOutputStream = temporaryScriptResource.getContentOutputStream(false)) {
-			IOUtils.write(commandline.toString(), contentOutputStream);
+			IOUtils.write(getCommandLineString(commandline), contentOutputStream);
 			contentOutputStream.flush();
 
 			//create command for exec script

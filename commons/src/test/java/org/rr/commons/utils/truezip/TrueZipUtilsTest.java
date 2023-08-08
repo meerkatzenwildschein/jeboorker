@@ -14,7 +14,7 @@ public class TrueZipUtilsTest extends TestCase{
 
 	public void test1() throws Exception {
 		byte[] data = "INHALT_NEU".getBytes();
-		File file = new File("/tmp/test1.cbz");
+		File file = new File(System.getProperty("java.io.tmpdir"), "test1.cbz");
 		IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(file);
 		TrueZipUtils.add(resourceHandler, "eintragPÄ2.txt", new ByteArrayInputStream(data));
 		

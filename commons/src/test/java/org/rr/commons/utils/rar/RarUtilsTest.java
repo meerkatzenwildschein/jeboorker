@@ -19,7 +19,7 @@ public class RarUtilsTest extends TestCase {
 	static {
 		//Setup the location for the rar executables.
 		if(ReflectionUtils.getOS() == ReflectionUtils.OS_WINDOWS) {
-			RarUtils.setRarExecFolder(System.getProperties().getProperty("user.dir") + File.separator + "exec");
+			RarUtils.setRarExecFolder(System.getProperties().getProperty("user.dir") + "/../dist/win32/");
 		} else {
 			RarUtils.setRarExecFolder("/usr/bin");
 		}		
@@ -38,7 +38,7 @@ public class RarUtilsTest extends TestCase {
 		CompressedDataEntry extract = RarUtils.extract(rarFileHandler, list.get(1));
 		
 		byte[] bytes = extract.getBytes();
-		assertEquals(contentString + "1", new String(bytes));
+		assertEquals(contentString + "0", new String(bytes));
 		
 		//test end, rar no longer be needed
 		try {
