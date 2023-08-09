@@ -4,11 +4,8 @@ import static org.rr.commons.utils.BooleanUtils.not;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -94,17 +91,6 @@ class MetadataDownloadUtils {
 			}
 		}, 10);
 		return loadPages;
-	}
-	
-	static List<URL> getSearchPageUrls(String searchTerm, int pagesToLoad, String queryUrl) throws UnsupportedEncodingException, MalformedURLException {
-		String encodesSearchPhrase = URLEncoder.encode(searchTerm, StringUtil.UTF_8);
-		List<URL> urls = new ArrayList<>(pagesToLoad);
-		for (int i = 0; i < pagesToLoad; i++) {
-			String position = String.valueOf(i * 10);
-			String url = MessageFormat.format(queryUrl, new Object[] {encodesSearchPhrase, position});
-			urls.add(new URL(url));
-		}
-		return urls;
 	}
 	
 	static byte[] loadImage(String imageUrl) {

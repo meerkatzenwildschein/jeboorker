@@ -93,12 +93,16 @@ public class GoogleBooksDeMetadataDownloader implements MetadataDownloader {
 		List<String> links = new ArrayList<>(ENTRIES_TO_FETCH);
 		Elements headlines = doc.getElementsByTag("h3");
 		for (Element headline : headlines) {
-			Element link = headline.child(0);
-			if(link.tagName().equals("a")) {
-				String href = link.attr("href");
-				if (href != null && href.contains("books.google.") && !href.contains("printsec=")) {
-					href = href.replaceAll("https://", "http://");
-					links.add(href);
+			Element link = headline;
+			while ((link = link.parent()) != null) {
+				if (link.tagName().equalsIgnoreCase("a")) {
+					String href = link.attr("href");
+					if (href != null && href.contains("books.google.") && !href.contains("printsec="))
+					{
+						href = href.replaceAll("https://", "http://");
+						links.add(href);
+					}
+					break;
 				}
 			}
 		}

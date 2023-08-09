@@ -18,9 +18,9 @@ import org.rr.commons.mufs.ResourceHandlerFactory;
 
 public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 
-	private static final String IMAGE_SIZE_S = "S";
+	private static final String IMAGE_SIZE_S = "s";
 
-	private static final String IMAGE_SIZE_L = "L";
+	private static final String IMAGE_SIZE_L = "l";
 
 	private Elements tags;
 
@@ -118,11 +118,12 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 	public byte[] getCoverImage(String size) {
 		String isbn = getIsbn13();
 		if (isbn != null) {
-			String imageUrl = "http://vlb.de/GetBlob.aspx?strIsbn=" + isbn + "&size=" + size;
+			String imageUrl = "http://portal.dnb.de/opac/mvb/cover?isbn=" + isbn + "&size=" + size;
 			try {
 				if (size.equals(IMAGE_SIZE_L)) {
 					if(largeSizeImage == null) {
 						LoggerFactory.getLogger(this).log(Level.INFO, "Downloading large image from " + imageUrl);
+						largeSizeImage = new byte[0];
 						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
 						largeSizeImage = resourceHandler.getContent();
 					}
@@ -130,6 +131,7 @@ public class DNBMetadataDownloadEntry implements MetadataDownloadEntry {
 				} else if (size.equals(IMAGE_SIZE_S)) {
 					if(smallSizeImage == null) {
 						LoggerFactory.getLogger(this).log(Level.INFO, "Downloading thumbnail image from " + imageUrl);
+						smallSizeImage = new byte[0];
 						IResourceHandler resourceHandler = ResourceHandlerFactory.getResourceHandler(new URL(imageUrl));
 						smallSizeImage = resourceHandler.getContent();
 					}
