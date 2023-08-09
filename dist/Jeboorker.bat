@@ -1,1 +1,1 @@
-java -splash:splashscreen.gif -Xmx512m -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -Djava.library.path=.\lib\ -cp .\lib\* org.rr.jeborker.Jeboorker
+java -splash:splashscreen.gif -Xmx512m -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -Djava.library.path=.\lib\ --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED -cp .\lib\* org.rr.jeborker.Jeboorker

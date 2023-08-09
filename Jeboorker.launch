@@ -11,5 +11,5 @@
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.rr.jeborker.Jeboorker"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jeboorker-main"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Duser.language=en -Duser.region=EN -Xmx512m -XX:+AggressiveOpts -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -client -Dapplication.suffix=publish -Djava.util.Arrays.useLegacyMergeSort=true -Djava.library.path=./lib/"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Duser.language=en -Duser.region=EN -Xmx512m -XX:+AggressiveOpts -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -client -Dapplication.suffix=publish -Djava.util.Arrays.useLegacyMergeSort=true -Djava.library.path=./lib/ --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED"/>
 </launchConfiguration>
