@@ -19,14 +19,15 @@ class ImageFetcherIterator implements Iterator<IImageFetcherEntry>{
 	@Override
 	public boolean hasNext() {
 		try {
-			if(nextEntries == null || nextEntries.size() <= pos) {
+			if(nextEntries == null)
+			{
 				pos = 0;
 				nextEntries = imageFetcher.getNextEntries();
 			}
 		} catch (IOException e) {
 			return false;
 		}
-		return !nextEntries.isEmpty();
+		return !nextEntries.isEmpty() && nextEntries.size() > pos;
 	}
 
 	@Override
