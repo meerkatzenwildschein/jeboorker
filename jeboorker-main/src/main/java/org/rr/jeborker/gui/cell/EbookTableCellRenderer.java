@@ -2,13 +2,7 @@ package org.rr.jeborker.gui.cell;
 
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,20 +15,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.rr.commons.collection.VolatileHashMap;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -546,7 +533,7 @@ public class EbookTableCellRenderer implements TableCellRenderer, Serializable  
 		}
 		
 		if(toClean.indexOf('<')!=-1) {
-			toClean = Jsoup.clean(toClean, Whitelist.none());
+			toClean = Jsoup.clean(toClean, Safelist.none());
 		}
 		return toClean.trim();
 	}

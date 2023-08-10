@@ -22,19 +22,21 @@ import org.rr.jeborker.Jeboorker;
 import org.rr.jeborker.app.preferences.APreferenceStore;
 import org.rr.jeborker.app.preferences.PreferenceStoreFactory;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.db.DatabaseType;
 import com.j256.ormlite.jdbc.JdbcDatabaseResults;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.jdbc.db.H2DatabaseType;
 import com.j256.ormlite.stmt.RawRowMapperImpl;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.table.TableInfo;
 import com.j256.ormlite.table.TableUtils;
 
 class H2DBManager extends DefaultDBManager {
+
+	private static final DatabaseType H2_DATABASE_TYPE = new H2DatabaseType();
 
 	protected JdbcPooledConnectionSource initDatabase() {
 		PreferenceStoreFactory.getPreferenceStore(PreferenceStoreFactory.SYSTEM_STORE);
@@ -42,7 +44,7 @@ class H2DBManager extends DefaultDBManager {
 		try {
 			Class.forName("org.h2.Driver");
 
-			JdbcPooledConnectionSource connection = new JdbcPooledConnectionSource("jdbc:h2:" + configPath + "h2db;MULTI_THREADED=TRUE;TRACE_LEVEL_FILE=0;OPTIMIZE_UPDATE=false");
+			JdbcPooledConnectionSource connection = new JdbcPooledConnectionSource("jdbc:h2:" + configPath + "h2db;TRACE_LEVEL_FILE=0");
 			connection.setUsername("sa");
 			connection.setPassword(EMPTY);
 			setConnectionPool(connection);
@@ -139,16 +141,15 @@ class H2DBManager extends DefaultDBManager {
 			String sqlString = sql.toString();
 
 			Dao<T, T> createDao = DaoManager.createDao(getConnectionPool(), cls);
-			GenericRawResults<T> queryRaw = createDao.queryRaw(sqlString, new RawRowMapperImpl<T, T>(new TableInfo<T, T>(getConnectionPool(),
-					(BaseDaoImpl<T, T>) createDao, cls)), new String[0]);
+			GenericRawResults<T> queryRaw = createDao.queryRaw(sqlString, new RawRowMapperImpl<>(createDao));
 
 			Iterator<T> iterator = queryRaw.closeableIterator();
 			int rowCount = getRowCount(iterator);
 
-			return new IteratorList<T>(iterator, rowCount);
+			return new IteratorList<>(iterator, rowCount);
 		} catch (Exception e) {
 			LoggerFactory.log(Level.SEVERE, this, "Failed to execute query", e);
-			return new IteratorList<T>(new ArrayList<T>(0).iterator(), 0);
+			return new IteratorList<>(new ArrayList<T>(0).iterator(), 0);
 		}
 	}
 
@@ -160,7 +161,7 @@ class H2DBManager extends DefaultDBManager {
 		JdbcDatabaseResults results = (JdbcDatabaseResults) ReflectionUtils.getFieldValue(iterator, "results", false);
 		JdbcResultSet resultSet = (JdbcResultSet) ReflectionUtils.getFieldValue(results, "resultSet", false);
 		LocalResult localResult = (LocalResult) ReflectionUtils.getFieldValue(resultSet, "result", false);
-		return localResult.getRowCount();
+		return (int) localResult.getRowCount();
 	}
 
 	private void appendOrderFields(List<Field> orderFields, OrderDirection orderDirection, StringBuilder sql) {

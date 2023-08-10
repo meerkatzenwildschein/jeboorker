@@ -1,6 +1,5 @@
 package org.rr.jeborker.db;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -76,7 +75,7 @@ public abstract class DefaultDBManager {
 	public synchronized void shutdown() {
 		try {
 			connection.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LoggerFactory.log(Level.SEVERE, this, "shutdown database has failed", e);
 		}
 	}

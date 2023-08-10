@@ -2,7 +2,6 @@ package org.rr.commons.collection;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -173,7 +172,7 @@ public class IteratorList<E> implements ICloseableList<E> {
 		}
 		
 		if(this.size >= 0) {
-			return this.size;
+			return (int) this.size;
 		}
 
 		this.copyIterator();
