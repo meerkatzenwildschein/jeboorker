@@ -71,7 +71,6 @@
         <module>commons-swing</module>
         <module>l2fprod</module>
         <module>myswing</module>
-        <module>mobi-api4java</module>
         <module>jeboorker-main</module>
     </modules>
 

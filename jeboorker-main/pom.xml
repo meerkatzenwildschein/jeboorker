@@ -31,6 +31,8 @@
 			<groupId>org.rr</groupId>
 			<artifactId>mobi-api4java</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/mobi-api4java-0.0.2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.rr</groupId>
