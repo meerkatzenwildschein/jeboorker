@@ -17,7 +17,21 @@
 	</target>
 
 	<target name="distribute-windows">
+		<echo message="Packaging Jeboorker version ${version}"/>
+
 		<mkdir dir="${target}"/>
+
+		<property name="programm-folder" value="${packaging}/usr/share/jeboorker" />
+
+		<antcall target="copy-libs">
+			<param name="target" value="${programm-folder}" />
+		</antcall>
+		<antcall target="copy-license-files">
+			<param name="target" value="${programm-folder}/../doc/jeboorker" />
+		</antcall>
+		<antcall target="copy-dist-files">
+			<param name="target" value="${programm-folder}/../" />
+		</antcall>
 
 		<!-- create Jeboorker executable -->
 		<exec executable="makensis">
@@ -33,6 +47,8 @@
 
 	<target name="distribute-linux">
 		<echo message="Packaging Jeboorker version ${version}"/>
+
+		<mkdir dir="${target}"/>
 
 		<property name="programm-folder" value="${packaging}/usr/share/jeboorker" />
 
