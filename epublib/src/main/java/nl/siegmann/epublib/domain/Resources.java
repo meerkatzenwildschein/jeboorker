@@ -2,6 +2,7 @@ package nl.siegmann.epublib.domain;
 
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,11 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.rr.commons.utils.StringUtil;
+
 import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.service.MediatypeService;
-
-import org.apache.commons.io.Charsets;
-import org.rr.commons.utils.StringUtil;
 
 /**
  * All the resources that make up the book.
@@ -292,7 +292,7 @@ public class Resources implements Serializable {
 		if(result == null && href.contains("%")) {
 			try {
 				//Do a try with URL decoding the href entry.
-				result = resources.get(URLDecoder.decode(href, Charsets.UTF_8.name()));
+				result = resources.get(URLDecoder.decode(href, StandardCharsets.UTF_8.name()));
 			} catch (Exception e) {
 				//just a quiet try.
 			}

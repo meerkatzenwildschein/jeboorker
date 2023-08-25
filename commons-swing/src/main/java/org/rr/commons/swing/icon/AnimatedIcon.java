@@ -12,18 +12,11 @@
  */
 package org.rr.commons.swing.icon;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,16 +24,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.swing.CellRendererPane;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.rr.commons.swing.image.GifDecoder;
 
-import sun.awt.image.GifImageDecoder;
-import sun.awt.image.ImageDecoder;
-import sun.awt.image.InputStreamImageSource;
+//import sun.awt.image.GifImageDecoder;
+//import sun.awt.image.ImageDecoder;
+//import sun.awt.image.InputStreamImageSource;
 
 /** 
  * Taken from the furbelow project. http://sourceforge.net/projects/furbelow
@@ -80,27 +70,27 @@ public class AnimatedIcon implements Icon {
                 catch(Exception e) {
                     e.printStackTrace();
                 }
-                if (is == null) {
-                    try {
-                        // Beware: lots of hackery to obtain the image input stream
-                        // Be sure to catch security exceptions
-                        ImageProducer p = image.getSource();
-                        if (p instanceof InputStreamImageSource) {
-                            Method m = InputStreamImageSource.class.getDeclaredMethod("getDecoder", null);
-                            m.setAccessible(true);
-                            ImageDecoder d = (ImageDecoder)m.invoke(p, null);
-                            if (d instanceof GifImageDecoder) {
-                                GifImageDecoder gd = (GifImageDecoder)d;
-                                Field input = ImageDecoder.class.getDeclaredField("input");
-                                input.setAccessible(true);
-                                is = (InputStream)input.get(gd);
-                            }
-                        }
-                    }
-                    catch(Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+//                if (is == null) {
+//                    try {
+//                        // Beware: lots of hackery to obtain the image input stream
+//                        // Be sure to catch security exceptions
+//                        ImageProducer p = image.getSource();
+//                        if (p instanceof InputStreamImageSource) {
+//                            Method m = InputStreamImageSource.class.getDeclaredMethod("getDecoder", null);
+//                            m.setAccessible(true);
+//                            ImageDecoder d = (ImageDecoder)m.invoke(p, null);
+//                            if (d instanceof GifImageDecoder) {
+//                                GifImageDecoder gd = (GifImageDecoder)d;
+//                                Field input = ImageDecoder.class.getDeclaredField("input");
+//                                input.setAccessible(true);
+//                                is = (InputStream)input.get(gd);
+//                            }
+//                        }
+//                    }
+//                    catch(Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
                 if (is != null) {
                     GifDecoder decoder = new GifDecoder();
                     decoder.read(is);

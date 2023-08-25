@@ -4,6 +4,7 @@ import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +12,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
+
+import org.apache.commons.lang3.StringUtils;
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.mufs.IResourceHandler;
+import org.rr.commons.utils.StringUtil;
+import org.rr.jeborker.db.item.EbookPropertyItem;
+import org.rr.jeborker.gui.cell.DatePropertyCellEditor;
+import org.rr.jeborker.gui.cell.DatePropertyCellRenderer;
 
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
@@ -22,15 +31,6 @@ import nl.siegmann.epublib.domain.Metadata;
 import nl.siegmann.epublib.domain.Relator;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.Resources;
-
-import org.apache.commons.io.Charsets;
-import org.apache.commons.lang3.StringUtils;
-import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.mufs.IResourceHandler;
-import org.rr.commons.utils.StringUtil;
-import org.rr.jeborker.db.item.EbookPropertyItem;
-import org.rr.jeborker.gui.cell.DatePropertyCellEditor;
-import org.rr.jeborker.gui.cell.DatePropertyCellRenderer;
 
 class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataReader {
 
@@ -306,7 +306,7 @@ class EPubLibMetadataReader extends AEpubMetadataHandler implements IMetadataRea
 	public String getPlainMetadata() {
 		try {
 			final byte[] containerXmlData = getContainerOPF(getEbookResource().get(0));
-			return new String(containerXmlData, Charsets.UTF_8);
+			return new String(containerXmlData, StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			LoggerFactory.logWarning(this, "Could not get plain metadata for " + getEbookResource(), e);
 		}

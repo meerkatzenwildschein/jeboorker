@@ -3,8 +3,7 @@ package org.rr.commons.xml;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,16 +12,12 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class XMLUtils
 {
@@ -72,29 +67,7 @@ public class XMLUtils
         return out.toString();
     }
 
-    public static String formatDocument(Document document)
-        throws TransformerFactoryConfigurationError, TransformerException, IOException
-    {
-        DOMSource domSource = new DOMSource(document);
-        StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.transform(domSource, result);
-
-        OutputFormat format = new OutputFormat(writer.toString(), "UTF-8", true);
-        format.setLineWidth(160);
-        //        format.setIndenting(true);
-        format.setIndent(2);
-        //        format.setEncoding("UTF-8");
-        Writer out = new StringWriter();
-        XMLSerializer serializer = new XMLSerializer(out, format);
-        serializer.serialize(document);
-
-        return out.toString();
-    }
-
-    public static String formatDocument2(Document document) throws TransformerException
+    public static String formatDocument(Document document) throws TransformerException
     {
         DOMSource domSource = new DOMSource(document);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -105,7 +78,8 @@ public class XMLUtils
         serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
         serializer.transform(domSource, streamResult);
-        return new String(out.toByteArray());
+
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
     /**

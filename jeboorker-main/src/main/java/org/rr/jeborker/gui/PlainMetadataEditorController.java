@@ -1,19 +1,16 @@
 package org.rr.jeborker.gui;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
+import javax.swing.*;
 
-import org.apache.commons.io.Charsets;
 import org.rr.commons.io.LineReader;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -163,7 +160,7 @@ public class PlainMetadataEditorController {
 			public void actionPerformed(ActionEvent e) {
 				final IMetadataWriter writer = MetadataHandlerFactory.getWriter(resourceHandler);
 				final String metadataContent = xmlMetadataView.editor.getText();
-				writer.storePlainMetadata(metadataContent.getBytes(Charsets.UTF_8));
+				writer.storePlainMetadata(metadataContent.getBytes(StandardCharsets.UTF_8));
 				close();
 
 				ActionFactory.getAction(ActionFactory.COMMON_ACTION_TYPES.REFRESH_ENTRY_ACTION, resourceHandler.toString()).invokeAction();

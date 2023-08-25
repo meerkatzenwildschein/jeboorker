@@ -4,13 +4,13 @@ import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -60,7 +60,7 @@ class HTMLMetadataReader implements IMetadataReader {
 			final String body = "<body>";
 			int len;
 			int bodyIndex = -1;
-			String charset = Charsets.UTF_8.name();
+			String charset = StandardCharsets.UTF_8.name();
 			while((len = contentInputStream.read(buf)) != -1) {
 				String html = new String(buf, 0, len, charset);
 				if(html.indexOf('\ufffd') != -1) {

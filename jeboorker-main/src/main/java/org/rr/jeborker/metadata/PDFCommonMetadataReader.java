@@ -3,6 +3,7 @@ package org.rr.jeborker.metadata;
 import static org.rr.commons.utils.StringUtil.EMPTY;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.Charsets;
 import org.apache.jempbox.xmp.Thumbnail;
 import org.apache.jempbox.xmp.XMPMetadata;
 import org.apache.jempbox.xmp.XMPSchema;
@@ -268,7 +268,7 @@ class PDFCommonMetadataReader extends APDFCommonMetadataHandler implements IMeta
 		try {
 			final byte[] xmpMetadataBytes = pdfDoc.getXMPMetadata();
 			if(xmpMetadataBytes != null && xmpMetadataBytes.length > 0) {
-				String xml = new String(xmpMetadataBytes, Charsets.UTF_8);
+				String xml = new String(xmpMetadataBytes, StandardCharsets.UTF_8);
 				xml = new HTMLEntityConverter(xml, -1).decodeEntities();
 
 				return xml;

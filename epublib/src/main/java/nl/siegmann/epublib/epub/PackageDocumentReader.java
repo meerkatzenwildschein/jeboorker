@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +19,13 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.rr.commons.log.LoggerFactory;
+import org.rr.commons.utils.StringUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Guide;
@@ -29,14 +37,6 @@ import nl.siegmann.epublib.domain.Spine;
 import nl.siegmann.epublib.domain.SpineReference;
 import nl.siegmann.epublib.service.MediatypeService;
 import nl.siegmann.epublib.util.ResourceUtil;
-
-import org.apache.commons.io.Charsets;
-import org.rr.commons.log.LoggerFactory;
-import org.rr.commons.utils.StringUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Reads the opf package document as defined by namespace http://www.idpf.org/2007/opf
@@ -142,7 +142,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 		try {
 			final boolean urlEncoded = href.indexOf('%') != -1;
 			final SortedMap<String, Charset> availableCharsets = Charset.availableCharsets();
-			final String compareHref = urlEncoded ? URLDecoder.decode(href, Charsets.UTF_8.name()) : href;
+			final String compareHref = urlEncoded ? URLDecoder.decode(href, StandardCharsets.UTF_8.name()) : href;
 			final Collection<Resource> allResources = resources.getAll();
 			
 			//try charset encodings for wrong encoded content.opf

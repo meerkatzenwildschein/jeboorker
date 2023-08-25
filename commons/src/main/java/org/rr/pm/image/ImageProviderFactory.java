@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.rr.commons.mufs.IResourceHandler;
 
-import sun.awt.image.ImageFormatException;
 
 public class ImageProviderFactory {
 
@@ -13,7 +12,6 @@ public class ImageProviderFactory {
 	 * 
 	 * @param resourceHandler The file for which the {@link IImageProvider} should be fetched for.
 	 * @return The desired {@link IImageProvider} for the given file.
-	 * @throws ImageFormatException Always if the image file format is unknown
 	 * @throws IOException If the desired file could not be opened or read.
 	 */
 	public static IImageProvider getImageProvider(IResourceHandler resourceHandler) {

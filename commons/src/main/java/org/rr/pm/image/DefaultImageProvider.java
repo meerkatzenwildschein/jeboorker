@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.rr.commons.mufs.IResourceHandler;
 
-import sun.awt.image.ImageFormatException;
 
 class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	
@@ -15,9 +14,7 @@ class DefaultImageProvider extends AImageProvider implements IImageProvider {
 	 * Creates a JpgImage from a specified file name
 	 *
 	 * @param  resourceHandler    the name of a JPEG file
-	 * @param gallery the gallery if the image to be displayed is associated with one. can be <code>null</code>.
 	 * @exception  IOException    if the file cannot be opened or read
-	 * @exception  ImageFormatException    if the JPEG file is invalid
 	 */
 	public DefaultImageProvider (IResourceHandler resourceHandler, String mime) {
 		super(resourceHandler);

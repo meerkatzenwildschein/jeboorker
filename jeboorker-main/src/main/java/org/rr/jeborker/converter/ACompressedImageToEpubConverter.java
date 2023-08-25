@@ -4,18 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-import nl.siegmann.epublib.domain.Book;
-import nl.siegmann.epublib.domain.Resource;
-import nl.siegmann.epublib.domain.Spine;
-import nl.siegmann.epublib.epub.EpubWriter;
-
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.rr.commons.log.LoggerFactory;
 import org.rr.commons.mufs.IResourceHandler;
@@ -28,6 +23,11 @@ import org.rr.jeborker.gui.MainController;
 import org.rr.pm.image.IImageProvider;
 import org.rr.pm.image.ImageProviderFactory;
 import org.rr.pm.image.ImageUtils;
+
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Resource;
+import nl.siegmann.epublib.domain.Spine;
+import nl.siegmann.epublib.epub.EpubWriter;
 
 /**
  * A converter for image archives to epub
@@ -127,7 +127,7 @@ abstract class ACompressedImageToEpubConverter implements IEBookConverter {
 			InputStream spineTemplateIn = ACompressedImageToEpubConverter.class.getResourceAsStream("CbzToEpubSpineImageTemplate");
 			String spineTemplate = IOUtils.toString(spineTemplateIn);
 			String spineDoc = MessageFormat.format(spineTemplate, new Object[] {imageResource.getHref()});
-			spineResource.setData(spineDoc.getBytes(Charsets.UTF_8));
+			spineResource.setData(spineDoc.getBytes(StandardCharsets.UTF_8));
 			spine.addResource(spineResource);
 			epub.addResource(spineResource);
 		}
